@@ -1,0 +1,54 @@
+#!/bin/bash
+
+. /var/epages/functions.sh
+
+ETC_DEFAULT=$(etc_default $(cd $(dirname $BASH_SOURCE)/../../.. && pwd))
+
+if [ ! -f $(readlink -f "$ETC_DEFAULT") ] ; then
+  echo -n "$BASH_SOURCE: " ; ls -l "$ETC_DEFAULT"
+  exit 1
+fi
+
+. "$ETC_DEFAULT"
+
+export PERL_BADLANG=0
+export PERL_UNICODE=SLA
+
+if [ -f "$PERL" ] ; then
+  if [ ${0##*/} != perl ] ; then
+    PERL_EXE="$PERL"
+  elif [ $(find "$PERL" -printf "%i") = $(find "$0" -printf "%i") ] ; then
+    PERL_EXE="$EPAGES_PERL/bin/perl.exe"
+  else
+    PERL_EXE="$PERL"
+  fi
+fi
+
+[ -x "$PERL_EXE" ] || PERL_EXE="$EPAGES_PERL/bin/perl.exe"
+[ -x "$PERL_EXE" ] || PERL_EXE="$EPAGES_PERL/bin/perl5.16.3"
+
+if [ ! -x "$PERL_EXE" -a ${0##*/} = perl ] ; then
+  echo "$0: file not executable: $PERL_EXE"
+  exit 1
+fi
+
+ELIB="$EPAGES_PERL/lib"
+PERL5LIB=$(epages_perl5lib)
+MAGICK_CONFIGURE_PATH="$ELIB/site_perl/linux/auto/Image/Magick/config"
+MAGICK_CODER_MODULE_PATH="$ELIB/site_perl/linux/auto/Image/Magick/modules-Q16/coders"
+MAGICK_FILTER_MODULE_PATH="$ELIB/site_perl/linux/auto/Image/Magick/modules-Q16/filters"
+
+export PERL5LIB MAGICK_CONFIGURE_PATH MAGICK_CODER_MODULE_PATH MAGICK_FILTER_MODULE_PATH
+
+LD_LIBRARY_PATH=$(epages_libs)
+
+chcon -t texrel_shlib_t $EPAGES_PERL/bin/libMagickCore.so.5 2>/dev/null
+
+while [[ $1 = -C || $1 = -P ]] ; do
+  case $1 in
+    -C) EPAGES_CARTRIDGES=$2 ; shift ; shift ;;
+    -P) PERL5LIB=$2 ; shift ; shift ;;
+  esac
+done
+
+[ ${0##*/} != perl ] || exec $PERL_EXE "$@"

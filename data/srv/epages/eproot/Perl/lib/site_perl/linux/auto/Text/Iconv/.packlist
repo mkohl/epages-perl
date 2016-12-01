@@ -1,0 +1,5 @@
+lib/site_perl/linux/Text/Iconv.pm
+lib/site_perl/linux/auto/Text/Iconv/Iconv.bs
+lib/site_perl/linux/auto/Text/Iconv/Iconv.so
+lib/site_perl/linux/auto/Text/Iconv/autosplit.ix
+man/man3/Text::Iconv.3

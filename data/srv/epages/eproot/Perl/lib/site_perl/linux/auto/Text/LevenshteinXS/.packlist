@@ -1,0 +1,5 @@
+lib/site_perl/linux/Text/LevenshteinXS.pm
+lib/site_perl/linux/auto/Text/LevenshteinXS/LevenshteinXS.bs
+lib/site_perl/linux/auto/Text/LevenshteinXS/LevenshteinXS.so
+lib/site_perl/linux/auto/Text/LevenshteinXS/autosplit.ix
+man/man3/Text::LevenshteinXS.3

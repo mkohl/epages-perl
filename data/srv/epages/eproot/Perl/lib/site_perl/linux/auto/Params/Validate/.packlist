@@ -1,0 +1,10 @@
+lib/site_perl/linux/Attribute/Params/Validate.pm
+lib/site_perl/linux/Params/Validate.pm
+lib/site_perl/linux/Params/ValidatePP.pm
+lib/site_perl/linux/Params/ValidateXS.pm
+lib/site_perl/linux/auto/Params/Validate/Validate.bs
+lib/site_perl/linux/auto/Params/Validate/Validate.so
+man/man3/Attribute::Params::Validate.3
+man/man3/Params::Validate.3
+man/man3/Params::ValidatePP.3
+man/man3/Params::ValidateXS.3

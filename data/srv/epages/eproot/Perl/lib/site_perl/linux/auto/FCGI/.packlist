@@ -1,0 +1,4 @@
+lib/site_perl/linux/FCGI.pm
+lib/site_perl/linux/auto/FCGI/FCGI.bs
+lib/site_perl/linux/auto/FCGI/FCGI.so
+man/man3/FCGI.3

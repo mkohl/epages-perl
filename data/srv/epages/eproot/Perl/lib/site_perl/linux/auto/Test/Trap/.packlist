@@ -1,0 +1,10 @@
+lib/site_perl/Test/Trap.pm
+lib/site_perl/Test/Trap/Builder.pm
+lib/site_perl/Test/Trap/Builder/PerlIO.pm
+lib/site_perl/Test/Trap/Builder/SystemSafe.pm
+lib/site_perl/Test/Trap/Builder/TempFile.pm
+man/man3/Test::Trap.3
+man/man3/Test::Trap::Builder.3
+man/man3/Test::Trap::Builder::PerlIO.3
+man/man3/Test::Trap::Builder::SystemSafe.3
+man/man3/Test::Trap::Builder::TempFile.3

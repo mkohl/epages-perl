@@ -1,0 +1,26 @@
+#!/bin/bash
+
+DN=$(cd $(dirname $0) ; pwd)
+
+. $DN/perl
+
+if [[ $EPAGES_KERNEL != ${EPAGES_KERNEL%d} ]] ; then
+  /usr/bin/xmlsec1 "$@"
+  exit $?
+fi
+
+case $EPAGES_KERNEL in
+  2.6.32r|3.10.0r) VER=so.10 ;;
+  *) VER=so.6 ;;
+esac
+
+for i in libssl libcrypto ; do
+  [[ -f /lib/$i.$VER || -f /usr/lib/$i.$VER || -f $DN/../lib32/$EPAGES_KERNEL/$i.$VER ]] || {
+    echo "(/usr)/lib/$i.$VER: No such file or directory"
+    exit 1
+  }
+done
+
+chmod 755 $DN/../lib32/$EPAGES_KERNEL/xmlsec1 2>/dev/null
+
+$DN/../lib32/$EPAGES_KERNEL/xmlsec1 "$@"

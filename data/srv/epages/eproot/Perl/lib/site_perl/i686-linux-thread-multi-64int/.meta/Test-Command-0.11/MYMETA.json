@@ -1,0 +1,43 @@
+{
+   "abstract" : "Test routines for external commands",
+   "author" : [
+      "Daniel B. Boorstein <danboo@cpan.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Module::Build version 0.4203",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Test-Command",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Test::Simple" : "0.62"
+         }
+      }
+   },
+   "provides" : {
+      "Test::Command" : {
+         "file" : "lib/Test/Command.pm",
+         "version" : "0.11"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Test-Command"
+      },
+      "homepage" : "https://metacpan.org/release/Test-Command",
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ],
+      "repository" : {
+         "url" : "https://github.com/danboo/perl-test-command"
+      }
+   },
+   "version" : "0.11"
+}

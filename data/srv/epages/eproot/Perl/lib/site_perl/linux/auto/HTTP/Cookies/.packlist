@@ -1,0 +1,6 @@
+lib/site_perl/HTTP/Cookies.pm
+lib/site_perl/HTTP/Cookies/Microsoft.pm
+lib/site_perl/HTTP/Cookies/Netscape.pm
+man/man3/HTTP::Cookies.3
+man/man3/HTTP::Cookies::Microsoft.3
+man/man3/HTTP::Cookies::Netscape.3

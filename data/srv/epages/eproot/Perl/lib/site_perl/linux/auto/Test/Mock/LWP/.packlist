@@ -1,0 +1,8 @@
+lib/site_perl/Test/Mock/HTTP/Request.pm
+lib/site_perl/Test/Mock/HTTP/Response.pm
+lib/site_perl/Test/Mock/LWP.pm
+lib/site_perl/Test/Mock/LWP/UserAgent.pm
+man/man3/Test::Mock::HTTP::Request.3
+man/man3/Test::Mock::HTTP::Response.3
+man/man3/Test::Mock::LWP.3
+man/man3/Test::Mock::LWP::UserAgent.3

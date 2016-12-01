@@ -1,0 +1,6 @@
+bin/json_pp
+lib/site_perl/JSON/PP.pm
+lib/site_perl/JSON/PP/Boolean.pm
+man/man1/json_pp.1
+man/man3/JSON::PP.3
+man/man3/JSON::PP::Boolean.3

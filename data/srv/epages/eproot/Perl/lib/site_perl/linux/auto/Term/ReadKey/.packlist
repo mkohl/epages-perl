@@ -1,0 +1,5 @@
+lib/site_perl/linux/Term/ReadKey.pm
+lib/site_perl/linux/auto/Term/ReadKey/ReadKey.bs
+lib/site_perl/linux/auto/Term/ReadKey/ReadKey.so
+lib/site_perl/linux/auto/Term/ReadKey/autosplit.ix
+man/man3/Term::ReadKey.3

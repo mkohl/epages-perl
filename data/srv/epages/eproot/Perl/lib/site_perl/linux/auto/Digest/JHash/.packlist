@@ -1,0 +1,4 @@
+lib/site_perl/linux/Digest/JHash.pm
+lib/site_perl/linux/auto/Digest/JHash/JHash.bs
+lib/site_perl/linux/auto/Digest/JHash/JHash.so
+man/man3/Digest::JHash.3

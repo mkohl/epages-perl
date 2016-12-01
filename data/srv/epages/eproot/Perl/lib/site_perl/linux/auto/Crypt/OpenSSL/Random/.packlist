@@ -1,0 +1,5 @@
+lib/site_perl/linux/Crypt/OpenSSL/Random.pm
+lib/site_perl/linux/auto/Crypt/OpenSSL/Random/Random.bs
+lib/site_perl/linux/auto/Crypt/OpenSSL/Random/Random.so
+lib/site_perl/linux/auto/Crypt/OpenSSL/Random/autosplit.ix
+man/man3/Crypt::OpenSSL::Random.3

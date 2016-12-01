@@ -1,0 +1,6 @@
+lib/site_perl/IO/TieCombine.pm
+lib/site_perl/IO/TieCombine/Handle.pm
+lib/site_perl/IO/TieCombine/Scalar.pm
+man/man3/IO::TieCombine.3
+man/man3/IO::TieCombine::Handle.3
+man/man3/IO::TieCombine::Scalar.3

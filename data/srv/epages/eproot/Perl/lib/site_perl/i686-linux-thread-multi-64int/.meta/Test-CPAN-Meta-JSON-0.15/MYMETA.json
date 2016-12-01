@@ -1,0 +1,80 @@
+{
+   "abstract" : "Validate your CPAN META.json files",
+   "author" : [
+      "Barbie <barbie@cpan.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Hand 1.0, CPAN::Meta::Converter version 2.133380",
+   "keywords" : [
+      "qa",
+      "cpan",
+      "testing"
+   ],
+   "license" : [
+      "artistic_2"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Test-CPAN-Meta-JSON",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "examples"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "IO::File" : "0",
+            "JSON" : "2.15",
+            "Test::Builder" : "0",
+            "Test::Builder::Tester" : "0",
+            "Test::More" : "0.70"
+         }
+      },
+      "test" : {
+         "recommends" : {
+            "Test::CPAN::Meta" : "0.13",
+            "Test::More" : "0.70",
+            "Test::Pod" : "1.00",
+            "Test::Pod::Coverage" : "0.08"
+         },
+         "requires" : {
+            "Test::Builder" : "0",
+            "Test::More" : "0.62"
+         }
+      }
+   },
+   "provides" : {
+      "Test::CPAN::Meta::JSON" : {
+         "file" : "lib/Test/CPAN/Meta/JSON.pm",
+         "version" : "0.15"
+      },
+      "Test::CPAN::Meta::JSON::Version" : {
+         "file" : "lib/Test/CPAN/Meta/JSON/Version.pm",
+         "version" : "0.15"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "http://rt.cpan.org/Public/Dist/Display.html?Name=Test-CPAN-Meta-JSON"
+      },
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ],
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/barbie/Test-CPAN-Meta-JSON.git",
+         "web" : "http://github.com/barbie/Test-CPAN-Meta-JSON"
+      }
+   },
+   "version" : "0.15"
+}

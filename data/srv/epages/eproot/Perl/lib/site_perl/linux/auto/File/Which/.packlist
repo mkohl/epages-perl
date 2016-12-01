@@ -1,0 +1,4 @@
+bin/pwhich
+lib/site_perl/File/Which.pm
+man/man1/pwhich.1
+man/man3/File::Which.3

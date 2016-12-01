@@ -1,0 +1,9 @@
+lib/site_perl/Log/Any/Adapter.pm
+lib/site_perl/Log/Any/Adapter/Base.pm
+lib/site_perl/Log/Any/Adapter/Development.pod
+lib/site_perl/Log/Any/Adapter/Test/Memory.pm
+lib/site_perl/Log/Any/Adapter/Util.pm
+lib/site_perl/Log/Any/Manager.pm
+man/man3/Log::Any::Adapter.3
+man/man3/Log::Any::Adapter::Base.3
+man/man3/Log::Any::Adapter::Development.3

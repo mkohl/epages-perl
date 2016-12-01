@@ -1,0 +1,5 @@
+lib/site_perl/linux/DBD/Sybase.pm
+lib/site_perl/linux/DBD/dbd-sybase.pod
+lib/site_perl/linux/auto/DBD/Sybase/Sybase.bs
+lib/site_perl/linux/auto/DBD/Sybase/Sybase.so
+man/man3/DBD::Sybase.3

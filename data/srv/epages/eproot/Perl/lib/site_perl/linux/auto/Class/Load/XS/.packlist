@@ -1,0 +1,4 @@
+lib/site_perl/linux/Class/Load/XS.pm
+lib/site_perl/linux/auto/Class/Load/XS/XS.bs
+lib/site_perl/linux/auto/Class/Load/XS/XS.so
+man/man3/Class::Load::XS.3

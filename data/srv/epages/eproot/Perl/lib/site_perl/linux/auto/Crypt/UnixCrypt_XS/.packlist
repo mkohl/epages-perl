@@ -1,0 +1,4 @@
+lib/site_perl/linux/Crypt/UnixCrypt_XS.pm
+lib/site_perl/linux/auto/Crypt/UnixCrypt_XS/UnixCrypt_XS.bs
+lib/site_perl/linux/auto/Crypt/UnixCrypt_XS/UnixCrypt_XS.so
+man/man3/Crypt::UnixCrypt_XS.3

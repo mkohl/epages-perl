@@ -1,0 +1,8 @@
+lib/site_perl/Perl/Critic/Deprecated.pm
+lib/site_perl/Perl/Critic/Policy/NamingConventions/ProhibitMixedCaseSubs.pm
+lib/site_perl/Perl/Critic/Policy/NamingConventions/ProhibitMixedCaseVars.pm
+lib/site_perl/Perl/Critic/Utils/PPIRegexp.pm
+man/man3/Perl::Critic::Deprecated.3
+man/man3/Perl::Critic::Policy::NamingConventions::ProhibitMixedCaseSubs.3
+man/man3/Perl::Critic::Policy::NamingConventions::ProhibitMixedCaseVars.3
+man/man3/Perl::Critic::Utils::PPIRegexp.3

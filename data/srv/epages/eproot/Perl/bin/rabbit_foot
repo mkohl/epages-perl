@@ -1,0 +1,9 @@
+#!/srv/epages/eproot/Perl/bin/perl
+
+use strict;
+use warnings;
+
+use Net::RabbitFoot::Cmd;
+
+Net::RabbitFoot::Cmd->run;
+

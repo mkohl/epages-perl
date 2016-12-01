@@ -1,0 +1,8 @@
+lib/site_perl/linux/DBD/SQLite.pm
+lib/site_perl/linux/DBD/SQLite/Cookbook.pod
+lib/site_perl/linux/auto/DBD/SQLite/SQLite.bs
+lib/site_perl/linux/auto/DBD/SQLite/SQLite.so
+lib/site_perl/linux/auto/share/dist/DBD-SQLite/sqlite3.c
+lib/site_perl/linux/auto/share/dist/DBD-SQLite/sqlite3.h
+man/man3/DBD::SQLite.3
+man/man3/DBD::SQLite::Cookbook.3

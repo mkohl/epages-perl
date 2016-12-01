@@ -1,0 +1,4 @@
+lib/site_perl/linux/Devel/Size.pm
+lib/site_perl/linux/auto/Devel/Size/Size.bs
+lib/site_perl/linux/auto/Devel/Size/Size.so
+man/man3/Devel::Size.3

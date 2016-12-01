@@ -1,0 +1,4 @@
+lib/site_perl/XML/SAX/Writer.pm
+lib/site_perl/XML/SAX/Writer/XML.pm
+man/man3/XML::SAX::Writer.3
+man/man3/XML::SAX::Writer::XML.3

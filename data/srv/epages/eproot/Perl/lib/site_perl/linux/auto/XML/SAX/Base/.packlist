@@ -1,0 +1,5 @@
+lib/site_perl/XML/SAX/Base.pm
+lib/site_perl/XML/SAX/Exception.pm
+lib/site_perl/XML/SAX/placeholder.pl
+man/man3/XML::SAX::Base.3
+man/man3/XML::SAX::Exception.3

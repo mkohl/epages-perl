@@ -1,0 +1,6 @@
+lib/site_perl/StackTrace/Auto.pm
+lib/site_perl/Throwable.pm
+lib/site_perl/Throwable/Error.pm
+man/man3/StackTrace::Auto.3
+man/man3/Throwable.3
+man/man3/Throwable::Error.3

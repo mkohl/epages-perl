@@ -1,0 +1,8 @@
+lib/site_perl/PPIx/Utilities.pm
+lib/site_perl/PPIx/Utilities/Exception/Bug.pm
+lib/site_perl/PPIx/Utilities/Node.pm
+lib/site_perl/PPIx/Utilities/Statement.pm
+man/man3/PPIx::Utilities.3
+man/man3/PPIx::Utilities::Exception::Bug.3
+man/man3/PPIx::Utilities::Node.3
+man/man3/PPIx::Utilities::Statement.3

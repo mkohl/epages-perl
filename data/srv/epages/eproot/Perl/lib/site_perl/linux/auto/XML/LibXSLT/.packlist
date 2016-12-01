@@ -1,0 +1,6 @@
+lib/site_perl/linux/XML/LibXSLT.pm
+lib/site_perl/linux/XML/benchmark.pl
+lib/site_perl/linux/auto/XML/LibXSLT/LibXSLT.bs
+lib/site_perl/linux/auto/XML/LibXSLT/LibXSLT.so
+lib/site_perl/linux/auto/XML/LibXSLT/LibXSLT1.so
+man/man3/XML::LibXSLT.3

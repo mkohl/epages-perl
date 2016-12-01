@@ -1,0 +1,8 @@
+bin/pdt-depcheck
+lib/site_perl/Devel/TraceDeps.pm
+lib/site_perl/Devel/TraceDeps/Scan.pm
+lib/site_perl/Devel/eps.pm
+man/man1/pdt-depcheck.1
+man/man3/Devel::TraceDeps.3
+man/man3/Devel::TraceDeps::Scan.3
+man/man3/Devel::eps.3

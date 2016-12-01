@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuremap [
+<!ELEMENT configuremap (configure)+>
+<!ELEMENT configure (#PCDATA)>
+<!ATTLIST configure name CDATA #REQUIRED>
+<!ATTLIST configure value CDATA #REQUIRED>
+]>
+<configuremap>
+  <configure name="NAME" value="ImageMagick"/>
+  <configure name="VERSION" value="6.7.3"/>
+  <configure name="LIB_VERSION" value="0x673"/>
+  <configure name="LIB_VERSION_NUMBER" value="6,7,3,4"/>
+  <configure name="SVN_REVISION" value="5881" />
+  <configure name="RELEASE_DATE" value="2011-11-08"/>
+  <configure name="CONFIGURE" value="./configure  'CFLAGS=-D_POSIX_PTHREAD_SEMANTICS -I/usr/include/gdbm -m32' '--prefix' '' '--with-perl=Perl/bin/perl' '--with-modules' '--disable-openmp' '--without-x' '--without-magick-plus-plus' '--without-bzlib' '--without-dps' '--without-fpx' '--without-djvu' '--without-fftw' '--without-fontconfig' '--without-wmf' '--without-freetype' '--without-gslib' '--without-gvc' '--without-jbig' '--without-jp2' '--without-lcms' '--without-lqr' '--without-openexr' '--without-rsvg' '--without-tiff' 'LDFLAGS=-Llib' 'CPPFLAGS=-Iinclude'"/>
+  <configure name="PREFIX" value=""/>
+  <configure name="EXEC-PREFIX" value=""/>
+  <configure name="INCLUDE_PATH" value="include/ImageMagick"/>
+  <configure name="CONFIGURE_PATH" value="etc/ImageMagick/"/>
+  <configure name="SHARE_PATH" value="share/ImageMagick-6.7.3"/>
+  <configure name="DOCUMENTATION_PATH" value="share/doc/ImageMagick/"/>
+  <configure name="EXECUTABLE_PATH" value="bin"/>
+  <configure name="LIBRARY_PATH" value="lib/ImageMagick-6.7.3"/>
+  <configure name="CODER_PATH" value="lib/ImageMagick-6.7.3/modules-Q16/coders"/>
+  <configure name="FILTER_PATH" value="lib/ImageMagick-6.7.3/modules-Q16/filters"/>
+  <configure name="CC" value="gcc -std=gnu99 -std=gnu99"/>
+  <configure name="CFLAGS" value="-D_POSIX_PTHREAD_SEMANTICS -I/usr/include/gdbm -m32 -Wall -pthread"/>
+  <configure name="CPPFLAGS" value="-Iinclude/ImageMagick"/>
+  <configure name="PCFLAGS" value=""/>
+  <configure name="DEFS" value="-DHAVE_CONFIG_H"/>
+  <configure name="LDFLAGS" value="-Llib -Llib"/>
+  <configure name="LIBS" value="-lMagickCore -ljpeg -lz -lm -lpthread "/>
+  <configure name="CXX" value="g++"/>
+  <configure name="CXXFLAGS" value="-g -O2 -pthread"/>
+  <configure name="DISTCHECK_CONFIG_FLAGS" value="'CFLAGS=-D_POSIX_PTHREAD_SEMANTICS -I/usr/include/gdbm -m32' 'CPPFLAGS=-Iinclude' 'LDFLAGS=-Llib' --disable-deprecated --with-quantum-depth=16 --with-umem=no --with-bzlib=no --with-autotrace=no --with-dps=no --with-djvu=no --with-fftw=no --with-fpx=no --with-fontconfig=no --with-freetype=no --with-gslib=no --with-fontpath= --with-gvc=no --with-jp2=no --with-lcms=no --with-lqr=no --with-openexr=no --with-pango=no --with-rsvg=no --with-tiff=no --with-wmf=no --with-xml=no --with-perl=Perl/bin/perl"/>
+  <configure name="TARGET_CPU" value="i686"/>
+  <configure name="TARGET_VENDOR" value="pc"/>
+  <configure name="TARGET_OS" value="linux-gnu"/>
+  <configure name="HOST" value="i686-pc-linux-gnu"/>
+  <configure name="FEATURES" value=""/>
+  <configure name="DELEGATES" value="jpeg jng png zlib"/>
+  <configure name="COPYRIGHT" value="Copyright (C) 1999-2011 ImageMagick Studio LLC"/>
+  <configure name="WEBSITE" value="http://www.imagemagick.org"/>
+  <configure name="QuantumDepth" value="16"/>
+</configuremap>

@@ -1,0 +1,8 @@
+bin/findrule
+lib/site_perl/File/Find/Rule.pm
+lib/site_perl/File/Find/Rule/Extending.pod
+lib/site_perl/File/Find/Rule/Procedural.pod
+man/man1/findrule.1
+man/man3/File::Find::Rule.3
+man/man3/File::Find::Rule::Extending.3
+man/man3/File::Find::Rule::Procedural.3

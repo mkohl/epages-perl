@@ -1,0 +1,5 @@
+lib/site_perl/linux/XML/CanonicalizeXML.pm
+lib/site_perl/linux/auto/XML/CanonicalizeXML/CanonicalizeXML.bs
+lib/site_perl/linux/auto/XML/CanonicalizeXML/CanonicalizeXML.so
+lib/site_perl/linux/auto/XML/CanonicalizeXML/autosplit.ix
+man/man3/XML::CanonicalizeXML.3

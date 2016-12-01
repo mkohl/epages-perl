@@ -1,0 +1,9 @@
+lib/site_perl/linux/Crypt/OpenSSL/RSA.pm
+lib/site_perl/linux/auto/Crypt/OpenSSL/RSA/RSA.bs
+lib/site_perl/linux/auto/Crypt/OpenSSL/RSA/RSA.so
+lib/site_perl/linux/auto/Crypt/OpenSSL/RSA/autosplit.ix
+lib/site_perl/linux/auto/Crypt/OpenSSL/RSA/get_key_parameters.al
+lib/site_perl/linux/auto/Crypt/OpenSSL/RSA/import_random_seed.al
+lib/site_perl/linux/auto/Crypt/OpenSSL/RSA/new_key_from_parameters.al
+lib/site_perl/linux/auto/Crypt/OpenSSL/RSA/new_public_key.al
+man/man3/Crypt::OpenSSL::RSA.3

@@ -1,0 +1,8 @@
+lib/site_perl/HTML/ElementGlob.pm
+lib/site_perl/HTML/ElementRaw.pm
+lib/site_perl/HTML/ElementSuper.pm
+lib/site_perl/HTML/ElementTable.pm
+man/man3/HTML::ElementGlob.3
+man/man3/HTML::ElementRaw.3
+man/man3/HTML::ElementSuper.3
+man/man3/HTML::ElementTable.3

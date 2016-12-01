@@ -1,0 +1,110 @@
+=head1 NAME
+
+Log::Report::Lexicon::POTcompact - use translations from a POT file
+
+=head1 INHERITANCE
+
+ Log::Report::Lexicon::POTcompact
+   is a Exporter
+
+=head1 SYNOPSIS
+
+ # using a PO table efficiently
+ my $pot = Log::Report::Lexicon::POTcompact
+             ->read('po/nl.po', charset => 'utf-8')
+    or die;
+
+ my $header = $pot->msgid('');
+ print $pot->msgstr('msgid', 3);
+
+=head1 DESCRIPTION
+
+This module is translating, based on PO files. PO files are used to store
+translations in humanly readable format for most of existing translation
+frameworks, like GNU gettext and Perl's Maketext.
+
+Internally, this module tries to be as efficient as possible: high
+speed and low memory foot-print.  You will not be able to sub-class
+this class cleanly.
+
+If you like to change the content of PO files, then use
+L<Log::Report::Lexicon::POT|Log::Report::Lexicon::POT>.
+
+=head1 METHODS
+
+=head2 Constructors
+
+=over 4
+
+=item Log::Report::Lexicon::POTcompact-E<gt>B<read>(FILENAME, OPTIONS)
+
+Read the POT table information from FILENAME, as compact as possible.
+Comments, plural-form, and such are lost on purpose: they are not
+needed for translations.
+
+ -Option --Default
+  charset  <required>
+
+=over 2
+
+=item charset => STRING
+
+The character-set which is used for the file.  You must specify
+this explicitly, while it cannot be trustfully detected automatically.
+
+=back
+
+=back
+
+=head2 Attributes
+
+=over 4
+
+=item $obj-E<gt>B<filename>
+
+Returns the name of the source file for this data.
+
+=item $obj-E<gt>B<index>
+
+Returns a HASH of all defined PO objects, organized by msgid.  Please try
+to avoid using this: use L<msgid()|Log::Report::Lexicon::POTcompact/"Managing PO's"> for lookup.
+
+=item $obj-E<gt>B<nrPlurals>
+
+=back
+
+=head2 Managing PO's
+
+=over 4
+
+=item $obj-E<gt>B<header>(FIELD)
+
+The translation of a blank MSGID is used to store a MIME header, which
+contains meta-data.  The FIELD content is returned.
+
+=item $obj-E<gt>B<msgid>(STRING)
+
+Lookup the translations with the STRING.  Returns a SCALAR, when only
+one translation is known, and an ARRAY wherein there are multiple.
+Returns C<undef> when the translation is not defined.
+
+=item $obj-E<gt>B<msgstr>(MSGID, [COUNT])
+
+Returns the translated string for MSGID.  When not specified, COUNT is 1
+(the single form).
+
+=back
+
+=head1 SEE ALSO
+
+This module is part of Log-Report distribution version 0.94,
+built on August 23, 2011. Website: F<http://perl.overmeer.net/log-report/>
+
+=head1 LICENSE
+
+Copyrights 2007-2011 by Mark Overmeer. For other contributors see ChangeLog.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+See F<http://www.perl.com/perl/misc/Artistic.html>
+

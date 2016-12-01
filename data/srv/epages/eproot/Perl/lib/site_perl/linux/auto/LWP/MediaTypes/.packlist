@@ -1,0 +1,3 @@
+lib/site_perl/LWP/MediaTypes.pm
+lib/site_perl/LWP/media.types
+man/man3/LWP::MediaTypes.3

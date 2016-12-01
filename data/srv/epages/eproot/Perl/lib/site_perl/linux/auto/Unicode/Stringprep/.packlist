@@ -1,0 +1,12 @@
+lib/site_perl/Unicode/Stringprep.pm
+lib/site_perl/Unicode/Stringprep/BiDi.pm
+lib/site_perl/Unicode/Stringprep/Mapping.pm
+lib/site_perl/Unicode/Stringprep/Prohibited.pm
+lib/site_perl/Unicode/Stringprep/Unassigned.pm
+lib/site_perl/Unicode/Stringprep/_Common.pm
+man/man3/Unicode::Stringprep.3
+man/man3/Unicode::Stringprep::BiDi.3
+man/man3/Unicode::Stringprep::Mapping.3
+man/man3/Unicode::Stringprep::Prohibited.3
+man/man3/Unicode::Stringprep::Unassigned.3
+man/man3/Unicode::Stringprep::_Common.3

@@ -1,0 +1,5 @@
+lib/site_perl/Mail/Sender.config
+lib/site_perl/Mail/Sender.pm
+lib/site_perl/Mail/Sender/CType/Ext.pm
+lib/site_perl/Mail/Sender/CType/Win32.pm
+man/man3/Mail::Sender.3

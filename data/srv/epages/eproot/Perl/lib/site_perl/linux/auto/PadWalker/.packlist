@@ -1,0 +1,4 @@
+lib/site_perl/linux/PadWalker.pm
+lib/site_perl/linux/auto/PadWalker/PadWalker.bs
+lib/site_perl/linux/auto/PadWalker/PadWalker.so
+man/man3/PadWalker.3

@@ -1,0 +1,7 @@
+lib/site_perl/Data/Dump.pm
+lib/site_perl/Data/Dump/FilterContext.pm
+lib/site_perl/Data/Dump/Filtered.pm
+lib/site_perl/Data/Dump/Trace.pm
+man/man3/Data::Dump.3
+man/man3/Data::Dump::Filtered.3
+man/man3/Data::Dump::Trace.3

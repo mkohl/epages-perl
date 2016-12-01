@@ -1,0 +1,13 @@
+bin/dave
+lib/site_perl/HTTP/DAV.pm
+lib/site_perl/HTTP/DAV/Comms.pm
+lib/site_perl/HTTP/DAV/Lock.pm
+lib/site_perl/HTTP/DAV/Resource.pm
+lib/site_perl/HTTP/DAV/ResourceList.pm
+lib/site_perl/HTTP/DAV/Response.pm
+lib/site_perl/HTTP/DAV/Utils.pm
+man/man1/dave.1
+man/man3/HTTP::DAV.3
+man/man3/HTTP::DAV::Lock.3
+man/man3/HTTP::DAV::Resource.3
+man/man3/HTTP::DAV::Response.3

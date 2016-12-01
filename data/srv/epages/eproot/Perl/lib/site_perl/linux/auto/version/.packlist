@@ -1,0 +1,9 @@
+lib/site_perl/linux/auto/version/vxs/vxs.bs
+lib/site_perl/linux/auto/version/vxs/vxs.so
+lib/site_perl/linux/version.pm
+lib/site_perl/linux/version.pod
+lib/site_perl/linux/version/Internals.pod
+lib/site_perl/linux/version/vpp.pm
+lib/site_perl/linux/version/vxs.pm
+man/man3/version.3
+man/man3/version::Internals.3

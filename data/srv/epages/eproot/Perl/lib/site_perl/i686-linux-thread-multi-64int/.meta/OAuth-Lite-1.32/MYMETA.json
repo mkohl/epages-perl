@@ -1,0 +1,59 @@
+{
+   "abstract" : "OAuth framework",
+   "author" : [
+      "Lyo Kato, C<lyo.kato _at_ gmail.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Module::Install version 1.06, CPAN::Meta::Converter version 2.133380",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "OAuth-Lite",
+   "no_index" : {
+      "directory" : [
+         "examples",
+         "inc",
+         "t"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.36",
+            "Test::More" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.36"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Class::Accessor" : "0.31",
+            "Class::Data::Accessor" : "0.04001",
+            "Class::ErrorHandler" : "0.01",
+            "Compress::Zlib" : "2.001",
+            "Crypt::OpenSSL::RSA" : "0.25",
+            "Crypt::OpenSSL::Random" : "0.04",
+            "Digest::SHA" : "5.45",
+            "LWP" : "0",
+            "List::MoreUtils" : "0.21",
+            "MIME::Base64" : "3.07",
+            "UNIVERSAL::require" : "0.11",
+            "URI" : "1.35"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ]
+   },
+   "version" : "1.32"
+}

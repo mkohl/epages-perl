@@ -1,0 +1,8 @@
+lib/site_perl/linux/Font/FreeType.pm
+lib/site_perl/linux/Font/FreeType/Face.pm
+lib/site_perl/linux/Font/FreeType/Glyph.pm
+lib/site_perl/linux/auto/Font/FreeType/FreeType.bs
+lib/site_perl/linux/auto/Font/FreeType/FreeType.so
+man/man3/Font::FreeType.3
+man/man3/Font::FreeType::Face.3
+man/man3/Font::FreeType::Glyph.3

@@ -1,0 +1,9 @@
+lib/site_perl/linux/WWW/Curl.pm
+lib/site_perl/linux/WWW/Curl/Easy.pm
+lib/site_perl/linux/WWW/Curl/Form.pm
+lib/site_perl/linux/WWW/Curl/Multi.pm
+lib/site_perl/linux/WWW/Curl/Share.pm
+lib/site_perl/linux/auto/WWW/Curl/Curl.so
+lib/site_perl/linux/auto/WWW/Curl/Easy/autosplit.ix
+lib/site_perl/linux/auto/WWW/Curl/Share/autosplit.ix
+man/man3/WWW::Curl.3pm

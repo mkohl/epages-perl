@@ -1,0 +1,17 @@
+bin/bdf2gdfont.pl
+lib/site_perl/linux/GD.pm
+lib/site_perl/linux/GD/Group.pm
+lib/site_perl/linux/GD/Image.pm
+lib/site_perl/linux/GD/Polygon.pm
+lib/site_perl/linux/GD/Polyline.pm
+lib/site_perl/linux/GD/Simple.pm
+lib/site_perl/linux/auto/GD/GD.bs
+lib/site_perl/linux/auto/GD/GD.so
+lib/site_perl/linux/auto/GD/autosplit.ix
+lib/site_perl/linux/qd.pl
+man/man1/bdf2gdfont.pl.1
+man/man3/GD.3
+man/man3/GD::Image.3
+man/man3/GD::Polygon.3
+man/man3/GD::Polyline.3
+man/man3/GD::Simple.3

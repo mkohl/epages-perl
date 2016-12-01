@@ -1,0 +1,11 @@
+lib/site_perl/linux/Bit/Vector.pm
+lib/site_perl/linux/Bit/Vector.pod
+lib/site_perl/linux/Bit/Vector/Overload.pm
+lib/site_perl/linux/Bit/Vector/Overload.pod
+lib/site_perl/linux/Bit/Vector/String.pm
+lib/site_perl/linux/Bit/Vector/String.pod
+lib/site_perl/linux/auto/Bit/Vector/Vector.bs
+lib/site_perl/linux/auto/Bit/Vector/Vector.so
+man/man3/Bit::Vector.3
+man/man3/Bit::Vector::Overload.3
+man/man3/Bit::Vector::String.3

@@ -1,0 +1,6 @@
+lib/site_perl/Test/Class.pm
+lib/site_perl/Test/Class/Load.pm
+lib/site_perl/Test/Class/MethodInfo.pm
+man/man3/Test::Class.3
+man/man3/Test::Class::Load.3
+man/man3/Test::Class::MethodInfo.3

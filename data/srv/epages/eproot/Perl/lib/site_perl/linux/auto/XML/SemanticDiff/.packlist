@@ -1,0 +1,4 @@
+lib/site_perl/XML/SemanticDiff.pm
+lib/site_perl/XML/SemanticDiff/BasicHandler.pm
+man/man3/XML::SemanticDiff.3
+man/man3/XML::SemanticDiff::BasicHandler.3

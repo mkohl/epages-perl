@@ -1,0 +1,4 @@
+lib/site_perl/Exception/Class.pm
+lib/site_perl/Exception/Class/Base.pm
+man/man3/Exception::Class.3
+man/man3/Exception::Class::Base.3

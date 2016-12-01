@@ -1,0 +1,6 @@
+lib/site_perl/Text/Diff.pm
+lib/site_perl/Text/Diff/Config.pm
+lib/site_perl/Text/Diff/Table.pm
+man/man3/Text::Diff.3
+man/man3/Text::Diff::Config.3
+man/man3/Text::Diff::Table.3

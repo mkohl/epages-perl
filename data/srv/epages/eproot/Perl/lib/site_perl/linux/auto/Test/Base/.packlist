@@ -1,0 +1,6 @@
+lib/site_perl/Module/Install/TestBase.pm
+lib/site_perl/Test/Base.pm
+lib/site_perl/Test/Base/Filter.pm
+man/man3/Module::Install::TestBase.3
+man/man3/Test::Base.3
+man/man3/Test::Base::Filter.3

@@ -1,0 +1,4 @@
+lib/site_perl/linux/Devel/Caller.pm
+lib/site_perl/linux/auto/Devel/Caller/Caller.bs
+lib/site_perl/linux/auto/Devel/Caller/Caller.so
+man/man3/Devel::Caller.3

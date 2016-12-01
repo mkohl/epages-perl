@@ -1,0 +1,1 @@
+{"provides":{"IO::TieCombine::Handle":{"version":"1.003","file":"IO/TieCombine/Handle.pm"},"IO::TieCombine::Scalar":{"version":"1.003","file":"IO/TieCombine/Scalar.pm"},"IO::TieCombine":{"version":"1.003","file":"IO/TieCombine.pm"}},"target":"IO::TieCombine","version":"1.003","name":"IO::TieCombine","dist":"IO-TieCombine-1.003","pathname":"R/RJ/RJBS/IO-TieCombine-1.003.tar.gz"}

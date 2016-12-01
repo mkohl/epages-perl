@@ -1,0 +1,14 @@
+lib/site_perl/Data/Entropy.pm
+lib/site_perl/Data/Entropy/Algorithms.pm
+lib/site_perl/Data/Entropy/RawSource/CryptCounter.pm
+lib/site_perl/Data/Entropy/RawSource/Local.pm
+lib/site_perl/Data/Entropy/RawSource/RandomOrg.pm
+lib/site_perl/Data/Entropy/RawSource/RandomnumbersInfo.pm
+lib/site_perl/Data/Entropy/Source.pm
+man/man3/Data::Entropy.3
+man/man3/Data::Entropy::Algorithms.3
+man/man3/Data::Entropy::RawSource::CryptCounter.3
+man/man3/Data::Entropy::RawSource::Local.3
+man/man3/Data::Entropy::RawSource::RandomOrg.3
+man/man3/Data::Entropy::RawSource::RandomnumbersInfo.3
+man/man3/Data::Entropy::Source.3

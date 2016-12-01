@@ -1,0 +1,5 @@
+lib/site_perl/Data/Random.pm
+lib/site_perl/Data/Random/WordList.pm
+lib/site_perl/Data/Random/dict
+man/man3/Data::Random.3
+man/man3/Data::Random::WordList.3

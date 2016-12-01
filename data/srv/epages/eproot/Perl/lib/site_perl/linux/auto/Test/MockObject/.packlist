@@ -1,0 +1,4 @@
+lib/site_perl/Test/MockObject.pm
+lib/site_perl/Test/MockObject/Extends.pm
+man/man3/Test::MockObject.3
+man/man3/Test::MockObject::Extends.3

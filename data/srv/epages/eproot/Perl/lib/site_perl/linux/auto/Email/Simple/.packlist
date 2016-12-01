@@ -1,0 +1,6 @@
+lib/site_perl/Email/Simple.pm
+lib/site_perl/Email/Simple/Creator.pm
+lib/site_perl/Email/Simple/Header.pm
+man/man3/Email::Simple.3
+man/man3/Email::Simple::Creator.3
+man/man3/Email::Simple::Header.3

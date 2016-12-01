@@ -1,0 +1,8 @@
+lib/site_perl/Sub/Exporter.pm
+lib/site_perl/Sub/Exporter/Cookbook.pod
+lib/site_perl/Sub/Exporter/Tutorial.pod
+lib/site_perl/Sub/Exporter/Util.pm
+man/man3/Sub::Exporter.3
+man/man3/Sub::Exporter::Cookbook.3
+man/man3/Sub::Exporter::Tutorial.3
+man/man3/Sub::Exporter::Util.3

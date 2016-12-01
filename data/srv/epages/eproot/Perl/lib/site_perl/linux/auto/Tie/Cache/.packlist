@@ -1,0 +1,3 @@
+lib/site_perl/Tie/Cache.pm
+lib/site_perl/Tie/bench.pl
+man/man3/Tie::Cache.3

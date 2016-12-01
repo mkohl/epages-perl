@@ -1,0 +1,14 @@
+lib/site_perl/CPAN/Meta.pm
+lib/site_perl/CPAN/Meta/Converter.pm
+lib/site_perl/CPAN/Meta/Feature.pm
+lib/site_perl/CPAN/Meta/History.pm
+lib/site_perl/CPAN/Meta/Prereqs.pm
+lib/site_perl/CPAN/Meta/Spec.pm
+lib/site_perl/CPAN/Meta/Validator.pm
+man/man3/CPAN::Meta.3
+man/man3/CPAN::Meta::Converter.3
+man/man3/CPAN::Meta::Feature.3
+man/man3/CPAN::Meta::History.3
+man/man3/CPAN::Meta::Prereqs.3
+man/man3/CPAN::Meta::Spec.3
+man/man3/CPAN::Meta::Validator.3
