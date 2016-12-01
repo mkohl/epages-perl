@@ -1,0 +1,13 @@
+# Ignore CVS specific files.
+CVS
+.#*
+
+# General temporary files.
+*.bak
+*~
+
+# Temporary emacs files.
+\#*#
+
+# OS X: Files storing custom attributes of a folder created by Finder.
+.DS_Store
