@@ -1,0 +1,4 @@
+lib/site_perl/linux/Digest/SHA1.pm
+lib/site_perl/linux/auto/Digest/SHA1/SHA1.bs
+lib/site_perl/linux/auto/Digest/SHA1/SHA1.so
+man/man3/Digest::SHA1.3

@@ -1,0 +1,4 @@
+lib/site_perl/linux/Crypt/MySQL.pm
+lib/site_perl/linux/auto/Crypt/MySQL/MySQL.bs
+lib/site_perl/linux/auto/Crypt/MySQL/MySQL.so
+man/man3/Crypt::MySQL.3

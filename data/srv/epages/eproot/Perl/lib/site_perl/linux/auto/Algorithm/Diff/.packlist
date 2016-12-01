@@ -1,0 +1,8 @@
+lib/site_perl/Algorithm/Diff.pm
+lib/site_perl/Algorithm/DiffOld.pm
+lib/site_perl/Algorithm/cdiff.pl
+lib/site_perl/Algorithm/diff.pl
+lib/site_perl/Algorithm/diffnew.pl
+lib/site_perl/Algorithm/htmldiff.pl
+man/man3/Algorithm::Diff.3
+man/man3/Algorithm::DiffOld.3

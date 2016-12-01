@@ -1,0 +1,6 @@
+lib/site_perl/Getopt/Long/Descriptive.pm
+lib/site_perl/Getopt/Long/Descriptive/Opts.pm
+lib/site_perl/Getopt/Long/Descriptive/Usage.pm
+man/man3/Getopt::Long::Descriptive.3
+man/man3/Getopt::Long::Descriptive::Opts.3
+man/man3/Getopt::Long::Descriptive::Usage.3

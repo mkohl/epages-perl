@@ -1,0 +1,8 @@
+lib/site_perl/Perl/Critic/Policy/Tics/ProhibitLongLines.pm
+lib/site_perl/Perl/Critic/Policy/Tics/ProhibitManyArrows.pm
+lib/site_perl/Perl/Critic/Policy/Tics/ProhibitUseBase.pm
+lib/site_perl/Perl/Critic/Tics.pm
+man/man3/Perl::Critic::Policy::Tics::ProhibitLongLines.3
+man/man3/Perl::Critic::Policy::Tics::ProhibitManyArrows.3
+man/man3/Perl::Critic::Policy::Tics::ProhibitUseBase.3
+man/man3/Perl::Critic::Tics.3

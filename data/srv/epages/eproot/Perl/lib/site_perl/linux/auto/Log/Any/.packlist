@@ -1,0 +1,9 @@
+lib/site_perl/Log/Any.pm
+lib/site_perl/Log/Any/Adapter/Core.pm
+lib/site_perl/Log/Any/Adapter/Null.pm
+lib/site_perl/Log/Any/Adapter/Test.pm
+lib/site_perl/Log/Any/Test.pm
+man/man3/Log::Any.3
+man/man3/Log::Any::Adapter::Core.3
+man/man3/Log::Any::Adapter::Null.3
+man/man3/Log::Any::Test.3

@@ -1,0 +1,4 @@
+lib/site_perl/Test/CPAN/Meta/JSON.pm
+lib/site_perl/Test/CPAN/Meta/JSON/Version.pm
+man/man3/Test::CPAN::Meta::JSON.3
+man/man3/Test::CPAN::Meta::JSON::Version.3

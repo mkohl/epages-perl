@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE delegatemap [
+<!ELEMENT delegatemap (delegate)+>
+<!ELEMENT delegate (#PCDATA)>
+<!ATTLIST delegate decode CDATA #IMPLIED>
+<!ATTLIST delegate encode CDATA #IMPLIED>
+<!ATTLIST delegate mode CDATA #IMPLIED>
+<!ATTLIST delegate spawn CDATA #IMPLIED>
+<!ATTLIST delegate stealth CDATA #IMPLIED>
+<!ATTLIST delegate thread-support CDATA #IMPLIED>
+<!ATTLIST delegate command CDATA #REQUIRED>
+]>
+<!--
+  Delegate command file.
+
+  Commands which specify
+
+    decode="in_format" encode="out_format"
+
+  specify the rules for converting from in_format to out_format These
+  rules may be used to translate directly between formats.
+
+  Commands which specify only
+
+    decode="in_format"
+
+  specify the rules for converting from in_format to some format that
+  ImageMagick will automatically recognize. These rules are used to
+  decode formats.
+
+  Commands which specify only
+
+   encode="out_format"
+
+  specify the rules for an "encoder" which may accept any input format.
+
+  For delegates other than ps:*, pcl:*, and mpeg:* the substitution rules are
+  as follows:
+
+    %i  input image filename
+    %o  output image filename
+    %u  unique temporary filename
+    %Z  unique temporary filename
+    %#  input image signature
+    %b  image file size
+    %c  input image comment
+    %g  image geometry
+    %h  image rows (height)
+    %k  input image number colors
+    %l  image label
+    %m  input image format
+    %p  page number
+    %q  input image depth
+    %s  scene number
+    %w  image columns (width)
+    %x  input image x resolution
+    %y  input image y resolution
+
+  Set option delegate:bimodal=true to process bimodal delegates otherwise they
+  are ignored.
+-->
+<delegatemap>
+  <delegate decode="autotrace" stealth="True" command="/bin/false"/>
+  <delegate decode="blender" command="/bin/false"/>
+  <delegate decode="browse" stealth="True" spawn="True" command="/bin/false"/>
+  <delegate decode="cdr" command="/bin/false"/>
+  <delegate decode="cgm" thread-support="False" command="/bin/false"/>
+  <delegate decode="dvi" command="/bin/false"/>
+  <delegate decode="dng:decode" command="/bin/false"/>
+  <delegate decode="edit" stealth="True" command="/bin/false"/>
+  <delegate decode="eps" encode="pdf" mode="bi" command="/bin/false"/>
+  <delegate decode="eps" encode="ps" mode="bi" command="/bin/false"/>
+  <delegate decode="fig" command="/bin/false"/>
+  <delegate decode="plt" command="/bin/false"/>
+  <delegate decode="hpg" command="/bin/false"/>
+  <delegate decode="hpgl" command="/bin/false"/>
+  <delegate decode="htm" command="/bin/false"/>
+  <delegate decode="html" command="/bin/false"/>
+  <delegate decode="https" command="/bin/false"/>
+  <delegate decode="ilbm" command="/bin/false"/>
+  <delegate decode="man" command="/bin/false"/>
+  <delegate decode="mpeg:decode" command="/bin/false"/>
+  <delegate encode="mpeg:encode" stealth="True" command="/bin/false"/>
+  <delegate decode="sid" command="/bin/false"/>
+  <delegate decode="pcl:color" stealth="True" command="/bin/false"/>
+  <delegate decode="pcl:cmyk" stealth="True" command="/bin/false"/>
+  <delegate decode="pcl:mono" stealth="True" command="/bin/false"/>
+  <delegate decode="pdf" encode="eps" mode="bi" command="/bin/false"/>
+  <delegate decode="pdf" encode="ps" mode="bi" command="/bin/false"/>
+  <delegate decode="tiff" encode="launch" mode="encode" command="/bin/false"/>
+  <delegate decode="pnm" encode="ilbm" mode="encode" command="/bin/false"/>
+  <delegate decode="pov" command="/bin/false"/>
+  <delegate decode="ps" encode="eps" mode="bi" command="/bin/false"/>
+  <delegate decode="ps" encode="pdf" mode="bi" command="/bin/false"/>
+  <delegate decode="ps" encode="print" mode="encode" command="/bin/false"/>
+  <delegate decode="ps:alpha" stealth="True" command="/bin/false"/>
+  <delegate decode="ps:cmyk" stealth="True" command="/bin/false"/>
+  <delegate decode="ps:color" stealth="True" command="/bin/false"/>
+  <delegate decode="ps:mono" stealth="True" command="/bin/false"/>
+  <delegate decode="rgba" encode="rle" mode="encode" command="/bin/false"/>
+  <delegate decode="scan" command="/bin/false"/>
+  <delegate decode="scanx" command="/bin/false"/>
+  <delegate decode="shtml" command="/bin/false"/>
+  <delegate decode="svg" command="/bin/false"/>
+  <delegate decode="txt" encode="ps" mode="bi" command="/bin/false"/>
+  <delegate decode="wmf" command="/bin/false"/>
+  <delegate decode="xps:color" stealth="True" command="/bin/false"/>
+  <delegate decode="xps:cmyk" stealth="True" command="/bin/false"/>
+  <delegate decode="xps:mono" stealth="True" command="/bin/false"/>
+</delegatemap>

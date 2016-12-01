@@ -1,0 +1,4 @@
+lib/site_perl/Devel/StackTrace.pm
+lib/site_perl/Devel/StackTrace/Frame.pm
+man/man3/Devel::StackTrace.3
+man/man3/Devel::StackTrace::Frame.3

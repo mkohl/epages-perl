@@ -1,0 +1,4 @@
+lib/site_perl/WWW/RobotRules.pm
+lib/site_perl/WWW/RobotRules/AnyDBM_File.pm
+man/man3/WWW::RobotRules.3
+man/man3/WWW::RobotRules::AnyDBM_File.3

@@ -1,0 +1,13 @@
+bin/xml_grep
+bin/xml_merge
+bin/xml_pp
+bin/xml_spellcheck
+bin/xml_split
+lib/site_perl/XML/Twig.pm
+lib/site_perl/XML/Twig/XPath.pm
+man/man1/xml_grep.1
+man/man1/xml_merge.1
+man/man1/xml_pp.1
+man/man1/xml_spellcheck.1
+man/man1/xml_split.1
+man/man3/XML::Twig.3

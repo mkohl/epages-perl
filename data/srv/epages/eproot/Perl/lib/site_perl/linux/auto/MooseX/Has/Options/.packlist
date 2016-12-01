@@ -1,0 +1,8 @@
+lib/site_perl/MooseX/Has/Options.pm
+lib/site_perl/MooseX/Has/Options/Handler/Accessors.pm
+lib/site_perl/MooseX/Has/Options/Handler/NativeTypes.pm
+lib/site_perl/MooseX/Has/Options/Handler/NoInit.pm
+man/man3/MooseX::Has::Options.3
+man/man3/MooseX::Has::Options::Handler::Accessors.3
+man/man3/MooseX::Has::Options::Handler::NativeTypes.3
+man/man3/MooseX::Has::Options::Handler::NoInit.3

@@ -1,0 +1,6 @@
+lib/site_perl/linux/Crypt/OpenSSL/DSA.pm
+lib/site_perl/linux/Crypt/OpenSSL/DSA/Signature.pod
+lib/site_perl/linux/auto/Crypt/OpenSSL/DSA/DSA.bs
+lib/site_perl/linux/auto/Crypt/OpenSSL/DSA/DSA.so
+man/man3/Crypt::OpenSSL::DSA.3
+man/man3/Crypt::OpenSSL::DSA::Signature.3

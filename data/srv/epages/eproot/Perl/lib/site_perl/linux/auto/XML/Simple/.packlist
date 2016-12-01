@@ -1,0 +1,4 @@
+lib/site_perl/XML/Simple.pm
+lib/site_perl/XML/Simple/FAQ.pod
+man/man3/XML::Simple.3
+man/man3/XML::Simple::FAQ.3

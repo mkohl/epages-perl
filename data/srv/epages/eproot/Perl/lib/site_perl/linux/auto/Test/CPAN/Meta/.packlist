@@ -1,0 +1,4 @@
+lib/site_perl/Test/CPAN/Meta.pm
+lib/site_perl/Test/CPAN/Meta/Version.pm
+man/man3/Test::CPAN::Meta.3
+man/man3/Test::CPAN::Meta::Version.3

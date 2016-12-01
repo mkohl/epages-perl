@@ -1,0 +1,6 @@
+bin/podspell
+lib/site_perl/Pod/Spell.pm
+lib/site_perl/Pod/Wordlist.pm
+lib/site_perl/Pod/Wordlist.pod
+man/man3/Pod::Spell.3
+man/man3/Pod::Wordlist.3

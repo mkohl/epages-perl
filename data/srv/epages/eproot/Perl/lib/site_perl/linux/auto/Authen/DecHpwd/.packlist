@@ -1,0 +1,4 @@
+lib/site_perl/linux/Authen/DecHpwd.pm
+lib/site_perl/linux/auto/Authen/DecHpwd/DecHpwd.bs
+lib/site_perl/linux/auto/Authen/DecHpwd/DecHpwd.so
+man/man3/Authen::DecHpwd.3

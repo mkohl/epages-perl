@@ -1,0 +1,4 @@
+lib/site_perl/MIME/Lite.pm
+lib/site_perl/MIME/changes.pod
+man/man3/MIME::Lite.3
+man/man3/MIME::changes.3

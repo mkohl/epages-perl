@@ -1,0 +1,8 @@
+lib/site_perl/Convert/ASN1.pm
+lib/site_perl/Convert/ASN1.pod
+lib/site_perl/Convert/ASN1/Debug.pm
+lib/site_perl/Convert/ASN1/IO.pm
+lib/site_perl/Convert/ASN1/_decode.pm
+lib/site_perl/Convert/ASN1/_encode.pm
+lib/site_perl/Convert/ASN1/parser.pm
+man/man3/Convert::ASN1.3

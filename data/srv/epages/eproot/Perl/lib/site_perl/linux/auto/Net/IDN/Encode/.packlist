@@ -1,0 +1,8 @@
+lib/site_perl/linux/Net/IDN/Encode.pm
+lib/site_perl/linux/Net/IDN/Punycode.pm
+lib/site_perl/linux/Net/IDN/Punycode/PP.pm
+lib/site_perl/linux/auto/Net/IDN/Punycode/Punycode.bs
+lib/site_perl/linux/auto/Net/IDN/Punycode/Punycode.so
+man/man3/Net::IDN::Encode.3
+man/man3/Net::IDN::Punycode.3
+man/man3/Net::IDN::Punycode::PP.3

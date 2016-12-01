@@ -1,0 +1,6 @@
+lib/site_perl/linux/Cache/FastMmap.pm
+lib/site_perl/linux/Cache/FastMmap/CImpl.pm
+lib/site_perl/linux/auto/Cache/FastMmap/CImpl/CImpl.bs
+lib/site_perl/linux/auto/Cache/FastMmap/CImpl/CImpl.so
+man/man3/Cache::FastMmap.3
+man/man3/Cache::FastMmap::CImpl.3

@@ -1,0 +1,15 @@
+bin/ppm
+lib/site_perl/PPM.pm
+lib/site_perl/PPM/RelocPerl.pm
+lib/site_perl/PPM/XML/Element.pm
+lib/site_perl/PPM/XML/PPD.pm
+lib/site_perl/PPM/XML/PPMConfig.pm
+lib/site_perl/PPM/XML/RepositorySummary.pm
+lib/site_perl/PPM/XML/ValidatingElement.pm
+lib/site_perl/ppm.xml
+man/man1/ppm.1
+man/man3/PPM.3
+man/man3/PPM::XML::Element.3
+man/man3/PPM::XML::PPD.3
+man/man3/PPM::XML::PPMConfig.3
+man/man3/PPM::XML::ValidatingElement.3

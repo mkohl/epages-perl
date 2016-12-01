@@ -1,0 +1,6 @@
+lib/site_perl/Barcode/DataMatrix.pm
+lib/site_perl/Barcode/DataMatrix/CharDataFiller.pm
+lib/site_perl/Barcode/DataMatrix/Constants.pm
+lib/site_perl/Barcode/DataMatrix/Engine.pm
+lib/site_perl/Barcode/DataMatrix/Reed.pm
+man/man3/Barcode::DataMatrix.3

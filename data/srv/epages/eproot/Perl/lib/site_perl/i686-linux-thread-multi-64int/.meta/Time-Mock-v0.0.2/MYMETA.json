@@ -1,0 +1,52 @@
+{
+   "abstract" : "shift and scale time",
+   "author" : [
+      "Eric Wilhelm @ <ewilhelm at cpan dot org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Module::Build version 0.4203",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Time-Mock",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Module::Build" : "0.26",
+            "Test::More" : "0"
+         }
+      },
+      "runtime" : {
+         "recommends" : {
+            "Date::Parse" : "2.27"
+         }
+      }
+   },
+   "provides" : {
+      "Time::Mock" : {
+         "file" : "lib/Time/Mock.pm",
+         "version" : "v0.0.2"
+      },
+      "Time::Mock::Original" : {
+         "file" : "lib/Time/Mock.pm"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "http://rt.cpan.org/NoAuth/Bugs.html?Dist=Time-Mock"
+      },
+      "homepage" : "http://scratchcomputing.com/",
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ],
+      "repository" : {
+         "url" : "http://svn.scratchcomputing.com/Time-Mock/trunk"
+      }
+   },
+   "version" : "v0.0.2"
+}

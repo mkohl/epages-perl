@@ -1,0 +1,4 @@
+lib/site_perl/linux/Socket/Multicast6.pm
+lib/site_perl/linux/auto/Socket/Multicast6/Multicast6.bs
+lib/site_perl/linux/auto/Socket/Multicast6/Multicast6.so
+man/man3/Socket::Multicast6.3

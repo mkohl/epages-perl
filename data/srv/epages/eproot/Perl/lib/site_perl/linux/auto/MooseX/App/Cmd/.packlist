@@ -1,0 +1,4 @@
+lib/site_perl/MooseX/App/Cmd.pm
+lib/site_perl/MooseX/App/Cmd/Command.pm
+man/man3/MooseX::App::Cmd.3
+man/man3/MooseX::App::Cmd::Command.3

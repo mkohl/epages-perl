@@ -1,0 +1,14 @@
+lib/site_perl/Email/Abstract.pm
+lib/site_perl/Email/Abstract/EmailMIME.pm
+lib/site_perl/Email/Abstract/EmailSimple.pm
+lib/site_perl/Email/Abstract/MIMEEntity.pm
+lib/site_perl/Email/Abstract/MailInternet.pm
+lib/site_perl/Email/Abstract/MailMessage.pm
+lib/site_perl/Email/Abstract/Plugin.pm
+man/man3/Email::Abstract.3
+man/man3/Email::Abstract::EmailMIME.3
+man/man3/Email::Abstract::EmailSimple.3
+man/man3/Email::Abstract::MIMEEntity.3
+man/man3/Email::Abstract::MailInternet.3
+man/man3/Email::Abstract::MailMessage.3
+man/man3/Email::Abstract::Plugin.3

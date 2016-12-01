@@ -1,0 +1,6 @@
+lib/site_perl/HTTP/Server/Simple.pm
+lib/site_perl/HTTP/Server/Simple/CGI.pm
+lib/site_perl/HTTP/Server/Simple/CGI/Environment.pm
+man/man3/HTTP::Server::Simple.3
+man/man3/HTTP::Server::Simple::CGI.3
+man/man3/HTTP::Server::Simple::CGI::Environment.3

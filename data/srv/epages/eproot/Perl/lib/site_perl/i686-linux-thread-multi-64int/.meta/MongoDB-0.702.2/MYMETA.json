@@ -1,0 +1,97 @@
+{
+   "abstract" : "A MongoDB Driver for Perl",
+   "author" : [
+      "Florian Ragwitz <rafl@debian.org>",
+      "Kristina Chodorow <kristina@mongodb.org>",
+      "Mike Friedman <friedo@mongodb.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.120921, CPAN::Meta::Converter version 2.133380",
+   "license" : [
+      "apache_2_0"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "MongoDB",
+   "no_index" : {
+      "directory" : [
+         "ext",
+         "inc",
+         "t"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Data::Types" : "0",
+            "DateTime" : "0",
+            "DateTime::Tiny" : "0",
+            "ExtUtils::MakeMaker" : "6.59",
+            "File::Slurp" : "0",
+            "File::Temp" : "0.17",
+            "FileHandle" : "0",
+            "JSON" : "0",
+            "Test::Exception" : "0",
+            "Test::Warn" : "0",
+            "Tie::IxHash" : "0",
+            "Try::Tiny" : "0",
+            "boolean" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.30"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Class::Method::Modifiers" : "0",
+            "DateTime" : "0",
+            "Digest::MD5" : "0",
+            "Moose" : "0",
+            "Tie::IxHash" : "0",
+            "XSLoader" : "0",
+            "boolean" : "0",
+            "perl" : "5.008004"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Config" : "0",
+            "Data::Dump" : "0",
+            "Data::Dumper" : "0",
+            "Data::Types" : "0",
+            "DateTime::Tiny" : "0",
+            "Devel::Peek" : "0",
+            "Exporter" : "0",
+            "File::Copy" : "0",
+            "File::Slurp" : "0",
+            "File::Temp" : "0",
+            "FileHandle" : "0",
+            "JSON" : "0",
+            "Test::Exception" : "0",
+            "Test::More" : "0",
+            "Test::Warn" : "0",
+            "Try::Tiny" : "0",
+            "bigint" : "0",
+            "threads" : "0",
+            "utf8" : "0"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://jira.mongodb.org/browse/PERL"
+      },
+      "homepage" : "https://github.com/mongodb/mongo-perl-driver",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/mongodb/mongo-perl-driver.git",
+         "web" : "https://github.com/mongodb/mongo-perl-driver"
+      }
+   },
+   "version" : "0.702.2"
+}

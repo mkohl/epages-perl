@@ -1,0 +1,4 @@
+lib/site_perl/linux/Data/UUID.pm
+lib/site_perl/linux/auto/Data/UUID/UUID.bs
+lib/site_perl/linux/auto/Data/UUID/UUID.so
+man/man3/Data::UUID.3

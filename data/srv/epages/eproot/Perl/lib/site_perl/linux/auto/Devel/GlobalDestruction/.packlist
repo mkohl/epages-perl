@@ -1,0 +1,4 @@
+lib/site_perl/linux/Devel/GlobalDestruction.pm
+lib/site_perl/linux/auto/Devel/GlobalDestruction/GlobalDestruction.bs
+lib/site_perl/linux/auto/Devel/GlobalDestruction/GlobalDestruction.so
+man/man3/Devel::GlobalDestruction.3

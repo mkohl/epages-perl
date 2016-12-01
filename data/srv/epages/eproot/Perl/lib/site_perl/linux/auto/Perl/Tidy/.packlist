@@ -1,0 +1,4 @@
+bin/perltidy
+lib/site_perl/Perl/Tidy.pm
+man/man1/perltidy.1
+man/man3/Perl::Tidy.3

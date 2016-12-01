@@ -1,0 +1,8 @@
+lib/site_perl/DBIx/Simple.pm
+lib/site_perl/DBIx/Simple/Comparison.pod
+lib/site_perl/DBIx/Simple/Examples.pod
+lib/site_perl/DBIx/Simple/Result/RowObject.pm
+man/man3/DBIx::Simple.3
+man/man3/DBIx::Simple::Comparison.3
+man/man3/DBIx::Simple::Examples.3
+man/man3/DBIx::Simple::Result::RowObject.3

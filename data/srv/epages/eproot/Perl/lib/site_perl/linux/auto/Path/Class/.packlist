@@ -1,0 +1,8 @@
+lib/site_perl/Path/Class.pm
+lib/site_perl/Path/Class/Dir.pm
+lib/site_perl/Path/Class/Entity.pm
+lib/site_perl/Path/Class/File.pm
+man/man3/Path::Class.3
+man/man3/Path::Class::Dir.3
+man/man3/Path::Class::Entity.3
+man/man3/Path::Class::File.3

@@ -1,0 +1,8 @@
+lib/site_perl/AnyEvent/RabbitMQ.pm
+lib/site_perl/AnyEvent/RabbitMQ/Channel.pm
+lib/site_perl/AnyEvent/RabbitMQ/LocalQueue.pm
+lib/site_perl/auto/share/dist/AnyEvent-RabbitMQ/README
+lib/site_perl/auto/share/dist/AnyEvent-RabbitMQ/fixed_amqp0-8.xml
+lib/site_perl/auto/share/dist/AnyEvent-RabbitMQ/fixed_amqp0-9-1.xml
+man/man3/AnyEvent::RabbitMQ.3
+man/man3/AnyEvent::RabbitMQ::Channel.3

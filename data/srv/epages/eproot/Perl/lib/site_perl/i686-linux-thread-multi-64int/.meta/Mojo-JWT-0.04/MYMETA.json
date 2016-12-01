@@ -1,0 +1,52 @@
+{
+   "abstract" : "JSON Web Token the Mojo way",
+   "author" : [
+      "Joel Berger <joel.a.berger@gmail.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Module::Build version 0.4203",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Mojo-JWT",
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.38"
+         }
+      },
+      "runtime" : {
+         "recommends" : {
+            "Crypt::OpenSSL::RSA" : "0"
+         },
+         "requires" : {
+            "Digest::SHA" : "0",
+            "MIME::Base64" : "3.11",
+            "Mojolicious" : "5.00"
+         }
+      }
+   },
+   "provides" : {
+      "Mojo::JWT" : {
+         "file" : "lib/Mojo/JWT.pm",
+         "version" : "0.04"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/jberger/Mojo-JWT/issues"
+      },
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ],
+      "repository" : {
+         "url" : "https://github.com/jberger/Mojo-JWT"
+      }
+   },
+   "version" : "0.04"
+}

@@ -1,0 +1,16 @@
+lib/site_perl/Config/Any.pm
+lib/site_perl/Config/Any/Base.pm
+lib/site_perl/Config/Any/General.pm
+lib/site_perl/Config/Any/INI.pm
+lib/site_perl/Config/Any/JSON.pm
+lib/site_perl/Config/Any/Perl.pm
+lib/site_perl/Config/Any/XML.pm
+lib/site_perl/Config/Any/YAML.pm
+man/man3/Config::Any.3
+man/man3/Config::Any::Base.3
+man/man3/Config::Any::General.3
+man/man3/Config::Any::INI.3
+man/man3/Config::Any::JSON.3
+man/man3/Config::Any::Perl.3
+man/man3/Config::Any::XML.3
+man/man3/Config::Any::YAML.3

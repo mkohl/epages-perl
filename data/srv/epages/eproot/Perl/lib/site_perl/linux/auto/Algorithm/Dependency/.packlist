@@ -1,0 +1,16 @@
+lib/site_perl/Algorithm/Dependency.pm
+lib/site_perl/Algorithm/Dependency/Item.pm
+lib/site_perl/Algorithm/Dependency/Ordered.pm
+lib/site_perl/Algorithm/Dependency/Source.pm
+lib/site_perl/Algorithm/Dependency/Source/File.pm
+lib/site_perl/Algorithm/Dependency/Source/HoA.pm
+lib/site_perl/Algorithm/Dependency/Source/Invert.pm
+lib/site_perl/Algorithm/Dependency/Weight.pm
+man/man3/Algorithm::Dependency.3
+man/man3/Algorithm::Dependency::Item.3
+man/man3/Algorithm::Dependency::Ordered.3
+man/man3/Algorithm::Dependency::Source.3
+man/man3/Algorithm::Dependency::Source::File.3
+man/man3/Algorithm::Dependency::Source::HoA.3
+man/man3/Algorithm::Dependency::Source::Invert.3
+man/man3/Algorithm::Dependency::Weight.3

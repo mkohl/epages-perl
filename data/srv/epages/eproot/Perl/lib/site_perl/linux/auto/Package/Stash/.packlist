@@ -1,0 +1,14 @@
+bin/package-stash-conflicts
+lib/site_perl/Package/Stash.pm
+lib/site_perl/Package/Stash/Conflicts.pm
+lib/site_perl/Package/Stash/PP.pm
+man/man1/package-stash-conflicts.1
+man/man3/Package::Stash.3
+man/man3/Package::Stash::Conflicts.3
+man/man3/Package::Stash::PP.3
+bin/package-stash-conflicts
+lib/site_perl/Package/Stash.pm
+lib/site_perl/Package/Stash/Conflicts.pm
+lib/site_perl/Package/Stash/PP.pm
+man/man3/Package::Stash.3
+man/man3/Package::Stash::PP.3

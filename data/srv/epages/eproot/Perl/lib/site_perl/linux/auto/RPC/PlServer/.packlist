@@ -1,0 +1,9 @@
+lib/site_perl/Bundle/PlRPC.pm
+lib/site_perl/RPC/PlClient.pm
+lib/site_perl/RPC/PlClient/Comm.pm
+lib/site_perl/RPC/PlServer.pm
+lib/site_perl/RPC/PlServer/Comm.pm
+lib/site_perl/RPC/PlServer/Test.pm
+man/man3/Bundle::PlRPC.3
+man/man3/RPC::PlClient.3
+man/man3/RPC::PlServer.3

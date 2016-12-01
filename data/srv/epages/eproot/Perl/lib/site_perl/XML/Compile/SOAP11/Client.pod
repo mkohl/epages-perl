@@ -1,0 +1,128 @@
+=head1 NAME
+
+XML::Compile::SOAP11::Client - SOAP1.1 client needs
+
+=head1 INHERITANCE
+
+ XML::Compile::SOAP11::Client
+   is a XML::Compile::SOAP11
+   is a XML::Compile::SOAP
+
+ XML::Compile::SOAP11::Client
+   is a XML::Compile::SOAP::Client
+
+=head1 DESCRIPTION
+
+See L<XML::Compile::SOAP11|XML::Compile::SOAP11>.
+
+=head1 METHODS
+
+=head2 Constructors
+
+=over 4
+
+=item $obj-E<gt>B<new>(OPTIONS)
+
+See L<XML::Compile::SOAP11/"Constructors">
+
+=back
+
+=head2 Accessors
+
+=over 4
+
+=item $obj-E<gt>B<name>
+
+See L<XML::Compile::SOAP/"Accessors">
+
+=item $obj-E<gt>B<schemas>
+
+See L<XML::Compile::SOAP/"Accessors">
+
+=item $obj-E<gt>B<version>
+
+See L<XML::Compile::SOAP/"Accessors">
+
+=back
+
+=head2 Single message
+
+=over 4
+
+=item $obj-E<gt>B<compileMessage>(('SENDER'|'RECEIVER'), OPTIONS)
+
+See L<XML::Compile::SOAP11/"Single message">
+
+=item $obj-E<gt>B<messageStructure>(XML)
+
+=item XML::Compile::SOAP11::Client-E<gt>B<messageStructure>(XML)
+
+See L<XML::Compile::SOAP/"Single message">
+
+=back
+
+=head2 Helpers
+
+=head2 Transcoding
+
+=over 4
+
+=item $obj-E<gt>B<replyMustUnderstandFault>(TYPE)
+
+See L<XML::Compile::SOAP/"Transcoding">
+
+=item $obj-E<gt>B<roleAbbreviation>(URI)
+
+See L<XML::Compile::SOAP/"Transcoding">
+
+=item $obj-E<gt>B<roleURI>(URI|STRING)
+
+See L<XML::Compile::SOAP/"Transcoding">
+
+=back
+
+=head2 Handlers
+
+=over 4
+
+=item $obj-E<gt>B<compileClient>(OPTIONS)
+
+See L<XML::Compile::SOAP::Client/"Handlers">
+
+=back
+
+=head1 SEE ALSO
+
+This module is part of XML-Compile-SOAP distribution version 2.24,
+built on June 20, 2011. Website: F<http://perl.overmeer.net/xml-compile/>
+
+Other distributions in this suite:
+L<XML::Compile>,
+L<XML::Compile::SOAP>,
+L<XML::Compile::SOAP12>,
+L<XML::Compile::SOAP::Daemon>,
+L<XML::Compile::SOAP::WSA>,
+L<XML::Compile::C14N>,
+L<XML::Compile::WSS>,
+L<XML::Compile::Tester>,
+L<XML::Compile::Cache>,
+L<XML::Compile::Dumper>,
+L<XML::Compile::RPC>,
+L<XML::Rewrite>,
+L<XML::eXistDB>,
+and
+L<XML::LibXML::Simple>.
+
+Please post questions or ideas to the mailinglist at
+F<http://lists.scsys.co.uk/cgi-bin/mailman/listinfo/xml-compile>
+For live contact with other developers, visit the C<#xml-compile> channel
+on C<irc.perl.org>.
+
+=head1 LICENSE
+
+Copyrights 2007-2011 by Mark Overmeer. For other contributors see ChangeLog.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+See F<http://www.perl.com/perl/misc/Artistic.html>
+

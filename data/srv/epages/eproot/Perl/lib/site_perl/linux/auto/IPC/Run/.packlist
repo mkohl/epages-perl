@@ -1,0 +1,14 @@
+lib/site_perl/IPC/Run.pm
+lib/site_perl/IPC/Run/Debug.pm
+lib/site_perl/IPC/Run/IO.pm
+lib/site_perl/IPC/Run/Timer.pm
+lib/site_perl/IPC/Run/Win32Helper.pm
+lib/site_perl/IPC/Run/Win32IO.pm
+lib/site_perl/IPC/Run/Win32Pump.pm
+man/man3/IPC::Run.3
+man/man3/IPC::Run::Debug.3
+man/man3/IPC::Run::IO.3
+man/man3/IPC::Run::Timer.3
+man/man3/IPC::Run::Win32Helper.3
+man/man3/IPC::Run::Win32IO.3
+man/man3/IPC::Run::Win32Pump.3

@@ -1,0 +1,4 @@
+bin/pod2test
+lib/site_perl/Pod/Tests.pm
+man/man1/pod2test.1
+man/man3/Pod::Tests.3

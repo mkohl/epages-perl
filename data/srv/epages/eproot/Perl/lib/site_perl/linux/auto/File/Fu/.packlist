@@ -1,0 +1,12 @@
+lib/site_perl/File/Fu.pm
+lib/site_perl/File/Fu/Base.pm
+lib/site_perl/File/Fu/Dir.pm
+lib/site_perl/File/Fu/Dir/Temp.pm
+lib/site_perl/File/Fu/File.pm
+lib/site_perl/File/Fu/File/Temp.pm
+man/man3/File::Fu.3
+man/man3/File::Fu::Base.3
+man/man3/File::Fu::Dir.3
+man/man3/File::Fu::Dir::Temp.3
+man/man3/File::Fu::File.3
+man/man3/File::Fu::File::Temp.3

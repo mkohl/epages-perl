@@ -1,0 +1,5 @@
+lib/site_perl/linux/Clone.pm
+lib/site_perl/linux/auto/Clone/Clone.bs
+lib/site_perl/linux/auto/Clone/Clone.so
+lib/site_perl/linux/auto/Clone/autosplit.ix
+man/man3/Clone.3

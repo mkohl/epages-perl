@@ -1,0 +1,8 @@
+lib/site_perl/linux/JSON/Syck.pm
+lib/site_perl/linux/YAML/Dumper/Syck.pm
+lib/site_perl/linux/YAML/Loader/Syck.pm
+lib/site_perl/linux/YAML/Syck.pm
+lib/site_perl/linux/auto/YAML/Syck/Syck.bs
+lib/site_perl/linux/auto/YAML/Syck/Syck.so
+man/man3/JSON::Syck.3
+man/man3/YAML::Syck.3

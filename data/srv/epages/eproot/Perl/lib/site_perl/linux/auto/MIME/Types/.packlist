@@ -1,0 +1,6 @@
+lib/site_perl/MIME/Type.pm
+lib/site_perl/MIME/Type.pod
+lib/site_perl/MIME/Types.pm
+lib/site_perl/MIME/Types.pod
+man/man3/MIME::Type.3
+man/man3/MIME::Types.3

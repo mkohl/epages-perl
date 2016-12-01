@@ -1,0 +1,4 @@
+lib/site_perl/linux/Sys/Syslog.pm
+lib/site_perl/linux/auto/Sys/Syslog/Syslog.bs
+lib/site_perl/linux/auto/Sys/Syslog/Syslog.so
+man/man3/Sys::Syslog.3

@@ -1,0 +1,6 @@
+lib/site_perl/linux/MP3/Cut/Gapless.pm
+lib/site_perl/linux/MP3/Cut/Gapless/Track.pm
+lib/site_perl/linux/auto/MP3/Cut/Gapless/Gapless.bs
+lib/site_perl/linux/auto/MP3/Cut/Gapless/Gapless.so
+man/man3/MP3::Cut::Gapless.3
+man/man3/MP3::Cut::Gapless::Track.3
