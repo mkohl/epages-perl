@@ -1,7 +1,8 @@
 package LWP::RobotUA;
 
-use base qw(LWP::UserAgent);
-our $VERSION = '6.17';
+require LWP::UserAgent;
+@ISA = qw(LWP::UserAgent);
+$VERSION = "6.03";
 
 require WWW::RobotRules;
 require HTTP::Request;
@@ -189,8 +190,6 @@ sub as_string
 
 __END__
 
-=pod
-
 =head1 NAME
 
 LWP::RobotUA - a class for well-behaved Web robots
@@ -302,5 +301,3 @@ Copyright 1996-2004 Gisle Aas.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
-
-=cut

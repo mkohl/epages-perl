@@ -9274,33 +9274,11 @@ C<LINKTYPE: dynamic>
 
 =item *
 
-C<VERSION: 6.12>
+C<VERSION: 6.12.1>
 
 =item *
 
 C<EXE_FILES: >
-
-=back
-
-=head2 Wed Feb  1 09:30:23 2017: C<Module> L<LWP|LWP>
-
-=over 4
-
-=item *
-
-C<installed into: lib/site_perl>
-
-=item *
-
-C<LINKTYPE: dynamic>
-
-=item *
-
-C<VERSION: 6.17>
-
-=item *
-
-C<EXE_FILES: bin/lwp-request bin/lwp-mirror bin/lwp-download bin/lwp-dump>
 
 =back
 

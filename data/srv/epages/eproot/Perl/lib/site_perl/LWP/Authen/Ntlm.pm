@@ -1,8 +1,9 @@
 package LWP::Authen::Ntlm;
 
 use strict;
+use vars qw/$VERSION/;
 
-our $VERSION = '6.17';
+$VERSION = "6.00";
 
 use Authen::NTLM "1.02";
 use MIME::Base64 "2.12";
@@ -89,9 +90,7 @@ sub authenticate {
 }
 
 1;
-__END__
 
-=pod
 
 =head1 NAME
 
@@ -117,7 +116,7 @@ LWP::Authen::Ntlm - Library for enabling NTLM authentication (Microsoft) in LWP
 
 =head1 DESCRIPTION
 
-L<LWP::Authen::Ntlm> allows LWP to authenticate against servers that are using the
+C<LWP::Authen::Ntlm> allows LWP to authenticate against servers that are using the
 NTLM authentication scheme popularized by Microsoft.  This type of authentication is
 common on intranets of Microsoft-centric organizations.
 
@@ -179,5 +178,3 @@ under the same terms as Perl itself.
 =head1 SEE ALSO
 
 L<LWP>, L<LWP::UserAgent>, L<lwpcook>.
-
-=cut
