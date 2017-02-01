@@ -1,12 +1,11 @@
 package LWP::UserAgent;
 
 use strict;
-use vars qw(@ISA $VERSION);
 
-require LWP::MemberMixin;
-@ISA = qw(LWP::MemberMixin);
-$VERSION = "6.05";
+use base qw(LWP::MemberMixin);
+our $VERSION = '6.17';
 
+use Carp ();
 use HTTP::Request ();
 use HTTP::Response ();
 use HTTP::Date ();
@@ -14,7 +13,8 @@ use HTTP::Date ();
 use LWP ();
 use LWP::Protocol ();
 
-use Carp ();
+use Scalar::Util qw(blessed);
+use Try::Tiny qw(try catch);
 
 
 sub new
@@ -171,10 +171,13 @@ sub send_request
         }
 
         unless ($protocol) {
-            $protocol = eval { LWP::Protocol::create($scheme, $self) };
-            if ($@) {
-                $@ =~ s/ at .* line \d+.*//s;  # remove file/line number
-                $response =  _new_response($request, &HTTP::Status::RC_NOT_IMPLEMENTED, $@);
+            try {
+                $protocol = LWP::Protocol::create($scheme, $self);
+            }
+            catch {
+                my $error = $_;
+                $error =~ s/ at .* line \d+.*//s;  # remove file/line number
+                $response =  _new_response($request, &HTTP::Status::RC_NOT_IMPLEMENTED, $error);
                 if ($scheme eq "https") {
                     $response->message($response->message . " (LWP::Protocol::https not installed)");
                     $response->content_type("text/plain");
@@ -183,28 +186,28 @@ LWP will support https URLs if the LWP::Protocol::https module
 is installed.
 EOT
                 }
-            }
+            };
         }
 
         if (!$response && $self->{use_eval}) {
             # we eval, and turn dies into responses below
-            eval {
-                $response = $protocol->request($request, $proxy, $arg, $size, $self->{timeout}) ||
-                    die "No response returned by $protocol";
-            };
-            if ($@) {
-                if (UNIVERSAL::isa($@, "HTTP::Response")) {
-                    $response = $@;
+            try {
+                $response = $protocol->request($request, $proxy, $arg, $size, $self->{timeout}) || die "No response returned by $protocol";
+            }
+            catch {
+                my $error = $_;
+                if (blessed($error) && $error->isa("HTTP::Response")) {
+                    $response = $error;
                     $response->request($request);
                 }
                 else {
-                    my $full = $@;
-                    (my $status = $@) =~ s/\n.*//s;
+                    my $full = $error;
+                    (my $status = $error) =~ s/\n.*//s;
                     $status =~ s/ at .* line \d+.*//s;  # remove file/line number
                     my $code = ($status =~ s/^(\d\d\d)\s+//) ? $1 : &HTTP::Status::RC_INTERNAL_SERVER_ERROR;
                     $response = _new_response($request, $code, $status, $full);
                 }
-            }
+            };
         }
         elsif (!$response) {
             $response = $protocol->request($request, $proxy,
@@ -264,13 +267,14 @@ sub simple_request
         Carp::croak("No request object passed in");
     }
 
-    eval {
+    try {
         $request = $self->prepare_request($request);
-    };
-    if ($@) {
-        $@ =~ s/ at .* line \d+.*//s;  # remove file/line number
-        return _new_response($request, &HTTP::Status::RC_BAD_REQUEST, $@);
     }
+    catch {
+        my $error = $_;
+        $error =~ s/ at .* line \d+.*//s;  # remove file/line number
+        return _new_response($request, &HTTP::Status::RC_BAD_REQUEST, $error);
+    };
     return $self->send_request($request, $arg, $size);
 }
 
@@ -375,17 +379,22 @@ sub request
             no strict 'refs';
             unless (%{"$class\::"}) {
                 # try to load it
-                eval "require $class";
-                if ($@) {
-                    if ($@ =~ /^Can\'t locate/) {
+        try {
+            (my $req = $class) =~ s{::}{/}g;
+            $req .= '.pm' unless $req =~ /\.pm$/;
+            require $req;
+        }
+        catch {
+            my $error = $_;
+                    if ($error =~ /^Can\'t locate/) {
                         $response->header("Client-Warning" =>
                                           "Unsupported authentication scheme '$scheme'");
                     }
                     else {
-                        $response->header("Client-Warning" => $@);
+                        $response->header("Client-Warning" => $error);
                     }
                     next CHALLENGE;
-                }
+                };
             }
             unless ($class->can("authenticate")) {
                 $response->header("Client-Warning" =>
@@ -411,12 +420,47 @@ sub get {
     return $self->request( HTTP::Request::Common::GET( @parameters ), @suff );
 }
 
+sub _has_raw_content {
+    my $self = shift;
+    shift; # drop url
+
+    # taken from HTTP::Request::Common::request_type_with_data
+    my $content;
+    $content = shift if @_ and ref $_[0];
+    my($k, $v);
+    while (($k,$v) = splice(@_, 0, 2)) {
+        if (lc($k) eq 'content') {
+            $content = $v;
+        }
+    }
+
+    # We were given Content => 'string' ...
+    if (defined $content && ! ref ($content)) {
+        return 1;
+    }
+
+    return;
+}
+
+sub _maybe_copy_default_content_type {
+    my ($self, $req, @parameters) = @_;
+
+    # If we have a default Content-Type and someone passes in a POST/PUT
+    # with Content => 'some-string-value', use that Content-Type instead
+    # of x-www-form-urlencoded
+    my $ct = $self->default_header('Content-Type');
+    return unless defined $ct && $self->_has_raw_content(@parameters);
+
+    $req->header('Content-Type' => $ct);
+}
 
 sub post {
     require HTTP::Request::Common;
     my($self, @parameters) = @_;
     my @suff = $self->_process_colonic_headers(\@parameters, (ref($parameters[1]) ? 2 : 1));
-    return $self->request( HTTP::Request::Common::POST( @parameters ), @suff );
+    my $req = HTTP::Request::Common::POST(@parameters);
+    $self->_maybe_copy_default_content_type($req, @parameters);
+    return $self->request($req, @suff);
 }
 
 
@@ -432,7 +476,9 @@ sub put {
     require HTTP::Request::Common;
     my($self, @parameters) = @_;
     my @suff = $self->_process_colonic_headers(\@parameters, (ref($parameters[1]) ? 2 : 1));
-    return $self->request( HTTP::Request::Common::PUT( @parameters ), @suff );
+    my $req = HTTP::Request::Common::PUT(@parameters);
+    $self->_maybe_copy_default_content_type($req, @parameters);
+    return $self->request($req, @suff);
 }
 
 
@@ -1052,6 +1098,8 @@ sub _new_response {
 
 __END__
 
+=pod
+
 =head1 NAME
 
 LWP::UserAgent - Web user agent class
@@ -1075,22 +1123,22 @@ LWP::UserAgent - Web user agent class
 
 =head1 DESCRIPTION
 
-The C<LWP::UserAgent> is a class implementing a web user agent.
-C<LWP::UserAgent> objects can be used to dispatch web requests.
+The L<LWP::UserAgent> is a class implementing a web user agent.
+L<LWP::UserAgent> objects can be used to dispatch web requests.
 
-In normal use the application creates an C<LWP::UserAgent> object, and
+In normal use the application creates an L<LWP::UserAgent> object, and
 then configures it with values for timeouts, proxies, name, etc. It
-then creates an instance of C<HTTP::Request> for the request that
+then creates an instance of L<HTTP::Request> for the request that
 needs to be performed. This request is then passed to one of the
 request method the UserAgent, which dispatches it using the relevant
-protocol, and returns a C<HTTP::Response> object.  There are
+protocol, and returns a L<HTTP::Response> object.  There are
 convenience methods for sending the most common request types: get(),
 head(), post(), put() and delete().  When using these methods then the
 creation of the request object is hidden as shown in the synopsis above.
 
 The basic approach of the library is to use HTTP style communication
 for all protocol schemes.  This means that you will construct
-C<HTTP::Request> objects and receive C<HTTP::Response> objects even
+L<HTTP::Request> objects and receive L<HTTP::Response> objects even
 for non-HTTP resources like I<gopher> and I<ftp>.  In order to achieve
 even more similarity to HTTP style communications, gopher menus and
 file directories are converted to HTML documents.
@@ -1103,7 +1151,7 @@ The following constructor methods are available:
 
 =item $ua = LWP::UserAgent->new( %options )
 
-This method constructs a new C<LWP::UserAgent> object and returns it.
+This method constructs a new L<LWP::UserAgent> object and returns it.
 Key/value pair arguments may be provided to set up the initial state.
 The following options correspond to attribute methods described below:
 
@@ -1141,7 +1189,7 @@ Returns a copy of the LWP::UserAgent object.
 =head1 ATTRIBUTES
 
 The settings of the configuration attributes modify the behaviour of the
-C<LWP::UserAgent> when it dispatches requests.  Most of these can also
+L<LWP::UserAgent> when it dispatches requests.  Most of these can also
 be initialized by options passed to the constructor method.
 
 The following attribute methods are provided.  The attribute value is
@@ -1196,10 +1244,10 @@ method for the more general interface that allow any header to be defaulted.
 =item $ua->cookie_jar( $cookie_jar_obj )
 
 Get/set the cookie jar object to use.  The only requirement is that
-the cookie jar object must implement the extract_cookies($request) and
-add_cookie_header($response) methods.  These methods will then be
+the cookie jar object must implement the extract_cookies($response) and
+add_cookie_header($request) methods.  These methods will then be
 invoked by the user agent as requests are sent and responses are
-received.  Normally this will be a C<HTTP::Cookies> object or some
+received.  Normally this will be a L<HTTP::Cookies> object or some
 subclass.
 
 The default is to have no cookie_jar, i.e. never automatically add
@@ -1207,8 +1255,8 @@ The default is to have no cookie_jar, i.e. never automatically add
 
 Shortcut: If a reference to a plain hash is passed in as the
 $cookie_jar_object, then it is replaced with an instance of
-C<HTTP::Cookies> that is initialized based on the hash.  This form also
-automatically loads the C<HTTP::Cookies> module.  It means that:
+L<HTTP::Cookies> that is initialized based on the hash.  This form also
+automatically loads the L<HTTP::Cookies> module.  It means that:
 
   $ua->cookie_jar({ file => "$ENV{HOME}/.cookies.txt" });
 
@@ -1222,7 +1270,7 @@ is really just a shortcut for:
 =item $ua->default_headers( $headers_obj )
 
 Get/set the headers object that will provide default header values for
-any requests sent.  By default this will be an empty C<HTTP::Headers>
+any requests sent.  By default this will be an empty L<HTTP::Headers>
 object.
 
 =item $ua->default_header( $field )
@@ -1239,7 +1287,7 @@ $value ). Example:
 
 =item $ua->conn_cache( $cache_obj )
 
-Get/set the C<LWP::ConnCache> object to use.  See L<LWP::ConnCache>
+Get/set the L<LWP::ConnCache> object to use.  See L<LWP::ConnCache>
 for details.
 
 =item $ua->credentials( $netloc, $realm )
@@ -1302,12 +1350,12 @@ This reads (or sets) this user agent's list of protocols that the
 request methods will exclusively allow.  The protocol names are case
 insensitive.
 
-For example: C<$ua-E<gt>protocols_allowed( [ 'http', 'https'] );>
+For example: C<< $ua->protocols_allowed( [ 'http', 'https'] ); >>
 means that this user agent will I<allow only> those protocols,
 and attempts to use this user agent to access URLs with any other
 schemes (like "ftp://...") will result in a 500 error.
 
-To delete the list, call: C<$ua-E<gt>protocols_allowed(undef)>
+To delete the list, call: C<< $ua->protocols_allowed(undef) >>
 
 By default, an object has neither a C<protocols_allowed> list, nor a
 C<protocols_forbidden> list.
@@ -1323,19 +1371,19 @@ This reads (or sets) this user agent's list of protocols that the
 request method will I<not> allow. The protocol names are case
 insensitive.
 
-For example: C<$ua-E<gt>protocols_forbidden( [ 'file', 'mailto'] );>
+For example: C<< $ua->protocols_forbidden( [ 'file', 'mailto'] ); >>
 means that this user agent will I<not> allow those protocols, and
 attempts to use this user agent to access URLs with those schemes
 will result in a 500 error.
 
-To delete the list, call: C<$ua-E<gt>protocols_forbidden(undef)>
+To delete the list, call: C<< $ua->protocols_forbidden(undef) >>
 
 =item $ua->requests_redirectable
 
 =item $ua->requests_redirectable( \@requests )
 
 This reads or sets the object's list of request names that
-C<$ua-E<gt>redirect_ok(...)> will allow redirection for.  By
+C<< $ua->redirect_ok(...) >> will allow redirection for.  By
 default, this is C<['GET', 'HEAD']>, as per RFC 2616.  To
 change to include 'POST', consider:
 
@@ -1426,7 +1474,7 @@ Set/retrieve proxy URL for a scheme:
  $ua->proxy(['http', 'ftp'], 'http://proxy.sn.no:8001/');
  $ua->proxy('gopher', 'http://proxy.sn.no:8001/');
 
-The first form specifies that the URL is to be used for proxying of
+The first form specifies that the URL is to be used as a proxy for
 access methods listed in the list in the first method argument,
 i.e. 'http' and 'ftp'.
 
@@ -1436,7 +1484,7 @@ proxy URL for a single access scheme.
 =item $ua->no_proxy( $domain, ... )
 
 Do not proxy requests to the given domains.  Calling no_proxy without
-any domains clears the list of domains. Eg:
+any domains clears the list of domains. For example:
 
  $ua->no_proxy('localhost', 'example.com');
 
@@ -1627,7 +1675,10 @@ object itself.  This might not be suitable for very large response
 bodies.  Only one of C<:content_file> or C<:content_cb> can be
 specified.  The content of unsuccessful responses will always
 accumulate in the response object itself, regardless of the
-C<:content_file> or C<:content_cb> options passed in.
+C<:content_file> or C<:content_cb> options passed in.  Note that errors
+writing to the content file (for example due to permission denied
+or the filesystem being full) will be reported via the C<Client-Aborted>
+or C<X-Died> response headers, and not the C<is_success> method.
 
 The C<:read_size_hint> option is passed to the protocol module which
 will try to read data from the server in chunks of this size.  A
@@ -1664,7 +1715,7 @@ This method will dispatch a C<POST> request on the given $url, with
 content. Additional headers and content options are the same as for
 the get() method.
 
-This method will use the POST() function from C<HTTP::Request::Common>
+This method will use the POST() function from L<HTTP::Request::Common>
 to build the request.  See L<HTTP::Request::Common> for a details on
 how to pass form content and other advanced features.
 
@@ -1685,7 +1736,7 @@ This method will dispatch a C<PUT> request on the given $url, with
 content. Additional headers and content options are the same as for
 the get() method.
 
-This method will use the PUT() function from C<HTTP::Request::Common>
+This method will use the PUT() function from L<HTTP::Request::Common>
 to build the request.  See L<HTTP::Request::Common> for a details on
 how to pass form content and other advanced features.
 
@@ -1696,7 +1747,7 @@ how to pass form content and other advanced features.
 This method will dispatch a C<DELETE> request on the given $url.  Additional
 headers and content options are the same as for the get() method.
 
-This method will use the DELETE() function from C<HTTP::Request::Common>
+This method will use the DELETE() function from L<HTTP::Request::Common>
 to build the request.  See L<HTTP::Request::Common> for a details on
 how to pass form content and other advanced features.
 
@@ -1721,7 +1772,7 @@ The return value is the response object.
 =item $ua->request( $request, $content_cb, $read_size_hint )
 
 This method will dispatch the given $request object.  Normally this
-will be an instance of the C<HTTP::Request> class, but any object with
+will be an instance of the L<HTTP::Request> class, but any object with
 a similar interface will do.  The return value is a response object.
 See L<HTTP::Request> and L<HTTP::Response> for a description of the
 interface provided by these classes.
@@ -1736,7 +1787,10 @@ They are convenience methods that simply hides the creation of the
 request object for you.
 
 The $content_file, $content_cb and $read_size_hint all correspond to
-options described with the get() method above.
+options described with the get() method above.  Note that errors
+writing to the content file (for example due to permission denied
+or the filesystem being full) will be reported via the C<Client-Aborted>
+or C<X-Died> response headers, and not the C<is_success> method.
 
 You are allowed to use a CODE reference as C<content> in the request
 object passed in.  The C<content> function should return the content
@@ -1782,7 +1836,7 @@ object.
 =head2 Callback methods
 
 The following methods will be invoked as requests are processed. These
-methods are documented here because subclasses of C<LWP::UserAgent>
+methods are documented here because subclasses of L<LWP::UserAgent>
 might want to override their behaviour.
 
 =over
@@ -1851,7 +1905,7 @@ message objects dispatched and received.  See L<HTTP::Request::Common>
 and L<HTML::Form> for other ways to build request objects.
 
 See L<WWW::Mechanize> and L<WWW::Search> for examples of more
-specialized user agents based on C<LWP::UserAgent>.
+specialized user agents based on L<LWP::UserAgent>.
 
 =head1 COPYRIGHT
 
@@ -1859,3 +1913,5 @@ Copyright 1995-2009 Gisle Aas.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
+
+=cut
