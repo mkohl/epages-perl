@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "fields 3"
-.TH fields 3 "2011-01-03" "perl v5.12.3" "Perl Programmers Reference Guide"
+.TH fields 3 "2015-11-21" "perl v5.12.3" "User Contributed Perl Documentation"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -152,8 +152,12 @@ fields \- compile\-time class fields
 \&    my $var = Foo\->new;
 \&    $var\->{foo} = 42;
 \&
-\&    # this will generate an error
+\&    # this will generate a run\-time error
 \&    $var\->{zap} = 42;
+\&
+\&    # this will generate a compile\-time error
+\&    my Foo $foo = Foo\->new;
+\&    $foo\->{zap} = 24;
 \&
 \&    # subclassing
 \&    {
@@ -172,49 +176,40 @@ fields \- compile\-time class fields
 .Ve
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
-The \f(CW\*(C`fields\*(C'\fR pragma enables compile-time verified class fields.
+The \f(CW\*(C`fields\*(C'\fR pragma enables compile-time and run-time verified class
+fields.
 .PP
 \&\s-1NOTE:\s0 The current implementation keeps the declared fields in the \f(CW%FIELDS\fR
 hash of the calling package, but this may change in future versions.
 Do \fBnot\fR update the \f(CW%FIELDS\fR hash directly, because it must be created
 at compile-time for it to be fully useful, as is done by this pragma.
 .PP
-\&\fBOnly valid for perl before 5.9.0:\fR
-.PP
-If a typed lexical variable holding a reference is used to access a
+If a typed lexical variable (\f(CW\*(C`my Class
+$var\*(C'\fR) holding a reference is used to access a
 hash element and a package with the same name as the type has
-declared class fields using this pragma, then the operation is
-turned into an array access at compile time.
+declared class fields using this pragma, then the hash key is
+verified at compile time.  If the variables are not typed, access is
+only checked at run time.
 .PP
 The related \f(CW\*(C`base\*(C'\fR pragma will combine fields from base classes and any
 fields declared using the \f(CW\*(C`fields\*(C'\fR pragma.  This enables field
-inheritance to work properly.
+inheritance to work properly.  Inherited fields can be overridden but
+will generate a warning if warnings are enabled.
 .PP
-Field names that start with an underscore character are made private to
-the class and are not visible to subclasses.  Inherited fields can be
-overridden but will generate a warning if used together with the \f(CW\*(C`\-w\*(C'\fR
-switch.
+\&\fBOnly valid for Perl 5.8.x and earlier:\fR Field names that start with an
+underscore character are made private to the class and are not visible
+to subclasses.
 .PP
-\&\fBOnly valid for perls before 5.9.0:\fR
-.PP
-The effect of all this is that you can have objects with named
-fields which are as compact and as fast arrays to access. This only
-works as long as the objects are accessed through properly typed
-variables. If the objects are not typed, access is only checked at
-run time.
+Also, \fBin Perl 5.8.x and earlier\fR, this pragma uses pseudo-hashes, the
+effect being that you can have objects with named fields which are as
+compact and as fast arrays to access, as long as the objects are
+accessed through properly typed variables.
 .PP
 The following functions are supported:
 .IP "new" 4
 .IX Item "new"
-\&\fB perl before 5.9.0: \fR \fIfields::new()\fR creates and blesses a
-pseudo-hash comprised of the fields declared using the \f(CW\*(C`fields\*(C'\fR
-pragma into the specified class.
-.Sp
-\&\fB perl 5.9.0 and higher: \fR \fIfields::new()\fR creates and blesses a
-restricted-hash comprised of the fields declared using the \f(CW\*(C`fields\*(C'\fR
-pragma into the specified class.
-.Sp
-This function is usable with or without pseudo-hashes.  It is the
+\&\fIfields::new()\fR creates and blesses a hash comprised of the fields declared
+using the \f(CW\*(C`fields\*(C'\fR pragma into the specified class.  It is the
 recommended way to construct a fields-based object.
 .Sp
 This makes it possible to write a constructor like this:
@@ -226,14 +221,18 @@ This makes it possible to write a constructor like this:
 \&    sub new {
 \&        my $self = shift;
 \&        $self = fields::new($self) unless ref $self;
-\&        $self\->{cat} = \*(Aqmeow\*(Aq;                          # scalar element
-\&        @$self{\*(Aqdog\*(Aq,\*(Aqbird\*(Aq} = (\*(Aqbark\*(Aq,\*(Aqtweet\*(Aq);        # slice
+\&        $self\->{cat} = \*(Aqmeow\*(Aq;                      # scalar element
+\&        @$self{\*(Aqdog\*(Aq,\*(Aqbird\*(Aq} = (\*(Aqbark\*(Aq,\*(Aqtweet\*(Aq);    # slice
 \&        return $self;
 \&    }
 .Ve
 .IP "phash" 4
 .IX Item "phash"
-\&\fB before perl 5.9.0: \fR
+\&\fBThis function only works in Perl 5.8.x and earlier.\fR  Pseudo-hashes
+were removed from Perl as of 5.10.  Consider using restricted hashes or
+\&\fIfields::new()\fR instead (which itself uses restricted hashes under 5.10+).
+See Hash::Util.  Using \fIfields::phash()\fR under 5.10 or higher will
+cause an error.
 .Sp
 \&\fIfields::phash()\fR can be used to create and initialize a plain (unblessed)
 pseudo-hash.  This function should always be used instead of creating
@@ -263,12 +262,6 @@ be used to construct the pseudo hash.  Examples:
 \&
 \&    my $pseudohash = fields::phash(%args);
 .Ve
-.Sp
-\&\fB perl 5.9.0 and higher: \fR
-.Sp
-Pseudo-hashes have been removed from Perl as of 5.10.  Consider using
-restricted hashes or \fIfields::new()\fR instead.  Using \fIfields::phash()\fR
-will cause an error.
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
-base
+base, Hash::Util

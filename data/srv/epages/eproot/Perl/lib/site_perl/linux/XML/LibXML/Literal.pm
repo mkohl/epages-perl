@@ -1,4 +1,4 @@
-# $Id: Literal.pm 785 2009-07-16 14:17:46Z pajas $
+# $Id$
 #
 # This is free software, you may use it and distribute it under the same terms as
 # Perl itself.
@@ -8,12 +8,15 @@
 #
 
 package XML::LibXML::Literal;
+
 use XML::LibXML::Boolean;
 use XML::LibXML::Number;
+
 use strict;
+use warnings;
 
 use vars qw ($VERSION);
-$VERSION = "1.70"; # VERSION TEMPLATE: DO NOT CHANGE
+$VERSION = "2.0128"; # VERSION TEMPLATE: DO NOT CHANGE
 
 use overload
                 '""' => \&value,

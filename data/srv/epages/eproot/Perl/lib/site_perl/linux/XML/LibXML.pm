@@ -1,4 +1,4 @@
-# $Id: LibXML.pm 809 2009-10-04 21:17:41Z pajas $
+# $Id$
 #
 #
 # This is free software, you may use it and distribute it under the same terms as
@@ -11,9 +11,12 @@
 package XML::LibXML;
 
 use strict;
+use warnings;
+
 use vars qw($VERSION $ABI_VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS
             $skipDTD $skipXMLDeclaration $setTagCompression
             $MatchCB $ReadCB $OpenCB $CloseCB %PARSER_FLAGS
+            $XML_LIBXML_PARSE_DEFAULTS
             );
 use Carp;
 
@@ -26,7 +29,7 @@ use XML::LibXML::XPathContext;
 use IO::Handle; # for FH reads called as methods
 
 BEGIN {
-$VERSION = "1.70"; # VERSION TEMPLATE: DO NOT CHANGE
+$VERSION = "2.0128"; # VERSION TEMPLATE: DO NOT CHANGE
 $ABI_VERSION = 2;
 require Exporter;
 require DynaLoader;
@@ -242,9 +245,9 @@ use constant {
   XML_PARSE_PEDANTIC      => 128,      # pedantic error reporting
   XML_PARSE_NOBLANKS      => 256,      # remove blank nodes
   XML_PARSE_SAX1          => 512,      # use the SAX1 interface internally
-  XML_PARSE_XINCLUDE      => 1024,     # Implement XInclude substitition
+  XML_PARSE_XINCLUDE      => 1024,     # Implement XInclude substitution
   XML_PARSE_NONET         => 2048,     # Forbid network access
-  XML_PARSE_NODICT        => 4096,     # Do not reuse the context dictionnary
+  XML_PARSE_NODICT        => 4096,     # Do not reuse the context dictionary
   XML_PARSE_NSCLEAN       => 8192,     # remove redundant namespaces declarations
   XML_PARSE_NOCDATA       => 16384,    # merge CDATA as text nodes
   XML_PARSE_NOXINCNODE    => 32768,    # do not generate XINCLUDE START/END nodes
@@ -254,9 +257,11 @@ use constant {
   XML_PARSE_NOBASEFIX     => 262144,   # do not fixup XINCLUDE xml#base uris
   XML_PARSE_HUGE          => 524288,   # relax any hardcoded limit from the parser
   XML_PARSE_OLDSAX        => 1048576,  # parse using SAX2 interface from before 2.7.0
+  HTML_PARSE_RECOVER => (1<<0),       # suppress error reports
+  HTML_PARSE_NOERROR  => (1<<5),       # suppress error reports
 };
 
-use constant XML_LIBXML_PARSE_DEFAULTS => ( XML_PARSE_NODICT | XML_PARSE_HUGE | XML_PARSE_DTDLOAD | XML_PARSE_NOENT );
+$XML_LIBXML_PARSE_DEFAULTS = ( XML_PARSE_NODICT | XML_PARSE_DTDLOAD | XML_PARSE_NOENT );
 
 # this hash is made global so that applications can add names for new
 # libxml2 parser flags as temporary workaround
@@ -302,7 +307,7 @@ sub _parser_options {
   if (ref($self)) {
     $flags = ($self->{XML_LIBXML_PARSER_OPTIONS}||0);
   } else {
-    $flags = XML_LIBXML_PARSE_DEFAULTS;         # safety precaution
+    $flags = $XML_LIBXML_PARSE_DEFAULTS;                # safety precaution
   }
 
   my ($key, $value);
@@ -374,7 +379,7 @@ sub new {
         $self->{$_}=$opts{$_} unless exists $PARSER_FLAGS{$_};
       }
     } else {
-      $self->{XML_LIBXML_PARSER_OPTIONS} = XML_LIBXML_PARSE_DEFAULTS;
+      $self->{XML_LIBXML_PARSER_OPTIONS} = $XML_LIBXML_PARSE_DEFAULTS;
     }
     if ( defined $self->{Handler} ) {
       $self->set_handler( $self->{Handler} );
@@ -388,11 +393,15 @@ sub _clone {
   my ($self)=@_;
   my $new = ref($self)->new({
       recover => $self->{XML_LIBXML_RECOVER},
-      line_nubers => $self->{XML_LIBXML_LINENUMBERS},
+      line_numbers => $self->{XML_LIBXML_LINENUMBERS},
       base_uri => $self->{XML_LIBXML_BASE_URI},
       gdome => $self->{XML_LIBXML_GDOME},
-      set_parser_flags => $self->{XML_LIBXML_PARSER_OPTIONS},
     });
+  # The parser options may contain some options that were zeroed from the
+  # defaults so set_parser_flags won't work here. We need to assign them
+  # explicitly.
+  $new->{XML_LIBXML_PARSER_OPTIONS} = $self->{XML_LIBXML_PARSER_OPTIONS};
+  $new->input_callbacks($self->input_callbacks());
   return $new;
 }
 
@@ -440,6 +449,11 @@ sub createDocument {
 #-------------------------------------------------------------------------#
 # callback functions                                                      #
 #-------------------------------------------------------------------------#
+
+sub externalEntityLoader(&)
+{
+    return _externalEntityLoader($_[0]);
+}
 
 sub input_callbacks {
     my $self     = shift;
@@ -604,7 +618,10 @@ sub recover {
 sub recover_silently {
     my $self = shift;
     my $arg = shift;
-    (($arg == 1) ? $self->recover(2) : $self->recover($arg)) if defined($arg);
+    if ( defined($arg) )
+    {
+        $self->recover(($arg == 1) ? 2 : $arg);
+    }
     return (($self->recover()||0) == 2) ? 1 : 0;
 }
 
@@ -723,22 +740,12 @@ sub _init_callbacks {
         $icb = $self->{XML_LIBXML_CALLBACK_STACK};
     }
 
-    my $mcb = $self->match_callback();
-    my $ocb = $self->open_callback();
-    my $rcb = $self->read_callback();
-    my $ccb = $self->close_callback();
-
-    if ( defined $mcb and defined $ocb and defined $rcb and defined $ccb ) {
-        $icb->register_callbacks( [$mcb, $ocb, $rcb, $ccb] );
-    }
-    $icb->init_callbacks();
+    $icb->init_callbacks($self);
 }
 
 sub _cleanup_callbacks {
     my $self = shift;
     $self->{XML_LIBXML_CALLBACK_STACK}->cleanup_callbacks();
-    my $mcb = $self->match_callback();
-    $self->{XML_LIBXML_CALLBACK_STACK}->unregister_callbacks( [$mcb] );
 }
 
 sub __read {
@@ -755,8 +762,9 @@ sub __write {
 }
 
 sub load_xml {
-  my ($class_or_self) = shift;
+  my $class_or_self = shift;
   my %args = map { ref($_) eq 'HASH' ? (%$_) : $_ } @_;
+
   my $URI = delete($args{URI});
   $URI = "$URI"  if defined $URI; # stringify in case it is an URI object
   my $parser;
@@ -1052,13 +1060,35 @@ sub _html_options {
   $opts = {} unless ref $opts;
   #  return (undef,undef) unless ref $opts;
   my $flags = 0;
-  $flags |=     1 if exists $opts->{recover} ? $opts->{recover} : $self->recover;
-  $flags |=    32 if $opts->{suppress_errors};
+  {
+    my $recover = exists $opts->{recover} ? $opts->{recover} : $self->recover;
+
+    if ($recover)
+    {
+      $flags |= HTML_PARSE_RECOVER;
+      if ($recover == 2)
+      {
+        $flags |= HTML_PARSE_NOERROR;
+      }
+    }
+  }
+
+  $flags |=     4 if $opts->{no_defdtd}; # default is ON: injects DTD as needed
+  $flags |=    32 if exists $opts->{suppress_errors} ? $opts->{suppress_errors} : $self->get_option('suppress_errors');
+  # This is to fix https://rt.cpan.org/Ticket/Display.html?id=58024 :
+  # <quote>
+  # In XML::LibXML, warnings are not suppressed when specifying the recover
+  # or recover_silently flags as per the following excerpt from the manpage:
+  # </quote>
+  if ($self->recover_silently)
+  {
+      $flags |= 32;
+  }
   $flags |=    64 if $opts->{suppress_warnings};
   $flags |=   128 if exists $opts->{pedantic_parser} ? $opts->{pedantic_parser} : $self->pedantic_parser;
   $flags |=   256 if exists $opts->{no_blanks} ? $opts->{no_blanks} : !$self->keep_blanks;
   $flags |=  2048 if exists $opts->{no_network} ? $opts->{no_network} : !$self->no_network;
-  $flags |= 16384 if  $opts->{no_cdata};
+  $flags |= 16384 if $opts->{no_cdata};
   $flags |= 65536 if $opts->{compact}; # compact small text nodes; no modification
                                          # of the tree allowed afterwards
                                          # (WILL possibly CRASH IF YOU try to MODIFY THE TREE)
@@ -1238,6 +1268,16 @@ sub finish_push {
 #-------------------------------------------------------------------------#
 package XML::LibXML::Node;
 
+use Carp qw(croak);
+
+use overload
+    '""'   => sub { $_[0]->toString() },
+    'bool' => sub { 1 },
+    '0+'   => sub { Scalar::Util::refaddr($_[0]) },
+    fallback => 1,
+    ;
+
+
 sub CLONE_SKIP {
   return $XML::LibXML::__threads_shared ? 0 : 1;
 }
@@ -1325,25 +1365,43 @@ sub toStringC14N {
                                  (defined $xpc ? $xpc : undef)
                                 );
 }
+
+{
+my $C14N_version_1_dot_1_val = 2;
+
+sub toStringC14N_v1_1 {
+    my ($self, $comments, $xpath, $xpc) = @_;
+
+    return $self->_toStringC14N(
+        $comments || 0,
+        (defined $xpath ? $xpath : undef),
+        $C14N_version_1_dot_1_val,
+        undef,
+        (defined $xpc ? $xpc : undef)
+    );
+}
+
+}
+
 sub toStringEC14N {
     my ($self, $comments, $xpath, $xpc, $inc_prefix_list) = @_;
     unless (UNIVERSAL::isa($xpc,'XML::LibXML::XPathContext')) {
-      if ($inc_prefix_list) {
-        croak("toStringEC14N: 3rd argument is not an XML::LibXML::XPathContext");
-      } else {
-        $inc_prefix_list=$xpc;
-        $xpc=undef;
-      }
+        if ($inc_prefix_list) {
+            croak("toStringEC14N: 3rd argument is not an XML::LibXML::XPathContext");
+        } else {
+            $inc_prefix_list=$xpc;
+            $xpc=undef;
+        }
     }
     if (defined($inc_prefix_list) and !UNIVERSAL::isa($inc_prefix_list,'ARRAY')) {
-      croak("toStringEC14N: inclusive_prefix_list must be undefined or ARRAY");
+        croak("toStringEC14N: inclusive_prefix_list must be undefined or ARRAY");
     }
     return $self->_toStringC14N( $comments || 0,
-                                 (defined $xpath ? $xpath : undef),
-                                 1,
-                                 (defined $inc_prefix_list ? $inc_prefix_list : undef),
-                                 (defined $xpc ? $xpc : undef)
-                                );
+        (defined $xpath ? $xpath : undef),
+        1,
+        (defined $inc_prefix_list ? $inc_prefix_list : undef),
+        (defined $xpc ? $xpc : undef)
+    );
 }
 
 *serialize_c14n = \&toStringC14N;
@@ -1439,7 +1497,7 @@ sub insertPI {
 
 #-------------------------------------------------------------------------#
 # DOM L3 Document functions.
-# added after robins implicit feature requst
+# added after robins implicit feature request
 #-------------------------------------------------------------------------#
 *getElementsByTagName = \&XML::LibXML::Element::getElementsByTagName;
 *getElementsByTagNameNS = \&XML::LibXML::Element::getElementsByTagNameNS;
@@ -1478,7 +1536,61 @@ package XML::LibXML::Element;
 use vars qw(@ISA);
 @ISA = ('XML::LibXML::Node');
 use XML::LibXML qw(:ns :libxml);
+use XML::LibXML::AttributeHash;
 use Carp;
+
+use Scalar::Util qw(blessed);
+
+use overload
+    '%{}'  => 'getAttributeHash',
+    'eq' => '_isSameNodeLax', '==' => '_isSameNodeLax',
+    'ne' => '_isNotSameNodeLax', '!=' => '_isNotSameNodeLax',
+    fallback => 1,
+    ;
+
+sub _isNotSameNodeLax {
+    my ($self, $other) = @_;
+
+    return ((not $self->_isSameNodeLax($other)) ? 1 : '');
+}
+
+sub _isSameNodeLax {
+    my ($self, $other) = @_;
+
+    if (blessed($other) and $other->isa('XML::LibXML::Element'))
+    {
+        return ($self->isSameNode($other) ? 1 : '');
+    }
+    else
+    {
+        return '';
+    }
+}
+
+{
+    my %tiecache;
+
+    sub __destroy_tiecache
+    {
+        delete $tiecache{ 0+$_[0] };
+    }
+
+    sub getAttributeHash
+    {
+        my $self = shift;
+        if (!exists $tiecache{ 0+$self }) {
+            tie my %attr, 'XML::LibXML::AttributeHash', $self, weaken => 1;
+            $tiecache{ 0+$self } = \%attr;
+        }
+        return $tiecache{ 0+$self };
+    }
+    sub DESTROY
+    {
+        my ($self) = @_;
+        $self->__destroy_tiecache;
+        $self->SUPER::DESTROY;
+    }
+}
 
 sub setNamespace {
     my $self = shift;
@@ -1557,7 +1669,7 @@ sub setAttributeNS {
   }
   if (defined($nsURI) and $nsURI eq XML_XMLNS_NS) {
     if ($qname !~ /^xmlns(?::|$)/) {
-      croak("NAMESPACE ERROR: Namespace declartions must have the prefix 'xmlns'");
+      croak("NAMESPACE ERROR: Namespace declarations must have the prefix 'xmlns'");
     }
     $self->setAttribute($qname,$value); # see implementation above
     return;
@@ -1663,28 +1775,20 @@ package XML::LibXML::Text;
 use vars qw(@ISA);
 @ISA = ('XML::LibXML::Node');
 
-sub attributes { return undef; }
+sub attributes { return; }
 
 sub deleteDataString {
-    my $node = shift;
-    my $string = shift;
-    my $all    = shift;
-    my $data = $node->nodeValue();
-    $string =~ s/([\\\*\+\^\{\}\&\?\[\]\(\)\$\%\@])/\\$1/g;
-    if ( $all ) {
-        $data =~ s/$string//g;
-    }
-    else {
-        $data =~ s/$string//;
-    }
-    $node->setData( $data );
+    my ($node, $string, $all) = @_;
+
+    return $node->replaceDataString($string, '', $all);
 }
 
 sub replaceDataString {
-    my ( $node, $left, $right,$all ) = @_;
+    my ( $node, $left_proto, $right,$all ) = @_;
 
-    #ashure we exchange the strings and not expressions!
-    $left  =~ s/([\\\*\+\^\{\}\&\?\[\]\(\)\$\%\@])/\\$1/g;
+    # Assure we exchange the strings and not expressions!
+    my $left = quotemeta($left_proto);
+
     my $datastr = $node->nodeValue();
     if ( $all ) {
         $datastr =~ s/$left/$right/g;
@@ -1790,7 +1894,7 @@ package XML::LibXML::Namespace;
 
 sub CLONE_SKIP { 1 }
 
-# this is infact not a node!
+# In fact, this is not a node!
 sub prefix { return "xmlns"; }
 sub getPrefix { return "xmlns"; }
 sub getNamespaceURI { return "http://www.w3.org/2000/xmlns/" };
@@ -2074,12 +2178,14 @@ sub CLONE_SKIP { 1 }
 #-------------------------------------------------------------------------#
 package XML::LibXML::InputCallback;
 
-use vars qw($_CUR_CB @_GLOBAL_CALLBACKS @_CB_STACK);
+use vars qw($_CUR_CB @_GLOBAL_CALLBACKS @_CB_STACK $_CB_NESTED_DEPTH @_CB_NESTED_STACK);
 
 BEGIN {
   $_CUR_CB = undef;
   @_GLOBAL_CALLBACKS = ();
   @_CB_STACK = ();
+  $_CB_NESTED_DEPTH = 0;
+  @_CB_NESTED_STACK = ();
 }
 
 sub CLONE_SKIP {
@@ -2093,9 +2199,9 @@ sub _callback_match {
     my $uri = shift;
     my $retval = 0;
 
-    # loop through the callbacks and and find the first matching
-    # The callbacks are stored in execution order (reverse stack order)
-    # any new global callbacks are shifted to the callback stack.
+    # loop through the callbacks, and find the first matching one.
+    # The callbacks are stored in execution order (reverse stack order).
+    # Any new global callbacks are shifted to the callback stack.
     foreach my $cb ( @_GLOBAL_CALLBACKS ) {
 
         # callbacks have to return 1, 0 or undef, while 0 and undef
@@ -2201,12 +2307,36 @@ sub unregister_callbacks {
 # make libxml2 use the callbacks
 sub init_callbacks {
     my $self = shift;
+    my $parser = shift;
 
+    #initialize the libxml2 callbacks unless this is a nested callback
+    $self->lib_init_callbacks() unless($_CB_NESTED_DEPTH);
+
+    #store the callbacks for any outer executing parser instance
+    $_CB_NESTED_DEPTH++;
+    push @_CB_NESTED_STACK, [
+      $_CUR_CB,
+      [@_CB_STACK],
+      [@_GLOBAL_CALLBACKS],
+    ];
+
+    #initialize the callback variables for the current parser
     $_CUR_CB           = undef;
     @_CB_STACK         = ();
-
     @_GLOBAL_CALLBACKS = @{ $self->{_CALLBACKS} };
 
+    #attach parser specific callbacks
+    if($parser) {
+        my $mcb = $parser->match_callback();
+        my $ocb = $parser->open_callback();
+        my $rcb = $parser->read_callback();
+        my $ccb = $parser->close_callback();
+        if ( defined $mcb and defined $ocb and defined $rcb and defined $ccb ) {
+            unshift @_GLOBAL_CALLBACKS, [$mcb, $ocb, $rcb, $ccb];
+        }
+    }
+
+    #attach global callbacks
     if ( defined $XML::LibXML::match_cb and
          defined $XML::LibXML::open_cb  and
          defined $XML::LibXML::read_cb  and
@@ -2216,19 +2346,21 @@ sub init_callbacks {
                                   $XML::LibXML::read_cb,
                                   $XML::LibXML::close_cb];
     }
-
-    $self->lib_init_callbacks();
 }
 
 # reset libxml2's callbacks
 sub cleanup_callbacks {
     my $self = shift;
 
-    $_CUR_CB           = undef;
-    @_GLOBAL_CALLBACKS = ();
-    @_CB_STACK         = ();
+    #restore the callbacks for the outer parser instance
+    $_CB_NESTED_DEPTH--;
+    my $saved          = pop @_CB_NESTED_STACK;
+    $_CUR_CB           = $saved->[0];
+    @_CB_STACK         = (@{$saved->[1]});
+    @_GLOBAL_CALLBACKS = (@{$saved->[2]});
 
-    $self->lib_cleanup_callbacks();
+    #clean up the libxml2 callbacks unless there are still outer parsing instances
+    $self->lib_cleanup_callbacks() unless($_CB_NESTED_DEPTH);
 }
 
 $XML::LibXML::__loaded=1;
