@@ -277,7 +277,7 @@ sub my_readline {
                         # We got exactly 1024 bytes, so we need to select() to know if there is more data
                         last unless $self->can_read(0);
                     }
-                    elsif($!{EINTR} || $!{EAGAIN} || $!{EWOULDBLOCK}) {
+                    elsif($!{EINTR} || $!{EAGAIN} || $!{EWOULDBLOCK} || $!{ESPIPE}) {
                         redo READ;
                     }
                     else {
@@ -321,7 +321,7 @@ sub can_read {
         $before = time if $timeout;
         my $nfound = select($fbits, undef, undef, $timeout);
         if ($nfound < 0) {
-            if ($!{EINTR} || $!{EAGAIN}) {
+            if ($!{EINTR} || $!{EAGAIN} || $!{ESPIPE} || $!{EACCES}) {
                 # don't really think EAGAIN can happen here
                 if ($timeout) {
                     $timeout -= time - $before;
