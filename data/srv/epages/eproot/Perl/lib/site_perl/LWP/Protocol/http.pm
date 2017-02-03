@@ -17,6 +17,12 @@ sub _new_socket
 {
     my($self, $host, $port, $timeout) = @_;
 
+    # IPv6 literal IP address should be [bracketed] to remove
+    # ambiguity between ip address and port number.
+    if ( ($host =~ /:/) && ($host !~ /^\[/) ) {
+      $host = "[$host]";
+    }
+
     local($^W) = 0;  # IO::Socket::INET can be noisy
     my $sock = $self->socket_class->new(PeerAddr => $host,
                                         PeerPort => $port,
@@ -33,6 +39,7 @@ sub _new_socket
         my $status = "Can't connect to $host:$port";
         if ($@ =~ /\bconnect: (.*)/ ||
             $@ =~ /\b(Bad hostname)\b/ ||
+            $@ =~ /\b(nodename nor servname provided, or not known)\b/ ||
             $@ =~ /\b(certificate verify failed)\b/ ||
             $@ =~ /\b(Crypt-SSLeay can't verify hostnames)\b/
         ) {
@@ -162,7 +169,7 @@ sub request
     my $cache_key;
     if ( $conn_cache ) {
         $cache_key = "$host:$port";
-        # For https we reuse the socket immediatly only if it has an established
+        # For https we reuse the socket immediately only if it has an established
         # tunnel to the target. Otherwise a CONNECT request followed by an SSL
         # upgrade need to be done first. The request itself might reuse an
         # existing non-ssl connection to the proxy
@@ -276,7 +283,7 @@ sub request
             my $n = $socket->syswrite($req_buf, length($req_buf));
             unless (defined $n) {
                 redo WRITE if $!{EINTR};
-                if ($!{EAGAIN}) {
+                if ($!{EWOULDBLOCK} || $!{EAGAIN}) {
                     select(undef, undef, undef, 0.1);
                     redo WRITE;
                 }
@@ -346,7 +353,7 @@ sub request
             {
                 my $nfound = select($rbits, $wbits, undef, $sel_timeout);
                 if ($nfound < 0) {
-                    if ($!{EINTR} || $!{EAGAIN}) {
+                    if ($!{EINTR} || $!{EWOULDBLOCK} || $!{EAGAIN}) {
                         if ($time_before) {
                             $sel_timeout = $sel_timeout_before - (time - $time_before);
                             $sel_timeout = 0 if $sel_timeout < 0;
@@ -367,7 +374,7 @@ sub request
                 my $buf = $socket->_rbuf;
                 my $n = $socket->sysread($buf, 1024, length($buf));
                 unless (defined $n) {
-                    die "read failed: $!" unless  $!{EINTR} || $!{EAGAIN};
+                    die "read failed: $!" unless  $!{EINTR} || $!{EWOULDBLOCK} || $!{EAGAIN};
                     # if we get here the rest of the block will do nothing
                     # and we will retry the read on the next round
                 }
@@ -398,7 +405,7 @@ sub request
             if (defined($wbits) && $wbits =~ /[^\0]/) {
                 my $n = $socket->syswrite($$wbuf, length($$wbuf), $woffset);
                 unless (defined $n) {
-                    die "write failed: $!" unless $!{EINTR} || $!{EAGAIN};
+                    die "write failed: $!" unless $!{EINTR} || $!{EWOULDBLOCK} || $!{EAGAIN};
                     $n = 0;  # will retry write on the next round
                 }
                 elsif ($n == 0) {
@@ -455,7 +462,7 @@ sub request
         {
             $n = $socket->read_entity_body($buf, $size);
             unless (defined $n) {
-                redo READ if $!{EINTR} || $!{EAGAIN} || $!{ENOTTY};
+                redo READ if $!{EINTR} || $!{EWOULDBLOCK} || $!{EAGAIN} || $!{ENOTTY};
                 die "read failed: $!";
             }
             redo READ if $n == -1;
