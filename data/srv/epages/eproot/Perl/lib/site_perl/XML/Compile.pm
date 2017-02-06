@@ -1,14 +1,14 @@
-# Copyrights 2006-2016 by [Mark Overmeer].
+# Copyrights 2006-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 
 use warnings;
 use strict;
 
 package XML::Compile;
 use vars '$VERSION';
-$VERSION = '1.54';
+$VERSION = '1.22';
 
 
 use Log::Report 'xml-compile';
@@ -33,7 +33,7 @@ __PACKAGE__->addSchemaDirs($ENV{SCHEMA_DIRECTORIES});
 __PACKAGE__->addSchemaDirs(__FILE__);
 
 
-sub new(@)
+sub new($@)
 {   my $class = shift;
     my $top   = @_ % 2 ? shift : undef;
 
@@ -123,14 +123,9 @@ sub dataToXML($)
     elsif(-f $raw)
     {   ($xml, %details) = $thing->_parseFile($raw);
     }
-    elsif($raw !~ /[\n\r<]/ && $raw =~ m![/\\]|\.xsd$|\.wsdl!i)
-    {   error __x"file {fn} does not exist", fn => $raw;
-    }
     else
     {   my $data = "$raw";
-        $data = substr($data, 0, 59) . '...'
-            if length($data) > 60 && $data =~ m/\</;
-
+        $data = substr($data, 0, 39) . '...' if length($data) > 40;
         error __x"don't known how to interpret XML data\n   {data}"
            , data => $data;
     }

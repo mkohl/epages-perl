@@ -1,23 +1,22 @@
-# Copyrights 2007-2016 by [Mark Overmeer].
+# Copyrights 2007-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 use warnings;
 use strict;
 
 package Log::Report::Dispatcher;
 use vars '$VERSION';
-$VERSION = '1.18';
+$VERSION = '0.94';
 
 
-use Log::Report 'log-report';
+use Log::Report 'log-report', syntax => 'SHORT';
 use Log::Report::Util qw/parse_locale expand_reasons %reason_code
   escape_chars/;
 
 use POSIX      qw/strerror/;
-use List::Util qw/sum first/;
+use List::Util qw/sum/;
 use Encode     qw/find_encoding FB_DEFAULT/;
-use Devel::GlobalDestruction qw/in_global_destruction/;
 
 eval { POSIX->import('locale_h') };
 if($@)
@@ -28,21 +27,18 @@ if($@)
 my %modes = (NORMAL => 0, VERBOSE => 1, ASSERT => 2, DEBUG => 3
   , 0 => 0, 1 => 1, 2 => 2, 3 => 3);
 my @default_accept = ('NOTICE-', 'INFO-', 'ASSERT-', 'ALL');
-my %always_loc = map +($_ => 1), qw/ASSERT ALERT FAILURE PANIC/;
 
-my %predef_dispatchers = map +(uc($_) => __PACKAGE__.'::'.$_)
-  , qw/File Perl Syslog Try Callback Log4perl/;
-
-my @skip_stack = sub { $_[0][0] =~ m/^Log\:\:Report(?:\:\:|$)/ };
+my %predef_dispatchers = map { (uc($_) => __PACKAGE__.'::'.$_) }
+   qw/File Perl Syslog Try Callback/;
 
 
 sub new(@)
 {   my ($class, $type, $name, %args) = @_;
 
-    # $type is a class name or predefined name.
     my $backend
       = $predef_dispatchers{$type}          ? $predef_dispatchers{$type}
       : $type->isa('Log::Dispatch::Output') ? __PACKAGE__.'::LogDispatch'
+      : $type->isa('Log::Log4perl')         ? __PACKAGE__.'::Log4perl'
       : $type;
 
     eval "require $backend";
@@ -94,7 +90,10 @@ sub close()
     $self;
 }
 
-sub DESTROY { in_global_destruction or shift->close }
+# horrible errors on some Perl versions if called during destruction
+my $in_global_destruction = 0;
+END { $in_global_destruction++ }
+sub DESTROY { $in_global_destruction or shift->close }
 
 #----------------------------
 
@@ -115,13 +114,13 @@ sub defaultMode($) {$default_mode = $_[1]}
 sub _set_mode($)
 {   my $self = shift;
     my $mode = $self->{mode} = $modes{$_[0]};
-    defined $mode or panic "unknown run mode $_[0]";
+    defined $mode
+        or error __x"unknown run mode '{mode}'", mode => $_[0];
 
-    $self->{needs} = [ expand_reasons $default_accept[$mode] ];
+    $self->{needs}  = [ expand_reasons $default_accept[$mode] ];
 
-    trace __x"switching to run mode {mode} for {pkg}, accept {accept}"
-       , mode => $mode, pkg => ref $self, accept => $default_accept[$mode]
-         unless $self->isa('Log::Report::Dispatcher::Try');
+    info __x"switching to run mode {mode}, accept {accept}"
+       , mode => $mode, accept => $default_accept[$mode];
 
     $mode;
 }
@@ -135,26 +134,15 @@ sub _disabled($)
 
 
 sub isDisabled() {shift->{disabled}}
+sub needs() { $_[0]->{disabled} ? () : @{$_[0]->{needs}} }
 
 
-sub needs(;$)
-{   my $self = shift;
-    return () if $self->{disabled};
-
-    my $needs = $self->{needs};
-    @_ or return @$needs;
-
-    my $need = shift;
-    first {$need eq $_} @$needs;
-}
-
-#-----------
-
-sub log($$$$)
+sub log($$$)
 {   panic "method log() must be extended per back-end";
 }
 
 
+my %always_loc = map {($_ => 1)} qw/ASSERT PANIC/;
 sub translate($$$)
 {   my ($self, $opts, $reason, $msg) = @_;
 
@@ -175,11 +163,12 @@ sub translate($$$)
     my $locale
       = defined $msg->msgid
       ? ($opts->{locale} || $self->{locale})      # translate whole
-      : (textdomain $msg->domain)->nativeLanguage;
+      : Log::Report->_setting($msg->domain, 'native_language');
 
-    my $oldloc = setlocale(&LC_ALL) // "";
-    setlocale(&LC_ALL, $locale)
-        if $locale && $locale ne $oldloc;
+    # not all implementations of setlocale() return the old value
+    my $oldloc = setlocale(&LC_ALL);
+    #setlocale(&LC_ALL, $locale || 'en_US');
+    setlocale(&LC_ALL, $locale) if $locale;
 
     my $r = $self->{format_reason}->((__$reason)->toString);
     my $e = $opts->{errno} ? strerror($opts->{errno}) : undef;
@@ -190,12 +179,11 @@ sub translate($$$)
       : $e       ? N__"{message}; {error}"
       :            undef;
 
-    my $text
-      = ( defined $format
-        ? __x($format, message => $msg->toString , reason => $r, error => $e)
-        : $msg
-        )->toString;
-    $text =~ s/\n*\z/\n/;
+    my $text = defined $format
+      ? __x($format, message => $msg->toString, reason => $r, error => $e
+           )->toString
+      : $msg->toString;
+    $text .= "\n";
 
     if($show_loc)
     {   if(my $loc = $opts->{location} || $self->collectLocation)
@@ -219,7 +207,7 @@ sub translate($$$)
     }
 
     setlocale(&LC_ALL, $oldloc)
-        if $locale && $locale ne $oldloc;
+        if defined $oldloc;
 
     $self->{charset_enc}->($text);
 }
@@ -227,7 +215,14 @@ sub translate($$$)
 
 sub collectStack($)
 {   my ($thing, $max) = @_;
-    my $nest = $thing->skipStack;
+
+    my ($nest, $sub) = (1, undef);
+    do { $sub = (caller $nest++)[3] }
+    while(defined $sub && $sub ne 'Log::Report::report');
+    defined $sub or $nest = 1;  # not found
+
+    # skip syntax==SHORT routine entries
+    $nest++ if defined $sub && $sub =~ m/^Log\:\:Report\:\:/;
 
     # special trick by Perl for Carp::Heavy: adds @DB::args
   { package DB;    # non-blank before package to avoid problem with OODoc
@@ -246,27 +241,20 @@ sub collectStack($)
 }
 
 
-sub addSkipStack(@)
-{   my $thing = shift;
-    push @skip_stack, @_;
-    $thing;
-}
-
-
-sub skipStack()
+sub collectLocation()
 {   my $thing = shift;
     my $nest  = 1;
-    my $args;
+    my @args;
 
-    do { $args = [caller ++$nest] }
-    while @$args && first {$_->($args)} @skip_stack;
+    do {@args = caller $nest++}
+    until $args[3] eq 'Log::Report::report';  # common entry point
 
-    # do not count my own stack level in!
-    @$args ? $nest-1 : 1;
+    # skip syntax==SHORT routine entries
+    @args = caller $nest++
+        if +(caller $nest)[3] =~ m/^Log\:\:Report\:\:[^:]*$/;
+
+    @args ? \@args : undef;
 }
-
-
-sub collectLocation() { [caller shift->skipStack] }
 
 
 sub stackTraceLine(@)
@@ -290,7 +278,7 @@ sub stackTraceLine(@)
     $max        -= @params * 2 - length($listtail);  #  \( ( \,[ ] ){n-1} \)
 
     my $calling  = $thing->stackTraceCall(\%args, $abstract, $call, $obj);
-    my @out      = map $thing->stackTraceParam(\%args, $abstract, $_), @params;
+    my @out      = map {$thing->stackTraceParam(\%args, $abstract, $_)} @params;
     my $total    = sum map {length $_} $calling, @out;
 
   ATTEMPT:
@@ -336,22 +324,14 @@ sub stackTraceParam($$$)
     defined $param
         or return 'undef';
 
-    $param = overload::StrVal($param)
-        if ref $param;
-
     return $param   # int or float
         if $param =~ /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/;
 
-    my $escaped = escape_chars $param;
-    if(length $escaped > 80)
-    {    $escaped = substr($escaped, 0, 30)
-                  . '...['. (length($escaped) -80) .' chars more]...'
-                  . substr($escaped, -30);
-    }
+    return overload::StrVal($param)
+        if ref $param;
 
-    qq{"$escaped"};
+    '"' . escape_chars($param) . '"';
 }
 
-#------------
 
 1;

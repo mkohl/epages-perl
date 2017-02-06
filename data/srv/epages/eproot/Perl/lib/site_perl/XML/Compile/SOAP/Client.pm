@@ -1,13 +1,13 @@
-# Copyrights 2007-2017 by [Mark Overmeer].
+# Copyrights 2007-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 use warnings;
 use strict;
 
 package XML::Compile::SOAP::Client;
 use vars '$VERSION';
-$VERSION = '3.21';
+$VERSION = '2.24';
 
 
 use Log::Report 'xml-compile-soap', syntax => 'SHORT';
@@ -20,7 +20,6 @@ use Time::HiRes        qw/time/;
 sub new(@) { panic __PACKAGE__." only secundary in multiple inheritance" }
 sub init($) { shift }
 
-#--------------
 
 my $rr = 'request-response';
 
@@ -44,7 +43,7 @@ sub compileClient(@)
 
     if(ref $transport eq 'CODE') { ; }
     elsif(UNIVERSAL::isa($transport, 'XML::Compile::Transport::SOAPHTTP'))
-    {   $transport = $transport->compileClient(soap => $args{soap});
+    {   $transport = $transport->compileClient;
     }
     else
     {   error __x"transport for client {name} is code ref or {type} object, not {is}"
@@ -53,18 +52,13 @@ sub compileClient(@)
     }
 
     my $output_handler = sub {
-        my ($ans, $trace, $xops) = @_;
+        my ($ans, $trace) = @_;
         wantarray or return
             UNIVERSAL::isa($ans, 'XML::LibXML::Node') ? $decode->($ans) : $ans;
 
         if(UNIVERSAL::isa($ans, 'XML::LibXML::Node'))
         {   $ans = try { $decode->($ans) };
-            if($@)
-            {   $trace->{decode_errors} = $@;
-                my $fatal = $@->wasFatal;
-                $trace->{errors} = [$fatal];
-                $fatal->message($fatal->message->concat('decode error: ', 1));
-            }
+            $trace->{decode_errors} = $@ if $@;
 
             my $end = time;
             $trace->{decode_elapse} = $end - $trace->{transport_end};
@@ -74,7 +68,7 @@ sub compileClient(@)
         {   $trace->{elapse} = $trace->{transport_end} - $trace->{start}
                 if defined $trace->{transport_end};
         }
-        ($ans, XML::Compile::SOAP::Trace->new($trace), $xops);
+        ($ans, XML::Compile::SOAP::Trace->new($trace));
     };
 
     $args{async}
@@ -86,7 +80,7 @@ sub compileClient(@)
               , name => $name;
 
         my $callback = delete $data->{_callback}
-            or error __x"operation `{name}' is async, so requires _callback";
+            or error __x"opertaion `{name}' is async, so requires _callback";
 
         my $trace = {start => time};
         my ($req, $mtom) = $encode->($data, $charset);
@@ -96,12 +90,12 @@ sub compileClient(@)
           , sub { $callback->($output_handler->(@_)) }
           );
       }
-    : sub # Synchronous call, f.i. XML::Compile::Transfer::SOAPHTTP
+    : sub # Synchronous call (f.i. XML::Compile::Transfer::SOAPHTTP
       { my ($data, $charset)
           = UNIVERSAL::isa($_[0], 'HASH') ? @_
           : @_%2==0 ? ({@_}, undef)
-          : panic(__x"operation `{name}' called with odd length parameter list"
-              , name => $name);
+          : error __x"operation `{name}' called with odd length parameter list"
+              , name => $name;
 
         $data->{_callback}
             and error __x"operation `{name}' called with _callback, but "
@@ -109,12 +103,10 @@ sub compileClient(@)
 
         my $trace = {start => time};
         my ($req, $mtom) = $encode->($data, $charset);
-        my ($ans, $xops) = $transport->($req, $trace, $mtom);
-        wantarray || !$xops || ! keys %$xops
-            or warning "loosing received XOPs";
+        my $ans = $transport->($req, $trace, $mtom);
 
         $trace->{encode_elapse} = $trace->{transport_start} - $trace->{start};
-        $output_handler->($ans, $trace, $xops);
+        $output_handler->($ans, $trace);
       };
 }
 

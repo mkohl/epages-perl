@@ -1,5 +1,3 @@
-=encoding utf8
-
 =head1 NAME
 
 XML::Compile::XOP::Include - Represents one XOP node.
@@ -13,7 +11,7 @@ XML::Compile::XOP::Include - Represents one XOP node.
 
 =head1 DESCRIPTION
 
-Represents one data-set which will be represented as separate (binary)
+Represents one data-set which will be represented as seperate (binary)
 object during transport.  This can only be used on data fields which
 are base64Binary.
 
@@ -23,7 +21,7 @@ L<XML::Compile::XOP|XML::Compile::XOP> method to create them.
 The object is overloaded to produce the contained data when a scalar is
 required, for instance when you call functions like "length".  This means
 that, hopefully, the end-user does not see much of a difference between
-data which is transported inline or packaged separately.
+data which is transported inline or packaged seperately.
 
 =head1 METHODS
 
@@ -31,11 +29,11 @@ data which is transported inline or packaged separately.
 
 =over 4
 
-=item XML::Compile::XOP::Include-E<gt>B<fromMime>($object)
+=item XML::Compile::XOP::Include-E<gt>B<fromMime>(OBJECT)
 
 Collect the data from a HTTP::Message object.
 
-=item XML::Compile::XOP::Include-E<gt>B<new>(%options)
+=item XML::Compile::XOP::Include-E<gt>B<new>(OPTIONS)
 
 You have to specify either a C<file> or C<byte> source.  Otherwise, the
 constructor will return C<undef>.
@@ -78,26 +76,14 @@ The MIME-Type of the data.
 
 =over 4
 
-=item $obj-E<gt>B<cid>()
+=item $obj-E<gt>B<cid>
 
 Returns the Content-ID.
 
-=item $obj-E<gt>B<content>( [$byref] )
+=item $obj-E<gt>B<content>([BYREF])
 
-Returns the content, when $byref (boolean) is true, then the value is
+Returns the content, when BYREF (boolean) is true, then the value is
 returned by reference.
-
-=item $obj-E<gt>B<contentCharset>()
-
-Returns the character set, as provided by the Content-Type header.
-
-=item $obj-E<gt>B<contentType>()
-
-Returns the media type included in the Content-Type header.
-
-=item $obj-E<gt>B<string>()
-
-Returns the content as string in Perl internal encoding.
 
 =back
 
@@ -105,21 +91,21 @@ Returns the content as string in Perl internal encoding.
 
 =over 4
 
-=item $obj-E<gt>B<mimePart>( [$headers] )
+=item $obj-E<gt>B<mimePart>([HEADERS])
 
 Produce the message part which contains a normal mime representation
-of a binary file.  You may provide an initial $headers (HTTP::Headers)
+of a binary file.  You may provide an initial HEADERS (HTTP::Headers)
 object, or an ARRAY of headers to instantiate such an object.
 
-=item $obj-E<gt>B<write>($filename|$fh)
+=item $obj-E<gt>B<write>(FILENAME|FILEHANDLE)
 
 Write the content to the specified FILE.
 
-=item $obj-E<gt>B<xmlNode>($document, $path, $tag)
+=item $obj-E<gt>B<xmlNode>(DOCUMENT, PATH, TAG)
 
-The $document will be used to construct the node from.  The $path
+The DOCUMENT will be used to construct the node from.  The PATH
 is an indicator for the location of the node within the data
-structure (used in error messages).  The $tag is the prefixed name
+structure (used in error messages).  The TAG is the prefixed name
 for the node to be created.
 
 Returned is an XML node to be included in the output tree.
@@ -130,7 +116,7 @@ Returned is an XML node to be included in the output tree.
 
 =over 4
 
-=item overload: B<"">
+=item overload: B<"" (stringification)>
 
 This object stringifies to its binary content.
 
@@ -138,17 +124,34 @@ This object stringifies to its binary content.
 
 =head1 SEE ALSO
 
-This module is part of XML-Compile-SOAP distribution version 3.21,
-built on January 11, 2017. Website: F<http://perl.overmeer.net/xml-compile/>
+This module is part of XML-Compile-SOAP distribution version 2.24,
+built on June 20, 2011. Website: F<http://perl.overmeer.net/xml-compile/>
+
+Other distributions in this suite:
+L<XML::Compile>,
+L<XML::Compile::SOAP>,
+L<XML::Compile::SOAP12>,
+L<XML::Compile::SOAP::Daemon>,
+L<XML::Compile::SOAP::WSA>,
+L<XML::Compile::C14N>,
+L<XML::Compile::WSS>,
+L<XML::Compile::Tester>,
+L<XML::Compile::Cache>,
+L<XML::Compile::Dumper>,
+L<XML::Compile::RPC>,
+L<XML::Rewrite>,
+L<XML::eXistDB>,
+and
+L<XML::LibXML::Simple>.
 
 Please post questions or ideas to the mailinglist at
-F<http://lists.scsys.co.uk/cgi-bin/mailman/listinfo/xml-compile> .
+F<http://lists.scsys.co.uk/cgi-bin/mailman/listinfo/xml-compile>
 For live contact with other developers, visit the C<#xml-compile> channel
 on C<irc.perl.org>.
 
 =head1 LICENSE
 
-Copyrights 2007-2017 by [Mark Overmeer]. For other contributors see ChangeLog.
+Copyrights 2007-2011 by Mark Overmeer. For other contributors see ChangeLog.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

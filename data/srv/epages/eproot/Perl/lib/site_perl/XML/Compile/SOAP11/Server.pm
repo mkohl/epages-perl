@@ -1,13 +1,13 @@
-# Copyrights 2007-2017 by [Mark Overmeer].
+# Copyrights 2007-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 use warnings;
 use strict;
 
 package XML::Compile::SOAP11::Server;
 use vars '$VERSION';
-$VERSION = '3.21';
+$VERSION = '2.24';
 
 use base 'XML::Compile::SOAP11', 'XML::Compile::SOAP::Server';
 
@@ -71,17 +71,17 @@ sub faultResponseInvalid($$)
 }
 
 sub faultNotImplemented($)
-{   my ($self, $name) = @_;
+{   my ($class, $name) = @_;
 
     my $message = __x"procedure {name} for {version} is not yet implemented"
       , name => $name, version => 'SOAP11';
 
-     +{ Fault =>
-          { faultcode   => pack_type(SOAP11ENV, 'Server.notImplemented')
-          , faultstring => $message
-          , faultactor  => SOAP11NEXT
-          }
-      };
+ +{ Fault =>
+      { faultcode   => pack_type(SOAP11ENV, 'Server.notImplemented')
+      , faultstring => $message
+      , faultactor  => SOAP11NEXT
+      }
+  };
 }
 
 sub faultNoAnswerProduced($)
@@ -89,7 +89,7 @@ sub faultNoAnswerProduced($)
 
     my $message = __x"callback {name} did not return an answer", name => $name;
     $self->makeError
-      ( faultcode   => pack_type(SOAP11ENV, 'Server.noAnswerProduced')
+      ( faultcode   => pack_type(SOAP11ENV, 'Server.noAnswer')
       , faultstring => $message
       , faultactor  => $self->role
       );
@@ -101,7 +101,7 @@ sub faultMessageNotRecognized($$$)
     my $message;
     if($handlers && @$handlers)
     {   my $sa = $action ? " (soapAction $action)" : '';
-        $message = __x"{version} body element {name}{sa} not recognized, available ports are {def}"
+        $message = __x"{version} body element {name}{sa} not recognized, available are {def}"
          , version => 'SOAP11', name => $name, sa => $sa, def => $handlers;
     }
     else

@@ -1,14 +1,14 @@
-# Copyrights 2006-2016 by [Mark Overmeer].
+# Copyrights 2006-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 
 use warnings;
 use strict;
 
 package XML::Compile::Schema::NameSpaces;
 use vars '$VERSION';
-$VERSION = '1.54';
+$VERSION = '1.22';
 
 
 use Log::Report 'xml-compile', syntax => 'SHORT';
@@ -45,18 +45,9 @@ sub namespace($)
 sub add(@)
 {   my $self = shift;
     foreach my $instance (@_)
-    {   # With the "new" targetNamespace attribute on any attribute, one
-        # schema may have contribute to multiple tns's.  Also, I have
-        # encounted schema's without elements, but <import>
-        my @tnses = $instance->tnses;
-        @tnses or @tnses = '(none)';
+    {   unshift @{$self->{tns}{$_}}, $instance
+            for $instance->tnses;
 
-        # newest definitions overrule earlier.
-        unshift @{$self->{tns}{$_}}, $instance
-            for @tnses;
-
-        # inventory where to find definitions which belong to some
-        # substitutionGroup.
         while(my($base,$ext) = each %{$instance->sgs})
         {   $self->{sgs}{$base}{$_} ||= $instance for @$ext;
         }
@@ -109,14 +100,13 @@ sub find($$;$)
 sub doesExtend($$)
 {   my ($self, $ext, $base) = @_;
     return 1 if $ext eq $base;
-    return 0 if $ext =~ m/^unnamed /;
 
-    my ($node, $super, $subnode);
+    my ($node, $super);
     if(my $st = $self->find(simpleType => $ext))
     {   # pure simple type
         $node = $st->{node};
-        if(($subnode) = $node->getChildrenByLocalName('restriction'))
-        {   $super = $subnode->getAttribute('base');
+        if(my($res) = $node->getChildrenByLocalName('restriction'))
+        {   $super = $res->getAttribute('base');
         }
         # list an union currently ignored
     }
@@ -125,25 +115,25 @@ sub doesExtend($$)
         # getChildrenByLocalName returns list, we know size one
         if(my($sc) = $node->getChildrenByLocalName('simpleContent'))
         {   # tagged
-            if(($subnode) = $sc->getChildrenByLocalName('extension'))
-            {   $super = $subnode->getAttribute('base');
+            if(my($ex) = $sc->getChildrenByLocalName('extension'))
+            {   $super = $ex->getAttribute('base');
             }
-            elsif(($subnode) = $sc->getChildrenByLocalName('restriction'))
-            {   $super = $subnode->getAttribute('base');
+            elsif(my($res) = $sc->getChildrenByLocalName('restriction'))
+            {   $super = $res->getAttribute('base');
             }
         }
         elsif(my($cc) = $node->getChildrenByLocalName('complexContent'))
         {   # real complex
-            if(($subnode) = $cc->getChildrenByLocalName('extension'))
-            {   $super = $subnode->getAttribute('base');
+            if(my($ex) = $cc->getChildrenByLocalName('extension'))
+            {   $super = $ex->getAttribute('base');
             }
-            elsif(($subnode) = $cc->getChildrenByLocalName('restriction'))
-            {   $super = $subnode->getAttribute('base');
+            elsif(my($res) = $cc->getChildrenByLocalName('restriction'))
+            {   $super = $res->getAttribute('base');
             }
         }
     }
     else
-    {   # built-in
+    {   # build-in
         my ($ns, $local) = unpack_type $ext;
         $ns eq SCHEMA2001 && $builtin_types{$local}
             or error __x"cannot find {type} as simpleType or complexType"
@@ -162,35 +152,9 @@ sub doesExtend($$)
         or return 0;
 
     my ($prefix, $local) = $super =~ m/:/ ? split(/:/,$super,2) : ('',$super);
-    my $supertype = pack_type $subnode->lookupNamespaceURI($prefix), $local;
+    my $supertype = pack_type $node->lookupNamespaceURI($prefix), $local;
 
     $base eq $supertype ? 1 : $self->doesExtend($supertype, $base);
-}
-
-
-sub findTypeExtensions($)
-{   my ($self, $type) = @_;
-
-    my %ext;
-    if($self->find(simpleType => $type))
-    {   $self->doesExtend($_, $type) && $ext{$_}++
-            for map $_->simpleTypes, $self->allSchemas;
-    }
-    elsif($self->find(complexType => $type))
-    {   $self->doesExtend($_, $type) && $ext{$_}++
-            for map $_->complexTypes, $self->allSchemas;
-    }
-    else
-    {   error __x"cannot find base-type {type} for extensions", type => $type;
-    }
-    sort keys %ext;
-}
-
-sub autoexpand_xsi_type($)
-{   my ($self, $type) = @_;
-    my @ext = $self->findTypeExtensions($type);
-    trace "discovered xsi:type choices for $type:\n  ". join("\n  ", @ext);
-    \@ext;
 }
 
 
@@ -250,21 +214,6 @@ sub printIndex(@)
     }
 
     $self;
-}
-
-
-sub importIndex(%)
-{   my ($self, %args) = @_;
-    my %import;
-    foreach my $fragment (map $self->schemas($_), $self->list)
-    {   foreach my $import ($fragment->imports)
-        {   $import{$import}{$_}++ for $fragment->importLocations($import);
-        }
-    }
-    foreach my $ns (keys %import)
-    {   $import{$ns} = [ grep length, keys %{$import{$ns}} ];
-    }
-    \%import;
 }
 
 1;
