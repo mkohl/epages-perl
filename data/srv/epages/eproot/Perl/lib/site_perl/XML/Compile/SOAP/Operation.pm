@@ -1,44 +1,32 @@
-# Copyrights 2007-2017 by [Mark Overmeer].
+# Copyrights 2007-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 use warnings;
 use strict;
 
 package XML::Compile::SOAP::Operation;
 use vars '$VERSION';
-$VERSION = '3.21';
+$VERSION = '2.24';
 
 
 use Log::Report 'xml-report-soap', syntax => 'SHORT';
+use List::Util  'first';
 
 use XML::Compile::Util       qw/pack_type unpack_type/;
 use XML::Compile::SOAP::Util qw/:wsdl11/;
-
-use File::Spec     ();
-use List::Util     qw(first);
-use File::Basename qw(dirname);
-
-my %servers =
-  ( 'XML::Compile::Daemon' =>  # my own server implementation
-      { xsddir => 'xcdaemon'
-      , xsds   => [ qw(xcdaemon.xsd) ]
-      }
-    # more in XML::Compile::Licensed
-  );
 
 
 sub new(@) { my $class = shift; (bless {}, $class)->init( {@_} ) }
 
 sub init($)
 {   my ($self, $args) = @_;
-    $self->{kind} = $args->{kind} or panic;
-    $self->{name} = $args->{name} or panic;
-    $self->{schemas} = $args->{schemas} or panic;
-    $self->_server_type($args->{server_type});
+    $self->{kind}     = $args->{kind} or die;
+    $self->{name}     = $args->{name} or die;
+    $self->{schemas}  = $args->{schemas} or die;
 
     $self->{transport} = $args->{transport};
-    $self->{action}    = $args->{action};
+    $self->{action}   = $args->{action};
 
     my $ep = $args->{endpoints} || [];
     my @ep = ref $ep eq 'ARRAY' ? @$ep : $ep;
@@ -53,40 +41,6 @@ sub init($)
     $self;
 }
 
-sub registered
-{   # This cannot be resolved via dependencies, because that causes
-    # a dependency cycle which CPAN.pm cannot handle.  This method was
-    # always called in <3.00 and moved to ::SOAP in >= 3.00
-    error "You need to upgrade XML::Compile::WSDL11 to at least 3.00";
-}
-
-sub _server_type($)
-{   my ($self, $type) = @_;
-    $type or return;
-
-    my $schemas = $self->schemas;
-    return if $schemas->{"did_init_server_$type"}++;
-
-    my ($def, $xsddir);
-    if($def = $servers{$type})
-    {   $xsddir = File::Spec->catdir(dirname(__FILE__), 'xsd', $def->{xsddir});
-    }
-    else
-    {   eval "require XML::Compile::Licensed";
-        if($@)
-        {   error __x"soap server type `{type}' is not supported (yet); installing XML::Compile::Licensed may help"
-             , type => $type;
-        }
-        ($xsddir, $def) = XML::Compile::Licensed->soapServer($type)
-            or error __x"soap server type `{type}' is not supported (yet)"
-             , type => $type;
-    }
-
-    $schemas->importDefinitions(File::Spec->catfile($xsddir, $_))
-        for @{$def->{xsds}};
-}
-
-#----------------
 
 sub schemas()   {shift->{schemas}}
 sub kind()      {shift->{kind}}
@@ -113,20 +67,14 @@ sub clientClass {panic}
 
 sub endPoints() { @{shift->{endpoints}} }
 
-
-sub longName()
-{   my $self = shift;
-    ($self->serviceName // '') . '#' . $self->name;
-}
-
 #-------------------------------------------
 
 
 sub compileTransporter(@)
 {   my ($self, %args) = @_;
 
-    my $transp    = delete $args{transporter} || delete $args{transport};
-    return $transp if ref $transp eq 'CODE';
+    my $send      = delete $args{transporter} || delete $args{transport};
+    return $send if $send;
 
     my $proto     = $self->transport;
     my @endpoints;
@@ -141,17 +89,15 @@ sub compileTransporter(@)
     }
 
     my $id        = join ';', sort @endpoints;
-    my $send      = $self->{transp_cache}{$proto}{$id};
+    $send         = $self->{transp_cache}{$proto}{$id};
     return $send if $send;
 
-    unless($transp)
-    {   my $type = XML::Compile::Transport->plugin($proto)
-         or error __x"transporter type {proto} not supported (add 'use {pkg}'?)"
-             , proto => $proto, pkg => 'XML::Compile::Transport::SOAPHTTP';
-        $transp  = $type->new(address => \@endpoints, %args);
-    }
+    my $transp    = XML::Compile::Transport->plugin($proto)
+        or error __x"transporter type {proto} not supported (not loaded?)"
+             , proto => $proto;
 
-    my $transport = $self->{transp_cache}{$proto}{$id} = $transp;
+    my $transport = $self->{transp_cache}{$proto}{$id}
+                  = $transp->new(address => \@endpoints, %args);
 
     $transport->compileClient
       ( name     => $self->name
@@ -166,16 +112,21 @@ sub compileTransporter(@)
 sub compileClient(@)  { panic "not implemented" }
 sub compileHandler(@) { panic "not implemented" }
 
-#---------------
 
-sub explain($$$@)
-{   my ($self, $wsdl, $format, $dir, %args) = @_;
-    panic "not implemented for ".ref $self;
+{   my (%registered, %envelope);
+    sub register($)
+    { my ($class, $uri, $env) = @_;
+      $registered{$uri} = $class;
+      $envelope{$env}   = $class if $env;
+    }
+    sub plugin($)       { $registered{$_[1]} }
+    sub fromEnvelope($) { $envelope{$_[1]} }
+    sub registered($)   { values %registered }
 }
 
 
-sub parsedWSDL(%)
-{   my $self = shift;
+sub explain($$$@)
+{   my ($self, $wsdl, $format, $dir, %args) = @_;
     panic "not implemented for ".ref $self;
 }
 

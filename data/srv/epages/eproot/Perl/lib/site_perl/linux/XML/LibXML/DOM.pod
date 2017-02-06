@@ -13,7 +13,7 @@ One also has to remember, that XML::LibXML is an interface to libxml2 nodes
 which actually reside on the C-Level of XML::LibXML. This means each node is a
 reference to a structure different than a perl hash or array. The only way to
 access these structure's values is through the DOM interface provided by
-XML::LibXML. This also means, that one I<<<<<< can't >>>>>> simply inherit an XML::LibXML node and add new member variables as they were
+XML::LibXML. This also means, that one I<<<<<< can't >>>>>> simply inherit a XML::LibXML node and add new member variables as they were
 hash keys.
 
 The DOM interface of XML::LibXML does not intend to implement a full DOM
@@ -48,7 +48,7 @@ See the section on Encodings in the I<<<<<< XML::LibXML >>>>>> manual page.
 
 XML::LibXML's DOM implementation is limited by the DOM implementation of
 libxml2 which treats namespaces slightly differently than required by the DOM
-Level 2 specification.
+Level 2 specification. 
 
 According to the DOM Level 2 specification, namespaces of elements and
 attributes should be persistent, and nodes should be permanently bound to
@@ -56,10 +56,10 @@ namespace URIs as they get created; it should be possible to manipulate the
 special attributes used for declaring XML namespaces just as other attributes
 without affecting the namespaces of other nodes. In DOM Level 2, the
 application is responsible for creating the special attributes consistently
-and/or for correct serialization of the document.
+and/or for correct serialization of the document. 
 
 This is both inconvenient, causes problems in serialization of DOM to XML, and
-most importantly, seems almost impossible to implement over libxml2.
+most importantly, seems almost impossible to implement over libxml2. 
 
 In libxml2, namespace URI and prefix of a node is provided by a pointer to a
 namespace declaration (appearing as a special xmlns attribute in the XML
@@ -67,19 +67,19 @@ document). If the prefix or namespace URI of the declaration changes, the
 prefix and namespace URI of all nodes that point to it changes as well.
 Moreover, in contrast to DOM, a node (element or attribute) can only be bound
 to a namespace URI if there is some namespace declaration in the document to
-point to.
+point to. 
 
 Therefore current DOM implementation in XML::LibXML tries to treat namespace
 declarations in a compromise between reason, common sense, limitations of
-libxml2, and the DOM Level 2 specification.
+libxml2, and the DOM Level 2 specification. 
 
 In XML::LibXML, special attributes declaring XML namespaces are often created
 automatically, usually when a namespaced node is attached to a document and no
 existing declaration of the namespace and prefix is in the scope to be reused.
 In this respect, XML::LibXML DOM implementation differs from the DOM Level 2
 specification according to which special attributes for declaring the
-appropriate XML namespaces should not be added when a node with a namespace
-prefix and namespace URI is created.
+apropriate XML namespaces should not be added when a node with a namespace
+prefix and namespace URI is created. 
 
 Namespace declarations are also created when L<<<<<< XML::LibXML::Document >>>>>>'s createElementNS() or createAttributeNS() function are used. If the a
 namespace is not declared on the documentElement, the namespace will be locally
@@ -107,14 +107,14 @@ This piece of code will result in the following document:
   <foo xmlns:bar="bar" bar:foo="test"/>
 
 The namespace is declared on the document element during the
-setAttributeNodeNS() call.
+setAttributeNodeNS() call. 
 
-Namespaces can be also declared explicitly by the use of XML::LibXML::Element's
+Namespaces can be also declared explicitly by the use of XML::LibXML:Element's
 setNamespace() function. Since 1.61, they can also be manipulated with
 functions setNamespaceDeclPrefix() and setNamespaceDeclURI() (not available in
 DOM). Changing an URI or prefix of an existing namespace declaration affects
 the namespace URI and prefix of all nodes which point to it (that is the nodes
-in its scope).
+in its scope). 
 
 It is also important to repeat the specification: While working with namespaces
 you should use the namespace aware functions instead of the simplified
@@ -122,14 +122,14 @@ versions. For example you should I<<<<<< never >>>>>> use setAttribute() but set
 
 =head1 AUTHORS
 
-Matt Sergeant,
-Christian Glahn,
+Matt Sergeant, 
+Christian Glahn, 
 Petr Pajas
 
 
 =head1 VERSION
 
-2.0128
+1.70
 
 =head1 COPYRIGHT
 
@@ -140,10 +140,3 @@ Petr Pajas
 2006-2009, Petr Pajas.
 
 =cut
-
-
-=head1 LICENSE
-
-This program is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself.
-

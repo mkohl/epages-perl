@@ -1,13 +1,13 @@
-# Copyrights 2014-2017 by [Mark Overmeer].
+# Copyrights 2007-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 use warnings;
 use strict;
 
 package XML::Compile::WSDL11;
 use vars '$VERSION';
-$VERSION = '3.06';
+$VERSION = '2.24';
 
 use base 'XML::Compile::Cache';
 
@@ -15,17 +15,16 @@ use Log::Report 'xml-compile-soap', syntax => 'SHORT';
 
 use XML::Compile             ();
 use XML::Compile::Util       qw/pack_type unpack_type/;
-use XML::Compile::SOAP       ();
 use XML::Compile::SOAP::Util qw/:wsdl11/;
 use XML::Compile::SOAP::Extension;
 
 use XML::Compile::SOAP::Operation  ();
 use XML::Compile::Transport  ();
 
-use File::Spec     ();
-use List::Util     qw/first/;
-use Scalar::Util   qw/blessed/;
-use File::Basename qw/dirname/;
+use List::Util               qw/first/;
+
+XML::Compile->addSchemaDirs(__FILE__);
+XML::Compile->knownNamespace(&WSDL11 => 'wsdl.xsd');
 
 
 sub init($)
@@ -41,11 +40,11 @@ sub init($)
 
     $self->{index}   = {};
 
-    $self->addPrefixes(wsdl => WSDL11, soap => WSDL11SOAP, http => WSDL11HTTP);
+    $self->prefixes(wsdl => WSDL11, soap => WSDL11SOAP, http => WSDL11HTTP);
 
     # next modules should change into an extension as well...
     $_->can('_initWSDL11') && $_->_initWSDL11($self)
-        for XML::Compile::SOAP->registered;
+        for XML::Compile::SOAP::Operation->registered;
 
     XML::Compile::SOAP::Extension->wsdl11Init($self, $args);
 
@@ -56,14 +55,10 @@ sub init($)
       );
 
     $self->{XCW_dcopts} = {};
-    $self->{XCW_server} = $args->{server_type};
 
-    my @xsds = map File::Spec->catdir(dirname(__FILE__), 'WSDL11', 'xsd', $_)
-      , qw(wsdl.xsd wsdl-mime.xsd wsdl-http.xsd);
+    $self->importDefinitions(WSDL11);
 
-    $self->importDefinitions(\@xsds, element_form_default => 'qualified');
-
-    $self->addWSDL($_) for ref $wsdl eq 'ARRAY' ? @$wsdl : $wsdl;
+    $self->addWSDL(ref $wsdl eq 'ARRAY' ? @$wsdl : $wsdl);
     $self;
 }
 
@@ -85,7 +80,6 @@ sub compileAll(;$$)
 
 sub compileCalls(@)
 {   my ($self, %args) = @_;
-    my $long = $args{long_names};
 
     my @ops = $self->operations
       ( service => delete $args{service}
@@ -93,30 +87,20 @@ sub compileCalls(@)
       , binding => delete $args{binding}
       );
 
+    $self->{XCW_ccode} ||= {};
     foreach my $op (@ops)
-    {   my $alias = $long ? $op->longName : undef;
-        $self->compileCall($op, alias => $alias, %args);
+    {   my $name  = $op->name;
+        my @opts  = %args;
+        my $dopts = $self->{XCW_dcopts} || {};
+        push @opts, ref $dopts eq 'ARRAY' ? @$dopts : %$dopts;
+
+        $self->{XCW_ccode}{$name} ||= $op->compileClient(@opts);
     }
 
-    $self;
+    $self->{XCW_ccode};
 }
 
-
-sub compileCall($@)
-{   my ($self, $oper, %opts) = @_;
-    my $alias = delete $opts{alias};
-    my $op    = blessed $oper ? $oper : $self->operation($oper, %opts);
-
-    my $name  = $alias || $op->name;
-    error __x"a compiled call for {name} already exists", name => $name
-        if $self->{XCW_ccode}{$name};
-
-    my $dopts = $self->{XCW_dcopts} || {};
-    my @opts  = %opts;
-    push @opts, ref $dopts eq 'ARRAY' ? @$dopts : %$dopts;
-    trace "compiling call `$name'";
-    $self->{XCW_ccode}{$name} = $op->compileClient(@opts);
-}
+#--------------------------
 
 
 sub call($@)
@@ -126,7 +110,7 @@ sub call($@)
         or error __x"you can only use call() after compileCalls()";
 
     my $call  = $codes->{$name}
-        or error __x"operation `{name}' is not known", name => $name;
+        or error __x"operation {name} is not known", name => $name;
 
     $call->(@_);
 }
@@ -134,15 +118,37 @@ sub call($@)
 #--------------------------
 
 
-sub addWSDL($%)
-{   my ($self, $data, %args) = @_;
+sub _learn_prefixes($)
+{   my ($self, $node) = @_;
+
+    my $namespaces = $self->prefixes;
+  PREFIX:
+    foreach my $ns ($node->getNamespaces)  # learn preferred ns
+    {   my ($prefix, $uri) = ($ns->getLocalName, $ns->getData);
+        next if !defined $prefix || $namespaces->{$uri};
+
+        if(my $def = $self->prefix($prefix))
+        {   next PREFIX if $def->{uri} eq $uri;
+        }
+        else
+        {   $self->prefixes($prefix => $uri);
+            next PREFIX;
+        }
+
+        $prefix =~ s/0?$/0/;
+        while(my $def = $self->prefix($prefix))
+        {   next PREFIX if $def->{uri} eq $uri;
+            $prefix++;
+        }
+        $self->prefixes($prefix => $uri);
+    }
+}
+
+sub addWSDL($)
+{   my ($self, $data) = @_;
     defined $data or return ();
 
-    if(ref $data eq 'ARRAY')
-    {   $self->addWSDL($_) for @$data;
-        return $self;
-    }
-
+    defined $data or return;
     my ($node, %details) = $self->dataToXML($data);
     defined $node or return $self;
 
@@ -150,7 +156,7 @@ sub addWSDL($%)
         or error __x"root element for WSDL is not 'wsdl:definitions'";
 
     $self->importDefinitions($node, details => \%details);
-    $self->learnPrefixes($node);
+    $self->_learn_prefixes($node);
 
     my $spec = $self->reader('wsdl:definitions')->($node);
     my $tns  = $spec->{targetNamespace}
@@ -170,19 +176,8 @@ sub addWSDL($%)
         $index->{$which}{pack_type $tns, $def->{name}} = $def;
 
         if($which eq 'service')
-        {   foreach my $port ( @{$def->{wsdl_port} || []} )
-            {   my $addr_label = first { /address$/ } keys %$port
-                    or error __x"no address in port {port}"
-                        , port => $port->{name};
-                my $first_addr = $port->{$addr_label};
-                $first_addr    = $first_addr->[0] if ref $first_addr eq 'ARRAY';
-
-                # Is XML::Compile::SOAP<version> loaded?
-                ref $first_addr eq 'HASH'
-                    or error __x"wsdl namespace {ns} not loaded"
-                       , ns => $first_addr->namespaceURI;
-
-                $index->{port}{pack_type $tns, $port->{name}} = $port;
+        {   foreach my $port ( @{$def->{port} || []} )
+            {   $index->{port}{pack_type $tns, $port->{name}} = $port;
             }
         }
     }
@@ -190,29 +185,24 @@ sub addWSDL($%)
     # no service block when only one port
     unless($index->{service})
     {   # only from this WSDL, cannot use collective $index
-        my @portTypes = map $_->{wsdl_portType}||(), @$toplevels;
+        my @portTypes = map { $_->{wsdl_portType} || () } @$toplevels;
         @portTypes==1
             or error __x"no service definition so needs 1 portType, found {nr}"
-              , nr => scalar @portTypes;
+                 , nr => scalar @portTypes;
 
-        my @bindings = map $_->{wsdl_binding}||(), @$toplevels;
+        my @bindings = map { $_->{wsdl_binding} || () } @$toplevels;
         @bindings==1
             or error __x"no service definition so needs 1 binding, found {nr}"
-              , nr => scalar @bindings;
+                 , nr => scalar @bindings;
 
         my $binding  = pack_type $tns, $bindings[0]->{name};
         my $portname = $portTypes[0]->{name};
         my $servname = $portname;
         $servname =~ s/Service$|(?:Service)?Port(?:Type)?$/Service/i
-            or $servname .= 'Service';
-
-        my $addr
-          = $bindings[0]->{soap_binding}   ? 'soap_address'
-          : $bindings[0]->{soap12_binding} ? 'soap12_address'
-          : error __x"unrecognized binding type for wsdl without service block";
+             or $servname .= 'Service';
 
         my %port = (name => $portname, binding => $binding
-           , $addr => {location => 'http://localhost'} );
+           , soap_address => {location => 'http://localhost'} );
 
         $index->{service}{pack_type $tns, $servname}
             = { name => $servname, wsdl_port => [ \%port ] };
@@ -240,16 +230,11 @@ sub operation(@)
     ## Service structure
     #
 
-    my $service = $self->findDef(service => delete $args{service});
+    my $service   = $self->findDef(service => delete $args{service});
 
     my $port;
-    my @ports   = @{$service->{wsdl_port} || []};
-    if(my $not  = first {blessed $_} @ports)
-    {   error __x"not all name-spaces loaded, {ns} not parsed in port"
-          , ns => $not->namespaceURI;
-    }
-
-    my @portnames = map $_->{name}, @ports;
+    my @ports     = @{$service->{wsdl_port} || []};
+    my @portnames = map {$_->{name}} @ports;
     if(my $portname = delete $args{port})
     {   $port = first {$_->{name} eq $portname} @ports;
         error __x"cannot find port `{portname}', pick from {ports}"
@@ -264,8 +249,8 @@ sub operation(@)
             , portnames => join("\n    ", '', @portnames);
     }
 
-    # get plugin for operation
-    my $address   = first { /address$/ && $port->{$_}{location}} keys %$port
+    # get plugin for operation # {
+    my $address   = first { $_ =~ m/address$/ } keys %$port
         or error __x"no address provided in service {service} port {port}"
              , service => $service->{name}, port => $port->{name};
 
@@ -282,13 +267,14 @@ sub operation(@)
 #warn Dumper $port, $self->prefixes;
     my ($prefix)  = $address =~ m/(\w+)_address$/;
     $prefix
-        or error __x"port address not prefixed; probably need to add a plugin XML::Compile::SOAP12";
+        or error __x"port address not prefixed; probably need to add a plugin";
 
     my $opns      = $self->findName("$prefix:");
-    my $protocol  = XML::Compile::SOAP->plugin($opns);
-    unless($protocol)
+    my $opclass   = XML::Compile::SOAP::Operation->plugin($opns);
+    unless($opclass)
     {   my $pkg = $opns eq WSDL11SOAP   ? 'SOAP11'
                 : $opns eq WSDL11SOAP12 ? 'SOAP12'
+                : $opns eq WSDL11HTTP   ? 'SOAP10'
                 :                         undef;
 
         if($pkg)
@@ -300,7 +286,6 @@ sub operation(@)
         }
     }
 
-    my $opclass = $protocol.'::Operation';
     $opclass->can('_fromWSDL11')
         or error __x"WSDL11 not supported by {class}", class => $opclass;
 
@@ -323,7 +308,7 @@ sub operation(@)
         or error __x"no operations defined for portType `{name}'"
                , name => $type;
 
-    my @port_ops  = map $_->{name}, @$types;
+    my @port_ops  = map {$_->{name}} @$types;
 
     $name       ||= delete $args{operation};
     my $port_op;
@@ -352,7 +337,7 @@ sub operation(@)
     # our life by saying that only 2 out-of 4 predefined types can actually
     # be used at present.
 
-    my @order = map +(unpack_type $_)[1], @{$port_op->{_ELEMENT_ORDER}};
+    my @order = map { (unpack_type $_)[1] } @{$port_op->{_ELEMENT_ORDER}};
 
     my ($first_in, $first_out);
     for(my $i = 0; $i<@order; $i++)
@@ -383,8 +368,6 @@ sub operation(@)
 
      , wsdl      => $self
      , action    => $args{action}
-
-     , server_type => $args{server_type} || $self->{XCW_server}
      );
 
     $operation;
@@ -395,9 +378,7 @@ sub compileClient(@)
 {   my $self = shift;
     unshift @_, 'operation' if @_ % 2;
     my $op   = $self->operation(@_) or return ();
-
-    my $dopts = $self->{XCW_dcopts} || {};
-    $op->compileClient(@_, (ref $dopts eq 'ARRAY' ? @$dopts : %$dopts));
+    $op->compileClient(@_);
 }
 
 #---------------------
@@ -461,6 +442,7 @@ sub findDef($;$)
 
     return (values %$group)[0]
         if keys %$group==1;
+
     my @alts = map $self->prefixed($_), sort keys %$group;
     error __x"explicit selection required: pick one {class} from {alts}"
       , class => $class, alts => join("\n    ", '', @alts);
@@ -469,18 +451,17 @@ sub findDef($;$)
 
 sub operations(@)
 {   my ($self, %args) = @_;
+    my @ops;
     $args{produce} and die "produce option removed in 0.81";
 
-    my @ops;
-    my @services = $self->findDef('service');
-    foreach my $service (@services)
-    {   my $sname = $service->{name};
-        next if $args{service} && $args{service} ne $sname;
+    foreach my $service ($self->findDef('service'))
+    {
+        next if $args{service} && $args{service} ne $service->{name};
 
-        my @ports = @{$service->{wsdl_port} || []};
-        foreach my $port (@ports)
+        foreach my $port (@{$service->{wsdl_port} || []})
         {
             next if $args{port} && $args{port} ne $port->{name};
+
             my $bindtype = $port->{binding}
                 or error __x"no binding defined in port '{name}'"
                       , name => $port->{name};
@@ -492,30 +473,14 @@ sub operations(@)
                 or error __x"no type defined with binding `{name}'"
                     , name => $bindtype;
 
-            my %all_ops;
             foreach my $operation ( @{$binding->{wsdl_operation}||[]} )
-            {   my $opname = $operation->{name};
-
-                if(my $has = $all_ops{$opname})
-                {   error __x"operation {name} found again; choose service {has} or {also}"
-                      , name => $opname, has => $has->serviceName
-                      , also => $sname
-                        if @services > 1 && !$args{service};
-
-                    error __x"need one set of operations, pick port from {ports}"
-                       , ports => [ map $_->{name}, @ports ], _join => ', ';
-                }
-
-                my $op = $all_ops{$opname} = $self->operation
-                  ( service     => $sname
-                  , port        => $port->{name}
-                  , binding     => $bindtype
-                  , operation   => $opname
-                  , portType    => $type
-                  , server_type => $args{server_type}
+            {   push @ops, $self->operation
+                  ( service   => $service->{name}
+                  , port      => $port->{name}
+                  , binding   => $bindtype
+                  , operation => $operation->{name}
+                  , portType  => $type
                   );
-
-                push @ops, $op;
             }
         }
     }
@@ -530,7 +495,7 @@ sub endPoint(@)
 
     my $port;
     my @ports     = @{$service->{wsdl_port} || []};
-    my @portnames = map $_->{name}, @ports;
+    my @portnames = map {$_->{name}} @ports;
     if(my $portname = delete $args{port})
     {   $port = first {$_->{name} eq $portname} @ports;
         error __x"cannot find port `{portname}', pick from {ports}"
@@ -559,11 +524,10 @@ sub printIndex(@)
     my @args = @_;
 
     my %tree;
-    foreach my $op ($self->operations(@args))
-    {   my $port = $op->version.' port '.$op->portName;
-        my $bind = '(binding '.$op->bindingName.')';
-        $tree{'service '.$op->serviceName}{"$port $bind"}{$op->name} = $_;
-    }
+    $tree{'service '.$_->serviceName}
+         {$_->version.' port '.$_->portName . ' (binding '.$_->bindingName.')'}
+         {$_->name} = $_
+         for $self->operations(@args);
 
     foreach my $service (sort keys %tree)
     {   $fh->print("$service\n");

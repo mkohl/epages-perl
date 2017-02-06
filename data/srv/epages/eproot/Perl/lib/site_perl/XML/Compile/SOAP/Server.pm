@@ -1,13 +1,13 @@
-# Copyrights 2007-2017 by [Mark Overmeer].
+# Copyrights 2007-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 use warnings;
 use strict;
 
 package XML::Compile::SOAP::Server;
 use vars '$VERSION';
-$VERSION = '3.21';
+$VERSION = '2.24';
 
 
 use Log::Report 'xml-compile-soap', syntax => 'SHORT';
@@ -46,10 +46,7 @@ sub compileHandler(@)
     my $callback = $args{callback};
 
     sub
-    {   my ($name, $xmlin, $info, $session) = @_;
-        # info is used to help determine if the xmlin is of the type for
-        # this call. $session is passed in by the server and is in turn
-        # passed to the handlers
+    {   my ($name, $xmlin, $info) = @_;
         $selector->($xmlin, $info) or return;
         trace __x"procedure {name} selected", name => $name;
 
@@ -66,20 +63,21 @@ sub compileHandler(@)
         {   $data = $xmlin;
         }
 
-        my $answer = $callback->($self, $data, $session);
+        my $answer = $callback->($self, $data);
         unless(defined $answer)
-        {   notice __x"procedure {name} did not produce an answer", name=> $name;
+        {   alert "procedure {name} did not produce an answer", name=> $name;
             return ( RC_INTERNAL_SERVER_ERROR, 'no answer produced'
-                   , $self->faultNoAnswerProduced($name));
+                      , $self->faultNoAnswerProduced($name));
         }
 
         if(ref $answer ne 'HASH')
-        {   notice __x"procedure {name} did not return a HASH", name => $name;
+        {   alert "procedure {name} did not return a HASH", name => $name;
             return ( RC_INTERNAL_SERVER_ERROR, 'invalid answer produced'
-                   , $self->faultNoAnswerProduced($name));
+                      , $self->faultNoAnswerProduced($name));
         }
 
-        my $rc     = (delete $answer->{_RETURN_CODE}) || RC_OK;
+        my $rc = (delete $answer->{_RETURN_CODE})
+              || ($answer->{Fault} ? RC_BAD_REQUEST : RC_OK);
         my $rc_txt = delete $answer->{_RETURN_TEXT} || 'Answer included';
 
         my $xmlout = try { $encode->($answer) };
@@ -98,9 +96,10 @@ sub compileHandler(@)
 sub compileFilter(@)
 {   my ($self, %args) = @_;
     my $nodetype;
-    if(my $first  = $args{body}{parts}[0])
+    if(my $first    = $args{body}{parts}[0])
     {   $nodetype = $first->{element}
-          || $args{body}{procedure};  # rpc-literal "type"
+#           or panic "cannot handle type parameter in server filter";
+            || $args{body}{procedure};  # rpc-literal "type"
     }
 
     # called with (XML, INFO)

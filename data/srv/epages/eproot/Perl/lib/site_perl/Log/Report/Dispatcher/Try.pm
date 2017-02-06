@@ -1,35 +1,30 @@
-# Copyrights 2007-2016 by [Mark Overmeer].
+# Copyrights 2007-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 use warnings;
 use strict;
 
 package Log::Report::Dispatcher::Try;
 use vars '$VERSION';
-$VERSION = '1.18';
+$VERSION = '0.94';
 
 use base 'Log::Report::Dispatcher';
 
 use Log::Report 'log-report', syntax => 'SHORT';
-use Log::Report::Exception ();
-use Log::Report::Util      qw/%reason_code/;
+use Log::Report::Exception;
 
 
 use overload
-    bool     => 'failed'
-  , '""'     => 'showStatus'
-  , fallback => 1;
+    bool => 'failed'
+  , '""' => 'showStatus';
 
-#-----------------
 
 sub init($)
 {   my ($self, $args) = @_;
     defined $self->SUPER::init($args) or return;
     $self->{exceptions} = delete $args->{exceptions} || [];
-    $self->{died}       = delete $args->{died};
-    $self->hide($args->{hide} // 'NONE');
-    $self->{on_die}     = $args->{on_die} // 'ERROR';
+    $self->{died} = delete $args->{died};
     $self;
 }
 
@@ -40,7 +35,6 @@ sub close()
     $self;
 }
 
-#-----------------
 
 sub died(;$)
 {   my $self = shift;
@@ -51,60 +45,34 @@ sub died(;$)
 sub exceptions() { @{shift->{exceptions}} }
 
 
-sub hides($)
-{   my $h = shift->{hides} or return 0;
-    keys %$h ? $h->{(shift)} : 1;
-}
+sub log($$$)
+{   my ($self, $opts, $reason, $message) = @_;
 
-
-sub hide(@)
-{   my $self = shift;
-    my @h = map { ref $_ eq 'ARRAY' ? @$_ : defined($_) ? $_ : () } @_;
-
-    $self->{hides}
-      = @h==0 ? undef
-      : @h==1 && $h[0] eq 'ALL'  ? {}    # empty HASH = ALL
-      : @h==1 && $h[0] eq 'NONE' ? undef
-      :    +{ map +($_ => 1), @h };
-}
-
-
-sub die2reason() { shift->{on_die} }
-
-#-----------------
-
-sub log($$$$)
-{   my ($self, $opts, $reason, $message, $domain) = @_;
-
-    unless($opts->{stack})
-    {   my $mode = $self->mode;
-        $opts->{stack} = $self->collectStack
-            if $reason eq 'PANIC'
-            || ($mode==2 && $reason_code{$reason} >= $reason_code{ALERT})
-            || ($mode==3 && $reason_code{$reason} >= $reason_code{ERROR});
-    }
-
+    # If "try" does not want a stack, because of its mode,
+    # then don't produce one later!  (too late)
+    $opts->{stack}    ||= [];
     $opts->{location} ||= '';
 
-    my $e = Log::Report::Exception->new
-      ( reason      => $reason
-      , report_opts => $opts
-      , message     => $message
-      );
+    push @{$self->{exceptions}}
+      , Log::Report::Exception->new
+          ( reason      => $reason
+          , report_opts => $opts
+          , message     => $message
+          );
 
-    push @{$self->{exceptions}}, $e;
-
-    $self->{died} ||=
-        exists $opts->{is_fatal} ? $opts->{is_fatal} : $e->isFatal;
-
+    # later changed into nice message
+    $self->{died} ||= $opts->{is_fatal};
     $self;
 }
 
 
-sub reportFatal(@) { $_->throw(@_) for shift->wasFatal   }
-sub reportAll(@)   { $_->throw(@_) for shift->exceptions }
+sub reportAll(@) { $_->throw(@_) for shift->exceptions }
+
+
+sub reportFatal(@) { $_->throw(@_) for shift->wasFatal }
 
 #-----------------
+
 
 sub failed()  {   shift->{died}}
 sub success() { ! shift->{died}}

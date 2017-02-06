@@ -1,5 +1,3 @@
-=encoding utf8
-
 =head1 NAME
 
 Log::Report::Translator - base implementation for translating messages
@@ -17,14 +15,13 @@ Log::Report::Translator - base implementation for translating messages
  print Log::Report::Translator->new(...)->translate($msg);
 
  # normal use
- textdomain 'my-domain'
-   , translator => Log::Report::Translator->new;  # default
+ use Log::Report 'my-domain';
  print __"Hello World\n";
 
 =head1 DESCRIPTION
 
 A module (or distribution) has a certain way of translating messages,
-usually C<gettext>.  The translator is based on some C<textdomain>
+usually C<gettext>.  The translator is based on the C<textdomain>
 for the message, which can be specified as option per text element,
 but usually is package scoped.
 
@@ -38,11 +35,11 @@ language packs are not installed.
 
 =over 4
 
-=item Log::Report::Translator-E<gt>B<new>(%options)
+=item Log::Report::Translator-E<gt>B<new>(OPTIONS)
 
- -Option  --Default
-  charset   <from locale>
-  lexicons  <see text>
+ -Option --Default
+  charset  <from locale>
+  lexicon  <see text>
 
 =over 2
 
@@ -51,7 +48,7 @@ language packs are not installed.
 When the locale contains a codeset in its name, then that will be
 used.  Otherwise, the default is C<utf-8>.
 
-=item lexicons => DIRECTORY|ARRAY-of-DIRECTORYs
+=item lexicon => DIRECTORY|ARRAY-of-DIRECTORYs
 
 The DIRECTORY where the translations can be found.  See
 L<Log::Report::Lexicon::Index|Log::Report::Lexicon::Index> for the expected structure of such
@@ -79,11 +76,11 @@ example: default lexicon directory
 
 =over 4
 
-=item $obj-E<gt>B<charset>()
+=item $obj-E<gt>B<charset>
 
 Returns the default charset, which can be overrule by the locale.
 
-=item $obj-E<gt>B<lexicons>()
+=item $obj-E<gt>B<lexicons>
 
 Returns a list of L<Log::Report::Lexicon::Index|Log::Report::Lexicon::Index> objects, where the
 translation files may be located.
@@ -94,15 +91,15 @@ translation files may be located.
 
 =over 4
 
-=item $obj-E<gt>B<load>($domain, $locale)
+=item $obj-E<gt>B<load>(DOMAIN, LOCALE)
 
-Load the translation information in the text $domain for the indicated $locale.
+Load the translation information in the text DOMAIN for the indicated LOCALE.
 Multiple calls to L<load()|Log::Report::Translator/"Translating"> should not cost significant performance: the
 data must be cached.
 
-=item $obj-E<gt>B<translate>( $message, [$language, $ctxt] )
+=item $obj-E<gt>B<translate>(MESSAGE)
 
-Returns the translation of the $message, a C<Log::Report::Message> object,
+Returns the translation of the MESSAGE, a C<Log::Report::Message> object,
 based on the current locale.
 
 Translators are permitted to peek into the internal HASH of the
@@ -112,12 +109,12 @@ message object, for performance reasons.
 
 =head1 SEE ALSO
 
-This module is part of Log-Report distribution version 1.18,
-built on October 21, 2016. Website: F<http://perl.overmeer.net/log-report/>
+This module is part of Log-Report distribution version 0.94,
+built on August 23, 2011. Website: F<http://perl.overmeer.net/log-report/>
 
 =head1 LICENSE
 
-Copyrights 2007-2016 by [Mark Overmeer]. For other contributors see ChangeLog.
+Copyrights 2007-2011 by Mark Overmeer. For other contributors see ChangeLog.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

@@ -1,20 +1,20 @@
-# Copyrights 2007-2017 by [Mark Overmeer].
+# Copyrights 2007-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 use warnings;
 use strict;
 
 package XML::Compile::SOAP::Util;
 use vars '$VERSION';
-$VERSION = '3.21';
+$VERSION = '2.24';
 
 use base 'Exporter';
 
 my @soap10 = qw/SOAP11HTTP WSDL11HTTP WSDL11MIME SOAP11ENV/;
 my @soap11 = qw/SOAP11ENV SOAP11ENC SOAP11NEXT SOAP11HTTP WSDL11SOAP/;
 my @wsdl11 = qw/WSDL11 WSDL11SOAP WSDL11HTTP WSDL11MIME WSDL11SOAP12/;
-my @daemon = qw/MSEXT XC_DAEMON_NS/;
+my @daemon = qw/MSEXT/;
 my @xop10  = qw/XOP10 XMIME10 XMIME11/;
 
 our @EXPORT_OK = (@soap10, @soap11, @wsdl11, @daemon, @xop10);
@@ -45,11 +45,7 @@ use constant
   };
 
 
-use constant
-  { MSEXT           => SOAP11ENV
-  , XC_DAEMON_NS    => 'http://perl.org/xml-schemas/xml-compile-daemon/1.0'
-  };
-
+use constant MSEXT          => SOAP11ENV;
 
 
 use constant

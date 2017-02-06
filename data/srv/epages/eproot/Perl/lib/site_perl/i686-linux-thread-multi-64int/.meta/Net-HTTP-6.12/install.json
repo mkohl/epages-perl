@@ -1,1 +1,0 @@
-{"provides":{"Net::HTTP":{"version":"6.12","file":"Net/HTTP.pm"},"Net::HTTPS":{"version":"6.12","file":"Net/HTTPS.pm"},"Net::HTTP::NB":{"version":"6.12","file":"Net/HTTP/NB.pm"},"Net::HTTP::Methods":{"version":"6.12","file":"Net/HTTP/Methods.pm"}},"target":"Net::HTTP","version":"6.12","name":"Net::HTTP","dist":"Net-HTTP-6.12","pathname":"O/OA/OALDERS/Net-HTTP-6.12.tar.gz"}

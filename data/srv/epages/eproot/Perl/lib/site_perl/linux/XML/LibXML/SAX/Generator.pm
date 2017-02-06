@@ -10,12 +10,11 @@
 package XML::LibXML::SAX::Generator;
 
 use strict;
-use warnings;
 
 use XML::LibXML;
 use vars qw ($VERSION);
 
-$VERSION = "2.0128"; # VERSION TEMPLATE: DO NOT CHANGE
+$VERSION = "1.70"; # VERSION TEMPLATE: DO NOT CHANGE
 
 sub CLONE_SKIP {
   return $XML::LibXML::__threads_shared ? 0 : 1;
@@ -143,7 +142,7 @@ XML::LibXML::SAX::Generator - Generate SAX events from a LibXML tree
 
 =head1 DESCRIPTION
 
-THIS CLASS IS DEPRECATED! Use XML::LibXML::SAX::Parser instead!
+THIS CLASS IS DEPRACED! Use XML::LibXML::SAX::Parser instead!
 
 This helper class allows you to generate SAX events from any XML::LibXML
 node, and all it's sub-nodes. This basically gives you interop from

@@ -1,24 +1,24 @@
-# Copyrights 2006-2016 by [Mark Overmeer].
+# Copyrights 2006-2011 by Mark Overmeer.
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
-# Pod stripped from pm file by OODoc 2.02.
+# Pod stripped from pm file by OODoc 2.00.
 
 package XML::Compile::Translate::Template;
 use vars '$VERSION';
-$VERSION = '1.54';
+$VERSION = '1.22';
 
 use base 'XML::Compile::Translate';
 
 use strict;
 use warnings;
-no warnings 'once', 'recursion';
+no warnings 'once';
 
 use XML::Compile::Util
   qw/odd_elements even_elements SCHEMA2001i pack_type unpack_type/;
 use Log::Report 'xml-compile', syntax => 'SHORT';
-use List::Util  qw/max first/;
+use List::Util  qw/max/;
 
-use vars '$VERSION';         # OODoc adds $VERSION to the script
+our $VERSION;         # OODoc adds $VERSION to the script
 $VERSION ||= 'undef';
 
 
@@ -42,14 +42,11 @@ sub makeTagUnqualified
     length $prefix ? "$prefix:$local" : $local;
 }
 
-# Detect recursion.  Based on type is best, but some schema's do not
-# have named types, so tags are indexed as well.
-my (%recurse_type, %reuse_type, %recurse_tag, %reuse_tag);
-
+my (%recurse, %reuse);
 sub compile($@)
 {   my ($self, $type, %args) = @_;
     $self->{_output} = $args{output};
-    (%recurse_type, %reuse_type, %recurse_tag, %reuse_tag) = ();
+    (%recurse, %reuse) = ();
     $self->SUPER::compile($type, %args);
 }
 
@@ -57,6 +54,7 @@ sub actsAs($)
 {   my ($self, $as) = @_;
        ($as eq 'READER' && $self->{_output} eq 'PERL')
     || ($as eq 'WRITER' && $self->{_output} eq 'XML')
+
 }
 
 sub makeWrapperNs($$$$$)
@@ -67,9 +65,8 @@ sub makeWrapperNs($$$$$)
 
     foreach my $entry (sort {$a->{prefix} cmp $b->{prefix}} values %$index)
     {   $entry->{used} or next;
-        my ($prefix, $uri) = @{$entry}{'prefix', 'uri'};
-        $filter->($uri, $prefix) or next;
-        push @entries, [ $uri, $prefix ];
+        $filter->($entry->{uri}, $entry->{prefix}) or next;
+        push @entries, [ $entry->{uri}, $entry->{prefix} ];
         $entry->{used} = 0;
     }
 
@@ -117,7 +114,7 @@ sub makeElementWrapper
 sub _block($@)
 {   my ($self, $block, $path, @pairs) = @_;
     bless
-    sub { my @elems  = map { $_->()    } odd_elements @pairs;
+    sub { my @elems  = map { $_->() } odd_elements @pairs;
           my @tags   = map { $_->{tag} } @elems;
 
           local $" = ', ';
@@ -195,16 +192,17 @@ sub makeElementHref
 
 sub makeElement
 {   my ($self, $path, $ns, $childname, $do) = @_;
-    sub { my $h = $do->(@_);
-          $h->{_NAME} = $childname;
-          $h;
+    sub {
+       my $h = $do->(@_);
+       $h->{_NAME} = $childname;
+       $h;
     };
 }
 
 sub makeElementDefault
 {   my ($self, $path, $ns, $childname, $do, $default) = @_;
     sub { my $h = $do->(@_);
-          $h->{occur}   = "defaults to '$default'";
+          $h->{occur}   = "defaults to $default";
           $h->{example} = $default;
           $h;
         };
@@ -213,8 +211,16 @@ sub makeElementDefault
 sub makeElementFixed
 {   my ($self, $path, $ns, $childname, $do, $fixed) = @_;
     sub { my $h = $do->(@_);
-          $h->{occur}   = "fixed to '$fixed'";
+          $h->{occur}   = "fixed to $fixed";
           $h->{example} = $fixed;
+          $h;
+        };
+}
+
+sub makeElementNillable
+{   my ($self, $path, $ns, $childname, $do) = @_;
+    sub { my $h = $do->();
+          $h->{occur} = "is nillable";
           $h;
         };
 }
@@ -231,14 +237,12 @@ sub makeElementAbstract
 }
 
 sub makeComplexElement
-{   my ($self, $path, $tag, $elems, $attrs, $any_attr, $type, $is_nillable)=@_;
-    my @elem_parts = odd_elements @$elems;
-    my @attr_parts = (odd_elements(@$attrs), @$any_attr);
+{   my ($self, $path, $tag, $elems, $attrs, $any_attr, $type) = @_;
+    my @parts = (odd_elements(@$elems, @$attrs), @$any_attr);
 
     sub { my (@attrs, @elems);
-          my $is_pseudo_type = $type !~ m/^{/;  # like "unnamed complex"
 
-          if((!$is_pseudo_type && $recurse_type{$type}) || $recurse_tag{$tag})
+          if($recurse{$tag})
           {   return
               +{ kind   => 'complex'
                , struct => 'probably a recursive complex'
@@ -247,7 +251,7 @@ sub makeComplexElement
                };
           }
 
-          if((!$is_pseudo_type && $reuse_type{$type}) || $reuse_tag{$tag})
+          if($reuse{$tag})
           {   return
               +{ kind   => 'complex'
                , struct => 'complex structure shown above'
@@ -256,15 +260,17 @@ sub makeComplexElement
                };
           }
 
-          $recurse_type{$type}++; $recurse_tag{$tag}++;
-          $reuse_type{$type}++;   $reuse_tag{$tag}++;
-          push @elems, $_->() for @elem_parts;
-          push @attrs, $_->() for @attr_parts;
-
-          $recurse_type{$type}--; $recurse_tag{$tag}--;
+          $recurse{$tag}++;
+          $reuse{$tag}++;
+          foreach my $part (@parts)
+          {   my $child = $part->();
+              if($child->{attr}) { push @attrs, $child }
+              else               { push @elems, $child }
+          }
+          $recurse{$tag}--;
 
           +{ kind   => 'complex'
-           , struct => ($is_nillable ? "is nillable, as: $tag => NIL" : undef)
+#          , struct => "$tag is complex"  # too obvious to mention
            , tag    => $tag
            , attrs  => \@attrs
            , elems  => \@elems
@@ -274,22 +280,17 @@ sub makeComplexElement
 }
 
 sub makeTaggedElement
-{   my ($self, $path, $tag, $st, $attrs, $attrs_any, $type, $is_nillable) = @_;
+{   my ($self, $path, $tag, $st, $attrs, $attrs_any, $type) = @_;
     my @parts = (odd_elements(@$attrs), @$attrs_any);
 
-    sub { my @attrs  = map $_->(), @parts;
-          my %simple = $st->();
+    my %content =
+     ( tag     => '_'
+     , struct  => 'string content of the container'
+     , example => 'Hello, World!'
+     );
 
-          my @struct = 'string content of the container';
-          push @struct, $simple{struct} if $simple{struct};
-          push @struct, 'is nillable, hence value or NIL' if $is_nillable;
-
-          my %content =
-            ( tag     => '_'
-            , struct  => \@struct
-            , example => ($simple{example} || 'Hello, World!')
-            );
-          $content{_TYPE}   = $simple{_TYPE}   if $simple{_TYPE};
+    sub { my @attrs  = map {$_->()} @parts;
+          my $simple = $st->() || '';
 
           +{ kind    => 'tagged'
            , struct  => "$tag is simple value with attributes"
@@ -302,15 +303,12 @@ sub makeTaggedElement
 }
 
 sub makeMixedElement
-{   my ($self, $path, $tag, $elems, $attrs, $attrs_any, $type, $is_nillable)=@_;
+{   my ($self, $path, $tag, $elems, $attrs, $attrs_any, $type) = @_;
     my @parts = (odd_elements(@$attrs), @$attrs_any);
-
-    my @struct = 'mixed content cannot be processed automatically';
-    push @struct, 'is nillable' if $is_nillable;
 
     my %mixed =
      ( tag     => '_'
-     , struct  => \@struct
+     , struct  => "mixed content cannot be processed automatically"
      , example => "XML::LibXML::Element->new('$tag')"
      );
 
@@ -320,7 +318,7 @@ sub makeMixedElement
         return sub { \%mixed };
     }
 
-    sub { my @attrs = map $_->(), @parts;
+    sub { my @attrs = map {$_->()} @parts;
           +{ kind    => 'mixed'
            , struct  => "$tag has a mixed content"
            , tag     => $tag
@@ -332,11 +330,9 @@ sub makeMixedElement
 }
 
 sub makeSimpleElement
-{   my ($self, $path, $tag, $st, undef, undef, $type, $is_nillable) = @_;
-    sub { my @struct;
-          push @struct, 'is nillable, hence value or NIL' if $is_nillable;
-          +{ kind    => 'simple'
-           , struct  => \@struct
+{   my ($self, $path, $tag, $st, undef, undef, $type) = @_;
+    sub { +{ kind    => 'simple'
+#          , struct  => "elem $tag is a single value"  # too obvious
            , tag     => $tag
            , $st->()
            };
@@ -353,13 +349,8 @@ sub makeList
     sub { my %d = $st->();
           $d{struct} = 'a list of values, where each';
           my $example = $d{example};
-          if($self->{_output} eq 'PERL')
-          {   $example    = qq("$example") if $example =~ m/[^0-9.]/;
-              $d{example} = "[ $example , ... ]";
-          }
-          else
-          {   $d{example} = "$example $example ...";
-          }
+          $example    = qq("$example") if $example =~ m/[^0-9.]/;
+          $d{example} = "[ $example , ... ]";
           %d };
 }
 
@@ -400,8 +391,7 @@ sub makeFacets
         : $k eq 'minInclusive' ? "value >= $v"
         : $k eq 'minExclusive' ? "value >  $v"
         : $k eq 'fractionDigits' ? "faction digits is $v"
-        : $k eq 'whiteSpace'   ? "white-space $v"
-        : "restriction? $k = $v";
+        : "restriction $k = $v";
     }
 
     my %facet = (facets => \@comment, $st->());
@@ -443,8 +433,7 @@ sub makeAttributeProhibited
 sub makeAttribute
 {   my ($self, $path, $ns, $tag, $label, $do) = @_;
     sub { +{ kind    => 'attr'
-           , tag     => $tag
-           , occur   => "becomes an attribute"
+           , tag     => $label
            , $do->()
            };
         };
@@ -452,9 +441,8 @@ sub makeAttribute
 
 sub makeAttributeDefault
 {   my ($self, $path, $ns, $tag, $label, $do) = @_;
-    sub {
-          +{ kind  => 'attr'
-           , tag   => $tag
+    sub { +{ kind  => 'attr'
+           , tag   => $label
            , occur => "attribute $tag has default"
            , $do->()
            };
@@ -466,7 +454,7 @@ sub makeAttributeFixed
     my $value = $fixed->value;
 
     sub { +{ kind   => 'attr'
-           , tag    => $tag
+           , tag    => $label
            , occur  => "attribute $tag is fixed"
            , example => $value
            };
@@ -474,11 +462,10 @@ sub makeAttributeFixed
 }
 
 sub makeSubstgroup
-{   my ($self, $path, $type, @todo) = @_;
+{   my ($self, $path, $type, @do) = @_;
 
     sub {
         my (@example_tags, $example_nest, %tags);
-        my @do    = @todo;
         my $group = $do[1][0];
 
         while(@do)
@@ -486,13 +473,7 @@ sub makeSubstgroup
             my ($label, $call) = @$info;
             my $processed = $call->();
             my $show = '';
-            if($processed->{kind} eq 'substitution group')
-            {   # substr extended by subst, which already is formatted.
-                # need to extract only the indicated type info.
-                my $s = $processed->{struct} || [];
-                /^  $label (.*)/ and $show = $1 for @$s;
-            }
-            elsif(my $type = $processed->{_TYPE})
+            if(my $type = $processed->{_TYPE})
             {   $show = $self->prefixed($type);
             }
 
@@ -524,7 +505,7 @@ sub makeSubstgroup
         , tag     => $group
         , struct  => [ "substitutionGroup $name", @lines ]
         , example => $example
-        };
+        }
     };
 }
 
@@ -571,8 +552,8 @@ sub makeAnyElement
     bless sub { +$data }, 'ANY';
 }
 
-sub makeHook($$$$$$$)
-{   my ($self, $path, $r, $tag, $before, $replace, $after, $fulltype) = @_;
+sub makeHook($$$$$$)
+{   my ($self, $path, $r, $tag, $before, $replace, $after) = @_;
 
     return $r unless $before || $replace || $after;
 
@@ -587,12 +568,12 @@ sub makeHook($$$$$$$)
 
     sub
     {   my $doc = XML::LibXML::Document->new;
-        for(@before) { $_->($doc, $path, undef) or return }
+        for(@before) { $_->($doc, undef, $path) or return }
 
-       my $xml = @replace ? $replace[0]->($doc, $path, $r) : $r->();
+       my $xml = @replace ? $replace[0]->($doc, undef, $path, $tag,$r) : $r->();
        defined $xml or return ();
 
-       for(@after) { $xml = $_->($doc, $path, $xml) or return }
+       for(@after) { $xml = $_->($doc, $xml, $path, undef) or return }
        $xml;
      }
 }
@@ -668,7 +649,7 @@ sub toPerl($%)
     # remove leading  'type =>'
     for(my $linenr = 0; $linenr < @lines; $linenr++)
     {   next if $lines[$linenr] =~ m/^\s*\#/;
-        next unless $lines[$linenr] =~ s/.*? \=\>\s*//;
+        next unless $lines[$linenr] =~ s/.* \=\>\s*//;
         $lines[$linenr] =~ m/\S/ or splice @lines, $linenr, 1;
         last;
     }
@@ -684,6 +665,13 @@ sub _perlAny($$)
 {   my ($self, $ast, $args) = @_;
 
     my @lines;
+    if($ast->{struct} && $args->{show_struct})
+    {   my $struct = $ast->{struct};
+        my @struct = ref $struct ? @$struct : $struct;
+        s/^/# /gm for @struct;
+        push @lines, @struct;
+    }
+
     if($ast->{_TYPE} && $args->{show_type})
     {   my $pref = $self->prefixed($ast->{_TYPE});
         if($pref)
@@ -691,13 +679,6 @@ sub _perlAny($$)
               , $pref =~ m/^[aiou]/i && $pref !~ m/^(uni|eu)/i
               ? "# is an $pref" : "# is a $pref";
         }
-    }
-
-    if($ast->{struct} && $args->{show_struct})
-    {   my $struct = $ast->{struct};
-        my @struct = ref $struct ? @$struct : $struct;
-        s/^/# /gm for @struct;
-        push @lines, @struct;
     }
 
     push @lines, "# $ast->{occur}"
@@ -778,8 +759,7 @@ sub _perlAny($$)
         }
     }
     elsif($kind eq 'complex' || $kind eq 'mixed')  # empty complex-type
-    {   # if there is an "occurs", then there can always be more than one
-        push @lines, $tag.' => '.($ast->{occur} ? '[{},]' : '{}');
+    {   push @lines, "$tag => {}";
     }
     elsif($kind eq 'collapsed') {;}
     elsif($kind eq 'union')    # union type
@@ -827,21 +807,16 @@ sub toXML($$%)
     my $now = localtime();
 
     my $header = $doc->createComment( <<_HEADER . '    ' );
-
  BE WARNED: in most cases, the example below cannot be used without
-  interpretation. The comments will guide you.
-  Produced by $pkg version $VERSION
-          on $now
+    -- interpretation.  The comments will guide you.
+    -- Produced by $pkg version $VERSION
+    --          on $now
 _HEADER
 
     unless($args{skip_header})
     {   $xml->insertBefore($header, $xml->firstChild);
         $xml->insertBefore($doc->createTextNode("\n  "), $header);
     }
-
-    # I use xsi:type myself, too late for the usual "used" counter
-    $ast->{'xmlns:xsi'} ||= SCHEMA2001i
-        if $args{show_type};
 
     # add info about name-spaces
     foreach (sort keys %$ast)
@@ -875,15 +850,13 @@ sub _xmlAny($$$$)
     }
 
     if(defined $ast->{kind} && $ast->{kind} eq 'union')
-    {   push @comment, map "  $_->{type}", @{$ast->{choice}};
+    {   push @comment, map { "  $_->{type}"} @{$ast->{choice}};
     }
 
     my @attrs = @{$ast->{attrs} || []};
     foreach my $attr (@attrs)
     {   push @res, $doc->createAttribute($attr->{tag}, $attr->{example});
-        my ($ns, $local) = unpack_type $attr->{_TYPE};
-        my $prefix = $self->_registerNSprefix('', $ns, 1);
-        push @comment, "attr $attr->{tag} has type $prefix:$local"
+        push @comment, "$attr->{tag}: $attr->{type}"
             if $args->{show_type};
     }
 
@@ -904,10 +877,8 @@ sub _xmlAny($$$$)
         {   push @res, $doc->createTextNode($indent.$elem->{example});
         }
         else
-        {   my $node = $self->_xmlAny($doc, $elem, $nest_indent, $args);
-            push @res, $doc->createTextNode($indent)
-                if $node->isa('XML::LibXML::Element');
-            push @res, $node;
+        {   push @res, $doc->createTextNode($indent)
+              , scalar $self->_xmlAny($doc, $elem, $nest_indent, $args);
         }
     }
 
@@ -927,7 +898,7 @@ sub _xmlAny($$$$)
         if wantarray;
 
     my $node = $doc->createElement($ast->{tag});
-    $node->addChild($_)         for @res;
+    $node->addChild($_) for @res;
     $node->appendText($outdent) if @elems;
     $node;
 }

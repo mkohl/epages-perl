@@ -14,7 +14,7 @@ use strict;
 use warnings;
 
 use vars qw ($VERSION);
-$VERSION = "2.0128"; # VERSION TEMPLATE: DO NOT CHANGE
+$VERSION = "1.70"; # VERSION TEMPLATE: DO NOT CHANGE
 
 use 5.008_000;
 
@@ -99,8 +99,6 @@ BEGIN {
 $EXPORT_TAGS{all}=\@EXPORT_OK;
 }
 
-our %_preserve_flag;
-
 {
   my %props = (
     load_ext_dtd => 1,           # load the external subset
@@ -140,9 +138,7 @@ our %_preserve_flag;
     }
     elsif ( defined $args{string} ) {
       $self = $class->_newForString( $args{string}, $URI, $encoding, $options );
-      if (defined($self)) {
-        $string_pool{$self} = \$args{string};
-      }
+      $string_pool{$self} = \$args{string};
     }
     elsif ( defined $args{IO} ) {
       $self = $class->_newForIO( $args{IO}, $URI, $encoding, $options  );
