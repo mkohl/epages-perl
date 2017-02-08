@@ -36,12 +36,12 @@ BEGIN {
 #
 # What we actually do is define a function in the caller's namespace
 # which returns the value. The function we create will normally
-# be inlined as a constant, thereby avoiding further sub calling
+# be inlined as a constant, thereby avoiding further sub calling 
 # overhead.
 #=======================================================================
 sub import {
     my $class = shift;
-    return unless @_;                   # Ignore 'use constant;'
+    return unless @_;			# Ignore 'use constant;'
     my $constants;
     my $multiple  = ref $_[0];
     my $pkg = caller;
@@ -49,93 +49,93 @@ sub import {
     my $symtab;
 
     if (_CAN_PCS) {
-        no strict 'refs';
-        $symtab = \%{$pkg . '::'};
+	no strict 'refs';
+	$symtab = \%{$pkg . '::'};
     };
 
     if ( $multiple ) {
-        if (ref $_[0] ne 'HASH') {
-            require Carp;
-            Carp::croak("Invalid reference type '".ref(shift)."' not 'HASH'");
-        }
-        $constants = shift;
+	if (ref $_[0] ne 'HASH') {
+	    require Carp;
+	    Carp::croak("Invalid reference type '".ref(shift)."' not 'HASH'");
+	}
+	$constants = shift;
     } else {
-        unless (defined $_[0]) {
-            require Carp;
-            Carp::croak("Can't use undef as constant name");
-        }
-        $constants->{+shift} = undef;
+	unless (defined $_[0]) {
+	    require Carp;
+	    Carp::croak("Can't use undef as constant name");
+	}
+	$constants->{+shift} = undef;
     }
 
     foreach my $name ( keys %$constants ) {
-        # Normal constant name
-        if ($name =~ $normal_constant_name and !$forbidden{$name}) {
-            # Everything is okay
+	# Normal constant name
+	if ($name =~ $normal_constant_name and !$forbidden{$name}) {
+	    # Everything is okay
 
-        # Name forced into main, but we're not in main. Fatal.
-        } elsif ($forced_into_main{$name} and $pkg ne 'main') {
+	# Name forced into main, but we're not in main. Fatal.
+	} elsif ($forced_into_main{$name} and $pkg ne 'main') {
+	    require Carp;
+	    Carp::croak("Constant name '$name' is forced into main::");
+
+	# Starts with double underscore. Fatal.
+	} elsif ($name =~ /^__/) {
+	    require Carp;
+	    Carp::croak("Constant name '$name' begins with '__'");
+
+	# Maybe the name is tolerable
+	} elsif ($name =~ $tolerable) {
+	    # Then we'll warn only if you've asked for warnings
+	    if (warnings::enabled()) {
+		if ($keywords{$name}) {
+		    warnings::warn("Constant name '$name' is a Perl keyword");
+		} elsif ($forced_into_main{$name}) {
+		    warnings::warn("Constant name '$name' is " .
+			"forced into package main::");
+		}
+	    }
+
+	# Looks like a boolean
+	# use constant FRED == fred;
+	} elsif ($name =~ $boolean) {
             require Carp;
-            Carp::croak("Constant name '$name' is forced into main::");
+	    if (@_) {
+		Carp::croak("Constant name '$name' is invalid");
+	    } else {
+		Carp::croak("Constant name looks like boolean value");
+	    }
 
-        # Starts with double underscore. Fatal.
-        } elsif ($name =~ /^__/) {
+	} else {
+	   # Must have bad characters
             require Carp;
-            Carp::croak("Constant name '$name' begins with '__'");
+	    Carp::croak("Constant name '$name' has invalid characters");
+	}
 
-        # Maybe the name is tolerable
-        } elsif ($name =~ $tolerable) {
-            # Then we'll warn only if you've asked for warnings
-            if (warnings::enabled()) {
-                if ($keywords{$name}) {
-                    warnings::warn("Constant name '$name' is a Perl keyword");
-                } elsif ($forced_into_main{$name}) {
-                    warnings::warn("Constant name '$name' is " .
-                        "forced into package main::");
-                }
-            }
-
-        # Looks like a boolean
-        # use constant FRED == fred;
-        } elsif ($name =~ $boolean) {
-            require Carp;
-            if (@_) {
-                Carp::croak("Constant name '$name' is invalid");
-            } else {
-                Carp::croak("Constant name looks like boolean value");
-            }
-
-        } else {
-           # Must have bad characters
-            require Carp;
-            Carp::croak("Constant name '$name' has invalid characters");
-        }
-
-        {
-            no strict 'refs';
-            my $full_name = "${pkg}::$name";
-            $declared{$full_name}++;
-            if ($multiple || @_ == 1) {
-                my $scalar = $multiple ? $constants->{$name} : $_[0];
-                # The constant serves to optimise this entire block out on
-                # 5.8 and earlier.
-                if (_CAN_PCS && $symtab && !exists $symtab->{$name}) {
-                    # No typeglob yet, so we can use a reference as space-
-                    # efficient proxy for a constant subroutine
-                    # The check in Perl_ck_rvconst knows that inlinable
-                    # constants from cv_const_sv are read only. So we have to:
-                    Internals::SvREADONLY($scalar, 1);
-                    $symtab->{$name} = \$scalar;
-                    ++$flush_mro;
-                } else {
-                    *$full_name = sub () { $scalar };
-                }
-            } elsif (@_) {
-                my @list = @_;
-                *$full_name = sub () { @list };
-            } else {
-                *$full_name = sub () { };
-            }
-        }
+	{
+	    no strict 'refs';
+	    my $full_name = "${pkg}::$name";
+	    $declared{$full_name}++;
+	    if ($multiple || @_ == 1) {
+		my $scalar = $multiple ? $constants->{$name} : $_[0];
+		# The constant serves to optimise this entire block out on
+		# 5.8 and earlier.
+		if (_CAN_PCS && $symtab && !exists $symtab->{$name}) {
+		    # No typeglob yet, so we can use a reference as space-
+		    # efficient proxy for a constant subroutine
+		    # The check in Perl_ck_rvconst knows that inlinable
+		    # constants from cv_const_sv are read only. So we have to:
+		    Internals::SvREADONLY($scalar, 1);
+		    $symtab->{$name} = \$scalar;
+		    ++$flush_mro;
+		} else {
+		    *$full_name = sub () { $scalar };
+		}
+	    } elsif (@_) {
+		my @list = @_;
+		*$full_name = sub () { @list };
+	    } else {
+		*$full_name = sub () { };
+	    }
+	}
     }
     # Flush the cache exactly once if we make any direct symbol table changes.
     mro::method_changed_in($pkg) if _CAN_PCS && $flush_mro;
@@ -333,7 +333,7 @@ name as a constant in the same package. This is probably a Good Thing.
 
 A constant with a name in the list C<STDIN STDOUT STDERR ARGV ARGVOUT
 ENV INC SIG> is not allowed anywhere but in package C<main::>, for
-technical reasons.
+technical reasons. 
 
 Unlike constants in some languages, these cannot be overridden
 on the command line or via environment variables.
@@ -377,7 +377,7 @@ E<lt>F<casey@geeknest.com>E<gt>.
 Documentation mostly rewritten by Ilmari Karonen,
 E<lt>F<perl@itz.pp.sci.fi>E<gt>.
 
-This program is maintained by the Perl 5 Porters.
+This program is maintained by the Perl 5 Porters. 
 The CPAN distribution is maintained by SE<eacute>bastien Aperghis-Tramoni
 E<lt>F<sebastien@aperghis.net>E<gt>.
 

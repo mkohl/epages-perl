@@ -89,7 +89,7 @@ sub request {
   if (my $accept = $request->header('Accept')) {
     $format = 'ldif' if $accept =~ m!\btext/ldif\b!;
   }
-
+  
   push @opts, "base" => $dn if $dn;
   push @opts, "filter" => $filter if $filter;
   push @opts, "attrs" => \@attrs if @attrs;
@@ -114,7 +114,7 @@ sub request {
     $response->header('Content-Type' => 'text/ldif');
     $response->header('Content-Length', length($content));
     $response = $self->collect_once($arg, $response, $content)
-        if ($method ne 'HEAD');
+	if ($method ne 'HEAD');
   }
   else {
     my $content = "<head><title>Directory Search Results</title></head>\n<body>";
@@ -139,8 +139,8 @@ sub request {
 
         my $j = 0;
         foreach $val (@$vals) {
-          $val = qq!<a href="$val">$val</a>! if $val =~ /^https?:/;
-          $val = qq!<a href="mailto:$val">$val</a>! if $val =~ /^[-\w]+\@[-.\w]+$/;
+	  $val = qq!<a href="$val">$val</a>! if $val =~ /^https?:/;
+	  $val = qq!<a href="mailto:$val">$val</a>! if $val =~ /^[-\w]+\@[-.\w]+$/;
           $content .= "<tr>" if $j++;
           $content .= "<td>" . $val . "</td></tr>\n";
         }
@@ -150,12 +150,12 @@ sub request {
     $content .= "</table>" if $index;
     $content .= "<hr>";
     $content .= $index ? sprintf("%s Match%s found",$index, $index>1 ? "es" : "")
-                       : "<b>No Matches found</b>";
+		       : "<b>No Matches found</b>";
     $content .= "</body>\n";
     $response->header('Content-Type' => 'text/html');
     $response->header('Content-Length', length($content));
     $response = $self->collect_once($arg, $response, $content)
-        if ($method ne 'HEAD');
+	if ($method ne 'HEAD');
 
   }
 

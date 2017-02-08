@@ -45,7 +45,7 @@ sub init {
         my $content_type = $self->content_type;
         Carp::croak( "Invalid boundary in content_type: '$content_type'" );
     }
-
+    
     $self->{start} = $1;
 
     return $self;
@@ -74,7 +74,7 @@ sub handler {
     my $contentid = $part->{headers}{'Content-ID'};
     $contentid =~ s/^.*[\<\"]//;
     $contentid =~ s/[\>\"].*$//;
-
+    
     if ( $contentid eq $self->start ) {
         $part->{name} = 'XForms:Model';
         if ($part->{done}) {
@@ -97,7 +97,7 @@ Daniel Ruoso C<daniel@ruoso.com>
 
 =head1 LICENSE
 
-This library is free software . You can redistribute it and/or modify
+This library is free software . You can redistribute it and/or modify 
 it under the same terms as perl itself.
 
 =cut

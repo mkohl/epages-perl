@@ -38,8 +38,8 @@ sub write {
   seek($fh, tell($fh), 0);
   my $data = [$config, $features, $auto_features];
   print($fh 'do{ my '
-              . Data::Dumper->new([$data],['x'])->Purity(1)->Dump()
-              . '$x; }' );
+	      . Data::Dumper->new([$data],['x'])->Purity(1)->Dump()
+	      . '$x; }' );
   truncate($fh, tell($fh));
   close $fh;
 

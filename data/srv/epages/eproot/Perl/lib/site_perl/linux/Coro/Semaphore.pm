@@ -96,7 +96,7 @@ threads, but is I<NOT> allowed to block (switch to other threads).
 #sub timed_down {
 #   require Coro::Timer;
 #   my $timeout = Coro::Timer::timeout ($_[1]);
-#
+# 
 #   while ($_[0][0] <= 0) {
 #      push @{$_[0][1]}, $Coro::current;
 #      &Coro::schedule;
@@ -111,7 +111,7 @@ threads, but is I<NOT> allowed to block (switch to other threads).
 #         die;
 #      }
 #   }
-#
+# 
 #   --$_[0][0];
 #   return 1;
 #}

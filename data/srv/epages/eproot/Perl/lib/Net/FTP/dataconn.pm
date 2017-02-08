@@ -96,12 +96,12 @@ sub _select {
 
     if ($nfound < 0) {
       if ($!{EINTR} || $!{EAGAIN} || $!{ESPIPE} || $!{EACCES}) {
-        # don't really think EAGAIN can happen here
-        if ($timeout) {
-          $timeout -= time - $before;
-          $timeout = 0 if $timeout < 0;
-        }
-        redo SELECT;
+	# don't really think EAGAIN can happen here
+	if ($timeout) {
+	  $timeout -= time - $before;
+	  $timeout = 0 if $timeout < 0;
+	}
+	redo SELECT;
       }
       croak "select: $!";
     }

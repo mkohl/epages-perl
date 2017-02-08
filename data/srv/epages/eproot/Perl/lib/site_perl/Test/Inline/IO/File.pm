@@ -41,7 +41,7 @@ use File::Remove ();
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '2.212';
+	$VERSION = '2.212';
 }
 
 
@@ -57,7 +57,7 @@ BEGIN {
 
   # Simplified usage
   $io_handler = Test::Inline::IO::File->new( $path );
-
+  
   # Full key/value usage
   $io_handler = Test::Inline::IO::File->new(
           path     => $path,
@@ -71,35 +71,35 @@ location.
 =cut
 
 sub new {
-        my $class  = shift;
-        my @params = @_;
-        if ( @params < 2 ) {
-                my $path  = defined $_[0] ? shift : File::Spec->curdir;
-                @params = ( path => $path );
-        }
+	my $class  = shift;
+	my @params = @_;
+	if ( @params < 2 ) {
+		my $path  = defined $_[0] ? shift : File::Spec->curdir;
+		@params = ( path => $path );
+	}
 
-        # Create the object
-        my $self = bless { @params }, $class;
+	# Create the object
+	my $self = bless { @params }, $class;
 
-        # Apply defaults
-        $self->{readonly} = !! $self->{readonly};
+	# Apply defaults
+	$self->{readonly} = !! $self->{readonly};
 
-        return $self;
+	return $self;
 }
 
 sub path {
-        $_[0]->{path};
+	$_[0]->{path};
 }
 
 sub readonly {
-        $_[0]->{readonly};
+	$_[0]->{readonly};
 }
 
 # Resolve the full path for any file
 sub _path {
-        my $self = shift;
-        my $file = defined $_[0] ? shift : return undef;
-        File::Spec->catfile( $self->{path}, $file );
+	my $self = shift;
+	my $file = defined $_[0] ? shift : return undef;
+	File::Spec->catfile( $self->{path}, $file );
 }
 
 
@@ -121,9 +121,9 @@ Returns true if it exists, or false if not.
 =cut
 
 sub exists_file {
-        my $self = shift;
-        my $file = $self->_path(shift) or return undef;
-        !! -f $file;
+	my $self = shift;
+	my $file = $self->_path(shift) or return undef;
+	!! -f $file;
 }
 
 =pod
@@ -138,9 +138,9 @@ Returns true if it exists, or false if not.
 =cut
 
 sub exists_dir {
-        my $self = shift;
-        my $dir = $self->_path(shift) or return undef;
-        !! -d $dir;
+	my $self = shift;
+	my $dir = $self->_path(shift) or return undef;
+	!! -d $dir;
 }
 
 =pod
@@ -157,12 +157,12 @@ Returns a SCALAR reference, or C<undef> on error.
 =cut
 
 sub read {
-        my $self    = shift;
-        my $file    = $self->_path(shift) or return undef;
-        require File::Flat;
-        my $content = File::Flat->slurp($file) or return undef;
-        $$content =~ s/\015{1,2}\012|\015|\012/\n/g;
-        $content;
+	my $self    = shift;
+	my $file    = $self->_path(shift) or return undef;
+	require File::Flat;
+	my $content = File::Flat->slurp($file) or return undef;
+	$$content =~ s/\015{1,2}\012|\015|\012/\n/g;
+	$content;
 }
 
 =pod
@@ -175,18 +175,18 @@ it and it's path if needed.
 =cut
 
 sub write {
-        my $self = shift;
-        my $file = $self->_path(shift) or return undef;
-        if ( -f $file and ! -w $file ) {
-                File::Remove::remove($file) or return undef;
+	my $self = shift;
+	my $file = $self->_path(shift) or return undef;
+	if ( -f $file and ! -w $file ) {
+		File::Remove::remove($file) or return undef;
 
-        }
-        require File::Flat;
-        my $rv = File::Flat->write( $file, @_ );
-        if ( $rv and $self->readonly ) {
-                File::chmod::symchmod('a-w', $file);
-        }
-        return $rv;
+	}
+	require File::Flat;
+	my $rv = File::Flat->write( $file, @_ );
+	if ( $rv and $self->readonly ) {
+		File::chmod::symchmod('a-w', $file);
+	}
+	return $rv;
 }
 
 =pod
@@ -204,10 +204,10 @@ or C<undef> on error.
 =cut
 
 sub class_file {
-        my $self   = shift;
-        my $_class = defined $_[0] ? shift : return undef;
-        my $file   = File::Spec->catfile( split /(?:::|')/, $_class ) . '.pm';
-        $self->exists_file($file) and [ $file ];
+	my $self   = shift;
+	my $_class = defined $_[0] ? shift : return undef;
+	my $file   = File::Spec->catfile( split /(?:::|')/, $_class ) . '.pm';
+	$self->exists_file($file) and [ $file ];
 }
 
 =pod
@@ -224,17 +224,17 @@ or C<undef> on error.
 =cut
 
 sub find {
-        my $self  = shift;
-        my $dir   = $self->exists_dir($_[0]) ? shift : return undef;
+	my $self  = shift;
+	my $dir   = $self->exists_dir($_[0]) ? shift : return undef;
 
-        # Search within the path
-        require File::Find::Rule;
-        my @files = File::Find::Rule->file
-                                    ->name('*.pm')
-                                    ->relative
-                                    ->in( $self->_path($dir) );
-        @files = map { File::Spec->catfile( $dir, $_ ) } sort @files;
-        return \@files;
+	# Search within the path
+	require File::Find::Rule;
+	my @files = File::Find::Rule->file
+	                            ->name('*.pm')
+	                            ->relative
+	                            ->in( $self->_path($dir) );
+	@files = map { File::Spec->catfile( $dir, $_ ) } sort @files;
+	return \@files;
 }
 
 1;

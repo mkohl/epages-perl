@@ -73,7 +73,7 @@ sub start_document {
 }
 
 
-sub _flush_content {
+sub _flush_content { 
     ## Called only when a child element has been detected
     my $self = shift;
 
@@ -102,7 +102,7 @@ sub _flush_content {
 }
 
 
-sub _flush_leaf_content {
+sub _flush_leaf_content { 
     ## Called only when no child elements have been detected
     my $self = shift;
     my $ctx = $self->{Stack}->[-1];
@@ -142,7 +142,7 @@ sub start_element {
 sub characters {
     my $self = shift;
 
-
+    
     if ( @{$self->{Stack}} ) {
         my $ctx = $self->{Stack}->[-1];
 

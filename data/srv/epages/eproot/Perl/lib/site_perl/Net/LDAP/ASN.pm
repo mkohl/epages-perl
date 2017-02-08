@@ -30,36 +30,36 @@ $asn->prepare(<<LDAP_ASN) or die $asn->error;
     --    less elements in the CHOICE
 
     LDAPRequest ::= SEQUENCE {
-        messageID       MessageID,
-          --protocolOp
-        CHOICE {
-            bindRequest     BindRequest,
-            unbindRequest   UnbindRequest,
-            searchRequest   SearchRequest,
-            modifyRequest   ModifyRequest,
-            addRequest      AddRequest,
-            delRequest      DelRequest,
-            modDNRequest    ModifyDNRequest,
-            compareRequest  CompareRequest,
-            abandonRequest  AbandonRequest,
-            extendedReq     ExtendedRequest}
-         controls       [0] Controls OPTIONAL }
+	messageID       MessageID,
+	  --protocolOp
+	CHOICE {
+	    bindRequest     BindRequest,
+	    unbindRequest   UnbindRequest,
+	    searchRequest   SearchRequest,
+	    modifyRequest   ModifyRequest,
+	    addRequest      AddRequest,
+	    delRequest      DelRequest,
+	    modDNRequest    ModifyDNRequest,
+	    compareRequest  CompareRequest,
+	    abandonRequest  AbandonRequest,
+	    extendedReq     ExtendedRequest}
+	 controls       [0] Controls OPTIONAL }
 
     LDAPResponse ::= SEQUENCE {
-        messageID       MessageID,
-        protocolOp     CHOICE {
-            bindResponse    BindResponse,
-            searchResEntry  SearchResultEntry,
-            searchResDone   SearchResultDone,
-            searchResRef    SearchResultReference,
-            modifyResponse  ModifyResponse,
-            addResponse     AddResponse,
-            delResponse     DelResponse,
-            modDNResponse   ModifyDNResponse,
-            compareResponse CompareResponse,
-            extendedResp    ExtendedResponse,
-            intermediateResponse IntermediateResponse }
-         controls       [0] Controls OPTIONAL }
+	messageID       MessageID,
+	protocolOp     CHOICE {
+	    bindResponse    BindResponse,
+	    searchResEntry  SearchResultEntry,
+	    searchResDone   SearchResultDone,
+	    searchResRef    SearchResultReference,
+	    modifyResponse  ModifyResponse,
+	    addResponse     AddResponse,
+	    delResponse     DelResponse,
+	    modDNResponse   ModifyDNResponse,
+	    compareResponse CompareResponse,
+	    extendedResp    ExtendedResponse,
+	    intermediateResponse IntermediateResponse }
+	 controls       [0] Controls OPTIONAL }
 
     MessageID ::= INTEGER -- (0 .. maxInt)
 
@@ -78,74 +78,74 @@ $asn->prepare(<<LDAP_ASN) or die $asn->error;
     AttributeDescription ::= LDAPString
 
     AttributeDescriptionList ::= SEQUENCE OF
-        AttributeDescription
+	AttributeDescription
 
     AttributeValue ::= OCTET STRING
 
     AttributeValueAssertion ::= SEQUENCE {
-        attributeDesc   AttributeDescription,
-        assertionValue  AssertionValue }
+	attributeDesc   AttributeDescription,
+	assertionValue  AssertionValue }
 
     AssertionValue ::= OCTET STRING
 
     Attribute ::= SEQUENCE {
-        type    AttributeDescription,
-        vals    SET OF AttributeValue }
+	type    AttributeDescription,
+	vals    SET OF AttributeValue }
 
     MatchingRuleId ::= LDAPString
 
     LDAPResult ::= SEQUENCE {
-        resultCode      ENUMERATED {
-            success                      (0),
-            operationsError              (1),
-            protocolError                (2),
-            timeLimitExceeded            (3),
-            sizeLimitExceeded            (4),
-            compareFalse                 (5),
-            compareTrue                  (6),
-            authMethodNotSupported       (7),
-            strongAuthRequired           (8),
-                -- 9 reserved --
-            referral                     (10),  -- new
-            adminLimitExceeded           (11),  -- new
-            unavailableCriticalExtension (12),  -- new
-            confidentialityRequired      (13),  -- new
-            saslBindInProgress           (14),  -- new
-            noSuchAttribute              (16),
-            undefinedAttributeType       (17),
-            inappropriateMatching        (18),
-            constraintViolation          (19),
-            attributeOrValueExists       (20),
-            invalidAttributeSyntax       (21),
-                -- 22-31 unused --
-            noSuchObject                 (32),
-            aliasProblem                 (33),
-            invalidDNSyntax              (34),
-                -- 35 reserved for undefined isLeaf --
-            aliasDereferencingProblem    (36),
-                -- 37-47 unused --
-            inappropriateAuthentication  (48),
-            invalidCredentials           (49),
-            insufficientAccessRights     (50),
-            busy                         (51),
-            unavailable                  (52),
-            unwillingToPerform           (53),
-            loopDetect                   (54),
-                -- 55-63 unused --
-            namingViolation              (64),
-            objectClassViolation         (65),
-            notAllowedOnNonLeaf          (66),
-            notAllowedOnRDN              (67),
-            entryAlreadyExists           (68),
-            objectClassModsProhibited    (69),
-                -- 70 reserved for CLDAP --
-            affectsMultipleDSAs          (71), -- new
-                -- 72-79 unused --
-            other                        (80)}
-                -- 81-90 reserved for APIs --
-        matchedDN       LDAPDN,
-        errorMessage    LDAPString,
-        referral        [3] Referral OPTIONAL }
+	resultCode      ENUMERATED {
+	    success                      (0),
+	    operationsError              (1),
+	    protocolError                (2),
+	    timeLimitExceeded            (3),
+	    sizeLimitExceeded            (4),
+	    compareFalse                 (5),
+	    compareTrue                  (6),
+	    authMethodNotSupported       (7),
+	    strongAuthRequired           (8),
+		-- 9 reserved --
+	    referral                     (10),  -- new
+	    adminLimitExceeded           (11),  -- new
+	    unavailableCriticalExtension (12),  -- new
+	    confidentialityRequired      (13),  -- new
+	    saslBindInProgress           (14),  -- new
+	    noSuchAttribute              (16),
+	    undefinedAttributeType       (17),
+	    inappropriateMatching        (18),
+	    constraintViolation          (19),
+	    attributeOrValueExists       (20),
+	    invalidAttributeSyntax       (21),
+		-- 22-31 unused --
+	    noSuchObject                 (32),
+	    aliasProblem                 (33),
+	    invalidDNSyntax              (34),
+		-- 35 reserved for undefined isLeaf --
+	    aliasDereferencingProblem    (36),
+		-- 37-47 unused --
+	    inappropriateAuthentication  (48),
+	    invalidCredentials           (49),
+	    insufficientAccessRights     (50),
+	    busy                         (51),
+	    unavailable                  (52),
+	    unwillingToPerform           (53),
+	    loopDetect                   (54),
+		-- 55-63 unused --
+	    namingViolation              (64),
+	    objectClassViolation         (65),
+	    notAllowedOnNonLeaf          (66),
+	    notAllowedOnRDN              (67),
+	    entryAlreadyExists           (68),
+	    objectClassModsProhibited    (69),
+		-- 70 reserved for CLDAP --
+	    affectsMultipleDSAs          (71), -- new
+		-- 72-79 unused --
+	    other                        (80)}
+		-- 81-90 reserved for APIs --
+	matchedDN       LDAPDN,
+	errorMessage    LDAPString,
+	referral        [3] Referral OPTIONAL }
 
     Referral ::= SEQUENCE OF LDAPURL
 
@@ -156,108 +156,108 @@ $asn->prepare(<<LDAP_ASN) or die $asn->error;
     -- Names changed here for backwards compat with previous
     -- Net::LDAP    --GMB
     Control ::= SEQUENCE {
-        type             LDAPOID,                       -- controlType
-        critical         BOOLEAN OPTIONAL, -- DEFAULT FALSE,    -- criticality
-        value            OCTET STRING OPTIONAL }        -- controlValue
+	type             LDAPOID,                       -- controlType
+	critical         BOOLEAN OPTIONAL, -- DEFAULT FALSE,    -- criticality
+	value            OCTET STRING OPTIONAL }        -- controlValue
 
     BindRequest ::= [APPLICATION 0] SEQUENCE {
-        version                 INTEGER, -- (1 .. 127),
-        name                    LDAPDN,
-        authentication          AuthenticationChoice }
+	version                 INTEGER, -- (1 .. 127),
+	name                    LDAPDN,
+	authentication          AuthenticationChoice }
 
     AuthenticationChoice ::= CHOICE {
-        simple                  [0] OCTET STRING,
-                     -- 1 and 2 reserved
-        sasl                    [3] SaslCredentials }
+	simple                  [0] OCTET STRING,
+		     -- 1 and 2 reserved
+	sasl                    [3] SaslCredentials }
 
     SaslCredentials ::= SEQUENCE {
-        mechanism               LDAPString,
-        credentials             OCTET STRING OPTIONAL }
+	mechanism               LDAPString,
+	credentials             OCTET STRING OPTIONAL }
 
     BindResponse ::= [APPLICATION 1] SEQUENCE {
-         COMPONENTS OF LDAPResult,
-         serverSaslCreds    [7] OCTET STRING OPTIONAL }
+	 COMPONENTS OF LDAPResult,
+	 serverSaslCreds    [7] OCTET STRING OPTIONAL }
 
     UnbindRequest ::= [APPLICATION 2] NULL
 
     SearchRequest ::= [APPLICATION 3] SEQUENCE {
-        baseObject      LDAPDN,
-        scope           ENUMERATED {
-            baseObject              (0),
-            singleLevel             (1),
-            wholeSubtree            (2) }
-        derefAliases    ENUMERATED {
-            neverDerefAliases       (0),
-            derefInSearching        (1),
-            derefFindingBaseObj     (2),
-            derefAlways             (3) }
-        sizeLimit       INTEGER , -- (0 .. maxInt),
-        timeLimit       INTEGER , -- (0 .. maxInt),
-        typesOnly       BOOLEAN,
-        filter          Filter,
-        attributes      AttributeDescriptionList }
+	baseObject      LDAPDN,
+	scope           ENUMERATED {
+	    baseObject              (0),
+	    singleLevel             (1),
+	    wholeSubtree            (2) }
+	derefAliases    ENUMERATED {
+	    neverDerefAliases       (0),
+	    derefInSearching        (1),
+	    derefFindingBaseObj     (2),
+	    derefAlways             (3) }
+	sizeLimit       INTEGER , -- (0 .. maxInt),
+	timeLimit       INTEGER , -- (0 .. maxInt),
+	typesOnly       BOOLEAN,
+	filter          Filter,
+	attributes      AttributeDescriptionList }
 
     Filter ::= CHOICE {
-        and             [0] SET OF Filter,
-        or              [1] SET OF Filter,
-        not             [2] Filter,
-        equalityMatch   [3] AttributeValueAssertion,
-        substrings      [4] SubstringFilter,
-        greaterOrEqual  [5] AttributeValueAssertion,
-        lessOrEqual     [6] AttributeValueAssertion,
-        present         [7] AttributeDescription,
-        approxMatch     [8] AttributeValueAssertion,
-        extensibleMatch [9] MatchingRuleAssertion }
+	and             [0] SET OF Filter,
+	or              [1] SET OF Filter,
+	not             [2] Filter,
+	equalityMatch   [3] AttributeValueAssertion,
+	substrings      [4] SubstringFilter,
+	greaterOrEqual  [5] AttributeValueAssertion,
+	lessOrEqual     [6] AttributeValueAssertion,
+	present         [7] AttributeDescription,
+	approxMatch     [8] AttributeValueAssertion,
+	extensibleMatch [9] MatchingRuleAssertion }
 
     SubstringFilter ::= SEQUENCE {
-        type            AttributeDescription,
-        -- at least one must be present
-        substrings      SEQUENCE OF CHOICE {
-            initial [0] LDAPString,
-            any     [1] LDAPString,
-            final   [2] LDAPString } }
+	type            AttributeDescription,
+	-- at least one must be present
+	substrings      SEQUENCE OF CHOICE {
+	    initial [0] LDAPString,
+	    any     [1] LDAPString,
+	    final   [2] LDAPString } }
 
     MatchingRuleAssertion ::= SEQUENCE {
-        matchingRule    [1] MatchingRuleId OPTIONAL,
-        type            [2] AttributeDescription OPTIONAL,
-        matchValue      [3] AssertionValue,
-        dnAttributes    [4] BOOLEAN OPTIONAL } -- DEFAULT FALSE }
+	matchingRule    [1] MatchingRuleId OPTIONAL,
+	type            [2] AttributeDescription OPTIONAL,
+	matchValue      [3] AssertionValue,
+	dnAttributes    [4] BOOLEAN OPTIONAL } -- DEFAULT FALSE }
 
     SearchResultEntry ::= [APPLICATION 4] SEQUENCE {
-        objectName      LDAPDN,
-        attributes      PartialAttributeList }
+	objectName      LDAPDN,
+	attributes      PartialAttributeList }
 
     PartialAttributeList ::= SEQUENCE OF SEQUENCE {
-        type    AttributeDescription,
-        vals    SET OF AttributeValue }
+	type    AttributeDescription,
+	vals    SET OF AttributeValue }
 
     SearchResultReference ::= [APPLICATION 19] SEQUENCE OF LDAPURL
 
     SearchResultDone ::= [APPLICATION 5] LDAPResult
 
     ModifyRequest ::= [APPLICATION 6] SEQUENCE {
-        object          LDAPDN,
-        modification    SEQUENCE OF SEQUENCE {
-            operation       ENUMERATED {
-                        add     (0),
-                        delete  (1),
-                        replace (2),
-                        increment (3) } -- increment from RFC 4525
-            modification    AttributeTypeAndValues } }
+	object          LDAPDN,
+	modification    SEQUENCE OF SEQUENCE {
+	    operation       ENUMERATED {
+			add     (0),
+			delete  (1),
+			replace (2),
+			increment (3) } -- increment from RFC 4525
+	    modification    AttributeTypeAndValues } }
 
     AttributeTypeAndValues ::= SEQUENCE {
-        type    AttributeDescription,
-        vals    SET OF AttributeValue }
+	type    AttributeDescription,
+	vals    SET OF AttributeValue }
 
     ModifyResponse ::= [APPLICATION 7] LDAPResult
 
     AddRequest ::= [APPLICATION 8] SEQUENCE {
-        objectName      LDAPDN,
-        attributes      AttributeList }
+	objectName      LDAPDN,
+	attributes      AttributeList }
 
     AttributeList ::= SEQUENCE OF SEQUENCE {
-        type    AttributeDescription,
-        vals    SET OF AttributeValue }
+	type    AttributeDescription,
+	vals    SET OF AttributeValue }
 
     AddResponse ::= [APPLICATION 9] LDAPResult
 
@@ -266,62 +266,62 @@ $asn->prepare(<<LDAP_ASN) or die $asn->error;
     DelResponse ::= [APPLICATION 11] LDAPResult
 
     ModifyDNRequest ::= [APPLICATION 12] SEQUENCE {
-        entry           LDAPDN,
-        newrdn          RelativeLDAPDN,
-        deleteoldrdn    BOOLEAN,
-        newSuperior     [0] LDAPDN OPTIONAL }
+	entry           LDAPDN,
+	newrdn          RelativeLDAPDN,
+	deleteoldrdn    BOOLEAN,
+	newSuperior     [0] LDAPDN OPTIONAL }
 
     ModifyDNResponse ::= [APPLICATION 13] LDAPResult
 
     CompareRequest ::= [APPLICATION 14] SEQUENCE {
-        entry           LDAPDN,
-        ava             AttributeValueAssertion }
+	entry           LDAPDN,
+	ava             AttributeValueAssertion }
 
     CompareResponse ::= [APPLICATION 15] LDAPResult
 
     AbandonRequest ::= [APPLICATION 16] MessageID
 
     ExtendedRequest ::= [APPLICATION 23] SEQUENCE {
-        requestName      [0] LDAPOID,
-        requestValue     [1] OCTET STRING OPTIONAL }
+	requestName      [0] LDAPOID,
+	requestValue     [1] OCTET STRING OPTIONAL }
 
     ExtendedResponse ::= [APPLICATION 24] SEQUENCE {
-        COMPONENTS OF LDAPResult,
-        responseName     [10] LDAPOID OPTIONAL,
-        response         [11] OCTET STRING OPTIONAL }
+	COMPONENTS OF LDAPResult,
+	responseName     [10] LDAPOID OPTIONAL,
+	response         [11] OCTET STRING OPTIONAL }
 
     IntermediateResponse ::= [APPLICATION 25] SEQUENCE {
-        responseName     [0] LDAPOID OPTIONAL,
-        responseValue    [1] OCTET STRING OPTIONAL }
+	responseName     [0] LDAPOID OPTIONAL,
+	responseValue    [1] OCTET STRING OPTIONAL }
 
 
     -- Virtual List View Control
     VirtualListViewRequest ::= SEQUENCE {
-        beforeCount    INTEGER , --(0 .. maxInt),
-        afterCount     INTEGER , --(0 .. maxInt),
-        CHOICE {
-            byoffset [0] SEQUENCE {
-            offset          INTEGER , --(0 .. maxInt),
-            contentCount    INTEGER } --(0 .. maxInt) }
-            byValue [1] AssertionValue }
-            -- byValue [1] greaterThanOrEqual assertionValue }
-        contextID     OCTET STRING OPTIONAL }
+	beforeCount    INTEGER , --(0 .. maxInt),
+	afterCount     INTEGER , --(0 .. maxInt),
+	CHOICE {
+	    byoffset [0] SEQUENCE {
+	    offset          INTEGER , --(0 .. maxInt),
+	    contentCount    INTEGER } --(0 .. maxInt) }
+	    byValue [1] AssertionValue }
+	    -- byValue [1] greaterThanOrEqual assertionValue }
+	contextID     OCTET STRING OPTIONAL }
 
     VirtualListViewResponse ::= SEQUENCE {
-        targetPosition    INTEGER , --(0 .. maxInt),
-        contentCount      INTEGER , --(0 .. maxInt),
-        virtualListViewResult ENUMERATED {
-            success (0),
-            operatonsError (1),
-            unwillingToPerform (53),
-            insufficientAccessRights (50),
-            busy (51),
-            timeLimitExceeded (3),
-            adminLimitExceeded (11),
-            sortControlMissing (60),
-            indexRangeError (61),
-            other (80) }
-        contextID     OCTET STRING OPTIONAL     }
+	targetPosition    INTEGER , --(0 .. maxInt),
+	contentCount      INTEGER , --(0 .. maxInt),
+	virtualListViewResult ENUMERATED {
+	    success (0),
+	    operatonsError (1),
+	    unwillingToPerform (53),
+	    insufficientAccessRights (50),
+	    busy (51),
+	    timeLimitExceeded (3),
+	    adminLimitExceeded (11),
+	    sortControlMissing (60),
+	    indexRangeError (61),
+	    other (80) }  
+	contextID     OCTET STRING OPTIONAL     }
 
 
     LDAPEntry ::= COMPONENTS OF AddRequest
@@ -330,63 +330,63 @@ $asn->prepare(<<LDAP_ASN) or die $asn->error;
     -- Current parser does not allow a named entity following the ::=
     -- so we use a COMPONENTS OF hack
     SortRequestDummy ::= SEQUENCE {
-        order SEQUENCE OF SEQUENCE {
-            type         OCTET STRING,
-            orderingRule [0] OCTET STRING OPTIONAL,
-            reverseOrder [1] BOOLEAN OPTIONAL } }
+	order SEQUENCE OF SEQUENCE {
+	    type         OCTET STRING,
+	    orderingRule [0] OCTET STRING OPTIONAL,
+	    reverseOrder [1] BOOLEAN OPTIONAL } }
 
     SortRequest ::= COMPONENTS OF SortRequestDummy
 
     SortResult ::= SEQUENCE {
-        sortResult  ENUMERATED {
-            success                   (0), -- results are sorted
-            operationsError           (1), -- server internal failure
-            timeLimitExceeded         (3), -- timelimit reached before
-                                           -- sorting was completed
-            strongAuthRequired        (8), -- refused to return sorted
-                                           -- results via insecure
-                                           -- protocol
-            adminLimitExceeded       (11), -- too many matching entries
-                                           -- for the server to sort
-            noSuchAttribute          (16), -- unrecognized attribute
-                                           -- type in sort key
-            inappropriateMatching    (18), -- unrecognized or inappro-
-                                           -- priate matching rule in
-                                           -- sort key
-            insufficientAccessRights (50), -- refused to return sorted
-                                           -- results to this client
-            busy                     (51), -- too busy to process
-            unwillingToPerform       (53), -- unable to sort
-            other                    (80) }
+	sortResult  ENUMERATED {
+	    success                   (0), -- results are sorted
+	    operationsError           (1), -- server internal failure
+	    timeLimitExceeded         (3), -- timelimit reached before
+					   -- sorting was completed
+	    strongAuthRequired        (8), -- refused to return sorted
+					   -- results via insecure
+					   -- protocol
+	    adminLimitExceeded       (11), -- too many matching entries
+					   -- for the server to sort
+	    noSuchAttribute          (16), -- unrecognized attribute
+					   -- type in sort key
+	    inappropriateMatching    (18), -- unrecognized or inappro-
+					   -- priate matching rule in
+					   -- sort key
+	    insufficientAccessRights (50), -- refused to return sorted
+					   -- results to this client
+	    busy                     (51), -- too busy to process
+	    unwillingToPerform       (53), -- unable to sort
+	    other                    (80) }
     attributeType [0] AttributeDescription OPTIONAL }
 
     -- RFC-2696 Paged Results Control
     realSearchControlValue ::= SEQUENCE {
-        size            INTEGER, --  (0..maxInt),
-                      -- requested page size from client
-                      -- result set size estimate from server
-        cookie          OCTET STRING }
+	size            INTEGER, --  (0..maxInt),
+		      -- requested page size from client
+		      -- result set size estimate from server
+	cookie          OCTET STRING }
 
     -- draft-behera-ldap-password-policy-09
     ppControlResponse ::= SEQUENCE {
-        warning [0] PPWarning OPTIONAL,
-        error   [1] PPError OPTIONAL
+	warning [0] PPWarning OPTIONAL,
+	error   [1] PPError OPTIONAL
     }
-        PPWarning ::= CHOICE {
-            timeBeforeExpiration [0] INTEGER, -- (0..maxInt),
-            graceAuthNsRemaining [1] INTEGER -- (0..maxInt)
-        }
-        PPError ::= ENUMERATED {
-            passwordExpired             (0),
-            accountLocked               (1),
-            changeAfterReset            (2),
-            passwordModNotAllowed       (3),
-            mustSupplyOldPassword       (4),
-            insufficientPasswordQuality (5),
-            passwordTooShort            (6),
-            passwordTooYoung            (7),
-            passwordInHistory           (8)
-        }
+	PPWarning ::= CHOICE {
+	    timeBeforeExpiration [0] INTEGER, -- (0..maxInt),
+	    graceAuthNsRemaining [1] INTEGER -- (0..maxInt)
+	}
+	PPError ::= ENUMERATED {
+	    passwordExpired             (0),
+	    accountLocked               (1),
+	    changeAfterReset            (2),
+	    passwordModNotAllowed       (3),
+	    mustSupplyOldPassword       (4),
+	    insufficientPasswordQuality (5),
+	    passwordTooShort            (6),
+	    passwordTooYoung            (7),
+	    passwordInHistory           (8)
+	}
 
     -- RFC-4370 Proxied Authorization Control
     proxyAuthValue ::= SEQUENCE {
@@ -421,26 +421,26 @@ $asn->prepare(<<LDAP_ASN) or die $asn->error;
     ValuesReturnFilter ::= SEQUENCE OF SimpleFilterItem
 
     SimpleFilterItem ::= CHOICE {
-        equalityMatch   [3] AttributeValueAssertion,
-        substrings      [4] SubstringFilter,
-        greaterOrEqual  [5] AttributeValueAssertion,
-        lessOrEqual     [6] AttributeValueAssertion,
-        present         [7] AttributeDescription,
-        approxMatch     [8] AttributeValueAssertion,
-        extensibleMatch [9] SimpleMatchingAssertion }
+	equalityMatch   [3] AttributeValueAssertion,
+	substrings      [4] SubstringFilter,
+	greaterOrEqual  [5] AttributeValueAssertion,
+	lessOrEqual     [6] AttributeValueAssertion,
+	present         [7] AttributeDescription,
+	approxMatch     [8] AttributeValueAssertion,
+	extensibleMatch [9] SimpleMatchingAssertion }
 
     SimpleMatchingAssertion ::= SEQUENCE {
-        matchingRule    [1] MatchingRuleId OPTIONAL,
-        type            [2] AttributeDescription OPTIONAL,
-        --- at least one of the above must be present
-        matchValue      [3] AssertionValue }
+	matchingRule    [1] MatchingRuleId OPTIONAL,
+	type            [2] AttributeDescription OPTIONAL,
+	--- at least one of the above must be present
+	matchValue      [3] AssertionValue }
 
     -- RFC-4527 Pre-/Post-read Control
     -- note: this is SearchResultEntry without the APPLICATION tag
     prSearchResultEntry ::= SEQUENCE {
-        objectName      LDAPDN,
-        attributes      PartialAttributeList }
-
+	objectName      LDAPDN,
+	attributes      PartialAttributeList }
+    
     -- RFC-4533 LDAP Content Synchronization Operation
 
     syncUUID ::= OCTET STRING -- (SIZE(16))

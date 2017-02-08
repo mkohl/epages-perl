@@ -19,7 +19,7 @@ sub new
 {
     my ($class, @options) = @_;
     my ($self) = {};
-
+    
     $class = ref($class) || $class;
     bless $self, $class;
 }
@@ -33,7 +33,7 @@ Reads the table into memory
 sub read
 {
     my ($self, $fh) = @_;
-
+ 
     my $dat;
     $fh->read($dat, 8);
     my ($nPairs, $searchRange, $entrySelector, $rangeShift) = unpack("nnnn", $dat);
@@ -44,9 +44,9 @@ sub read
         my ($left, $right, $kern) = TTF_Unpack("SSs", $dat);
         push @$pairs, { 'left' => $left, 'right' => $right, 'kern' => $kern } if $kern != 0;
     }
-
+    
     $self->{'kernPairs'} = $pairs;
-
+    
     $self;
 }
 
@@ -59,10 +59,10 @@ Writes the table to a file
 sub out_sub
 {
     my ($self, $fh) = @_;
-
+    
     my $pairs = $self->{'kernPairs'};
     $fh->print(pack("nnnn", TTF_bininfo(scalar @$pairs, 6)));
-
+    
     foreach (sort { $a->{'left'} <=> $b->{'left'} or $a->{'right'} <=> $b->{'right'} } @$pairs) {
         $fh->print(TTF_Pack("SSs", $_->{'left'}, $_->{'right'}, $_->{'kern'}));
     }
@@ -77,9 +77,9 @@ Prints a human-readable representation of the table
 sub dumpXML
 {
     my ($self, $fh) = @_;
-
+    
     my $postVal = $self->post()->{'VAL'};
-
+    
     $fh = 'STDOUT' unless defined $fh;
     foreach (@{$self->{'kernPairs'}}) {
         $fh->printf("<pair l=\"%s\" r=\"%s\" v=\"%s\"/>\n", $postVal->[$_->{'left'}], $postVal->[$_->{'right'}], $_->{'kern'});

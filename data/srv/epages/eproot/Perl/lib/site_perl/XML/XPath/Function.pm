@@ -11,10 +11,10 @@ use strict;
 sub new {
     my $class = shift;
     my ($pp, $name, $params) = @_;
-    bless {
-        pp => $pp,
-        name => $name,
-        params => $params
+    bless { 
+        pp => $pp, 
+        name => $name, 
+        params => $params 
         }, $class;
 }
 
@@ -43,7 +43,7 @@ sub as_xml {
     else {
         $string .= " />\n";
     }
-
+    
     return $string;
 }
 
@@ -137,7 +137,7 @@ sub local_name {
         my $nodeset = shift(@params);
         $node = $nodeset->get_node(1);
     }
-
+    
     return XML::XPath::Literal->new($node->getLocalName);
 }
 
@@ -157,7 +157,7 @@ sub name {
         my $nodeset = shift(@params);
         $node = $nodeset->get_node(1);
     }
-
+    
     return XML::XPath::Literal->new($node->getName);
 }
 
@@ -170,7 +170,7 @@ sub string {
     if (@params) {
         return XML::XPath::Literal->new($params[0]->string_value);
     }
-
+    
     # TODO - this MUST be wrong! - not sure now. -matt
     return XML::XPath::Literal->new($node->string_value);
     # default to nodeset with just $node in.
@@ -347,7 +347,7 @@ sub number {
         }
         return $params[0]->to_number;
     }
-
+    
     return XML::XPath::Number->new( $node->string_value );
 }
 

@@ -2,8 +2,8 @@ use strict;
 
 BEGIN {  # do the right thing for threads?
     eval { require attrs; } or do {
-        $INC{'attrs.pm'} = "";
-        *attrs::import = sub {};
+	$INC{'attrs.pm'} = "";
+	*attrs::import = sub {};
     }
 }
 
@@ -13,7 +13,7 @@ use base 'Exporter';
 use Carp;
 eval { require Carp::Heavy; };  # work around perl_call_pv bug XXX
 use vars qw($VERSION @EXPORT_OK
-            $API $DebugLevel $Eval $DIED $Now);
+	    $API $DebugLevel $Eval $DIED $Now);
 $VERSION = '1.21';
 
 # If we inherit DynaLoader then we inherit AutoLoader; Bletch!
@@ -25,13 +25,13 @@ require DynaLoader;
     (__PACKAGE__, $VERSION);
 
 $DebugLevel = 0;
-$Eval = 0;              # avoid because c_callback is exempt
+$Eval = 0;		# avoid because c_callback is exempt
 $DIED = \&default_exception_handler;
 
 @EXPORT_OK = qw(time all_events all_watchers all_running all_queued all_idle
-                one_event sweep loop unloop unloop_all sleep queue
-                queue_pending
-                QUEUES PRIO_NORMAL PRIO_HIGH NO_TIME_HIRES);
+		one_event sweep loop unloop unloop_all sleep queue
+		queue_pending
+		QUEUES PRIO_NORMAL PRIO_HIGH NO_TIME_HIRES);
 
 sub import {
   my $pkg = shift;
@@ -66,7 +66,7 @@ sub _load_watcher {
     eval { require "Event/$sub.pm" };
     die if $@;
     croak "Event/$sub.pm did not define Event::$sub\::new"
-        unless defined &$sub;
+	unless defined &$sub;
     1;
 }
 
@@ -83,7 +83,7 @@ sub default_exception_handler {
     my $desc = '?';
     my $w;
     if ($run and ($w = $run->w)) {
-        $desc = "`".$w->desc."'";
+	$desc = "`".$w->desc."'";
     }
     my $m = "Event: trapped error in $desc: $err";
     $m .= "\n" if $m !~ m/\n$/;
@@ -102,19 +102,19 @@ sub verbose_exception_handler { #AUTOLOAD XXX
     $m .= "  in $w --\n";
 
     for my $k ($w->attributes) {
-        $m .= sprintf "%18s: ", $k;
-        eval {
-            my $v = $w->$k();
-            if (!defined $v) {
-                $m .= '<undef>';
-            } elsif ($v =~ /^-?\d+(\.\d+)?$/) {
-                $m .= $v;
-            } else {
-                $m .= "'$v'";
-            }
-        };
-        if ($@) { $m .= "[$@]"; $@=''; }
-        $m .= "\n";
+	$m .= sprintf "%18s: ", $k;
+	eval {
+	    my $v = $w->$k();
+	    if (!defined $v) {
+		$m .= '<undef>';
+	    } elsif ($v =~ /^-?\d+(\.\d+)?$/) {
+		$m .= $v;
+	    } else {
+		$m .= "'$v'";
+	    }
+	};
+	if ($@) { $m .= "[$@]"; $@=''; }
+	$m .= "\n";
     }
     warn $m;
 }
@@ -124,16 +124,16 @@ sub sweep {
     queue_pending();
     my $errsv = '';
     while (1) {
-        eval { $@ = $errsv; _empty_queue($prio) };
-        $errsv = $@;
-        if ($@) {
-#           if ($Event::DebugLevel >= 2) {
-#               my $e = all_running();
-#               warn "Event: '$e->{desc}' died with: $@";
-#           }
-            next
-        }
-        last;
+	eval { $@ = $errsv; _empty_queue($prio) };
+	$errsv = $@;
+	if ($@) {
+#	    if ($Event::DebugLevel >= 2) {
+#		my $e = all_running();
+#		warn "Event: '$e->{desc}' died with: $@";
+#	    }
+	    next
+	}
+	last;
     }
 }
 
@@ -143,49 +143,49 @@ my $loop_timer;
 sub loop {
     use integer;
     if (@_) {
-        my $how_long = shift;
-        if (!$loop_timer) {
-            $loop_timer = Event->timer(desc => "Event::loop timeout",
-                                       after => $how_long,
-                                       cb => sub { unloop($how_long) },
-                                       parked=>1);
-            $loop_timer->prio(PRIO_HIGH());
-        } else {
-            $loop_timer->at(Event::time() + $how_long),
-        }
-        $loop_timer->start;
+	my $how_long = shift;
+	if (!$loop_timer) {
+	    $loop_timer = Event->timer(desc => "Event::loop timeout",
+				       after => $how_long,
+				       cb => sub { unloop($how_long) },
+				       parked=>1);
+	    $loop_timer->prio(PRIO_HIGH());
+	} else {
+	    $loop_timer->at(Event::time() + $how_long),
+	}
+	$loop_timer->start;
     }
     $TopResult = undef;    # allow re-entry of loop after unloop_all
     local $Result = undef;
     _incr_looplevel();
     my $errsv = '';
     while (1) {
-        # like G_EVAL | G_KEEPERR
-        eval { $@ = $errsv; _loop() };
-        $errsv = $@;
-        if ($@) {
-            warn "Event::loop caught: $@"
-                if $Event::DebugLevel >= 4;
-            next
-        }
-        last;
+	# like G_EVAL | G_KEEPERR
+	eval { $@ = $errsv; _loop() };
+	$errsv = $@;
+	if ($@) {
+	    warn "Event::loop caught: $@"
+		if $Event::DebugLevel >= 4;
+	    next
+	}
+	last;
     }
     _decr_looplevel();
     $loop_timer->stop if $loop_timer;
     my $r = $Result;
     $r = $TopResult if !defined $r;
     warn "Event: unloop(".(defined $r?$r:'<undef>').")\n"
-        if $Event::DebugLevel >= 3;
+	if $Event::DebugLevel >= 3;
     $r
 }
 
 sub add_hooks {
     shift if @_ & 1; #?
     while (@_) {
-        my $k = shift;
-        my $v = shift;
-        croak "$v must be CODE" if ref $v ne 'CODE';
-        _add_hook($k, $v);
+	my $k = shift;
+	my $v = shift;
+	croak "$v must be CODE" if ref $v ne 'CODE';
+	_add_hook($k, $v);
     }
 }
 
@@ -209,8 +209,8 @@ _load_watcher($_) for qw(idle io signal timer var);
 sub Inline {
     my $language = shift;
     if ($language ne 'C') {
-        warn "Warning: Event.pm does not provide Inline hints for the $language language\n";
-        return
+	warn "Warning: Event.pm does not provide Inline hints for the $language language\n";
+	return
     }
 
     require Event::MakeMaker;
@@ -219,11 +219,11 @@ sub Inline {
     my $so = $Config::Config{so};
 
     return {
-        INC => "-I $path/Event",
-        TYPEMAPS => "$path/Event/typemap",
-        MYEXTLIB => "$path/auto/Event/Event.$so",
-        AUTO_INCLUDE => '#include "EventAPI.h"',
-        BOOT => 'I_EVENT_API("Inline");',
+	INC => "-I $path/Event",
+	TYPEMAPS => "$path/Event/typemap",
+	MYEXTLIB => "$path/auto/Event/Event.$so",
+	AUTO_INCLUDE => '#include "EventAPI.h"',
+	BOOT => 'I_EVENT_API("Inline");',
     };
 }
 

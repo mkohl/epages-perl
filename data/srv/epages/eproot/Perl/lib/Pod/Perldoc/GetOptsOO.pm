@@ -13,7 +13,7 @@ use strict;
 #    (and we increment the error count by the return value of it)
 #  If there's no handle_unknown_option, then we just warn, and then increment
 #    the error counter
-#
+# 
 #  The return value of Pod::Perldoc::GetOptsOO::getopts is true if no errors,
 #   otherwise it's false.
 #
@@ -28,7 +28,7 @@ BEGIN { # Make a DEBUG constant ASAP
 
 sub getopts {
   my($target, $args, $truth) = @_;
-
+  
   $args ||= \@ARGV;
 
   $target->aside(
@@ -46,7 +46,7 @@ sub getopts {
 
   while( @$args  and  ($_ = $args->[0]) =~ m/^-(.)(.*)/s ) {
     my($first,$rest) = ($1,$2);
-    if ($_ eq '--') {   # early exit if "--"
+    if ($_ eq '--') {	# early exit if "--"
       shift @$args;
       last;
     }
@@ -75,7 +75,7 @@ sub getopts {
       } elsif( $target->can('handle_unknown_option') ) {
         DEBUG > 3
          and print " calling handle_unknown_option('$first')\n";
-
+         
         $error_count += (
           $target->handle_unknown_option( $first ) || 0
         );
@@ -93,7 +93,7 @@ sub getopts {
       }
     }
   }
-
+  
 
   $target->aside(
     "Ending switch processing.  Args are [@$args] with $error_count errors.\n"

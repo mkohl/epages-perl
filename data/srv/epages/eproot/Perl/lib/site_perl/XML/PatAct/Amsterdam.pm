@@ -25,13 +25,13 @@ sub new {
 
     my $usage = <<'EOF';
 usage: XML::PatAct::Amsterdam->new( Matcher => $matcher,
-                                 Patterns => $patterns );
+				 Patterns => $patterns );
 EOF
 
     die "No Matcher specified\n$usage\n"
-        if !defined $self->{Matcher};
+	if !defined $self->{Matcher};
     die "No Patterns specified\n$usage\n"
-        if !defined $self->{Patterns};
+	if !defined $self->{Patterns};
 
     # perform additional initialization here
 
@@ -53,15 +53,15 @@ sub start_document {
     # create a temporary Output_ in case we're creating a standard
     # output file that we'll delete later.
     if (!$self->{AsString} && !defined($self->{Output})) {
-        require IO::File;
-        import IO::File;
-        $self->{Output_} = new IO::File(">-");
+	require IO::File;
+	import IO::File;
+	$self->{Output_} = new IO::File(">-");
     } elsif (defined($self->{Output})) {
-        $self->{Output_} = $self->{Output};
+	$self->{Output_} = $self->{Output};
     }
 
     if ($self->{AsString}) {
-        $self->{Strings} = [];
+	$self->{Strings} = [];
     }
 }
 
@@ -72,13 +72,13 @@ sub end_document {
     $self->{Matcher}->finalize();
 
     if (defined($self->{Output_})) {
-        delete $self->{Output_};
+	delete $self->{Output_};
     }
 
     my $string = undef;
     if (defined($self->{AsString})) {
-        $string = join('', @{$self->{Strings}});
-        delete $self->{Strings};
+	$string = join('', @{$self->{Strings}});
+	delete $self->{Strings};
     }
 
     # release all the info that is just used during event handling
@@ -95,27 +95,27 @@ sub start_element {
     push @{$self->{Nodes}}, $element;
 
     my $index = $self->{Matcher}->match($element,
-                                        $self->{Names},
-                                        $self->{Nodes});
+					$self->{Names},
+					$self->{Nodes});
 
     my $action;
     if (!defined $index) {
-        $action = undef;
+	$action = undef;
     } else {
-        $action = $self->{Patterns}[$index * 2 + 1];
+	$action = $self->{Patterns}[$index * 2 + 1];
     }
 
     push @{$self->{ActionStack}}, $action;
 
     if (defined($action)) {
-        my $before = $action->{Before};
-        if (defined $before) {
-            my $atts = $element->{Attributes};
-            $before =~ s/\[([\w.:]+)\]/
-                ($1 eq '_element') ? $element->{Name} : $atts->{$1}
-            /eg;
-            $self->print($before);
-        }
+	my $before = $action->{Before};
+	if (defined $before) {
+	    my $atts = $element->{Attributes};
+	    $before =~ s/\[([\w.:]+)\]/
+		($1 eq '_element') ? $element->{Name} : $atts->{$1}
+	    /eg;
+	    $self->print($before);
+	}
     }
 }
 
@@ -128,14 +128,14 @@ sub end_element {
     my $action = pop @{$self->{ActionStack}};
 
     if (defined($action)) {
-        my $after = $action->{After};
-        if (defined $after) {
-            my $atts = $element->{Attributes};
-            $after =~ s/\[([\w.:]+)\]/
-                ($1 eq '_element') ? $element->{Name} : $atts->{$1}
-            /eg;
-            $self->print($after);
-        }
+	my $after = $action->{After};
+	if (defined $after) {
+	    my $atts = $element->{Attributes};
+	    $after =~ s/\[([\w.:]+)\]/
+		($1 eq '_element') ? $element->{Name} : $atts->{$1}
+	    /eg;
+	    $self->print($after);
+	}
     }
 }
 
@@ -149,10 +149,10 @@ sub print {
     my ($self, $output) = @_;
 
     $self->{Output_}->print($output)
-        if (defined($self->{Output_}));
+	if (defined($self->{Output_}));
 
     push(@{$self->{Strings}}, $output)
-        if (defined($self->{AsString}));
+	if (defined($self->{AsString}));
 }
 
 1;
@@ -168,8 +168,8 @@ XML::PatAct::Amsterdam - An action module for simplistic style-sheets
  use XML::PatAct::Amsterdam;
 
  my $patterns = [ PATTERN => { Before => 'before',
-                               After => 'after' },
-                  ... ];
+			       After => 'after' },
+		  ... ];
 
  my $matcher = XML::PatAct::Amsterdam->new( I<OPTIONS> );
 

@@ -53,7 +53,7 @@ sub read_more {
 sub move_along {
     my $self = shift;
     my $discarded = substr($self->[BUFFER], 0, $_[0], '');
-
+    
     # Wish I could skip this lot - tells us where we are in the file
     my $lines = $discarded =~ tr/\n//;
     $self->[LINE] += $lines;

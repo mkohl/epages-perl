@@ -21,28 +21,28 @@ use Test::Inline::Content ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '2.212';
-        @ISA = 'Test::Inline::Content';
+	$VERSION = '2.212';
+	@ISA = 'Test::Inline::Content';
 }
 
 sub process {
-        my $self   = shift;
-        my $Inline = _INSTANCE(shift, 'Test::Inline')         or return undef;
-        my $Script = _INSTANCE(shift, 'Test::Inline::Script') or return undef;
+	my $self   = shift;
+	my $Inline = _INSTANCE(shift, 'Test::Inline')         or return undef;
+	my $Script = _INSTANCE(shift, 'Test::Inline::Script') or return undef;
 
-        # Get the merged content
-        my $content = $Script->merged_content;
-        return undef unless defined $content;
+	# Get the merged content
+	my $content = $Script->merged_content;
+	return undef unless defined $content;
 
-        # Determine a plan
-        my $tests = $Script->tests;
-        my $plan  = defined $tests
-                ? "tests => $tests"
-                : "'no_plan'";
+	# Determine a plan
+	my $tests = $Script->tests;
+	my $plan  = defined $tests
+		? "tests => $tests"
+		: "'no_plan'";
 
-        # Wrap the merged contents with the rest of the test
-        # file infrastructure.
-        my $file = <<"END_TEST";
+	# Wrap the merged contents with the rest of the test
+	# file infrastructure.
+	my $file = <<"END_TEST";
 #!/usr/bin/perl -w
 
 use strict;
@@ -58,7 +58,7 @@ $content
 1;
 END_TEST
 
-        $file;
+	$file;
 }
 
 1;

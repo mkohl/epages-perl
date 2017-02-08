@@ -215,7 +215,7 @@ $VERSION = '1.72'; # Dont forget to set version in META.yml too
  NID_dsaWithSHA1                 OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION   XN_FLAG_SEP_MULTILINE
  NID_dsaWithSHA1_2               OP_CIPHER_SERVER_PREFERENCE            XN_FLAG_SEP_SPLUS_SPC
  NID_dsa_2                       OP_CISCO_ANYCONNECT                    XN_FLAG_SPC_EQ
- NID_email_protect               OP_COOKIE_EXCHANGE
+ NID_email_protect               OP_COOKIE_EXCHANGE                     
     BIO_eof
     BIO_f_ssl
     BIO_free
@@ -384,26 +384,26 @@ sub AUTOLOAD {
     ($constname = $AUTOLOAD) =~ s/.*:://;
     my $val = constant($constname);
     if ($! != 0) {
-        if ($! =~ /((Invalid)|(not valid))/i || $!{EINVAL}) {
-            $AutoLoader::AUTOLOAD = $AUTOLOAD;
-            goto &AutoLoader::AUTOLOAD;
-        }
-        else {
-          croak "Your vendor has not defined SSLeay macro $constname";
-        }
+	if ($! =~ /((Invalid)|(not valid))/i || $!{EINVAL}) {
+	    $AutoLoader::AUTOLOAD = $AUTOLOAD;
+	    goto &AutoLoader::AUTOLOAD;
+	}
+	else {
+	  croak "Your vendor has not defined SSLeay macro $constname";
+	}
     }
     eval "sub $AUTOLOAD { $val }";
     goto &$AUTOLOAD;
 }
 
 eval {
-        require XSLoader;
-        XSLoader::load('Net::SSLeay', $VERSION);
-        1;
+	require XSLoader;
+	XSLoader::load('Net::SSLeay', $VERSION);
+	1;
 } or do {
-        require DynaLoader;
-        push @ISA, 'DynaLoader';
-        bootstrap Net::SSLeay $VERSION;
+	require DynaLoader;
+	push @ISA, 'DynaLoader';
+	bootstrap Net::SSLeay $VERSION;
 };
 
 # Preloaded methods go here.
@@ -417,9 +417,9 @@ sub print_errs {
     my ($count, $err, $errs, $e) = (0,0,'');
     while ($err = ERR_get_error()) {
         $count ++;
-        $e = "$msg $$: $count - " . ERR_error_string($err) . "\n";
-        $errs .= $e;
-        warn $e if $Net::SSLeay::trace;
+	$e = "$msg $$: $count - " . ERR_error_string($err) . "\n";
+	$errs .= $e;
+	warn $e if $Net::SSLeay::trace;
     }
     return $errs;
 }
@@ -476,15 +476,15 @@ sub open_tcp_connection {
     $port = getservbyname($port, 'tcp') unless $port =~ /^\d+$/;
     my $dest_serv_ip = gethostbyname($dest_serv);
     unless (defined($dest_serv_ip)) {
-        $errs = "$0 $$: open_tcp_connection: destination host not found:"
+	$errs = "$0 $$: open_tcp_connection: destination host not found:"
             . " `$dest_serv' (port $port) ($!)\n";
-        warn $errs if $trace;
+	warn $errs if $trace;
         return wantarray ? (0, $errs) : 0;
     }
     my $sin = sockaddr_in($port, $dest_serv_ip);
 
     warn "Opening connection to $dest_serv:$port (" .
-        inet_ntoa($dest_serv_ip) . ")" if $trace>2;
+	inet_ntoa($dest_serv_ip) . ")" if $trace>2;
 
     my $proto = &Socket::IPPROTO_TCP; # getprotobyname('tcp') not available on android
     if (socket (SSLCAT_S, &PF_INET(), &SOCK_STREAM(), $proto)) {
@@ -516,7 +516,7 @@ sub open_proxy_tcp_connection {
     #print SSLCAT_S "CONNECT $dest_serv:$port HTTP/1.0$proxyauth$CRLF$CRLF";
     #my $line = <SSLCAT_S>;   # *** bug? Mixing stdio with syscall read?
     ($ret, $errs) =
-        tcp_write_all("CONNECT $dest_serv:$port HTTP/1.0$proxyauth$CRLF$CRLF");
+	tcp_write_all("CONNECT $dest_serv:$port HTTP/1.0$proxyauth$CRLF$CRLF");
     return wantarray ? (0,$errs) : 0 if $errs;
     ($line, $errs) = tcp_read_until($CRLF . $CRLF, 1024);
     warn "Proxy response: $line" if $trace>2;
@@ -531,11 +531,11 @@ sub open_proxy_tcp_connection {
 sub debug_read {
     my ($replyr, $gotr) = @_;
     my $vm = $trace>2 && $linux_debug ?
-        (split ' ', `cat /proc/$$/stat`)[22] : 'vm_unknown';
+	(split ' ', `cat /proc/$$/stat`)[22] : 'vm_unknown';
     warn "  got " . blength($$gotr) . ':'
-        . blength($$replyr) . " bytes (VM=$vm).\n" if $trace == 3;
+	. blength($$replyr) . " bytes (VM=$vm).\n" if $trace == 3;
     warn "  got `$$gotr' (" . blength($$gotr) . ':'
-        . blength($$replyr) . " bytes, VM=$vm)\n" if $trace>3;
+	. blength($$replyr) . " bytes, VM=$vm)\n" if $trace>3;
 }
 
 sub ssl_read_all {
@@ -566,12 +566,12 @@ sub tcp_read_all {
 
     my $bsize = 0x10000;
     while ($how_much > 0) {
-        $n = sysread(SSLCAT_S,$got, (($bsize < $how_much) ? $bsize : $how_much));
-        warn "Read error: $! ($n,$how_much)" unless defined $n;
-        last if !$n;  # EOF
-        $how_much -= $n;
-        debug_read(\$reply, \$got) if $trace>1;
-        $reply .= $got;
+	$n = sysread(SSLCAT_S,$got, (($bsize < $how_much) ? $bsize : $how_much));
+	warn "Read error: $! ($n,$how_much)" unless defined $n;
+	last if !$n;  # EOF
+	$how_much -= $n;
+	debug_read(\$reply, \$got) if $trace>1;
+	$reply .= $got;
     }
     return wantarray ? ($reply, $errs) : $reply;
 }
@@ -580,139 +580,139 @@ sub ssl_write_all {
     my $ssl = $_[0];
     my ($data_ref, $errs);
     if (ref $_[1]) {
-        $data_ref = $_[1];
+	$data_ref = $_[1];
     } else {
-        $data_ref = \$_[1];
+	$data_ref = \$_[1];
     }
     my ($wrote, $written, $to_write) = (0,0, blength($$data_ref));
     my $vm = $trace>2 && $linux_debug ?
-        (split ' ', `cat /proc/$$/stat`)[22] : 'vm_unknown';
+	(split ' ', `cat /proc/$$/stat`)[22] : 'vm_unknown';
     warn "  write_all VM at entry=$vm\n" if $trace>2;
     while ($to_write) {
-        #sleep 1; # *** DEBUG
-        warn "partial `$$data_ref'\n" if $trace>3;
-        $wrote = write_partial($ssl, $written, $to_write, $$data_ref);
-        if (defined $wrote && ($wrote > 0)) {  # write_partial can return -1
-            $written += $wrote;
-            $to_write -= $wrote;
-        } else {
-          if (defined $wrote) {
-            # check error conditions via SSL_get_error per man page
-            if ( my $sslerr = get_error($ssl, $wrote) ) {
-              my $errstr = ERR_error_string($sslerr);
-              my $errname = '';
-              SWITCH: {
-                $sslerr == constant("ERROR_NONE") && do {
-                  # according to map page SSL_get_error(3ssl):
-                  #  The TLS/SSL I/O operation completed.
-                  #  This result code is returned if and only if ret > 0
+	#sleep 1; # *** DEBUG
+	warn "partial `$$data_ref'\n" if $trace>3;
+	$wrote = write_partial($ssl, $written, $to_write, $$data_ref);
+	if (defined $wrote && ($wrote > 0)) {  # write_partial can return -1
+	    $written += $wrote;
+	    $to_write -= $wrote;
+	} else {
+	  if (defined $wrote) {
+	    # check error conditions via SSL_get_error per man page
+	    if ( my $sslerr = get_error($ssl, $wrote) ) {
+	      my $errstr = ERR_error_string($sslerr);
+	      my $errname = '';
+	      SWITCH: {
+		$sslerr == constant("ERROR_NONE") && do {
+		  # according to map page SSL_get_error(3ssl):
+		  #  The TLS/SSL I/O operation completed.
+		  #  This result code is returned if and only if ret > 0
                   # so if we received it here complain...
-                  warn "ERROR_NONE unexpected with invalid return value!"
-                    if $trace;
-                  $errname = "SSL_ERROR_NONE";
-                };
-                $sslerr == constant("ERROR_WANT_READ") && do {
-                  # operation did not complete, call again later, so do not
-                  # set errname and empty err_que since this is a known
-                  # error that is expected but, we should continue to try
-                  # writing the rest of our data with same io call and params.
-                  warn "ERROR_WANT_READ (TLS/SSL Handshake, will continue)\n"
-                    if $trace;
-                  print_errs('SSL_write(want read)');
-                  last SWITCH;
-                };
-                $sslerr == constant("ERROR_WANT_WRITE") && do {
-                  # operation did not complete, call again later, so do not
-                  # set errname and empty err_que since this is a known
-                  # error that is expected but, we should continue to try
-                  # writing the rest of our data with same io call and params.
-                  warn "ERROR_WANT_WRITE (TLS/SSL Handshake, will continue)\n"
-                    if $trace;
-                  print_errs('SSL_write(want write)');
-                  last SWITCH;
-                };
-                $sslerr == constant("ERROR_ZERO_RETURN") && do {
-                  # valid protocol closure from other side, no longer able to
-                  # write, since there is no longer a session...
-                  warn "ERROR_ZERO_RETURN($wrote): TLS/SSLv3 Closure alert\n"
-                    if $trace;
-                  $errname = "SSL_ERROR_ZERO_RETURN";
-                  last SWITCH;
-                };
-                $sslerr == constant("ERROR_SSL") && do {
-                  # library/protocol error
-                  warn "ERROR_SSL($wrote): Library/Protocol error occured\n"
-                    if $trace;
-                  $errname = "SSL_ERROR_SSL";
-                  last SWITCH;
-                };
-                $sslerr == constant("ERROR_WANT_CONNECT") && do {
-                  # according to man page, should never happen on call to
-                  # SSL_write, so complain, but handle as known error type
-                  warn "ERROR_WANT_CONNECT: Unexpected error for SSL_write\n"
-                    if $trace;
-                  $errname = "SSL_ERROR_WANT_CONNECT";
-                  last SWITCH;
-                };
-                $sslerr == constant("ERROR_WANT_ACCEPT") && do {
-                  # according to man page, should never happen on call to
-                  # SSL_write, so complain, but handle as known error type
-                  warn "ERROR_WANT_ACCEPT: Unexpected error for SSL_write\n"
-                    if $trace;
-                  $errname = "SSL_ERROR_WANT_ACCEPT";
-                  last SWITCH;
-                };
-                $sslerr == constant("ERROR_WANT_X509_LOOKUP") && do {
-                  # operation did not complete: waiting on call back,
-                  # call again later, so do not set errname and empty err_que
-                  # since this is a known error that is expected but, we should
-                  # continue to try writing the rest of our data with same io
-                  # call parameter.
-                  warn "ERROR_WANT_X509_LOOKUP: (Cert Callback asked for in ".
-                    "SSL_write will contine)\n" if $trace;
-                  print_errs('SSL_write(want x509');
-                  last SWITCH;
-                };
-                $sslerr == constant("ERROR_SYSCALL") && do {
-                  # some IO error occured. According to man page:
-                  # Check retval, ERR, fallback to errno
-                  if ($wrote==0) { # EOF
-                    warn "ERROR_SYSCALL($wrote): EOF violates protocol.\n"
-                      if $trace;
-                    $errname = "SSL_ERROR_SYSCALL(EOF)";
-                  } else { # -1 underlying BIO error reported.
-                    # check error que for details, don't set errname since we
-                    # are directly appending to errs
-                    my $chkerrs = print_errs('SSL_write (syscall)');
-                    if ($chkerrs) {
-                      warn "ERROR_SYSCALL($wrote): Have errors\n" if $trace;
-                      $errs .= "ssl_write_all $$: 1 - ERROR_SYSCALL($wrote,".
-                        "$sslerr,$errstr,$!)\n$chkerrs";
-                    } else { # que was empty, use errno
-                      warn "ERROR_SYSCALL($wrote): errno($!)\n" if $trace;
-                      $errs .= "ssl_write_all $$: 1 - ERROR_SYSCALL($wrote,".
-                        "$sslerr) : $!\n";
-                    }
-                  }
-                  last SWITCH;
-                };
-                warn "Unhandled val $sslerr from SSL_get_error(SSL,$wrote)\n"
-                  if $trace;
-                $errname = "SSL_ERROR_?($sslerr)";
-              } # end of SWITCH block
-              if ($errname) { # if we had an errname set add the error
-                $errs .= "ssl_write_all $$: 1 - $errname($wrote,$sslerr,".
-                  "$errstr,$!)\n";
-              }
-            } # endif on have SSL_get_error val
-          } # endif on $wrote defined
-        } # endelse on $wrote > 0
-        $vm = $trace>2 && $linux_debug ?
-            (split ' ', `cat /proc/$$/stat`)[22] : 'vm_unknown';
-        warn "  written so far $wrote:$written bytes (VM=$vm)\n" if $trace>2;
-        # append remaining errors in que and report if errs exist
-        $errs .= print_errs('SSL_write');
-        return (wantarray ? (undef, $errs) : undef) if $errs;
+		  warn "ERROR_NONE unexpected with invalid return value!"
+		    if $trace;
+		  $errname = "SSL_ERROR_NONE";
+		};
+		$sslerr == constant("ERROR_WANT_READ") && do {
+		  # operation did not complete, call again later, so do not
+		  # set errname and empty err_que since this is a known
+		  # error that is expected but, we should continue to try
+		  # writing the rest of our data with same io call and params.
+		  warn "ERROR_WANT_READ (TLS/SSL Handshake, will continue)\n"
+		    if $trace;
+		  print_errs('SSL_write(want read)');
+		  last SWITCH;
+		};
+		$sslerr == constant("ERROR_WANT_WRITE") && do {
+		  # operation did not complete, call again later, so do not
+		  # set errname and empty err_que since this is a known
+		  # error that is expected but, we should continue to try
+		  # writing the rest of our data with same io call and params.
+		  warn "ERROR_WANT_WRITE (TLS/SSL Handshake, will continue)\n"
+		    if $trace;
+		  print_errs('SSL_write(want write)');
+		  last SWITCH;
+		};
+		$sslerr == constant("ERROR_ZERO_RETURN") && do {
+		  # valid protocol closure from other side, no longer able to
+		  # write, since there is no longer a session...
+		  warn "ERROR_ZERO_RETURN($wrote): TLS/SSLv3 Closure alert\n"
+		    if $trace;
+		  $errname = "SSL_ERROR_ZERO_RETURN";
+		  last SWITCH;
+		};
+		$sslerr == constant("ERROR_SSL") && do {
+		  # library/protocol error
+		  warn "ERROR_SSL($wrote): Library/Protocol error occured\n"
+		    if $trace;
+		  $errname = "SSL_ERROR_SSL";
+		  last SWITCH;
+		};
+		$sslerr == constant("ERROR_WANT_CONNECT") && do {
+		  # according to man page, should never happen on call to
+		  # SSL_write, so complain, but handle as known error type
+		  warn "ERROR_WANT_CONNECT: Unexpected error for SSL_write\n"
+		    if $trace;
+		  $errname = "SSL_ERROR_WANT_CONNECT";
+		  last SWITCH;
+		};
+		$sslerr == constant("ERROR_WANT_ACCEPT") && do {
+		  # according to man page, should never happen on call to
+		  # SSL_write, so complain, but handle as known error type
+		  warn "ERROR_WANT_ACCEPT: Unexpected error for SSL_write\n"
+		    if $trace;
+		  $errname = "SSL_ERROR_WANT_ACCEPT";
+		  last SWITCH;
+		};
+		$sslerr == constant("ERROR_WANT_X509_LOOKUP") && do {
+		  # operation did not complete: waiting on call back,
+		  # call again later, so do not set errname and empty err_que
+		  # since this is a known error that is expected but, we should
+		  # continue to try writing the rest of our data with same io
+		  # call parameter.
+		  warn "ERROR_WANT_X509_LOOKUP: (Cert Callback asked for in ".
+		    "SSL_write will contine)\n" if $trace;
+		  print_errs('SSL_write(want x509');
+		  last SWITCH;
+		};
+		$sslerr == constant("ERROR_SYSCALL") && do {
+		  # some IO error occured. According to man page:
+		  # Check retval, ERR, fallback to errno
+		  if ($wrote==0) { # EOF
+		    warn "ERROR_SYSCALL($wrote): EOF violates protocol.\n"
+		      if $trace;
+		    $errname = "SSL_ERROR_SYSCALL(EOF)";
+		  } else { # -1 underlying BIO error reported.
+		    # check error que for details, don't set errname since we
+		    # are directly appending to errs
+		    my $chkerrs = print_errs('SSL_write (syscall)');
+		    if ($chkerrs) {
+		      warn "ERROR_SYSCALL($wrote): Have errors\n" if $trace;
+		      $errs .= "ssl_write_all $$: 1 - ERROR_SYSCALL($wrote,".
+			"$sslerr,$errstr,$!)\n$chkerrs";
+		    } else { # que was empty, use errno
+		      warn "ERROR_SYSCALL($wrote): errno($!)\n" if $trace;
+		      $errs .= "ssl_write_all $$: 1 - ERROR_SYSCALL($wrote,".
+			"$sslerr) : $!\n";
+		    }
+		  }
+		  last SWITCH;
+		};
+		warn "Unhandled val $sslerr from SSL_get_error(SSL,$wrote)\n"
+		  if $trace;
+		$errname = "SSL_ERROR_?($sslerr)";
+	      } # end of SWITCH block
+	      if ($errname) { # if we had an errname set add the error
+		$errs .= "ssl_write_all $$: 1 - $errname($wrote,$sslerr,".
+		  "$errstr,$!)\n";
+	      }
+	    } # endif on have SSL_get_error val
+	  } # endif on $wrote defined
+	} # endelse on $wrote > 0
+	$vm = $trace>2 && $linux_debug ?
+	    (split ' ', `cat /proc/$$/stat`)[22] : 'vm_unknown';
+	warn "  written so far $wrote:$written bytes (VM=$vm)\n" if $trace>2;
+	# append remaining errors in que and report if errs exist
+	$errs .= print_errs('SSL_write');
+	return (wantarray ? (undef, $errs) : undef) if $errs;
     }
     return wantarray ? ($written, $errs) : $written;
 }
@@ -720,27 +720,27 @@ sub ssl_write_all {
 sub tcp_write_all {
     my ($data_ref, $errs);
     if (ref $_[0]) {
-        $data_ref = $_[0];
+	$data_ref = $_[0];
     } else {
-        $data_ref = \$_[0];
+	$data_ref = \$_[0];
     }
     my ($wrote, $written, $to_write) = (0,0, blength($$data_ref));
     my $vm = $trace>2 && $linux_debug ?
-        (split ' ', `cat /proc/$$/stat`)[22] : 'vm_unknown';
+	(split ' ', `cat /proc/$$/stat`)[22] : 'vm_unknown';
     warn "  write_all VM at entry=$vm to_write=$to_write\n" if $trace>2;
     while ($to_write) {
-        warn "partial `$$data_ref'\n" if $trace>3;
-        $wrote = syswrite(SSLCAT_S, $$data_ref, $to_write, $written);
-        if (defined $wrote && ($wrote > 0)) {  # write_partial can return -1
-            $written += $wrote;
-            $to_write -= $wrote;
-        } elsif (!defined($wrote)) {
-            warn "tcp_write_all: $!";
-            return (wantarray ? (undef, "$!") : undef);
-        }
-        $vm = $trace>2 && $linux_debug ?
-            (split ' ', `cat /proc/$$/stat`)[22] : 'vm_unknown';
-        warn "  written so far $wrote:$written bytes (VM=$vm)\n" if $trace>2;
+	warn "partial `$$data_ref'\n" if $trace>3;
+	$wrote = syswrite(SSLCAT_S, $$data_ref, $to_write, $written);
+	if (defined $wrote && ($wrote > 0)) {  # write_partial can return -1
+	    $written += $wrote;
+	    $to_write -= $wrote;
+	} elsif (!defined($wrote)) {
+	    warn "tcp_write_all: $!";
+	    return (wantarray ? (undef, "$!") : undef);
+	}
+	$vm = $trace>2 && $linux_debug ?
+	    (split ' ', `cat /proc/$$/stat`)[22] : 'vm_unknown';
+	warn "  written so far $wrote:$written bytes (VM=$vm)\n" if $trace>2;
     }
     return wantarray ? ($written, '') : $written;
 }
@@ -769,64 +769,64 @@ sub ssl_read_until ($;$$) {
     # N.B. 0.9.6a has security problems, so the support for
     #      anything earlier than 0.9.6e will be dropped soon.
     if (&Net::SSLeay::OPENSSL_VERSION_NUMBER >= 0x0090601f) {
-        $max_length = 2000000000 unless (defined $max_length);
-        my ($pending, $peek_length, $found, $done);
-        while (blength($reply) < $max_length and !$done) {
-            #Block if necessary until we get some data
-            $got = Net::SSLeay::peek($ssl,1);
-            last if print_errs('SSL_peek');
+	$max_length = 2000000000 unless (defined $max_length);
+	my ($pending, $peek_length, $found, $done);
+	while (blength($reply) < $max_length and !$done) {
+	    #Block if necessary until we get some data
+	    $got = Net::SSLeay::peek($ssl,1);
+	    last if print_errs('SSL_peek');
 
-            $pending = Net::SSLeay::pending($ssl) + blength($reply);
-            $peek_length = ($pending > $max_length) ? $max_length : $pending;
-            $peek_length -= blength($reply);
-            $got = Net::SSLeay::peek($ssl, $peek_length);
-            last if print_errs('SSL_peek');
-            $peek_length = blength($got);
+	    $pending = Net::SSLeay::pending($ssl) + blength($reply);
+	    $peek_length = ($pending > $max_length) ? $max_length : $pending;
+	    $peek_length -= blength($reply);
+	    $got = Net::SSLeay::peek($ssl, $peek_length);
+	    last if print_errs('SSL_peek');
+	    $peek_length = blength($got);
 
-            #$found = index($got, $delim);  # Old and broken
+	    #$found = index($got, $delim);  # Old and broken
 
-            # the delimiter may be split across two gets, so we prepend
-            # a little from the last get onto this one before we check
-            # for a match
-            my $match;
-            if(blength($reply) >= blength($delim) - 1) {
-                #if what we've read so far is greater or equal
-                #in length of what we need to prepatch
-                $match = substr $reply, blength($reply) - blength($delim) + 1;
-            } else {
-                $match = $reply;
-            }
+	    # the delimiter may be split across two gets, so we prepend
+	    # a little from the last get onto this one before we check
+	    # for a match
+	    my $match;
+	    if(blength($reply) >= blength($delim) - 1) {
+		#if what we've read so far is greater or equal
+		#in length of what we need to prepatch
+		$match = substr $reply, blength($reply) - blength($delim) + 1;
+	    } else {
+		$match = $reply;
+	    }
 
-            $match .= $got;
-            $found = index($match, $delim);
+	    $match .= $got;
+	    $found = index($match, $delim);
 
-            if ($found > -1) {
-                #$got = Net::SSLeay::read($ssl, $found+$len_delim);
-                #read up to the end of the delimiter
-                $got = Net::SSLeay::read($ssl,
-                                         $found + $len_delim
-                                         - ((blength($match)) - (blength($got))));
-                $done = 1;
-            } else {
-                $got = Net::SSLeay::read($ssl, $peek_length);
-                $done = 1 if ($peek_length == $max_length - blength($reply));
-            }
+	    if ($found > -1) {
+		#$got = Net::SSLeay::read($ssl, $found+$len_delim);
+		#read up to the end of the delimiter
+		$got = Net::SSLeay::read($ssl,
+					 $found + $len_delim
+					 - ((blength($match)) - (blength($got))));
+		$done = 1;
+	    } else {
+		$got = Net::SSLeay::read($ssl, $peek_length);
+		$done = 1 if ($peek_length == $max_length - blength($reply));
+	    }
 
-            last if print_errs('SSL_read');
-            debug_read(\$reply, \$got) if $trace>1;
-            last if $got eq '';
-            $reply .= $got;
-        }
+	    last if print_errs('SSL_read');
+	    debug_read(\$reply, \$got) if $trace>1;
+	    last if $got eq '';
+	    $reply .= $got;
+	}
     } else {
-        while (!defined $max_length || length $reply < $max_length) {
-            $got = Net::SSLeay::read($ssl,1);  # one by one
-            last if print_errs('SSL_read');
-            debug_read(\$reply, \$got) if $trace>1;
-            last if $got eq '';
-            $reply .= $got;
-            last if $len_delim
-                && substr($reply, blength($reply)-$len_delim) eq $delim;
-        }
+	while (!defined $max_length || length $reply < $max_length) {
+	    $got = Net::SSLeay::read($ssl,1);  # one by one
+	    last if print_errs('SSL_read');
+	    debug_read(\$reply, \$got) if $trace>1;
+	    last if $got eq '';
+	    $reply .= $got;
+	    last if $len_delim
+		&& substr($reply, blength($reply)-$len_delim) eq $delim;
+	}
     }
     return $reply;
 }
@@ -845,13 +845,13 @@ sub tcp_read_until {
     my $reply = '';
 
     while (!defined $max_length || length $reply < $max_length) {
-        $n = sysread(SSLCAT_S, $got, 1);  # one by one
-        warn "tcp_read_until: $!" if !defined $n;
-        debug_read(\$reply, \$got) if $trace>1;
-        last if !$n;  # EOF
-        $reply .= $got;
-        last if $len_delim
-            && substr($reply, blength($reply)-$len_delim) eq $delim;
+	$n = sysread(SSLCAT_S, $got, 1);  # one by one
+	warn "tcp_read_until: $!" if !defined $n;
+	debug_read(\$reply, \$got) if $trace>1;
+	last if !$n;  # EOF
+	$reply .= $got;
+	last if $len_delim
+	    && substr($reply, blength($reply)-$len_delim) eq $delim;
     }
     return $reply;
 }
@@ -900,15 +900,15 @@ sub dump_peer_certificate ($) {
     print "no cert defined\n" if !defined($cert);
     # Cipher=NONE with empty cert fix
     if (!defined($cert) || ($cert == 0)) {
-        warn "cert = `$cert'\n" if $trace;
-        return "Subject Name: undefined\nIssuer  Name: undefined\n";
+	warn "cert = `$cert'\n" if $trace;
+	return "Subject Name: undefined\nIssuer  Name: undefined\n";
     } else {
-        my $x = 'Subject Name: '
-            . X509_NAME_oneline(X509_get_subject_name($cert)) . "\n"
-                . 'Issuer  Name: '
-                    . X509_NAME_oneline(X509_get_issuer_name($cert))  . "\n";
-        Net::SSLeay::X509_free($cert);
-        return $x;
+	my $x = 'Subject Name: '
+	    . X509_NAME_oneline(X509_get_subject_name($cert)) . "\n"
+		. 'Issuer  Name: '
+		    . X509_NAME_oneline(X509_get_issuer_name($cert))  . "\n";
+	Net::SSLeay::X509_free($cert);
+	return $x;
     }
 }
 
@@ -918,45 +918,45 @@ sub randomize (;$$$) {
     my ($rn_seed_file, $seed, $egd_path) = @_;
     my $rnsf = defined($rn_seed_file) && -r $rn_seed_file;
 
-        $egd_path = '';
+	$egd_path = '';
     $egd_path = $ENV{'EGD_PATH'} if $ENV{'EGD_PATH'};
 
     RAND_seed(rand() + $$);  # Stir it with time and pid
 
     unless ($rnsf || -r $Net::SSLeay::random_device || $seed || -S $egd_path) {
-        my $poll_retval = Net::SSLeay::RAND_poll();
-        warn "Random number generator not seeded!!!" if $trace && !$poll_retval;
+	my $poll_retval = Net::SSLeay::RAND_poll();
+	warn "Random number generator not seeded!!!" if $trace && !$poll_retval;
     }
 
     RAND_load_file($rn_seed_file, -s _) if $rnsf;
     RAND_seed($seed) if $seed;
     RAND_seed($ENV{RND_SEED}) if $ENV{RND_SEED};
     RAND_load_file($Net::SSLeay::random_device, $Net::SSLeay::how_random/8)
-        if -r $Net::SSLeay::random_device;
+	if -r $Net::SSLeay::random_device;
 }
 
 sub new_x_ctx {
     if ($ssl_version == 2)  {
-        unless (exists &Net::SSLeay::CTX_v2_new) {
-            warn "ssl_version has been set to 2, but this version of OpenSSL has been compiled without SSLv2 support";
-            return undef;
-        }
-        $ctx = CTX_v2_new();
+	unless (exists &Net::SSLeay::CTX_v2_new) {
+	    warn "ssl_version has been set to 2, but this version of OpenSSL has been compiled without SSLv2 support";
+	    return undef;
+	}
+	$ctx = CTX_v2_new();
     }
     elsif ($ssl_version == 3)  { $ctx = CTX_v3_new(); }
     elsif ($ssl_version == 10) { $ctx = CTX_tlsv1_new(); }
     elsif ($ssl_version == 11) {
-        unless (exists &Net::SSLeay::CTX_tlsv1_1_new) {
-            warn "ssl_version has been set to 11, but this version of OpenSSL has been compiled without TLSv1.1 support";
-            return undef;
-        }
+	unless (exists &Net::SSLeay::CTX_tlsv1_1_new) {
+	    warn "ssl_version has been set to 11, but this version of OpenSSL has been compiled without TLSv1.1 support";
+	    return undef;
+	}
         $ctx = CTX_tlsv1_1_new;
     }
     elsif ($ssl_version == 12) {
-        unless (exists &Net::SSLeay::CTX_tlsv1_2_new) {
-            warn "ssl_version has been set to 12, but this version of OpenSSL has been compiled without TLSv1.2 support";
-            return undef;
-        }
+	unless (exists &Net::SSLeay::CTX_tlsv1_2_new) {
+	    warn "ssl_version has been set to 12, but this version of OpenSSL has been compiled without TLSv1.2 support";
+	    return undef;
+	}
         $ctx = CTX_tlsv1_2_new;
     }
     else                       { $ctx = CTX_new(); }
@@ -975,10 +975,10 @@ sub initialize
 {
     if (!$library_initialised)
     {
-        load_error_strings();         # Some bloat, but I'm after ease of use
-        SSLeay_add_ssl_algorithms();  # and debuggability.
-        randomize();
-        $library_initialised++;
+	load_error_strings();         # Some bloat, but I'm after ease of use
+	SSLeay_add_ssl_algorithms();  # and debuggability.
+	randomize();
+	$library_initialised++;
     }
 }
 
@@ -1018,18 +1018,18 @@ sub sslcat { # address, port, message, $crt, $key --> reply / (reply,errs,cert)
     warn "Entering SSL negotiation phase...\n" if $trace>2;
 
     if ($trace>2) {
-        my $i = 0;
-        my $p = '';
-        my $cipher_list = 'Cipher list: ';
-        $p=Net::SSLeay::get_cipher_list($ssl,$i);
-        $cipher_list .= $p if $p;
-        do {
-            $i++;
-            $cipher_list .= ', ' . $p if $p;
-            $p=Net::SSLeay::get_cipher_list($ssl,$i);
-        } while $p;
-        $cipher_list .= '\n';
-        warn $cipher_list;
+	my $i = 0;
+	my $p = '';
+	my $cipher_list = 'Cipher list: ';
+	$p=Net::SSLeay::get_cipher_list($ssl,$i);
+	$cipher_list .= $p if $p;
+	do {
+	    $i++;
+	    $cipher_list .= ', ' . $p if $p;
+	    $p=Net::SSLeay::get_cipher_list($ssl,$i);
+	} while $p;
+	$cipher_list .= '\n';
+	warn $cipher_list;
     }
 
     $got = Net::SSLeay::connect($ssl);
@@ -1039,17 +1039,17 @@ sub sslcat { # address, port, message, $crt, $key --> reply / (reply,errs,cert)
     my $server_cert = get_peer_certificate($ssl);
     print_errs('get_peer_certificate');
     if ($trace>1) {
-        warn "Cipher `" . get_cipher($ssl) . "'\n";
-        print_errs('get_ciper');
-        warn dump_peer_certificate($ssl);
+	warn "Cipher `" . get_cipher($ssl) . "'\n";
+	print_errs('get_ciper');
+	warn dump_peer_certificate($ssl);
     }
 
     ### Connected. Exchange some data (doing repeated tries if necessary).
 
     warn "sslcat $$: sending " . blength($out_message) . " bytes...\n"
-        if $trace==3;
+	if $trace==3;
     warn "sslcat $$: sending `$out_message' (" . blength($out_message)
-        . " bytes)...\n" if $trace>3;
+	. " bytes)...\n" if $trace>3;
     ($written, $errs) = ssl_write_all($ssl, $out_message);
     goto cleanup unless $written;
 
@@ -1081,9 +1081,9 @@ sub tcpcat { # address, port, message, $crt, $key --> reply / (reply,errs,cert)
     ### Connected. Exchange some data (doing repeated tries if necessary).
 
     warn "tcpcat $$: sending " . blength($out_message) . " bytes...\n"
-        if $trace==3;
+	if $trace==3;
     warn "tcpcat $$: sending `$out_message' (" . blength($out_message)
-        . " bytes)...\n" if $trace>3;
+	. " bytes)...\n" if $trace>3;
     ($written, $errs) = tcp_write_all($out_message);
     goto cleanup unless $written;
 
@@ -1103,9 +1103,9 @@ cleanup:
 sub tcpxcat {
     my ($usessl, $site, $port, $req, $crt_path, $key_path) = @_;
     if ($usessl) {
-        return sslcat($site, $port, $req, $crt_path, $key_path);
+	return sslcat($site, $port, $req, $crt_path, $key_path);
     } else {
-        return tcpcat($site, $port, $req);
+	return tcpcat($site, $port, $req);
     }
 }
 
@@ -1146,18 +1146,18 @@ sub https_cat { # address, port, message --> returns reply / (reply,errs,cert)
     warn "Entering SSL negotiation phase...\n" if $trace>2;
 
     if ($trace>2) {
-        my $i = 0;
-        my $p = '';
-        my $cipher_list = 'Cipher list: ';
-        $p=Net::SSLeay::get_cipher_list($ssl,$i);
-        $cipher_list .= $p if $p;
-        do {
-            $i++;
-            $cipher_list .= ', ' . $p if $p;
-            $p=Net::SSLeay::get_cipher_list($ssl,$i);
-        } while $p;
-        $cipher_list .= '\n';
-        warn $cipher_list;
+	my $i = 0;
+	my $p = '';
+	my $cipher_list = 'Cipher list: ';
+	$p=Net::SSLeay::get_cipher_list($ssl,$i);
+	$cipher_list .= $p if $p;
+	do {
+	    $i++;
+	    $cipher_list .= ', ' . $p if $p;
+	    $p=Net::SSLeay::get_cipher_list($ssl,$i);
+	} while $p;
+	$cipher_list .= '\n';
+	warn $cipher_list;
     }
 
     $got = Net::SSLeay::connect($ssl);
@@ -1167,17 +1167,17 @@ sub https_cat { # address, port, message --> returns reply / (reply,errs,cert)
     my $server_cert = get_peer_certificate($ssl);
     print_errs('get_peer_certificate');
     if ($trace>1) {
-        warn "Cipher `" . get_cipher($ssl) . "'\n";
-        print_errs('get_ciper');
-        warn dump_peer_certificate($ssl);
+	warn "Cipher `" . get_cipher($ssl) . "'\n";
+	print_errs('get_ciper');
+	warn dump_peer_certificate($ssl);
     }
 
     ### Connected. Exchange some data (doing repeated tries if necessary).
 
     warn "https_cat $$: sending " . blength($out_message) . " bytes...\n"
-        if $trace==3;
+	if $trace==3;
     warn "https_cat $$: sending `$out_message' (" . blength($out_message)
-        . " bytes)...\n" if $trace>3;
+	. " bytes)...\n" if $trace>3;
     ($written, $errs) = ssl_write_all($ssl, $out_message);
     goto cleanup unless $written;
 
@@ -1206,9 +1206,9 @@ sub http_cat { # address, port, message --> returns reply / (reply,errs,cert)
     ### Connected. Exchange some data (doing repeated tries if necessary).
 
     warn "http_cat $$: sending " . blength($out_message) . " bytes...\n"
-        if $trace==3;
+	if $trace==3;
     warn "http_cat $$: sending `$out_message' (" . blength($out_message)
-        . " bytes)...\n" if $trace>3;
+	. " bytes)...\n" if $trace>3;
     ($written, $errs) = tcp_write_all($out_message);
     goto cleanup unless $written;
 
@@ -1226,9 +1226,9 @@ sub httpx_cat {
     my ($usessl, $site, $port, $req, $crt_path, $key_path) = @_;
     warn "httpx_cat: usessl=$usessl ($site:$port)" if $trace;
     if ($usessl) {
-        return https_cat($site, $port, $req, $crt_path, $key_path);
+	return https_cat($site, $port, $req, $crt_path, $key_path);
     } else {
-        return http_cat($site, $port, $req);
+	return http_cat($site, $port, $req);
     }
 }
 
@@ -1258,8 +1258,8 @@ sub set_proxy ($$;**) {
     require MIME::Base64 if $proxyuser;
     $proxyauth = $proxyuser
          ? $CRLF . 'Proxy-authorization: Basic '
-         . MIME::Base64::encode("$proxyuser:$proxypass", '')
-         : '';
+	 . MIME::Base64::encode("$proxyuser:$proxypass", '')
+	 : '';
 }
 
 ###
@@ -1270,10 +1270,10 @@ sub make_form {
     my (@fields) = @_;
     my $form;
     while (@fields) {
-        my ($name, $data) = (shift(@fields), shift(@fields));
-        $data =~ s/([^\w\-.\@\$ ])/sprintf("%%%2.2x",ord($1))/gse;
-        $data =~ tr[ ][+];
-        $form .= "$name=$data&";
+	my ($name, $data) = (shift(@fields), shift(@fields));
+	$data =~ s/([^\w\-.\@\$ ])/sprintf("%%%2.2x",ord($1))/gse;
+    	$data =~ tr[ ][+];
+	$form .= "$name=$data&";
     }
     chop $form;
     return $form;
@@ -1283,27 +1283,27 @@ sub make_headers {
     my (@headers) = @_;
     my $headers;
     while (@headers) {
-        my $header = shift(@headers);
-        my $value = shift(@headers);
-        $header =~ s/:$//;
-        $value =~ s/\x0d?\x0a$//; # because we add it soon, see below
-        $headers .= "$header: $value$CRLF";
+	my $header = shift(@headers);
+	my $value = shift(@headers);
+	$header =~ s/:$//;
+	$value =~ s/\x0d?\x0a$//; # because we add it soon, see below
+	$headers .= "$header: $value$CRLF";
     }
     return $headers;
 }
 
 sub do_httpx3 {
     my ($method, $usessl, $site, $port, $path, $headers,
-        $content, $mime_type, $crt_path, $key_path) = @_;
+	$content, $mime_type, $crt_path, $key_path) = @_;
     my ($response, $page, $h,$v);
 
     my $len = blength($content);
     if ($len) {
-        $mime_type = "application/x-www-form-urlencoded" unless $mime_type;
-        $content = "Content-Type: $mime_type$CRLF"
-            . "Content-Length: $len$CRLF$CRLF$content";
+	$mime_type = "application/x-www-form-urlencoded" unless $mime_type;
+	$content = "Content-Type: $mime_type$CRLF"
+	    . "Content-Length: $len$CRLF$CRLF$content";
     } else {
-        $content = "$CRLF$CRLF";
+	$content = "$CRLF$CRLF";
     }
     my $req = "$method $path HTTP/1.0$CRLF";
     unless (defined $headers && $headers =~ /^Host:/m) {
@@ -1312,12 +1312,12 @@ sub do_httpx3 {
             $req .= ":$port";
         }
         $req .= $CRLF;
-        }
+	}
     $req .= (defined $headers ? $headers : '') . "Accept: */*$CRLF$content";
 
     warn "do_httpx3($method,$usessl,$site:$port)" if $trace;
     my ($http, $errs, $server_cert)
-        = httpx_cat($usessl, $site, $port, $req, $crt_path, $key_path);
+	= httpx_cat($usessl, $site, $port, $req, $crt_path, $key_path);
     return (undef, "HTTP/1.0 900 NET OR SSL ERROR$CRLF$CRLF$errs") if $errs;
 
     $http = '' if !defined $http;
@@ -1336,10 +1336,10 @@ sub do_httpx2 {
     my ($page, $response, $headers, $server_cert) = &do_httpx3;
     X509_free($server_cert) if defined $server_cert;
     return ($page, $response, defined $headers ?
-            map( { ($h,$v)=/^(\S+)\:\s*(.*)$/; (uc($h),$v); }
-                split(/\s?\n/, $headers)
-                ) : ()
-            );
+	    map( { ($h,$v)=/^(\S+)\:\s*(.*)$/; (uc($h),$v); }
+		split(/\s?\n/, $headers)
+		) : ()
+	    );
 }
 
 sub do_https2 { splice(@_,1,0) = 1; do_httpx2; }  # Legacy undocumented
@@ -1351,8 +1351,8 @@ sub do_httpx4 {
     my ($page, $response, $headers, $server_cert) = &do_httpx3;
     my %hr = ();
     for my $hh (split /\s?\n/, $headers) {
-        my ($h,$v) = ($hh =~ /^(\S+)\:\s*(.*)$/);
-        push @{$hr{uc($h)}}, $v;
+	my ($h,$v) = ($hh =~ /^(\S+)\:\s*(.*)$/);
+	push @{$hr{uc($h)}}, $v;
     }
     return ($page, $response, \%hr, $server_cert);
 }
@@ -1415,10 +1415,10 @@ sub head_httpx4 { do_httpx4(HEAD => @_) }
 
 sub do_https {
     my ($site, $port, $path, $method, $headers,
-        $content, $mime_type, $crt_path, $key_path) = @_;
+	$content, $mime_type, $crt_path, $key_path) = @_;
 
     do_https2($method, $site, $port, $path, $headers,
-             $content, $mime_type, $crt_path, $key_path);
+	     $content, $mime_type, $crt_path, $key_path);
 }
 
 1;

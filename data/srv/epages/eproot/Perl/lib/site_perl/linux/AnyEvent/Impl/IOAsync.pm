@@ -103,7 +103,7 @@ sub set_loop($) {
 
 sub timer {
    my ($class, %arg) = @_;
-
+   
    my $cb = $arg{cb};
 
    my $id;

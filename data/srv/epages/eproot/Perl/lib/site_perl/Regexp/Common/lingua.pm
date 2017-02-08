@@ -16,7 +16,7 @@ pattern name    => [qw /lingua palindrome -chars=[A-Za-z]/],
             my $ch   = $_ [1] -> {-chars};
             my $idx  = $keep ? "1:$ch" : "0:$ch";
             my $r    = "(??{\$Regexp::Common::lingua::pd{'" . $idx . "'}})";
-            $Regexp::Common::lingua::pd {$idx} =
+            $Regexp::Common::lingua::pd {$idx} = 
                     $keep ? qr /($ch|($ch)($r)?\2)/ : qr  /$ch|($ch)($r)?\1/;
         #   print "[$ch]: ", $Regexp::Common::lingua::pd {$idx}, "\n";
         #   $Regexp::Common::lingua::pd {$idx};
@@ -60,7 +60,7 @@ This option takes a character class (default is C<[A-Za-z]>) as
 argument.
 
 If C<{-keep}> is used, only C<$1> will be set, and set to the entire
-match.
+match. 
 
 This pattern requires at least perl 5.6.0.
 

@@ -50,8 +50,8 @@ sub __PPIX_TOKENIZER__regexp {
     # The optional escapes are because any non-open-bracket character
     # may be the delimiter of the regular expression.
     if ( my $accept = $tokenizer->find_regexp(
-            qr{ \A \\? \? \\? > }smx ) ) {
-        return $accept;
+	    qr{ \A \\? \? \\? > }smx ) ) {
+	return $accept;
     }
 
     return;

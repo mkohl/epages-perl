@@ -14,7 +14,7 @@ our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
-Class to parse a cuefile and access the chewy, nougat centre.
+Class to parse a cuefile and access the chewy, nougat centre. 
 Returns Audio::Cuefile::Parser::Track objects.
 
 =head1 USAGE
@@ -25,7 +25,7 @@ my $filename = 'filename.cue';
 
 my $cue = Audio::Cuefile::Parser->new($filename);
 
-my ($audio_file, $cd_performer, $cd_title) =
+my ($audio_file, $cd_performer, $cd_title) = 
   ($cue->file, $cue->performer, $cue->title);
 
 foreach my $track ($cue->tracks) {
@@ -133,18 +133,18 @@ sub _parse_header {
     $line =~ m/\S/ or next LINE;
 
     my ($keyword, $data) = (
-      $line =~ m/
+      $line =~ m/ 
         \A          # anchor at string beginning
         (\w+)       # capture keyword (e.g. FILE, PERFORMER, TITLE)
         \s+ ['"]?   # optional quotes
-        (.*?)       # capture all text as keyword's value
+        (.*?)       # capture all text as keyword's value  
         (?:         # non-capture cluster
           ['"]      # quote, followed by
-          (?:
+          (?:       
             \s+     # spacing, followed by
             \w+     # word (e.g. MP3, WAVE)
           )?        # make cluster optional
-        )?
+        )?          
         \z          # anchor at line end
       /xms
     );
@@ -212,7 +212,7 @@ sub tracks {
 # strip leading and trailing whitespace from input string
 sub _strip_spaces {
   $_[0] =~ s/
-  (?:
+  (?: 
     \A \s+
       |
     \s+ \z
@@ -228,8 +228,8 @@ Returns a list of Audio::Cuefile::Parser::Track objects.
 
 =head2 $cue->file
 
-Returns the filename associated with the FILE keyword from
-the .cue's headers (i.e. the audio file that the .cue file
+Returns the filename associated with the FILE keyword from 
+the .cue's headers (i.e. the audio file that the .cue file 
 is describing).
 
 =head2 $cue->performer

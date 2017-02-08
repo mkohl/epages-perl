@@ -358,7 +358,7 @@ sub map :method {
   my @parts = defined($parts) ? (ref($parts) ? @$parts : $parts) :
     0..($#{$self->{dirs}});
   # TODO actually use the parts() code for this
-  # warn "@parts";
+  # warn "@parts"; 
   foreach my $dir (@{$self->{dirs}}[@parts]) {
     local $_ = $dir;
     $sub->();

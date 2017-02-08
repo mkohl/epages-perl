@@ -12,66 +12,66 @@ our @ISA = qw(Algorithm::CheckDigits);
 my @weight = ( 2,1,2,5,7,1,2,1,2,1,2,1 );
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{8}[A-Za-z]\d\d)(\d)$/) {
-                return $2 == $self->_compute_checkdigit($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{8}[A-Za-z]\d\d)(\d)$/) {
+		return $2 == $self->_compute_checkdigit($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^\d{8}[A-Za-z]\d\d$/) {
-                return  $number . $self->_compute_checkdigit($number);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^\d{8}[A-Za-z]\d\d$/) {
+		return  $number . $self->_compute_checkdigit($number);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{8}[A-Za-z]\d\d)(\d)$/) {
-                return $1 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{8}[A-Za-z]\d\d)(\d)$/) {
+		return $1 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{8}[A-Za-z]\d\d)(\d)$/) {
-                return $2 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{8}[A-Za-z]\d\d)(\d)$/) {
+		return $2 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        if ($number =~ /^(\d{8})([A-Za-z])(\d\d)$/) {
+	if ($number =~ /^(\d{8})([A-Za-z])(\d\d)$/) {
 
-                my $lv     = sprintf("%2.2d",ord(uc($2)) - ord('A') + 1);
-                my @digits = split(//,"$1$lv$3");
-                my $sum    = 0;
+		my $lv     = sprintf("%2.2d",ord(uc($2)) - ord('A') + 1);
+		my @digits = split(//,"$1$lv$3");
+		my $sum    = 0;
 
-                for (my $i = 0; $i <= $#digits; $i++) {
+		for (my $i = 0; $i <= $#digits; $i++) {
 
-                        my $tmp = $weight[$i] * $digits[$i];
+			my $tmp = $weight[$i] * $digits[$i];
 
-                        $sum += $tmp / 10;
-                        $sum += $tmp % 10
-                }
-                return $sum % 10;
-        }
-        return -1;
+			$sum += $tmp / 10;
+			$sum += $tmp % 10
+		}
+		return $sum % 10;
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -90,7 +90,7 @@ CheckDigits::M10_006 - compute check digits for Rentenversicherung (DE)
   $rv = CheckDigits('rentenversicherung');
 
   if ($rv->is_valid('65180539W001')) {
-        # do something
+	# do something
   }
 
   $cn = $rv->complete('65180539W00');
@@ -101,7 +101,7 @@ CheckDigits::M10_006 - compute check digits for Rentenversicherung (DE)
 
   $bn = $rv->basenumber('65180539W001');
   # $bn = '65180539W00'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

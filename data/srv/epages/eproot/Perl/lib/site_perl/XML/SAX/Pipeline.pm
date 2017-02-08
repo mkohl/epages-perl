@@ -13,10 +13,10 @@ XML::SAX::Pipeline - Manage a linear pipeline of SAX processors
         XML::Filter::Foo->new,  ## Create it manually
         "XML::Filter::Bar",     ## Or let Pipeline load & create it
         "XML::Filter::Baz",
-        {
-            ## Normal options
+	{
+	    ## Normal options
             Handler => $h,
-        }
+	}
     );
 
     ## To choose the default parser automatically if XML::Filter::Foo

@@ -13,13 +13,13 @@ sub new {
     my %arg;
     my @add;
     while (my ($k,$v) = splice(@_, 0, 2)) {
-        if ($k eq 'add') {
-            push @add, $v;
-        } elsif ($k eq 'del') {
-            carp "del in constructor (ignored)";
-        } else {
-            $arg{$k} = $v;
-        }
+	if ($k eq 'add') {
+	    push @add, $v;
+	} elsif ($k eq 'del') {
+	    carp "del in constructor (ignored)";
+	} else {
+	    $arg{$k} = $v;
+	}
     }
     my $o = allocate($class, delete $arg{attach_to} || {});
     $o->init(\%arg);

@@ -15,10 +15,10 @@ sub register {
 
     my $sub = \&{"$package\::new"};
     die "can't find $package\::new"
-        if !$sub;
+	if !$sub;
     *{"Event::".$name} = sub {
-        shift;
-        $sub->("Event::".$name, @_);
+	shift;
+	$sub->("Event::".$name, @_);
     };
 
     &Event::add_hooks if @_;
@@ -30,52 +30,52 @@ sub init {
     my ($o, $arg) = @_;
 
     for my $k (keys %$arg) {
-        if ($k =~ s/^e_//) {
-            Carp::cluck "'e_$k' is renamed to '$k'"
-                if --$warn_noise >= 0;
-            $arg->{$k} = delete $arg->{"e_$k"};
-        }
+	if ($k =~ s/^e_//) {
+	    Carp::cluck "'e_$k' is renamed to '$k'"
+		if --$warn_noise >= 0;
+	    $arg->{$k} = delete $arg->{"e_$k"};
+	}
     }
 
     if (!exists $arg->{desc}) {
-        # try to find caller but cope with optimized-away frames & etc
-        for my $up (1..4) {
-            my @fr = caller $up;
-            next if !@fr || $fr[0] =~ m/^Event\b/;
-            my ($file,$line) = @fr[1,2];
-            $file =~ s,^.*/,,;
-            $o->desc("?? $file:$line");
-            last;
-        }
+	# try to find caller but cope with optimized-away frames & etc
+	for my $up (1..4) {
+	    my @fr = caller $up;
+	    next if !@fr || $fr[0] =~ m/^Event\b/;
+	    my ($file,$line) = @fr[1,2];
+	    $file =~ s,^.*/,,;
+	    $o->desc("?? $file:$line");
+	    last;
+	}
     }
 
     # set up prio
     {
-        no strict 'refs';
-        $o->prio($ { ref($o)."::DefaultPriority" } || Event::PRIO_NORMAL);
-        if (exists $arg->{nice}) {
-            $o->prio($o->prio + delete $arg->{nice});
-        }
+	no strict 'refs';
+	$o->prio($ { ref($o)."::DefaultPriority" } || Event::PRIO_NORMAL);
+	if (exists $arg->{nice}) {
+	    $o->prio($o->prio + delete $arg->{nice});
+	}
     }
     $o->prio(-1)
-        if delete $arg->{async};
+	if delete $arg->{async};
     $o->prio(delete $arg->{prio})
-        if exists $arg->{prio};
+	if exists $arg->{prio};
 
     # is parked?
     my $parked = delete $arg->{parked};
 
     for my $k (keys %$arg) {
-        my $m = $k;
-        if ($o->can($m)) {
-            $o->$m($arg->{$k});
-            next;
-        }
+	my $m = $k;
+	if ($o->can($m)) {
+	    $o->$m($arg->{$k});
+	    next;
+	}
     }
 
     Carp::cluck "creating ".ref($o)." desc='".$o->desc."'\n"
-        if $Event::DebugLevel >= 3;
-
+	if $Event::DebugLevel >= 3;
+    
     $o->start unless $parked;
     $o;
 }
@@ -90,10 +90,10 @@ sub attributes {
 sub configure {
     my $o = shift;
     if (! @_) {
-        map { $_, $o->$_() } $o->attributes;
+	map { $_, $o->$_() } $o->attributes;
     } else {
-        while (my ($k,$v)= splice @_, -2) { $o->$k($v)}
-        1 # whatever
+	while (my ($k,$v)= splice @_, -2) { $o->$k($v)}
+	1 # whatever
     }
 }
 
@@ -101,18 +101,18 @@ sub private {  # assumes $self is a HASH ref
     my $self = shift;
     my $pkg = caller;
     if (@_) {
-        $self->{$pkg} = shift
+	$self->{$pkg} = shift
     } else {
-        $self->{$pkg};
+	$self->{$pkg};
     }
 }
 
 sub data {  # assumes $self is a HASH ref
     my $self = shift;
     if (@_) {
-        $self->{_user_data_} = shift
+	$self->{_user_data_} = shift
     } else {
-        $self->{_user_data_};
+	$self->{_user_data_};
     }
 }
 

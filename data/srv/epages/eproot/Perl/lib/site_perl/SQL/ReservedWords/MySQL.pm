@@ -275,13 +275,13 @@ use constant MYSQL51 => 0x10;
 
     sub is_reserved_by_mysql4 {
         my $flags = &is_reserved;
-        return    $flags & MYSQL40
+        return    $flags & MYSQL40 
                || $flags & MYSQL41;
     }
 
     sub is_reserved_by_mysql5 {
         my $flags = &is_reserved;
-        return    $flags & MYSQL50
+        return    $flags & MYSQL50 
                || $flags & MYSQL51;
     }
 

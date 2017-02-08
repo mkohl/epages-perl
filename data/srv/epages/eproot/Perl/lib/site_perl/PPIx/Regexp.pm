@@ -137,27 +137,27 @@ is it supported.
     my $errstr;
 
     sub new {
-        my ( $class, $content, %args ) = @_;
-        ref $class and $class = ref $class;
+	my ( $class, $content, %args ) = @_;
+	ref $class and $class = ref $class;
 
-        $errstr = undef;
+	$errstr = undef;
 
-        my $tokenizer = PPIx::Regexp::Tokenizer->new(
-            $content, %args ) or do {
-            $errstr = PPIx::Regexp::Tokenizer->errstr();
-            return;
-        };
+	my $tokenizer = PPIx::Regexp::Tokenizer->new(
+	    $content, %args ) or do {
+	    $errstr = PPIx::Regexp::Tokenizer->errstr();
+	    return;
+	};
 
-        my $lexer = PPIx::Regexp::Lexer->new( $tokenizer, %args );
-        my @nodes = $lexer->lex();
-        my $self = $class->SUPER::_new( @nodes );
-        $self->{source} = $content;
-        $self->{failures} = $lexer->failures();
-        return $self;
+	my $lexer = PPIx::Regexp::Lexer->new( $tokenizer, %args );
+	my @nodes = $lexer->lex();
+	my $self = $class->SUPER::_new( @nodes );
+	$self->{source} = $content;
+	$self->{failures} = $lexer->failures();
+	return $self;
     }
 
     sub errstr {
-        return $errstr;
+	return $errstr;
     }
 
 }
@@ -195,50 +195,50 @@ any objects specified are removed from the cache.
 
     my %cache;
 
-    our $DISABLE_CACHE;         # Leave this undocumented, at least for
-                                # now.
+    our $DISABLE_CACHE;		# Leave this undocumented, at least for
+				# now.
 
     sub _cache_size {
-        return scalar keys %cache;
+	return scalar keys %cache;
     }
 
     sub new_from_cache {
-        my ( $class, $content, %args ) = @_;
+	my ( $class, $content, %args ) = @_;
 
-        __instance( $content, 'PPI::Element' )
-            or return $class->new( $content, %args );
+	__instance( $content, 'PPI::Element' )
+	    or return $class->new( $content, %args );
 
-        $DISABLE_CACHE and return $class->new( $content, %args );
+	$DISABLE_CACHE and return $class->new( $content, %args );
 
-        my $addr = refaddr( $content );
-        exists $cache{$addr} and return $cache{$addr};
+	my $addr = refaddr( $content );
+	exists $cache{$addr} and return $cache{$addr};
 
-        my $self = $class->new( $content, %args )
-            or return;
+	my $self = $class->new( $content, %args )
+	    or return;
 
-        $cache{$addr} = $self;
+	$cache{$addr} = $self;
 
-        return $self;
+	return $self;
 
     }
 
     sub flush_cache {
-        my @args = @_;
+	my @args = @_;
 
-        ref $args[0] or shift @args;
+	ref $args[0] or shift @args;
 
-        if ( @args ) {
-            foreach my $obj ( @args ) {
-                if ( __instance( $obj, __PACKAGE__ ) &&
-                    __instance( ( my $parent = $obj->source() ),
-                        'PPI::Element' ) ) {
-                    delete $cache{ refaddr( $parent ) };
-                }
-            }
-        } else {
-            %cache = ();
-        }
-        return;
+	if ( @args ) {
+	    foreach my $obj ( @args ) {
+		if ( __instance( $obj, __PACKAGE__ ) &&
+		    __instance( ( my $parent = $obj->source() ),
+			'PPI::Element' ) ) {
+		    delete $cache{ refaddr( $parent ) };
+		}
+	    }
+	} else {
+	    %cache = ();
+	}
+	return;
     }
 
 }
@@ -304,8 +304,8 @@ sub delimiters {
 
     my @rslt;
     foreach my $method ( qw{ regular_expression replacement } ) {
-        defined ( my $obj = $self->$method() ) or next;
-        push @rslt, $obj->delimiters();
+	defined ( my $obj = $self->$method() ) or next;
+	push @rslt, $obj->delimiters();
     }
 
     defined $inx and return $rslt[$inx];
@@ -454,7 +454,7 @@ sub type {
 sub _component {
     my ( $self, $class ) = @_;
     foreach my $elem ( $self->children() ) {
-        $elem->isa( $class ) and return $elem;
+	$elem->isa( $class ) and return $elem;
     }
     return;
 }

@@ -5,7 +5,7 @@ AnyEvent::Impl::Irssi - AnyEvent adaptor for Irssi
 =head1 SYNOPSIS
 
    use AnyEvent;
-
+  
    # this module gets loaded automatically when running under irssi
 
 =head1 DESCRIPTION
@@ -84,7 +84,7 @@ use base "AnyEvent::Base";
 
 sub io {
    my ($class, %arg) = @_;
-
+   
    my $cb = $arg{cb};
    my $fd = fileno $arg{fh};
    defined $fd or $fd = $arg{fh};
@@ -104,7 +104,7 @@ sub AnyEvent::Impl::Irssi::io::DESTROY {
 
 sub timer {
    my ($class, %arg) = @_;
-
+   
    my $cb    = $arg{cb};
    my $ival  = $arg{interval} * 1000;
    my $after = $arg{after} * 1000;

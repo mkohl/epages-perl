@@ -62,7 +62,7 @@ MooseX::AttributeHelpers::Counter
   package MyHomePage;
   use Moose;
   use MooseX::AttributeHelpers;
-
+  
   has 'counter' => (
       metaclass => 'Counter',
       is        => 'ro',
@@ -70,19 +70,19 @@ MooseX::AttributeHelpers::Counter
       default   => sub { 0 },
       provides  => {
           inc => 'inc_counter',
-          dec => 'dec_counter',
+          dec => 'dec_counter',          
           reset => 'reset_counter',
       }
   );
 
   my $page = MyHomePage->new();
   $page->inc_counter; # same as $page->counter($page->counter + 1);
-  $page->dec_counter; # same as $page->counter($page->counter - 1);
-
+  $page->dec_counter; # same as $page->counter($page->counter - 1);  
+  
 =head1 DESCRIPTION
 
-This module provides a simple counter attribute, which can be
-incremented and decremeneted.
+This module provides a simple counter attribute, which can be 
+incremented and decremeneted. 
 
 If your attribute definition does not include any of I<is>, I<isa>,
 I<default> or I<provides> but does use the C<Counter> metaclass,
@@ -137,13 +137,13 @@ cause the counter to be increased by specified amount.
 
 =item I<reset>
 
-Resets the value stored in this slot to it's default value.
+Resets the value stored in this slot to it's default value. 
 
 =back
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

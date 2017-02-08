@@ -28,14 +28,14 @@ sub cacheout {
 
     ($file) = @_;
     if (!$isopen{$file}) {
-        if (++$numopen > $maxopen) {
-            local(@lru) = sort {$isopen{$a} <=> $isopen{$b};} keys(%isopen);
-            splice(@lru, $maxopen / 3);
-            $numopen -= @lru;
-            for (@lru) { &close($_); delete $isopen{$_}; }
-        }
-        &open($file, ($saw{$file}++ ? '>>' : '>') . $file)
-            || die "Can't create $file: $!\n";
+	if (++$numopen > $maxopen) {
+	    local(@lru) = sort {$isopen{$a} <=> $isopen{$b};} keys(%isopen);
+	    splice(@lru, $maxopen / 3);
+	    $numopen -= @lru;
+	    for (@lru) { &close($_); delete $isopen{$_}; }
+	}
+	&open($file, ($saw{$file}++ ? '>>' : '>') . $file)
+	    || die "Can't create $file: $!\n";
     }
     $isopen{$file} = ++$seq;
 }
@@ -48,7 +48,7 @@ $numopen = 0;
 if (open(PARAM,'/usr/include/sys/param.h')) {
     local($_, $.);
     while (<PARAM>) {
-        $maxopen = $1 - 4 if /^\s*#\s*define\s+NOFILE\s+(\d+)/;
+	$maxopen = $1 - 4 if /^\s*#\s*define\s+NOFILE\s+(\d+)/;
     }
     close PARAM;
 }

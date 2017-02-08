@@ -83,7 +83,7 @@ sub blessed {
     my (undef, undef, $node_id) = YAML::Base->node_info($ref);
     $self->{blessed_map}->{$node_id};
 }
-
+    
 sub bless {
     my $self = shift;
     my ($ref, $blessing) = @_;

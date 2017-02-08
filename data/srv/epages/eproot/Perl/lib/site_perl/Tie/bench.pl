@@ -24,40 +24,40 @@ for(@cols) {
 print "\n";
 
 &report("$write_count Writes", sub {
-            my $cache = shift;
-            for(1..$write_count) {
-                $cache->{$_} = $_;
-            }
-        },
-        @cols,
-        );
+	    my $cache = shift;
+	    for(1..$write_count) {
+		$cache->{$_} = $_;
+	    }
+	},
+	@cols,
+	);
 
 &report("$read_count Reads", sub {
-            my $cache = shift;
-            for(1..$read_count) {
-                my $value = $cache->{$_};
-            }
-        },
-        @cols,
-        );
+	    my $cache = shift;
+	    for(1..$read_count) {
+		my $value = $cache->{$_};
+	    }
+	},
+	@cols,
+	);
 
 &report("$delete_count Deletes", sub {
-            my $cache = shift;
-            for(1..$delete_count) {
-                my $value = $cache->{$_};
-            }
-        },
-        @cols,
-        );
+	    my $cache = shift;
+	    for(1..$delete_count) {
+		my $value = $cache->{$_};
+	    }
+	},
+	@cols,
+	);
 
 sub report {
     my($desc, $sub, @caches) = @_;
 
     printf(" %-15s", $desc);
     for my $cache (@caches) {
-        my $timed = timestr(timeit(1, sub { &$sub($cache) }));
-        $timed =~ /([\d\.]+\s+cpu)/i;
-        printf("%18s sec", $1);
+	my $timed = timestr(timeit(1, sub { &$sub($cache) }));
+	$timed =~ /([\d\.]+\s+cpu)/i;
+	printf("%18s sec", $1);
     }
     print "\n";
 }

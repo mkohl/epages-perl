@@ -1062,7 +1062,7 @@ JSON text:
 
    $handle->push_write (json => ["method", "arg1", "arg2"]); # whatever
    $handle->push_write ("\012");
-
+ 
 An AnyEvent::Handle receiver would simply use the C<json> read type and
 rely on the fact that the newline will be skipped as leading whitespace:
 
@@ -1564,7 +1564,7 @@ register_read_type regex => sub {
          $cb->($_[0], $data);
          return 1;
       }
-
+      
       # reject
       if ($reject && $$rbuf =~ $reject) {
          $_[0]->_error (Errno::EBADMSG);
@@ -2095,7 +2095,7 @@ sub starttls {
          $ctx = new AnyEvent::TLS %$ctx;
       }
    }
-
+   
    $self->{tls_ctx} = $ctx || TLS_CTX ();
    $self->{tls}     = $tls = $self->{tls_ctx}->_get_session ($tls, $self, $self->{peername});
 
@@ -2106,7 +2106,7 @@ sub starttls {
    # http://www.mail-archive.com/openssl-dev@openssl.org/msg22420.html
    #
    # in short: this is a mess.
-   #
+   # 
    # note that we do not try to keep the length constant between writes as we are required to do.
    # we assume that most (but not all) of this insanity only applies to non-blocking cases,
    # and we drive openssl fully in blocking mode here. Or maybe we don't - openssl seems to
@@ -2164,7 +2164,7 @@ sub _freetls {
 
    $self->{tls_ctx}->_put_session (delete $self->{tls})
       if $self->{tls} > 0;
-
+   
    delete @$self{qw(_rbio _wbio _tls_wbuf _on_starttls)};
 }
 

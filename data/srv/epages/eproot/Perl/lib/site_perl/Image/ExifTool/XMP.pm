@@ -2818,7 +2818,7 @@ sub ParseXMPElement($$$;$$$)
 
         # hook for special parsing of attributes
         $attrProc and &$attrProc(\@attrs, \%attrs, \$prop, \$val);
-
+            
         # add nodeID to property path (with leading ' #') if it exists
         if (defined $attrs{'rdf:nodeID'}) {
             $nodeID = $$blankInfo{NodeID} = $attrs{'rdf:nodeID'};

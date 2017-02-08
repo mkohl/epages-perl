@@ -69,7 +69,7 @@ sub yaml_dump {
                     $value->{tell} = tell(*{$_[0]});
                 }
             }
-            $ynode->{$type} = $value;
+            $ynode->{$type} = $value; 
         }
     }
     return $ynode;
@@ -119,7 +119,7 @@ sub yaml_load {
 #-------------------------------------------------------------------------------
 package YAML::Type::code;
 
-my $dummy_warned = 0;
+my $dummy_warned = 0; 
 my $default = '{ "DUMMY" }';
 
 sub yaml_dump {
@@ -151,7 +151,7 @@ sub yaml_dump {
     }
     $_[2] = $code;
     YAML::Node->new($_[2], $tag);
-}
+}    
 
 sub yaml_load {
     my $self = shift;

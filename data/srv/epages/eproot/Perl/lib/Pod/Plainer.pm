@@ -8,27 +8,27 @@ our @ISA = qw(Pod::Parser);
 our $VERSION = '1.02';
 
 our %E = qw( < lt > gt );
-
+ 
 sub escape_ltgt {
     (undef, my $text) = @_;
     $text =~ s/([<>])/E<$E{$1}>/g;
-    $text
-}
+    $text 
+} 
 
 sub simple_delimiters {
     (undef, my $seq) = @_;
-    $seq -> left_delimiter( '<' );
-    $seq -> right_delimiter( '>' );
+    $seq -> left_delimiter( '<' ); 
+    $seq -> right_delimiter( '>' );  
     $seq;
 }
 
 sub textblock {
     my($parser,$text,$line) = @_;
     print {$parser->output_handle()}
-        $parser->parse_text(
-            { -expand_text => q(escape_ltgt),
-              -expand_seq => q(simple_delimiters) },
-            $text, $line ) -> raw_text();
+	$parser->parse_text(
+	    { -expand_text => q(escape_ltgt),
+	      -expand_seq => q(simple_delimiters) },
+	    $text, $line ) -> raw_text(); 
 }
 
 1;
@@ -58,7 +58,7 @@ recognise the new style Pods.
 
 =head2 METHODS
 
-=over
+=over 
 
 =item escape_ltgt
 

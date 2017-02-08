@@ -52,10 +52,10 @@ sub DB {
   $DB::cdone = $u+$s+$cu+$cs;
   $DB::done = time;
 
-  # Now save the _< array for later reference.  If we don't do this here,
+  # Now save the _< array for later reference.  If we don't do this here, 
   # evals which do not define subroutines will disappear.
   no strict 'refs';
-  $DB::listings{$filename} = \@{"main::_<$filename"} if
+  $DB::listings{$filename} = \@{"main::_<$filename"} if 
     defined(@{"main::_<$filename"});
   use strict 'refs';
 
@@ -107,12 +107,12 @@ END {
         ++$i or next;
         my $time = defined($DB::ctimes{$file}->[$i]) ? $DB::ctimes{$file}->[$i] : 0;
         $maxtime = $time if $time > $maxtime;
-        foreach my $file (sort keys %{$DB::calls{$file}->{$i}}) {
-          foreach my $j (sort {$a <=> $b} keys %{$DB::calls{$file}->{$i}->{$file}}) {
-            my $calls = $DB::calls{$file}->{$i}->{$file}->{$j};
-            $maxcalls = $calls if $calls > $maxcalls;
-          }
-        }
+	foreach my $file (sort keys %{$DB::calls{$file}->{$i}}) {
+	  foreach my $j (sort {$a <=> $b} keys %{$DB::calls{$file}->{$i}->{$file}}) {
+	    my $calls = $DB::calls{$file}->{$i}->{$file}->{$j};
+	    $maxcalls = $calls if $calls > $maxcalls;
+	  }
+	}
       }
     }
   }
@@ -128,36 +128,36 @@ END {
       $i = -1;
       foreach $line (@{$DB::listings{$file}}) {
         ++$i or next;
-        $line = "" unless defined $line;
+	$line = "" unless defined $line;
         chomp($line);
         $stat = $DB::profiles{$file}->[$i] || 0 or !$DB::drop_zeros or next;
         $time = defined($DB::times{$file}->[$i]) ?
-          $DB::times{$file}->[$i] : 0;
+	  $DB::times{$file}->[$i] : 0;
         $ctime = defined($DB::ctimes{$file}->[$i]) ?
-          $DB::ctimes{$file}->[$i] : 0;
-        my $label = getlabel($file . $i);
-        my $name = getname($file, $i);
-        foreach my $file (sort keys %{$DB::calls{$file}->{$i}}) {
-          foreach my $j (sort {$a <=> $b} keys %{$DB::calls{$file}->{$i}->{$file}}) {
-            my $calls = $DB::calls{$file}->{$i}->{$file}->{$j};
-#           next unless $calls > 2;
-            my $fromlabel = getlabel($file . $j);
-            my $ratio = $ctime / $maxtime;
-            $g->add_node("$file/$name", label => $name, color => "0,1,$ratio") unless ($name =~ m|/| || $seenlabel{"$file/$name"}++);
-            my $fromtime = defined($DB::ctimes{$file}->[$j]) ?
-              $DB::times{$file}->[$j] : 0;
-            $ratio = $fromtime / $maxtime;
-            my $fromname = getname($file, $j);
-            $g->add_node("$file/$fromname", label => $fromname, color => "0,1,$ratio") unless $seenlabel{"$file/$fromname"}++;
-            my $ratio = $calls / $maxcalls;
-            my $w = 100 * (1 - $ratio);
-            $g->add_edge("$file/$fromname" => "$file/$name", color => "0,1,$ratio", w => $w, len => 2);
-          }
-        }
+	  $DB::ctimes{$file}->[$i] : 0;
+	my $label = getlabel($file . $i);
+	my $name = getname($file, $i);
+	foreach my $file (sort keys %{$DB::calls{$file}->{$i}}) {
+	  foreach my $j (sort {$a <=> $b} keys %{$DB::calls{$file}->{$i}->{$file}}) {
+	    my $calls = $DB::calls{$file}->{$i}->{$file}->{$j};
+#	    next unless $calls > 2;
+	    my $fromlabel = getlabel($file . $j);
+	    my $ratio = $ctime / $maxtime;
+	    $g->add_node("$file/$name", label => $name, color => "0,1,$ratio") unless ($name =~ m|/| || $seenlabel{"$file/$name"}++);
+	    my $fromtime = defined($DB::ctimes{$file}->[$j]) ?
+	      $DB::times{$file}->[$j] : 0;
+	    $ratio = $fromtime / $maxtime;
+	    my $fromname = getname($file, $j);
+	    $g->add_node("$file/$fromname", label => $fromname, color => "0,1,$ratio") unless $seenlabel{"$file/$fromname"}++;
+	    my $ratio = $calls / $maxcalls; 
+	    my $w = 100 * (1 - $ratio);
+	    $g->add_edge("$file/$fromname" => "$file/$name", color => "0,1,$ratio", w => $w, len => 2);
+	  }
+	}
       }
     } else {
 #      print "# The code for $file is not in the symbol table.";
-    }
+    } 
   }
 
   print $g->_as_debug;
@@ -176,7 +176,7 @@ sub getname {
   return $line;
 }
 
-{
+{ 
 my $labelcount;
 my %label;
 sub getlabel {
@@ -212,7 +212,7 @@ Devel::GraphVizProf - per-line Perl profiler (with graph output)
 
 =head1 SYNOPSIS
 
-        perl -d:GraphVizProf test.pl > test.dot
+	perl -d:GraphVizProf test.pl > test.dot
         dot -Tpng test.dot > test.png
 
 =head1 DESCRIPTION
@@ -241,27 +241,27 @@ from the file).
 The package uses the debugging hooks in Perl and thus needs the B<-d> switch,
 so to profile F<test.pl>, use the command:
 
-        perl5 -d:GraphVizProf test.pl
+	perl5 -d:GraphVizProf test.pl
 
-Once the script is done, the statistics in F<smallprof.out> can be sorted to
+Once the script is done, the statistics in F<smallprof.out> can be sorted to 
 show which lines took the most time.  The output can be sorted to find which
 lines take the longest, either with the sort command:
 
-        sort -k 2nr,2 smallprof.out | less
+	sort -k 2nr,2 smallprof.out | less
 
 or a perl script:
 
-        open(PROF,"smallprof.out");
-        @sorted = sort {(split(/\s+/,$b))[2] <=>
+	open(PROF,"smallprof.out");
+	@sorted = sort {(split(/\s+/,$b))[2] <=> 
                         (split(/\s+/,$a))[2]} <PROF>;
         close PROF;
-        print join('',@sorted);
+	print join('',@sorted);
 
 =head1 NOTES
 
 =over 4
 
-=item *
+=item * 
 
 The "wall time" readings come from Time::HiRes and are reasonably useful, at
 least on my system.  The cpu times come from the 'times' built-in and the
@@ -274,7 +274,7 @@ GraphVizProf does attempt to make up for its shortcomings by subtracting a small
 amount from each timing (null time compensation).  This should help somewhat
 with the accuracy.
 
-=item *
+=item * 
 
 GraphVizProf depends on the Time::HiRes package to do its timings.  It claims to
 require version 1.20, but may work with earlier versions, depending on your
@@ -292,14 +292,14 @@ gets profiled.
 =item *
 
 If you do not wish to see lines which were never called, set the variable
-C<$DB::drop_zeros = 1>.  With C<drop_zeros> set, GraphVizProf can be used for
+C<$DB::drop_zeros = 1>.  With C<drop_zeros> set, GraphVizProf can be used for 
 basic coverage analysis.
 
 =item *
 
 To turn off profiling for a time, insert a C<$DB::profile = 0> into your code
 (profiling may be turned back on with C<$DB::profile = 1>).  All of the time
-between profiling being turned off and back on again will be lumped together
+between profiling being turned off and back on again will be lumped together 
 and reported on the C<$DB::profile = 0> line.  This can be used to summarize a
 subroutine call or a chunk of code.
 
@@ -308,15 +308,15 @@ subroutine call or a chunk of code.
 To only profile code in a certain package, set the C<%DB::packages> array.  For
 example, to see only the code in packages C<main> and C<Test1>, do this:
 
-        %DB::packages = ( 'main' => 1, 'Test1' => 1 );
+	%DB::packages = ( 'main' => 1, 'Test1' => 1 );
 
 =item *
 
-These variables can be put in a file called F<.smallprof> in the current
+These variables can be put in a file called F<.smallprof> in the current 
 directory.  For example, a F<.smallprof> containing
 
-        $DB::drop_zeros = 1;
-        $DB::profile = 0;
+	$DB::drop_zeros = 1;
+	$DB::profile = 0;
 
 will set GraphVizProf to not report lines which are never touched for any file
 profiled in that directory and will set profiling off initially (presumably to
@@ -328,40 +328,40 @@ be turned on only for a small portion of code).
 
 Just the usual
 
-        perl Makefile.PL
-        make
-        make test
-        make install
+	perl Makefile.PL
+	make
+	make test
+	make install
 
 and should install fine via the CPAN module.
 
 =head1 BUGS
 
 Subroutine calls are currently not under the control of %DB::packages.  This
-should not be a great inconvenience in general.
+should not be a great inconvenience in general.  
 
-The handling of evals is bad news.  This is due to Perl's handling of evals
-under the B<-d> flag.  For certain evals, caller() returns '(eval n)' for the
+The handling of evals is bad news.  This is due to Perl's handling of evals 
+under the B<-d> flag.  For certain evals, caller() returns '(eval n)' for the 
 filename and for others it doesn't.  For some of those which it does, the array
 C<@{'_E<lt>filename'}> contains the code of the eval.  For others it doesn't.
-Sometime, when I've an extra tuit or two, I'll figure out why and how I can
+Sometime, when I've an extra tuit or two, I'll figure out why and how I can 
 compensate for this.
 
 Comments, advice and questions are welcome.  If you see
 inefficent stuff in this module and have a better way, please let me know.
 
 =head1 AUTHOR
-
+ 
 Ted Ashton E<lt>ashted@southern.eduE<gt>
-
+ 
 GraphVizProf was developed from code originally posted to usenet by Philippe
 Verdret E<lt>philippe.verdret@sonovision-itep.frE<gt>.  Special thanks to
 Geoffrey Broadwell E<lt>habusan2@sprynet.comE<gt> for his assistance on the
-Win32 platform and to Philippe for his patient assistance in testing and
+Win32 platform and to Philippe for his patient assistance in testing and 
 debugging.
-
+ 
 Copyright (c) 1997 Ted Ashton
-
+ 
 This module is free software and can be redistributed and/or modified under the
 same terms as Perl itself.
 

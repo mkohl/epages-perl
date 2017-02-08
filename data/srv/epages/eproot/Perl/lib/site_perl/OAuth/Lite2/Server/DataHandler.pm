@@ -121,7 +121,7 @@ inherit this and implement the subroutines according to the interface contract.
 =head1 SYNOPSIS
 
     package YourDataHandler;
-
+    
     use strict;
     use warnings;
 

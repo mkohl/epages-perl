@@ -12,16 +12,16 @@ require DynaLoader;
 use AutoLoader;
 
 my @functions = qw(if_addr if_broadcast if_netmask if_dstaddr if_hwaddr if_flags if_list if_mtu if_metric
-                   addr_to_interface if_index if_indextoname );
+		   addr_to_interface if_index if_indextoname );
 my @flags     = qw(IFF_ALLMULTI    IFF_AUTOMEDIA  IFF_BROADCAST
-                   IFF_DEBUG       IFF_LOOPBACK   IFF_MASTER
-                   IFF_MULTICAST   IFF_NOARP      IFF_NOTRAILERS
-                   IFF_POINTOPOINT IFF_PORTSEL    IFF_PROMISC
-                   IFF_RUNNING     IFF_SLAVE      IFF_UP);
+		   IFF_DEBUG       IFF_LOOPBACK   IFF_MASTER
+		   IFF_MULTICAST   IFF_NOARP      IFF_NOTRAILERS
+		   IFF_POINTOPOINT IFF_PORTSEL    IFF_PROMISC
+		   IFF_RUNNING     IFF_SLAVE      IFF_UP);
 %EXPORT_TAGS = ( 'all'        => [@functions,@flags],
-                 'functions'  => \@functions,
-                 'flags'      => \@flags,
-               );
+		 'functions'  => \@functions,
+		 'flags'      => \@flags,
+	       );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
@@ -40,17 +40,17 @@ sub AUTOLOAD {
     croak "&constant not defined" if $constname eq 'constant';
     my $val = constant($constname, @_ ? $_[0] : 0);
     if ($! != 0) {
-        if ($! =~ /Invalid/ || $!{EINVAL}) {
-            $AutoLoader::AUTOLOAD = $AUTOLOAD;
-            goto &AutoLoader::AUTOLOAD;
-        }
-        else {
-            croak "Your vendor has not defined IO::Interface macro $constname";
-        }
+	if ($! =~ /Invalid/ || $!{EINVAL}) {
+	    $AutoLoader::AUTOLOAD = $AUTOLOAD;
+	    goto &AutoLoader::AUTOLOAD;
+	}
+	else {
+	    croak "Your vendor has not defined IO::Interface macro $constname";
+	}
     }
     {
       no strict 'refs';
-      *$AUTOLOAD = sub { $val };  # *$AUTOLOAD = sub() { $val };
+      *$AUTOLOAD = sub { $val };  # *$AUTOLOAD = sub() { $val }; 
     }
     goto &$AUTOLOAD;
 }
@@ -58,7 +58,7 @@ sub AUTOLOAD {
 bootstrap IO::Interface $VERSION;
 
 # copy routines into IO::Socket
-{
+{ 
   no strict 'refs';
   *{"IO\:\:Socket\:\:$_"} = \&$_ foreach @functions;
 }

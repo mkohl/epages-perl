@@ -9,34 +9,34 @@
 
 # This file returns the 17 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{Joining_Group=Hah}
 #         \p{Jg=Hah}
 #         \p{Is_Joining_Group=Hah}
 #         \p{Is_Jg=Hah}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Jg: Hah}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-062C    062E     # [3]
-0681    0687     # [7]
-06BF
-0757    0758     # [2]
-076E    076F     # [2]
-0772
-077C
+062C	062E	 # [3]
+0681	0687	 # [7]
+06BF		
+0757	0758	 # [2]
+076E	076F	 # [2]
+0772		
+077C		
 END

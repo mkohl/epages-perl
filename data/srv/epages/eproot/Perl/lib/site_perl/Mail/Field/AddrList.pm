@@ -36,7 +36,7 @@ sub parse($)
 {   my ($self, $string) = @_;
     foreach my $a (Mail::Address->parse($string))
     {   my $e = $a->address;
-        $self->{AddrList}{$e} = $a;
+	$self->{AddrList}{$e} = $a;
     }
     $self;
 }

@@ -11,7 +11,7 @@ require 5.002;
 require Exporter;
 
 #-----------------------------------------------------------------------
-#       Public Global Variables
+#	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw($VERSION @ISA @EXPORT);
 $VERSION      = sprintf("%d.%02d", q$Revision: 2.7 $ =~ /(\d+)\.(\d+)/);
@@ -20,7 +20,7 @@ $VERSION      = sprintf("%d.%02d", q$Revision: 2.7 $ =~ /(\d+)\.(\d+)/);
                    &all_language_codes &all_language_names );
 
 #-----------------------------------------------------------------------
-#       Private Global Variables
+#	Private Global Variables
 #-----------------------------------------------------------------------
 my %CODES     = ();
 my %LANGUAGES = ();

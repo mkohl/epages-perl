@@ -642,24 +642,24 @@ Example:
 
 
     $smtp = Net::SMTP->new('mailhost',
-                           Hello => 'my.mail.domain',
-                           Timeout => 30,
+			   Hello => 'my.mail.domain',
+			   Timeout => 30,
                            Debug   => 1,
-                          );
+			  );
 
     # the same
     $smtp = Net::SMTP->new(
-                           Host => 'mailhost',
-                           Hello => 'my.mail.domain',
-                           Timeout => 30,
+			   Host => 'mailhost',
+			   Hello => 'my.mail.domain',
+			   Timeout => 30,
                            Debug   => 1,
-                          );
+			  );
 
     # Connect to the default server from Net::config
     $smtp = Net::SMTP->new(
-                           Hello => 'my.mail.domain',
-                           Timeout => 30,
-                          );
+			   Hello => 'my.mail.domain',
+			   Timeout => 30,
+			  );
 
 =back
 
@@ -735,7 +735,7 @@ required by RFC 2554, in an RFC2821-quoted form and xtext-encoded, or <> .
 
 =item reset ()
 
-Reset the status of the server. This may be called after a message has been
+Reset the status of the server. This may be called after a message has been 
 initiated, but before any data has been sent, to cancel the sending of the
 message.
 
@@ -814,7 +814,7 @@ Synonyms for C<recipient>.
 
 =item data ( [ DATA ] )
 
-Initiate the sending of the data from the current message.
+Initiate the sending of the data from the current message. 
 
 C<DATA> may be a reference to a list or a list. If specified the contents
 of C<DATA> and a termination string C<".\r\n"> is sent to the server. And the

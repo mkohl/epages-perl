@@ -97,7 +97,7 @@ hand:
 
   my $x = "Hello!";
   my $r = peek_sub(sub {$x})->{'$x'};
-  print "$$r\n";        # prints 'Hello!'
+  print "$$r\n";	# prints 'Hello!'
 
 If the sub defines several C<my> variables with the same name, you'll get the
 last one. I don't know of any use for C<peek_sub> that isn't broken as a result
@@ -131,7 +131,7 @@ For example,
 
   my $foo;
   print var_name(0, \$foo);    # prints '$foo'
-
+  
   sub my_name {
     return var_name(1, shift);
   }

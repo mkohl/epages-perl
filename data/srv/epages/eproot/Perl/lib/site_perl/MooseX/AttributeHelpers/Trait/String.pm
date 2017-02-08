@@ -26,7 +26,7 @@ before 'process_options_for_provides' => sub {
     if ((my $type = $self->helper_type) && !exists $options->{isa}){
         $options->{isa} = $type;
     }
-
+    
     $options->{is}      = 'rw' unless exists $options->{is};
     $options->{default} = ''   unless exists $options->{default};
 };
@@ -38,7 +38,7 @@ after 'check_provides_values' => sub {
     unless (scalar keys %$provides) {
         my $method_constructors = $self->method_constructors;
         my $attr_name           = $self->name;
-
+        
         foreach my $method (keys %$method_constructors) {
             $provides->{$method} = ($method . '_' . $attr_name);
         }
@@ -62,7 +62,7 @@ MooseX::AttributeHelpers::String
   package MyHomePage;
   use Moose;
   use MooseX::AttributeHelpers;
-
+  
   has 'text' => (
       metaclass => 'String',
       is        => 'rw',
@@ -76,7 +76,7 @@ MooseX::AttributeHelpers::String
 
   my $page = MyHomePage->new();
   $page->add_text("foo"); # same as $page->text($page->text . "foo");
-
+  
 =head1 DESCRIPTION
 
 This module provides a simple string attribute, to which mutating string
@@ -162,7 +162,7 @@ Sets the string to the empty string (not the value passed to C<default>).
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

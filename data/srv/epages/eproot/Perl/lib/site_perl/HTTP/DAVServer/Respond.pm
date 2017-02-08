@@ -85,7 +85,7 @@ sub multiStatus {
     warn "MULTISTATUS @_\n" if $HTTP::DAVServer::TRACE;
     my ($self, $r, $xml) = @_;
 
-        my $message = qq(<?xml version="1.0" encoding="utf-8" ?>\n<multistatus xmlns="DAV:">\n$xml\n</multistatus>);
+	my $message = qq(<?xml version="1.0" encoding="utf-8" ?>\n<multistatus xmlns="DAV:">\n$xml\n</multistatus>);
     warn "RESPOND XML:\n$message\n" if $HTTP::DAVServer::TRACE;
 
     print $r->header(
@@ -95,7 +95,7 @@ sub multiStatus {
         -Content_Type => "text/xml; charset=UTF-8",
     );
 
-        print $message;
+	print $message;
 
     exit 0;
 
@@ -107,7 +107,7 @@ sub badRequest {
 
     my ($self, $r, $flag, $detail) = @_;
 
-        my $message = "<h1>400 Bad Request</h1>\n$flag $detail\n";
+	my $message = "<h1>400 Bad Request</h1>\n$flag $detail\n";
 
     print $r->header(
         -status => "400 Bad Request",
@@ -116,7 +116,7 @@ sub badRequest {
         -Content_Type => "text/html; charset=UTF-8",
     );
 
-        print $message;
+	print $message;
 
     exit 0;
 
@@ -288,7 +288,7 @@ sub headers {
 
 =head1 SUPPORT
 
-For technical support please email to jlawrenc@cpan.org ...
+For technical support please email to jlawrenc@cpan.org ... 
 for faster service please include "HTTP::DAVServer" and "help" in your subject line.
 
 =head1 AUTHOR

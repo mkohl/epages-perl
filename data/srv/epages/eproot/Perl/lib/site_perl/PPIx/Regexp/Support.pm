@@ -50,18 +50,18 @@ brackets: (), {}, [], and <>.
 
 {
     my %bracket = (
-        '(' => ')',
-        '{' => '}',
-        '<' => '>',
-        '[' => ']',
+	'(' => ')',
+	'{' => '}',
+	'<' => '>',
+	'[' => ']',
     );
 
     sub close_bracket {
-        my ( $self, $char ) = @_;
-        defined $char or return;
-        __instance( $char, 'PPIx::Regexp::Element' )
-            and $char = $char->content();
-        return $bracket{$char};
+	my ( $self, $char ) = @_;
+	defined $char or return;
+	__instance( $char, 'PPIx::Regexp::Element' )
+	    and $char = $char->content();
+	return $bracket{$char};
     }
 
 }
@@ -109,12 +109,12 @@ loaded.
     my $encode_available;
 
     sub encode_available {
-        defined $encode_available and return $encode_available;
-        return ( $encode_available = eval {
-                require Encode;
-                1;
-            } ? 1 : 0
-        );
+	defined $encode_available and return $encode_available;
+	return ( $encode_available = eval {
+		require Encode;
+		1;
+	    } ? 1 : 0
+	);
     }
 
 }
@@ -126,7 +126,7 @@ loaded.
 sub _defined_or {
     my ( $self, @args ) = @_;
     foreach my $arg ( @args ) {
-        defined $arg and return $arg;
+	defined $arg and return $arg;
     }
     return;
 }

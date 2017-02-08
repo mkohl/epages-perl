@@ -26,7 +26,7 @@ Encode::CN - China-based Chinese Encodings
 
 =head1 SYNOPSIS
 
-    use Encode qw/encode decode/;
+    use Encode qw/encode decode/; 
     $euc_cn = encode("euc-cn", $utf8);   # loads Encode::CN implicitly
     $utf8   = decode("euc-cn", $euc_cn); # ditto
 
@@ -35,19 +35,19 @@ Encode::CN - China-based Chinese Encodings
 This module implements China-based Chinese charset encodings.
 Encodings supported are as follows.
 
-  Canonical   Alias             Description
+  Canonical   Alias		Description
   --------------------------------------------------------------------
-  euc-cn      /\beuc.*cn$/i     EUC (Extended Unix Character)
+  euc-cn      /\beuc.*cn$/i	EUC (Extended Unix Character)
           /\bcn.*euc$/i
               /\bGB[-_ ]?2312(?:\D.*$|$)/i (see below)
-  gb2312-raw                    The raw (low-bit) GB2312 character map
-  gb12345-raw                   Traditional chinese counterpart to
+  gb2312-raw			The raw (low-bit) GB2312 character map
+  gb12345-raw			Traditional chinese counterpart to 
                 GB2312 (raw)
-  iso-ir-165                    GB2312 + GB6345 + GB8565 + additions
+  iso-ir-165			GB2312 + GB6345 + GB8565 + additions
   MacChineseSimp                GB2312 + Apple Additions
-  cp936                         Code Page 936, also known as GBK
+  cp936				Code Page 936, also known as GBK 
                 (Extended GuoBiao)
-  hz                            7-bit escaped GB2312 encoding
+  hz				7-bit escaped GB2312 encoding
   --------------------------------------------------------------------
 
 To find how to use this module in detail, see L<Encode>.

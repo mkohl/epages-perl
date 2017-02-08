@@ -9,30 +9,30 @@
 
 # This file returns the 3 code points in Unicode Version 5.2.0 that match any
 # of the following regular expression constructs:
-#
+# 
 #         \p{Joining_Group=Teh_Marbuta}
 #         \p{Jg=Teh_Marbuta}
 #         \p{Is_Joining_Group=Teh_Marbuta}
 #         \p{Is_Jg=Teh_Marbuta}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Jg: Teh_Marbuta}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-0629
-06C0
-06D5
+0629		
+06C0		
+06D5		
 END

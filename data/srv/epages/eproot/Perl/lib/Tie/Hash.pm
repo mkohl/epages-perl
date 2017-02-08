@@ -13,8 +13,8 @@ Tie::Hash, Tie::StdHash, Tie::ExtraHash - base class definitions for tied hashes
 
     @ISA = qw(Tie::Hash);
 
-    sub DELETE { ... }          # Provides needed method
-    sub CLEAR { ... }           # Overrides inherited method
+    sub DELETE { ... }		# Provides needed method
+    sub CLEAR { ... }		# Overrides inherited method
 
 
     package NewStdHash;
@@ -35,10 +35,10 @@ Tie::Hash, Tie::StdHash, Tie::ExtraHash - base class definitions for tied hashes
     # All methods provided by default, define only those needing overrides
     # Accessors access the storage in %{$_[0][0]};
     # TIEHASH should return an array reference with the first element being
-    # the reference to the actual storage
-    sub DELETE {
+    # the reference to the actual storage 
+    sub DELETE { 
       $_[0][1]->('del', $_[0][0], $_[1]); # Call the report writer
-      delete $_[0][0]->{$_[1]};           #  $_[0]->SUPER::DELETE($_[1])
+      delete $_[0][0]->{$_[1]};		  #  $_[0]->SUPER::DELETE($_[1])
     }
 
 
@@ -47,7 +47,7 @@ Tie::Hash, Tie::StdHash, Tie::ExtraHash - base class definitions for tied hashes
     tie %new_hash, 'NewHash';
     tie %new_std_hash, 'NewStdHash';
     tie %new_extra_hash, 'NewExtraHash',
-        sub {warn "Doing \U$_[1]\E of $_[2].\n"};
+	sub {warn "Doing \U$_[1]\E of $_[2].\n"};
 
 =head1 DESCRIPTION
 
@@ -198,11 +198,11 @@ sub new {
 sub TIEHASH {
     my $pkg = shift;
     if (defined &{"${pkg}::new"}) {
-        warnings::warnif("WARNING: calling ${pkg}->new since ${pkg}->TIEHASH is missing");
-        $pkg->new(@_);
+	warnings::warnif("WARNING: calling ${pkg}->new since ${pkg}->TIEHASH is missing");
+	$pkg->new(@_);
     }
     else {
-        croak "$pkg doesn't define a TIEHASH method";
+	croak "$pkg doesn't define a TIEHASH method";
     }
 }
 
@@ -217,11 +217,11 @@ sub CLEAR {
     my @keys;
 
     while (defined $key) {
-        push @keys, $key;
-        $key = $self->NEXTKEY(@_, $key);
+	push @keys, $key;
+	$key = $self->NEXTKEY(@_, $key);
     }
     foreach $key (@keys) {
-        $self->DELETE(@_, $key);
+	$self->DELETE(@_, $key);
     }
 }
 
@@ -230,7 +230,7 @@ sub CLEAR {
 # alter some parts of their behaviour.
 
 package Tie::StdHash;
-# @ISA = qw(Tie::Hash);         # would inherit new() only
+# @ISA = qw(Tie::Hash);		# would inherit new() only
 
 sub TIEHASH  { bless {}, $_[0] }
 sub STORE    { $_[0]->{$_[1]} = $_[2] }

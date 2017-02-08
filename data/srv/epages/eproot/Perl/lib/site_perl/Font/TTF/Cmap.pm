@@ -114,7 +114,7 @@ sub read
         } elsif ($form == 6)
         {
             my ($start, $ecount);
-
+            
             $fh->read($dat, 8);
             ($len, $s->{'Ver'}, $start, $ecount) = unpack('n4', $dat);
             $fh->read($dat, $ecount << 1);
@@ -273,10 +273,10 @@ sub ms_enc
 {
     my ($self) = @_;
     my ($s);
-
-    return $self->{' mstable'}{'Encoding'}
+    
+    return $self->{' mstable'}{'Encoding'} 
         if (defined $self->{' mstable'} && $self->{' mstable'}{'Platform'} == 3);
-
+    
     foreach $s (@{$self->{'Tables'}})
     {
         return $s->{'Encoding'} if ($s->{'Platform'} == 3);
@@ -323,7 +323,7 @@ sub out
         { $fh->print(pack("n3", $s->{'Format'}, 0, $s->{'Ver'})); }       # come back for length
         else
         { $fh->print(pack("n2N2", $s->{'Format'}, 0, 0, $s->{'Ver'})); }
-
+            
         if ($s->{'Format'} == 0)
         {
             $fh->print(pack("C256", @{$s->{'val'}}{0 .. 255}));
@@ -470,7 +470,7 @@ sub out
         } elsif ($s->{'Format'} == 8 || $s->{'Format'} == 12)
         {
             my (@jobs, $start, $current, $curr_glyf, $map);
-
+            
             $current = 0; $curr_glyf = 0;
             $map = "\000" x 8192;
             foreach $j (@keys)

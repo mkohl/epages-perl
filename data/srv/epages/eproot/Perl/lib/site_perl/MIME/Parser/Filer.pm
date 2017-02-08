@@ -143,75 +143,75 @@ my $GSubdirNo = 0;
 my %DefaultTypeToExt =
 qw(
 
-application/andrew-inset        .ez
-application/octet-stream        .bin
-application/oda                 .oda
-application/pdf                 .pdf
-application/pgp                 .pgp
-application/postscript          .ps
-application/rtf                 .rtf
-application/x-bcpio             .bcpio
-application/x-chess-pgn         .pgn
-application/x-cpio              .cpio
-application/x-csh               .csh
-application/x-dvi               .dvi
-application/x-gtar              .gtar
-application/x-gunzip            .gz
-application/x-hdf               .hdf
-application/x-latex             .latex
-application/x-mif               .mif
-application/x-netcdf            .cdf
-application/x-netcdf            .nc
-application/x-sh                .sh
-application/x-shar              .shar
-application/x-sv4cpio           .sv4cpio
-application/x-sv4crc            .sv4crc
-application/x-tar               .tar
-application/x-tcl               .tcl
-application/x-tex               .tex
-application/x-texinfo           .texi
-application/x-troff             .roff
-application/x-troff             .tr
-application/x-troff-man         .man
-application/x-troff-me          .me
-application/x-troff-ms          .ms
-application/x-ustar             .ustar
-application/x-wais-source       .src
-application/zip                 .zip
+application/andrew-inset	.ez
+application/octet-stream	.bin
+application/oda			.oda
+application/pdf			.pdf
+application/pgp			.pgp
+application/postscript		.ps
+application/rtf			.rtf
+application/x-bcpio		.bcpio
+application/x-chess-pgn		.pgn
+application/x-cpio		.cpio
+application/x-csh		.csh
+application/x-dvi		.dvi
+application/x-gtar		.gtar
+application/x-gunzip		.gz
+application/x-hdf		.hdf
+application/x-latex		.latex
+application/x-mif		.mif
+application/x-netcdf		.cdf
+application/x-netcdf		.nc
+application/x-sh		.sh
+application/x-shar		.shar
+application/x-sv4cpio		.sv4cpio
+application/x-sv4crc		.sv4crc
+application/x-tar		.tar
+application/x-tcl		.tcl
+application/x-tex		.tex
+application/x-texinfo		.texi
+application/x-troff		.roff
+application/x-troff		.tr
+application/x-troff-man		.man
+application/x-troff-me		.me
+application/x-troff-ms		.ms
+application/x-ustar		.ustar
+application/x-wais-source	.src
+application/zip			.zip
 
-audio/basic                     .snd
-audio/ulaw                      .au
-audio/x-aiff                    .aiff
-audio/x-wav                     .wav
+audio/basic			.snd
+audio/ulaw			.au
+audio/x-aiff			.aiff
+audio/x-wav			.wav
 
-image/gif                       .gif
-image/ief                       .ief
-image/jpeg                      .jpg
+image/gif			.gif
+image/ief			.ief
+image/jpeg			.jpg
 image/png                       .png
 image/xbm                       .xbm
-image/tiff                      .tif
-image/x-cmu-raster              .ras
-image/x-portable-anymap         .pnm
-image/x-portable-bitmap         .pbm
-image/x-portable-graymap        .pgm
-image/x-portable-pixmap         .ppm
-image/x-rgb                     .rgb
-image/x-xbitmap                 .xbm
-image/x-xpixmap                 .xpm
-image/x-xwindowdump             .xwd
+image/tiff			.tif
+image/x-cmu-raster		.ras
+image/x-portable-anymap		.pnm
+image/x-portable-bitmap		.pbm
+image/x-portable-graymap	.pgm
+image/x-portable-pixmap		.ppm
+image/x-rgb			.rgb
+image/x-xbitmap			.xbm
+image/x-xpixmap			.xpm
+image/x-xwindowdump		.xwd
 
 text/*                          .txt
-text/html                       .html
-text/plain                      .txt
-text/richtext                   .rtx
-text/tab-separated-values       .tsv
-text/x-setext                   .etx
+text/html			.html
+text/plain			.txt
+text/richtext			.rtx
+text/tab-separated-values	.tsv
+text/x-setext			.etx
 text/x-vcard                    .vcf
 
-video/mpeg                      .mpg
-video/quicktime                 .mov
-video/x-msvideo                 .avi
-video/x-sgi-movie               .movie
+video/mpeg			.mpg
+video/quicktime			.mov
+video/x-msvideo			.avi
+video/x-sgi-movie		.movie
 
 message/*                       .msg
 
@@ -233,14 +233,14 @@ override for their own use (the default init does nothing).
 sub new {
     my ($class, @initargs) = @_;
     my $self = bless {
-        MPF_Prefix    => "msg",
-        MPF_Dir       => ".",
-        MPF_Ext       => { %DefaultTypeToExt },
-        MPF_Purgeable => [],       ### files created by the last parse
+	MPF_Prefix    => "msg",
+	MPF_Dir       => ".",
+	MPF_Ext       => { %DefaultTypeToExt },
+	MPF_Purgeable => [],       ### files created by the last parse
 
-        MPF_MaxName   => 80,       ### max filename before treated as evil
-        MPF_TrimRoot  => 14,       ### trim root to this length
-        MPF_TrimExt   => 3,        ### trim extension to this length
+	MPF_MaxName   => 80,       ### max filename before treated as evil
+	MPF_TrimRoot  => 14,       ### trim root to this length
+	MPF_TrimExt   => 3,        ### trim extension to this length
     }, $class;
     $self->init(@initargs);
     $self;
@@ -286,11 +286,11 @@ sub results {
 sub debug {
     my $self = shift;
     if (MIME::Tools->debugging()) {
-        if ($self->{MPF_Results}) {
-            unshift @_, $self->{MPF_Results}->indent;
-            $self->{MPF_Results}->msg($M_DEBUG, @_);
-        }
-        MIME::Tools::debug(@_);
+	if ($self->{MPF_Results}) {
+	    unshift @_, $self->{MPF_Results}->indent;
+	    $self->{MPF_Results}->msg($M_DEBUG, @_);
+	}
+	MIME::Tools::debug(@_);
     }
 }
 
@@ -298,8 +298,8 @@ sub debug {
 sub whine {
     my $self = shift;
     if ($self->{MPF_Results}) {
-        unshift @_, $self->{MPF_Results}->indent;
-        $self->{MPF_Results}->msg($M_WARNING, @_);
+	unshift @_, $self->{MPF_Results}->indent;
+	$self->{MPF_Results}->msg($M_WARNING, @_);
     }
     MIME::Tools::whine(@_);
 }
@@ -365,7 +365,7 @@ sub evil_filename {
     return 1 if ($name =~ m{^\.+\Z});         ### dots
     return 1 if ($name =~ /[^-A-Z0-9_+=.,@\#\$\% ]/i); # Only allow good chars
     return 1 if ($self->{MPF_MaxName} and
-                 (length($name) > $self->{MPF_MaxName}));
+		 (length($name) > $self->{MPF_MaxName}));
     $self->debug("it's ok");
     0;
 }
@@ -398,14 +398,14 @@ sub exorcise_filename {
     ### Isolate to last path element:
     my $last = $fname; $last =~ s{^.*[/\\\[\]:]}{};
     if ($last and !$self->evil_filename($last)) {
-        $self->debug("looks like I can use the last path element");
-        return $last;
+	$self->debug("looks like I can use the last path element");
+	return $last;
     }
 
     ### Break last element into root and extension, and truncate:
     my ($root, $ext) = (($last =~ /^(.*)\.([^\.]+)\Z/)
-                        ? ($1, $2)
-                        : ($last, ''));
+			? ($1, $2)
+			: ($last, ''));
     ### Delete leading and trailing whitespace
     $root =~ s/^\s+//;
     $ext  =~ s/\s+$//;
@@ -414,15 +414,15 @@ sub exorcise_filename {
     $ext =~ /^\w+$/ or $ext = "dat";
     my $trunc = $root . ($ext ? ".$ext" : '');
     if (!$self->evil_filename($trunc)) {
-        $self->debug("looks like I can use the truncated last path element");
-        return $trunc;
+	$self->debug("looks like I can use the truncated last path element");
+	return $trunc;
     }
 
     ### Remove all bad characters
     $trunc =~ s/([^-A-Z0-9_+=.,@\#\$ ])/sprintf("%%%02X", unpack("C", $1))/ige;
     if (!$self->evil_filename($trunc)) {
-        $self->debug("looks like I can use a munged version of the truncated last path element");
-        return $trunc;
+	$self->debug("looks like I can use a munged version of the truncated last path element");
+	return $trunc;
     }
 
     ### Hope that works:
@@ -463,15 +463,15 @@ sub find_unused_path {
     my $i = 0;
     while (1) {
 
-        ### Create suffixed name (from filename), and see if we can use it:
-        my $suffix = ($i ? "-$i" : "");
-        my $sname = $fname; $sname =~ s/^(.*?)(\.|\Z)/$1$suffix$2/;
-        my $path = File::Spec->catfile($dir, $sname);
-        if (! -e $path) {   ### it's good!
-            $i and $self->whine("collision with $fname in $dir: using $path");
-            return $path;
-        }
-        $self->debug("$path already taken");
+	### Create suffixed name (from filename), and see if we can use it:
+	my $suffix = ($i ? "-$i" : "");
+	my $sname = $fname; $sname =~ s/^(.*?)(\.|\Z)/$1$suffix$2/;
+	my $path = File::Spec->catfile($dir, $sname);
+	if (! -e $path) {   ### it's good!
+	    $i and $self->whine("collision with $fname in $dir: using $path");
+	    return $path;
+	}
+	$self->debug("$path already taken");
     } continue { ++$i; }
 }
 
@@ -538,15 +538,15 @@ sub output_filename {
 
     ### Get recommended extension, being quite conservative:
     my $recommended_ext = (($recommended and ($recommended =~ m{(\.\w+)\Z}))
-                           ? $1
-                           : undef);
+			   ? $1
+			   : undef);
 
     ### Try and get an extension, honoring a given one first:
     my $ext = ($recommended_ext ||
-               $self->{MPF_Ext}{"$type/$subtype"} ||
-               $self->{MPF_Ext}{"$type/*"} ||
-               $self->{MPF_Ext}{"*/*"} ||
-               ".dat");
+	       $self->{MPF_Ext}{"$type/$subtype"} ||
+	       $self->{MPF_Ext}{"$type/*"} ||
+	       $self->{MPF_Ext}{"*/*"} ||
+	       ".dat");
 
     ### Get a prefix:
     ++$GFileNo;
@@ -623,9 +623,9 @@ instead of the whole thing.  It works basically as follows:
 
     $filename = $head->recommended_filename();
     if (!$filename or
-         $self->ignore_filename() or
-         $self->evil_filename($filename)) {
-        $filename = $self->output_filename($head);
+	 $self->ignore_filename() or
+	 $self->evil_filename($filename)) {
+ 	$filename = $self->output_filename($head);
     }
 
     return $self->find_unused_path($directory, $filename);
@@ -661,28 +661,28 @@ sub output_path {
 
     ### Can we use it:
     if    (!defined($fname)) {
-        $self->debug("no filename recommended: synthesizing our own");
-        $fname = $self->output_filename($head);
+	$self->debug("no filename recommended: synthesizing our own");
+	$fname = $self->output_filename($head);
     }
     elsif ($self->ignore_filename) {
-        $self->debug("ignoring all external filenames: synthesizing our own");
-        $fname = $self->output_filename($head);
+	$self->debug("ignoring all external filenames: synthesizing our own");
+	$fname = $self->output_filename($head);
     }
     elsif ($self->evil_filename($fname)) {
 
-        ### Can we save it by just taking the last element?
-        my $ex = $self->exorcise_filename($fname);
-        if (defined($ex) and !$self->evil_filename($ex)) {
-            $self->whine("Provided filename '$fname' is regarded as evil, ",
-                         "but I was able to exorcise it and get something ",
-                         "usable.");
-            $fname = $ex;
-        }
-        else {
-            $self->whine("Provided filename '$fname' is regarded as evil; ",
-                         "I'm ignoring it and supplying my own.");
-            $fname = $self->output_filename($head);
-        }
+	### Can we save it by just taking the last element?
+	my $ex = $self->exorcise_filename($fname);
+	if (defined($ex) and !$self->evil_filename($ex)) {
+	    $self->whine("Provided filename '$fname' is regarded as evil, ",
+			 "but I was able to exorcise it and get something ",
+			 "usable.");
+	    $fname = $ex;
+	}
+	else {
+	    $self->whine("Provided filename '$fname' is regarded as evil; ",
+			 "I'm ignoring it and supplying my own.");
+	    $fname = $self->output_filename($head);
+	}
     }
     $self->debug("planning to use '$fname'");
 
@@ -705,9 +705,9 @@ You should not need to override this method.
 sub purge {
     my ($self) = @_;
     foreach my $path (reverse @{$self->{MPF_Purgeable}}) {
-        (-e $path) or next;   ### must check: might delete DIR before DIR/FILE
-        rmtree($path, 0, 1);
-        (-e $path) and $self->whine("unable to purge: $path");
+	(-e $path) or next;   ### must check: might delete DIR before DIR/FILE
+	rmtree($path, 0, 1);
+	(-e $path) and $self->whine("unable to purge: $path");
     }
     1;
 }
@@ -852,12 +852,12 @@ until the next parse is begun, so you can do this:
 
     $parser->output_under("/tmp");
     $ent = eval { $parser->parse_open($msg); };   ### parse
-    if (!$ent) {         ### parse failed
-        rmtree($parser->output_dir);
-        die "parse failed: $@";
+    if (!$ent) {	 ### parse failed
+	rmtree($parser->output_dir);
+	die "parse failed: $@";
     }
     else {               ### parse succeeded
-        ...do stuff...
+	...do stuff...
     }
 
 =cut
@@ -885,8 +885,8 @@ sub init_parse {
 
     ### Determine the subdirectory of ther base to use:
     my $subdir = (defined($self->{MPFU_DirName})
-                  ?       $self->{MPFU_DirName}
-                  :       ("msg-".scalar(time)."-$$-".$GSubdirNo++));
+		  ?       $self->{MPFU_DirName}
+		  :       ("msg-".scalar(time)."-$$-".$GSubdirNo++));
     $self->debug("subdir = $subdir");
 
     ### Determine full path to the per-message output directory:
@@ -895,8 +895,8 @@ sub init_parse {
     ### Remove and re-create the per-message output directory:
     rmtree $self->output_dir if $self->{MPFU_Purge};
     (-d $self->output_dir) or
-        mkdir $self->output_dir, 0700 or
-            die "mkdir ".$self->output_dir.": $!\n";
+	mkdir $self->output_dir, 0700 or
+	    die "mkdir ".$self->output_dir.": $!\n";
 
     ### Add the per-message output directory to the puregables:
     $self->purgeable($self->output_dir);

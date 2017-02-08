@@ -55,10 +55,10 @@ static :: $self->{BASEEXT}.exp
 
     push(@m,"
 $self->{BASEEXT}.exp: Makefile.PL
-",'     $(PERLRUN) -e \'use ExtUtils::Mksymlists; \\
-        Mksymlists("NAME" => "',$self->{NAME},'", "DL_FUNCS" => ',
-        neatvalue($funcs), ', "FUNCLIST" => ', neatvalue($funclist),
-        ', "DL_VARS" => ', neatvalue($vars), ');\'
+",'	$(PERLRUN) -e \'use ExtUtils::Mksymlists; \\
+	Mksymlists("NAME" => "',$self->{NAME},'", "DL_FUNCS" => ',
+	neatvalue($funcs), ', "FUNCLIST" => ', neatvalue($funclist),
+	', "DL_VARS" => ', neatvalue($vars), ');\'
 ');
 
     join('',@m);

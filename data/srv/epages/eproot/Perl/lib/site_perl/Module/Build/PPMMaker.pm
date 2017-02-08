@@ -131,12 +131,12 @@ sub _varchname {  # Copied from PPM.pm
 
 {
   my %escapes = (
-                 "\n" => "\\n",
-                 '"' => '&quot;',
-                 '&' => '&amp;',
-                 '>' => '&gt;',
-                 '<' => '&lt;',
-                );
+		 "\n" => "\\n",
+		 '"' => '&quot;',
+		 '&' => '&amp;',
+		 '>' => '&gt;',
+		 '<' => '&lt;',
+		);
   my $rx = join '|', keys %escapes;
 
   sub _simple_xml_escape {

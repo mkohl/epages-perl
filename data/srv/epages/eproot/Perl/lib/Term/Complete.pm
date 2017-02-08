@@ -74,13 +74,13 @@ CONFIG: {
     $erase1 =   "\177";
     $erase2 =   "\010";
     foreach my $s (qw(/bin/stty /usr/bin/stty)) {
-        if (-x $s) {
-            $tty_raw_noecho = "$s raw -echo";
-            $tty_restore    = "$s -raw echo";
-            $tty_safe_restore = $tty_restore;
-            $stty = $s;
-            last;
-        }
+	if (-x $s) {
+	    $tty_raw_noecho = "$s raw -echo";
+	    $tty_restore    = "$s -raw echo";
+	    $tty_safe_restore = $tty_restore;
+	    $stty = $s;
+	    last;
+	}
     }
 }
 
@@ -93,23 +93,23 @@ sub Complete {
 
     $prompt = shift;
     if (ref $_[0] || $_[0] =~ /^\*/) {
-        @cmp_lst = sort @{$_[0]};
+	@cmp_lst = sort @{$_[0]};
     }
     else {
-        @cmp_lst = sort(@_);
+	@cmp_lst = sort(@_);
     }
 
     # Attempt to save the current stty state, to be restored later
     if (defined $stty && defined $tty_saved_state && $tty_saved_state eq '') {
-        $tty_saved_state = qx($stty -g 2>/dev/null);
-        if ($?) {
-            # stty -g not supported
-            $tty_saved_state = undef;
-        }
-        else {
-            $tty_saved_state =~ s/\s+$//g;
-            $tty_restore = qq($stty "$tty_saved_state" 2>/dev/null);
-        }
+	$tty_saved_state = qx($stty -g 2>/dev/null);
+	if ($?) {
+	    # stty -g not supported
+	    $tty_saved_state = undef;
+	}
+	else {
+	    $tty_saved_state =~ s/\s+$//g;
+	    $tty_restore = qq($stty "$tty_saved_state" 2>/dev/null);
+	}
     }
     system $tty_raw_noecho if defined $tty_raw_noecho;
     LOOP: {
@@ -143,8 +143,8 @@ sub Complete {
                 # (^U) kill
                 $_ eq $kill && do {
                     if ($r) {
-                        $r      = 0;
-                        $return = "";
+                        $r	= 0;
+			$return	= "";
                         print("\r\n");
                         redo LOOP;
                     }
@@ -175,11 +175,11 @@ sub Complete {
     # system $tty_restore if defined $tty_restore;
     if (defined $tty_saved_state && defined $tty_restore && defined $tty_safe_restore)
     {
-        system $tty_restore;
-        if ($?) {
-            # tty_restore caused error
-            system $tty_safe_restore;
-        }
+	system $tty_restore;
+	if ($?) {
+	    # tty_restore caused error
+	    system $tty_safe_restore;
+	}
     }
     print("\n");
     $return;

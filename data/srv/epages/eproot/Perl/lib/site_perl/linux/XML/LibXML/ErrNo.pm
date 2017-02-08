@@ -495,6 +495,6 @@ use constant FTP_EPSV_ANSWER                      => 2001;
 use constant FTP_ACCNT                            => 2002;
 use constant HTTP_URL_SYNTAX                      => 2020;
 use constant HTTP_USE_IP                          => 2021;
-use constant HTTP_UNKNOWN_HOST                   => 2022;
+use constant HTTP_UNKNOWN_HOST			 => 2022;
 
 1;

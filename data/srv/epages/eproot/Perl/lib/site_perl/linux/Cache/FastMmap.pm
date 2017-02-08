@@ -166,7 +166,7 @@ Cache::FastMmap uses mmap to map a file as the shared cache space,
 and fcntl to do page locking. This means it should work on most
 UNIX like operating systems.
 
-Ash Berlin has written a Win32 layer using MapViewOfFile et al. to
+Ash Berlin has written a Win32 layer using MapViewOfFile et al. to 
 provide support for Win32 platform.
 
 =head1 MEMORY SIZE
@@ -218,7 +218,7 @@ And we put all our cache files on there. The tmpfs filesystem is smart
 enough to only use memory as required by files actually on the tmpfs,
 so making it 1G in size doesn't actually use 1G of memory, it only uses
 as much as the cache files we put on it. In all cases, we ensure that
-we never run out of real memory, so the cache files effectively act
+we never run out of real memory, so the cache files effectively act 
 just as named access points to shared memory.
 
 Some people have suggested using anonymous mmaped memory. Unfortunately
@@ -255,7 +255,7 @@ two main ways to do this:
 
 Create the cache in the parent process, and then when it forks, each
 child will inherit the same file descriptor, mmap'ed memory, etc and
-just work. (BEWARE: This works just under UNIX as Win32 has no
+just work. (BEWARE: This works just under UNIX as Win32 has no 
 concept of forking)
 
 =item *
@@ -399,7 +399,7 @@ if specified
 Callback to read data from the underlying data store.  Called as:
 
   $read_cb->($context, $Key)
-
+  
 Should return the value to use. This value will be saved in the cache
 for future retrievals. Return undef if there is no value for the
 given key
@@ -410,7 +410,7 @@ Callback to write data to the underlying data store.
 Called as:
 
   $write_cb->($context, $Key, $Value, $ExpiryTime)
-
+  
 In 'write_through' mode, it's always called as soon as a I<set(...)>
 is called on the Cache::FastMmap class. In 'write_back' mode, it's
 called when a value is expunged from the cache if it's been changed
@@ -541,7 +541,7 @@ sub new {
 
   # If using empty_on_exit, need to track used caches
   my $empty_on_exit = $Self->{empty_on_exit} = int($Args{empty_on_exit} || 0);
-
+  
   # Need Scalar::Util::weaken to track open caches
   if ($empty_on_exit) {
     eval "use Scalar::Util qw(weaken); 1;"
@@ -570,7 +570,7 @@ sub new {
       $page_size *= $Sizes{$1} if $page_size =~ s/([km])$//i;
       $page_size = 4096 if $page_size < 4096;
 
-      # Increase num_pages till we exceed
+      # Increase num_pages till we exceed 
       $num_pages = 89;
       if ($num_pages * $page_size <= $cache_size) {
         while ($num_pages * $page_size <= $cache_size) {
@@ -687,7 +687,7 @@ sub get {
       # Are we doing writeback's? If so, need to mark as dirty in cache
       my $write_back = $Self->{write_back};
 
-      # If not using raw values, use freeze() to turn data
+      # If not using raw values, use freeze() to turn data 
       $Val = freeze(\$Val) if !$Self->{raw_values};
       $Val = Compress::Zlib::memGzip($Val) if $Self->{compress};
 
@@ -727,7 +727,7 @@ for more details.
 sub set {
   my ($Self, $Cache) = ($_[0], $_[0]->{Cache});
 
-  # If not using raw values, use freeze() to turn data
+  # If not using raw values, use freeze() to turn data 
   my $Val = $Self->{raw_values} ? $_[2] : freeze(\$_[2]);
   $Val = Compress::Zlib::memGzip($Val) if $Self->{compress};
 
@@ -844,7 +844,7 @@ sub remove {
      && (my $delete_cb = $Self->{delete_cb})) {
     eval { $delete_cb->($Self->{context}, $_[1]); };
   }
-
+  
   return $DidDel;
 }
 
@@ -1069,7 +1069,7 @@ sub multi_set {
   my $KVs = $_[2];
   while (my ($Key, $Val) = each %$KVs) {
 
-    # If not using raw values, use freeze() to turn data
+    # If not using raw values, use freeze() to turn data 
     $Val = freeze(\$Val) unless $Self->{raw_values};
     $Val = Compress::Zlib::memGzip($Val) if $Self->{compress};
 
@@ -1243,7 +1243,7 @@ leaving them around to accumulate.
 
 =item *
 
-Default share_file name is no longer /tmp/sharefile-$pid-$time
+Default share_file name is no longer /tmp/sharefile-$pid-$time 
 but /tmp/sharefile-$pid-$time-$random.
 
 =back
@@ -1304,7 +1304,7 @@ Rob Mueller L<mailto:cpan@robm.fastmail.fm>
 Copyright (C) 2003-2010 by The FastMail Partnership
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+it under the same terms as Perl itself. 
 
 =cut
 

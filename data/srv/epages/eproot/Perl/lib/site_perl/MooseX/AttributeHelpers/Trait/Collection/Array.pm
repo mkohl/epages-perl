@@ -36,7 +36,7 @@ MooseX::AttributeHelpers::Collection::Array
   package Stuff;
   use Moose;
   use MooseX::AttributeHelpers;
-
+  
   has 'options' => (
       metaclass => 'Collection::Array',
       is        => 'ro',
@@ -50,7 +50,7 @@ MooseX::AttributeHelpers::Collection::Array
 
 =head1 DESCRIPTION
 
-This module provides an Array attribute which provides a number of
+This module provides an Array attribute which provides a number of 
 array operations. See L<MooseX::AttributeHelpers::MethodProvider::Array>
 for more details.
 
@@ -70,7 +70,7 @@ for more details.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

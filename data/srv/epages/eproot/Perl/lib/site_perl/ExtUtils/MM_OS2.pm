@@ -58,10 +58,10 @@ sub dlsyms {
     (my $boot = $self->{NAME}) =~ s/:/_/g;
 
     if (not $self->{SKIPHASH}{'dynamic'}) {
-        push(@m,"
+	push(@m,"
 $self->{BASEEXT}.def: Makefile.PL
 ",
-     '  $(PERL) "-I$(PERL_ARCHLIB)" "-I$(PERL_LIB)" -e \'use ExtUtils::Mksymlists; \\
+     '	$(PERL) "-I$(PERL_ARCHLIB)" "-I$(PERL_LIB)" -e \'use ExtUtils::Mksymlists; \\
      Mksymlists("NAME" => "$(NAME)", "DLBASE" => "$(DLBASE)", ',
      '"VERSION" => "$(VERSION)", "DISTNAME" => "$(DISTNAME)", ',
      '"INSTALLDIRS" => "$(INSTALLDIRS)", ',
@@ -72,21 +72,21 @@ $self->{BASEEXT}.def: Makefile.PL
 ');
     }
     if ($self->{IMPORTS} && %{$self->{IMPORTS}}) {
-        # Make import files (needed for static build)
-        -d 'tmp_imp' or mkdir 'tmp_imp', 0777 or die "Can't mkdir tmp_imp";
-        open my $imp, '>', 'tmpimp.imp' or die "Can't open tmpimp.imp";
-        while (my($name, $exp) = each %{$self->{IMPORTS}}) {
-            my ($lib, $id) = ($exp =~ /(.*)\.(.*)/) or die "Malformed IMPORT `$exp'";
-            print $imp "$name $lib $id ?\n";
-        }
-        close $imp or die "Can't close tmpimp.imp";
-        # print "emximp -o tmpimp$Config::Config{lib_ext} tmpimp.imp\n";
-        system "emximp -o tmpimp$Config::Config{lib_ext} tmpimp.imp"
-            and die "Cannot make import library: $!, \$?=$?";
-        # May be running under miniperl, so have no glob...
-        eval { unlink <tmp_imp/*>; 1 } or system "rm tmp_imp/*";
-        system "cd tmp_imp; $Config::Config{ar} x ../tmpimp$Config::Config{lib_ext}"
-            and die "Cannot extract import objects: $!, \$?=$?";
+	# Make import files (needed for static build)
+	-d 'tmp_imp' or mkdir 'tmp_imp', 0777 or die "Can't mkdir tmp_imp";
+	open my $imp, '>', 'tmpimp.imp' or die "Can't open tmpimp.imp";
+	while (my($name, $exp) = each %{$self->{IMPORTS}}) {
+	    my ($lib, $id) = ($exp =~ /(.*)\.(.*)/) or die "Malformed IMPORT `$exp'";
+	    print $imp "$name $lib $id ?\n";
+	}
+	close $imp or die "Can't close tmpimp.imp";
+	# print "emximp -o tmpimp$Config::Config{lib_ext} tmpimp.imp\n";
+	system "emximp -o tmpimp$Config::Config{lib_ext} tmpimp.imp"
+	    and die "Cannot make import library: $!, \$?=$?";
+	# May be running under miniperl, so have no glob...
+	eval { unlink <tmp_imp/*>; 1 } or system "rm tmp_imp/*";
+	system "cd tmp_imp; $Config::Config{ar} x ../tmpimp$Config::Config{lib_ext}"
+	    and die "Cannot extract import objects: $!, \$?=$?";
     }
     join('',@m);
 }
@@ -100,7 +100,7 @@ sub static_lib {
     shift @chunks unless length $chunks[0]; # Empty lines at the start
     $chunks[0] .= <<'EOC';
 
-        $(AR) $(AR_STATIC_ARGS) $@ tmp_imp/* && $(RANLIB) $@
+	$(AR) $(AR_STATIC_ARGS) $@ tmp_imp/* && $(RANLIB) $@
 EOC
     return join "\n\n". '', @chunks;
 }

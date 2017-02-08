@@ -4,7 +4,7 @@ package Net::AMQP::Frame::Body;
 
 Net::AMQP::Frame::Body - AMQP wire-level body Frame object
 
-=head1 DESCRIPTION
+=head1 DESCRIPTION 
 
 Inherits from L<Net::AMQP::Frame>.
 
@@ -16,7 +16,7 @@ use base qw(Net::AMQP::Frame);
 
 __PACKAGE__->type_id(3);
 
-sub parse_payload {
+sub parse_payload { 
     my $self = shift;
 
     # Nothing to be done; it's already there

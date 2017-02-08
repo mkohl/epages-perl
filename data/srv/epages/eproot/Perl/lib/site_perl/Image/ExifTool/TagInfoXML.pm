@@ -402,7 +402,7 @@ sub BuildLangModules($;$)
                     next;
                 }
                 my @infoArray = GetTagInfoList($table, $id);
-
+    
                 # this will fail for UserDefined tags and tags without ID's
                 @infoArray or warn("Error loading tag for $tableName ID='$id'\n"), next;
                 my ($tagInfo, $langInfo);

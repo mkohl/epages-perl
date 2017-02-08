@@ -24,8 +24,8 @@ my %noYes = ( 0 => 'No', 1 => 'Yes' );
 %Image::ExifTool::Matroska::Main = (
     GROUPS => { 2 => 'Video' },
     NOTES => q{
-        The following tags are extracted from Matroska multimedia container files.
-        This container format is used by file types such as MKA, MKV, MKS and WEBM.
+        The following tags are extracted from Matroska multimedia container files. 
+        This container format is used by file types such as MKA, MKV, MKS and WEBM. 
         For speed, ExifTool extracts tags only up to the first Cluster unless the
         Verbose (-v) or Unknown = 2 (-U) option is used.  See
         L<http://www.matroska.org/technical/specs/index.html> for the official

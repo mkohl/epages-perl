@@ -48,8 +48,8 @@ sub _compiler_type {
   my $cc = $self->{config}{cc};
 
   return (  $cc =~ /cl(\.exe)?$/ ? 'MSVC'
-          : $cc =~ /bcc32(\.exe)?$/ ? 'BCC'
-          : 'GCC');
+	  : $cc =~ /bcc32(\.exe)?$/ ? 'BCC'
+	  : 'GCC');
 }
 
 sub split_like_shell {
@@ -67,9 +67,9 @@ sub do_system {
   # See above
   my $self = shift;
   my $cmd = join(" ",
-                 grep length,
-                 map {$a=$_;$a=~s/\t/ /g;$a=~s/^\s+|\s+$//;$a}
-                 grep defined, @_);
+		 grep length,
+		 map {$a=$_;$a=~s/\t/ /g;$a=~s/^\s+|\s+$//;$a}
+		 grep defined, @_);
   return $self->SUPER::do_system($cmd);
 }
 

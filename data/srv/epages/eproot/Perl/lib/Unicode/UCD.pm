@@ -12,13 +12,13 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our @EXPORT_OK = qw(charinfo
-                    charblock charscript
-                    charblocks charscripts
-                    charinrange
-                    general_categories bidi_types
-                    compexcl
-                    casefold casespec
-                    namedseq);
+		    charblock charscript
+		    charblocks charscripts
+		    charinrange
+		    general_categories bidi_types
+		    compexcl
+		    casefold casespec
+		    namedseq);
 
 use Carp;
 
@@ -96,15 +96,15 @@ sub openunicode {
     my ($rfh, @path) = @_;
     my $f;
     unless (defined $$rfh) {
-        for my $d (@INC) {
-            use File::Spec;
-            $f = File::Spec->catfile($d, "unicore", @path);
-            last if open($$rfh, $f);
-            undef $f;
-        }
-        croak __PACKAGE__, ": failed to find ",
+	for my $d (@INC) {
+	    use File::Spec;
+	    $f = File::Spec->catfile($d, "unicore", @path);
+	    last if open($$rfh, $f);
+	    undef $f;
+	}
+	croak __PACKAGE__, ": failed to find ",
               File::Spec->catfile(@path), " in @INC"
-            unless defined $f;
+	    unless defined $f;
     }
     return $f;
 }
@@ -124,7 +124,7 @@ the standard),
 B<undef> is returned.
 
 Fields that aren't applicable to the particular code point argument exist in the
-returned hash, and are empty.
+returned hash, and are empty. 
 
 The keys in the hash with the meanings of their values are:
 
@@ -247,9 +247,9 @@ sub _getcode {
     my $arg = shift;
 
     if ($arg =~ /^[1-9]\d*$/) {
-        return $arg;
+	return $arg;
     } elsif ($arg =~ /^(?:[Uu]\+|0[xX])?([[:xdigit:]]+)$/) {
-        return hex($1);
+	return hex($1);
     }
 
     return;
@@ -266,9 +266,9 @@ if ($hasHangulUtil) {
 
 sub hangul_decomp { # internal: called from charinfo
     if ($hasHangulUtil) {
-        my @tmp = decomposeHangul(shift);
-        return sprintf("%04X %04X",      @tmp) if @tmp == 2;
-        return sprintf("%04X %04X %04X", @tmp) if @tmp == 3;
+	my @tmp = decomposeHangul(shift);
+	return sprintf("%04X %04X",      @tmp) if @tmp == 2;
+	return sprintf("%04X %04X %04X", @tmp) if @tmp == 3;
     }
     return;
 }
@@ -292,7 +292,7 @@ get_charinfo_ranges();
 
 sub get_charinfo_ranges {
    my @blocks = keys %first_last;
-
+   
    my $fh;
    openunicode( \$fh, 'UnicodeData.txt' );
    if( defined $fh ){
@@ -339,14 +339,14 @@ sub charinfo {
     my $arg  = shift;
     my $code = _getcode($arg);
     croak __PACKAGE__, "::charinfo: unknown code '$arg'"
-        unless defined $code;
+	unless defined $code;
     my $hexk = sprintf("%06X", $code);
     my($rcode,$rname,$rdec);
     foreach my $range (@CharinfoRanges){
       if ($range->[0] <= $code && $code <= $range->[1]) {
         $rcode = $hexk;
-        $rcode =~ s/^0+//;
-        $rcode =  sprintf("%04X", hex($rcode));
+	$rcode =~ s/^0+//;
+	$rcode =  sprintf("%04X", hex($rcode));
         $rname = $range->[2] ? $range->[2]->($code) : '';
         $rdec  = $range->[3] ? $range->[3]->($code) : '';
         $hexk  = sprintf("%06X", $range->[0]); # replace by the first
@@ -355,32 +355,32 @@ sub charinfo {
     }
     openunicode(\$UNICODEFH, "UnicodeData.txt");
     if (defined $UNICODEFH) {
-        use Search::Dict 1.02;
-        if (look($UNICODEFH, "$hexk;", { xfrm => sub { $_[0] =~ /^([^;]+);(.+)/; sprintf "%06X;$2", hex($1) } } ) >= 0) {
-            my $line = <$UNICODEFH>;
-            return unless defined $line;
-            chomp $line;
-            my %prop;
-            @prop{qw(
-                     code name category
-                     combining bidi decomposition
-                     decimal digit numeric
-                     mirrored unicode10 comment
-                     upper lower title
-                    )} = split(/;/, $line, -1);
-            $hexk =~ s/^0+//;
-            $hexk =  sprintf("%04X", hex($hexk));
-            if ($prop{code} eq $hexk) {
-                $prop{block}  = charblock($code);
-                $prop{script} = charscript($code);
-                if(defined $rname){
+	use Search::Dict 1.02;
+	if (look($UNICODEFH, "$hexk;", { xfrm => sub { $_[0] =~ /^([^;]+);(.+)/; sprintf "%06X;$2", hex($1) } } ) >= 0) {
+	    my $line = <$UNICODEFH>;
+	    return unless defined $line;
+	    chomp $line;
+	    my %prop;
+	    @prop{qw(
+		     code name category
+		     combining bidi decomposition
+		     decimal digit numeric
+		     mirrored unicode10 comment
+		     upper lower title
+		    )} = split(/;/, $line, -1);
+	    $hexk =~ s/^0+//;
+	    $hexk =  sprintf("%04X", hex($hexk));
+	    if ($prop{code} eq $hexk) {
+		$prop{block}  = charblock($code);
+		$prop{script} = charscript($code);
+		if(defined $rname){
                     $prop{code} = $rcode;
                     $prop{name} = $rname;
                     $prop{decomposition} = $rdec;
                 }
-                return \%prop;
-            }
-        }
+		return \%prop;
+	    }
+	}
     }
     return;
 }
@@ -393,15 +393,15 @@ sub _search { # Binary search in a [[lo,hi,prop],[...],...] table.
     my $mid = int(($lo+$hi) / 2);
 
     if ($table->[$mid]->[0] < $code) {
-        if ($table->[$mid]->[1] >= $code) {
-            return $table->[$mid]->[2];
-        } else {
-            _search($table, $mid + 1, $hi, $code);
-        }
+	if ($table->[$mid]->[1] >= $code) {
+	    return $table->[$mid]->[2];
+	} else {
+	    _search($table, $mid + 1, $hi, $code);
+	}
     } elsif ($table->[$mid]->[0] > $code) {
-        _search($table, $lo, $mid - 1, $code);
+	_search($table, $lo, $mid - 1, $code);
     } else {
-        return $table->[$mid]->[2];
+	return $table->[$mid]->[2];
     }
 }
 
@@ -409,7 +409,7 @@ sub charinrange {
     my ($range, $arg) = @_;
     my $code = _getcode($arg);
     croak __PACKAGE__, "::charinrange: unknown code '$arg'"
-        unless defined $code;
+	unless defined $code;
     _search($range, 0, $#$range, $code);
 }
 
@@ -445,18 +445,18 @@ my %BLOCKS;
 
 sub _charblocks {
     unless (@BLOCKS) {
-        if (openunicode(\$BLOCKSFH, "Blocks.txt")) {
-            local $_;
-            while (<$BLOCKSFH>) {
-                if (/^([0-9A-F]+)\.\.([0-9A-F]+);\s+(.+)/) {
-                    my ($lo, $hi) = (hex($1), hex($2));
-                    my $subrange = [ $lo, $hi, $3 ];
-                    push @BLOCKS, $subrange;
-                    push @{$BLOCKS{$3}}, $subrange;
-                }
-            }
-            close($BLOCKSFH);
-        }
+	if (openunicode(\$BLOCKSFH, "Blocks.txt")) {
+	    local $_;
+	    while (<$BLOCKSFH>) {
+		if (/^([0-9A-F]+)\.\.([0-9A-F]+);\s+(.+)/) {
+		    my ($lo, $hi) = (hex($1), hex($2));
+		    my $subrange = [ $lo, $hi, $3 ];
+		    push @BLOCKS, $subrange;
+		    push @{$BLOCKS{$3}}, $subrange;
+		}
+	    }
+	    close($BLOCKSFH);
+	}
     }
 }
 
@@ -468,13 +468,13 @@ sub charblock {
     my $code = _getcode($arg);
 
     if (defined $code) {
-        _search(\@BLOCKS, 0, $#BLOCKS, $code);
+	_search(\@BLOCKS, 0, $#BLOCKS, $code);
     } else {
-        if (exists $BLOCKS{$arg}) {
-            return dclone $BLOCKS{$arg};
-        } else {
-            return;
-        }
+	if (exists $BLOCKS{$arg}) {
+	    return dclone $BLOCKS{$arg};
+	} else {
+	    return;
+	}
     }
 }
 
@@ -508,21 +508,21 @@ my %SCRIPTS;
 
 sub _charscripts {
     unless (@SCRIPTS) {
-        if (openunicode(\$SCRIPTSFH, "Scripts.txt")) {
-            local $_;
-            while (<$SCRIPTSFH>) {
-                if (/^([0-9A-F]+)(?:\.\.([0-9A-F]+))?\s+;\s+(\w+)/) {
-                    my ($lo, $hi) = (hex($1), $2 ? hex($2) : hex($1));
-                    my $script = lc($3);
-                    $script =~ s/\b(\w)/uc($1)/ge;
-                    my $subrange = [ $lo, $hi, $script ];
-                    push @SCRIPTS, $subrange;
-                    push @{$SCRIPTS{$script}}, $subrange;
-                }
-            }
-            close($SCRIPTSFH);
-            @SCRIPTS = sort { $a->[0] <=> $b->[0] } @SCRIPTS;
-        }
+	if (openunicode(\$SCRIPTSFH, "Scripts.txt")) {
+	    local $_;
+	    while (<$SCRIPTSFH>) {
+		if (/^([0-9A-F]+)(?:\.\.([0-9A-F]+))?\s+;\s+(\w+)/) {
+		    my ($lo, $hi) = (hex($1), $2 ? hex($2) : hex($1));
+		    my $script = lc($3);
+		    $script =~ s/\b(\w)/uc($1)/ge;
+		    my $subrange = [ $lo, $hi, $script ];
+		    push @SCRIPTS, $subrange;
+		    push @{$SCRIPTS{$script}}, $subrange;
+		}
+	    }
+	    close($SCRIPTSFH);
+	    @SCRIPTS = sort { $a->[0] <=> $b->[0] } @SCRIPTS;
+	}
     }
 }
 
@@ -534,13 +534,13 @@ sub charscript {
     my $code = _getcode($arg);
 
     if (defined $code) {
-        _search(\@SCRIPTS, 0, $#SCRIPTS, $code);
+	_search(\@SCRIPTS, 0, $#SCRIPTS, $code);
     } else {
-        if (exists $SCRIPTS{$arg}) {
-            return dclone $SCRIPTS{$arg};
-        } else {
-            return;
-        }
+	if (exists $SCRIPTS{$arg}) {
+	    return dclone $SCRIPTS{$arg};
+	} else {
+	    return;
+	}
     }
 }
 
@@ -678,7 +678,7 @@ my %BIDI_TYPES =
    'S'   => 'Segment Separator',
    'WS'  => 'Whitespace',
    'ON'  => 'Other Neutrals',
- );
+ ); 
 
 =head2 B<bidi_types()>
 
@@ -726,16 +726,16 @@ my %COMPEXCL;
 
 sub _compexcl {
     unless (%COMPEXCL) {
-        if (openunicode(\$COMPEXCLFH, "CompositionExclusions.txt")) {
-            local $_;
-            while (<$COMPEXCLFH>) {
-                if (/^([0-9A-F]+)\s+\#\s+/) {
-                    my $code = hex($1);
-                    $COMPEXCL{$code} = undef;
-                }
-            }
-            close($COMPEXCLFH);
-        }
+	if (openunicode(\$COMPEXCLFH, "CompositionExclusions.txt")) {
+	    local $_;
+	    while (<$COMPEXCLFH>) {
+		if (/^([0-9A-F]+)\s+\#\s+/) {
+		    my $code = hex($1);
+		    $COMPEXCL{$code} = undef;
+		}
+	    }
+	    close($COMPEXCLFH);
+	}
     }
 }
 
@@ -743,7 +743,7 @@ sub compexcl {
     my $arg  = shift;
     my $code = _getcode($arg);
     croak __PACKAGE__, "::compexcl: unknown code '$arg'"
-        unless defined $code;
+	unless defined $code;
 
     _compexcl() unless %COMPEXCL;
 
@@ -848,7 +848,7 @@ additional processing.
 
 For versions of Unicode 3.1 and earlier, this field is empty unless there is a
 special folding for Turkic languages, in which case I<status> is C<I>, and
-I<mapping>, I<full>, I<simple>, and I<turkic> are all equal.
+I<mapping>, I<full>, I<simple>, and I<turkic> are all equal.  
 
 =back
 
@@ -877,52 +877,52 @@ my %CASEFOLD;
 
 sub _casefold {
     unless (%CASEFOLD) {
-        if (openunicode(\$CASEFOLDFH, "CaseFolding.txt")) {
-            local $_;
-            while (<$CASEFOLDFH>) {
-                if (/^([0-9A-F]+); ([CFIST]); ([0-9A-F]+(?: [0-9A-F]+)*);/) {
-                    my $code = hex($1);
-                    $CASEFOLD{$code}{'code'} = $1;
-                    $CASEFOLD{$code}{'turkic'} = "" unless
-                                            defined $CASEFOLD{$code}{'turkic'};
-                    if ($2 eq 'C' || $2 eq 'I') {       # 'I' is only on 3.1 and
-                                                        # earlier Unicodes
-                                                        # Both entries there (I
-                                                        # only checked 3.1) are
-                                                        # the same as C, and
-                                                        # there are no other
-                                                        # entries for those
-                                                        # codepoints, so treat
-                                                        # as if C, but override
-                                                        # the turkic one for
-                                                        # 'I'.
-                        $CASEFOLD{$code}{'status'} = $2;
-                        $CASEFOLD{$code}{'full'} = $CASEFOLD{$code}{'simple'} =
-                        $CASEFOLD{$code}{'mapping'} = $3;
-                        $CASEFOLD{$code}{'turkic'} = $3 if $2 eq 'I';
-                    } elsif ($2 eq 'F') {
-                        $CASEFOLD{$code}{'full'} = $3;
-                        unless (defined $CASEFOLD{$code}{'simple'}) {
-                                $CASEFOLD{$code}{'simple'} = "";
-                                $CASEFOLD{$code}{'mapping'} = $3;
-                                $CASEFOLD{$code}{'status'} = $2;
-                        }
-                    } elsif ($2 eq 'S') {
+	if (openunicode(\$CASEFOLDFH, "CaseFolding.txt")) {
+	    local $_;
+	    while (<$CASEFOLDFH>) {
+		if (/^([0-9A-F]+); ([CFIST]); ([0-9A-F]+(?: [0-9A-F]+)*);/) {
+		    my $code = hex($1);
+		    $CASEFOLD{$code}{'code'} = $1;
+		    $CASEFOLD{$code}{'turkic'} = "" unless
+					    defined $CASEFOLD{$code}{'turkic'};
+		    if ($2 eq 'C' || $2 eq 'I') {	# 'I' is only on 3.1 and
+							# earlier Unicodes
+							# Both entries there (I
+							# only checked 3.1) are
+							# the same as C, and
+							# there are no other
+							# entries for those
+							# codepoints, so treat
+							# as if C, but override
+							# the turkic one for
+							# 'I'.
+			$CASEFOLD{$code}{'status'} = $2;
+			$CASEFOLD{$code}{'full'} = $CASEFOLD{$code}{'simple'} =
+			$CASEFOLD{$code}{'mapping'} = $3;
+			$CASEFOLD{$code}{'turkic'} = $3 if $2 eq 'I';
+		    } elsif ($2 eq 'F') {
+			$CASEFOLD{$code}{'full'} = $3;
+			unless (defined $CASEFOLD{$code}{'simple'}) {
+				$CASEFOLD{$code}{'simple'} = "";
+				$CASEFOLD{$code}{'mapping'} = $3;
+				$CASEFOLD{$code}{'status'} = $2;
+			}
+		    } elsif ($2 eq 'S') {
 
 
-                        # There can't be a simple without a full, and simple
-                        # overrides all but full
+			# There can't be a simple without a full, and simple
+			# overrides all but full
 
-                        $CASEFOLD{$code}{'simple'} = $3;
-                        $CASEFOLD{$code}{'mapping'} = $3;
-                        $CASEFOLD{$code}{'status'} = $2;
-                    } elsif ($2 eq 'T') {
-                        $CASEFOLD{$code}{'turkic'} = $3;
-                    } # else can't happen because only [CIFST] are possible
-                }
-            }
-            close($CASEFOLDFH);
-        }
+			$CASEFOLD{$code}{'simple'} = $3;
+			$CASEFOLD{$code}{'mapping'} = $3;
+			$CASEFOLD{$code}{'status'} = $2;
+		    } elsif ($2 eq 'T') {
+			$CASEFOLD{$code}{'turkic'} = $3;
+		    } # else can't happen because only [CIFST] are possible
+		}
+	    }
+	    close($CASEFOLDFH);
+	}
     }
 }
 
@@ -930,7 +930,7 @@ sub casefold {
     my $arg  = shift;
     my $code = _getcode($arg);
     croak __PACKAGE__, "::casefold: unknown code '$arg'"
-        unless defined $code;
+	unless defined $code;
 
     _casefold() unless %CASEFOLD;
 
@@ -1007,7 +1007,7 @@ These are for context-sensitive casing.
 =back
 
 The hash described above is returned for locale-independent casing, where
-at least one of the mappings has length longer than one.  If B<undef> is
+at least one of the mappings has length longer than one.  If B<undef> is 
 returned, the code point may have mappings, but if so, all are length one,
 and are returned by L</charinfo()>.
 Note that when this function does return a value, it will be for the complete
@@ -1039,55 +1039,55 @@ my %CASESPEC;
 
 sub _casespec {
     unless (%CASESPEC) {
-        if (openunicode(\$CASESPECFH, "SpecialCasing.txt")) {
-            local $_;
-            while (<$CASESPECFH>) {
-                if (/^([0-9A-F]+); ([0-9A-F]+(?: [0-9A-F]+)*)?; ([0-9A-F]+(?: [0-9A-F]+)*)?; ([0-9A-F]+(?: [0-9A-F]+)*)?; (\w+(?: \w+)*)?/) {
-                    my ($hexcode, $lower, $title, $upper, $condition) =
-                        ($1, $2, $3, $4, $5);
-                    my $code = hex($hexcode);
-                    if (exists $CASESPEC{$code}) {
-                        if (exists $CASESPEC{$code}->{code}) {
-                            my ($oldlower,
-                                $oldtitle,
-                                $oldupper,
-                                $oldcondition) =
-                                    @{$CASESPEC{$code}}{qw(lower
-                                                           title
-                                                           upper
-                                                           condition)};
-                            if (defined $oldcondition) {
-                                my ($oldlocale) =
-                                ($oldcondition =~ /^([a-z][a-z](?:_\S+)?)/);
-                                delete $CASESPEC{$code};
-                                $CASESPEC{$code}->{$oldlocale} =
-                                { code      => $hexcode,
-                                  lower     => $oldlower,
-                                  title     => $oldtitle,
-                                  upper     => $oldupper,
-                                  condition => $oldcondition };
-                            }
-                        }
-                        my ($locale) =
-                            ($condition =~ /^([a-z][a-z](?:_\S+)?)/);
-                        $CASESPEC{$code}->{$locale} =
-                        { code      => $hexcode,
-                          lower     => $lower,
-                          title     => $title,
-                          upper     => $upper,
-                          condition => $condition };
-                    } else {
-                        $CASESPEC{$code} =
-                        { code      => $hexcode,
-                          lower     => $lower,
-                          title     => $title,
-                          upper     => $upper,
-                          condition => $condition };
-                    }
-                }
-            }
-            close($CASESPECFH);
-        }
+	if (openunicode(\$CASESPECFH, "SpecialCasing.txt")) {
+	    local $_;
+	    while (<$CASESPECFH>) {
+		if (/^([0-9A-F]+); ([0-9A-F]+(?: [0-9A-F]+)*)?; ([0-9A-F]+(?: [0-9A-F]+)*)?; ([0-9A-F]+(?: [0-9A-F]+)*)?; (\w+(?: \w+)*)?/) {
+		    my ($hexcode, $lower, $title, $upper, $condition) =
+			($1, $2, $3, $4, $5);
+		    my $code = hex($hexcode);
+		    if (exists $CASESPEC{$code}) {
+			if (exists $CASESPEC{$code}->{code}) {
+			    my ($oldlower,
+				$oldtitle,
+				$oldupper,
+				$oldcondition) =
+				    @{$CASESPEC{$code}}{qw(lower
+							   title
+							   upper
+							   condition)};
+			    if (defined $oldcondition) {
+				my ($oldlocale) =
+				($oldcondition =~ /^([a-z][a-z](?:_\S+)?)/);
+				delete $CASESPEC{$code};
+				$CASESPEC{$code}->{$oldlocale} =
+				{ code      => $hexcode,
+				  lower     => $oldlower,
+				  title     => $oldtitle,
+				  upper     => $oldupper,
+				  condition => $oldcondition };
+			    }
+			}
+			my ($locale) =
+			    ($condition =~ /^([a-z][a-z](?:_\S+)?)/);
+			$CASESPEC{$code}->{$locale} =
+			{ code      => $hexcode,
+			  lower     => $lower,
+			  title     => $title,
+			  upper     => $upper,
+			  condition => $condition };
+		    } else {
+			$CASESPEC{$code} =
+			{ code      => $hexcode,
+			  lower     => $lower,
+			  title     => $title,
+			  upper     => $upper,
+			  condition => $condition };
+		    }
+		}
+	    }
+	    close($CASESPECFH);
+	}
     }
 }
 
@@ -1095,7 +1095,7 @@ sub casespec {
     my $arg  = shift;
     my $code = _getcode($arg);
     croak __PACKAGE__, "::casespec: unknown code '$arg'"
-        unless defined $code;
+	unless defined $code;
 
     _casespec() unless %CASESPEC;
 
@@ -1129,17 +1129,17 @@ my %NAMEDSEQ;
 
 sub _namedseq {
     unless (%NAMEDSEQ) {
-        if (openunicode(\$NAMEDSEQFH, "NamedSequences.txt")) {
-            local $_;
-            while (<$NAMEDSEQFH>) {
-                if (/^(.+)\s*;\s*([0-9A-F]+(?: [0-9A-F]+)*)$/) {
-                    my ($n, $s) = ($1, $2);
-                    my @s = map { chr(hex($_)) } split(' ', $s);
-                    $NAMEDSEQ{$n} = join("", @s);
-                }
-            }
-            close($NAMEDSEQFH);
-        }
+	if (openunicode(\$NAMEDSEQFH, "NamedSequences.txt")) {
+	    local $_;
+	    while (<$NAMEDSEQFH>) {
+		if (/^(.+)\s*;\s*([0-9A-F]+(?: [0-9A-F]+)*)$/) {
+		    my ($n, $s) = ($1, $2);
+		    my @s = map { chr(hex($_)) } split(' ', $s);
+		    $NAMEDSEQ{$n} = join("", @s);
+		}
+	    }
+	    close($NAMEDSEQFH);
+	}
     }
 }
 
@@ -1147,16 +1147,16 @@ sub namedseq {
     _namedseq() unless %NAMEDSEQ;
     my $wantarray = wantarray();
     if (defined $wantarray) {
-        if ($wantarray) {
-            if (@_ == 0) {
-                return %NAMEDSEQ;
-            } elsif (@_ == 1) {
-                my $s = $NAMEDSEQ{ $_[0] };
-                return defined $s ? map { ord($_) } split('', $s) : ();
-            }
-        } elsif (@_ == 1) {
-            return $NAMEDSEQ{ $_[0] };
-        }
+	if ($wantarray) {
+	    if (@_ == 0) {
+		return %NAMEDSEQ;
+	    } elsif (@_ == 1) {
+		my $s = $NAMEDSEQ{ $_[0] };
+		return defined $s ? map { ord($_) } split('', $s) : ();
+	    }
+	} elsif (@_ == 1) {
+	    return $NAMEDSEQ{ $_[0] };
+	}
     }
     return;
 }
@@ -1173,11 +1173,11 @@ my $UNICODEVERSION;
 
 sub UnicodeVersion {
     unless (defined $UNICODEVERSION) {
-        openunicode(\$VERSIONFH, "version");
-        chomp($UNICODEVERSION = <$VERSIONFH>);
-        close($VERSIONFH);
-        croak __PACKAGE__, "::VERSION: strange version '$UNICODEVERSION'"
-            unless $UNICODEVERSION =~ /^\d+(?:\.\d+)+$/;
+	openunicode(\$VERSIONFH, "version");
+	chomp($UNICODEVERSION = <$VERSIONFH>);
+	close($VERSIONFH);
+	croak __PACKAGE__, "::VERSION: strange version '$UNICODEVERSION'"
+	    unless $UNICODEVERSION =~ /^\d+(?:\.\d+)+$/;
     }
     return $UNICODEVERSION;
 }

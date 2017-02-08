@@ -46,11 +46,11 @@ BEGIN {
    # If ENV{FCGI_SOCKET_PATH} is given, explicitly open the socket,
    # and keep the request handle around from which to call Accept().
    if ($ENV{FCGI_SOCKET_PATH}) {
-        my $path    = $ENV{FCGI_SOCKET_PATH};
-        my $backlog = $ENV{FCGI_LISTEN_QUEUE} || 100;
-        my $socket  = FCGI::OpenSocket( $path, $backlog );
-        $Ext_Request = FCGI::Request( \*STDIN, \*STDOUT, \*STDERR,
-                                        \%ENV, $socket, 1 );
+	my $path    = $ENV{FCGI_SOCKET_PATH};
+	my $backlog = $ENV{FCGI_LISTEN_QUEUE} || 100;
+	my $socket  = FCGI::OpenSocket( $path, $backlog );
+	$Ext_Request = FCGI::Request( \*STDIN, \*STDOUT, \*STDERR,
+					\%ENV, $socket, 1 );
    }
 }
 
@@ -59,9 +59,9 @@ BEGIN {
 sub new {
      my ($self, $initializer, @param) = @_;
      unless (defined $initializer) {
-        if ($Ext_Request) {
+	if ($Ext_Request) {
           return undef unless $Ext_Request->Accept() >= 0;
-        } else {
+	} else {
          return undef unless FCGI::accept() >= 0;
      }
      }
@@ -81,13 +81,13 @@ CGI::Fast - CGI Interface for Fast CGI
     use CGI::Fast qw(:standard);
     $COUNTER = 0;
     while (new CGI::Fast) {
-        print header;
-        print start_html("Fast CGI Rocks");
-        print
-            h1("Fast CGI Rocks"),
-            "Invocation number ",b($COUNTER++),
+	print header;
+	print start_html("Fast CGI Rocks");
+	print
+	    h1("Fast CGI Rocks"),
+	    "Invocation number ",b($COUNTER++),
             " PID ",b($$),".",
-            hr;
+	    hr;
         print end_html;
     }
 
@@ -120,7 +120,7 @@ A typical FastCGI script will look like this:
     use CGI::Fast;
     &do_some_initialization();
     while ($q = new CGI::Fast) {
-        &process_request($q);
+	&process_request($q);
     }
 
 Each time there's a new request, CGI::Fast returns a
@@ -136,7 +136,7 @@ CGI.pm's default CGI object mode also works.  Just modify the loop
 this way:
 
     while (new CGI::Fast) {
-        &process_request;
+	&process_request;
     }
 
 Calls to header(), start_form(), etc. will all operate on the
@@ -197,7 +197,7 @@ For example:
     $ENV{FCGI_SOCKET_PATH} = "sputnik:8888";
     $ENV{FCGI_LISTEN_QUEUE} = 100;
     while ($q = new CGI::Fast) {
-        &process_request($q);
+	&process_request($q);
     }
 
 =head1 CAVEATS

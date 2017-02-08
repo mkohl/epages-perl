@@ -20,7 +20,7 @@ sub parse_datetime {
     my ( $self, $date ) = @_;
 
     my @fields = qw/ year month day hour minute second fraction time_zone /;
-    my @values =
+    my @values = 
        ( $date =~ /^(\d\d\d\d) # Year
                     (?:-(\d\d) # -Month
                      (?:-(\d\d) # -Day
@@ -40,7 +40,7 @@ sub parse_datetime {
        next unless defined $values[$i];
        $p{$fields[$i]} = $values[$i];
     }
-
+    
 ### support for YYYY-MM-DDT24:00:00 as a syntactic form for 00:00:00 on the day following YYYY-MM-DD
 ### this is allowed in xsd dateTime syntactic forms, but not W3CDTF.
 #     my $next_day    = 0;
@@ -54,7 +54,7 @@ sub parse_datetime {
 #             }
 #         }
 #     }
-
+    
     if ( !$p{time_zone} ) {
         $p{time_zone} = 'floating';
     } elsif ( $p{time_zone} eq 'Z' ) {
@@ -155,7 +155,7 @@ This module understands the W3CDTF date/time format, an ISO 8601 profile,
 defined at http://www.w3.org/TR/NOTE-datetime.  This format as the native
 date format of RSS 1.0.
 
-It can be used to parse these formats in order to create the appropriate
+It can be used to parse these formats in order to create the appropriate 
 objects.
 
 =head1 METHODS

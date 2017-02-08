@@ -17,7 +17,7 @@ __END__
 =head1 NAME
 
 MooseX::AttributeHelpers::Meta::Method::Provided
-
+  
 =head1 DESCRIPTION
 
 This is an extension of Moose::Meta::Method to mark I<provided> methods.
@@ -32,7 +32,7 @@ This is an extension of Moose::Meta::Method to mark I<provided> methods.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

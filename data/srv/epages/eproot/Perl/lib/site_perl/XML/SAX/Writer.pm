@@ -44,7 +44,7 @@ sub new {
     $opt->{Format}          ||= {}; # needs options w/ defaults, we'll see later
     $opt->{Output}          ||= *{STDOUT}{IO};
     $opt->{QuoteCharacter}  ||= q['];
-
+    
     eval "use $opt->{Writer};";
 
     my $obj = bless $opt, $opt->{Writer};
@@ -174,10 +174,10 @@ sub safeConvert {
     my $str = shift;
 
     my $out = $self->{Encoder}->convert($str);
-
+    
     if (!defined $out and defined $str) {
-        warn "Conversion error returned by Encoder [$self->{Encoder}], string: '$str'";
-        $out = '_LOST_DATA_';
+	warn "Conversion error returned by Encoder [$self->{Encoder}], string: '$str'";
+	$out = '_LOST_DATA_';
     }
     return $out;
 }
@@ -487,7 +487,7 @@ this defaults to UTF-8.
 
 =item -- QuoteCharacter
 
-Set the character used to quote attributes. This defaults to single quotes (')
+Set the character used to quote attributes. This defaults to single quotes (') 
 for backwards compatiblity.
 
 =back
@@ -683,8 +683,8 @@ Robin Berjon, robin@knowscape.com
 
 =head1 COPYRIGHT
 
-Copyright (c) 2001-2006 Robin Berjon and Perl XML project. Some rights reserved.
-This program is free software; you can redistribute it and/or modify it under
+Copyright (c) 2001-2006 Robin Berjon and Perl XML project. Some rights reserved. 
+This program is free software; you can redistribute it and/or modify it under 
 the same terms as Perl itself.
 
 =head1 SEE ALSO

@@ -276,7 +276,7 @@ Usually you'd load Devel::NYTProf on the command line using the perl -d option:
 
   perl -d:NYTProf some_perl.pl
 
-To save typing the ':NYTProf' you could set the PERL5DB env var
+To save typing the ':NYTProf' you could set the PERL5DB env var 
 
   PERL5DB='use Devel::NYTProf'
 
@@ -294,7 +294,7 @@ L</addpid=1> option to ensure any nested invocations of perl don't overwrite the
 
 =head1 NYTPROF ENVIRONMENT VARIABLE
 
-The behavior of Devel::NYTProf may be modified by setting the
+The behavior of Devel::NYTProf may be modified by setting the 
 environment variable C<NYTPROF>.  It is possible to use this environment
 variable to effect multiple setting by separating the values with a C<:>.  For
 example:
@@ -685,7 +685,7 @@ Perl treats each execution of a string eval (C<eval $string;> not C<eval { ...  
 as a distinct file, so NYTProf does as well. The 'files' are given names with
 this structure:
 
-        (eval $sequence)[$filename:$line]
+	(eval $sequence)[$filename:$line]
 
 for example "C<(eval 93)[/foo/bar.pm:42]>" would be the name given to the
 93rd execution of a string eval by that process and, in this case, the 93rd
@@ -693,7 +693,7 @@ eval happened to be one at line 42 of "/foo/bar.pm".
 
 Nested string evals can give rise to file names like
 
-        (eval 1047)[(eval 93)[/foo/bar.pm:42]:17]
+	(eval 1047)[(eval 93)[/foo/bar.pm:42]:17]
 
 =head3 Merging Evals
 
@@ -724,7 +724,7 @@ The report annotations will indicate when evals have been merged together.
 
 Anonymous subroutines defined within string evals have names like this:
 
-        main::__ANON__[(eval 75)[/foo/bar.pm:42]:12]
+	main::__ANON__[(eval 75)[/foo/bar.pm:42]:12]
 
 That anonymous subroutine was defined on line 12 of the source code executed by
 the string eval on line 42 of F</foo/bar.pm>. That was the 75th string eval

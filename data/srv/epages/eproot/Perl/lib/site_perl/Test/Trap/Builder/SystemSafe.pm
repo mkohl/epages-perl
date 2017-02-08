@@ -20,10 +20,10 @@ sub import {
     my ($fh_keeper, $autoflush_keeper);
     $self->Teardown($_) for sub {
       if ($pid == $$) {
-        # this process opened it, so it gets to collect the contents:
-        local $/;
-        $self->{$name} .= $fh->getline;
-        close $fh; # don't leak this one either!
+	# this process opened it, so it gets to collect the contents:
+	local $/;
+	$self->{$name} .= $fh->getline;
+	close $fh; # don't leak this one either!
         unlink $file;
       }
       close *$globref;
@@ -31,12 +31,12 @@ sub import {
       # close and reopen the file to the keeper!
       my $fno = fileno $fh_keeper;
       _close_reopen( $self, $globref, $fileno, ">&$fno",
-                     sub {
-                       close $fh_keeper;
-                       sprintf "Cannot dup '%s' for %s: '%s'",
-                         $fno, $name, $!;
-                     },
-                   );
+		     sub {
+		       close $fh_keeper;
+		       sprintf "Cannot dup '%s' for %s: '%s'",
+			 $fno, $name, $!;
+		     },
+		   );
       close $fh_keeper; # another potential leak, I suppose.
       $globref->autoflush($autoflush_keeper);
     };
@@ -45,11 +45,11 @@ sub import {
       or $self->Exception("Cannot dup '$fileno' for $name: '$!'");
     $autoflush_keeper = $globref->autoflush;
     _close_reopen( $self, $globref, $fileno, ">>$file",
-                   sub {
-                     sprintf "Cannot open %s for %s: '%s'",
-                       $file, $name, $!;
-                   },
-                 );
+		   sub {
+		     sprintf "Cannot open %s for %s: '%s'",
+		       $file, $name, $!;
+		   },
+		 );
     binmode *$globref; # must write with the same mode as we read.
     $globref->autoflush(1);
     $self->Next;

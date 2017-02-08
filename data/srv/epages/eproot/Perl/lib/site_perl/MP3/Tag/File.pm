@@ -40,14 +40,14 @@ sub new_with_parent {
     return undef unless -f $filename or -c $filename;
     return bless {filename => $filename, parent => $parent}, $class;
 }
-*new = \&new_with_parent;       # Obsolete handler
+*new = \&new_with_parent;	# Obsolete handler
 
 # Destructor
 
 sub DESTROY {
     my $self=shift;
     if (exists $self->{FH} and defined $self->{FH}) {
-        $self->close;
+	$self->close;
     }
 }
 
@@ -59,18 +59,18 @@ sub open {
     my $self=shift;
     my $mode= shift;
     if (defined $mode and $mode =~ /w/i) {
-        $mode=O_RDWR;    # read/write mode
+	$mode=O_RDWR;    # read/write mode
     } else {
-        $mode=O_RDONLY;  # read only mode
+	$mode=O_RDONLY;  # read only mode
     }
     unless (exists $self->{FH}) {
-        local *FH;
-        if (sysopen (FH, $self->filename, $mode)) {
-            $self->{FH} = *FH;
-            binmode $self->{FH};
-        } else {
-            warn "Open `" . $self->filename() . "' failed: $!\n";
-        }
+	local *FH;
+	if (sysopen (FH, $self->filename, $mode)) {
+	    $self->{FH} = *FH;
+	    binmode $self->{FH};
+	} else {
+	    warn "Open `" . $self->filename() . "' failed: $!\n";
+	}
     }
     return exists $self->{FH};
 }
@@ -79,27 +79,27 @@ sub open {
 sub close {
     my $self=shift;
     if (exists $self->{FH}) {
-        close $self->{FH};
-        delete $self->{FH};
+	close $self->{FH};
+	delete $self->{FH};
     }
 }
 
 sub write {
     my ($self, $data) = @_;
     if (exists $self->{FH}) {
-        local $\ = '';
-        print {$self->{FH}} $data;
+	local $\ = '';
+	print {$self->{FH}} $data;
     }
 }
 
 sub truncate {
     my ($self, $length) = @_;
     if ($length<0) {
-        my @stat = stat $self->{FH};
-        $length = $stat[7] + $length;
+	my @stat = stat $self->{FH};
+	$length = $stat[7] + $length;
     }
     if (exists $self->{FH}) {
-        truncate $self->{FH}, $length;
+	truncate $self->{FH}, $length;
     }
 }
 
@@ -144,33 +144,33 @@ sub get_mp3_frame_header {
     $start = 0 unless $start;
 
     if (exists $self->{mp3header}) {
-        return $self->{mp3header};
+	return $self->{mp3header};
     }
 
     $self->seek($start, 0);
     my ($data, $bits)="";
     while (1) {
-        my $nextdata;
-        $self->read(\$nextdata, 512);
-        return unless $nextdata; # no header found
-        $data .= $nextdata;
-        if ($data =~ /(\xFF[\xE0-\xFF]..)/) {
-            $bits = unpack("B32", $1);
-            last;
-        }
-        $data = substr $data, -3
+	my $nextdata;
+	$self->read(\$nextdata, 512);
+	return unless $nextdata; # no header found
+	$data .= $nextdata;
+	if ($data =~ /(\xFF[\xE0-\xFF]..)/) {
+	    $bits = unpack("B32", $1);
+	    last;
+	}
+	$data = substr $data, -3
     }
 
     my @fields;
     for (qw/11 2 2 1 4 2 1 1 1 2 2 1 1 2/) {
-        push @fields, oct "0b" . substr $bits, 0, $_;
-        $bits = substr $bits, $_ if length $bits > $_;
+	push @fields, oct "0b" . substr $bits, 0, $_;
+	$bits = substr $bits, $_ if length $bits > $_;
     }
 
     $self->{mp3header}={};
     for (qw/sync version layer proctection bitrate_id sampling_rate_id padding private
-         channel_mode mode_ext copyright original emphasis/) {
-        $self->{mp3header}->{$_}=shift @fields;
+	 channel_mode mode_ext copyright original emphasis/) {
+	$self->{mp3header}->{$_}=shift @fields;
     }
 
     return $self->{mp3header}
@@ -228,11 +228,11 @@ the year.
 sub return_parsed {
     my ($self,$what) = @_;
     if (defined $what) {
-        return $self->{parsed}{album}  if $what =~/^al/i;
-        return $self->{parsed}{artist} if $what =~/^a/i;
-        return $self->{parsed}{no}     if $what =~/^tr/i;
-        return $self->{parsed}{year}   if $what =~/^y/i;
-        return $self->{parsed}{title};
+	return $self->{parsed}{album}  if $what =~/^al/i;
+	return $self->{parsed}{artist} if $what =~/^a/i;
+	return $self->{parsed}{no}     if $what =~/^tr/i;
+	return $self->{parsed}{year}   if $what =~/^y/i;
+	return $self->{parsed}{title};
     }
 
     return $self->{parsed} unless wantarray;
@@ -245,18 +245,18 @@ sub parse_filename {
       $filename = $self->filename;
       my $e;
       if ($e = $self->get_config('decode_encoding_filename') and $e->[0]) {
-        require Encode;
-        $filename = Encode::decode($e->[0], $filename);
+	require Encode;
+	$filename = Encode::decode($e->[0], $filename);
       }
     }
     my $pathandfile = $filename;
 
-    $self->return_parsed($what) if exists $self->{parsed_filename}
-                                   and $self->{parsed_filename} eq $filename;
+    $self->return_parsed($what)	if exists $self->{parsed_filename}
+				   and $self->{parsed_filename} eq $filename;
 
     # prepare pathandfile for easier use
     my $ext_rex = $self->get_config('extension')->[0];
-    $pathandfile =~ s/$ext_rex//;               # remove extension
+    $pathandfile =~ s/$ext_rex//;		# remove extension
     $pathandfile =~ s/ +/ /g; # replace several spaces by one space
 
     # Keep two last components of the file name
@@ -268,19 +268,19 @@ sub parse_filename {
     #   assumption: spaces between words
 
     unless ($file =~/ /) {
-        # no spaces used, find word seperator
-        my $Ndot = $file =~ tr/././;
-        my $Nunderscore = $file =~ tr/_/_/;
-        my $Ndash = $file =~ tr/-/-/;
-        if (($Ndot>$Nunderscore) && ($Ndot>1)) {
-            $file =~ s/\./ /g;
-        }
-        elsif ($Nunderscore > 1) {
-            $file =~ s/_/ /g;
-        }
-        elsif ($Ndash>2) {
-            $file =~ s/-/ /g;
-        }
+	# no spaces used, find word seperator
+	my $Ndot = $file =~ tr/././;
+	my $Nunderscore = $file =~ tr/_/_/;
+	my $Ndash = $file =~ tr/-/-/;
+	if (($Ndot>$Nunderscore) && ($Ndot>1)) {
+	    $file =~ s/\./ /g;
+	}
+	elsif ($Nunderscore > 1) {
+	    $file =~ s/_/ /g;
+	}
+	elsif ($Ndash>2) {
+	    $file =~ s/-/ /g;
+	}
     }
 
     # check wich chars are used for seperating parts
@@ -289,18 +289,18 @@ sub parse_filename {
     my $partsep = " - ";
 
     unless ($file =~ / - /) {
-        if ($file =~ /-/) {
-            $partsep = "-";
-        } elsif ($file =~ /^\(.*\)/) {
-            # replace brackets by -
-            $file =~ s/^\((.*?)\)/$1 - /;
-            $file =~ s/ +/ /;
-            $partsep = " - ";
-        } elsif ($file =~ /_/) {
-            $partsep = "_";
-        } else {
-            $partsep = "DoesNotExist";
-        }
+	if ($file =~ /-/) {
+	    $partsep = "-";
+	} elsif ($file =~ /^\(.*\)/) {
+	    # replace brackets by -
+	    $file =~ s/^\((.*?)\)/$1 - /;
+	    $file =~ s/ +/ /;
+	    $partsep = " - ";
+	} elsif ($file =~ /_/) {
+	    $partsep = "_";
+	} else {
+	    $partsep = "DoesNotExist";
+	}
     }
 
     # get parts of name
@@ -308,42 +308,42 @@ sub parse_filename {
 
     # try to find a track-number in front of filename
     if ($file =~ /^ *(\d+)[\W_]/) {
-        $no=$1;                 # store number
-        $file =~ s/^ *\d+//; # and delete it
-        $file =~ s/^$partsep// || $file =~ s/^.//;
-        $file =~ s/^ +//;
+	$no=$1;                 # store number
+	$file =~ s/^ *\d+//; # and delete it
+	$file =~ s/^$partsep// || $file =~ s/^.//;
+	$file =~ s/^ +//;
     }
 
     $file =~ s/_+/ /g unless $partsep =~ /_/; #remove underscore unless they are needed for part seperation
     my @parts = split /$partsep/, $file;
     if (@parts == 1) {
-        $title=$parts[0];
-        $no = $file if $title and $title =~ /^\d{1,2}$/;
+	$title=$parts[0];
+	$no = $file if $title and $title =~ /^\d{1,2}$/;
     } elsif (@parts == 2) {
-        if ($parts[0] =~ /^\d{1,2}$/) {
-          $no = $parts[0];
-          $title = $file;
-        } elsif ($parts[1] =~ /^\d{1,2}$/) {
-          $no = $parts[1];
-          $title = $file;
-        } else {
-          $artist=$parts[0];
-          $title=$parts[1];
-        }
+	if ($parts[0] =~ /^\d{1,2}$/) {
+	  $no = $parts[0];
+	  $title = $file;
+	} elsif ($parts[1] =~ /^\d{1,2}$/) {
+	  $no = $parts[1];
+	  $title = $file;
+	} else {
+	  $artist=$parts[0];
+	  $title=$parts[1];
+	}
     } elsif (@parts > 2) {
-        my $temp = "";
-        $artist = shift @parts;
-        foreach (@parts) {
-            if (/^ *(\d+)\.? *$/) {
-                $artist.= $partsep . $temp if $temp;
-                $temp="";
-                $no=$1;
-            } else {
-                $temp .= $partsep if $temp;
-                $temp .= $_;
-            }
-        }
-        $title=$temp;
+	my $temp = "";
+	$artist = shift @parts;
+	foreach (@parts) {
+	    if (/^ *(\d+)\.? *$/) {
+		$artist.= $partsep . $temp if $temp;
+		$temp="";
+		$no=$1;
+	    } else {
+		$temp .= $partsep if $temp;
+		$temp .= $_;
+	    }
+	}
+	$title=$temp;
     }
 
     $title =~ s/ +$//;
@@ -357,18 +357,18 @@ sub parse_filename {
     $no =~ s/^0+//;
 
     if ($path) {
-        unless ($artist) {
-            $artist = $path;
-        } else {
-            $album = $path;
-        }
+	unless ($artist) {
+	    $artist = $path;
+	} else {
+	    $album = $path;
+	}
     }
     # Keep the year in the title/artist (XXXX Should we?)
     $year = $1 if $title =~ /\((\d{4})\)/ or $artist =~ /\((\d{4})\)/;
 
     $self->{parsed_filename} = $filename;
     $self->{parsed} = { artist=>$artist, song=>$title, no=>$no,
-                        album=>$album,  title=>$title, year => $year};
+		        album=>$album,  title=>$title, year => $year};
     $self->return_parsed($what);
 }
 
@@ -464,7 +464,7 @@ sub album {
 
 =item comment()
 
- $comment = $mp3->comment($filename);   # Always undef
+ $comment = $mp3->comment($filename);	# Always undef
 
 =cut
 
@@ -472,7 +472,7 @@ sub comment {}
 
 =item genre()
 
- $genre = $mp3->genre($filename);       # Always undef
+ $genre = $mp3->genre($filename);	# Always undef
 
 =cut
 

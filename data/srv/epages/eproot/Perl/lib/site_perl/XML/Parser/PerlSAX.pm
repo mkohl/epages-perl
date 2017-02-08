@@ -32,14 +32,14 @@ sub parse {
     my $self = shift;
 
     die "XML::Parser::PerlSAX: parser instance ($self) already parsing\n"
-        if (defined $self->{ParseOptions});
+	if (defined $self->{ParseOptions});
 
     # If there's one arg and it has no ref, it's a string
     my $args;
     if (scalar (@_) == 1 && !ref($_[0])) {
-        $args = { Source => { String => shift } };
+	$args = { Source => { String => shift } };
     } else {
-        $args = (scalar (@_) == 1) ? shift : { @_ };
+	$args = (scalar (@_) == 1) ? shift : { @_ };
     }
 
     my $parse_options = { %$self, %$args };
@@ -47,108 +47,108 @@ sub parse {
 
     # ensure that we have at least one source
     if (!defined $parse_options->{Source}
-        || !(defined $parse_options->{Source}{String}
-             || defined $parse_options->{Source}{ByteStream}
-             || defined $parse_options->{Source}{SystemId})) {
-        die "XML::Parser::PerlSAX: no source defined for parse\n";
+	|| !(defined $parse_options->{Source}{String}
+	     || defined $parse_options->{Source}{ByteStream}
+	     || defined $parse_options->{Source}{SystemId})) {
+	die "XML::Parser::PerlSAX: no source defined for parse\n";
     }
 
     # assign default Handler to any undefined handlers
     if (defined $parse_options->{Handler}) {
-        $parse_options->{DocumentHandler} = $parse_options->{Handler}
-            if (!defined $parse_options->{DocumentHandler});
-        $parse_options->{DTDHandler} = $parse_options->{Handler}
-            if (!defined $parse_options->{DTDHandler});
-        $parse_options->{EntityResolver} = $parse_options->{Handler}
-            if (!defined $parse_options->{EntityResolver});
+	$parse_options->{DocumentHandler} = $parse_options->{Handler}
+	    if (!defined $parse_options->{DocumentHandler});
+	$parse_options->{DTDHandler} = $parse_options->{Handler}
+	    if (!defined $parse_options->{DTDHandler});
+	$parse_options->{EntityResolver} = $parse_options->{Handler}
+	    if (!defined $parse_options->{EntityResolver});
     }
 
     my @handlers;
     if (defined $parse_options->{DocumentHandler}) {
-        # cache DocumentHandler in self for callbacks
-        $self->{DocumentHandler} = $parse_options->{DocumentHandler};
+	# cache DocumentHandler in self for callbacks
+	$self->{DocumentHandler} = $parse_options->{DocumentHandler};
 
-        my $doc_h = $parse_options->{DocumentHandler};
+	my $doc_h = $parse_options->{DocumentHandler};
 
-        push (@handlers, Init => sub { $self->_handle_init(@_) } )
-            if (UNIVERSAL::can($doc_h, 'start_document'));
-        push (@handlers, Final => sub { $self->_handle_final(@_) } )
-            if (UNIVERSAL::can($doc_h, 'end_document'));
-        push (@handlers, Start => sub { $self->_handle_start(@_) } )
-            if (UNIVERSAL::can($doc_h, 'start_element'));
-        push (@handlers, End => sub { $self->_handle_end(@_) } )
-            if (UNIVERSAL::can($doc_h, 'end_element'));
-        push (@handlers, Char => sub { $self->_handle_char(@_) } )
-            if (UNIVERSAL::can($doc_h, 'characters'));
-        push (@handlers, Proc => sub { $self->_handle_proc(@_) } )
-            if (UNIVERSAL::can($doc_h, 'processing_instruction'));
-        push (@handlers, Comment => sub { $self->_handle_comment(@_) } )
-            if (UNIVERSAL::can($doc_h, 'comment'));
-        push (@handlers, CdataStart => sub { $self->_handle_cdatastart(@_) } )
-            if (UNIVERSAL::can($doc_h, 'start_cdata'));
-        push (@handlers, CdataEnd => sub { $self->_handle_cdataend(@_) } )
-            if (UNIVERSAL::can($doc_h, 'end_cdata'));
-        if (UNIVERSAL::can($doc_h, 'entity_reference')) {
-            push (@handlers, Default => sub { $self->_handle_default(@_) } );
-            $self->{UseEntRefs} = 1;
-        }
+	push (@handlers, Init => sub { $self->_handle_init(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'start_document'));
+	push (@handlers, Final => sub { $self->_handle_final(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'end_document'));
+	push (@handlers, Start => sub { $self->_handle_start(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'start_element'));
+	push (@handlers, End => sub { $self->_handle_end(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'end_element'));
+	push (@handlers, Char => sub { $self->_handle_char(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'characters'));
+	push (@handlers, Proc => sub { $self->_handle_proc(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'processing_instruction'));
+	push (@handlers, Comment => sub { $self->_handle_comment(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'comment'));
+	push (@handlers, CdataStart => sub { $self->_handle_cdatastart(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'start_cdata'));
+	push (@handlers, CdataEnd => sub { $self->_handle_cdataend(@_) } )
+	    if (UNIVERSAL::can($doc_h, 'end_cdata'));
+	if (UNIVERSAL::can($doc_h, 'entity_reference')) {
+	    push (@handlers, Default => sub { $self->_handle_default(@_) } );
+	    $self->{UseEntRefs} = 1;
+	}
     }
 
     if (defined $parse_options->{DTDHandler}) {
-        # cache DTDHandler in self for callbacks
-        $self->{DTDHandler} = $parse_options->{DTDHandler};
+	# cache DTDHandler in self for callbacks
+	$self->{DTDHandler} = $parse_options->{DTDHandler};
 
-        my $dtd_h = $parse_options->{DTDHandler};
+	my $dtd_h = $parse_options->{DTDHandler};
 
-        push (@handlers, Notation => sub { $self->_handle_notation(@_) } )
-            if (UNIVERSAL::can($dtd_h, 'notation_decl'));
-        push (@handlers, Unparsed => sub { $self->_handle_unparsed(@_) } )
-            if (UNIVERSAL::can($dtd_h, 'unparsed_entity_decl'));
-        push (@handlers, Entity => sub { $self->_handle_entity(@_) } )
-            if ($self->{UseEntRefs}
-                || UNIVERSAL::can($dtd_h, 'entity_decl'));
-        push (@handlers, Element => sub { $self->_handle_element(@_) } )
-            if (UNIVERSAL::can($dtd_h, 'element_decl'));
-        push (@handlers, Attlist => sub { $self->_handle_attlist(@_) } )
-            if (UNIVERSAL::can($dtd_h, 'attlist_decl'));
-        push (@handlers, Doctype => sub { $self->_handle_doctype(@_) } )
-            if (UNIVERSAL::can($dtd_h, 'doctype_decl'));
-        push (@handlers, XMLDecl => sub { $self->_handle_xmldecl(@_) } )
-            if (UNIVERSAL::can($dtd_h, 'xml_decl'));
+	push (@handlers, Notation => sub { $self->_handle_notation(@_) } )
+	    if (UNIVERSAL::can($dtd_h, 'notation_decl'));
+	push (@handlers, Unparsed => sub { $self->_handle_unparsed(@_) } )
+	    if (UNIVERSAL::can($dtd_h, 'unparsed_entity_decl'));
+	push (@handlers, Entity => sub { $self->_handle_entity(@_) } )
+	    if ($self->{UseEntRefs}
+		|| UNIVERSAL::can($dtd_h, 'entity_decl'));
+	push (@handlers, Element => sub { $self->_handle_element(@_) } )
+	    if (UNIVERSAL::can($dtd_h, 'element_decl'));
+	push (@handlers, Attlist => sub { $self->_handle_attlist(@_) } )
+	    if (UNIVERSAL::can($dtd_h, 'attlist_decl'));
+	push (@handlers, Doctype => sub { $self->_handle_doctype(@_) } )
+	    if (UNIVERSAL::can($dtd_h, 'doctype_decl'));
+	push (@handlers, XMLDecl => sub { $self->_handle_xmldecl(@_) } )
+	    if (UNIVERSAL::can($dtd_h, 'xml_decl'));
     }
 
-
+    
     if (defined $parse_options->{EntityResolver}) {
-        # cache EntityResolver in self for callbacks
-        $self->{EntityResolver} = $parse_options->{EntityResolver};
+	# cache EntityResolver in self for callbacks
+	$self->{EntityResolver} = $parse_options->{EntityResolver};
 
-        my $er = $parse_options->{EntityResolver};
+	my $er = $parse_options->{EntityResolver};
 
-        push (@handlers, ExternEnt => sub { $self->_handle_extern_ent(@_) } )
-            if (UNIVERSAL::can($er, 'resolve_entity'));
+	push (@handlers, ExternEnt => sub { $self->_handle_extern_ent(@_) } )
+	    if (UNIVERSAL::can($er, 'resolve_entity'));
     }
 
     my @xml_parser_options;
     if ($self->{UseEntRefs}) {
-        @xml_parser_options = ( NoExpand => 1,
-                                Handlers => { @handlers } );
+	@xml_parser_options = ( NoExpand => 1,
+				Handlers => { @handlers } );
     } else {
-        @xml_parser_options = ( Handlers => { @handlers } );
+	@xml_parser_options = ( Handlers => { @handlers } );
     }
 
     push (@xml_parser_options,
-          ProtocolEncoding => $self->{ParseOptions}{Source}{Encoding})
-        if (defined $self->{ParseOptions}{Source}{Encoding});
+	  ProtocolEncoding => $self->{ParseOptions}{Source}{Encoding})
+	if (defined $self->{ParseOptions}{Source}{Encoding});
 
     my $parser = new XML::Parser(@xml_parser_options);
     my $result;
 
     if (defined $self->{ParseOptions}{Source}{ByteStream}) {
-        $result = $parser->parse($self->{ParseOptions}{Source}{ByteStream});
+	$result = $parser->parse($self->{ParseOptions}{Source}{ByteStream});
     } elsif (defined $self->{ParseOptions}{Source}{String}) {
-        $result = $parser->parse($self->{ParseOptions}{Source}{String});
+	$result = $parser->parse($self->{ParseOptions}{Source}{String});
     } elsif (defined $self->{ParseOptions}{Source}{SystemId}) {
-        $result = $parser->parsefile($self->{ParseOptions}{Source}{SystemId});
+	$result = $parser->parsefile($self->{ParseOptions}{Source}{SystemId});
     }
 
     # clean up parser instance
@@ -167,15 +167,15 @@ sub location {
     my $expat = $self->{Expat};
 
     my @properties = ( ColumnNumber => $expat->current_column,
-                       LineNumber => $expat->current_line,
-                       BytePosition => $expat->current_byte,
-                       Base => $expat->base );
+		       LineNumber => $expat->current_line,
+		       BytePosition => $expat->current_byte,
+		       Base => $expat->base );
 
     # FIXME these locations change while parsing external entities
     push (@properties, PublicId => $self->{Source}{PublicId})
-        if (defined $self->{Source}{PublicId});
+	if (defined $self->{Source}{PublicId});
     push (@properties, SystemId => $self->{Source}{SystemId})
-        if (defined $self->{Source}{SystemId});
+	if (defined $self->{Source}{SystemId});
 
     return { @properties };
 }
@@ -191,7 +191,7 @@ sub _handle_init {
     $self->{Expat} = $expat;
 
     if ($self->{DocumentHandler}->can('set_document_locator')) {
-        $self->{DocumentHandler}->set_document_locator( { Locator => $self } );
+	$self->{DocumentHandler}->set_document_locator( { Locator => $self } );
     }
     $self->{DocumentHandler}->start_document( { } );
 }
@@ -211,24 +211,24 @@ sub _handle_start {
 
     my @properties;
     if ($self->{ParseOptions}{UseAttributeOrder}) {
-        # Capture order and defined() status for attributes
-        my $ii;
+	# Capture order and defined() status for attributes
+	my $ii;
 
-        my $order = [];
-        for ($ii = 0; $ii < $#_; $ii += 2) {
-            push @$order, $_[$ii];
-        }
+	my $order = [];
+	for ($ii = 0; $ii < $#_; $ii += 2) {
+	    push @$order, $_[$ii];
+	}
 
-        push @properties, 'AttributeOrder', $order;
+	push @properties, 'AttributeOrder', $order;
 
-        # Divide by two because XML::Parser counts both attribute name
-        # and value within it's index
-        push @properties, 'Defaulted', ($expat->specified_attr() / 2);
+	# Divide by two because XML::Parser counts both attribute name
+	# and value within it's index
+	push @properties, 'Defaulted', ($expat->specified_attr() / 2);
     }
 
     $self->{DocumentHandler}->start_element( { Name => $element,
-                                               Attributes => { @_ },
-                                               @properties } );
+					       Attributes => { @_ },
+					       @properties } );
 }
 
 sub _handle_end {
@@ -254,7 +254,7 @@ sub _handle_proc {
     my $data = shift;
 
     $self->{DocumentHandler}->processing_instruction( { Target => $target,
-                                                        Data => $data } );
+							Data => $data } );
 }
 
 sub _handle_comment {
@@ -288,11 +288,11 @@ sub _handle_default {
     my $string = shift;
 
     if ($string =~ /^&($name_re);$/) {
-        my $ent_ref = $self->{EntRefs}{$1};
-        if (!defined $ent_ref) {
-            $ent_ref = { Name => $1 };
-        }
-        $self->{DocumentHandler}->entity_reference($ent_ref);
+	my $ent_ref = $self->{EntRefs}{$1};
+	if (!defined $ent_ref) {
+	    $ent_ref = { Name => $1 };
+	}
+	$self->{DocumentHandler}->entity_reference($ent_ref);
     }
 }
 
@@ -310,11 +310,11 @@ sub _handle_notation {
     my @properties = (Name => $notation);
 
     push (@properties, Base => $base)
-        if (defined $base);
+	if (defined $base);
     push (@properties, SystemId => $sysid)
-        if (defined $sysid);
+	if (defined $sysid);
     push (@properties, PublicId => $pubid)
-        if (defined $pubid);
+	if (defined $pubid);
 
 
     $self->{DTDHandler}->notation_decl( { @properties } );
@@ -330,9 +330,9 @@ sub _handle_unparsed {
     my @properties = (Name => $entity, SystemId => $sysid);
 
     push (@properties, Base => $base)
-        if (defined $base);
+	if (defined $base);
     push (@properties, PublicId => $pubid)
-        if (defined $pubid);
+	if (defined $pubid);
 
     $self->{DTDHandler}->unparsed_entity_decl( { @properties } );
 }
@@ -348,20 +348,20 @@ sub _handle_entity {
     my @properties = (Name => $name);
 
     push (@properties, Value => $val)
-        if (defined $val);
+	if (defined $val);
     push (@properties, PublicId => $pubid)
-        if (defined $pubid);
+	if (defined $pubid);
     push (@properties, SystemId => $sysid)
-        if (defined $sysid);
+	if (defined $sysid);
     push (@properties, Notation => $ndata)
-        if (defined $ndata);
+	if (defined $ndata);
 
     my $properties = { @properties };
     if ($self->{UseEntRefs}) {
-        $self->{EntRefs}{$name} = $properties;
+	$self->{EntRefs}{$name} = $properties;
     }
     if ($self->{DTDHandler}->can('entity_decl')) {
-        $self->{DTDHandler}->entity_decl( $properties );
+	$self->{DTDHandler}->entity_decl( $properties );
     }
 }
 
@@ -372,7 +372,7 @@ sub _handle_element {
     my $model = shift;
 
     $self->{DTDHandler}->element_decl( { Name => $name,
-                                         Model => $model } );
+					 Model => $model } );
 }
 
 sub _handle_attlist {
@@ -385,10 +385,10 @@ sub _handle_attlist {
     my $fixed = shift;
 
     $self->{DTDHandler}->attlist_decl( { ElementName => $elname,
-                                         AttributeName => $attname,
-                                         Type => $type,
-                                         Default => $default,
-                                         Fixed => $fixed } );
+					 AttributeName => $attname,
+					 Type => $type,
+					 Default => $default,
+					 Fixed => $fixed } );
 }
 
 sub _handle_doctype {
@@ -401,11 +401,11 @@ sub _handle_doctype {
     my @properties = (Name => $name);
 
     push (@properties, SystemId => $sysid)
-        if (defined $sysid);
+	if (defined $sysid);
     push (@properties, PublicId => $pubid)
-        if (defined $pubid);
+	if (defined $pubid);
     push (@properties, Internal => $internal)
-        if (defined $internal);
+	if (defined $internal);
 
     $self->{DTDHandler}->doctype_decl( { @properties } );
 }
@@ -419,9 +419,9 @@ sub _handle_xmldecl {
     my @properties = (Version => $version);
 
     push (@properties, Encoding => $encoding)
-        if (defined $encoding);
+	if (defined $encoding);
     push (@properties, Standalone => $standalone)
-        if (defined $standalone);
+	if (defined $standalone);
 
     $self->{DTDHandler}->xml_decl( { @properties } );
 }
@@ -439,25 +439,25 @@ sub _handle_extern_ent {
     my @properties = (SystemId => $sysid);
 
     push (@properties, Base => $base)
-        if (defined $base);
+	if (defined $base);
     push (@properties, PublicId => $pubid)
-        if (defined $pubid);
+	if (defined $pubid);
 
     my $result = $self->{EntityResolver}->resolve_entity( { @properties } );
 
     if (UNIVERSAL::isa($result, 'HASH')) {
-        if ($result->{ByteStream}) {
-            return $result->{ByteStream};
-        } elsif ($result->{String}) {
-            return $result->{String};
-        } elsif ($result->{SystemId}) {
-            # FIXME must be able to resolve SystemIds, XML::Parser's
-            # default can :-(
-            die "PerlSAX: automatic opening of SystemIds from \`resolve_entity' not implemented, contact the author\n";
-        } else {
-            # FIXME
-            die "PerlSAX: invalid source returned from \`resolve_entity'\n";
-        }
+	if ($result->{ByteStream}) {
+	    return $result->{ByteStream};
+	} elsif ($result->{String}) {
+	    return $result->{String};
+	} elsif ($result->{SystemId}) {
+	    # FIXME must be able to resolve SystemIds, XML::Parser's
+	    # default can :-(
+	    die "PerlSAX: automatic opening of SystemIds from \`resolve_entity' not implemented, contact the author\n";
+	} else {
+	    # FIXME
+	    die "PerlSAX: invalid source returned from \`resolve_entity'\n";
+	}
     }
 
     return undef;
@@ -621,9 +621,9 @@ Receive notification of character data.
 
 =item processing_instruction
 
-Receive notification of a processing instruction.
+Receive notification of a processing instruction. 
 
- Target           The processing instruction target.
+ Target           The processing instruction target. 
  Data             The processing instruction data, if any.
 
 =item comment
@@ -771,7 +771,7 @@ describing the new input source.  This hash has the same properties as
 the `C<Source>' parameter to `C<parse()>':
 
   PublicId    The public identifier of the external entity being
-              referenced, or undef if none was supplied.
+              referenced, or undef if none was supplied. 
   SystemId    The system identifier of the external entity being
               referenced.
   String      String containing XML text

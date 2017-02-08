@@ -244,7 +244,7 @@ or "Rights-en-US").  (See L<http://www.ietf.org/rfc/rfc3066.txt> for the RFC
 3066 specification.)  A C<lang-alt> tag with no language code accesses the
 "x-default" language, but causes other languages for this tag to be deleted
 when writing.  The "x-default" language code may be specified when writing
-to preserve other existing languages (ie. "XMP-dc:Description-x-default").
+to preserve other existing languages (ie. "XMP-dc:Description-x-default"). 
 When reading, "x-default" is not specified.
 
 The XMP tags are organized according to schema B<Namespace> in the following
@@ -360,7 +360,7 @@ These tags are used in Sigma/Foveon cameras.
 },
     Sony => q{
 The maker notes in images from most recent Sony camera models contain a
-wealth of information, but for some models very little has been decoded.
+wealth of information, but for some models very little has been decoded. 
 Use the ExifTool Unknown (-u) or Verbose (-v) options to see information
 about the unknown tags.  Also see the Minolta tags which are used by some
 Sony models.

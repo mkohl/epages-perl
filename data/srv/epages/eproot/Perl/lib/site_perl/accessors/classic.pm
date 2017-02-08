@@ -33,7 +33,7 @@ sub create_accessor {
     # sub, but the difference is marginal (~5%), and this uses less memory...
     no strict 'refs';
     *{$accessor} = sub {
-        (@_ > 1) ? $_[0]->{$property} = $_[1] : $_[0]->{$property};
+	(@_ > 1) ? $_[0]->{$property} = $_[1] : $_[0]->{$property};
     }
 }
 

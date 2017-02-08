@@ -12,7 +12,7 @@ our $VERSION = '1.2';
 sub matches { return qw(QNX::v4 QNX::Neutrino); }
 sub os_is { Devel::CheckOS::os_is(matches()); }
 sub expn {
-join("\n",
+join("\n", 
 "All versions of QNX match this, as well as (possibly) a more specific",
 "match"
 )

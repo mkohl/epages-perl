@@ -36,7 +36,7 @@ URI::ldap - LDAP Uniform Resource Locators
   @attr   = $uri->attributes;
   $scope  = $uri->scope;
   %extn   = $uri->extensions;
-
+  
   $uri = URI->new("ldap:");  # start empty
   $uri->host("ldap.itd.umich.edu");
   $uri->dn("o=University of Michigan,c=US");

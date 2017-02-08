@@ -27,7 +27,7 @@ B<aren't> considered a match regexp.
   # Is a match regexp
   /This is a match regexp/;
   m/Old McDonald had a farm/eieio;
-
+  
   # These are NOT match regexp
   qr/This is a regexp quote-like operator/;
   s/This is a/replace regexp/;
@@ -48,11 +48,11 @@ use PPI::Token::_QuoteEngine::Full ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = qw{
-                PPI::Token::_QuoteEngine::Full
-                PPI::Token::Regexp
-        };
+	$VERSION = '1.215';
+	@ISA     = qw{
+		PPI::Token::_QuoteEngine::Full
+		PPI::Token::Regexp
+	};
 }
 
 1;

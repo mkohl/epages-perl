@@ -46,10 +46,10 @@ use.  (They will be exported upon request.)
 
 =cut
 
-$Math::Base85::base85_digits = join('',
-    '0' .. '9',
-    'A' .. 'Z',
-    'a' .. 'z',
+$Math::Base85::base85_digits = join('', 
+    '0' .. '9', 
+    'A' .. 'Z', 
+    'a' .. 'z', 
     '!', '#', qw/$ % & ( ) * + - ; < = > ? @ ^ _ ` { | } ~/,
 );
 
@@ -80,12 +80,12 @@ sub from_base85
     my $n;
     my $d;
     while (defined($d = shift @digits)) {
-        $answer = $answer * B85_BASE;
-        $n = index($base85_digits, $d);
-        if ($n < 0) {
-            croak __PACKAGE__ . "::from_base85 -- invalid base 85 digit $d";
-        }
-        $answer = $answer + $n;
+	$answer = $answer * B85_BASE;
+	$n = index($base85_digits, $d);
+	if ($n < 0) {
+	    croak __PACKAGE__ . "::from_base85 -- invalid base 85 digit $d";
+	}
+	$answer = $answer + $n;
     }
     return $answer;
 }
@@ -112,11 +112,11 @@ sub to_base85
     my $r;
     my $d;
     while ($num > 0) {
-        $q = $num / B85_BASE;
-        $r = $num % B85_BASE;
-        $d = substr($base85_digits, $r, 1);
-        unshift @digits, $d;
-        $num = $q;
+	$q = $num / B85_BASE;
+	$r = $num % B85_BASE;
+	$d = substr($base85_digits, $r, 1);
+	unshift @digits, $d;
+	$num = $q;
     }
     unshift @digits, '0' unless (@digits);
     return join('', @digits);

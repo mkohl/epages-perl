@@ -1657,7 +1657,7 @@ HTML::TreeBuilder - Parser that builds a HTML syntax tree
     $tree->dump; # a method we inherit from HTML::Element
     print "And here it is, bizarrely rerendered as HTML:\n",
       $tree->as_HTML, "\n";
-
+    
     # Now that we're done with it, we must destroy it.
     $tree = $tree->delete;
   }
@@ -1741,7 +1741,7 @@ attributes.
 see.  Current versions of HTML::Parser can take a filespec, or a
 filehandle object, like *FOO, or some object from class IO::Handle,
 IO::File, IO::Socket) or the like.
-I think you should check that a given file exists I<before> calling
+I think you should check that a given file exists I<before> calling 
 $root->parse_file($filespec).]
 
 =item $root->parse(...)
@@ -1871,7 +1871,7 @@ Default is false (entities will be decoded.)
 =item $root->ignore_unknown(value)
 
 This attribute controls whether unknown tags should be represented as
-elements in the parse tree, or whether they should be ignored.
+elements in the parse tree, or whether they should be ignored. 
 Default is true (to ignore unknown tags.)
 
 =item $root->ignore_text(value)
@@ -2118,7 +2118,7 @@ while still producing the bug in question, and I<then> email me that
 mini-document I<and> the code you're using to parse it, to the HTML::Tree
 bug queue at C<bug-html-tree at rt.cpan.org>.
 
-Include a note as to how it
+Include a note as to how it 
 parses (presumably including its $tree->dump output), and then a
 I<careful and clear> explanation of where you think the parser is
 going astray, and how you would prefer that it work instead.
@@ -2144,15 +2144,15 @@ merchantability or fitness for a particular purpose.
 =head1 AUTHOR
 
 Current Author:
-        Jeff Fearn C<< <jfearn@cpan.org> >>.
+	Jeff Fearn C<< <jfearn@cpan.org> >>.
 
 Original HTML-Tree author:
-        Gisle Aas.
+	Gisle Aas.
 
 Former Authors:
-        Sean M. Burke.
-        Andy Lester.
-        Pete Krawczyk C<< <petek@cpan.org> >>.
+	Sean M. Burke.
+	Andy Lester.
+	Pete Krawczyk C<< <petek@cpan.org> >>.
 
 
 =cut

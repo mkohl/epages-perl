@@ -42,7 +42,7 @@ It's not clear whether this is the right checksum.
 pattern name   => [qw /SEN Netherlands SoFi/],
         create => sub {
             # 9 digits (d1 d2 d3 d4 d5 d6 d7 d8 d9)
-            # 9*d1 + 8*d2 + 7*d3 + 6*d4 + 5*d5 + 4*d6 + 3*d7 + 2*d8 + 1*d9
+            # 9*d1 + 8*d2 + 7*d3 + 6*d4 + 5*d5 + 4*d6 + 3*d7 + 2*d8 + 1*d9 
             # == 0 mod 11.
             qr /([0-9]{9})(?(?{par11 ($^N)})|(?!))/;
         }
@@ -83,8 +83,8 @@ Returns a pattern that matches an American Social Security Number (SSN).
 SSNs consist of three groups of numbers, separated by a hypen (C<->).
 This pattern only checks for a valid structure, that is, it validates
 whether a number is valid SSN, was a valid SSN, or maybe a valid SSN
-in the future. There are almost a billion possible SSNs, and about
-400 million are in use, or have been in use.
+in the future. There are almost a billion possible SSNs, and about 
+400 million are in use, or have been in use. 
 
 If C<-sep=I<P>> is specified, the pattern I<P> is used as the
 separator between the groups of numbers.

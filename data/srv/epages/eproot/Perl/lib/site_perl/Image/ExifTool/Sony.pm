@@ -905,7 +905,7 @@ my %binaryDataAttrs = (
             33 => '1/3 EV',
             50 => '1/2 EV',
         },
-    },
+    },            
 );
 
 # Camera settings (ref PH) (A330 and A380)

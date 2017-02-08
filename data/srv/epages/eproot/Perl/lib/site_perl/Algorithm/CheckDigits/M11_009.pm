@@ -14,59 +14,59 @@ my @weight = ( 2, 7, 6, 5, 4, 3, 2 );
 my @keys   = ('', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'Z', 'J' );
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^([fgst])?(\d{7})([a-jz])$/i) {
-                return (uc($3) eq $self->_compute_checkdigits($2));
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^([fgst])?(\d{7})([a-jz])$/i) {
+		return (uc($3) eq $self->_compute_checkdigits($2));
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if($number =~ /^([fgst])?(\d{7})$/i) {
-                my $prefix = $1 || '';
-                return $prefix . $2 . $self->_compute_checkdigits($2);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if($number =~ /^([fgst])?(\d{7})$/i) {
+		my $prefix = $1 || '';
+		return $prefix . $2 . $self->_compute_checkdigits($2);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if(   $number =~ /^([fgst])?(\d{7})([a-jz])$/i
-          and uc($3) eq $self->_compute_checkdigits($2)) {
-                my $prefix = $1 || '';
-                return $prefix . $2;
-        }
-        return '';
+	my ($self,$number) = @_;
+	if(   $number =~ /^([fgst])?(\d{7})([a-jz])$/i
+	  and uc($3) eq $self->_compute_checkdigits($2)) {
+		my $prefix = $1 || '';
+		return $prefix . $2;
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^([fgst])?(\d{7})([a-jz])$/i) {
-                return $self->_compute_checkdigits($2);
-        }
-        return undef;
+	my ($self,$number) = @_;
+	if ($number =~ /^([fgst])?(\d{7})([a-jz])$/i) {
+		return $self->_compute_checkdigits($2);
+	}
+	return undef;
 } # checkdigit()
 
 sub _compute_checkdigits {
-        my $self    = shift;
+	my $self    = shift;
 
-        my @digits = split(//,shift);
-        my $sum = 0;
-        for (my $i = 0; $i <= $#digits; $i++) {
-                $sum += $weight[$i] * $digits[$i];
-        }
-        $sum %= 11;
-        return $keys[11 - $sum];
+	my @digits = split(//,shift);
+	my $sum = 0;
+	for (my $i = 0; $i <= $#digits; $i++) {
+		$sum += $weight[$i] * $digits[$i];
+	}
+	$sum %= 11;
+	return $keys[11 - $sum];
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -85,7 +85,7 @@ CheckDigits::M11_009 - compute check digits NRIC (SG)
   $nric = CheckDigits('nric_sg');
 
   if ($nric->is_valid('S1234567D')) {
-        # do something
+	# do something
   }
 
   $cn = $nric->complete('S1234567');
@@ -96,7 +96,7 @@ CheckDigits::M11_009 - compute check digits NRIC (SG)
 
   $bn = $nric->basenumber('S1234567D');
   # $bn = 'S1234567';
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

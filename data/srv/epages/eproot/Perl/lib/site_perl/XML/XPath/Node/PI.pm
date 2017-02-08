@@ -14,16 +14,16 @@ use vars qw/@ISA/;
 use XML::XPath::Node ':node_keys';
 
 sub new {
-        my $class = shift;
-        my ($target, $data) = @_;
-
+	my $class = shift;
+	my ($target, $data) = @_;
+	
         my $pos = XML::XPath::Node->nextPos;
-
+        
         my @vals;
-        @vals[node_global_pos, node_target, node_data] =
+        @vals[node_global_pos, node_target, node_data] = 
                 ($pos, $target, $data);
-        my $self = \@vals;
-        bless $self, $class;
+	my $self = \@vals;
+	bless $self, $class;
 }
 
 sub getNodeType { PROCESSING_INSTRUCTION_NODE }
@@ -32,29 +32,29 @@ sub isPINode { 1; }
 sub isProcessingInstructionNode { 1; }
 
 sub getTarget {
-        my $self = shift;
-        $self->[node_target];
+	my $self = shift;
+	$self->[node_target];
 }
 
 sub getData {
-        my $self = shift;
-        $self->[node_data];
+	my $self = shift;
+	$self->[node_data];
 }
 
 sub _to_sax {
-        my $self = shift;
-        my ($doch, $dtdh, $enth) = @_;
-        # PI's not supported in PerlSAX 1
+	my $self = shift;
+	my ($doch, $dtdh, $enth) = @_;
+	# PI's not supported in PerlSAX 1
 }
 
 sub string_value {
-        my $self = shift;
-        return $self->[node_data];
+	my $self = shift;
+	return $self->[node_data];
 }
 
 sub toString {
-        my $self = shift;
-        return "<?" . $self->[node_target] . " " . XML::XPath::Node::XMLescape($self->[node_data], ">") . "?>";
+	my $self = shift;
+	return "<?" . $self->[node_target] . " " . XML::XPath::Node::XMLescape($self->[node_data], ">") . "?>";
 }
 
 1;

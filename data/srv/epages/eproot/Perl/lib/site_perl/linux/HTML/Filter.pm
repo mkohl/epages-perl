@@ -85,7 +85,7 @@ table.
   {
       my $self = shift;
       unless ($self->{table_seen}) {
-          $self->SUPER::output(@_);
+	  $self->SUPER::output(@_);
       }
   }
 

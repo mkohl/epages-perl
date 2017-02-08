@@ -10,25 +10,25 @@ Algorithm::Dependency - Base class for implementing various dependency trees
 
   use Algorithm::Dependency;
   use Algorithm::Dependency::Source::File;
-
+  
   # Load the data from a simple text file
   my $data_source = Algorithm::Dependency::Source::File->new( 'foo.txt' );
-
+  
   # Create the dependency object, and indicate the items that are already
   # selected/installed/etc in the database
   my $dep = Algorithm::Dependency->new(
       source   => $data_source,
       selected => [ 'This', 'That' ]
       ) or die 'Failed to set up dependency algorithm';
-
+  
   # For the item 'Foo', find out the other things we also have to select.
   # This WON'T include the item we selected, 'Foo'.
   my $also = $dep->depends( 'Foo' );
   print $also
-        ? "By selecting 'Foo', you are also selecting the following items: "
-                . join( ', ', @$also )
-        : "Nothing else to select for 'Foo'";
-
+  	? "By selecting 'Foo', you are also selecting the following items: "
+  		. join( ', ', @$also )
+  	: "Nothing else to select for 'Foo'";
+  
   # Find out the order we need to act on the items in.
   # This WILL include the item we selected, 'Foo'.
   my $schedule = $dep->schedule( 'Foo' );
@@ -101,7 +101,7 @@ use Params::Util qw{_INSTANCE _ARRAY};
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '1.110';
+	$VERSION = '1.110';
 }
 
 
@@ -151,40 +151,40 @@ or C<undef> on error.
 =cut
 
 sub new {
-        my $class  = shift;
-        my %args   = @_;
-        my $source = _INSTANCE($args{source}, 'Algorithm::Dependency::Source')
-                or return undef;
+	my $class  = shift;
+	my %args   = @_;
+	my $source = _INSTANCE($args{source}, 'Algorithm::Dependency::Source')
+		or return undef;
 
-        # Create the object
-        my $self = bless {
-                source   => $source, # Source object
-                selected => {},
-                }, $class;
+	# Create the object
+	my $self = bless {
+		source   => $source, # Source object
+		selected => {},
+		}, $class;
 
-        # Were we given the 'ignore_orphans' flag?
-        if ( $args{ignore_orphans} ) {
-                $self->{ignore_orphans} = 1;
-        }
+	# Were we given the 'ignore_orphans' flag?
+	if ( $args{ignore_orphans} ) {
+		$self->{ignore_orphans} = 1;
+	}
 
-        # Done, unless we have been given some selected items
-        _ARRAY($args{selected}) or return $self;
+	# Done, unless we have been given some selected items
+	_ARRAY($args{selected}) or return $self;
 
-        # Make sure each of the selected ids exists
-        my %selected = ();
-        foreach my $id ( @{ $args{selected} } ) {
-                # Does the item exist?
-                return undef unless $source->item($id);
+	# Make sure each of the selected ids exists
+	my %selected = ();
+	foreach my $id ( @{ $args{selected} } ) {
+		# Does the item exist?
+		return undef unless $source->item($id);
 
-                # Is it a duplicate
-                return undef if $selected{$id};
+		# Is it a duplicate
+		return undef if $selected{$id};
 
-                # Add to the selected index
-                $selected{$id} = 1;
-        }
+		# Add to the selected index
+		$selected{$id} = 1;
+	}
 
-        $self->{selected} = \%selected;
-        $self;
+	$self->{selected} = \%selected;
+	$self;
 }
 
 
@@ -270,34 +270,34 @@ on error.
 =cut
 
 sub depends {
-        my $self    = shift;
-        my @stack   = @_ or return undef;
-        my @depends = ();
-        my %checked = ();
+	my $self    = shift;
+	my @stack   = @_ or return undef;
+	my @depends = ();
+	my %checked = ();
 
-        # Process the stack
-        while ( my $id = shift @stack ) {
-                # Does the id exist?
-                my $Item = $self->{source}->item($id)
-                or $self->{ignore_orphans} ? next : return undef;
+	# Process the stack
+	while ( my $id = shift @stack ) {
+		# Does the id exist?
+		my $Item = $self->{source}->item($id)
+		or $self->{ignore_orphans} ? next : return undef;
 
-                # Skip if selected or checked
-                next if $checked{$id};
+		# Skip if selected or checked
+		next if $checked{$id};
 
-                # Add its depends to the stack
-                push @stack, $Item->depends;
-                $checked{$id} = 1;
+		# Add its depends to the stack
+		push @stack, $Item->depends;
+		$checked{$id} = 1;
 
-                # Add anything to the final output that wasn't one of
-                # the original input.
-                unless ( scalar grep { $id eq $_ } @_ ) {
-                        push @depends, $id;
-                }
-        }
+		# Add anything to the final output that wasn't one of
+		# the original input.
+		unless ( scalar grep { $id eq $_ } @_ ) {
+			push @depends, $id;
+		}
+	}
 
-        # Remove any items already selected
-        my $s = $self->{selected};
-        return [ sort grep { ! $s->{$_} } @depends ];
+	# Remove any items already selected
+	my $s = $self->{selected};
+	return [ sort grep { ! $s->{$_} } @depends ];
 }
 
 =pod
@@ -323,30 +323,30 @@ on error.
 =cut
 
 sub schedule {
-        my $self  = shift;
-        my @items = @_ or return undef;
+	my $self  = shift;
+	my @items = @_ or return undef;
 
-        # Get their dependencies
-        my $depends = $self->depends( @items ) or return undef;
+	# Get their dependencies
+	my $depends = $self->depends( @items ) or return undef;
 
-        # Now return a combined list, removing any items already selected.
-        # We are allowed to return an empty list.
-        my $s = $self->{selected};
-        return [ sort grep { ! $s->{$_} } @items, @$depends ];
+	# Now return a combined list, removing any items already selected.
+	# We are allowed to return an empty list.
+	my $s = $self->{selected};
+	return [ sort grep { ! $s->{$_} } @items, @$depends ];
 }
 
 =pod
 
 =head2 schedule_all;
 
-The C<schedule_all> method acts the same as the C<schedule> method, but
+The C<schedule_all> method acts the same as the C<schedule> method, but 
 returns a schedule that selected all the so-far unselected items.
 
 =cut
 
 sub schedule_all {
-        my $self = shift;
-        $self->schedule( map { $_->id } $self->source->items );
+	my $self = shift;
+	$self->schedule( map { $_->id } $self->source->items );
 }
 
 1;

@@ -167,7 +167,7 @@ sub anyElement($)
       = $anyelem eq 'ATTEMPT' ? sub {$s->_convertAnyTyped(@_)}
       : $anyelem eq 'SLOPPY'  ? sub {$s->_convertAnySloppy(@_)}
       :                         $anyelem;
-
+     
     $self->addCompileOptions(READERS => any_element => $code);
     $code;
 }
@@ -322,7 +322,7 @@ sub mergeCompileOptions($$$)
         {   $val ||= {};
             if(ref $val eq 'ARRAY')
             {   while(@$val)
-                {   my $k = $self->findName(shift @$val);
+                {   my $k = $self->findName(shift @$val); 
                     $t{$k} = shift @$val;
                 }
             }

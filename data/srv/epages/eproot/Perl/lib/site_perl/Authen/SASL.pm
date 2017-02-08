@@ -11,9 +11,9 @@ use Carp;
 $VERSION = "2.15";
 
 @Plugins = qw(
-        Authen::SASL::XS
-        Authen::SASL::Cyrus
-        Authen::SASL::Perl
+	Authen::SASL::XS
+	Authen::SASL::Cyrus
+	Authen::SASL::Perl
 );
 
 

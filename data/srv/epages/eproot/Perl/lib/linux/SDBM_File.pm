@@ -29,7 +29,7 @@ SDBM_File - Tied access to sdbm files
 
  # Now read and change the hash
  $h{newkey} = newvalue;
- print $h{oldkey};
+ print $h{oldkey}; 
  ...
 
  untie %h;
@@ -52,14 +52,14 @@ C<tie> should be:
 
 The hash variable you want to tie.
 
-=item 2.
+=item 2. 
 
 The string C<"SDBM_File">.  (Ths tells Perl to use the C<SDBM_File>
 package to perform the functions of the hash.)
 
-=item 3.
+=item 3. 
 
-The name of the file you want to tie to the hash.
+The name of the file you want to tie to the hash.  
 
 =item 4.
 

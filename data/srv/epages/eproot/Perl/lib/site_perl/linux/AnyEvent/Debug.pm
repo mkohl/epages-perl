@@ -504,7 +504,7 @@ sub _reset {
          my $t = $TRACE;
 
          my ($pkg, $file, $line, $sub);
-
+         
          $w = 0;
          do {
             ($pkg, $file, $line) = caller $w++;

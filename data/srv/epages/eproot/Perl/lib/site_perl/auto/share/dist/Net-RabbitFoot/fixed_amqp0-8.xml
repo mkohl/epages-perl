@@ -9,8 +9,8 @@ TWIST Process Innovations, and 29West Inc. 2006. All rights reserved.
 
 License
 =======
-JPMorgan Chase Bank, Cisco Systems, Inc., Envoy Technologies Inc., iMatix
-Corporation, IONA� Technologies, Red Hat, Inc., TWIST Process Innovations, and
+JPMorgan Chase Bank, Cisco Systems, Inc., Envoy Technologies Inc., iMatix 
+Corporation, IONA� Technologies, Red Hat, Inc., TWIST Process Innovations, and 
 29West Inc. (collectively, the "Authors") each hereby grants to you a worldwide,
 perpetual, royalty-free, nontransferable, nonexclusive license to
 (i) copy, display, and implement the Advanced Messaging Queue Protocol
@@ -72,7 +72,7 @@ IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE
 CONTENTS OF THE ADVANCED MESSAGING QUEUE PROTOCOL SPECIFICATION ARE
 SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION OF THE ADVANCED
-MESSAGING QUEUE PROTOCOL SPECIFICATION WILL NOT INFRINGE ANY THIRD PARTY
+MESSAGING QUEUE PROTOCOL SPECIFICATION WILL NOT INFRINGE ANY THIRD PARTY 
 PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
 
 THE AUTHORS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL,
@@ -1794,7 +1794,7 @@ localised reply text
       </field>
       <field name="if empty" type="bit">
     delete only if empty
-        <test>amq_queue_27</test>
+	<test>amq_queue_27</test>
         <doc>
       If set, the server will only delete the queue if it has no
       messages. If the queue is not empty the server raises a channel
@@ -2438,9 +2438,9 @@ localised reply text
     A client MUST NOT use this method as a means of selecting messages
     to process.  A rejected message MAY be discarded or dead-lettered,
     not necessarily passed to another client.
-  </doc>
+  </doc>      
   <chassis name = "server" implement = "MUST" />
-
+    
   <field name = "delivery tag" domain = "delivery tag" />
 
   <field name = "requeue" type = "bit">
@@ -2784,7 +2784,7 @@ localised reply text
   <response name = "open-ok" />
   <chassis name = "server" implement = "MUST" />
   <chassis name = "client" implement = "MUST" />
-
+  
   <field name = "identifier" type = "shortstr">
     staging identifier
     <doc>
@@ -2821,7 +2821,7 @@ localised reply text
   <response name = "stage" />
   <chassis name = "server" implement = "MUST" />
   <chassis name = "client" implement = "MUST" />
-
+  
   <field name = "staged size" type = "longlong">
     already staged amount
     <doc>
@@ -3037,7 +3037,7 @@ localised reply text
   </doc>
   <chassis name = "server" implement = "MUST" />
   <field name = "delivery tag" domain = "delivery tag" />
-
+      
   <field name = "multiple" type = "bit">
     acknowledge multiple messages
     <doc>
@@ -3076,7 +3076,7 @@ localised reply text
     not necessarily passed to another client.
   </doc>
   <chassis name = "server" implement = "MUST" />
-
+    
   <field name = "delivery tag" domain = "delivery tag" />
 
   <field name = "requeue" type = "bit">
@@ -3475,7 +3475,7 @@ localised reply text
     <doc>
       Specifies the routing key name specified when the message was
       published.
-    </doc>
+    </doc>     
   </field>
 </method>
 

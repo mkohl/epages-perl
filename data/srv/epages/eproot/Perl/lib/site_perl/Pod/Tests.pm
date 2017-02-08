@@ -54,7 +54,7 @@ use 5.005;
 use strict;
 use vars qw($VERSION);
 BEGIN {
-        $VERSION = '1.19';
+	$VERSION = '1.19';
 }
 
 
@@ -76,15 +76,15 @@ out of a POD document.
 =cut
 
 sub new {
-        my ($proto) = shift;
-        my ($class) = ref $proto || $proto;
+	my ($proto) = shift;
+	my ($class) = ref $proto || $proto;
 
-        my $self = bless {}, $class;
-        $self->_init;
-        $self->{example} = [];
-        $self->{testing} = [];
+	my $self = bless {}, $class;
+	$self->_init;
+	$self->{example} = [];
+	$self->{testing} = [];
 
-        return $self;
+	return $self;
 }
 
 
@@ -106,63 +106,63 @@ run they're available via examples() and testing().
 =cut
 
 sub parse {
-        my ($self) = shift;
+	my ($self) = shift;
 
-        $self->_init;
-        foreach (@_) {
-                if ( /^=(\w.*)/ and $self->{_sawblank} and !$self->{_inblock}) {
-                        $self->{_inpod} = 1;
+	$self->_init;
+	foreach (@_) {
+		if ( /^=(\w.*)/ and $self->{_sawblank} and !$self->{_inblock}) {
+			$self->{_inpod} = 1;
 
-                        my ($tag, $for, $pod) = split /\s+/, $1, 3;
+			my ($tag, $for, $pod) = split /\s+/, $1, 3;
 
-                        if ( $tag eq 'also' ) {
-                                $tag = $for;
-                                ($for, $pod) = split /\s+/, $pod, 2;
-                        }
+			if ( $tag eq 'also' ) {
+				$tag = $for;
+				($for, $pod) = split /\s+/, $pod, 2;
+			}
 
-                        if ( $tag eq 'for' ) {
-                                $self->_beginfor($for, $pod);
-                        } elsif ( $tag eq 'begin' ) {
-                                $self->_beginblock($for);
-                        } elsif ( $tag eq 'cut' ) {
-                                $self->{_inpod} = 0;
-                        }
+			if ( $tag eq 'for' ) {
+				$self->_beginfor($for, $pod);
+			} elsif ( $tag eq 'begin' ) {
+				$self->_beginblock($for);
+			} elsif ( $tag eq 'cut' ) {
+				$self->{_inpod} = 0;
+			}
 
-                        $self->{_sawblank} = 0;
-                } elsif ( $self->{_inpod} ) {
-                        if (
-                        (/^=(?:also )?end (\S+)/ or /^=for (\S+) end\b/)
-                        and
-                        $self->{_inblock} eq $1
-                        ) {
-                                $self->_endblock;
-                                $self->{_sawblank} = 0;
-                        } else {
-                                if ( /^\s*$/ ) {
-                                        $self->_endfor() if $self->{_infor};
-                                        $self->{_sawblank} = 1;
-                                } elsif ( !$self->{_inblock} and !$self->{_infor} ) {
-                                        $self->_sawsomethingelse;
-                                        $self->{_sawblank} = 0;
-                                }
-                                $self->{_currpod} .= $_;
-                        }
-                } else {
-                        if ( /^\s*$/ ) {
-                                $self->{_sawblank} = 1;
-                        } else {
-                                $self->_sawsomethingelse;
-                        }
-                }
+			$self->{_sawblank} = 0;
+		} elsif ( $self->{_inpod} ) {
+			if (
+			(/^=(?:also )?end (\S+)/ or /^=for (\S+) end\b/)
+			and
+			$self->{_inblock} eq $1
+			) {
+				$self->_endblock;
+				$self->{_sawblank} = 0;
+			} else {
+				if ( /^\s*$/ ) {
+					$self->_endfor() if $self->{_infor};
+					$self->{_sawblank} = 1;
+				} elsif ( !$self->{_inblock} and !$self->{_infor} ) {
+					$self->_sawsomethingelse;
+					$self->{_sawblank} = 0;
+				}
+				$self->{_currpod} .= $_;
+			}
+		} else {
+			if ( /^\s*$/ ) {
+				$self->{_sawblank} = 1;
+			} else {
+				$self->_sawsomethingelse;
+			}
+		}
 
-                $self->{_linenum}++;
-        }
+		$self->{_linenum}++;
+	}
 
-        $self->_endfor;
+	$self->_endfor;
 
-        push @{$self->{example}}, @{$self->{_for}{example}};
-        push @{$self->{testing}}, @{$self->{_for}{testing}};
-        push @{$self->{example_testing}}, @{$self->{_for}{example_testing}};
+	push @{$self->{example}}, @{$self->{_for}{example}};
+	push @{$self->{testing}}, @{$self->{_for}{testing}};
+	push @{$self->{example_testing}}, @{$self->{_for}{example_testing}};
 }
 
 #=head2 _init
@@ -172,22 +172,22 @@ sub parse {
 #Initializes the state of the parser, but not the rest of the object.
 #Should be called before each parse of new POD.
 sub _init {
-        my ($self) = shift;
-        $self->{_sawblank} = 1;
-        $self->{_inblock}  = 0;
-        $self->{_infor}    = 0;
-        $self->{_inpod}    = 0;
-        $self->{_linenum}  = 1;
-        $self->{_for}      = {
-                example         => [],
-                testing         => [],
-                example_testing => [],
-        };
+	my ($self) = shift;
+	$self->{_sawblank} = 1;
+	$self->{_inblock}  = 0;
+	$self->{_infor}    = 0;
+	$self->{_inpod}    = 0;
+	$self->{_linenum}  = 1;
+	$self->{_for}      = {
+		example         => [],
+		testing         => [],
+		example_testing => [],
+	};
 }
 
 sub _sawsomethingelse {
-        my ($self) = shift;
-        $self->{_lasttype} = 0;
+	my ($self) = shift;
+	$self->{_lasttype} = 0;
 }
 
 #=head2 _beginfor
@@ -197,19 +197,19 @@ sub _sawsomethingelse {
 #Indicates that a =for tag has been seen.  $format (what immediately
 #follows '=for'), and $pod is the rest of the POD on that line.
 sub _beginfor {
-        my ($self, $for, $pod) = @_;
-
-        if ( $for eq 'example' and defined $pod ) {
-                if ( $pod eq 'begin' ) {
-                        return $self->_beginblock($for);
-                } elsif ( $pod eq 'end' ) {
-                        return $self->_endlblock;
-                }
-        }
-
-        $self->{_infor}    = $for;
-        $self->{_currpod}  = $pod;
-        $self->{_forstart} = $self->{_linenum};
+	my ($self, $for, $pod) = @_;
+	
+	if ( $for eq 'example' and defined $pod ) { 
+		if ( $pod eq 'begin' ) {
+			return $self->_beginblock($for);
+		} elsif ( $pod eq 'end' ) {
+			return $self->_endlblock;
+		}
+	}
+	
+	$self->{_infor}    = $for;
+	$self->{_currpod}  = $pod;
+	$self->{_forstart} = $self->{_linenum};
 }
 
 #=head2 _endfor
@@ -218,34 +218,34 @@ sub _beginfor {
 #
 #Indicates that the current =for block has ended.
 sub _endfor {
-        my ($self) = shift;
+	my ($self) = shift;
 
-        my $pod = {
-                code => $self->{_currpod},
-                # Skip over the "=for" line
-                line => $self->{_forstart} + 1,
-        };
+	my $pod = {
+		code => $self->{_currpod},
+		# Skip over the "=for" line
+		line => $self->{_forstart} + 1,
+	};
 
-        if ( $self->{_infor} ) {
-                if ( $self->{_infor} eq 'example_testing' ) {
-                        $self->_example_testing($pod);
-                }
+	if ( $self->{_infor} ) {
+		if ( $self->{_infor} eq 'example_testing' ) {
+			$self->_example_testing($pod);
+		}
 
-                if ( $self->{_infor} eq $self->{_lasttype}) {
-                        my $last_for = ${$self->{_for}{$self->{_infor}}}[-1];
-                        $last_for->{code} .= "\n" x ($pod->{line} -
-                                ($last_for->{line} +
-                                $last_for->{code} =~ tr/\n//)
-                                );
-                        $last_for->{code} .= $self->{_currpod};
-
-                } else {
-                        push @{$self->{_for}{$self->{_infor}}}, $pod;
-                }
-        }
-
-        $self->{_lasttype} = $self->{_infor};
-        $self->{_infor} = 0;
+		if ( $self->{_infor} eq $self->{_lasttype}) {
+			my $last_for = ${$self->{_for}{$self->{_infor}}}[-1];
+			$last_for->{code} .= "\n" x ($pod->{line} - 
+				($last_for->{line} + 
+				$last_for->{code} =~ tr/\n//)
+				);
+			$last_for->{code} .= $self->{_currpod};
+		
+		} else {
+			push @{$self->{_for}{$self->{_infor}}}, $pod;
+		}
+	}
+	
+	$self->{_lasttype} = $self->{_infor};
+	$self->{_infor} = 0;
 }
 
 #=head2 _beginblock
@@ -255,11 +255,11 @@ sub _endfor {
 #Indicates that the parser saw a =begin tag.  $format is the word
 #immediately following =begin.
 sub _beginblock {
-        my ($self, $for) = @_;
+	my ($self, $for) = @_;
 
-        $self->{_inblock}    = $for;
-        $self->{_currpod}    = '';
-        $self->{_blockstart} = $self->{_linenum};
+	$self->{_inblock}    = $for;
+	$self->{_currpod}    = '';
+	$self->{_blockstart} = $self->{_linenum};
 }
 
 #=head2 _endblock
@@ -268,46 +268,46 @@ sub _beginblock {
 #
 #Indicates that the parser saw an =end tag for the current block.
 sub _endblock {
-        my ($self) = shift;
+	my ($self) = shift;
 
-        my $pod = {
-                code => $self->{_currpod},
-                # Skip over the "=begin"
-                line => $self->{_blockstart} + 1,
-        };
+	my $pod = {
+		code => $self->{_currpod},
+		# Skip over the "=begin"
+		line => $self->{_blockstart} + 1,
+	};
 
-        if ( $self->{_inblock} ) {
-                if ( $self->{_inblock} eq 'example_testing' ) {
-                        $self->_example_testing($self->{_currpod});
-                }
+	if ( $self->{_inblock} ) {
+		if ( $self->{_inblock} eq 'example_testing' ) {
+			$self->_example_testing($self->{_currpod});
+		}
 
-                if ( $self->{_inblock} eq $self->{_lasttype}) {
-                        my $last_for = ${$self->{_for}{$self->{_inblock}}}[-1];
-                        $last_for->{code} .= "\n" x ($pod->{line} -
-                                ($last_for->{line} +
-                                $last_for->{code} =~ tr/\n//)
-                                );
-                        $last_for->{code} .= $self->{_currpod};
+		if ( $self->{_inblock} eq $self->{_lasttype}) {
+			my $last_for = ${$self->{_for}{$self->{_inblock}}}[-1];
+			$last_for->{code} .= "\n" x ($pod->{line} - 
+				($last_for->{line} + 
+				$last_for->{code} =~ tr/\n//)
+				);
+			$last_for->{code} .= $self->{_currpod};
+		
+		} else {
+			push @{$self->{_for}{$self->{_inblock}}}, $pod;
+		}
+	}
 
-                } else {
-                        push @{$self->{_for}{$self->{_inblock}}}, $pod;
-                }
-        }
-
-        $self->{_lasttype} = $self->{_inblock};
-        $self->{_inblock}  = 0;
+	$self->{_lasttype} = $self->{_inblock};
+	$self->{_inblock}  = 0;
 }
 
 sub _example_testing {
-        my ($self, $test) = @_;
+	my ($self, $test) = @_;
 
-        my $last_example = ${$self->{_for}{example}}[-1];
-        $last_example->{code} .= "\n" x ($test->{line} -
-                ($last_example->{line} +
-                $last_example->{code} =~ tr/\n//)
-                );
+	my $last_example = ${$self->{_for}{example}}[-1];
+	$last_example->{code} .= "\n" x ($test->{line} - 
+		($last_example->{line} + 
+		$last_example->{code} =~ tr/\n//)
+		);
 
-        $last_example->{testing} = $test->{code};
+	$last_example->{testing} = $test->{code};
 }
 
 =pod
@@ -321,14 +321,14 @@ Just like parse() except it works on a file.
 =cut
 
 sub parse_file {
-        my ($self, $file) = @_;
+	my ($self, $file) = @_;
 
-        unless( open(POD, $file) ) {
-                warn "Couldn't open POD file $file:  $!\n";
-                return;
-        }
+	unless( open(POD, $file) ) {
+		warn "Couldn't open POD file $file:  $!\n";
+		return;
+	}
 
-        return $self->parse_fh(\*POD);
+	return $self->parse_fh(\*POD);
 }
 
 =pod
@@ -342,10 +342,10 @@ Just like parse() except it works on a filehandle.
 =cut
 
 sub parse_fh {
-        my ($self, $fh) = @_;
+	my ($self, $fh) = @_;
 
-        # Yeah, this is inefficient.  Sue me.
-        return $self->parse(<$fh>);
+	# Yeah, this is inefficient.  Sue me.
+	return $self->parse(<$fh>);
 }
 
 =pod
@@ -364,8 +364,8 @@ information about that block.
 =cut
 
 sub tests {
-        my ($self) = shift;
-        return @{$self->{testing}};
+	my ($self) = shift;
+	return @{$self->{testing}};
 }
 
 =pod
@@ -384,8 +384,8 @@ information about that block.
 =cut
 
 sub examples {
-        my ($self) = shift;
-        return @{$self->{example}};
+	my ($self) = shift;
+	return @{$self->{example}};
 }
 
 =pod
@@ -409,13 +409,13 @@ B<NOTE> Look at pod2test before embarking on your own test building.
 =cut
 
 sub build_tests {
-        my ($self, @tests) = @_;
+	my ($self, @tests) = @_;
 
-        my @code = ();
+	my @code = ();
 
-        foreach my $test (@tests) {
-                my $file = $self->{file} || '';
-                push @code, <<CODE;
+	foreach my $test (@tests) {
+		my $file = $self->{file} || '';
+		push @code, <<CODE;
 {
     undef \$main::_STDOUT_;
     undef \$main::_STDERR_;
@@ -426,9 +426,9 @@ $test->{code}
 }
 CODE
 
-        }
+	}
 
-        return @code;
+	return @code;
 }
 
 =pod
@@ -447,12 +447,12 @@ will run the the example code and the example testing block.
 =cut
 
 sub build_examples {
-        my ($self, @examples) = @_;
+	my ($self, @examples) = @_;
 
-        my @code = ();
-        foreach my $example (@examples) {
-                my $file = $self->{file} || '';
-                push @code, <<CODE;
+	my @code = ();
+	foreach my $example (@examples) {
+		my $file = $self->{file} || '';
+		push @code, <<CODE;
     undef \$main::_STDOUT_;
     undef \$main::_STDERR_;
 eval q{
@@ -467,18 +467,18 @@ $example->{code};
 is(\$@, '', "example from line $example->{line}");
 CODE
 
-                if ( $example->{testing} ) {
-                        $example->{code} .= $example->{testing};
-                        push @code, $self->build_tests($example);
-                }
+		if ( $example->{testing} ) {
+			$example->{code} .= $example->{testing};
+			push @code, $self->build_tests($example);
+		}
 
-                push @code, <<CODE;
+		push @code, <<CODE;
     undef \$main::_STDOUT_;
     undef \$main::_STDERR_;
 CODE
-        }
+	}
 
-        return @code;
+	return @code;
 }
 
 1;

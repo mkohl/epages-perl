@@ -20,17 +20,17 @@ our $VERSION = '1.001';
 
   use Log::Dispatch;
   use Log::Dispatch::Array;
-
+ 
   my $log = Log::Dispatch->new;
 
   my $target = [];
-
+ 
   $log->add(Log::Dispatch::Array->new(
     name      => 'text_table',
     min_level => 'debug',
     array     => $target,
   ));
-
+ 
   $log->warn($_) for @events;
 
   # now $target refers to an array of events
@@ -60,7 +60,7 @@ sub new {
   $arg{array} ||= [];
 
   my $self = { array => $arg{array} };
-
+  
   bless $self => $class;
 
   # this is our duty as a well-behaved Log::Dispatch plugin

@@ -55,9 +55,9 @@ my %standard_case;
 {
     my $i = 0;
     for (@header_order) {
-        my $lc = lc $_;
-        $header_order{$lc} = ++$i;
-        $standard_case{$lc} = $_;
+	my $lc = lc $_;
+	$header_order{$lc} = ++$i;
+	$standard_case{$lc} = $_;
     }
 }
 
@@ -79,9 +79,9 @@ sub header
     my(@old);
     my %seen;
     while (@_) {
-        my $field = shift;
+	my $field = shift;
         my $op = @_ ? ($seen{lc($field)}++ ? 'PUSH' : 'SET') : 'GET';
-        @old = $self->_header($field, shift, $op);
+	@old = $self->_header($field, shift, $op);
     }
     return @old if wantarray;
     return $old[0] if @old <= 1;
@@ -100,7 +100,7 @@ sub push_header
     my $self = shift;
     return $self->_header(@_, 'PUSH_H') if @_ == 2;
     while (@_) {
-        $self->_header(splice(@_, 0, 2), 'PUSH_H');
+	$self->_header(splice(@_, 0, 2), 'PUSH_H');
     }
 }
 
@@ -118,9 +118,9 @@ sub remove_header
     my $field;
     my @values;
     foreach $field (@fields) {
-        $field =~ tr/_/-/ if $field !~ /^:/ && $TRANSLATE_UNDERSCORE;
-        my $v = delete $self->{lc $field};
-        push(@values, ref($v) eq 'ARRAY' ? @$v : $v) if defined $v;
+	$field =~ tr/_/-/ if $field !~ /^:/ && $TRANSLATE_UNDERSCORE;
+	my $v = delete $self->{lc $field};
+	push(@values, ref($v) eq 'ARRAY' ? @$v : $v) if defined $v;
     }
     return @values;
 }
@@ -129,14 +129,14 @@ sub remove_content_headers
 {
     my $self = shift;
     unless (defined(wantarray)) {
-        # fast branch that does not create return object
-        delete @$self{grep $entity_header{$_} || /^content-/, keys %$self};
-        return;
+	# fast branch that does not create return object
+	delete @$self{grep $entity_header{$_} || /^content-/, keys %$self};
+	return;
     }
 
     my $c = ref($self)->new;
     for my $f (grep $entity_header{$_} || /^content-/, keys %$self) {
-        $c->{$f} = delete $self->{$f};
+	$c->{$f} = delete $self->{$f};
     }
     $c;
 }
@@ -147,50 +147,50 @@ sub _header
     my($self, $field, $val, $op) = @_;
 
     unless ($field =~ /^:/) {
-        $field =~ tr/_/-/ if $TRANSLATE_UNDERSCORE;
-        my $old = $field;
-        $field = lc $field;
-        unless(defined $standard_case{$field}) {
-            # generate a %standard_case entry for this field
-            $old =~ s/\b(\w)/\u$1/g;
-            $standard_case{$field} = $old;
-        }
+	$field =~ tr/_/-/ if $TRANSLATE_UNDERSCORE;
+	my $old = $field;
+	$field = lc $field;
+	unless(defined $standard_case{$field}) {
+	    # generate a %standard_case entry for this field
+	    $old =~ s/\b(\w)/\u$1/g;
+	    $standard_case{$field} = $old;
+	}
     }
 
     $op ||= defined($val) ? 'SET' : 'GET';
     if ($op eq 'PUSH_H') {
-        # Like PUSH but where we don't care about the return value
-        if (exists $self->{$field}) {
-            my $h = $self->{$field};
-            if (ref($h) eq 'ARRAY') {
-                push(@$h, ref($val) eq "ARRAY" ? @$val : $val);
-            }
-            else {
-                $self->{$field} = [$h, ref($val) eq "ARRAY" ? @$val : $val]
-            }
-            return;
-        }
-        $self->{$field} = $val;
-        return;
+	# Like PUSH but where we don't care about the return value
+	if (exists $self->{$field}) {
+	    my $h = $self->{$field};
+	    if (ref($h) eq 'ARRAY') {
+		push(@$h, ref($val) eq "ARRAY" ? @$val : $val);
+	    }
+	    else {
+		$self->{$field} = [$h, ref($val) eq "ARRAY" ? @$val : $val]
+	    }
+	    return;
+	}
+	$self->{$field} = $val;
+	return;
     }
 
     my $h = $self->{$field};
     my @old = ref($h) eq 'ARRAY' ? @$h : (defined($h) ? ($h) : ());
 
     unless ($op eq 'GET' || ($op eq 'INIT' && @old)) {
-        if (defined($val)) {
-            my @new = ($op eq 'PUSH') ? @old : ();
-            if (ref($val) ne 'ARRAY') {
-                push(@new, $val);
-            }
-            else {
-                push(@new, @$val);
-            }
-            $self->{$field} = @new > 1 ? \@new : $new[0];
-        }
-        elsif ($op ne 'PUSH') {
-            delete $self->{$field};
-        }
+	if (defined($val)) {
+	    my @new = ($op eq 'PUSH') ? @old : ();
+	    if (ref($val) ne 'ARRAY') {
+		push(@new, $val);
+	    }
+	    else {
+		push(@new, @$val);
+	    }
+	    $self->{$field} = @new > 1 ? \@new : $new[0];
+	}
+	elsif ($op ne 'PUSH') {
+	    delete $self->{$field};
+	}
     }
     @old;
 }
@@ -209,7 +209,7 @@ sub _sorted_field_names
 sub header_field_names {
     my $self = shift;
     return map $standard_case{$_} || $_, @{ $self->_sorted_field_names },
-        if wantarray;
+	if wantarray;
     return keys %$self;
 }
 
@@ -219,17 +219,17 @@ sub scan
     my($self, $sub) = @_;
     my $key;
     for $key (@{ $self->_sorted_field_names }) {
-        next if substr($key, 0, 1) eq '_';
-        my $vals = $self->{$key};
-        if (ref($vals) eq 'ARRAY') {
-            my $val;
-            for $val (@$vals) {
-                $sub->($standard_case{$key} || $key, $val);
-            }
-        }
-        else {
-            $sub->($standard_case{$key} || $key, $vals);
-        }
+	next if substr($key, 0, 1) eq '_';
+	my $vals = $self->{$key};
+	if (ref($vals) eq 'ARRAY') {
+	    my $val;
+	    for $val (@$vals) {
+		$sub->($standard_case{$key} || $key, $val);
+	    }
+	}
+	else {
+	    $sub->($standard_case{$key} || $key, $vals);
+	}
     }
 }
 
@@ -241,26 +241,26 @@ sub as_string
 
     my @result = ();
     for my $key (@{ $self->_sorted_field_names }) {
-        next if index($key, '_') == 0;
-        my $vals = $self->{$key};
-        if ( ref($vals) eq 'ARRAY' ) {
-            for my $val (@$vals) {
-                my $field = $standard_case{$key} || $key;
-                $field =~ s/^://;
-                if ( index($val, "\n") >= 0 ) {
-                    $val = _process_newline($val, $endl);
-                }
-                push @result, $field . ': ' . $val;
-            }
-        }
-        else {
-            my $field = $standard_case{$key} || $key;
-            $field =~ s/^://;
-            if ( index($vals, "\n") >= 0 ) {
-                $vals = _process_newline($vals, $endl);
-            }
-            push @result, $field . ': ' . $vals;
-        }
+	next if index($key, '_') == 0;
+	my $vals = $self->{$key};
+	if ( ref($vals) eq 'ARRAY' ) {
+	    for my $val (@$vals) {
+		my $field = $standard_case{$key} || $key;
+		$field =~ s/^://;
+		if ( index($val, "\n") >= 0 ) {
+		    $val = _process_newline($val, $endl);
+		}
+		push @result, $field . ': ' . $val;
+	    }
+	}
+	else {
+	    my $field = $standard_case{$key} || $key;
+	    $field =~ s/^://;
+	    if ( index($vals, "\n") >= 0 ) {
+		$vals = _process_newline($vals, $endl);
+	    }
+	    push @result, $field . ': ' . $vals;
+	}
     }
 
     join($endl, @result, '');
@@ -283,10 +283,10 @@ if (eval { require Storable; 1 }) {
     *clone = \&Storable::dclone;
 } else {
     *clone = sub {
-        my $self = shift;
-        my $clone = HTTP::Headers->new;
-        $self->scan(sub { $clone->push_header(@_);} );
-        $clone;
+	my $self = shift;
+	my $clone = HTTP::Headers->new;
+	$self->scan(sub { $clone->push_header(@_);} );
+	$clone;
     };
 }
 
@@ -297,7 +297,7 @@ sub _date_header
     my($self, $header, $time) = @_;
     my($old) = $self->_header($header);
     if (defined $time) {
-        $self->_header($header, HTTP::Date::time2str($time));
+	$self->_header($header, HTTP::Date::time2str($time));
     }
     $old =~ s/;.*// if defined($old);
     HTTP::Date::str2time($old);
@@ -329,8 +329,8 @@ sub content_type      {
     return '' unless defined($ct) && length($ct);
     my @ct = split(/;\s*/, $ct, 2);
     for ($ct[0]) {
-        s/\s+//g;
-        $_ = lc($_);
+	s/\s+//g;
+	$_ = lc($_);
     }
     wantarray ? @ct : $ct[0];
 }
@@ -343,19 +343,19 @@ sub content_type_charset {
     $h = "" unless defined $h;
     my @v = HTTP::Headers::Util::split_header_words($h);
     if (@v) {
-        my($ct, undef, %ct_param) = @{$v[0]};
-        my $charset = $ct_param{charset};
-        if ($ct) {
-            $ct = lc($ct);
-            $ct =~ s/\s+//;
-        }
-        if ($charset) {
-            $charset = uc($charset);
-            $charset =~ s/^\s+//;  $charset =~ s/\s+\z//;
-            undef($charset) if $charset eq "";
-        }
-        return $ct, $charset if wantarray;
-        return $charset;
+	my($ct, undef, %ct_param) = @{$v[0]};
+	my $charset = $ct_param{charset};
+	if ($ct) {
+	    $ct = lc($ct);
+	    $ct =~ s/\s+//;
+	}
+	if ($charset) {
+	    $charset = uc($charset);
+	    $charset =~ s/^\s+//;  $charset =~ s/\s+\z//;
+	    undef($charset) if $charset eq "";
+	}
+	return $ct, $charset if wantarray;
+	return $charset;
     }
     return undef, undef if wantarray;
     return undef;
@@ -388,16 +388,16 @@ sub content_is_xml {
 sub referer           {
     my $self = shift;
     if (@_ && $_[0] =~ /#/) {
-        # Strip fragment per RFC 2616, section 14.36.
-        my $uri = shift;
-        if (ref($uri)) {
-            $uri = $uri->clone;
-            $uri->fragment(undef);
-        }
-        else {
-            $uri =~ s/\#.*//;
-        }
-        unshift @_, $uri;
+	# Strip fragment per RFC 2616, section 14.36.
+	my $uri = shift;
+	if (ref($uri)) {
+	    $uri = $uri->clone;
+	    $uri->fragment(undef);
+	}
+	else {
+	    $uri =~ s/\#.*//;
+	}
+	unshift @_, $uri;
     }
     ($self->_header('Referer', @_))[0];
 }
@@ -428,16 +428,16 @@ sub _basic_auth {
     my($self, $h, $user, $passwd) = @_;
     my($old) = $self->_header($h);
     if (defined $user) {
-        Carp::croak("Basic authorization user name can't contain ':'")
-          if $user =~ /:/;
-        $passwd = '' unless defined $passwd;
-        $self->_header($h => 'Basic ' .
+	Carp::croak("Basic authorization user name can't contain ':'")
+	  if $user =~ /:/;
+	$passwd = '' unless defined $passwd;
+	$self->_header($h => 'Basic ' .
                              MIME::Base64::encode("$user:$passwd", ''));
     }
     if (defined $old && $old =~ s/^\s*Basic\s+//) {
-        my $val = MIME::Base64::decode($old);
-        return $val unless wantarray;
-        return split(/:/, $val, 2);
+	my $val = MIME::Base64::decode($old);
+	return $val unless wantarray;
+	return split(/:/, $val, 2);
     }
     return;
 }
@@ -525,7 +525,7 @@ field value.
 Examples:
 
  $header->header(MIME_Version => '1.0',
-                 User_Agent   => 'My-Web-Client/0.01');
+		 User_Agent   => 'My-Web-Client/0.01');
  $header->header(Accept => "text/html, text/plain, image/*");
  $header->header(Accept => [qw(text/html text/plain image/*)]);
  @accepts = $header->header('Accept');  # get multiple values
@@ -666,7 +666,7 @@ modified. I<E.g.>:
   # check if document is more than 1 hour old
   if (my $last_mod = $h->last_modified) {
       if ($last_mod < time - 60*60) {
-          ...
+	  ...
       }
   }
 

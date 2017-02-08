@@ -184,7 +184,7 @@ If called with an argument C<blocking> will turn on non-blocking IO if
 C<BOOL> is false, and turn it off if C<BOOL> is true.
 
 C<blocking> will return the value of the previous setting, or the
-current setting if C<BOOL> is not given.
+current setting if C<BOOL> is not given. 
 
 If an error occurs C<blocking> will return undef and C<$!> will be set.
 
@@ -240,7 +240,7 @@ module keeps a C<timeout> variable in 'io_socket_timeout'.
 
 =head1 SEE ALSO
 
-L<perlfunc>,
+L<perlfunc>, 
 L<perlop/"I/O Operators">,
 L<IO::File>
 
@@ -248,7 +248,7 @@ L<IO::File>
 
 Due to backwards compatibility, all filehandles resemble objects
 of class C<IO::Handle>, or actually classes derived from that class.
-They actually aren't.  Which means you can't derive your own
+They actually aren't.  Which means you can't derive your own 
 class from C<IO::Handle> and inherit those methods.
 
 =head1 HISTORY
@@ -263,7 +263,7 @@ our($VERSION, @EXPORT_OK, @ISA);
 use Carp;
 use Symbol;
 use SelectSaver;
-use IO ();      # Load the XS module
+use IO ();	# Load the XS module
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -320,7 +320,7 @@ sub new_from_fd {
     my $io = gensym;
     shift;
     IO::Handle::fdopen($io, @_)
-        or return undef;
+	or return undef;
     bless $io, $class;
 }
 
@@ -353,17 +353,17 @@ sub fdopen {
     local(*GLOB);
 
     if (ref($fd) && "".$fd =~ /GLOB\(/o) {
-        # It's a glob reference; Alias it as we cannot get name of anon GLOBs
-        my $n = qualify(*GLOB);
-        *GLOB = *{*$fd};
-        $fd =  $n;
+	# It's a glob reference; Alias it as we cannot get name of anon GLOBs
+	my $n = qualify(*GLOB);
+	*GLOB = *{*$fd};
+	$fd =  $n;
     } elsif ($fd =~ m#^\d+$#) {
-        # It's an FD number; prefix with "=".
-        $fd = "=$fd";
+	# It's an FD number; prefix with "=".
+	$fd = "=$fd";
     }
 
     open($io, _open_mode_string($mode) . '&' . $fd)
-        ? $io : undef;
+	? $io : undef;
 }
 
 sub close {
@@ -423,14 +423,14 @@ sub getline {
     @_ == 1 or croak 'usage: $io->getline()';
     my $this = shift;
     return scalar <$this>;
-}
+} 
 
 *gets = \&getline;  # deprecated
 
 sub getlines {
     @_ == 1 or croak 'usage: $io->getlines()';
     wantarray or
-        croak 'Can\'t call $io->getlines in a scalar context, use $io->getline';
+	croak 'Can\'t call $io->getlines in a scalar context, use $io->getline';
     my $this = shift;
     return <$this>;
 }
@@ -460,9 +460,9 @@ sub write {
 sub syswrite {
     @_ >= 2 && @_ <= 4 or croak 'usage: $io->syswrite(BUF [, LEN [, OFFSET]])';
     if (defined($_[2])) {
-        syswrite($_[0], $_[1], $_[2], $_[3] || 0);
+	syswrite($_[0], $_[1], $_[2], $_[3] || 0);
     } else {
-        syswrite($_[0], $_[1]);
+	syswrite($_[0], $_[1]);
     }
 }
 
@@ -484,7 +484,7 @@ sub autoflush {
 
 sub output_field_separator {
     carp "output_field_separator is not supported on a per-handle basis"
-        if ref($_[0]);
+	if ref($_[0]);
     my $prev = $,;
     $, = $_[1] if @_ > 1;
     $prev;
@@ -492,7 +492,7 @@ sub output_field_separator {
 
 sub output_record_separator {
     carp "output_record_separator is not supported on a per-handle basis"
-        if ref($_[0]);
+	if ref($_[0]);
     my $prev = $\;
     $\ = $_[1] if @_ > 1;
     $prev;
@@ -500,7 +500,7 @@ sub output_record_separator {
 
 sub input_record_separator {
     carp "input_record_separator is not supported on a per-handle basis"
-        if ref($_[0]);
+	if ref($_[0]);
     my $prev = $/;
     $/ = $_[1] if @_ > 1;
     $prev;
@@ -556,7 +556,7 @@ sub format_top_name {
 
 sub format_line_break_characters {
     carp "format_line_break_characters is not supported on a per-handle basis"
-        if ref($_[0]);
+	if ref($_[0]);
     my $prev = $:;
     $: = $_[1] if @_ > 1;
     $prev;
@@ -564,7 +564,7 @@ sub format_line_break_characters {
 
 sub format_formfeed {
     carp "format_formfeed is not supported on a per-handle basis"
-        if ref($_[0]);
+	if ref($_[0]);
     my $prev = $^L;
     $^L = $_[1] if @_ > 1;
     $prev;
@@ -582,12 +582,12 @@ sub formline {
 sub format_write {
     @_ < 3 || croak 'usage: $io->write( [FORMAT_NAME] )';
     if (@_ == 2) {
-        my ($io, $fmt) = @_;
-        my $oldfmt = $io->format_name(qualify($fmt,caller));
-        CORE::write($io);
-        $io->format_name($oldfmt);
+	my ($io, $fmt) = @_;
+	my $oldfmt = $io->format_name(qualify($fmt,caller));
+	CORE::write($io);
+	$io->format_name($oldfmt);
     } else {
-        CORE::write($_[0]);
+	CORE::write($_[0]);
     }
 }
 
@@ -613,7 +613,7 @@ sub constant {
     no strict 'refs';
     my $name = shift;
     (($name =~ /^(SEEK_(SET|CUR|END)|_IO[FLN]BF)$/) && defined &{$name})
-        ? &{$name}() : undef;
+	? &{$name}() : undef;
 }
 
 
@@ -628,7 +628,7 @@ sub printflush {
         print $io @_;
     }
     else {
-        print @_;
+	print @_;
     }
 }
 

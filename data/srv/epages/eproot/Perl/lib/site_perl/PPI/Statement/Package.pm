@@ -48,10 +48,10 @@ isa_ok( $Document, 'PPI::Document' );
 my $packages = $Document->find('PPI::Statement::Package');
 my $test_name = 'Found no package statements in hash constructors - RT #52259';
 if (not $packages) {
-        pass $test_name;
+	pass $test_name;
 } elsif ( not is(scalar @{$packages}, 0, $test_name) ) {
-        diag 'Package statements found:';
-        diag $_->parent()->parent()->content() foreach @{$packages};
+	diag 'Package statements found:';
+	diag $_->parent()->parent()->content() foreach @{$packages};
 }
 
 =end testing
@@ -69,8 +69,8 @@ use PPI::Statement ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Statement';
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Statement';
 }
 
 =pod
@@ -90,11 +90,11 @@ If the package statement is done any different way, it returns false.
 =cut
 
 sub namespace {
-        my $self = shift;
-        my $namespace = $self->schild(1) or return '';
-        $namespace->isa('PPI::Token::Word')
-                ? $namespace->content
-                : '';
+	my $self = shift;
+	my $namespace = $self->schild(1) or return '';
+	$namespace->isa('PPI::Token::Word')
+		? $namespace->content
+		: '';
 }
 
 =pod
@@ -116,11 +116,11 @@ a file does not represent a scope.
 =cut
 
 sub file_scoped {
-        my $self     = shift;
-        my ($Parent, $Document) = ($self->parent, $self->top);
-        $Parent and $Document and $Parent == $Document
-        and $Document->isa('PPI::Document')
-        and ! $Document->isa('PPI::Document::Fragment');
+	my $self     = shift;
+	my ($Parent, $Document) = ($self->parent, $self->top);
+	$Parent and $Document and $Parent == $Document
+	and $Document->isa('PPI::Document')
+	and ! $Document->isa('PPI::Document::Fragment');
 }
 
 1;

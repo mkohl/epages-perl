@@ -435,7 +435,7 @@ sub server_step {
   if ($cservice ne $self->service or $chost ne $self->host) {
       # XXX deal with serv_name
       $self->set_error("Incorrect digest-uri");
-      return $cb->();
+      return $cb->(); 
   }
 
   unless (defined $self->callback('getsecret')) {
@@ -447,26 +447,26 @@ sub server_step {
   my $realm = $self->{client_params}->{'realm'};
   my $response_check = sub {
     my $password = shift;
-    return $self->set_error("Cannot get the passord for $username")
+    return $self->set_error("Cannot get the passord for $username") 
         unless defined $password;
-
+ 
     ## configure the security layer
     $self->_server_layer($qop)
         or return $self->set_error("Cannot negociate the security layer");
-
+ 
     my ($expected, $rspauth)
         = $self->_compute_digests_and_set_keys($password, $self->{client_params});
-
+ 
     return $self->set_error("Incorrect response $self->{client_params}->{response} <> $expected")
         unless $expected eq $self->{client_params}->{response};
-
+ 
     my %response = (
         rspauth => $rspauth,
     );
-
+ 
     # I'm not entirely sure of what I am doing
     $self->{answer}{$_} = $self->{client_params}->{$_} for qw/username authzid realm serv/;
-
+ 
     $self->set_success;
     return _response(\%response);
   };
@@ -599,7 +599,7 @@ sub _client_layer {
 
   return undef if ($maxssf < $minssf); # sanity check
 
-  # ssf values > 1 mean integrity and confidentiality
+  # ssf values > 1 mean integrity and confidentiality 
   # ssf == 1 means integrity but no confidentiality
   # ssf < 1 means neither integrity nor confidentiality
   # no security layer can be had if buffer size is 0
@@ -755,7 +755,7 @@ Authen::SASL::Perl::DIGEST_MD5 - Digest MD5 Authentication class
   $sasl = Authen::SASL->new(
     mechanism => 'DIGEST-MD5',
     callback  => {
-      user => $user,
+      user => $user, 
       pass => $pass,
       serv => $serv
     },
@@ -867,11 +867,11 @@ Yann Kerherve.
 Please report any bugs, or post any suggestions, to the perl-ldap mailing list
 <perl-ldap@perl.org>
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT 
 
 Copyright (c) 2003-2009 Graham Barr, Djamel Boudjerda, Paul Connolly,
 Julian Onions, Nexor, Peter Marschall and Yann Kerherve.
-All rights reserved. This program is free software; you can redistribute
+All rights reserved. This program is free software; you can redistribute 
 it and/or modify it under the same terms as Perl itself.
 
 =cut

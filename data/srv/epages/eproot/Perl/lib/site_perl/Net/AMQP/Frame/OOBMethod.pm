@@ -4,7 +4,7 @@ package Net::AMQP::Frame::OOBMethod;
 
 Net::AMQP::Frame::OOBMethod - AMQP wire-level out-of-band method Frame object
 
-=head1 DESCRIPTION
+=head1 DESCRIPTION 
 
 Inherits from L<Net::AMQP::Frame::Method>.
 

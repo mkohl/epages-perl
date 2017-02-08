@@ -51,9 +51,9 @@ sub new {
 
 Checks all the perl files it can find for compilation errors.
 
-If C<@dirs> is defined then it is taken as an array of directories to
+If C<@dirs> is defined then it is taken as an array of directories to 
 be searched for perl files, otherwise it searches some default locatioons
-- see L</all_pm_files()> and L</all_pl_files()>.
+- see L</all_pm_files()> and L</all_pl_files()>. 
 
 =cut
 sub all_files_ok {
@@ -75,7 +75,7 @@ sub all_files_ok {
 
 =item C<verbose($verbose)>
 
-An accessor to get/set the verbose flag.  If C<verbose> is set, you can get some
+An accessor to get/set the verbose flag.  If C<verbose> is set, you can get some 
 extra diagnostics when compilation fails.
 
 Verbose is set on by default.
@@ -194,7 +194,7 @@ sub pm_file_compiles {
                 $module =~ s!^(blib[/\\])?lib[/\\]!!;
                 $module =~ s![/\\]!::!g;
                 $module =~ s/\.pm$//;
-
+    
                 return 1 if $module->require;
 
                 $self->{test}->diag("Compilation of $module failed: $@")

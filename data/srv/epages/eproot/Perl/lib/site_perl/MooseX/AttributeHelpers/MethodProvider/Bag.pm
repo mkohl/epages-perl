@@ -37,7 +37,7 @@ MooseX::AttributeHelpers::MethodProvider::Bag
 This is a role which provides the method generators for
 L<MooseX::AttributeHelpers::Collection::Bag>.
 
-This role is composed from the
+This role is composed from the 
 L<MooseX::AttributeHelpers::Collection::ImmutableHash> role.
 
 =head1 METHODS

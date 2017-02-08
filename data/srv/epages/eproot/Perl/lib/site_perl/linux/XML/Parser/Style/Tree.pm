@@ -29,7 +29,7 @@ sub Char {
   my $text = shift;
   my $clist = $expat->{Curlist};
   my $pos = $#$clist;
-
+  
   if ($pos > 0 and $clist->[$pos - 1] eq '0') {
     $clist->[$pos] .= $text;
   } else {

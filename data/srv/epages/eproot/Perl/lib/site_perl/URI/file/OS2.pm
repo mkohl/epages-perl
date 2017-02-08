@@ -14,8 +14,8 @@ sub _file_extract_authority
     return $1 if $_[0] =~ s,^\\\\([^\\]+),,;  # UNC
     return $1 if $_[0] =~ s,^//([^/]+),,;     # UNC too?
 
-    if ($_[0] =~ m#^[a-zA-Z]{1,2}:#) {        # allow for ab: drives
-        return "";
+    if ($_[0] =~ m#^[a-zA-Z]{1,2}:#) {	      # allow for ab: drives
+	return "";
     }
     return;
 }

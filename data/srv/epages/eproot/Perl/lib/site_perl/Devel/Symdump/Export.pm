@@ -7,15 +7,15 @@ use vars qw(@ISA @EXPORT_OK $AUTOLOAD);
 @ISA=('Exporter');
 
 @EXPORT_OK=(
-        'packages'      ,
-        'scalars'       ,
-        'arrays'        ,
-        'hashes'        ,
-        'functions'     ,
-        'filehandles'   ,
-        'dirhandles'    ,
-        'ios'           ,
-        'unknowns'      ,
+	'packages'	,
+	'scalars'	,
+	'arrays'	,
+	'hashes'	,
+	'functions'	,
+	'filehandles'	,
+	'dirhandles'	,
+	'ios'           ,
+	'unknowns'	,
 );
 my %OK;
 @OK{@EXPORT_OK}=(1) x @EXPORT_OK;

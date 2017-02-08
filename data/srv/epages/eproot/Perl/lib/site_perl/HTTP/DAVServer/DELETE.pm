@@ -17,7 +17,7 @@ sub handle {
 
     my ($self, $r, $url, $responder, $request) = @_;
 
-        my $fullPath = $HTTP::DAVServer::ROOT . $url;
+	my $fullPath = $HTTP::DAVServer::ROOT . $url;
     $url =~ m#^(.*)/([^/]+)$#;
     my $path     = $HTTP::DAVServer::ROOT . $1;
     my $file     = $2;
@@ -81,7 +81,7 @@ sub deleteDir {
 
 =head1 SUPPORT
 
-For technical support please email to jlawrenc@cpan.org ...
+For technical support please email to jlawrenc@cpan.org ... 
 for faster service please include "HTTP::DAVServer" and "help" in your subject line.
 
 =head1 AUTHOR

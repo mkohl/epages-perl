@@ -25,7 +25,7 @@ sub call {
 
             return sub {
                 my $line = shift;
-
+                
                 $length += length $line if defined $line;
 
                 unless( defined $line ) {

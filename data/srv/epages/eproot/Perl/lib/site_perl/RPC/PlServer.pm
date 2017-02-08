@@ -62,15 +62,15 @@ sub Version ($) {
 sub Options ($) {
     my $options = shift->SUPER::Options();
     $options->{'maxmessage'} =
-        { 'template' => 'maxmessage=i',
-          'description' =>  '--maxmessage <size>           '
-          . 'Set max message size to <size> (Default 65535).'
-        };
+	{ 'template' => 'maxmessage=i',
+	  'description' =>  '--maxmessage <size>           '
+	  . 'Set max message size to <size> (Default 65535).'
+	};
     $options->{'compression'} =
-        { 'template' => 'compression=s',
-          'description' =>  '--compression <type>           '
-          . 'Set compression type to off (default) or gzip.'
-        };
+	{ 'template' => 'compression=s',
+	  'description' =>  '--compression <type>           '
+	  . 'Set compression type to off (default) or gzip.'
+	};
     $options;
 }
 
@@ -116,15 +116,15 @@ sub AcceptUser ($$$) {
     return 1 unless $client->{'users'};
     my $users = $client->{'users'};
     foreach my $u (@$users) {
-        my $au;
-        if (ref($u)) {
-            $au = $u;
-            $u = defined($u->{'name'}) ? $u->{'name'} : '';
-        }
-        if ($u eq $user) {
-            $self->{'authorized_user'} = $au;
-            return 1;
-        }
+	my $au;
+	if (ref($u)) {
+	    $au = $u;
+	    $u = defined($u->{'name'}) ? $u->{'name'} : '';
+	}
+	if ($u eq $user) {
+	    $self->{'authorized_user'} = $au;
+	    return 1;
+	}
     }
     0;
 }
@@ -136,10 +136,10 @@ sub Accept ($) {
     return 0 if (!$self->SUPER::Accept());
     my $client;
     if ($client = $self->{'client'}) {
-        if (my $cipher = $client->{'cipher'}) {
-            $self->Debug("Host encryption: %s", $cipher);
-            $self->{'cipher'} = $cipher;
-        }
+	if (my $cipher = $client->{'cipher'}) {
+	    $self->Debug("Host encryption: %s", $cipher);
+	    $self->{'cipher'} = $cipher;
+	}
     }
 
     my $msg = $comm->Read($socket);
@@ -152,41 +152,41 @@ sub Accept ($) {
     my $password = $self->{'password'}    = $msg->[3] || '';
 
     $self->Debug("Client logs in: Application %s, version %s, user %s",
-                 $app, $version, $user);
+		 $app, $version, $user);
 
     if (!$self->AcceptApplication($app)) {
-        $comm->Write($socket,
-                     [0, "This is a " . ref($self) . " server, go away!"]);
-        return 0;
+	$comm->Write($socket,
+		     [0, "This is a " . ref($self) . " server, go away!"]);
+	return 0;
     }
     if (!$self->AcceptVersion($version)) {
-        $comm->Write($socket,
-                     [0, "Sorry, but I am not running version $version."]);
-        return 0;
+	$comm->Write($socket,
+		     [0, "Sorry, but I am not running version $version."]);
+	return 0;
     }
     my $result;
     if (!($result = $self->AcceptUser($user, $password))) {
-        $comm->Write($socket,
-                     [0, "User $user is not permitted to connect."]);
-        return 0;
+	$comm->Write($socket,
+		     [0, "User $user is not permitted to connect."]);
+	return 0;
     }
     $comm->Write($socket, (ref($result) ? $result : [1, "Welcome!"]));
     if (my $au = $self->{'authorized_user'}) {
-        if (ref($au)  &&  (my $cipher = $au->{'cipher'})) {
-            $self->Debug("User encryption: %s", $cipher);
-            $self->{'cipher'} = $cipher;
-        }
+	if (ref($au)  &&  (my $cipher = $au->{'cipher'})) {
+	    $self->Debug("User encryption: %s", $cipher);
+	    $self->{'cipher'} = $cipher;
+	}
     }
 
     if (my $client = $self->{'client'}) {
-        if (my $methods = $client->{'methods'}) {
-            $self->{'methods'} = $methods;
-        }
+	if (my $methods = $client->{'methods'}) {
+	    $self->{'methods'} = $methods;
+	}
     }
     if (my $au = $self->{'authorized_user'}) {
-        if (my $methods = $au->{'methods'}) {
-            $self->{'methods'} = $methods;
-        }
+	if (my $methods = $au->{'methods'}) {
+	    $self->{'methods'} = $methods;
+	}
     }
 
     1;
@@ -232,33 +232,33 @@ sub Run ($) {
     my $socket = $self->{'socket'};
 
     while (!$self->Done()) {
-        my $msg = $comm->Read($socket);
-        last unless defined($msg);
-        die "Expected array" unless ref($msg) eq 'ARRAY';
-        my($error, $command);
-        if (!($command = shift @$msg)) {
-            $error = "Expected method name";
-        } else {
-            if ($self->{'methods'}) {
-                my $class = $self->{'methods'}->{ref($self)};
-                if (!$class  ||  !$class->{$command}) {
-                    $error = "Not permitted for method $command of class "
-                        . ref($self);
-                }
-            }
-            if (!$error) {
-                $self->Debug("Client executes method $command");
-                my @result = eval { $self->$command(@$msg) };
-                if ($@) {
-                    $error = "Failed to execute method $command: $@";
-                } else {
-                    $comm->Write($socket, \@result);
-                }
-            }
-        }
-        if ($error) {
-            $comm->Write($socket, \$error);
-        }
+	my $msg = $comm->Read($socket);
+	last unless defined($msg);
+	die "Expected array" unless ref($msg) eq 'ARRAY';
+	my($error, $command);
+	if (!($command = shift @$msg)) {
+	    $error = "Expected method name";
+	} else {
+	    if ($self->{'methods'}) {
+		my $class = $self->{'methods'}->{ref($self)};
+		if (!$class  ||  !$class->{$command}) {
+		    $error = "Not permitted for method $command of class "
+			. ref($self);
+		}
+	    }
+	    if (!$error) {
+		$self->Debug("Client executes method $command");
+		my @result = eval { $self->$command(@$msg) };
+		if ($@) {
+		    $error = "Failed to execute method $command: $@";
+		} else {
+		    $comm->Write($socket, \@result);
+		}
+	    }
+	}
+	if ($error) {
+	    $comm->Write($socket, \$error);
+	}
     }
 }
 
@@ -307,24 +307,24 @@ sub CallMethod ($$$@) {
 
     my $call_by_instance;
     {
-        my $lock = lock($Net::Daemon::RegExpLock)
-            if $Net::Daemon::RegExpLock && $self->{'mode'} eq 'threads';
-        $call_by_instance = ($handle =~ /=\w+\(0x/);
+	my $lock = lock($Net::Daemon::RegExpLock)
+	    if $Net::Daemon::RegExpLock && $self->{'mode'} eq 'threads';
+	$call_by_instance = ($handle =~ /=\w+\(0x/);
     }
     if ($call_by_instance) {
-        # Looks like a call by instance
-        $object = $self->UseHandle($handle);
-        $ref = ref($object);
+	# Looks like a call by instance
+	$object = $self->UseHandle($handle);
+	$ref = ref($object);
     } else {
-        # Call by class
-        $ref = $object = $handle;
+	# Call by class
+	$ref = $object = $handle;
     }
 
     if ($self->{'methods'}) {
-        my $class = $self->{'methods'}->{$ref};
-        if (!$class  ||  !$class->{$method}) {
-            die "Not permitted for method $method of class $ref";
-        }
+	my $class = $self->{'methods'}->{$ref};
+	if (!$class  ||  !$class->{$method}) {
+	    die "Not permitted for method $method of class $ref";
+	}
     }
 
     $object->$method(@args);
@@ -581,26 +581,26 @@ is part of the RPC::PlClient man page. See L<RPC::PlClient(3)>.
         # Server options below can be overwritten in the config file or
         # on the command line.
         my $server = MD5_Server->new({
-            'pidfile'    => '/var/run/md5serv.pid',
-            'configfile' => '/etc/md5serv.conf',
-            'facility'   => 'daemon', # Default
-            'user'       => 'nobody',
-            'group'      => 'nobody',
-            'localport'  => 2000,
-            'logfile'    => 0,        # Use syslog
+	    'pidfile'    => '/var/run/md5serv.pid',
+	    'configfile' => '/etc/md5serv.conf',
+	    'facility'   => 'daemon', # Default
+	    'user'       => 'nobody',
+	    'group'      => 'nobody',
+	    'localport'  => 2000,
+	    'logfile'    => 0,        # Use syslog
             'mode'       => 'fork',   # Recommended for Unix
             'methods'    => {
-                'MD5_Server' => {
-                    'ClientObject' => 1,
-                    'CallMethod' => 1,
-                    'NewHandle' => 1
-                    },
-                'MD5' => {
-                    'new' => 1,
-                    'add' => 1,
-                    'hexdigest' => 1
-                    },
-                }
+	        'MD5_Server' => {
+		    'ClientObject' => 1,
+		    'CallMethod' => 1,
+		    'NewHandle' => 1
+		    },
+	        'MD5' => {
+		    'new' => 1,
+		    'add' => 1,
+		    'hexdigest' => 1
+		    },
+	        }
         });
         $server->Bind();
     };

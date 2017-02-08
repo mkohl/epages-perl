@@ -10,71 +10,71 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 my $ctable = [
-        [ 0, 9, 4, 6, 8, 2, 7, 1, 3, 5,  0, ],
-        [ 9, 4, 6, 8, 2, 7, 1, 3, 5, 0,  9, ],
-        [ 4, 6, 8, 2, 7, 1, 3, 5, 0, 9,  8, ],
-        [ 6, 8, 2, 7, 1, 3, 5, 0, 9, 4,  7, ],
-        [ 8, 2, 7, 1, 3, 5, 0, 9, 4, 6,  6, ],
-        [ 2, 7, 1, 3, 5, 0, 9, 4, 6, 8,  5, ],
-        [ 7, 1, 3, 5, 0, 9, 4, 6, 8, 2,  4, ],
-        [ 1, 3, 5, 0, 9, 4, 6, 8, 2, 7,  3, ],
-        [ 3, 5, 0, 9, 4, 6, 8, 2, 7, 1,  2, ],
-        [ 5, 0, 9, 4, 6, 8, 2, 7, 1, 3,  1, ],
+	[ 0, 9, 4, 6, 8, 2, 7, 1, 3, 5,  0, ],
+	[ 9, 4, 6, 8, 2, 7, 1, 3, 5, 0,  9, ],
+	[ 4, 6, 8, 2, 7, 1, 3, 5, 0, 9,  8, ],
+	[ 6, 8, 2, 7, 1, 3, 5, 0, 9, 4,  7, ],
+	[ 8, 2, 7, 1, 3, 5, 0, 9, 4, 6,  6, ],
+	[ 2, 7, 1, 3, 5, 0, 9, 4, 6, 8,  5, ],
+	[ 7, 1, 3, 5, 0, 9, 4, 6, 8, 2,  4, ],
+	[ 1, 3, 5, 0, 9, 4, 6, 8, 2, 7,  3, ],
+	[ 3, 5, 0, 9, 4, 6, 8, 2, 7, 1,  2, ],
+	[ 5, 0, 9, 4, 6, 8, 2, 7, 1, 3,  1, ],
 ];
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{8})(\d)$/i) {
-                return $2 == $self->_compute_checkdigit($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{8})(\d)$/i) {
+		return $2 == $self->_compute_checkdigit($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{8})$/i) {
-                return  $number .  $self->_compute_checkdigit($1);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{8})$/i) {
+		return  $number .  $self->_compute_checkdigit($1);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{8})(\d)$/i) {
-                return $1 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{8})(\d)$/i) {
+		return $1 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{8})(\d)$/i) {
-                return $2 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{8})(\d)$/i) {
+		return $2 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
-        my $carry  = 0;
-        if ($number =~ /^\d{8}$/) {
-                my @digits = split(//,$number);
-                for (my $i = 0;$i <= $#digits;$i++) {
-                        $carry = $ctable->[$carry]->[$digits[$i]];
-                }
-                return (10 - $carry) % 10;
-        }
-        return -1;
+	my $self   = shift;
+	my $number = shift;
+	my $carry  = 0;
+	if ($number =~ /^\d{8}$/) {
+		my @digits = split(//,$number);
+		for (my $i = 0;$i <= $#digits;$i++) {
+			$carry = $ctable->[$carry]->[$digits[$i]];
+		}
+		return (10 - $carry) % 10;
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -93,7 +93,7 @@ CheckDigits::MXX_005 - compute check digits for ESR9 (CH)
   $esr = CheckDigits('esr9');
 
   if ($esr->is_valid('123456786')) {
-        # do something
+	# do something
   }
 
   $cn = $esr->complete('12345678');
@@ -104,7 +104,7 @@ CheckDigits::MXX_005 - compute check digits for ESR9 (CH)
 
   $bn = $esr->basenumber('123456786');
   # $bn = '12345678'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

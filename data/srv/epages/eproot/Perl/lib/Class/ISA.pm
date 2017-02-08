@@ -27,7 +27,7 @@ sub self_and_super_versions {
 # Or even consider this incantation for doing something like hash-data
 # inheritance:
 #   no strict 'refs';
-#   %union_hash =
+#   %union_hash = 
 #     map { defined(%{"$_\::SomeHash"}) ? %{"$_\::SomeHash"}) : () }
 #         reverse(Class::ISA::self_and_super_path($class));
 # Consider that reverse() is necessary because with
@@ -64,7 +64,7 @@ sub self_and_super_path {
         { my $c = $_; # copy, to avoid being destructive
           substr($c,0,2) = "main::" if substr($c,0,2) eq '::';
            # Canonize the :: -> main::, ::foo -> main::foo thing.
-           # Should I ever canonize the Foo'Bar = Foo::Bar thing?
+           # Should I ever canonize the Foo'Bar = Foo::Bar thing? 
           $seen{$c}++ ? () : $c;
         }
         @{"$current\::ISA"}

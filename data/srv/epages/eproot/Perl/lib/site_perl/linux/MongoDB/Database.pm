@@ -26,7 +26,7 @@ use Moose;
 use MongoDB::GridFS;
 use Carp 'carp';
 
-has _client => (
+has _client => ( 
     is       => 'ro',
     isa      => 'MongoDB::MongoClient',
     required => 1,
@@ -55,10 +55,10 @@ sub AUTOLOAD {
 sub collection_names {
     my ($self) = @_;
     my $it = $self->get_collection('system.namespaces')->query({});
-    return grep {
-        not ( index( $_, '$' ) >= 0 && index( $_, '.oplog.$' ) < 0 )
-    } map {
-        substr $_->{name}, length( $self->name ) + 1
+    return grep { 
+        not ( index( $_, '$' ) >= 0 && index( $_, '.oplog.$' ) < 0 ) 
+    } map { 
+        substr $_->{name}, length( $self->name ) + 1 
     } $it->all;
 }
 
@@ -99,7 +99,7 @@ sub last_error {
         $cmd->Push("fsync", $options->{fsync})          if $options->{fsync};
         $cmd->Push("j", 1)                              if $options->{j};
     }
-
+                                                        
     return $self->run_command($cmd);
 }
 

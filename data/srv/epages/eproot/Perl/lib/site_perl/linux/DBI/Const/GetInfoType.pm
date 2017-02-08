@@ -42,13 +42,13 @@ written here is guaranteed.
 
 =cut
 
-use DBI::Const::GetInfo::ANSI ();       # liable to change
-use DBI::Const::GetInfo::ODBC ();       # liable to change
+use DBI::Const::GetInfo::ANSI ();	# liable to change
+use DBI::Const::GetInfo::ODBC ();	# liable to change
 
 %GetInfoType =
 (
-  %DBI::Const::GetInfo::ANSI::InfoTypes # liable to change
-, %DBI::Const::GetInfo::ODBC::InfoTypes # liable to change
+  %DBI::Const::GetInfo::ANSI::InfoTypes	# liable to change
+, %DBI::Const::GetInfo::ODBC::InfoTypes	# liable to change
 );
 
 1;

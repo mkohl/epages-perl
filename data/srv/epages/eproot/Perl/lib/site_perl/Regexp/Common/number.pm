@@ -39,7 +39,7 @@ sub int_creator {
                 : qq {(?k:(?k:[+-]?)(?k:[$chars]$quant))}
 }
 
-sub real_creator {
+sub real_creator { 
     my ($base, $places, $radix, $sep, $group, $expon) =
             @{$_[1]}{-base, -places, -radix, -sep, -group, -expon};
     _croak "Base must be between 1 and 36"
@@ -58,7 +58,7 @@ sub real_creator {
              qq {(?k:[$chars]*)(?:(?k:$radix)(?k:[$chars]{$places}))?)}  .
              qq {(?:(?k:$expon)(?k:(?k:[+-]?)(?k:[$chars]+))|))};
 }
-sub decimal_creator {
+sub decimal_creator { 
     my ($base, $places, $radix, $sep, $group) =
             @{$_[1]}{-base, -places, -radix, -sep, -group};
     _croak "Base must be between 1 and 36"
@@ -397,7 +397,7 @@ Returns a pattern that matches an integer written in Roman numbers.
 Case doesn't matter. Only the more modern style, that is, no more
 than three repetitions of a letter, is recognized. The largest number
 matched is I<MMMCMXCIX>, or 3999. Larger numbers cannot be expressed
-using ASCII characters. A future version will be able to deal with
+using ASCII characters. A future version will be able to deal with 
 the Unicode symbols to match larger Roman numbers.
 
 Under C<-keep>, the number will be captured in $1.

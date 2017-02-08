@@ -84,7 +84,7 @@ CheckDigits::M11_017 - compute check digits for EC-No, EINECS, ELINCS
   $ecno = CheckDigits('ecno');
 
   if ($ecno->is_valid('200-236-6')) {
-        # do something
+	# do something
   }
 
   $cn = $ecno->complete('200-236-');
@@ -95,7 +95,7 @@ CheckDigits::M11_017 - compute check digits for EC-No, EINECS, ELINCS
 
   $bn = $ecno->basenumber('200-236-6');
   # $bn = '200-236-'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

@@ -54,14 +54,14 @@ sub new {
 # ido - perl dispatcher
 sub perl_dispatcher {
     my $func = shift;
-        my $owner_doc = shift;
+	my $owner_doc = shift;
     my @params = @_;
     my @perlParams;
-
+    
     my $i = 0;
     while (@params) {
         my $type = shift(@params);
-        if ($type eq 'XML::LibXML::Literal' or
+        if ($type eq 'XML::LibXML::Literal' or 
             $type eq 'XML::LibXML::Number' or
             $type eq 'XML::LibXML::Boolean')
         {
@@ -75,7 +75,7 @@ sub perl_dispatcher {
             unshift(@perlParams, $type->new(@nodes));
         }
     }
-
+    
     $func = "main::$func" unless ref($func) || $func =~ /(.+)::/;
     no strict 'refs';
     my $res = $func->(@perlParams);
@@ -94,7 +94,7 @@ sub xpath_to_string {
         }
         else {
             if ($value =~ s/'/', "'", '/g) {
-                $results[-1] = "concat('$value')";
+	        $results[-1] = "concat('$value')";
             }
             else {
                 $results[-1] = "'$results[-1]'";
@@ -264,8 +264,8 @@ sub parse_stylesheet {
                XML_LIBXSLT_READ_CB => $self->{XML_LIBXSLT_READ_CB},
                XML_LIBXSLT_CLOSE_CB => $self->{XML_LIBXSLT_CLOSE_CB},
                XML_LIBXSLT_SECPREFS => $self->{XML_LIBXSLT_SECPREFS},
-                           XML_LIBXSLT_FUNCTIONS => {},
-                           XML_LIBXSLT_ELEMENTS => {},
+			   XML_LIBXSLT_FUNCTIONS => {},
+			   XML_LIBXSLT_ELEMENTS => {},
              };
 
     return bless $rv, "XML::LibXSLT::StylesheetWrapper";
@@ -294,8 +294,8 @@ sub parse_stylesheet_file {
                XML_LIBXSLT_READ_CB => $self->{XML_LIBXSLT_READ_CB},
                XML_LIBXSLT_CLOSE_CB => $self->{XML_LIBXSLT_CLOSE_CB},
                XML_LIBXSLT_SECPREFS => $self->{XML_LIBXSLT_SECPREFS},
-                           XML_LIBXSLT_FUNCTIONS => {},
-                           XML_LIBXSLT_ELEMENTS => {},
+			   XML_LIBXSLT_FUNCTIONS => {},
+			   XML_LIBXSLT_ELEMENTS => {},
              };
 
     return bless $rv, "XML::LibXSLT::StylesheetWrapper";
@@ -493,16 +493,16 @@ sub transform_file {
 
 sub register_function
 {
-        my $self = shift;
+	my $self = shift;
 
-        $self->{XML_LIBXSLT_FUNCTIONS}->{"{$_[0]}$_[1]"} = [@_[0,1,2]];
+	$self->{XML_LIBXSLT_FUNCTIONS}->{"{$_[0]}$_[1]"} = [@_[0,1,2]];
 }
 
 sub register_element
 {
-        my $self = shift;
+	my $self = shift;
 
-        $self->{XML_LIBXSLT_ELEMENTS}->{"{$_[0]}$_[1]"} = [@_[0,1,2]];
+	$self->{XML_LIBXSLT_ELEMENTS}->{"{$_[0]}$_[1]"} = [@_[0,1,2]];
 }
 
 sub output_string { shift->{XML_LIBXSLT_STYLESHEET}->_output_string($_[0],0) }
@@ -628,16 +628,16 @@ XML::LibXSLT - Interface to the GNOME libxslt library
 
   use XML::LibXSLT;
   use XML::LibXML;
-
+  
   my $xslt = XML::LibXSLT->new();
-
+  
   my $source = XML::LibXML->load_xml(location => 'foo.xml');
   my $style_doc = XML::LibXML->load_xml(location=>'bar.xsl', no_cdata=>1);
-
+  
   my $stylesheet = $xslt->parse_stylesheet($style_doc);
-
+  
   my $results = $stylesheet->transform($source);
-
+  
   print $stylesheet->output_as_bytes($results);
 
 =head1 DESCRIPTION
@@ -709,13 +709,13 @@ a nodelist).
 
 =item register_element
 
-        $stylesheet->register_element($uri, $name, $subref)
+	$stylesheet->register_element($uri, $name, $subref)
 
 Registers an XSLT extension element $name mapped to the given URI. For example:
 
   $stylesheet->register_element("urn:foo", "hello", sub {
-          my $name = $_[2]->getAttribute( "name" );
-          return XML::LibXML::Text->new( "Hello, $name!" );
+	  my $name = $_[2]->getAttribute( "name" );
+	  return XML::LibXML::Text->new( "Hello, $name!" );
   });
 
 Will register a C<hello> element in the C<urn:foo> namespace that returns a "Hello, X!" text node. You must define this namespace in your XSLT and include its prefix in the C<extension-element-prefixes> list:
@@ -723,7 +723,7 @@ Will register a C<hello> element in the C<urn:foo> namespace that returns a "Hel
   <xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:foo="urn:foo"
-        extension-element-prefixes="foo">
+	extension-element-prefixes="foo">
   <xsl:template match="/">
     <foo:hello name="bob"/>
   </xsl:template>
@@ -742,9 +742,9 @@ The following methods are available on the new XML::LibXSLT object:
 =item parse_stylesheet($stylesheet_doc)
 
 C<$stylesheet_doc> here is an XML::LibXML::Document object (see L<XML::LibXML>)
-representing an XSLT file. This method will return a
+representing an XSLT file. This method will return a 
 XML::LibXSLT::Stylesheet object, or undef on failure. If the XSLT is
-invalid, an exception will be thrown, so wrap the call to
+invalid, an exception will be thrown, so wrap the call to 
 parse_stylesheet in an eval{} block to trap this.
 
 IMPORTANT: C<$stylesheet_doc> should not contain CDATA sections,
@@ -1001,7 +1001,7 @@ number of XML::LibXSLT module itself, i.e. with
 C<$XML::LibXSLT::VERSION>). XML::LibXSLT issues a warning if the
 runtime version of the library is less then the compile-time version.
 
-=over
+=over 
 
 =item XML::LibXSLT::LIBXSLT_VERSION()
 

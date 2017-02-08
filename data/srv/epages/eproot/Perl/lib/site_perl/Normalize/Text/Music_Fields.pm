@@ -1,8 +1,8 @@
-package Normalize::Text::Music_Fields;  # Music_Normalize_Fields
+package Normalize::Text::Music_Fields;	# Music_Normalize_Fields
 $VERSION = '0.02';
 use strict;
 use Config;
-#use utf8;                      # Needed for 5.005...
+#use utf8;			# Needed for 5.005...
 
 my %tr;
 my %short;
@@ -23,7 +23,7 @@ sub translate_tr ($) {
   return $a;
 }
 
-sub strip_years ($) {           # strip dates
+sub strip_years ($) {		# strip dates
   my ($a) = (shift);
   my @rest;
   return $a unless $a =~ s/\s+((?:\([-\d,]+\)(\s+|$))+)$//;
@@ -31,7 +31,7 @@ sub strip_years ($) {           # strip dates
   return $a, @rest;
 }
 
-sub strip_duplicate_dates {     # Remove $d[0] if it matches $d_r
+sub strip_duplicate_dates {	# Remove $d[0] if it matches $d_r
   my ($d_r, @d) = @_;
   return unless @d;
   $d_r   = substr $d_r,  1, length($d_r)  - 2; # Parens
@@ -55,7 +55,7 @@ sub _translate_person ($$$) {
   my $fail = ($with_year & 2);
   $with_year &= 1;
   my $ini_a = $aa;
-  $aa = $aa->[0] if ref $aa;            # [value, handler]
+  $aa = $aa->[0] if ref $aa;		# [value, handler]
   $aa =~ s/\s+$//;
   load_lists() unless %tr;
   # Try early fixing:
@@ -77,29 +77,29 @@ sub _translate_person ($$$) {
     $aa =~ s/\b(transl)ated\b/$1./g;
 
     my @parts = __split_person $aa;
-    if (@parts <= 1) {          # At least normalize spacing:
+    if (@parts <= 1) {		# At least normalize spacing:
       # Add dots after initials
       $aa =~ s/\b(\w)\s+(?=(\w))/
-               ($1 ne lc $1 and $2 ne lc $2) ? "$1." : "$1 " /eg;
+	       ($1 ne lc $1 and $2 ne lc $2) ? "$1." : "$1 " /eg;
       # Separate initials by spaces unless in a group of initials
       $aa =~ s/\b(\w\.)(?!$|[-\s]|\w\.)/$1 /g;
       return ref $ini_a ? [$aa, $ini_a->[1]] : $aa;
     }
     for my $i (0..$#parts) {
-      next if $i % 2;           # Separator
+      next if $i % 2;		# Separator
       my $val = _translate_person($self, $parts[$i], $with_year | 2); # fail
       # Deal with cases (currently, in Russian only, after "transl.")
       if (not defined $val and $i
-          and $parts[$i-1] =~ /^;\s+\x{043f}\x{0435}\x{0440}\.\s+$/ # per
-          and $parts[$i] =~ /(.*)\x{0430}$/s) {
-        $val = _translate_person($self, "$1", $with_year | 2); # fail
+	  and $parts[$i-1] =~ /^;\s+\x{043f}\x{0435}\x{0440}\.\s+$/ # per
+	  and $parts[$i] =~ /(.*)\x{0430}$/s) {
+	$val = _translate_person($self, "$1", $with_year | 2); # fail
       }
       $val ||= _translate_person($self, $parts[$i], $with_year); # cosmetic too
       $parts[$i] = $val if defined $val;
     }
     $tr_a = join '', @parts;
     return $ini_a if $tr_a eq $ini;
-    @date = ();                 # Already taken into account...
+    @date = ();			# Already taken into account...
   }
   my ($short, @date_r) = strip_years($tr_a); # Real date
   @date = strip_duplicate_dates($date_r[0], @date) if @date_r == 1 and @date;
@@ -121,7 +121,7 @@ sub short_person ($$);
 sub short_person ($$) {
   my ($self, $a) = (shift, shift);
   my $ini_a = $a;
-  $a = $a->[0] if ref $a;               # [value, handler]
+  $a = $a->[0] if ref $a;		# [value, handler]
   $a = _translate_person($self, $a, 0); # Normalize, no dates of life
   $a =~ s/\s+$//;
   ($a, my @date) = strip_years($a);
@@ -130,7 +130,7 @@ sub short_person ($$) {
     $a = $short{$a};
   } elsif (@parts = __split_person $a and @parts > 1) {
     for my $i (0..$#parts) {
-      next if $i % 2;           # Separator
+      next if $i % 2;		# Separator
       $parts[$i] = short_person($self, $parts[$i]);
     }
     $a = join '', @parts;
@@ -162,7 +162,7 @@ sub short_person ($$) {
 
 my %comp;
 
-sub normalize_file_lines ($$) { # Normalizing speeds up load_composer()
+sub normalize_file_lines ($$) {	# Normalizing speeds up load_composer()
   my ($self, $fn) = @_;
   open my $f, '<', $fn or die "Can't open file $fn for read";
   local $_;
@@ -176,10 +176,10 @@ sub normalize_file_lines ($$) { # Normalizing speeds up load_composer()
   close $f or die "Can't close file $fn for read";
 }
 
-sub _significant ($$$) {        # Try to extract "actual name" of the piece
+sub _significant ($$$) {	# Try to extract "actual name" of the piece
   my ($tbl, $l, $r) = (shift, shift, shift);
   my ($pre, $opus);
-  if ($tbl->{no_opus_no}) {     # Remove year-like comment
+  if ($tbl->{no_opus_no}) {	# Remove year-like comment
     ($pre) = ($l =~ /^(.*\S)\s*\(\d{4}\b[^()]*\)$/s);
   } else {
     ($pre, $opus) = ($l =~ /$r/);
@@ -198,7 +198,7 @@ sub _read_composer_file ($$*$$) {
   my($normalized, $l, @works, %aka, $opened);
   my $opus_rx = $tbl->{opus_rx} || $def_opus_rx;
   my $opus_pref = $tbl->{opus_prefix} || 'Op.';
-  local $/ = "\n";              # allow customization
+  local $/ = "\n";		# allow customization
   if (defined $fh) {
     $f |= "composer's file" . (eval {' for ' . $self->name_for_field_normalization} || '');
   } else {
@@ -210,7 +210,7 @@ sub _read_composer_file ($$*$$) {
   while (defined ($l = <$fh>)) {
     next if $l =~ /^\s*(?:##|$)/;
     if ($l =~ /^#\s*normalized\s*$/) {
-      $normalized++;    # Very significant optimization (unless mail-header)
+      $normalized++;	# Very significant optimization (unless mail-header)
     } elsif ($l =~ /^#\s*opus_rex\s(.*?)\s*$/) {
       $opus_rx = $tbl->{opus_rx} = qr/$1/;
     } elsif ($l =~ /^#\s*dup_opus_rex\s(.*?)\s*$/) {
@@ -222,18 +222,18 @@ sub _read_composer_file ($$*$$) {
     } elsif ($l =~ /^#\s*opus_dup\s+(.*?)\s*$/) {
       $tbl->{dup_opus}{lc $1} = 1;
     } elsif ($l =~ /^#\s*prev_aka\s+(.*?)\s*$/) {
-      $aka->{$1} = $works[-1];  # recognize also alternative names
+      $aka->{$1} = $works[-1];	# recognize also alternative names
     } elsif ($l =~ /^#\s*format\s*=\s*(line|mail-header)\s*$/) {
       $/ = ($1 eq 'line' ? "\n" : '');
     } elsif ($l =~ /^#[^#]/) {
       warn "Unrecognized line of $f: $l"
-    } elsif ($l !~ /^##/) {     # Recursive call to ourselves...
+    } elsif ($l !~ /^##/) {	# Recursive call to ourselves...
       if ($normalized) {
-        $l =~ s/\s*$//;         # chomp...
+	$l =~ s/\s*$//;		# chomp...
       } elsif ($/) {
-        $l = normalize_piece($self, $l);
+	$l = normalize_piece($self, $l);
       } else {
-        $l = normalize_piece_mail_header($self, $l, $opus_rx, $opus_pref);
+	$l = normalize_piece_mail_header($self, $l, $opus_rx, $opus_pref);
       }
       push @works, $l;
     }
@@ -282,8 +282,8 @@ sub load_composer ($$) {
   my @files = grep -r $_, map "$_/$c.comp", @dirs or return 0;
   my $f = $files[0];
 #  $f = $c =~ tr( ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ\x80-\x9F)
-#         ( !cLXY|S"Ca<__R~o+23'mP.,1o>...?AAAAAAACEEEEIIIIDNOOOOOx0UUUUYpbaaaaaaaceeeeiiiidnooooo:ouuuuyPy_)
-#           unless -r $f;
+#	  ( !cLXY|S"Ca<__R~o+23'mP.,1o>...?AAAAAAACEEEEIIIIDNOOOOOx0UUUUYpbaaaaaaaceeeeiiiidnooooo:ouuuuyPy_)
+#	    unless -r $f;
   #warn "file looked up is $f";
   return $comp{$ini} unless -r $f;
   my $tbl = $comp{$ini};
@@ -300,7 +300,7 @@ sub load_composer ($$) {
     if ($significant and $name{$significant}) {
       $dup{$significant}++;
       warn "Duplicate name `$significant': <$l> <$name{$significant}>"
-        if $ENV{MUSIC_DEBUG_TABLE};
+	if $ENV{MUSIC_DEBUG_TABLE};
     }
     $name{$significant} = $l if $significant;
     $opus or next;
@@ -308,8 +308,8 @@ sub load_composer ($$) {
     if ($opus{$opus}) {
       $dupop{$opus}++;
       warn "Duplicate opus number `$opus': <$l> <$opus{$opus}>"
-        unless $tbl->{dup_opus_rx} and $opus =~ /$tbl->{dup_opus_rx}/
-          or $tbl->{dup_opus}{$opus};
+	unless $tbl->{dup_opus_rx} and $opus =~ /$tbl->{dup_opus_rx}/
+	  or $tbl->{dup_opus}{$opus};
     }
     $opus{$opus} = $l;
   }
@@ -320,7 +320,7 @@ sub load_composer ($$) {
     warn "Duplicate and/or unnecessary A.K.A. name `$s' for <$aka{$s}>"
       if $name{$n};
     $name{$n} = $aka{$s};
-    $name{"\0$s"} = "\0$n";     # put into values(), see normalize_person()
+    $name{"\0$s"} = "\0$n";	# put into values(), see normalize_person()
   }
   $tbl->{works} = \@works;
   $tbl->{opus} = \%opus if %opus;
@@ -335,8 +335,8 @@ sub translate_signature ($$$$) { # One should be able to override this
 $Normalize::Text::Music_Fields::translate_signature = \&translate_signature;
 
 my %alteration = (dur => 'major', moll => 'minor');
-my %mod = (is => 'sharp', es => 'flat', s => 'flat',    # since Es means Ees
-           '#' => 'sharp', b => 'flat');
+my %mod = (is => 'sharp', es => 'flat', s => 'flat',	# since Es means Ees
+	   '#' => 'sharp', b => 'flat');
 
 # XXXX German ==> English (nontrivial): H ==> B, His ==> B sharp, B ==> B flat
 # XXXX Do not touch B (??? Check "Klavier" etc to detect German???)
@@ -348,7 +348,7 @@ sub normalize_signature ($$$$) {
   $alteration = lc $alteration;
   $alteration =~ s/^-?\s*/ /;
   $alteration =~ s/(\w+)/ $alteration{$1} || $1 /e;
-  $mod =~ s/^-?\s*/ / if $mod;          # E-flat, Cb
+  $mod =~ s/^-?\s*/ / if $mod;		# E-flat, Cb
   $mod = lc $mod;
   $mod =~ s/(\w+|#)/ $mod{$1} || $1 /e;
   $key = uc $key;
@@ -388,7 +388,7 @@ sub find_person ($) {
 sub _normalize_piece ($$$$) {
   my ($self, $n, $improve_opus, $by_opus) = (shift, shift, shift, shift);
   my $ini_n = $n;
-  $n = $n->[0] if ref $n;               # [value, handler]
+  $n = $n->[0] if ref $n;		# [value, handler]
   return $ini_n unless $n;
   $n =~ s/^\s+//;
   $n =~ s/\s+$//;
@@ -396,9 +396,9 @@ sub _normalize_piece ($$$$) {
   $n =~ s/\s{2,}/ /g;
 
   # Opus numbers
-  $n =~ s/\bOp(us\s+(?=\d)|[.\s]\s*|\.?(?=\d))/Op. /gi; # XXXX posth.???
+  $n =~ s/\bOp(us\s+(?=\d)|[.\s]\s*|\.?(?=\d))/Op. /gi;	# XXXX posth.???
   $n =~ s/\bN(?:[or]|(?=\d))\.?\s*(?=\d)/No. /gi; # nr12 n12
-  $n =~ s/(?<!\w)[#\x{2116}]\s*(?=\d)/No. /gi;  # #12, Numero Sign 12
+  $n =~ s/(?<!\w)[#\x{2116}]\s*(?=\d)/No. /gi;	# #12, Numero Sign 12
 
   my $c = find_person $self;
   my $tbl = ($c and load_composer($self, $c)) || {};
@@ -406,7 +406,7 @@ sub _normalize_piece ($$$$) {
 
   # XXXX Is this `?' for good?
   $n =~ s/(?<=[^(.,;\s])(\s*[.,;])?\s*\b(?=$opus_rx)/; /gi
-    if $improve_opus;           # punctuation before Op.
+    if $improve_opus;		# punctuation before Op.
 
   # punctuation between Op. and No (as in Wikipedia for most expanded listings)
   # $n =~ s/\b((Op\.|WoO)\s+\d+[a-d]?)(?:[,;.]?|\s)\s*(?=No\.\s*\d+)/$1, /gi;
@@ -430,65 +430,65 @@ sub _normalize_piece ($$$$) {
       $canon = $tbl->{opus}{lc $opus} or last;
     } else { # $significant: Up to the first "No. NNN.N", or to the first ";"
       my ($significant, $pre, $no, $post) =
-        ($n =~ /^((.*?)\bNo\b[.]?\s*(\d+(?:\.\d+)*))\s*(.*)/is);
+	($n =~ /^((.*?)\bNo\b[.]?\s*(\d+(?:\.\d+)*))\s*(.*)/is);
       ($significant) = ($n =~ /^(.*?);/s) unless $significant;
       $significant ||= $n;
       $canon = $tbl->{name}{lc $significant}; # Try exact match
-      if (not $canon) { # Try harder: match word-for-word
-        my ($ton, $rx_pre, $rx_post) = ('') x 3;
-        my $nn = $n;
-        if ($nn =~ s/\b(in\s+[A-H](?:\s+(?:flat|sharp))?\s+(?:minor|major))\b//) {
-          $ton = $1;
-          ($significant, $pre, $no, $post) = # Redo with $nn
-            ($nn =~ /^((.*?)\bNo\b[.]?\s*(\d+(?:\.\d+)*))\s*(.*)/is);
-          ($significant) = ($nn =~ /^(.*?);/s) unless $significant;
-          $significant ||= $nn;
-          $ton = '.*\b' . (quotemeta $ton) . '\b';
-        }
-        $pre = $significant unless defined $pre;        # Same with No removed
-        # my @parts2 = split '\W+', $post;
-        if ($pre and $pre =~ /\w/) {
-          $rx_pre = '\b' . join('\b.*\b', split /\W+/, $pre) . '\b';
-        }
-        if ($post and $post =~ /\w/) {
-          $rx_post = '.*' . join '\b.*\b', split /\W+/, $post;
-        }
-        # warn "<$no> <$n> <$nn> <$ton> <$rx_pre> <$rx_post>";
-        $no = '.*\bNo\.\s*' . (quotemeta $no) . '\b(?!\.\d)' if $no;
-        $no = '' unless defined $no;
-        last unless "$rx_pre$no$ton$rx_post";
-        my $sep = $tbl->{no_opus_no} ? '' : '.*;';
-        my $rx = qr/$rx_pre$no$ton$rx_post$sep/is;
-        my @matches = grep /$rx/, values %{$tbl->{name}};
-        if (@matches == 1) {
-          $canon = $matches[0];
-        } elsif (!@matches) {
-          last;
-        } else { # Many matches; maybe the shortest is substr of the rest?
-          my ($l, $s, $diff) = 1e100;
-          $l > length and ($s = $_, $l = length) for @matches;
-          $s eq substr $_, 0, $l or ($diff = 1, last) for @matches;
-          last if $diff;
-          $canon = $s;
-        }
-        $canon = $tbl->{name}{$canon} if $canon =~ s/^\0//s; # short name
+      if (not $canon) {	# Try harder: match word-for-word
+	my ($ton, $rx_pre, $rx_post) = ('') x 3;
+	my $nn = $n;
+	if ($nn =~ s/\b(in\s+[A-H](?:\s+(?:flat|sharp))?\s+(?:minor|major))\b//) {
+	  $ton = $1;
+	  ($significant, $pre, $no, $post) = # Redo with $nn
+	    ($nn =~ /^((.*?)\bNo\b[.]?\s*(\d+(?:\.\d+)*))\s*(.*)/is);
+	  ($significant) = ($nn =~ /^(.*?);/s) unless $significant;
+	  $significant ||= $nn;
+	  $ton = '.*\b' . (quotemeta $ton) . '\b';
+	}
+	$pre = $significant unless defined $pre;	# Same with No removed
+	# my @parts2 = split '\W+', $post;
+	if ($pre and $pre =~ /\w/) {
+	  $rx_pre = '\b' . join('\b.*\b', split /\W+/, $pre) . '\b';
+	}
+	if ($post and $post =~ /\w/) {
+	  $rx_post = '.*' . join '\b.*\b', split /\W+/, $post;
+	}
+	# warn "<$no> <$n> <$nn> <$ton> <$rx_pre> <$rx_post>";
+	$no = '.*\bNo\.\s*' . (quotemeta $no) . '\b(?!\.\d)' if $no;
+	$no = '' unless defined $no;
+	last unless "$rx_pre$no$ton$rx_post";
+	my $sep = $tbl->{no_opus_no} ? '' : '.*;';
+	my $rx = qr/$rx_pre$no$ton$rx_post$sep/is;
+	my @matches = grep /$rx/, values %{$tbl->{name}};
+	if (@matches == 1) {
+	  $canon = $matches[0];
+	} elsif (!@matches) {
+	  last;
+	} else { # Many matches; maybe the shortest is substr of the rest?
+	  my ($l, $s, $diff) = 1e100;
+	  $l > length and ($s = $_, $l = length) for @matches;
+	  $s eq substr $_, 0, $l or ($diff = 1, last) for @matches;
+	  last if $diff;
+	  $canon = $s;
+	}
+	$canon = $tbl->{name}{$canon} if $canon =~ s/^\0//s; # short name
       }
     }
 #    if ($canon) {
 #      my (%w, %w1);
 #      for my $w (split /[-.,;\s]+/, $canon) {
-#       $w{lc $w}++;
+#	$w{lc $w}++;
 #      }
 #      for my $w (split /[-.,;\s]+/, $n) {
-#       $w1{lc $w}++ unless $w{lc $w};
+#	$w1{lc $w}++ unless $w{lc $w};
 #      }
 #      if (%w1) {
-#       warn "Unknown words in title: `", join("` '", sort keys %w1), "'"
-#         unless $ENV{MUSIC_TRANSLATE_FIELDS_SKIP_WARNINGS};
-#       last
+#	warn "Unknown words in title: `", join("` '", sort keys %w1), "'"
+#	  unless $ENV{MUSIC_TRANSLATE_FIELDS_SKIP_WARNINGS};
+#	last
 #      }
 #    }
-    $n = $canon;        # XXXX Simple try (need to compare word-for-word)
+    $n = $canon;	# XXXX Simple try (need to compare word-for-word)
   }
   return ref $ini_n ? [$n, $ini_n->[1]] : $n;
 }
@@ -551,11 +551,11 @@ sub normalize_piece_mail_header ($$;$$) {
   return join '', @pieces;
 }
 
-sub shorten_opus ($$$$) {               # $mp3, $str, $pre
+sub shorten_opus ($$$$) {		# $mp3, $str, $pre
   my ($tag, $op, $pref, $rx) = (shift, shift, shift, shift);
   my ($out, $cut) = ($op, '');
   if ($out =~ s/^\Q$pref\E\s*(?=\d)//) {
-    if ($out =~ $rx) {  # back up if shortened version causes confusion
+    if ($out =~ $rx) {	# back up if shortened version causes confusion
       $out = $op;
     } else {
       $cut = $pref;
@@ -564,11 +564,11 @@ sub shorten_opus ($$$$) {               # $mp3, $str, $pre
   my $out1 = $out;
   if ($out =~ s/(\d[a-i]?),\s+No\.\s*(?=\d)/$1-/) {
     my $o = full_opus($tag, $out, $rx, $pref);
-    if ($op ne $o or $out =~ /^$rx$/) { # check again
+    if ($op ne $o or $out =~ /^$rx$/) {	# check again
       $out = $out1;
-      unless ($out eq $op) {                    # Extra sanity check
-        $o = full_opus($tag, $out, $rx, $pref);
-        $out = $op unless $op eq $o;
+      unless ($out eq $op) {			# Extra sanity check
+	$o = full_opus($tag, $out, $rx, $pref);
+	$out = $op unless $op eq $o;
       }
     }
   }
@@ -576,7 +576,7 @@ sub shorten_opus ($$$$) {               # $mp3, $str, $pre
 }
 
 my $main_instr = join '|', qw(Piano Violin Viola Cello Horn String Wind Harp
-                              Instrument Clarinet Alto);
+			      Instrument Clarinet Alto);
 my $for_instr = join '|', qw(Mandolin Harpsichord chorus soprano alt bass
     basses tenor mezzo-soprano \(mezzo\)soprano baritone contralto hand
     soli soloists woodwinds celesta accordion instrumentalists large small
@@ -603,44 +603,44 @@ my $pieces = join '|', qw(Serenada Serenade Romance Song Notturno Aria Mass
 my $numb_rx = qr/one|two|three|four|five|six|seven|eight|nine/i;
 
 my $count_rx = qr/ \d+
-                 | (?:$numb_rx)(?:teen)?
-                 | ten|eleven|twelve|thirteen|fifteen|eighteen
-                 | (?:twenty|thirty|fourty|fifty|sixty|seventy|eighty|ninety)
-                   (?: (?:\s+ | -) (?:$numb_rx) )? /ix;
+		 | (?:$numb_rx)(?:teen)?
+		 | ten|eleven|twelve|thirteen|fifteen|eighteen
+		 | (?:twenty|thirty|fourty|fifty|sixty|seventy|eighty|ninety)
+		   (?: (?:\s+ | -) (?:$numb_rx) )? /ix;
 
-#no utf8;                       # `use' is needed by 5.005
+#no utf8;			# `use' is needed by 5.005
 
 my $for_rx = qr/ (?:\s+|^)
-                 for
-                 (?: (?:\s+|(?<=\/)) \(?
-                     (?:and|or|&|vocal\s+soloist|$main_instr|$for_instr|prepared\s+piano|magnetic\s+tape|stage\s+orchestra|jazz\s+ensemble|(?:vocal\s+)?(?:$multiplets)|$count_rx|[23456789]|[12345]\d|Große Fuge)
-                     (?:s|\(s\))? \)?
-                     [,\/]?
-                   )+
-               /ix;
+		 for
+		 (?: (?:\s+|(?<=\/)) \(?
+		     (?:and|or|&|vocal\s+soloist|$main_instr|$for_instr|prepared\s+piano|magnetic\s+tape|stage\s+orchestra|jazz\s+ensemble|(?:vocal\s+)?(?:$multiplets)|$count_rx|[23456789]|[12345]\d|Große Fuge)
+		     (?:s|\(s\))? \)?
+		     [,\/]?
+		   )+
+	       /ix;
 
 my $piece_rx = qr/ (?: (?:Transcription|Orchestration|Reduction|Arrangement|Suite|Instrumentation|Re-?orchestration)
-                     \s+ of
-                     (?: \s+ (?: $main_instr | the | $count_rx ) )?
-                     \s+ )? # Mod
-                   (?:
-                     (?: $main_instr | Vocal | secular | sacred
-                     | Double | Triple | Easy | Trio | Symphonic )
-                     \s+ )?     # Prefix
-                   (?:Concerto\s+grosso | $multiplets
-                   | Ecossaise?
-                   | (?:[123456]-part\s+)? (?:riddle\s+)? Canon
-                   | (?:sets\s+of\s+)? (?: chorale\s+preludes? | $pieces )
+		     \s+ of
+		     (?: \s+ (?: $main_instr | the | $count_rx ) )?
+		     \s+ )? # Mod
+		   (?:
+		     (?: $main_instr | Vocal | secular | sacred
+		     | Double | Triple | Easy | Trio | Symphonic )
+		     \s+ )?	# Prefix
+		   (?:Concerto\s+grosso | $multiplets
+		   | Ecossaise?
+		   | (?:[123456]-part\s+)? (?:riddle\s+)? Canon
+		   | (?:sets\s+of\s+)? (?: chorale\s+preludes? | $pieces )
                      (?: s? \s* (?:\band\b|&) \s* (?:$pieces))?
-                   | Incidental\s+music | electronic\s+composition
-                   | chorale\s+prelude
-                   | Musical\s+greetings? | choral\s+score | vocal\s+quartet
-                   | (?:heroic|comic|tragic|historical)\s+opera
-                   | scenic\s+composition | symphonic\s+poem ) # Main type
-                   (?: s? \s+ in \s+ (?:$numb_rx) \s+ act )?
-                 /ix;
+		   | Incidental\s+music | electronic\s+composition
+		   | chorale\s+prelude
+		   | Musical\s+greetings? | choral\s+score | vocal\s+quartet
+		   | (?:heroic|comic|tragic|historical)\s+opera
+		   | scenic\s+composition | symphonic\s+poem ) # Main type
+		   (?: s? \s+ in \s+ (?:$numb_rx) \s+ act )?
+		 /ix;
 
-#use utf8;                      # needed by 5.005
+#use utf8;			# needed by 5.005
 
 my $name_rx = qr/ (?: [A-Z]\w* \.? \s+)* [A-Z][-\'\w]+ /x;
 
@@ -648,10 +648,10 @@ my $rel_piece_rx = # Two Pieces for Erwin Dressel's Opera "Armer Columbus"
   qr/ \b
       (?:to|from|of|a\s+fter|for|on(?:\s+motives\s+of)?)
       (?:
-        \s+ (?: \s+ music \s+ to)? (?: the | $name_rx\'s ) # Erwin Dressel's
-        (?: \s+ (?: (?:(?:silent|animated)\s+)? film | spectacle | comedy
-          | TV[-\s]+production | music\s+to\s+the\s+film
-          | play | (?:Chamber-?\s*)? opera | stage \s+ revue | novel))?)? \b
+	\s+ (?: \s+ music \s+ to)? (?: the | $name_rx\'s ) # Erwin Dressel's
+	(?: \s+ (?: (?:(?:silent|animated)\s+)? film | spectacle | comedy
+	  | TV[-\s]+production | music\s+to\s+the\s+film
+	  | play | (?:Chamber-?\s*)? opera | stage \s+ revue | novel))?)? \b
     /ix;
 
 
@@ -664,10 +664,10 @@ sub strip_known_from_end ($$$) {
 
   # Too much recognized as this if ???
   while ( $in =~ s/ \s* ( $rel_piece_rx | (?!$) [.:,;]? )
-                    (?: \s+
-                      ( (\[)? ["\x{201E}]([^\"\x{201C}\x{201E}]+)["\x{201C}] (?(3) \] | )
+		    (?: \s+
+		      ( (\[)? ["\x{201E}]([^\"\x{201C}\x{201E}]+)["\x{201C}] (?(3) \] | )
                       | \(["\x{201E}]([^\"\x{201C}\x{201E}]+)["\x{201C}]\) )) $
-                  //xo ) {
+		  //xo ) {
     if (length $1 <= 1) {
       unshift @tail, "Title-Name: $+";
     } else {
@@ -678,11 +678,11 @@ sub strip_known_from_end ($$$) {
   unshift @tail, "Title-Related-By: after $1"
     if $in =~ s/ \s* after \s+ ($name_rx) $//xo;
 
-  unshift @tail, "Title-Related-On: $+" # Variation and Fugue
+  unshift @tail, "Title-Related-On: $+"	# Variation and Fugue
     if $in =~ s/ ( \b variations? (?: \s+ and \s+ $piece_rx)? (?:$for_rx)? )
-                 \s+ on \s+     # on a Hungarian melody
+		 \s+ on \s+	# on a Hungarian melody
                  (an? \s+ (?: (?: $name_rx | original ) \s+)? $piece_rx
-                   (?: \s+ by \s+ $name_rx)? )$/$1/xio; # XXXX Why $+ needed?
+                   (?: \s+ by \s+ $name_rx)? )$/$1/xio;	# XXXX Why $+ needed?
 
   unshift @tail, "Title-In-Movements: $1"
     if $in =~ s/\s*(in\s+(a\s+single|$numb_rx|\d)\s+(movement|episode)s?)$//;
@@ -699,9 +699,9 @@ sub strip_known_from_end ($$$) {
 
   my $f;
   ($f = $1) =~ s/^\s*for\s*//, unshift @tail, "Title-For: $f"
-    if $in =~ s/($for_rx)$//io; # XXXX: foo arranged for piano ???
+    if $in =~ s/($for_rx)$//io;	# XXXX: foo arranged for piano ???
 
-  if ($in =~ s/\s*([.,;:])?\s+No.\s*(\d+[a-d]?(\.\d+)?)$//i) {  # Repeat
+  if ($in =~ s/\s*([.,;:])?\s+No.\s*(\d+[a-d]?(\.\d+)?)$//i) {	# Repeat
     unshift @tail, "Title-No: $2";
     unshift @tail, "Title-Punct: $1" if $1;
   }
@@ -709,15 +709,15 @@ sub strip_known_from_end ($$$) {
   ($in, @tail);
 }
 
-sub parse_piece ($$$$$$$);      # Predeclaration for recursive call without ()
+sub parse_piece ($$$$$$$);	# Predeclaration for recursive call without ()
 sub parse_piece ($$$$$$$) {
   my ($after_name, $at_end, $at_start, $tag, $in, $opus_pref, $opus_rx, @tail)
     = (shift, shift, shift, shift, shift, shift, shift);
   if ($at_end) {
     unshift @tail, "Title-Dates: $2"
       if $in =~ s/(.*\S)\s*\(([^()]*\b\d{4}\b[^()]*)\)$/$1/ # $1 makes greedy
-        or $at_end and not $at_start and
-          $in =~ s/^()\s*\(([^()]*\b\d{4}\b[^()]*)\)$/$1/; # $1 makes greedy
+	or $at_end and not $at_start and
+	  $in =~ s/^()\s*\(([^()]*\b\d{4}\b[^()]*)\)$/$1/; # $1 makes greedy
     unshift @tail, "Title-Opus: " . shorten_opus($tag, "$2", $opus_pref, $opus_rx)
       while $in =~ s/(.*);\s+($opus_rx)\s*$/$1/;
     unshift @tail, "Title-Key: " . normalize_signature($tag, "$2", "$3", "$4")
@@ -731,9 +731,9 @@ sub parse_piece ($$$$$$$) {
     $in = $1;
     my $k = normalize_signature($tag, "$3", "$4", "$5");
     my($n,$rest) = ($6, $8);
-    if (length $rest) {{                # Localize match
+    if (length $rest) {{		# Localize match
       unshift @tail,
-        'Title-'. ($8 =~ /^[^\s\w]$/ ? 'Punct' : 'Comment'). ": $rest";
+	'Title-'. ($8 =~ /^[^\s\w]$/ ? 'Punct' : 'Comment'). ": $rest";
     }}
     unshift @tail, "Title-Punct: $7" if $7;
     my $alt = ($in =~ /".*"/ ? '-Alternative' : '');
@@ -745,7 +745,7 @@ sub parse_piece ($$$$$$$) {
   ($in, @r) = strip_known_from_end($tag, $in, not 'look for key');
   unshift @tail, @r;
 
-  if ($at_start) {              #  and (@tail or not $at_end)
+  if ($at_start) {		#  and (@tail or not $at_end)
     unshift @tail, "Title-Type: $1" if $in =~ s/^($piece_rx s?)\s*$//iox;
     unshift @tail, "Title-Count: $1" , "Title-Type: $2"
       if $in =~ s/^($count_rx)\s+( $piece_rx s?)\s*$//iox;
@@ -754,7 +754,7 @@ sub parse_piece ($$$$$$$) {
   }
   if (not @tail and $at_start and $at_end) {
     unshift @tail, "Title: $in";
-  } elsif (not length $in) {    # Do nothing
+  } elsif (not length $in) {	# Do nothing
   } elsif ($in =~ /^\s*[-,:;.()\[\]{}]\s*$/) {
     unshift @tail, "Title-Punct: $in";
   } elsif ($after_name and $in =~ /^(by|after)((\s+and)?\s+[A-Z][-\'\w]+)+\s*$/) {
@@ -765,13 +765,13 @@ sub parse_piece ($$$$$$$) {
     unshift @tail, "Title-Name: $1";
   } else {
     if ($at_start and $in =~ /^"([^\"]+)"[,.;:]\s*(\S.*?)\s*$/) {
-      my $name = $1;            # Pretend we are at start:
+      my $name = $1;		# Pretend we are at start:
       my @rest = parse_piece 'after_name', ($at_end and not @tail), 'start',
-        $tag, "$2", $opus_pref, $opus_rx;
+	$tag, "$2", $opus_pref, $opus_rx;
       unshift @rest, "Title-Punct: ,"
-        unless $rest[0] =~ s/^Title-Type:/Title-Type-After-Name:/;
+	unless $rest[0] =~ s/^Title-Type:/Title-Type-After-Name:/;
       return("Title-Name: $name", @rest, @tail)
-        unless (join "\n", '', @rest) =~ /\nTitle-RAW:/;
+	unless (join "\n", '', @rest) =~ /\nTitle-RAW:/;
     }
     unshift @tail, "Title-RAW: $in";
   }
@@ -854,37 +854,37 @@ sub emit_as_mail_header ($$$$) { # $mp3, $str, $has_bold_parts_etc, $pre [R/W]
       my @parts = split /\s*\n\s*/, $in;
       my ($after_for, $after_name);
       for my $n (0..$#parts) {
-        my $p = $parts[$n];
-        $p =~ s/\s+$//;
-        if ($p =~ s/^Title-Bold:\s*//) {
-          my $rel = $after_for ? '-Related' : '';
-          push @out, "Title$rel-Name: $p";
-          $after_for = 0, $after_name = 1;
-          next;
-        } elsif ($p =~ /^Title-RAW:\s*$/) { # Do nothing
-          next;
-        } elsif ($after_for =
-                 ($n != $#parts and $parts[$n+1] =~ /^Title-Bold:\s*/
-                  and $parts[$n] =~ /^Title-RAW:\s*/
-                  # Title-RAW: Two Pieces for Erwin Dressel's Opera "Armer Columbus"
-                  and $p =~ s/ \s* ( $rel_piece_rx \s*$ )//ixo)) {
-          my $how = $1;
-          $p =~ s/^Title-RAW:\s+//
-            or warn "Expected to start with Title-RAW: <<<$p>>>";
-          push @out,
-            parse_piece $after_name,!'end', !$n, $tag, $p, $opus_pre, $opus_rx;
-          push @out, "Title-Related-How: $how";
-        } elsif ($p =~ s/^Title-Opus:\s+// ) {
-          push @out, 'Title-Opus: ' . full_opus $tag, $p, $opus_rx, $opus_pre;
-          $after_name = 0;
-        } elsif ($p =~ /^(Title-(Opus|Comment|Dates)|X-Title-Opus-Alt):\s+/ ) { # Keep intact
-          push @out, $p;
-          $after_name = 0;
-        } else {
-          $p =~ s/^Title-RAW:\s+// or warn "Expected to start with `Title-RAW: ': <<<$p>>>";
-          push @out, parse_piece $after_name, $n==$#parts, !$n, $tag, $p, $opus_pre, $opus_rx;
-          $after_name = 0;
-        }
+	my $p = $parts[$n];
+	$p =~ s/\s+$//;
+	if ($p =~ s/^Title-Bold:\s*//) {
+	  my $rel = $after_for ? '-Related' : '';
+	  push @out, "Title$rel-Name: $p";
+	  $after_for = 0, $after_name = 1;
+	  next;
+	} elsif ($p =~ /^Title-RAW:\s*$/) { # Do nothing
+	  next;
+	} elsif ($after_for =
+		 ($n != $#parts and $parts[$n+1] =~ /^Title-Bold:\s*/
+		  and $parts[$n] =~ /^Title-RAW:\s*/
+		  # Title-RAW: Two Pieces for Erwin Dressel's Opera "Armer Columbus"
+		  and $p =~ s/ \s* ( $rel_piece_rx \s*$ )//ixo)) {
+	  my $how = $1;
+	  $p =~ s/^Title-RAW:\s+//
+	    or warn "Expected to start with Title-RAW: <<<$p>>>";
+	  push @out,
+	    parse_piece $after_name,!'end', !$n, $tag, $p, $opus_pre, $opus_rx;
+	  push @out, "Title-Related-How: $how";
+	} elsif ($p =~ s/^Title-Opus:\s+// ) {
+	  push @out, 'Title-Opus: ' . full_opus $tag, $p, $opus_rx, $opus_pre;
+	  $after_name = 0;
+	} elsif ($p =~ /^(Title-(Opus|Comment|Dates)|X-Title-Opus-Alt):\s+/ ) { # Keep intact
+	  push @out, $p;
+	  $after_name = 0;
+	} else {
+	  $p =~ s/^Title-RAW:\s+// or warn "Expected to start with `Title-RAW: ': <<<$p>>>";
+	  push @out, parse_piece $after_name, $n==$#parts, !$n, $tag, $p, $opus_pre, $opus_rx;
+	  $after_name = 0;
+	}
       }
     } else {
       @out = parse_piece 0, 'at_end', 'at_start', $tag, $in, $opus_pre, $opus_rx;
@@ -900,11 +900,11 @@ sub emit_as_mail_header ($$$$) { # $mp3, $str, $has_bold_parts_etc, $pre [R/W]
   }
   $in = "\n$in" if $in !~ /^\s*##/ and $_[0] and not $preformatted =~ /\bbold\b/;
   $in .= qq(\n) unless $preformatted =~ /\bbold\b/ or $_[0] = ($in =~ /^##/);
-  $in;                  # Caller appends extra \n
+  $in;			# Caller appends extra \n
 }
 
 ## perl -MNormalize::Text::Music_Fields -wnle "BEGIN {$tag = Normalize::Text::Music_Fields::prepare_tag_object_comp(shift @ARGV); print qq(# format = mail-header\n)} next unless s/^\s*\+\+\s*//; print Normalize::Text::Music_Fields::merge_info($tag,$_, q(opus))" brahms o-brahms-op-no1-xslt
-sub merge_info ($$$;$$) {       # $update not fully implemented
+sub merge_info ($$$;$$) {	# $update not fully implemented
   my ($tag, $in, $preformatted, $soft, $update) = (shift, shift, shift, shift, shift);
   my $parsed = emit_as_mail_header($tag, $in, $preformatted, my $pre);
   my $op_n = ($parsed =~ /^Title-Opus: (.*)/m and $1);
@@ -912,7 +912,7 @@ sub merge_info ($$$;$$) {       # $update not fully implemented
   my $op_no = full_opus $tag, $op_n;
 
   $parsed =~ s/^Title-Punct:\s*-\nTitle-Name:/Title-Name-By-First-Row:/;
-  $soft ||= qr(^(?!));          # Never match
+  $soft ||= qr(^(?!));		# Never match
   warn "Opus [$op_n]: Type `$1' interpreted as Title-Name\n"
     if $op_n =~ $soft and $parsed =~ s/^Title-Type:/Title-Name:/m
       and $parsed =~ /^Title-Name:\s*(.*)/;
@@ -921,7 +921,7 @@ sub merge_info ($$$;$$) {       # $update not fully implemented
 
   my $name = normalize_piece $tag, $op_no; # expand opus+no to the full name
 
-  if ($name eq $op_no) {        # No current information
+  if ($name eq $op_no) {	# No current information
     my ($opus_rx, $opus_pre) = opus_parser($tag);
     die "No subopus number in `$op_no' (from `$in')"
       unless $op_no =~ /^($opus_rx)\s*[.,:;]\s*No/;
@@ -936,19 +936,19 @@ sub merge_info ($$$;$$) {       # $update not fully implemented
   warn("Prior knowledge not found for `$in'\n"),
     return $parsed if $parsed_op =~ /^Title:/; # Not found, or not parsable
 
-  unless ($update) {            # Handling "a group name"
+  unless ($update) {		# Handling "a group name"
     $parsed_op =~ s/^Title-Count:.*\n//; # Four ballades for piano
     if ($parsed_op =~ /^Title-Type:\s*(.*)\n/) { # Strip the plural
       my $type = $1;
       $type =~ s/^ Sets \s+ of \s+/Set of /x
-        or $type =~ s/^ ($piece_rx) (?:s | es) $/$1/x; # Strip the plural
+	or $type =~ s/^ ($piece_rx) (?:s | es) $/$1/x; # Strip the plural
       $parsed_op =~ s/^.*/Title-Type: $type/;
     }
     $parsed_op =~ s/^Title-Opus:.*/Title-Opus: $op_n/m
       or die "Can't find Opus: `$parsed_op'";
   }
   if ($parsed =~ /^Title-Dates:\s*(.*)/m) {
-    my $d = $1;                 # (?<!.) does as /^/m, but matches at end too
+    my $d = $1;			# (?<!.) does as /^/m, but matches at end too
     $parsed_op =~ s/(?<!.)(Title-Dates:.*\n|\Z)/Title-Dates: $d\n/ or die;
   }
   if ($parsed =~ /^Title-Key:\s*(.*)/m) {
@@ -964,7 +964,7 @@ sub merge_info ($$$;$$) {       # $update not fully implemented
     warn "Title-RAW `$n' interpreted as Title-Name in `$in'\n";
   }
   if ($parsed =~ /^(Title-Name(?:[-\w]*):\s*.*)/m) { # pre: Type-After-Name, In-Movements
-    my $n = $1;                 # Related-On, Comment, Related-After
+    my $n = $1;			# Related-On, Comment, Related-After
     $parsed_op =~ s/(?<!.)(?=Title-(?:Type-After-Name|In-Movements|Related-On|Comment|Related-After|Opus|Dates):|\Z)/$n\n/ or die;
   }
   $parsed_op
@@ -1065,7 +1065,7 @@ sub load_lists () {
    my $last = pop @f;
    my @last = $last;
 
- #  no utf8;                    # `use' is needed by 5.005
+ #  no utf8;			# `use' is needed by 5.005
    (my $ascii = $last) =~
          tr( ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ\x80-\x9F)
            ( !cLXY|S"Ca<__R~o+23'mP.,1o>...?AAAAAAACEEEEIIIIDNOOOOOx0UUUUYpbaaaaaaaceeeeiiiidnooooo:ouuuuyPy_);
@@ -1076,12 +1076,12 @@ sub load_lists () {
    for my $last (@last) {
      my @comp = (@f, $last);
      $tr{"\L@comp"} ||= $_;
-     $tr{lc $last} ||= $_;              # Two Bach's
+     $tr{lc $last} ||= $_;		# Two Bach's
      if (@f) {
-       $tr{"\L$f[0] $last"} ||= $_;     # With the first of pre-names only
+       $tr{"\L$f[0] $last"} ||= $_;	# With the first of pre-names only
        my @ini = map substr($_, 0, 1), @f;
-       $tr{"\L$ini[0] $last"} ||= $_;   # One initial
-       $tr{"\L@ini $last"} ||= $_;      # All initials
+       $tr{"\L$ini[0] $last"} ||= $_;	# One initial
+       $tr{"\L@ini $last"} ||= $_;	# All initials
      }
    }
   }
@@ -1144,8 +1144,8 @@ EOS
 }
 
 for my $elt ( qw( title track artist album comment year genre
-                  title_track artist_collection person ) ) {
-  no strict 'refs';             # backward compatibility layer:
+		  title_track artist_collection person ) ) {
+  no strict 'refs';		# backward compatibility layer:
   *{"translate_$elt"} = \&{"normalize_$elt"} if defined &{"normalize_$elt"};
 }
 

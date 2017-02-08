@@ -373,7 +373,7 @@ Example: read 128 octets from a file.
    aio_read $fh, 128, sub {
       my ($data) = @_
          or return AE::log error "read from fh: $!";
-
+  
       if (length $data) {
          print "read ", length $data, " octets.\n";
       } else {

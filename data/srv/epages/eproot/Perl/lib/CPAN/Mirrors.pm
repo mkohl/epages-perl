@@ -11,13 +11,13 @@ use Fcntl ":flock";
 
 sub new {
     my ($class, $file) = @_;
-    my $self = bless {
-        mirrors => [],
+    my $self = bless { 
+        mirrors => [], 
         geography => {},
     }, $class;
 
     my $handle = FileHandle->new;
-    $handle->open($file)
+    $handle->open($file) 
         or croak "Couldn't open $file: $!";
     flock $handle, LOCK_SH;
     $self->_parse($file,$handle);
@@ -180,7 +180,7 @@ sub _parse {
             $mirror ||= {};
             if ( $prop eq 'dst_location' ) {
                 my (@location,$continent,$country);
-                @location = (split /\s*,\s*/, $value)
+                @location = (split /\s*,\s*/, $value) 
                     and ($continent, $country) = @location[-1,-2];
                 $continent =~ s/\s\(.*//;
                 $continent =~ s/\W+$//; # if Jarkko doesn't know latitude/longitude
@@ -238,7 +238,7 @@ sub http { shift->{http} || '' }
 sub ftp { shift->{ftp} || '' }
 sub rsync { shift->{rsync} || '' }
 
-sub url {
+sub url { 
     my $self = shift;
     return $self->{ftp} || $self->{http};
 }

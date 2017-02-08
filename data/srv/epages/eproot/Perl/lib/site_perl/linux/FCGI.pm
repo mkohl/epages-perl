@@ -305,7 +305,7 @@ Returns whether or not the program was run as a FastCGI.
 
 =HEAD1 LIMITATIONS
 
-FCGI.pm isn't Unicode aware, only characters within the range 0x00-0xFF are
+FCGI.pm isn't Unicode aware, only characters within the range 0x00-0xFF are 
 supported. Attempts to output strings containing characters above 0xFF results
 in a exception: (F) C<Wide character in %s>.
 

@@ -6,9 +6,9 @@ use strict;
 
 sub encoding_detect {
     my ($parser, $reader) = @_;
-
+    
     my $error = "Invalid byte sequence at start of file";
-
+    
     my $data = $reader->data;
     if ($data =~ /^\x00\x00\xFE\xFF/) {
         # BO-UCS4-be
@@ -96,7 +96,7 @@ sub encoding_detect {
         $reader->set_encoding('EBCDIC');
         return;
     }
-
+    
     warn("Unable to recognise encoding of this document");
     return;
 }

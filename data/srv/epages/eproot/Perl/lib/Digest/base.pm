@@ -25,8 +25,8 @@ sub addfile {
         $self->add($buf);
     }
     unless (defined $n) {
-        require Carp;
-        Carp::croak("Read failed: $!");
+	require Carp;
+	Carp::croak("Read failed: $!");
     }
 
     $self;
@@ -37,16 +37,16 @@ sub add_bits {
     my $bits;
     my $nbits;
     if (@_ == 1) {
-        my $arg = shift;
-        $bits = pack("B*", $arg);
-        $nbits = length($arg);
+	my $arg = shift;
+	$bits = pack("B*", $arg);
+	$nbits = length($arg);
     }
     else {
-        ($bits, $nbits) = @_;
+	($bits, $nbits) = @_;
     }
     if (($nbits % 8) != 0) {
-        require Carp;
-        Carp::croak("Number of bits must be multiple of 8 for this algorithm");
+	require Carp;
+	Carp::croak("Number of bits must be multiple of 8 for this algorithm");
     }
     return $self->add(substr($bits, 0, $nbits/8));
 }

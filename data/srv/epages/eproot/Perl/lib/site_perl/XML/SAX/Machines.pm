@@ -77,7 +77,7 @@ use Carp;
 use Exporter;
 use vars qw( $debug @ISA @EXPORT_OK %EXPORT_TAGS );
 
-## TODO: Load this mapping from the config file, or generalize
+## TODO: Load this mapping from the config file, or generalize 
 ## this.
 my %machines = (
     ByRecord    => "XML::SAX::ByRecord",
@@ -166,12 +166,12 @@ sub _read_config {
         ProcessorClassOptions
     ) ) {
         no strict "refs";
-
-        ## I don't like creating these just to default them, but perls
-        ## 5.005003 and older (at least) emit a "used only once, possible
-        ## type" warngings that local $^W = 0 doesn't silence.
-        ${__PACKAGE__."::ConfigDefaults::$_"} ||= {};
-        ${__PACKAGE__."::SiteConfig::$_"}     ||= {};
+        
+	## I don't like creating these just to default them, but perls
+	## 5.005003 and older (at least) emit a "used only once, possible
+	## type" warngings that local $^W = 0 doesn't silence.
+	${__PACKAGE__."::ConfigDefaults::$_"} ||= {};
+	${__PACKAGE__."::SiteConfig::$_"}     ||= {};
         ${__PACKAGE__."::Config::$_"} = {
             %{ ${__PACKAGE__."::ConfigDefaults::$_"} },
             %{ ${__PACKAGE__."::SiteConfig::$_"    } },
@@ -196,7 +196,7 @@ sub _read_config {
         "    Legal names are: ",
         join(
             ", ",
-            map
+            map 
                 "'$_'",
                 keys %$XML::SAX::Machines::Config::LegalProcessorClassOptions
         )
@@ -226,7 +226,7 @@ sub _config_as_string {
 #=over
 #
 #=item processor_class_option
-#
+# 
 #    if ( XML::SAX::Machines->processor_class_option
 #        $class, "ConstructWithHashedOptions"
 #    ) {

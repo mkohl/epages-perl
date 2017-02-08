@@ -47,12 +47,12 @@ six digits of microsecond precision.
 
 sub new {
     my ($class, %args) = @_;
-
+    
     $args{user} ||= $class->create_user;
     $args{host} ||= $class->create_host;
-
+        
     my $mid = join '@', @args{qw[user host]};
-
+    
     my $addr = Email::Address->new(undef, $mid);
 
     bless $addr => $class;
@@ -92,7 +92,7 @@ my $unique_value = 0;
 sub _generate_string {
     my $length = 3;
     $length = rand(8) until $length > 3;
-
+    
     join '', (map $CHARS[rand $#CHARS], 0 .. $length), $unique_value++;
 }
 

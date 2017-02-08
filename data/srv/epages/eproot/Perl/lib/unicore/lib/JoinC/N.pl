@@ -9,34 +9,34 @@
 
 # This file returns the 1_114_110 code points in Unicode Version 5.2.0 that
 # match any of the following regular expression constructs:
-#
+# 
 #         \p{Join_Control=No}
 #         \p{Join_C=N}
 #         \p{Is_Join_Control=F}
 #         \p{Is_Join_C=False}
-#
+# 
 #         \P{Join_Control}
 #         \P{Is_Join_Control}
 #         \P{Join_C}
 #         \P{Is_Join_C}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Join_C: No}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-0000    200B     # [8204]
-200E    10FFFF   # [1_105_906]
+0000	200B	 # [8204]
+200E	10FFFF	 # [1_105_906]
 END

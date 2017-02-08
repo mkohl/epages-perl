@@ -18,8 +18,8 @@ Tie::Handle - base class definitions for tied handles
 
     @ISA = qw(Tie::Handle);
 
-    sub READ { ... }            # Provide a needed method
-    sub TIEHANDLE { ... }       # Overrides inherited method
+    sub READ { ... }		# Provide a needed method
+    sub TIEHANDLE { ... }	# Overrides inherited method
 
 
     package main;
@@ -31,7 +31,7 @@ Tie::Handle - base class definitions for tied handles
 This module provides some skeletal methods for handle-tying classes. See
 L<perltie> for a list of the functions required in tying a handle to a package.
 The basic B<Tie::Handle> package provides a C<new> method, as well as methods
-C<TIEHANDLE>, C<PRINT>, C<PRINTF> and C<GETC>.
+C<TIEHANDLE>, C<PRINT>, C<PRINTF> and C<GETC>. 
 
 For developers wishing to write their own tied-handle classes, the methods
 are summarized below. The L<perltie> section not only documents these, but
@@ -133,35 +133,35 @@ sub new {
 sub TIEHANDLE {
     my $pkg = shift;
     if (defined &{"{$pkg}::new"}) {
-        warnings::warnif("WARNING: calling ${pkg}->new since ${pkg}->TIEHANDLE is missing");
-        $pkg->new(@_);
+	warnings::warnif("WARNING: calling ${pkg}->new since ${pkg}->TIEHANDLE is missing");
+	$pkg->new(@_);
     }
     else {
-        croak "$pkg doesn't define a TIEHANDLE method";
+	croak "$pkg doesn't define a TIEHANDLE method";
     }
 }
 
 sub PRINT {
     my $self = shift;
     if($self->can('WRITE') != \&WRITE) {
-        my $buf = join(defined $, ? $, : "",@_);
-        $buf .= $\ if defined $\;
-        $self->WRITE($buf,length($buf),0);
+	my $buf = join(defined $, ? $, : "",@_);
+	$buf .= $\ if defined $\;
+	$self->WRITE($buf,length($buf),0);
     }
     else {
-        croak ref($self)," doesn't define a PRINT method";
+	croak ref($self)," doesn't define a PRINT method";
     }
 }
 
 sub PRINTF {
     my $self = shift;
-
+    
     if($self->can('WRITE') != \&WRITE) {
-        my $buf = sprintf(shift,@_);
-        $self->WRITE($buf,length($buf),0);
+	my $buf = sprintf(shift,@_);
+	$self->WRITE($buf,length($buf),0);
     }
     else {
-        croak ref($self)," doesn't define a PRINTF method";
+	croak ref($self)," doesn't define a PRINTF method";
     }
 }
 
@@ -172,14 +172,14 @@ sub READLINE {
 
 sub GETC {
     my $self = shift;
-
+    
     if($self->can('READ') != \&READ) {
-        my $buf;
-        $self->READ($buf,1);
-        return $buf;
+	my $buf;
+	$self->READ($buf,1);
+	return $buf;
     }
     else {
-        croak ref($self)," doesn't define a GETC method";
+	croak ref($self)," doesn't define a GETC method";
     }
 }
 

@@ -49,7 +49,7 @@ sub _scandir
     return unless -d $dir;
 
     opendir DIR, $dir
-        or confess ("Cannot open directory $dir: $!");
+	or confess ("Cannot open directory $dir: $!");
 
     my @packages =
         ( map { substr($_, 0, length($_) - 3) }
@@ -58,7 +58,7 @@ sub _scandir
         );
 
     closedir DIR
-        or confess("Cannot close directory $dir: $!" );
+	or confess("Cannot close directory $dir: $!" );
 
     return @packages;
 }

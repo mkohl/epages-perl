@@ -5,32 +5,32 @@ digest algorithm
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::SaltedDigest;
+	use Authen::Passphrase::SaltedDigest;
 
-        $ppr = Authen::Passphrase::SaltedDigest->new(
-                algorithm => "SHA-1",
-                salt_hex => "a9f524b1e819e96d8cc7".
-                            "a04d5471e8b10c84e596",
-                hash_hex => "8270d9d1a345d3806ab2".
-                            "3b0385702e10f1acc943");
+	$ppr = Authen::Passphrase::SaltedDigest->new(
+		algorithm => "SHA-1",
+		salt_hex => "a9f524b1e819e96d8cc7".
+			    "a04d5471e8b10c84e596",
+		hash_hex => "8270d9d1a345d3806ab2".
+			    "3b0385702e10f1acc943");
 
-        $ppr = Authen::Passphrase::SaltedDigest->new(
-                algorithm => "SHA-1", salt_random => 20,
-                passphrase => "passphrase");
+	$ppr = Authen::Passphrase::SaltedDigest->new(
+		algorithm => "SHA-1", salt_random => 20,
+		passphrase => "passphrase");
 
-        $ppr = Authen::Passphrase::SaltedDigest->from_rfc2307(
-                "{SSHA}gnDZ0aNF04BqsjsDhXAuEPGsy".
-                "UOp9SSx6BnpbYzHoE1UceixDITllg==");
+	$ppr = Authen::Passphrase::SaltedDigest->from_rfc2307(
+		"{SSHA}gnDZ0aNF04BqsjsDhXAuEPGsy".
+		"UOp9SSx6BnpbYzHoE1UceixDITllg==");
 
-        $algorithm = $ppr->algorithm;
-        $salt = $ppr->salt;
-        $salt_hex = $ppr->salt_hex;
-        $hash = $ppr->hash;
-        $hash_hex = $ppr->hash_hex;
+	$algorithm = $ppr->algorithm;
+	$salt = $ppr->salt;
+	$salt_hex = $ppr->salt_hex;
+	$hash = $ppr->hash;
+	$hash_hex = $ppr->hash_hex;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $userPassword = $ppr->as_rfc2307;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -159,69 +159,69 @@ The digest algorithm must be given, and either the hash or the passphrase.
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "algorithm") {
-                        croak "algorithm specified redundantly"
-                                if exists $self->{algorithm};
-                        $self->{algorithm} = $value;
-                } elsif($attr eq "salt") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $value =~ m#\A[\x00-\xff]*\z#
-                                or croak "\"$value\" is not a valid salt";
-                        $self->{salt} = "$value";
-                } elsif($attr eq "salt_hex") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $value =~ m#\A(?:[0-9A-Fa-f]{2})+\z#
-                                or croak "\"$value\" is not a valid salt";
-                        $self->{salt} = pack("H*", $value);
-                } elsif($attr eq "salt_random") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        croak "\"$value\" is not a valid salt length"
-                                unless $value == int($value) && $value >= 0;
-                        $self->{salt} = rand_bits($value * 8);
-                } elsif($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[\x00-\xff]*\z#
-                                or croak "\"$value\" is not a valid hash";
-                        $self->{hash} = "$value";
-                } elsif($attr eq "hash_hex") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A(?:[0-9A-Fa-f]{2})+\z#
-                                or croak "\"$value\" is not a valid hash";
-                        $self->{hash} = pack("H*", $value);
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        croak "algorithm not specified" unless exists $self->{algorithm};
-        $self->{salt} = "" unless exists $self->{salt};
-        if(defined $passphrase) {
-                $self->{hash} = $self->_hash_of($passphrase);
-        } elsif(exists $self->{hash}) {
-                croak "not a valid ".$self->{algorithm}." hash"
-                        unless length($self->{hash}) ==
-                                length($self->_hash_of(""));
-        } else {
-                croak "hash not specified";
-        }
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "algorithm") {
+			croak "algorithm specified redundantly"
+				if exists $self->{algorithm};
+			$self->{algorithm} = $value;
+		} elsif($attr eq "salt") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$value =~ m#\A[\x00-\xff]*\z#
+				or croak "\"$value\" is not a valid salt";
+			$self->{salt} = "$value";
+		} elsif($attr eq "salt_hex") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$value =~ m#\A(?:[0-9A-Fa-f]{2})+\z#
+				or croak "\"$value\" is not a valid salt";
+			$self->{salt} = pack("H*", $value);
+		} elsif($attr eq "salt_random") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			croak "\"$value\" is not a valid salt length"
+				unless $value == int($value) && $value >= 0;
+			$self->{salt} = rand_bits($value * 8);
+		} elsif($attr eq "hash") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[\x00-\xff]*\z#
+				or croak "\"$value\" is not a valid hash";
+			$self->{hash} = "$value";
+		} elsif($attr eq "hash_hex") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A(?:[0-9A-Fa-f]{2})+\z#
+				or croak "\"$value\" is not a valid hash";
+			$self->{hash} = pack("H*", $value);
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	croak "algorithm not specified" unless exists $self->{algorithm};
+	$self->{salt} = "" unless exists $self->{salt};
+	if(defined $passphrase) {
+		$self->{hash} = $self->_hash_of($passphrase);
+	} elsif(exists $self->{hash}) {
+		croak "not a valid ".$self->{algorithm}." hash"
+			unless length($self->{hash}) ==
+				length($self->_hash_of(""));
+	} else {
+		croak "hash not specified";
+	}
+	return $self;
 }
 
 =item Authen::Passphrase::SaltedDigest->from_rfc2307(USERPASSWORD)
@@ -240,38 +240,38 @@ All scheme identifiers are recognised case-insensitively.
 =cut
 
 my %rfc2307_scheme_meaning = (
-        "MD4" => ["MD4", 16, 0],
-        "MD5" => ["MD5", 16, 0],
-        "RMD160" => ["Crypt::RIPEMD160-", 20, 0],
-        "SHA" => ["SHA-1", 20, 0],
-        "SMD5" => ["MD5", 16, 1],
-        "SSHA" => ["SHA-1", 20, 1],
+	"MD4" => ["MD4", 16, 0],
+	"MD5" => ["MD5", 16, 0],
+	"RMD160" => ["Crypt::RIPEMD160-", 20, 0],
+	"SHA" => ["SHA-1", 20, 0],
+	"SMD5" => ["MD5", 16, 1],
+	"SSHA" => ["SHA-1", 20, 1],
 );
 
 sub from_rfc2307 {
-        my($class, $userpassword) = @_;
-        return $class->SUPER::from_rfc2307($userpassword)
-                unless $userpassword =~ /\A\{([-0-9A-Za-z]+)\}/;
-        my $scheme = uc($1);
-        my $meaning = $rfc2307_scheme_meaning{$scheme};
-        return $class->SUPER::from_rfc2307($userpassword)
-                unless defined $meaning;
-        croak "malformed {$scheme} data"
-                unless $userpassword =~
-                        m#\A\{.*?\}
-                          ((?>(?:[A-Za-z0-9+/]{4})*)
-                           (?:|[A-Za-z0-9+/]{2}[AEIMQUYcgkosw048]=|
-                               [A-Za-z0-9+/][AQgw]==))\z#x;
-        my $b64 = $1;
-        my $hash_and_salt = decode_base64($b64);
-        my($algorithm, $hash_len, $salt_allowed) = @$meaning;
-        croak "insufficient hash data for {$scheme}"
-                if length($hash_and_salt) < $hash_len;
-        croak "too much hash data for {$scheme}"
-                if !$salt_allowed && length($hash_and_salt) > $hash_len;
-        return $class->new(algorithm => $algorithm,
-                salt => substr($hash_and_salt, $hash_len),
-                hash => substr($hash_and_salt, 0, $hash_len));
+	my($class, $userpassword) = @_;
+	return $class->SUPER::from_rfc2307($userpassword)
+		unless $userpassword =~ /\A\{([-0-9A-Za-z]+)\}/;
+	my $scheme = uc($1);
+	my $meaning = $rfc2307_scheme_meaning{$scheme};
+	return $class->SUPER::from_rfc2307($userpassword)
+		unless defined $meaning;
+	croak "malformed {$scheme} data"
+		unless $userpassword =~
+			m#\A\{.*?\}
+			  ((?>(?:[A-Za-z0-9+/]{4})*)
+			   (?:|[A-Za-z0-9+/]{2}[AEIMQUYcgkosw048]=|
+			       [A-Za-z0-9+/][AQgw]==))\z#x;
+	my $b64 = $1;
+	my $hash_and_salt = decode_base64($b64);
+	my($algorithm, $hash_len, $salt_allowed) = @$meaning;
+	croak "insufficient hash data for {$scheme}"
+		if length($hash_and_salt) < $hash_len;
+	croak "too much hash data for {$scheme}"
+		if !$salt_allowed && length($hash_and_salt) > $hash_len;
+	return $class->new(algorithm => $algorithm,
+		salt => substr($hash_and_salt, $hash_len),
+		hash => substr($hash_and_salt, 0, $hash_len));
 }
 
 =back
@@ -288,8 +288,8 @@ constructor.
 =cut
 
 sub algorithm {
-        my($self) = @_;
-        return $self->{algorithm};
+	my($self) = @_;
+	return $self->{algorithm};
 }
 
 =item $ppr->salt
@@ -299,8 +299,8 @@ Returns the salt, in raw form.
 =cut
 
 sub salt {
-        my($self) = @_;
-        return $self->{salt};
+	my($self) = @_;
+	return $self->{salt};
 }
 
 =item $ppr->salt_hex
@@ -310,8 +310,8 @@ Returns the salt, as a string of hexadecimal digits.
 =cut
 
 sub salt_hex {
-        my($self) = @_;
-        return unpack("H*", $self->{salt});
+	my($self) = @_;
+	return unpack("H*", $self->{salt});
 }
 
 =item $ppr->hash
@@ -321,8 +321,8 @@ Returns the hash value, in raw form.
 =cut
 
 sub hash {
-        my($self) = @_;
-        return $self->{hash};
+	my($self) = @_;
+	return $self->{hash};
 }
 
 =item $ppr->hash_hex
@@ -332,8 +332,8 @@ Returns the hash value, as a string of hexadecimal digits.
 =cut
 
 sub hash_hex {
-        my($self) = @_;
-        return unpack("H*", $self->{hash});
+	my($self) = @_;
+	return unpack("H*", $self->{hash});
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -347,81 +347,81 @@ can be represented in RFC 2307 form.
 =cut
 
 sub _hash_of {
-        my($self, $passphrase) = @_;
-        my $alg = $self->{algorithm};
-        my $ctx;
-        if(is_string($alg)) {
-                if($alg =~ /::/) {
-                        $alg =~ /\A(?:::)?([0-9a-zA-Z_:]+)
-                                   (-([0-9][0-9_]*(?:\._*[0-9][0-9_]*)?)?)?\z/x
-                                or croak "module spec `$alg' not understood";
-                        my($pkgname, $load_p, $modver) = ($1, $2, $3);
-                        croak "bad package name `$pkgname'"
-                                unless is_valid_module_name($pkgname);
-                        if($load_p) {
-                                if(defined $modver) {
-                                        $modver =~ tr/_//d;
-                                        use_module($pkgname, $modver);
-                                } else {
-                                        use_module($pkgname);
-                                }
-                        }
-                        $ctx = $pkgname->new;
-                } else {
-                        $ctx = Digest->new($alg);
-                }
-        } elsif(is_blessed($alg)) {
-                $ctx = $alg->new;
-        } else {
-                croak "algorithm specifier `$alg' is of an unrecognised type";
-        }
-        $ctx->add($passphrase);
-        $ctx->add($self->{salt});
-        return $ctx->digest;
+	my($self, $passphrase) = @_;
+	my $alg = $self->{algorithm};
+	my $ctx;
+	if(is_string($alg)) {
+		if($alg =~ /::/) {
+			$alg =~ /\A(?:::)?([0-9a-zA-Z_:]+)
+				   (-([0-9][0-9_]*(?:\._*[0-9][0-9_]*)?)?)?\z/x
+				or croak "module spec `$alg' not understood";
+			my($pkgname, $load_p, $modver) = ($1, $2, $3);
+			croak "bad package name `$pkgname'"
+				unless is_valid_module_name($pkgname);
+			if($load_p) {
+				if(defined $modver) {
+					$modver =~ tr/_//d;
+					use_module($pkgname, $modver);
+				} else {
+					use_module($pkgname);
+				}
+			}
+			$ctx = $pkgname->new;
+		} else {
+			$ctx = Digest->new($alg);
+		}
+	} elsif(is_blessed($alg)) {
+		$ctx = $alg->new;
+	} else {
+		croak "algorithm specifier `$alg' is of an unrecognised type";
+	}
+	$ctx->add($passphrase);
+	$ctx->add($self->{salt});
+	return $ctx->digest;
 }
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $self->_hash_of($passphrase) eq $self->{hash};
+	my($self, $passphrase) = @_;
+	return $self->_hash_of($passphrase) eq $self->{hash};
 }
 
 my %rfc2307_scheme_for_digest_name = (
-        "MD4" => "MD4",
-        "MD5" => "MD5",
-        "SHA-1" => "SHA",
-        "SHA1" => "SHA",
+	"MD4" => "MD4",
+	"MD5" => "MD5",
+	"SHA-1" => "SHA",
+	"SHA1" => "SHA",
 );
 
 my %rfc2307_scheme_for_package_name = (
-        "Crypt::RIPEMD160" => "RMD160",
-        "Digest::MD4" => "MD4",
-        "Digest::MD5" => "MD5",
-        "Digest::MD5::Perl" => "MD5",
-        "Digest::Perl::MD4" => "MD4",
-        "Digest::SHA" => "SHA",
-        "Digest::SHA::PurePerl" => "SHA",
-        "Digest::SHA1" => "SHA",
-        "MD5" => "MD5",
-        "RIPEMD160" => "RMD160",
+	"Crypt::RIPEMD160" => "RMD160",
+	"Digest::MD4" => "MD4",
+	"Digest::MD5" => "MD5",
+	"Digest::MD5::Perl" => "MD5",
+	"Digest::Perl::MD4" => "MD4",
+	"Digest::SHA" => "SHA",
+	"Digest::SHA::PurePerl" => "SHA",
+	"Digest::SHA1" => "SHA",
+	"MD5" => "MD5",
+	"RIPEMD160" => "RMD160",
 );
 
 sub as_rfc2307 {
-        my($self) = @_;
-        my $alg = $self->{algorithm};
-        my $scheme;
-        if(is_string($alg)) {
-                if($alg =~ /::/) {
-                        $scheme = $rfc2307_scheme_for_package_name{$1}
-                                if $alg =~ /\A(?:::)?
-                                            ([0-9a-zA-Z_:]+)(?:-[0-9._]*)?\z/x;
-                } else {
-                        $scheme = $rfc2307_scheme_for_digest_name{$alg};
-                }
-        }
-        croak "don't know RFC 2307 scheme identifier for digest algorithm $alg"
-                unless defined $scheme;
-        return "{".($self->{salt} eq "" ? "" : "S").$scheme."}".
-                encode_base64($self->{hash}.$self->{salt}, "");
+	my($self) = @_;
+	my $alg = $self->{algorithm};
+	my $scheme;
+	if(is_string($alg)) {
+		if($alg =~ /::/) {
+			$scheme = $rfc2307_scheme_for_package_name{$1}
+				if $alg =~ /\A(?:::)?
+					    ([0-9a-zA-Z_:]+)(?:-[0-9._]*)?\z/x;
+		} else {
+			$scheme = $rfc2307_scheme_for_digest_name{$alg};
+		}
+	}
+	croak "don't know RFC 2307 scheme identifier for digest algorithm $alg"
+		unless defined $scheme;
+	return "{".($self->{salt} eq "" ? "" : "S").$scheme."}".
+		encode_base64($self->{hash}.$self->{salt}, "");
 }
 
 =back

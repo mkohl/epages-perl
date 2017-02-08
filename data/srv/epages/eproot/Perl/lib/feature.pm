@@ -37,11 +37,11 @@ feature - Perl pragma to enable new features
 
     use feature qw(switch say);
     given ($foo) {
-        when (1)          { say "\$foo == 1" }
-        when ([2,3])      { say "\$foo == 2 || \$foo == 3" }
-        when (/^a[bc]d$/) { say "\$foo eq 'abd' || \$foo eq 'acd'" }
-        when ($_ > 100)   { say "\$foo > 100" }
-        default           { say "None of the above" }
+	when (1)	  { say "\$foo == 1" }
+	when ([2,3])	  { say "\$foo == 2 || \$foo == 3" }
+	when (/^a[bc]d$/) { say "\$foo eq 'abd' || \$foo eq 'acd'" }
+	when ($_ > 100)   { say "\$foo > 100" }
+	default		  { say "None of the above" }
     }
 
     use feature ':5.10'; # loads all features available in perl 5.10
@@ -160,25 +160,25 @@ with the same effect.
 sub import {
     my $class = shift;
     if (@_ == 0) {
-        croak("No features specified");
+	croak("No features specified");
     }
     while (@_) {
-        my $name = shift(@_);
-        if (substr($name, 0, 1) eq ":") {
-            my $v = substr($name, 1);
-            if (!exists $feature_bundle{$v}) {
-                $v =~ s/^([0-9]+)\.([0-9]+).[0-9]+$/$1.$2/;
-                if (!exists $feature_bundle{$v}) {
-                    unknown_feature_bundle(substr($name, 1));
-                }
-            }
-            unshift @_, @{$feature_bundle{$v}};
-            next;
-        }
-        if (!exists $feature{$name}) {
-            unknown_feature($name);
-        }
-        $^H{$feature{$name}} = 1;
+	my $name = shift(@_);
+	if (substr($name, 0, 1) eq ":") {
+	    my $v = substr($name, 1);
+	    if (!exists $feature_bundle{$v}) {
+		$v =~ s/^([0-9]+)\.([0-9]+).[0-9]+$/$1.$2/;
+		if (!exists $feature_bundle{$v}) {
+		    unknown_feature_bundle(substr($name, 1));
+		}
+	    }
+	    unshift @_, @{$feature_bundle{$v}};
+	    next;
+	}
+	if (!exists $feature{$name}) {
+	    unknown_feature($name);
+	}
+	$^H{$feature{$name}} = 1;
         $^H |= $hint_uni8bit if $name eq 'unicode_strings';
     }
 }
@@ -188,44 +188,44 @@ sub unimport {
 
     # A bare C<no feature> should disable *all* features
     if (!@_) {
-        delete @^H{ values(%feature) };
+	delete @^H{ values(%feature) };
         $^H &= ~ $hint_uni8bit;
-        return;
+	return;
     }
 
     while (@_) {
-        my $name = shift;
-        if (substr($name, 0, 1) eq ":") {
-            my $v = substr($name, 1);
-            if (!exists $feature_bundle{$v}) {
-                $v =~ s/^([0-9]+)\.([0-9]+).[0-9]+$/$1.$2/;
-                if (!exists $feature_bundle{$v}) {
-                    unknown_feature_bundle(substr($name, 1));
-                }
-            }
-            unshift @_, @{$feature_bundle{$v}};
-            next;
-        }
-        if (!exists($feature{$name})) {
-            unknown_feature($name);
-        }
-        else {
-            delete $^H{$feature{$name}};
+	my $name = shift;
+	if (substr($name, 0, 1) eq ":") {
+	    my $v = substr($name, 1);
+	    if (!exists $feature_bundle{$v}) {
+		$v =~ s/^([0-9]+)\.([0-9]+).[0-9]+$/$1.$2/;
+		if (!exists $feature_bundle{$v}) {
+		    unknown_feature_bundle(substr($name, 1));
+		}
+	    }
+	    unshift @_, @{$feature_bundle{$v}};
+	    next;
+	}
+	if (!exists($feature{$name})) {
+	    unknown_feature($name);
+	}
+	else {
+	    delete $^H{$feature{$name}};
             $^H &= ~ $hint_uni8bit if $name eq 'unicode_strings';
-        }
+	}
     }
 }
 
 sub unknown_feature {
     my $feature = shift;
     croak(sprintf('Feature "%s" is not supported by Perl %vd',
-            $feature, $^V));
+	    $feature, $^V));
 }
 
 sub unknown_feature_bundle {
     my $feature = shift;
     croak(sprintf('Feature bundle "%s" is not supported by Perl %vd',
-            $feature, $^V));
+	    $feature, $^V));
 }
 
 sub croak {

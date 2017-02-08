@@ -56,7 +56,7 @@ Daniel Ruoso, C<daniel@ruoso.com>
 
 =head1 LICENSE
 
-This library is free software . You can redistribute it and/or modify
+This library is free software . You can redistribute it and/or modify 
 it under the same terms as perl itself.
 
 =cut

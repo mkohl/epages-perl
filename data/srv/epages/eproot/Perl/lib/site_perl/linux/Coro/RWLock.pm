@@ -25,8 +25,8 @@ read by many coroutines in parallel as long as no writer has locked it
 exist. RWLocks basically allow many concurrent readers (without writers)
 OR a single writer (but no readers).
 
-You don't have to load C<Coro::RWLock> manually, it will be loaded
-automatically when you C<use Coro> and call the C<new> constructor.
+You don't have to load C<Coro::RWLock> manually, it will be loaded 
+automatically when you C<use Coro> and call the C<new> constructor. 
 
 =over 4
 

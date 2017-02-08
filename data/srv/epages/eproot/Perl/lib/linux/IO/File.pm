@@ -112,7 +112,7 @@ suggested instead.
 
 =head1 SEE ALSO
 
-L<perlfunc>,
+L<perlfunc>, 
 L<perlop/"I/O Operators">,
 L<IO::Handle>,
 L<IO::Seekable>,
@@ -157,11 +157,11 @@ sub new {
     my $type = shift;
     my $class = ref($type) || $type || "IO::File";
     @_ >= 0 && @_ <= 3
-        or croak "usage: new $class [FILENAME [,MODE [,PERMS]]]";
+	or croak "usage: new $class [FILENAME [,MODE [,PERMS]]]";
     my $fh = $class->SUPER::new();
     if (@_) {
-        $fh->open(@_)
-            or return undef;
+	$fh->open(@_)
+	    or return undef;
     }
     $fh;
 }
@@ -174,14 +174,14 @@ sub open {
     @_ >= 2 && @_ <= 4 or croak 'usage: $fh->open(FILENAME [,MODE [,PERMS]])';
     my ($fh, $file) = @_;
     if (@_ > 2) {
-        my ($mode, $perms) = @_[2, 3];
-        if ($mode =~ /^\d+$/) {
-            defined $perms or $perms = 0666;
-            return sysopen($fh, $file, $mode, $perms);
-        } elsif ($mode =~ /:/) {
-            return open($fh, $mode, $file) if @_ == 3;
-            croak 'usage: $fh->open(FILENAME, IOLAYERS)';
-        } else {
+	my ($mode, $perms) = @_[2, 3];
+	if ($mode =~ /^\d+$/) {
+	    defined $perms or $perms = 0666;
+	    return sysopen($fh, $file, $mode, $perms);
+	} elsif ($mode =~ /:/) {
+	    return open($fh, $mode, $file) if @_ == 3;
+	    croak 'usage: $fh->open(FILENAME, IOLAYERS)';
+	} else {
             return open($fh, IO::Handle::_open_mode_string($mode), $file);
         }
     }

@@ -182,7 +182,7 @@ sub decode ($$;$) {
               : exists $GSM2UNI{$c2} ? $ATMARK . $GSM2UNI{$c2}
               : $chk
               ? croak sprintf( "\\x%02X\\x%02X does not map to Unicode",
-                               ord($c), ord($c2) )
+			       ord($c), ord($c2) )
               : $ATMARK . $FBCHAR;
 
         }
@@ -193,7 +193,7 @@ sub decode ($$;$) {
               : exists $GSM2UNI{$c2}        ? $NBSP . $GSM2UNI{$c2}
               : $chk
               ? croak sprintf( "\\x%02X\\x%02X does not map to Unicode",
-                               ord($c), ord($c2) )
+			       ord($c), ord($c2) )
               : $NBSP . $FBCHAR;
         }
         else {
@@ -224,8 +224,8 @@ sub encode($$;$) {
           ? $UNI2GSM{$u}
           : $chk ? ref $chk eq 'CODE'
               ? $chk->( ord($u) )
-              : croak sprintf( "\\x{%04x} does not map to %s",
-                               ord($u), $obj->name )
+              : croak sprintf( "\\x{%04x} does not map to %s", 
+			       ord($u), $obj->name )
           : $FBCHAR;
     }
     $_[1] = $str if $chk;
@@ -241,7 +241,7 @@ Encode::GSM0338 -- ESTI GSM 03.38 Encoding
 
 =head1 SYNOPSIS
 
-  use Encode qw/encode decode/;
+  use Encode qw/encode decode/; 
   $gsm0338 = encode("gsm0338", $utf8);    # loads Encode::GSM0338 implicitly
   $utf8    = decode("gsm0338", $gsm0338); # ditto
 
@@ -280,7 +280,7 @@ ESTI GSM 03.38 Encoding itself.
 
 Mapping \x00 to '@' causes too much pain everywhere.
 
-Its use of \x1b (escape) is also very questionable.
+Its use of \x1b (escape) is also very questionable.  
 
 Because of those two, the code paging approach used use in ucm-based
 Encoding SOMETIMES fails so this module was written.

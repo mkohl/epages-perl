@@ -5,7 +5,7 @@ use strict;
 our $VERSION = '0.22';
 $VERSION = eval $VERSION;
 
-# We must override *CORE::GLOBAL::caller if it hasn't already been
+# We must override *CORE::GLOBAL::caller if it hasn't already been 
 # overridden or else Perl won't see our local override later.
 
 if ( not defined *CORE::GLOBAL::caller{CODE} ) {
@@ -42,7 +42,7 @@ sub _force_reload {
     require $m if delete $INC{$m};
   }
 }
-
+  
 =head1 NAME
 
 Sub::Uplevel - apparently run a function in a higher stack frame
@@ -117,7 +117,7 @@ stack depth.
 our (@Up_Frames, $Caller_Proxy);
 
 sub _apparent_stack_height {
-    my $height = 1; # start above this function
+    my $height = 1; # start above this function 
     while ( 1 ) {
         last if ! defined scalar $Caller_Proxy->($height);
         $height++;
@@ -127,7 +127,7 @@ sub _apparent_stack_height {
 
 sub uplevel {
     my($num_frames, $func, @args) = @_;
-
+    
     # backwards compatible version of "no warnings 'redefine'"
     my $old_W = $^W;
     $^W = 0;
@@ -136,7 +136,7 @@ sub uplevel {
     local $Caller_Proxy = *CORE::GLOBAL::caller{CODE}
         if *CORE::GLOBAL::caller{CODE} != \&_uplevel_caller;
     local *CORE::GLOBAL::caller = \&_uplevel_caller;
-
+    
     # restore old warnings state
     $^W = $old_W;
 
@@ -146,7 +146,7 @@ sub uplevel {
     }
 
     local @Up_Frames = ($num_frames, @Up_Frames );
-
+    
     return $func->(@args);
 }
 
@@ -191,17 +191,17 @@ Carp::short_error_loc           0
 Carp::shortmess_heavy           1           0
 Carp::croak                     2           1
 try_croak                       3           2
-uplevel                         4
-function_that_called_uplevel    5
+uplevel                         4            
+function_that_called_uplevel    5            
 caller_we_want_to_see           6           3
 its_caller                      7           4
 
-So when caller(X) winds up below uplevel(), it only has to use
+So when caller(X) winds up below uplevel(), it only has to use  
 CORE::caller(X+1) (to skip CORE::GLOBAL::caller).  But when caller(X)
 winds up no or above uplevel(), it's CORE::caller(X+1+uplevel+1).
 
 Which means I'm probably going to have to do something nasty like walk
-up the call stack on each caller() to see if I'm going to wind up
+up the call stack on each caller() to see if I'm going to wind up   
 before or after Sub::Uplevel::uplevel().
 
 =end _private
@@ -228,7 +228,7 @@ in the call stack, i.e. the requested height plus any uplevel adjustments
 found during the search
 
 =end _dagolden
-
+        
 =cut
 
     my $saw_uplevel = 0;
@@ -237,12 +237,12 @@ found during the search
     # walk up the call stack to fight the right package level to return;
     # look one higher than requested for each call to uplevel found
     # and adjust by the amount found in the Up_Frames stack for that call.
-    # We *must* use CORE::caller here since we need the real stack not what
+    # We *must* use CORE::caller here since we need the real stack not what 
     # some other override says the stack looks like, just in case that other
     # override breaks things in some horrible way
 
     for ( my $up = 0; $up <= $height + $adjust; $up++ ) {
-        my @caller = CORE::caller($up + 1);
+        my @caller = CORE::caller($up + 1); 
         if( defined $caller[0] && $caller[0] eq __PACKAGE__ ) {
             # add one for each uplevel call seen
             # and look into the uplevel stack for the offset
@@ -302,10 +302,10 @@ of caller(), regardless of whether uplevel() is in effect.
 
 Sub::Uplevel overrides CORE::GLOBAL::caller temporarily for the scope of
 each uplevel call.  It does its best to work with any previously existing
-CORE::GLOBAL::caller (both when Sub::Uplevel is first loaded and within
-each uplevel call) such as from Contextual::Return or Hook::LexWrap.
+CORE::GLOBAL::caller (both when Sub::Uplevel is first loaded and within 
+each uplevel call) such as from Contextual::Return or Hook::LexWrap.  
 
-However, if you are routinely using multiple modules that override
+However, if you are routinely using multiple modules that override 
 CORE::GLOBAL::caller, you are probably asking for trouble.
 
 You B<should> load Sub::Uplevel as early as possible within your program.  As
@@ -318,7 +318,7 @@ Exporter (and Exporter::Heavy) after loading Sub::Uplevel, use it with the
     use Sub::Uplevel qw/:aggressive/;
 
 The private function C<Sub::Uplevel::_force_reload()> may be passed a list of
-additional modules to reload if ":aggressive" is not aggressive enough.
+additional modules to reload if ":aggressive" is not aggressive enough.  
 Reloading modules may break things, so only use this as a last resort.
 
 As of version 0.20, Sub::Uplevel requires Perl 5.6 or greater.
@@ -352,7 +352,7 @@ See http://www.perl.com/perl/misc/Artistic.html
 
 =head1 SEE ALSO
 
-PadWalker (for the similar idea with lexicals), Hook::LexWrap,
+PadWalker (for the similar idea with lexicals), Hook::LexWrap, 
 Tcl's uplevel() at http://www.scriptics.com/man/tcl8.4/TclCmd/uplevel.htm
 
 =cut

@@ -5,13 +5,13 @@ as I/O handle
 
 =head1 SYNOPSIS
 
-        use Data::Entropy::RawSource::CryptCounter;
+	use Data::Entropy::RawSource::CryptCounter;
 
-        my $rawsrc = Data::Entropy::RawSource::CryptCounter
-                        ->new(Crypt::Rijndael->new($key));
+	my $rawsrc = Data::Entropy::RawSource::CryptCounter
+			->new(Crypt::Rijndael->new($key));
 
-        $c = $rawsrc->getc;
-        # and the rest of the I/O handle interface
+	$c = $rawsrc->getc;
+	# and the rest of the I/O handle interface
 
 =head1 DESCRIPTION
 
@@ -61,13 +61,13 @@ output of the cipher's counter mode.
 =cut
 
 sub new {
-        my($class, $cipher) = @_;
-        return bless({
-                cipher => $cipher,
-                blksize => $cipher->blocksize,
-                counter => "\0" x $cipher->blocksize,
-                subpos => 0,
-        }, $class);
+	my($class, $cipher) = @_;
+	return bless({
+		cipher => $cipher,
+		blksize => $cipher->blocksize,
+		counter => "\0" x $cipher->blocksize,
+		subpos => 0,
+	}, $class);
 }
 
 =back
@@ -138,39 +138,39 @@ is fundamentally read-only.
 =cut
 
 sub _ensure_buffer {
-        my($self) = @_;
-        $self->{buffer} = $self->{cipher}->encrypt($self->{counter})
-                unless exists $self->{buffer};
+	my($self) = @_;
+	$self->{buffer} = $self->{cipher}->encrypt($self->{counter})
+		unless exists $self->{buffer};
 }
 
 sub _clear_buffer {
-        my($self) = @_;
-        delete $self->{buffer};
+	my($self) = @_;
+	delete $self->{buffer};
 }
 
 sub _increment_counter {
-        my($self) = @_;
-        for(my $i = 0; $i != $self->{blksize}; $i++) {
-                my $c = ord(substr($self->{counter}, $i, 1));
-                unless($c == 255) {
-                        substr $self->{counter}, $i, 1, chr($c + 1);
-                        return;
-                }
-                substr $self->{counter}, $i, 1, "\0";
-        }
-        $self->{counter} = undef;
+	my($self) = @_;
+	for(my $i = 0; $i != $self->{blksize}; $i++) {
+		my $c = ord(substr($self->{counter}, $i, 1));
+		unless($c == 255) {
+			substr $self->{counter}, $i, 1, chr($c + 1);
+			return;
+		}
+		substr $self->{counter}, $i, 1, "\0";
+	}
+	$self->{counter} = undef;
 }
 
 sub _decrement_counter {
-        my($self) = @_;
-        for(my $i = 0; ; $i++) {
-                my $c = ord(substr($self->{counter}, $i, 1));
-                unless($c == 0) {
-                        substr $self->{counter}, $i, 1, chr($c - 1);
-                        return;
-                }
-                substr $self->{counter}, $i, 1, "\xff";
-        }
+	my($self) = @_;
+	for(my $i = 0; ; $i++) {
+		my $c = ord(substr($self->{counter}, $i, 1));
+		unless($c == 0) {
+			substr $self->{counter}, $i, 1, chr($c - 1);
+			return;
+		}
+		substr $self->{counter}, $i, 1, "\xff";
+	}
 }
 
 sub close { 1 }
@@ -182,85 +182,85 @@ sub error { 0 }
 sub clearerr { 0 }
 
 sub getc {
-        my($self) = @_;
-        return undef unless defined $self->{counter};
-        $self->_ensure_buffer;
-        my $ret = substr($self->{buffer}, $self->{subpos}, 1);
-        if(++$self->{subpos} == $self->{blksize}) {
-                $self->_increment_counter;
-                $self->{subpos} = 0;
-                $self->_clear_buffer;
-        }
-        return $ret;
+	my($self) = @_;
+	return undef unless defined $self->{counter};
+	$self->_ensure_buffer;
+	my $ret = substr($self->{buffer}, $self->{subpos}, 1);
+	if(++$self->{subpos} == $self->{blksize}) {
+		$self->_increment_counter;
+		$self->{subpos} = 0;
+		$self->_clear_buffer;
+	}
+	return $ret;
 }
 
 sub ungetc {
-        my($self, undef) = @_;
-        unless($self->{subpos} == 0) {
-                $self->{subpos}--;
-                return;
-        }
-        return if $self->{counter} =~ /\A\0*\z/;
-        $self->_decrement_counter;
-        $self->{subpos} = $self->{blksize} - 1;
-        $self->_clear_buffer;
+	my($self, undef) = @_;
+	unless($self->{subpos} == 0) {
+		$self->{subpos}--;
+		return;
+	}
+	return if $self->{counter} =~ /\A\0*\z/;
+	$self->_decrement_counter;
+	$self->{subpos} = $self->{blksize} - 1;
+	$self->_clear_buffer;
 }
 
 sub read {
-        my($self, undef, $length, $offset) = @_;
-        return undef if $length < 0;
-        $_[1] = "" unless defined $_[1];
-        if(!defined($offset)) {
-                $offset = 0;
-                $_[1] = "";
-        } elsif($offset < 0) {
-                return undef if $offset < -length($_[1]);
-                substr $_[1], $offset, -$offset, "";
-                $offset = length($_[1]);
-        } elsif($offset > length($_[1])) {
-                $_[1] .= "\0" x ($offset - length($_[1]));
-        } else {
-                substr $_[1], $offset, length($_[1]) - $offset, "";
-        }
-        my $original_offset = $offset;
-        while($length != 0 && defined($self->{counter})) {
-                $self->_ensure_buffer;
-                my $avail = $self->{blksize} - $self->{subpos};
-                if($length < $avail) {
-                        $_[1] .= substr($self->{buffer}, $self->{subpos},
-                                        $length);
-                        $offset += $length;
-                        $self->{subpos} += $length;
-                        last;
-                }
-                $_[1] .= substr($self->{buffer}, $self->{subpos}, $avail);
-                $offset += $avail;
-                $length -= $avail;
-                $self->_increment_counter;
-                $self->{subpos} = 0;
-                $self->_clear_buffer;
-        }
-        return $offset - $original_offset;
+	my($self, undef, $length, $offset) = @_;
+	return undef if $length < 0;
+	$_[1] = "" unless defined $_[1];
+	if(!defined($offset)) {
+		$offset = 0;
+		$_[1] = "";
+	} elsif($offset < 0) {
+		return undef if $offset < -length($_[1]);
+		substr $_[1], $offset, -$offset, "";
+		$offset = length($_[1]);
+	} elsif($offset > length($_[1])) {
+		$_[1] .= "\0" x ($offset - length($_[1]));
+	} else {
+		substr $_[1], $offset, length($_[1]) - $offset, "";
+	}
+	my $original_offset = $offset;
+	while($length != 0 && defined($self->{counter})) {
+		$self->_ensure_buffer;
+		my $avail = $self->{blksize} - $self->{subpos};
+		if($length < $avail) {
+			$_[1] .= substr($self->{buffer}, $self->{subpos},
+					$length);
+			$offset += $length;
+			$self->{subpos} += $length;
+			last;
+		}
+		$_[1] .= substr($self->{buffer}, $self->{subpos}, $avail);
+		$offset += $avail;
+		$length -= $avail;
+		$self->_increment_counter;
+		$self->{subpos} = 0;
+		$self->_clear_buffer;
+	}
+	return $offset - $original_offset;
 }
 
 *sysread = \&read;
 
 sub tell {
-        my($self) = @_;
-        use integer;
-        my $ctr = $self->{counter};
-        my $nblocks;
-        if(defined $ctr) {
-                return -1 if $ctr =~ /\A.{4,}[^\0]/s;
-                $ctr .= "\0\0\0\0" if $self->{blksize} < 4;
-                $nblocks = unpack("V", $ctr);
-        } else {
-                return -1 if $self->{blksize} >= 4;
-                $nblocks = 1 << ($self->{blksize} << 3);
-        }
-        my $pos = $nblocks * $self->{blksize} + $self->{subpos};
-        return -1 unless ($pos-$self->{subpos}) / $self->{blksize} == $nblocks;
-        return $pos;
+	my($self) = @_;
+	use integer;
+	my $ctr = $self->{counter};
+	my $nblocks;
+	if(defined $ctr) {
+		return -1 if $ctr =~ /\A.{4,}[^\0]/s;
+		$ctr .= "\0\0\0\0" if $self->{blksize} < 4;
+		$nblocks = unpack("V", $ctr);
+	} else {
+		return -1 if $self->{blksize} >= 4;
+		$nblocks = 1 << ($self->{blksize} << 3);
+	}
+	my $pos = $nblocks * $self->{blksize} + $self->{subpos};
+	return -1 unless ($pos-$self->{subpos}) / $self->{blksize} == $nblocks;
+	return $pos;
 }
 
 use constant SEEK_SET => 0;
@@ -268,75 +268,75 @@ use constant SEEK_CUR => 1;
 use constant SEEK_END => 2;
 
 sub sysseek {
-        my($self, $offset, $whence) = @_;
-        if($whence == SEEK_SET) {
-                use integer;
-                return undef if $offset < 0;
-                my $ctr = $offset / $self->{blksize};
-                my $subpos = $offset % $self->{blksize};
-                $ctr = pack("V", $ctr);
-                if($self->{blksize} < 4) {
-                        return undef unless
-                        my $chopped = substr($ctr, $self->{blksize},
-                                             4-$self->{blksize}, "");
-                        if($chopped =~ /\A\x{01}\0*\z/ && $subpos == 0) {
-                                $self->{counter} = undef;
-                                $self->{subpos} = 0;
-                                $self->_clear_buffer;
-                                return $offset;
-                        } elsif($chopped !~ /\A\0+\z/) {
-                                return undef;
-                        }
-                } else {
-                        $ctr .= "\0" x ($self->{blksize} - 4);
-                }
-                $self->{counter} = $ctr;
-                $self->{subpos} = $subpos;
-                $self->_clear_buffer;
-                return $offset || "0 but true";
-        } elsif($whence == SEEK_CUR) {
-                my $pos = $self->tell;
-                return undef if $pos == -1;
-                return $self->sysseek($pos + $offset, SEEK_SET);
-        } elsif($whence == SEEK_END) {
-                use integer;
-                return undef if $offset > 0;
-                return undef if $self->{blksize} >= 4;
-                my $nblocks = 1 << ($self->{blksize} << 3);
-                my $pos = $nblocks * $self->{blksize};
-                return undef unless $pos/$self->{blksize} == $nblocks;
-                return $self->sysseek($pos + $offset, SEEK_SET);
-        } else {
-                return undef;
-        }
+	my($self, $offset, $whence) = @_;
+	if($whence == SEEK_SET) {
+		use integer;
+		return undef if $offset < 0;
+		my $ctr = $offset / $self->{blksize};
+		my $subpos = $offset % $self->{blksize};
+		$ctr = pack("V", $ctr);
+		if($self->{blksize} < 4) {
+			return undef unless
+			my $chopped = substr($ctr, $self->{blksize},
+					     4-$self->{blksize}, "");
+			if($chopped =~ /\A\x{01}\0*\z/ && $subpos == 0) {
+				$self->{counter} = undef;
+				$self->{subpos} = 0;
+				$self->_clear_buffer;
+				return $offset;
+			} elsif($chopped !~ /\A\0+\z/) {
+				return undef;
+			}
+		} else {
+			$ctr .= "\0" x ($self->{blksize} - 4);
+		}
+		$self->{counter} = $ctr;
+		$self->{subpos} = $subpos;
+		$self->_clear_buffer;
+		return $offset || "0 but true";
+	} elsif($whence == SEEK_CUR) {
+		my $pos = $self->tell;
+		return undef if $pos == -1;
+		return $self->sysseek($pos + $offset, SEEK_SET);
+	} elsif($whence == SEEK_END) {
+		use integer;
+		return undef if $offset > 0;
+		return undef if $self->{blksize} >= 4;
+		my $nblocks = 1 << ($self->{blksize} << 3);
+		my $pos = $nblocks * $self->{blksize};
+		return undef unless $pos/$self->{blksize} == $nblocks;
+		return $self->sysseek($pos + $offset, SEEK_SET);
+	} else {
+		return undef;
+	}
 }
 
 sub seek { shift->sysseek(@_) ? 1 : 0 }
 
 sub getpos {
-        my($self) = @_;
-        return [ $self->{counter}, $self->{subpos} ];
+	my($self) = @_;
+	return [ $self->{counter}, $self->{subpos} ];
 }
 
 sub setpos {
-        my($self, $pos) = @_;
-        return undef unless is_ref($pos, "ARRAY") && @$pos == 2;
-        my($ctr, $subpos) = @$pos;
-        unless(!defined($ctr) && $subpos == 0) {
-                return undef unless is_string($ctr) &&
-                        length($ctr) == $self->{blksize} &&
-                        is_number($subpos) &&
-                        $subpos >= 0 && $subpos < $self->{blksize};
-        }
-        $self->{counter} = $ctr;
-        $self->{subpos} = $subpos;
-        $self->_clear_buffer;
-        return "0 but true";
+	my($self, $pos) = @_;
+	return undef unless is_ref($pos, "ARRAY") && @$pos == 2;
+	my($ctr, $subpos) = @$pos;
+	unless(!defined($ctr) && $subpos == 0) {
+		return undef unless is_string($ctr) &&
+			length($ctr) == $self->{blksize} &&
+			is_number($subpos) &&
+			$subpos >= 0 && $subpos < $self->{blksize};
+	}
+	$self->{counter} = $ctr;
+	$self->{subpos} = $subpos;
+	$self->_clear_buffer;
+	return "0 but true";
 }
 
 sub eof {
-        my($self) = @_;
-        return !defined($self->{counter});
+	my($self) = @_;
+	return !defined($self->{counter});
 }
 
 =head1 SEE ALSO

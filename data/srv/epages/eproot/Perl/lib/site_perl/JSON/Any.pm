@@ -285,50 +285,50 @@ This module tries to provide a coherent API to bring together the various JSON
 modules currently on CPAN. This module will allow you to code to any JSON API
 and have it work regardless of which JSON module is actually installed.
 
-        use JSON::Any;
+	use JSON::Any;
 
-        my $j = JSON::Any->new;
+	my $j = JSON::Any->new;
 
-        $json = $j->objToJson({foo=>'bar', baz=>'quux'});
-        $obj = $j->jsonToObj($json);
-
-or
-
-        $json = $j->encode({foo=>'bar', baz=>'quux'});
-        $obj = $j->decode($json);
+	$json = $j->objToJson({foo=>'bar', baz=>'quux'});
+	$obj = $j->jsonToObj($json);
 
 or
 
-        $json = $j->Dump({foo=>'bar', baz=>'quux'});
-        $obj = $j->Load($json);
+	$json = $j->encode({foo=>'bar', baz=>'quux'});
+	$obj = $j->decode($json);
 
 or
 
-        $json = $j->to_json({foo=>'bar', baz=>'quux'});
-        $obj = $j->from_json($json);
+	$json = $j->Dump({foo=>'bar', baz=>'quux'});
+	$obj = $j->Load($json);
+
+or
+
+	$json = $j->to_json({foo=>'bar', baz=>'quux'});
+	$obj = $j->from_json($json);
 
 or without creating an object:
 
-        $json = JSON::Any->objToJson({foo=>'bar', baz=>'quux'});
-        $obj = JSON::Any->jsonToObj($json);
+	$json = JSON::Any->objToJson({foo=>'bar', baz=>'quux'});
+	$obj = JSON::Any->jsonToObj($json);
 
-On load, JSON::Any will find a valid JSON module in your @INC by looking
+On load, JSON::Any will find a valid JSON module in your @INC by looking 
 for them in this order:
 
-        JSON::XS
-        JSON
-        JSON::DWIW
+	JSON::XS 
+	JSON 
+	JSON::DWIW 
 
 And loading the first one it finds.
 
 You may change the order by specifying it on the C<use JSON::Any> line:
 
-        use JSON::Any qw(DWIW XS JSON);
+	use JSON::Any qw(DWIW XS JSON);
 
 Specifying an order that is missing one of the modules will prevent that
 module from being used:
 
-        use JSON::Any qw(DWIW XS JSON);
+	use JSON::Any qw(DWIW XS JSON);
 
 This will check in that order, and will never attempt to load JSON::Syck. This
 can also be set via the $ENV{JSON_ANY_ORDER} environment variable.
@@ -338,11 +338,11 @@ stay relevant as a "Compat Layer" JSON::Any still supports it. This support
 however has been made optional starting with JSON::Any 1.19. In deference to a
 bug request starting with JSON 1.20 JSON::Syck and other deprecated modules
 will still be installed, but only as a last resort and will now include a
-warning.
+warning. 
 
-    use JSON::Any qw(Syck XS JSON);
-
-or
+    use JSON::Any qw(Syck XS JSON); 
+    
+or 
 
     $ENV{JSON_ANY_ORDER} = 'Syck XS JSON';
 
@@ -350,7 +350,7 @@ or
 WARNING: If you call JSON::Any with an empty list
 
     use JSON::Any ();
-
+    
 It will skip the JSON package detection routines and will die loudly that it
 couldn't find a package.
 
@@ -427,8 +427,8 @@ sub handlerType {
 
 =item C<handler>
 
-Takes no arguments, if called on an object returns the internal JSON::*
-object in use.  Otherwise returns the JSON::* package we are using for
+Takes no arguments, if called on an object returns the internal JSON::* 
+object in use.  Otherwise returns the JSON::* package we are using for 
 class methods.
 
 =back
@@ -525,7 +525,7 @@ sub objToJson {
 
 =item C<encode>
 
-Aliases for objToJson, can be used interchangeably, regardless of the
+Aliases for objToJson, can be used interchangeably, regardless of the 
 underlying JSON module.
 
 =back
@@ -581,7 +581,7 @@ sub jsonToObj {
 
 =item C<decode>
 
-Aliases for jsonToObj, can be used interchangeably, regardless of the
+Aliases for jsonToObj, can be used interchangeably, regardless of the 
 underlying JSON module.
 
 =back
@@ -618,13 +618,13 @@ your bug as I make changes.
 
 =head1 ACKNOWLEDGEMENTS
 
-This module came about after discussions on irc.perl.org about the fact
+This module came about after discussions on irc.perl.org about the fact 
 that there were now six separate JSON perl modules with different interfaces.
 
-In the spirit of Class::Any, JSON::Any was created with the considerable
+In the spirit of Class::Any, JSON::Any was created with the considerable 
 help of Matt 'mst' Trout.
 
-Simon Wistow graciously supplied a patch for backwards compat with JSON::XS
+Simon Wistow graciously supplied a patch for backwards compat with JSON::XS 
 versions previous to 2.01
 
 San Dimas High School Football Rules!

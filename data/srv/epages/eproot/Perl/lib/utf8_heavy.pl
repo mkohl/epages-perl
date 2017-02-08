@@ -47,7 +47,7 @@ sub croak { require Carp; Carp::croak(@_) }
         ##
         ## $list (or that filled according to $type):
         ##     Refer to perlunicode.pod, "User-Defined Character Properties."
-        ##
+        ##     
         ##     For binary properties, only characters with the property value
         ##     of True should be listed. The 3rd column, if any, will be ignored
         ##
@@ -87,7 +87,7 @@ sub croak { require Carp; Carp::croak(@_) }
                     my $prop = "${caller1}::$type";
                     if (exists &{$prop}) {
                         no strict 'refs';
-
+                        
                         $list = &{$prop};
                         last GETFILE;
                     }
@@ -107,7 +107,7 @@ sub croak { require Carp; Carp::croak(@_) }
 
                 my $prefix;
                 if (! defined $table) {
-
+                        
                     # Here, is the single form.  The property becomes empty, and
                     # the whole value is the table.
                     $table = $property;
@@ -131,7 +131,7 @@ sub croak { require Carp; Carp::croak(@_) }
                     if ($table =~ qr{ ^ [ \s 0-9 _  + / . -]+ $ }x) {
                         print STDERR __LINE__, ": table=$table\n" if DEBUG;
 
-                        # Don't allow leading nor trailing slashes
+                        # Don't allow leading nor trailing slashes 
                         return $type if $table =~ / ^ \/ | \/ $ /x;
 
                         # Split on slash, in case it is a rational, like \p{1/5}
@@ -168,7 +168,7 @@ sub croak { require Carp; Carp::croak(@_) }
 
                             print STDERR __LINE__, ": part=$part\n" if DEBUG;
                             #return $type if $part eq "";
-
+                            
                             # Result better look like a number.  (This test is
                             # needed because, for example could have a plus in
                             # the middle.)
@@ -255,7 +255,7 @@ sub croak { require Carp; Carp::croak(@_) }
                                     # just to be safe.
                                     $min_floating_slop *= 100;
                                 }
-
+                                    
                                 if ($epsilon < $min_floating_slop) {
                                     $epsilon = $min_floating_slop;
                                 }
@@ -323,7 +323,7 @@ sub croak { require Carp; Carp::croak(@_) }
 
                     if (exists &{$map}) {
                         no strict 'refs';
-
+                        
                         $list = &{$map};
                         last GETFILE;
                     }
@@ -418,7 +418,7 @@ sub croak { require Carp; Carp::croak(@_) }
                     my $name = $2;
                     print STDERR __LINE__, ": $1 => $2\n" if DEBUG;
                     if ($char =~ /[-+!&]/) {
-                        my ($c,$t) = split(/::/, $name, 2);     # bogus use of ::, really
+                        my ($c,$t) = split(/::/, $name, 2);	# bogus use of ::, really
                         my $subobj;
                         if ($c eq 'utf8') {
                             $subobj = utf8->SWASHNEW($t, "", $minbits, 0);

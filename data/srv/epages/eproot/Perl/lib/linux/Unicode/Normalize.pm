@@ -2,7 +2,7 @@ package Unicode::Normalize;
 
 BEGIN {
     unless ("A" eq pack('U', 0x41)) {
-        die "Unicode::Normalize cannot stringify a Unicode code point\n";
+	die "Unicode::Normalize cannot stringify a Unicode code point\n";
     }
 }
 
@@ -66,11 +66,11 @@ sub FCD ($) {
 }
 
 our %formNorm = (
-    NFC  => \&NFC,      C  => \&NFC,
-    NFD  => \&NFD,      D  => \&NFD,
-    NFKC => \&NFKC,     KC => \&NFKC,
-    NFKD => \&NFKD,     KD => \&NFKD,
-    FCD  => \&FCD,      FCC => \&FCC,
+    NFC  => \&NFC,	C  => \&NFC,
+    NFD  => \&NFD,	D  => \&NFD,
+    NFKC => \&NFKC,	KC => \&NFKC,
+    NFKD => \&NFKD,	KD => \&NFKD,
+    FCD  => \&FCD,	FCC => \&FCC,
 );
 
 sub normalize($$)
@@ -78,7 +78,7 @@ sub normalize($$)
     my $form = shift;
     my $str = shift;
     if (exists $formNorm{$form}) {
-        return $formNorm{$form}->($str);
+	return $formNorm{$form}->($str);
     }
     croak($PACKAGE."::normalize: invalid form name: $form");
 }
@@ -89,11 +89,11 @@ sub normalize($$)
 ##
 
 our %formCheck = (
-    NFC  => \&checkNFC,         C  => \&checkNFC,
-    NFD  => \&checkNFD,         D  => \&checkNFD,
-    NFKC => \&checkNFKC,        KC => \&checkNFKC,
-    NFKD => \&checkNFKD,        KD => \&checkNFKD,
-    FCD  => \&checkFCD,         FCC => \&checkFCC,
+    NFC  => \&checkNFC, 	C  => \&checkNFC,
+    NFD  => \&checkNFD, 	D  => \&checkNFD,
+    NFKC => \&checkNFKC,	KC => \&checkNFKC,
+    NFKD => \&checkNFKD,	KD => \&checkNFKD,
+    FCD  => \&checkFCD, 	FCC => \&checkFCC,
 );
 
 sub check($$)
@@ -101,7 +101,7 @@ sub check($$)
     my $form = shift;
     my $str = shift;
     if (exists $formCheck{$form}) {
-        return $formCheck{$form}->($str);
+	return $formCheck{$form}->($str);
     }
     croak($PACKAGE."::check: invalid form name: $form");
 }
@@ -321,15 +321,15 @@ while C<"B\N{COMBINING ACUTE ACCENT}"> is in NFC.
 If you want to check exactly, compare the string with its NFC/NFKC/FCC.
 
     if ($string eq NFC($string)) {
-        # $string is exactly normalized in NFC;
+	# $string is exactly normalized in NFC;
     } else {
-        # $string is not normalized in NFC;
+	# $string is not normalized in NFC;
     }
 
     if ($string eq NFKC($string)) {
-        # $string is exactly normalized in NFKC;
+	# $string is exactly normalized in NFKC;
     } else {
-        # $string is not normalized in NFKC;
+	# $string is not normalized in NFKC;
     }
 
 =head2 Character Data

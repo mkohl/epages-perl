@@ -52,7 +52,7 @@ sub _new_rewriter {
 
       push @result, $str;
     }
-
+    
     return wantarray ? @result : $result[0];
   };
 }

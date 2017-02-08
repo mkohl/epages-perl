@@ -41,7 +41,7 @@ sub read
     my ($self) = @_;
     my ($dat, $fh);
     my ($version, $lookupPresent, $default);
-
+    
     $self->SUPER::read or return $self;
 
     $fh = $self->{' INFILE'};
@@ -71,7 +71,7 @@ sub out
 {
     my ($self, $fh) = @_;
     my ($default, $lookup);
-
+    
     return $self->SUPER::out($fh) unless $self->{' read'};
 
     $default = $self->{'default'};
@@ -91,9 +91,9 @@ sub print
 {
     my ($self, $fh) = @_;
     my ($lookup);
-
+    
     $self->read;
-
+    
     $fh = 'STDOUT' unless defined $fh;
 
     $fh->printf("version %f\ndefault %04x # %s\n", $self->{'version'}, $self->{'default'}, meaning_($self->{'default'}));
@@ -110,7 +110,7 @@ sub meaning_
 {
     my ($val) = @_;
     my ($res);
-
+    
     my @types = (
         "Strong left-to-right",
         "Strong right-to-left",
@@ -125,7 +125,7 @@ sub meaning_
         "Whitespace",
         "Other neutral");
     $res = $types[$val & 0x001f] or ("Undefined [" . ($val & 0x001f) . "]");
-
+    
     $res .= ", floater" if $val & 0x8000;
     $res .= ", hang left" if $val & 0x4000;
     $res .= ", hang right" if $val & 0x2000;
@@ -134,7 +134,7 @@ sub meaning_
     my $pairOffset = ($val & 0x0f00) >> 8;
     $pairOffset = $pairOffset - 16 if $pairOffset > 7;
     $res .= $pairOffset > 0 ? " +" . $pairOffset : $pairOffset < 0 ? " " . $pairOffset : "";
-
+    
     $res;
 }
 

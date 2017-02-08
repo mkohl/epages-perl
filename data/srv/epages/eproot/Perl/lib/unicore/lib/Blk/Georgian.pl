@@ -9,33 +9,33 @@
 
 # This file returns the 96 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{Block=Georgian}
 #         \p{Blk=Georgian}
 #         \p{Is_Block=Georgian}
 #         \p{Is_Blk=Georgian}
-#
+# 
 #         \p{In_Georgian}
-#
+# 
 #     Note that contrary to what you might expect, the above is NOT the same
 #     as any of: \p{Georgian}, \p{Is_Georgian}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Blk: Georgian}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-10A0    10FF     # [96]
+10A0	10FF	 # [96]
 END

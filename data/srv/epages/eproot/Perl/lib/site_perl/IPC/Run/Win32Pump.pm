@@ -29,7 +29,7 @@ It parses a bunch of command line parameters from IPC::Run::Win32IO.
 use strict;
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '0.89';
+	$VERSION = '0.89';
 }
 
 use Win32API::File qw(
@@ -45,17 +45,17 @@ BEGIN {
    ## load IPC::Run::Debug.
    if ( $debug ) {
       eval "use IPC::Run::Debug qw( :default _debug_init ); 1;"
-         or die $@;
+	 or die $@;
    }
    else {
       eval <<STUBS_END or die $@;
-         sub _debug {}
-         sub _debug_init {}
-         sub _debugging() { 0 }
-         sub _debugging_data() { 0 }
-         sub _debugging_details() { 0 }
-         sub _debugging_gory_details() { 0 }
-         1;
+	 sub _debug {}
+	 sub _debug_init {}
+	 sub _debugging() { 0 }
+	 sub _debugging_data() { 0 }
+	 sub _debugging_details() { 0 }
+	 sub _debugging_gory_details() { 0 }
+	 1;
 STUBS_END
    }
 }
@@ -132,21 +132,21 @@ _debug "Exiting, transferred $total_count chars" if _debugging_details;
 ##
 ## In any case, this close() is one of the main reasons we have helper
 ## processes; if the OS closed socket fds gracefully when an app exits,
-## we'd just redirect the client directly to what is now the pump end
+## we'd just redirect the client directly to what is now the pump end 
 ## of the socket.  As it is, however, we need to let the client play with
 ## pipes, which don't have the abort-on-app-exit behavior, and then
 ## adapt to the sockets in the helper processes to allow the parent to
 ## select.
 ##
 ## Possible alternatives / improvements:
-##
+## 
 ## 1) use helper threads instead of processes.  I don't trust perl's threads
 ## as of 5.005 or 5.6 enough (which may be myopic of me).
 ##
 ## 2) figure out if/how to get at WaitForMultipleObjects() with pipe
-## handles.  May be able to take the Win32 handle and pass it to
+## handles.  May be able to take the Win32 handle and pass it to 
 ## Win32::Event::wait_any, dunno.
-##
+## 
 ## 3) Use Inline::C or a hand-tooled XS module to do helper threads.
 ## This would be faster than #1, but would require a ppm distro.
 ##

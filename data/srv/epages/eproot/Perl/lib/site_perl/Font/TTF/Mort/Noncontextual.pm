@@ -38,7 +38,7 @@ sub read
 {
     my ($self, $fh) = @_;
     my ($dat);
-
+    
     my ($format, $lookup) = AAT_read_lookup($fh, 2, $self->{'length'} - 8, undef);
     $self->{'format'} = $format;
     $self->{'lookup'} = $lookup;
@@ -53,7 +53,7 @@ sub read
 sub pack_sub
 {
     my ($self) = @_;
-
+    
     return AAT_pack_lookup($self->{'format'}, $self->{'lookup'}, 2, undef);
 }
 
@@ -66,9 +66,9 @@ Prints a human-readable representation of the table
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     my $post = $self->post();
-
+    
     $fh = 'STDOUT' unless defined $fh;
 
     my $lookup = $self->{'lookup'};

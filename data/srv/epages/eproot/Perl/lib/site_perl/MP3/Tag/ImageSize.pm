@@ -16,7 +16,7 @@ MP3::Tag::ImageSize - extract size info from image files via L<Image::Size|Image
 
 =head1 SYNOPSIS
 
-  my $db = MP3::Tag::ImageSize->new($filename); # Name of multimedia file
+  my $db = MP3::Tag::ImageSize->new($filename);	# Name of multimedia file
 
 see L<MP3::Tag>
 
@@ -53,15 +53,15 @@ sub new {
 sub DESTROY {}
 
 my @fields = qw( 0 0 width height img_type mime_type );
-for my $elt ( 2, 3, 4, 5 ) {    #  i_bitdepth
+for my $elt ( 2, 3, 4, 5 ) {	#  i_bitdepth
   my $r = sub (;$) {
     my $self = shift;
     unless ($self->[1]) {
-        my ($w, $h, $t) = eval { require Image::Size;
-                                 Image::Size::imgsize($self->[0]) };
-        defined $w or @$self[1..4] = (1,undef,undef,undef), return;
-        my $tt = "image/\L$t";
-        @$self[1..5] = (1, $w, $h, $t, $tt);
+	my ($w, $h, $t) = eval { require Image::Size;
+				 Image::Size::imgsize($self->[0]) };
+	defined $w or @$self[1..4] = (1,undef,undef,undef), return;
+	my $tt = "image/\L$t";
+	@$self[1..5] = (1, $w, $h, $t, $tt);
     }
     return $self->[$elt];
   };

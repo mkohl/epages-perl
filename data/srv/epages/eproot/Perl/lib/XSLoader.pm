@@ -38,7 +38,7 @@ sub load {
     my $modpname = join('/',@modparts);
     my $modlibname = (caller())[1];
     my $c = @modparts;
-    $modlibname =~ s,[\\/][^\\/]+$,, while $c--;        # Q&D basename
+    $modlibname =~ s,[\\/][^\\/]+$,, while $c--;	# Q&D basename
     my $file = "$modlibname/auto/$modpname/$modfname.$dl_dlext";
 
 #   print STDERR "XSLoader::load for $module ($file)\n" if $dl_debug;
@@ -67,7 +67,7 @@ sub load {
     # in this perl code simply because this was the last perl code
     # it executed.
 
-    my $libref = dl_load_file($file, 0) or do {
+    my $libref = dl_load_file($file, 0) or do { 
         require Carp;
         Carp::croak("Can't load '$file' for module $module: " . dl_error());
     };
@@ -94,7 +94,7 @@ sub load {
     return &$xs(@_);
 
   retry:
-    my $bootstrap_inherit = DynaLoader->can('bootstrap_inherit') ||
+    my $bootstrap_inherit = DynaLoader->can('bootstrap_inherit') || 
                             XSLoader->can('bootstrap_inherit');
     goto &$bootstrap_inherit;
 }

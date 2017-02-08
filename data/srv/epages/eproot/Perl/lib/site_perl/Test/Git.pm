@@ -77,23 +77,23 @@ Test::Git - Helper functions for test scripts using Git
 
     use Test::More;
     use Test::Git;
-
+    
     # check there is a git binary available, or skip all
     has_git();
-
+    
     # check there is a minimum version of git available, or skip all
     has_git( '1.6.5' );
-
+    
     # check the git we want to test has a minimum version, or skip all
     has_git( '1.6.5', { git => '/path/to/alternative/git' } );
-
+    
     # normal plan
     plan tests => 2;
-
+    
     # create a new, empty repository in a temporary location
     # and return a Git::Repository object
     my $r = test_repository();
-
+    
     # clone an existing repository in a temporary location
     # and return a Git::Repository object
     my $c = test_repository( clone => [ $url ] );

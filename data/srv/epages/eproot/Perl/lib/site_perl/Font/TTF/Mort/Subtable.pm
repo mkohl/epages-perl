@@ -51,7 +51,7 @@ sub create
     elsif ($type == 5) {
         $subclass = 'Font::TTF::Mort::Insertion';
     }
-
+    
     my ($self) = $subclass->new(
             (($coverage & 0x4000) ? 'RL' : 'LR'),
             (($coverage & 0x2000) ? 'VH' : ($coverage & 0x8000) ? 'V' : 'H'),
@@ -73,19 +73,19 @@ Writes the table to a file
 sub out
 {
     my ($self, $fh) = @_;
-
+    
     my ($subtableStart) = $fh->tell();
     my ($type) = $self->{'type'};
     my ($coverage) = $type;
     $coverage += 0x4000 if $self->{'direction'} eq 'RL';
     $coverage += 0x2000 if $self->{'orientation'} eq 'VH';
     $coverage += 0x8000 if $self->{'orientation'} eq 'V';
-
+    
     $fh->print(TTF_Pack("SSL", 0, $coverage, $self->{'subFeatureFlags'}));    # placeholder for length
-
+    
     my ($dat) = $self->pack_sub();
     $fh->print($dat);
-
+    
     my ($length) = $fh->tell() - $subtableStart;
     my ($padBytes) = (4 - ($length & 3)) & 3;
     $fh->print(pack("C*", (0) x $padBytes));
@@ -104,7 +104,7 @@ Prints a human-readable representation of the table
 sub post
 {
     my ($self) = @_;
-
+    
     my ($post) = $self->{' PARENT'}{' PARENT'}{' PARENT'}{'post'};
     if (defined $post) {
         $post->read;
@@ -112,24 +112,24 @@ sub post
     else {
         $post = {};
     }
-
+    
     return $post;
 }
 
 sub feat
 {
     my ($self) = @_;
-
+    
     return $self->{' PARENT'}->feat();
 }
 
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     my ($feat) = $self->feat();
     my ($post) = $self->post();
-
+    
     $fh = 'STDOUT' unless defined $fh;
 
     my ($type) = $self->{'type'};
@@ -150,7 +150,7 @@ sub subtable_type_
 {
     my ($val) = @_;
     my ($res);
-
+    
     my (@types) =    (
                         'Rearrangement',
                         'Contextual',
@@ -160,7 +160,7 @@ sub subtable_type_
                         'Insertion',
                     );
     $res = $types[$val] or ('Undefined (' . $val . ')');
-
+    
     $res;
 }
 
@@ -173,9 +173,9 @@ Prints a human-readable representation of the table
 sub print_classes
 {
     my ($self, $fh) = @_;
-
+    
     my ($post) = $self->post();
-
+    
     my ($classes) = $self->{'classes'};
     foreach (0 .. $#$classes) {
         my $class = $classes->[$_];

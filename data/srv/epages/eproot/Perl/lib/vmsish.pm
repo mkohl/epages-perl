@@ -10,7 +10,7 @@ vmsish - Perl pragma to control VMS-specific language features
 
     use vmsish;
 
-    use vmsish 'status';        # or '$?'
+    use vmsish 'status';	# or '$?'
     use vmsish 'exit';
     use vmsish 'time';
 
@@ -95,7 +95,7 @@ it.
 EXAMPLE:
     if ($quiet_exit) {
         vmsish::hushed(1);
-    }
+    } 
     print "Sssshhhh...I'm hushed...\n" if vmsish::hushed();
     exit 44;
 
@@ -117,10 +117,10 @@ sub bits {
     my $bits = 0;
     my $sememe;
     foreach $sememe (@_) {
-        # Those hints are defined in vms/vmsish.h :
-        # HINT_M_VMSISH_STATUS and HINT_M_VMSISH_TIME
+	# Those hints are defined in vms/vmsish.h :
+	# HINT_M_VMSISH_STATUS and HINT_M_VMSISH_TIME
         $bits |= 0x40000000, next if $sememe eq 'status' || $sememe eq '$?';
-        $bits |= 0x80000000, next if $sememe eq 'time';
+	$bits |= 0x80000000, next if $sememe eq 'time';
     }
     $bits;
 }

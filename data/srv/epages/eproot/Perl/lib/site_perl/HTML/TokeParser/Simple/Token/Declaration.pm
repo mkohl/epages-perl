@@ -30,7 +30,7 @@ HTML::TokeParser::Simple::Token::Declaration - Token.pm declaration class.
 
 =head1 DESCRIPTION
 
-This is the declaration class for tokens.
+This is the declaration class for tokens. 
 
 =head1 OVERRIDDEN METHODS
 

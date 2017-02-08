@@ -8,35 +8,35 @@
 # Don't use it directly.
 
 # 'X' below means that this form is discouraged.  Consult perluniprops.pod
-#
+# 
 # This file returns the 48 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{Block=Vedic_Extensions}
 #         \p{Blk=Vedic_Extensions}
 #         \p{Is_Block=Vedic_Extensions}
 #         \p{Is_Blk=Vedic_Extensions}
-#
+# 
 # X       \p{Vedic_Extensions}
 # X       \p{Is_Vedic_Extensions}
 #         \p{In_Vedic_Extensions}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Blk: Vedic_Extensions}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-1CD0    1CFF     # [48]
+1CD0	1CFF	 # [48]
 END

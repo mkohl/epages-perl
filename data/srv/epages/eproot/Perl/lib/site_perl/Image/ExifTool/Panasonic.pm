@@ -1407,7 +1407,7 @@ my %shootingMode = (
         Format => 'int16u[4]',
         RawConv => '$$self{NumFacePositions} < 1 ? undef : $val',
         Notes => q{
-            4 numbers: X/Y coordinates of the face center and width/height of face.
+            4 numbers: X/Y coordinates of the face center and width/height of face. 
             Coordinates are relative to an image twice the size of the thumbnail, or 320
             pixels wide
         },

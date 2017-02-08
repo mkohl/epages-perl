@@ -366,7 +366,7 @@ sub read_sub
         }
         $lookup->{'ACTION_TYPE'} = 'a';
     } elsif ($type == 7 || $type == 8)
-    { $self->read_context($lookup, $fh, $type - 2, $fmt, $cover, $count, $loc); }
+    { $self->read_context($lookup, $fh, $type - 2, $fmt, $cover, $count, $loc); }        
     $lookup;
 }
 
@@ -397,7 +397,7 @@ sub out_sub
     my ($num) = $#{$lookup->{'RULES'}} + 1;
     my ($mtables) = {};
     my (@reftables);
-
+    
     if ($type == 1 && $fmt == 1)
     {
         $out = pack('n2', $fmt, Font::TTF::Ttopen::ref_cache($lookup->{'COVERAGE'}, $ctables, 2 + $base));
@@ -427,11 +427,11 @@ sub out_sub
         if ($fmt == 1)
         {
             # start PairPosFormat1 subtable
-            $out = pack('n5',
-                        $fmt,
+            $out = pack('n5', 
+                        $fmt, 
                         Font::TTF::Ttopen::ref_cache($lookup->{'COVERAGE'}, $ctables, 2 + $base),
-                        $vfmt,
-                        $vfmt2,
+                        $vfmt, 
+                        $vfmt2, 
                         $#{$lookup->{'RULES'}} + 1); # PairSetCount
             my $off = 0;
             $off += length($out);
@@ -453,9 +453,9 @@ sub out_sub
                     foreach $t (@$r) # foreach PairValueRecord
                     {
                         $pairset .= pack('n', $t->{'MATCH'}[0]); # SecondGlyph - MATCH has only one entry
-                        $pairset .=
+                        $pairset .= 
                             $self->out_value($t->{'ACTION'}[0], $vfmt,  $ctables, $off + length($pairset) + $base);
-                        $pairset .=
+                        $pairset .= 
                             $self->out_value($t->{'ACTION'}[1], $vfmt2, $ctables, $off + length($pairset) + $base);
                     }
                     $off += length($pairset);
@@ -493,7 +493,7 @@ sub out_sub
     } elsif ($type == 4 || $type == 5 || $type == 6)
     {
         my ($loc_off, $loc_t, $ltables);
-
+        
         $out = pack('n7', $fmt, Font::TTF::Ttopen::ref_cache($lookup->{'MATCH'}[0], $ctables, 2 + $base),
                             Font::TTF::Ttopen::ref_cache($lookup->{'COVERAGE'}, $ctables, 4 + $base),
                             $#{$lookup->{'RULES'}[0][0]{'ACTION'}} + 1, 12, ($#{$lookup->{'MARKS'}} + 4) << 2,
@@ -536,7 +536,7 @@ sub out_sub
 #    push (@reftables, [$ctables, 0]);
     $out;
 }
-
+            
 
 =head2 $t->read_value($format, $base, $lookup, $fh)
 

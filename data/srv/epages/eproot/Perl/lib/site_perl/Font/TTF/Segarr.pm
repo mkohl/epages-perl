@@ -84,7 +84,7 @@ sub fastadd_segment
         {
             if (!defined $seg && (($sparse != 2 && defined $_[$i]) || $_[$i] != 0))
             { $seg->{'START'} = $start + $i; $seg->{'VAL'} = []; }
-
+            
             if (defined $seg && (($sparse == 2 && $_[$i] == 0) || !defined $_[$i]))
             {
                 $seg->{'LEN'} = $start + $i - $seg->{'START'};
@@ -245,7 +245,7 @@ sub at
             $offset = $s->{'START'} - $addr;
         }
         last if ($s->{'START'} >= $addr + $len);
-
+        
         if ($s->{'START'} + $s->{'LEN'} >= $addr + $len)
         {
             push (@res, @{$s->{'VAL'}}[$addr + $offset - $s->{'START'} ..
@@ -289,7 +289,7 @@ sub remove
             $offset = $s->{'START'} - $addr;
         }
         last if ($s->{'START'} >= $addr + $len);
-
+        
         unless ($s->{'START'} == $addr + $offset)
         {
             my ($seg) = {};
@@ -322,7 +322,7 @@ sub remove
     push (@res, (undef) x ($len - $offset)) if ($offset < $len);
     return wantarray ? @res : $res[0];
 }
-
+    
 
 =head2 $s->copy
 
@@ -340,7 +340,7 @@ sub copy
     { push (@$res, $self->copy_seg($p)); }
     $res;
 }
-
+    
 
 =head2 $s->copy_seg($seg)
 

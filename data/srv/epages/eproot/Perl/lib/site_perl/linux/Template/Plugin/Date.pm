@@ -45,7 +45,7 @@ sub new {
 
 #------------------------------------------------------------------------
 # now()
-#
+# 
 # Call time() to return the current system time in seconds since the epoch.
 #------------------------------------------------------------------------
 
@@ -55,28 +55,28 @@ sub now {
 
 
 #------------------------------------------------------------------------
-# format()
+# format()                           
 # format($time)
 # format($time, $format)
 # format($time, $format, $locale)
 # format($time, $format, $locale, $gmt_flag)
 # format(\%named_params);
-#
-# Returns a formatted time/date string for the specified time, $time,
+# 
+# Returns a formatted time/date string for the specified time, $time, 
 # (or the current system time if unspecified) using the $format, $locale,
 # and $gmt values specified as arguments or internal values set defined
 # at construction time).  Specifying a Perl-true value for $gmt will
 # override the local time zone and force the output to be for GMT.
-# Any or all of the arguments may be specified as named parameters which
+# Any or all of the arguments may be specified as named parameters which 
 # get passed as a hash array reference as the final argument.
 # ------------------------------------------------------------------------
 
 sub format {
     my $self   = shift;
     my $params = ref($_[$#_]) eq 'HASH' ? pop(@_) : { };
-    my $time   = shift(@_) || $params->{ time } || $self->{ time }
+    my $time   = shift(@_) || $params->{ time } || $self->{ time } 
                            || $self->now();
-    my $format = @_ ? shift(@_)
+    my $format = @_ ? shift(@_) 
                     : ($params->{ format } || $self->{ format } || $FORMAT);
     my $locale = @_ ? shift(@_)
                     : ($params->{ locale } || $self->{ locale });
@@ -120,7 +120,7 @@ sub format {
         $date[5] -= 1900;  # convert absolute year to years since 1900
         $time = &POSIX::mktime(@date);
     }
-
+    
     if ($locale) {
         # format the date in a specific locale, saving and subsequently
         # restoring the current locale.
@@ -193,18 +193,18 @@ use vars qw( $AUTOLOAD );
 sub AUTOLOAD {
     my $self = shift;
     my $method = $AUTOLOAD;
-
+    
     $method =~ s/.*:://;
     return if $method eq 'DESTROY';
-
+    
     my $sub = \&{"Date::Manip::$method"};
     $self->throw("no such Date::Manip method: $method")
         unless $sub;
-
+    
     &$sub(@_);
 }
-
-
+    
+    
 1;
 
 __END__
@@ -216,32 +216,32 @@ Template::Plugin::Date - Plugin to generate formatted date strings
 =head1 SYNOPSIS
 
     [% USE date %]
-
+    
     # use current time and default format
     [% date.format %]
-
+    
     # specify time as seconds since epoch
     # or as a 'h:m:s d-m-y' or 'y-m-d h:m:s' string
     [% date.format(960973980) %]
     [% date.format('4:20:36 21/12/2000') %]
     [% date.format('2000/12/21 4:20:36') %]
-
+    
     # specify format
     [% date.format(mytime, '%H:%M:%S') %]
-
+    
     # specify locale
     [% date.format(date.now, '%a %d %b %y', 'en_GB') %]
-
-    # named parameters
+    
+    # named parameters 
     [% date.format(mytime, format = '%H:%M:%S') %]
     [% date.format(locale = 'en_GB') %]
-    [% date.format(time   = date.now,
-                   format = '%H:%M:%S',
+    [% date.format(time   = date.now, 
+                   format = '%H:%M:%S', 
                    locale = 'en_GB) %]
-
+    
     # specify default format to plugin
     [% USE date(format = '%H:%M:%S', locale = 'de_DE') %]
-
+    
     [% date.format %]
     ...
 
@@ -263,13 +263,13 @@ The plugin provides the C<format()> method which accepts a time value, a
 format string and a locale name.  All of these parameters are optional
 with the current system time, default format ('C<%H:%M:%S %d-%b-%Y>') and
 current locale being used respectively, if undefined.  Default values
-for the time, format and/or locale may be specified as named parameters
+for the time, format and/or locale may be specified as named parameters 
 in the C<USE> directive.
 
     [% USE date(format = '%a %d-%b-%Y', locale = 'fr_FR') %]
 
 When called without any parameters, the C<format()> method returns a string
-representing the current system time, formatted by C<strftime()> according
+representing the current system time, formatted by C<strftime()> according 
 to the default format and for the default locale (which may not be the
 current one, if locale is set in the C<USE> directive).
 
@@ -285,7 +285,7 @@ or C<y/m/d h:m:s>.  Any of the characters : / - or space may be used to
 delimit fields.
 
     [% USE day = date(format => '%A', locale => 'en_GB') %]
-    [% day.format('4:20:00 9-13-2000') %]
+    [% day.format('4:20:00 9-13-2000') %]  
 
 Output:
 
@@ -297,13 +297,13 @@ specification may follow that.
     [% date.format(filemod, '%d-%b-%Y') %]
     [% date.format(filemod, '%d-%b-%Y', 'en_GB') %]
 
-A fourth parameter allows you to force output in GMT, in the case of
+A fourth parameter allows you to force output in GMT, in the case of 
 seconds-since-the-epoch input:
 
     [% date.format(filemod, '%d-%b-%Y', 'en_GB', 1) %]
 
 Note that in this case, if the local time is not GMT, then also specifying
-'C<%Z>' (time zone) in the format parameter will lead to an extremely
+'C<%Z>' (time zone) in the format parameter will lead to an extremely 
 misleading result.
 
 Any or all of these parameters may be named.  Positional parameters
@@ -316,8 +316,8 @@ should always be in the order C<($time, $format, $locale)>.
     [% date.format(mytime, format => '%H:%M:%S', gmt => 1) %]
     ...etc...
 
-The C<now()> method returns the current system time in seconds since the
-epoch.
+The C<now()> method returns the current system time in seconds since the 
+epoch.  
 
     [% date.format(date.now, '%A') %]
 

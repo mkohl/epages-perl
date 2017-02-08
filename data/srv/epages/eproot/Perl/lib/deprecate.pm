@@ -13,43 +13,43 @@ sub import {
     $expect_leaf =~ s!::!/!g;
 
     foreach my $pair ([qw(sitearchexp archlibexp)],
-                      [qw(sitelibexp privlibexp)]) {
-        my ($site, $priv) = @Config{@$pair};
-        if ($^O eq 'VMS') {
-            for my $d ($site, $priv) { $d = VMS::Filespec::unixify($d) };
-        }
-        # Just in case anyone managed to configure with trailing /s
-        s!/*$!!g foreach $site, $priv;
+		      [qw(sitelibexp privlibexp)]) {
+	my ($site, $priv) = @Config{@$pair};
+	if ($^O eq 'VMS') {
+	    for my $d ($site, $priv) { $d = VMS::Filespec::unixify($d) };
+	}
+	# Just in case anyone managed to configure with trailing /s
+	s!/*$!!g foreach $site, $priv;
 
-        next if $site eq $priv;
-        if (uc("$priv/$expect_leaf") eq uc($file)) {
-            my $call_depth=1;
-            my @caller;
-            while (@caller = caller $call_depth++) {
-                last if $caller[7]                      # use/require
-                    and $caller[6] eq $expect_leaf;     # the package file
-            }
-            unless (@caller) {
-                require Carp;
-                Carp::cluck(<<"EOM");
+	next if $site eq $priv;
+	if (uc("$priv/$expect_leaf") eq uc($file)) {
+	    my $call_depth=1;
+	    my @caller;
+	    while (@caller = caller $call_depth++) {
+		last if $caller[7]			# use/require
+		    and $caller[6] eq $expect_leaf;	# the package file
+	    }
+	    unless (@caller) {
+		require Carp;
+		Carp::cluck(<<"EOM");
 Can't find use/require $expect_leaf in caller stack
 EOM
-                next;
-            }
+		next;
+	    }
 
-            # This is fragile, because it
-            # is directly poking in the internals of warnings.pm
-            my ($call_file, $call_line, $callers_bitmask) = @caller[1,2,9];
+	    # This is fragile, because it
+	    # is directly poking in the internals of warnings.pm
+	    my ($call_file, $call_line, $callers_bitmask) = @caller[1,2,9];
 
-            if (defined $callers_bitmask
-                && (vec($callers_bitmask, $warnings::Offsets{deprecated}, 1)
-                    || vec($callers_bitmask, $warnings::Offsets{all}, 1))) {
-                warn <<"EOM";
+	    if (defined $callers_bitmask
+            	&& (vec($callers_bitmask, $warnings::Offsets{deprecated}, 1)
+		    || vec($callers_bitmask, $warnings::Offsets{all}, 1))) {
+		warn <<"EOM";
 $package will be removed from the Perl core distribution in the next major release. Please install it from CPAN. It is being used at $call_file, line $call_line.
 EOM
-            }
-            return;
-        }
+	    }
+	    return;
+	}
     }
 }
 
@@ -63,9 +63,9 @@ deprecate - Perl pragma for deprecating the core version of a module
 
 =head1 SYNOPSIS
 
-    use deprecate;      # always deprecate the module in which this occurs
+    use deprecate;	# always deprecate the module in which this occurs
 
-    use if $] > 5.010, 'deprecate';     # conditionally deprecate the module
+    use if $] > 5.010, 'deprecate';	# conditionally deprecate the module
 
 
 =head1 DESCRIPTION
@@ -95,7 +95,7 @@ Original version by Nicholas Clark
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2009
+Copyright (C) 2009 
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.10.0 or,

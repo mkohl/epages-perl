@@ -24,8 +24,8 @@ use Algorithm::Dependency::Source::HoA ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.110';
-        @ISA     = 'Algorithm::Dependency::Source::HoA';
+	$VERSION = '1.110';
+	@ISA     = 'Algorithm::Dependency::Source::HoA';
 }
 
 
@@ -36,22 +36,22 @@ BEGIN {
 # Constructor
 
 sub new {
-        my $class  = shift;
-        my $source = _INSTANCE(shift, 'Algorithm::Dependency::Source') or return undef;
+	my $class  = shift;
+	my $source = _INSTANCE(shift, 'Algorithm::Dependency::Source') or return undef;
 
-        # Derive a HoA from the original source
-        my @items = $source->items;
-        my %hoa   = map { $_->id => [ ] } @items;
-        foreach my $item ( @items ) {
-                my $id   = $item->id;
-                my @deps = $item->depends;
-                foreach my $dep ( @deps ) {
-                        push @{ $hoa{$dep} }, $id;
-                }
-        }
+	# Derive a HoA from the original source
+	my @items = $source->items;
+	my %hoa   = map { $_->id => [ ] } @items;
+	foreach my $item ( @items ) {
+		my $id   = $item->id;
+		my @deps = $item->depends;
+		foreach my $dep ( @deps ) {
+			push @{ $hoa{$dep} }, $id;
+		}
+	}
 
-        # Hand off to the parent class
-        $class->SUPER::new( \%hoa );
+	# Hand off to the parent class
+	$class->SUPER::new( \%hoa );
 }
 
 1;

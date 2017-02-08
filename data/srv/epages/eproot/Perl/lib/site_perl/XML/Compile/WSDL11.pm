@@ -13,7 +13,7 @@ use base 'XML::Compile::Cache';
 
 use Log::Report 'xml-compile-soap', syntax => 'SHORT';
 
-use XML::Compile             ();
+use XML::Compile             ();      
 use XML::Compile::Util       qw/pack_type unpack_type/;
 use XML::Compile::SOAP::Util qw/:wsdl11/;
 use XML::Compile::SOAP::Extension;
@@ -75,7 +75,7 @@ sub compileAll(;$$)
     $self->compileCalls
         if !$need || $need eq 'CALLS';
     $self;
-}
+} 
 
 
 sub compileCalls(@)
@@ -111,7 +111,7 @@ sub call($@)
 
     my $call  = $codes->{$name}
         or error __x"operation {name} is not known", name => $name;
-
+    
     $call->(@_);
 }
 
@@ -369,7 +369,7 @@ sub operation(@)
      , wsdl      => $self
      , action    => $args{action}
      );
-
+ 
     $operation;
 }
 

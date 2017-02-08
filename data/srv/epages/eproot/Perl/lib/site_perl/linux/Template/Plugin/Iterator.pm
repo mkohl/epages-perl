@@ -48,7 +48,7 @@ Template::Plugin::Iterator - Plugin to create iterators (Template::Iterator)
 =head1 SYNOPSIS
 
     [% USE iterator(list, args) %]
-
+    
     [% FOREACH item = iterator %]
        [% '<ul>' IF iterator.first %]
        <li>[% item %]
@@ -57,7 +57,7 @@ Template::Plugin::Iterator - Plugin to create iterators (Template::Iterator)
 
 =head1 DESCRIPTION
 
-The iterator plugin provides a way to create a L<Template::Iterator> object
+The iterator plugin provides a way to create a L<Template::Iterator> object 
 to iterate over a data set.  An iterator is implicitly automatically by the
 L<FOREACH> directive.  This plugin allows the iterator to be explicitly created
 with a given name.

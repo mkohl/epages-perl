@@ -235,7 +235,7 @@ sub ProcessLinkInfo($$$);
     GROUPS => { 2 => 'Other' },
     PROCESS_PROC => \&ProcessItemID,
     # (can't find any documentation on these items)
-    0x0032 => {
+    0x0032 => { 
         Name => 'Item0032',
         SubDirectory => { TagTable => 'Image::ExifTool::LNK::Item0032' },
     },
@@ -646,7 +646,7 @@ sub ProcessLNK($$)
         next unless $flags & $mask;
         $raf->Read($buff, 2) or return 1;
         $len = unpack('v', $buff);
-        $len *= 2 if $flags & 0x80;  # characters are 2 bytes if Unicode flag is set
+        $len *= 2 if $flags & 0x80;  # characters are 2 bytes if Unicode flag is set   
         $raf->Read($buff, $len) or return 1;
         my $val;
         $val = $exifTool->Decode($buff, 'UCS2') if $flags & 0x80;

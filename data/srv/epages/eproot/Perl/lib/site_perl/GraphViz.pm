@@ -150,7 +150,7 @@ This is the constructor. It accepts several attributes.
   my $g = GraphViz->new(rankdir  => 1);
   my $g = GraphViz->new(width => 8.5, height => 11);
   my $g = GraphViz->new(width => 30, height => 20,
-                        pagewidth => 8.5, pageheight => 11);
+			pagewidth => 8.5, pageheight => 11);
 
 The most two important attributes are 'layout' and 'directed'.
 
@@ -159,7 +159,7 @@ The most two important attributes are 'layout' and 'directed'.
 =item layout
 
 The 'layout' attribute determines which layout algorithm GraphViz.pm will
-use. Possible values are:
+use. Possible values are: 
 
 =over
 
@@ -248,13 +248,13 @@ Determines if and how node overlaps should be removed.
 
 =item true
 
-(the default) overlaps are retained.
+(the default) overlaps are retained. 
 
 =item scale
 
-overlaps are removed by uniformly scaling in x and y.
+overlaps are removed by uniformly scaling in x and y. 
 
-=item false
+=item false 
 
 If the value converts to "false", node overlaps are removed by a Voronoi-based technique.
 
@@ -269,7 +269,7 @@ constraint problems, one for the x axis and one for the y. The suffix indicates
 which axis is processed first.
 
 B<NOTE>: The methods related to "orthoxy" and "orthoyx" are still evolving. The
-semantics of these may change, or these methods may disappear altogether.
+semantics of these may change, or these methods may disappear altogether. 
 
 =item compress
 
@@ -331,7 +331,7 @@ If ratio = C<auto> the page attribute is set and the graph cannot be drawn on a
 single page, then size is set to an ``ideal'' value. In particular, the size in
 a given dimension will be the smallest integral multiple of the page size in
 that dimension which is at least half the current size. The two dimensions are
-then scaled independently to the new size. This feature only works in dot.
+then scaled independently to the new size. This feature only works in dot. 
 
 =back
 
@@ -831,7 +831,7 @@ other as_* method does.
 
   # prints out something like:
   digraph test {
-      node [    label = "\N" ];
+      node [	label = "\N" ];
       London [label=London];
       Paris [label="City of\nlurve"];
       New_York [label="New York"];
@@ -849,7 +849,7 @@ twopi / circo / fdp format file.
 
   # prints out something like:
   digraph test {
-      node [    label = "\N" ];
+      node [	label = "\N" ];
       graph [bb= "0,0,162,134"];
       London [label=London, pos="33,116", width="0.89", height="0.50"];
       Paris [label="City of\nlurve", pos="33,23", width="0.92", height="0.62"];
@@ -1309,7 +1309,7 @@ The file CHANGES was converted into Changelog.ini by L<Module::Metadata::Changes
 Leon Brocard: E<lt>F<acme@astray.com>E<gt>.
 
 Current maintainer: Ron Savage I<E<lt>ron@savage.net.auE<gt>>.
-
+ 
 =head1 COPYRIGHT
 
 Copyright (C) 2000-4, Leon Brocard

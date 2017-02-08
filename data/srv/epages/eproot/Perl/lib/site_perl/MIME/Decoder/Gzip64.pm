@@ -42,7 +42,7 @@ L<MIME::Decoder>
 
 Eryq (F<eryq@zeegee.com>), ZeeGee Software Inc (F<http://www.zeegee.com>).
 
-All rights reserved.  This program is free software; you can redistribute
+All rights reserved.  This program is free software; you can redistribute 
 it and/or modify it under the same terms as Perl itself.
 
 
@@ -82,9 +82,9 @@ sub decode_it {
 
     # Stage 1: decode the base64'd stream into zipped data:
     $self->SUPER::decode_it($in, $tmp)    or die "base64 decoding failed!";
-
+    
     # Stage 2: un-zip the zipped data:
-    $tmp->seek(0, 0);
+    $tmp->seek(0, 0); 
     $self->filter($tmp, $out, $GUNZIP)    or die "gzip decoding failed!";
 }
 
@@ -94,16 +94,16 @@ sub decode_it {
 #
 sub encode_it {
     my ($self, $in, $out) = @_;
-    whine "Encoding ", $self->encoding, " is not standard MIME!";
-
+    whine "Encoding ", $self->encoding, " is not standard MIME!"; 
+    
     # Open a temp file (assume the worst, that this is a big stream):
     my $tmp = tmpopen() || die "can't get temp file";
-
+  
     # Stage 1: zip the raw data:
     $self->filter($in, $tmp, $GZIP)       or die "gzip encoding failed!";
-
+    
     # Stage 2: encode the zipped data via base64:
-    $tmp->seek(0, 0);
+    $tmp->seek(0, 0);    
     $self->SUPER::encode_it($tmp, $out)   or die "base64 encoding failed!";
 }
 

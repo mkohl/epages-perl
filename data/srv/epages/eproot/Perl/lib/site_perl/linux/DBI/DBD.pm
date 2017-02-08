@@ -1,7 +1,7 @@
 package DBI::DBD;
 # vim:ts=8:sw=4
 
-use vars qw($VERSION);  # set $VERSION early so we don't confuse PAUSE/CPAN etc
+use vars qw($VERSION);	# set $VERSION early so we don't confuse PAUSE/CPAN etc
 
 # don't use Revision here because that's not in svn:keywords so that the
 # examples that use it below won't be messed up
@@ -797,8 +797,8 @@ touch via dbi-dev@perl.org)
 
 Methods installed using install_method default to the standard error
 handling behaviour for DBI methods: clearing err and errstr before
-calling the method, and checking for errors to trigger RaiseError
-etc. on return. This differs from the default behaviour of func().
+calling the method, and checking for errors to trigger RaiseError 
+etc. on return. This differs from the default behaviour of func(). 
 
 Note for driver authors: The DBD::Foo::xx->install_method call won't
 work until the class-hierarchy has been setup. Normally the DBI
@@ -865,16 +865,16 @@ namespace) C<connect()> method:
       # here, that is, the DSN looks like var1=val1;...;varN=valN
       foreach my $var ( split /;/, $dr_dsn ) {
           my ($attr_name, $attr_value) = split '=', $var, 2;
-          return $drh->set_err($DBI::stderr, "Can't parse DSN part '$var'")
+	  return $drh->set_err($DBI::stderr, "Can't parse DSN part '$var'")
               unless defined $attr_value;
 
           # add driver prefix to attribute name if it doesn't have it already
           $attr_name = $driver_prefix.$attr_name
               unless $attr_name =~ /^$driver_prefix/o;
 
-          # Store attribute into %$attr, replacing any existing value.
+	  # Store attribute into %$attr, replacing any existing value.
           # The DBI will STORE() these into $dbh after we've connected
-          $attr->{$attr_name} = $attr_value;
+	  $attr->{$attr_name} = $attr_value;
       }
 
       # Get the attributes we'll use to connect.
@@ -3252,14 +3252,14 @@ use vars qw(
 
 BEGIN {
     if ($^O eq 'VMS') {
-        require vmsish;
-        import  vmsish;
-        require VMS::Filespec;
-        import  VMS::Filespec;
+	require vmsish;
+	import  vmsish;
+	require VMS::Filespec;
+	import  VMS::Filespec;
     }
     else {
-        *vmsify  = sub { return $_[0] };
-        *unixify = sub { return $_[0] };
+	*vmsify  = sub { return $_[0] };
+	*unixify = sub { return $_[0] };
     }
 }
 
@@ -3283,20 +3283,20 @@ sub _inst_checks {
     return if $done_inst_checks++;
     my $cwd = cwd();
     if ($cwd =~ /\Q$Config{path_sep}/) {
-        warn "*** Warning: Path separator characters (`$Config{path_sep}') ",
-            "in the current directory path ($cwd) may cause problems\a\n\n";
+	warn "*** Warning: Path separator characters (`$Config{path_sep}') ",
+	    "in the current directory path ($cwd) may cause problems\a\n\n";
         sleep 2;
     }
     if ($cwd =~ /\s/) {
-        warn "*** Warning: whitespace characters ",
-            "in the current directory path ($cwd) may cause problems\a\n\n";
+	warn "*** Warning: whitespace characters ",
+	    "in the current directory path ($cwd) may cause problems\a\n\n";
         sleep 2;
     }
     if (   $^O eq 'MSWin32'
-        && $Config{cc} eq 'cl'
-        && !(exists $ENV{'LIB'} && exists $ENV{'INCLUDE'}))
+	&& $Config{cc} eq 'cl'
+	&& !(exists $ENV{'LIB'} && exists $ENV{'INCLUDE'}))
     {
-        die <<EOT;
+	die <<EOT;
 *** You're using Microsoft Visual C++ compiler or similar but
     the LIB and INCLUDE environment variables are not both set.
 
@@ -3321,32 +3321,32 @@ sub dbd_edit_mm_attribs {
     my $mm_attr = shift;
     my $dbd_attr = shift || {};
     croak "dbd_edit_mm_attribs( \%makemaker [, \%other ]): too many parameters"
-        if @_;
+	if @_;
     _inst_checks();
 
     # what can be done
     my %test_variants = (
-        p => {  name => "DBI::PurePerl",
-                match => qr/^\d/,
-                add => [ '$ENV{DBI_PUREPERL} = 2',
-                         'END { delete $ENV{DBI_PUREPERL}; }' ],
-        },
-        g => {  name => "DBD::Gofer",
-                match => qr/^\d/,
-                add => [ q{$ENV{DBI_AUTOPROXY} = 'dbi:Gofer:transport=null;policy=pedantic'},
-                         q|END { delete $ENV{DBI_AUTOPROXY}; }| ],
-        },
-        n => {  name => "DBI::SQL::Nano",
-                match => qr/^(?:48dbi_dbd_sqlengine|49dbd_file|5\ddbm_\w+|85gofer)\.t$/,
-                add => [ q{$ENV{DBI_SQL_NANO} = 1},
-                         q|END { delete $ENV{DBI_SQL_NANO}; }| ],
-        },
-    #   mx => { name => "DBD::Multiplex",
+	p => {	name => "DBI::PurePerl",
+		match => qr/^\d/,
+		add => [ '$ENV{DBI_PUREPERL} = 2',
+			 'END { delete $ENV{DBI_PUREPERL}; }' ],
+	},
+	g => {	name => "DBD::Gofer",
+		match => qr/^\d/,
+		add => [ q{$ENV{DBI_AUTOPROXY} = 'dbi:Gofer:transport=null;policy=pedantic'},
+			 q|END { delete $ENV{DBI_AUTOPROXY}; }| ],
+	},
+	n => {	name => "DBI::SQL::Nano",
+		match => qr/^(?:48dbi_dbd_sqlengine|49dbd_file|5\ddbm_\w+|85gofer)\.t$/,
+		add => [ q{$ENV{DBI_SQL_NANO} = 1},
+			 q|END { delete $ENV{DBI_SQL_NANO}; }| ],
+	},
+    #   mx => {	name => "DBD::Multiplex",
     #           add => [ q{local $ENV{DBI_AUTOPROXY} = 'dbi:Multiplex:';} ],
     #   }
-    #   px => { name => "DBD::Proxy",
-    #           need mechanism for starting/stopping the proxy server
-    #           add => [ q{local $ENV{DBI_AUTOPROXY} = 'dbi:Proxy:XXX';} ],
+    #   px => {	name => "DBD::Proxy",
+    #		need mechanism for starting/stopping the proxy server
+    #		add => [ q{local $ENV{DBI_AUTOPROXY} = 'dbi:Proxy:XXX';} ],
     #   }
     );
 
@@ -3358,61 +3358,61 @@ sub dbd_edit_mm_attribs {
     # expand for all combinations
     my @all_keys = my @tv_keys = sort keys %test_variants;
     while( @tv_keys ) {
-        my $cur_key = shift @tv_keys;
-        last if( 1 < length $cur_key );
-        my @new_keys;
-        foreach my $remain (@tv_keys) {
-            push @new_keys, $cur_key . $remain unless $remain =~ /$cur_key/;
-        }
-        push @tv_keys, @new_keys;
-        push @all_keys, @new_keys;
+	my $cur_key = shift @tv_keys;
+	last if( 1 < length $cur_key );
+	my @new_keys;
+	foreach my $remain (@tv_keys) {
+	    push @new_keys, $cur_key . $remain unless $remain =~ /$cur_key/;
+	}
+	push @tv_keys, @new_keys;
+	push @all_keys, @new_keys;
     }
 
     my %uniq_keys;
     foreach my $key (@all_keys) {
-        @tv_keys = sort split //, $key;
-        my $ordered = join( '', @tv_keys );
-        $uniq_keys{$ordered} = 1;
+	@tv_keys = sort split //, $key;
+	my $ordered = join( '', @tv_keys );
+	$uniq_keys{$ordered} = 1;
     }
     @all_keys = sort { length $a <=> length $b or $a cmp $b } keys %uniq_keys;
 
     # do whatever needs doing
     if( keys %test_variants ) {
-        # XXX need to convert this to work within the generated Makefile
-        # so 'make' creates them and 'make clean' deletes them
-        opendir DIR, 't' or die "Can't read 't' directory: $!";
-        my @tests = grep { /\.t$/ } readdir DIR;
-        closedir DIR;
+	# XXX need to convert this to work within the generated Makefile
+	# so 'make' creates them and 'make clean' deletes them
+	opendir DIR, 't' or die "Can't read 't' directory: $!";
+	my @tests = grep { /\.t$/ } readdir DIR;
+	closedir DIR;
 
         foreach my $test_combo (@all_keys) {
-            @tv_keys = split //, $test_combo;
-            my @test_names = map { $test_variants{$_}->{name} } @tv_keys;
+	    @tv_keys = split //, $test_combo;
+	    my @test_names = map { $test_variants{$_}->{name} } @tv_keys;
             printf "Creating test wrappers for " . join( " + ", @test_names ) . ":\n";
-            my @test_matches = map { $test_variants{$_}->{match} } @tv_keys;
-            my @test_adds;
-            foreach my $test_add ( map { $test_variants{$_}->{add} } @tv_keys) {
-                push @test_adds, @$test_add;
-            }
-            my $v_type = $test_combo;
-            $v_type = 'x' . $v_type if length( $v_type ) > 1;
+	    my @test_matches = map { $test_variants{$_}->{match} } @tv_keys;
+	    my @test_adds;
+	    foreach my $test_add ( map { $test_variants{$_}->{add} } @tv_keys) {
+		push @test_adds, @$test_add;
+	    }
+	    my $v_type = $test_combo;
+	    $v_type = 'x' . $v_type if length( $v_type ) > 1;
 
-        TEST:
+	TEST:
             foreach my $test (sort @tests) {
-                foreach my $match (@test_matches) {
-                    next TEST if $test !~ $match;
-                }
+		foreach my $match (@test_matches) {
+		    next TEST if $test !~ $match;
+		}
                 my $usethr = ($test =~ /(\d+|\b)thr/ && $] >= 5.008 && $Config{useithreads});
                 my $v_test = "t/zv${v_type}_$test";
                 my $v_perl = ($test =~ /taint/) ? "perl -wT" : "perl -w";
-                printf "%s %s\n", $v_test, ($usethr) ? "(use threads)" : "";
-                open PPT, ">$v_test" or warn "Can't create $v_test: $!";
-                print PPT "#!$v_perl\n";
-                print PPT "use threads;\n" if $usethr;
-                print PPT "$_;\n" foreach @test_adds;
-                print PPT "require './t/$test'; # or warn \$!;\n";
-                close PPT or warn "Error writing $v_test: $!";
-            }
-        }
+		printf "%s %s\n", $v_test, ($usethr) ? "(use threads)" : "";
+		open PPT, ">$v_test" or warn "Can't create $v_test: $!";
+		print PPT "#!$v_perl\n";
+		print PPT "use threads;\n" if $usethr;
+		print PPT "$_;\n" foreach @test_adds;
+		print PPT "require './t/$test'; # or warn \$!;\n";
+		close PPT or warn "Error writing $v_test: $!";
+	    }
+	}
     }
     return %$mm_attr;
 }
@@ -3458,7 +3458,7 @@ $(BASEEXT).c: $(BASEEXT).xsi
 $(BASEEXT)$(OBJ_EXT): $(BASEEXT).xsi
 
 $(BASEEXT).xsi: $(DBI_DRIVER_XST) '.$xstf_h.'
-        $(PERL) -p -e "s/~DRIVER~/$(BASEEXT)/g" $(DBI_DRIVER_XST) > $(BASEEXT).xsi
+	$(PERL) -p -e "s/~DRIVER~/$(BASEEXT)/g" $(DBI_DRIVER_XST) > $(BASEEXT).xsi
 
 # ---
 ';

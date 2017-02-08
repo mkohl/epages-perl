@@ -323,7 +323,7 @@ DateTime::Locale - Localization support for DateTime.pm
   my $loc = DateTime::Locale->load('en_GB');
 
   print $loc->native_locale_name(),   "\n",
-        $loc->datetime_format_long(), "\n";
+	$loc->datetime_format_long(), "\n";
 
   # but mostly just things like ...
 

@@ -58,8 +58,8 @@ sub import {
       foreach (@_);
   }
   return export $pkg, $callpkg, ($args ? @_ : ()) if $heavy;
-  local $SIG{__WARN__} =
-        sub {require Carp; &Carp::carp};
+  local $SIG{__WARN__} = 
+	sub {require Carp; &Carp::carp};
   # shortcut for the common case of no type character
   *{"$callpkg\::$_"} = \&{"$pkg\::$_"} foreach @_;
 }
@@ -278,12 +278,12 @@ import function:
 
     sub import
     {
-        $A::b = 1;     # not a very useful import method
+	$A::b = 1;     # not a very useful import method
     }
 
-and you want to Export symbol C<$A::b> back to the module that called
-package A. Since Exporter relies on the import method to work, via
-inheritance, as it stands Exporter::import() will never get called.
+and you want to Export symbol C<$A::b> back to the module that called 
+package A. Since Exporter relies on the import method to work, via 
+inheritance, as it stands Exporter::import() will never get called. 
 Instead, say the following:
 
     package A;
@@ -292,12 +292,12 @@ Instead, say the following:
 
     sub import
     {
-        $A::b = 1;
-        A->export_to_level(1, @_);
+	$A::b = 1;
+	A->export_to_level(1, @_);
     }
 
-This will export the symbols one level 'above' the current package - ie: to
-the program or module that used package A.
+This will export the symbols one level 'above' the current package - ie: to 
+the program or module that used package A. 
 
 Note: Be careful not to modify C<@_> at all before you call export_to_level
 - or people using your package will get very unexplained results!
@@ -507,7 +507,7 @@ C<base> code to just establish the IS-A relationship.
 For more details, see the documentation and code of
 L<base> and L<parent>.
 
-Another thorough remedy to that runtime vs.
+Another thorough remedy to that runtime vs. 
 compile-time trap is to use L<Exporter::Easy>,
 which is a wrapper of Exporter that allows all
 boilerplate code at a single gulp in the

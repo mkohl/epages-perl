@@ -32,8 +32,8 @@ sub init {
     }
     else {
       $asn->{byoffset} = {
-        offset => $self->{offset} || 0,
-        contentCount => $self->{content} || 0
+ 	offset => $self->{offset} || 0,
+	contentCount => $self->{content} || 0
       };
     }
   }
@@ -100,7 +100,7 @@ sub context {
 sub response {
   my $self = shift;
   my $resp = shift;
-
+  
   my $asn = $self->{asn};
 
   $asn->{contextID} = $resp->context;
@@ -110,7 +110,7 @@ sub response {
   };
   delete $asn->{byValue};
 
-  1;
+  1;  
 }
 
 sub offset {
@@ -199,7 +199,7 @@ sub end {
   my $self = shift;
   my $asn = $self->{asn};
   my $content = $self->content || 0;
-
+  
   $asn->{beforeCount} += $asn->{afterCount};
   $asn->{afterCount} = 0;
   $self->offset($content);
@@ -223,18 +223,18 @@ Net::LDAP::Control::VLV - LDAPv3 Virtual List View control object
 
  # Get the first 20 entries
  $vlv  = Net::LDAP::Control::VLV->new(
-           before  => 0,        # No entries from before target entry
-           after   => 19,       # 19 entries after target entry
-           content => 0,        # List size unknown
-           offset  => 1,        # Target entry is the first
-         );
+	   before  => 0,	# No entries from before target entry
+	   after   => 19,	# 19 entries after target entry
+	   content => 0,	# List size unknown
+	   offset  => 1,	# Target entry is the first
+	 );
  $sort = Net::LDAP::Control::Sort->new( order => 'cn' );
 
  @args = ( base     => "o=Ace Industry, c=us",
-           scope    => "subtree",
-           filter   => "(objectClass=inetOrgPerson)",
-           callback => \&process_entry, # Call this sub for each entry
-           control  => [ $vlv, $sort ],
+	   scope    => "subtree",
+	   filter   => "(objectClass=inetOrgPerson)",
+	   callback => \&process_entry, # Call this sub for each entry
+	   control  => [ $vlv, $sort ],
  );
 
  $mesg = $ldap->search( @args );
@@ -262,9 +262,9 @@ Net::LDAP::Control::VLV - LDAPv3 Virtual List View control object
  $vlv->response( $resp );
 
  # Now page with first entry starting with "B" in the middle
- $vlv->before(9);       # Change page to show 9 before
- $vlv->after(10);       # Change page to show 10 after
- $vlv->assert("B");     # assert "B"
+ $vlv->before(9);	# Change page to show 9 before
+ $vlv->after(10);	# Change page to show 10 after
+ $vlv->assert("B");	# assert "B"
 
  $mesg = $ldap->search( @args );
 

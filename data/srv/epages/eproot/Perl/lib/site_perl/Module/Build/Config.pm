@@ -9,9 +9,9 @@ use Config;
 sub new {
   my ($pack, %args) = @_;
   return bless {
-                stack => {},
-                values => $args{values} || {},
-               }, $pack;
+		stack => {},
+		values => $args{values} || {},
+	       }, $pack;
 }
 
 sub get {

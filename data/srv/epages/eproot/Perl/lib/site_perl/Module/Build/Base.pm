@@ -4217,7 +4217,7 @@ EOF
   $content .= '\b'.$self->dist_name.'-[\d\.\_]+'."\n";
 
   print $fh $content;
-
+  
   close $fh;
 
   return;
@@ -4672,7 +4672,7 @@ sub _upconvert_resources {
   return \%output
 }
 my %custom = (
-        resources => \&_upconvert_resources,
+	resources => \&_upconvert_resources,
 );
 
 sub _upconvert_metapiece {

@@ -118,7 +118,7 @@ sub docs_as_pod {
     my $class_spec = $class->class_spec;
     my $method_spec = $class->method_spec;
     my $frame_arguments = $class->frame_arguments;
-
+    
     my $description = "This is an auto-generated subclass of L<$package>; see the docs for that module for inherited methods.  Check the L</USAGE> below for details on the auto-generated methods within this class.\n";
 
     if ($class->method_id == 0) {

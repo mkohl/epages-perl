@@ -21,7 +21,7 @@ sub new
 {
     my ($class) = @_;
     my ($self) = {};
-
+    
     $class = ref($class) || $class;
     bless $self, $class;
 }
@@ -36,7 +36,7 @@ sub read
 {
     my ($self, $fh) = @_;
     my ($dat);
-
+    
     my $stTableStart = $fh->tell();
 
     my ($classes, $states, $entries) = AAT_read_state_table($fh, 0);
@@ -65,7 +65,7 @@ sub read
     $self->{'entries'} = $entries;
 
     $fh->seek($stTableStart - 8 + $self->{'length'}, IO::File::SEEK_SET);
-
+    
     $self;
 }
 
@@ -92,7 +92,7 @@ sub print
 sub dumpXML
 {
     my ($self, $fh) = @_;
-
+    
     $fh->printf("<classes>\n");
     $self->dumpClasses($self->{'classes'}, $fh);
     $fh->printf("</classes>\n");

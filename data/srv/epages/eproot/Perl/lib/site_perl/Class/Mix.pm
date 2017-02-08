@@ -4,15 +4,15 @@ Class::Mix - dynamic class mixing
 
 =head1 SYNOPSIS
 
-        use Class::Mix qw(mix_class);
+	use Class::Mix qw(mix_class);
 
-        $foobar_object = mix_class("Foo", "Bar")->new;
-        $digest_class = mix_class("Foo", "Bar", {prefix=>"Digest::"});
+	$foobar_object = mix_class("Foo", "Bar")->new;
+	$digest_class = mix_class("Foo", "Bar", {prefix=>"Digest::"});
 
-        use Class::Mix qw(genpkg);
+	use Class::Mix qw(genpkg);
 
-        $package = genpkg;
-        $package = genpkg("Digest::Foo::");
+	$package = genpkg;
+	$package = genpkg("Digest::Foo::");
 
 =head1 DESCRIPTION
 
@@ -39,11 +39,11 @@ use parent "Exporter";
 our @EXPORT_OK = qw(mix_class genpkg);
 
 BEGIN {
-        if(_DO_MRO) {
-                *_get_mro = \&mro::get_mro;
-        } else {
-                *_get_mro = sub ($) { "dfs" };
-        }
+	if(_DO_MRO) {
+		*_get_mro = \&mro::get_mro;
+	} else {
+		*_get_mro = sub ($) { "dfs" };
+	}
 }
 
 my $prefix_rx = qr/(?:[a-zA-Z_][0-9a-zA-Z_]*::(?:[0-9a-zA-Z_]+::)*)?/;
@@ -114,49 +114,49 @@ sub genpkg(;$);
 
 my %mixtures;
 sub mix_class(@) {
-        my @parents;
-        my %options;
-        foreach(@_) {
-                if(is_string($_)) {
-                        push @parents, $_;
-                } elsif(is_ref($_, "HASH")) {
-                        foreach my $k (keys %$_) {
-                                croak "clashing option `$k'"
-                                        if exists $options{$k};
-                                $options{$k} = $_->{$k};
-                        }
-                } else {
-                        croak "bad argument for mix_class";
-                }
-        }
-        foreach(keys %options) {
-                croak "bad option `$_' for mix_class"
-                        unless /\A(?:mro|prefix)\z/;
-        }
-        $options{mro} = "dfs" unless exists $options{mro};
-        croak "bad mro value" unless is_string($options{mro});
-        $options{prefix} = undef unless exists $options{prefix};
-        croak "bad prefix value" unless
-                is_undef($options{prefix}) ||
-                        (is_string($options{prefix}) &&
-                                $options{prefix} =~ /\A$prefix_rx\z/o);
-        return "UNIVERSAL" if @parents == 0 &&
-                $options{mro} eq _get_mro("UNIVERSAL") &&
-                (is_undef($options{prefix}) || $options{prefix} eq "");
-        return $parents[0] if @parents == 1 &&
-                $options{mro} eq _get_mro($parents[0]) &&
-                (is_undef($options{prefix}) ||
-                        $parents[0] =~ /\A\Q$options{prefix}\E[^:]*\z/);
-        $options{prefix} = "Class::Mix::" unless defined $options{prefix};
-        my $recipe = join("", map { length($_)."_".$_ }
-                                $options{mro}, $options{prefix}, @parents);
-        return $mixtures{$recipe} ||= do {
-                my $pkg = genpkg($options{prefix});
-                no strict "refs";
-                @{$pkg."::ISA"} = @parents;
-                mro::set_mro($pkg, $options{mro}) if $options{mro} ne "dfs";
-                $pkg;
-        };
+	my @parents;
+	my %options;
+	foreach(@_) {
+		if(is_string($_)) {
+			push @parents, $_;
+		} elsif(is_ref($_, "HASH")) {
+			foreach my $k (keys %$_) {
+				croak "clashing option `$k'"
+					if exists $options{$k};
+				$options{$k} = $_->{$k};
+			}
+		} else {
+			croak "bad argument for mix_class";
+		}
+	}
+	foreach(keys %options) {
+		croak "bad option `$_' for mix_class"
+			unless /\A(?:mro|prefix)\z/;
+	}
+	$options{mro} = "dfs" unless exists $options{mro};
+	croak "bad mro value" unless is_string($options{mro});
+	$options{prefix} = undef unless exists $options{prefix};
+	croak "bad prefix value" unless
+		is_undef($options{prefix}) ||
+			(is_string($options{prefix}) &&
+				$options{prefix} =~ /\A$prefix_rx\z/o);
+	return "UNIVERSAL" if @parents == 0 &&
+		$options{mro} eq _get_mro("UNIVERSAL") &&
+		(is_undef($options{prefix}) || $options{prefix} eq "");
+	return $parents[0] if @parents == 1 &&
+		$options{mro} eq _get_mro($parents[0]) &&
+		(is_undef($options{prefix}) ||
+			$parents[0] =~ /\A\Q$options{prefix}\E[^:]*\z/);
+	$options{prefix} = "Class::Mix::" unless defined $options{prefix};
+	my $recipe = join("", map { length($_)."_".$_ }
+				$options{mro}, $options{prefix}, @parents);
+	return $mixtures{$recipe} ||= do {
+		my $pkg = genpkg($options{prefix});
+		no strict "refs";
+		@{$pkg."::ISA"} = @parents;
+		mro::set_mro($pkg, $options{mro}) if $options{mro} ne "dfs";
+		$pkg;
+	};
 }
 
 =item genpkg([PREFIX])
@@ -185,18 +185,18 @@ is not supplied, the caller is not expressing any preference.
 
 my $n = 0;
 sub genpkg(;$) {
-        my($prefix) = @_;
-        $prefix = "Class::Mix::" unless defined $prefix;
-        croak "`$prefix' is not a valid module name prefix"
-                unless $prefix =~ /\A$prefix_rx\z/o;
-        no strict "refs";
-        my $pkgtail;
-        do {
-                $pkgtail = "__GP".$n++;
-        } while(exists ${$prefix || "::"}{$pkgtail."::"});
-        my $pkgname = $prefix.$pkgtail;
-        %{$pkgname."::"} = ();
-        return $pkgname;
+	my($prefix) = @_;
+	$prefix = "Class::Mix::" unless defined $prefix;
+	croak "`$prefix' is not a valid module name prefix"
+		unless $prefix =~ /\A$prefix_rx\z/o;
+	no strict "refs";
+	my $pkgtail;
+	do {
+		$pkgtail = "__GP".$n++;
+	} while(exists ${$prefix || "::"}{$pkgtail."::"});
+	my $pkgname = $prefix.$pkgtail;
+	%{$pkgname."::"} = ();
+	return $pkgname;
 }
 
 =back

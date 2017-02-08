@@ -14,12 +14,12 @@ A generic decoder object; see L<MIME::Decoder> for usage.
 =head1 DESCRIPTION
 
 A MIME::Decoder subclass for the C<"binary"> encoding (in other words,
-no encoding).
+no encoding).  
 
 The C<"binary"> decoder is a special case, since it's ill-advised
 to read the input line-by-line: after all, an uncompressed image file might
 conceivably have loooooooooong stretches of bytes without a C<"\n"> among
-them, and we don't want to risk blowing out our core.  So, we
+them, and we don't want to risk blowing out our core.  So, we 
 read-and-write fixed-size chunks.
 
 Both the B<encoder> and B<decoder> do a simple pass-through of the data
@@ -34,7 +34,7 @@ L<MIME::Decoder>
 
 Eryq (F<eryq@zeegee.com>), ZeeGee Software Inc (F<http://www.zeegee.com>).
 
-All rights reserved.  This program is free software; you can redistribute
+All rights reserved.  This program is free software; you can redistribute 
 it and/or modify it under the same terms as Perl itself.
 
 =cut
@@ -59,7 +59,7 @@ sub decode_it {
 
     my ($buf, $nread) = ('', 0);
     while ($nread = $in->read($buf, $BUFLEN)) {
-        $out->print($buf);
+	$out->print($buf);
     }
     defined($nread) or return undef;      ### check for error
     1;
@@ -74,7 +74,7 @@ sub encode_it {
 
     my ($buf, $nread) = ('', 0);
     while ($nread = $in->read($buf, $BUFLEN)) {
-        $out->print($buf);
+	$out->print($buf);
     }
     defined($nread) or return undef;      ### check for error
     1;

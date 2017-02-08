@@ -39,7 +39,7 @@ sub lwp_ext_ent_handler {
       $uri = URI->new_abs($uri, URI::file->cwd);
     }
   }
-
+  
   my $ua = $xp->{_lwpagent};
   unless (defined $ua) {
     $ua = $xp->{_lwpagent} = new LWP::UserAgent();
@@ -53,12 +53,12 @@ sub lwp_ext_ent_handler {
     $xp->{ErrorMessage} .= "\n" . $res->status_line . " $uri";
     return undef;
   }
-
+  
   $xp->{_BaseStack} ||= [];
   push(@{$xp->{_BaseStack}}, $base);
 
   $xp->base($uri);
-
+  
   return $res->content;
 }  # End lwp_ext_ent_handler
 

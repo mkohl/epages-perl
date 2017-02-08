@@ -11,7 +11,7 @@ PPI::Structure::Condition - Round braces for boolean context conditions
   if ( condition ) {
       ...
   }
-
+  
   while ( condition ) {
       ...
   }
@@ -42,8 +42,8 @@ use PPI::Structure ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Structure';
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Structure';
 }
 
 1;

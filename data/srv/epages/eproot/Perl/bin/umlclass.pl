@@ -294,7 +294,7 @@ The image obtained is really really large, I won't show it here, but you
 can browse it in your favorite picture browser from
 L<http://perlcabal.org/agent/images/moose_big.png>.
 
-Before trying out these commands yourself, please make sure that you have
+Before trying out these commands yourself, please make sure that you have 
 L<Moose> already installed. (It's also on CPAN, btw.)
 
 =head2 Perl libraries that use Moose

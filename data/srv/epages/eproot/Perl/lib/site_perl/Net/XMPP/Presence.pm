@@ -119,7 +119,7 @@ Net::XMPP::Presence - XMPP Presence Module
               loc=>string)         specific Set functions below.
 
                         $Pres->SetPresence(TYPE=>"away",
-                                           StatuS=>"Out for lunch");
+					   StatuS=>"Out for lunch");
 
   SetTo(string) - sets the to attribute.  You can either pass a string
   SetTo(JID)      or a JID object.  They must be valid JIDs or the

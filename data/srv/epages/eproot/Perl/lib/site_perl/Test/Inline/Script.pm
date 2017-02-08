@@ -29,18 +29,18 @@ use overload 'bool' => sub () { 1 },
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '2.212';
-        @ISA     = qw{
-                Algorithm::Dependency::Source
-                Algorithm::Dependency::Item
-        };
+	$VERSION = '2.212';
+	@ISA     = qw{
+		Algorithm::Dependency::Source
+		Algorithm::Dependency::Item
+	};
 }
 
 # Special case, for when doing unit tests ONLY.
 # Don't throw the missing files warning.
 use vars qw{$NO_MISSING_DEPENDENCIES_WARNING};
 BEGIN {
-        $NO_MISSING_DEPENDENCIES_WARNING = '';
+	$NO_MISSING_DEPENDENCIES_WARNING = '';
 }
 
 
@@ -65,56 +65,56 @@ Returns C<undef> on error.
 =cut
 
 sub new {
-        my $class       = shift;
-        my $_class      = defined $_[0] ? shift : return undef;
-        my $Sections    = _ARRAY(shift) or return undef;
-        my $check_count = shift || 0;
+	my $class       = shift;
+	my $_class      = defined $_[0] ? shift : return undef;
+	my $Sections    = _ARRAY(shift) or return undef;
+	my $check_count = shift || 0;
 
-        # Create the object
-        my $self = bless {
-                class       => $_class,
-                setup       => [ grep {   $_->setup } @$Sections ],
-                sections    => [ grep { ! $_->setup } @$Sections ],
-                filename    => lc "$_class.t",
-                check_count => $check_count,
-                # tests     => undef,
-                }, $class;
-        $self->{filename} =~ s/::/_/g;
+	# Create the object
+	my $self = bless {
+		class       => $_class,
+		setup       => [ grep {   $_->setup } @$Sections ],
+		sections    => [ grep { ! $_->setup } @$Sections ],
+		filename    => lc "$_class.t",
+		check_count => $check_count,
+		# tests     => undef,
+		}, $class;
+	$self->{filename} =~ s/::/_/g;
 
-        # Verify the uniqueness of the names
-        $self->_duplicate_names and return undef;
+	# Verify the uniqueness of the names
+	$self->_duplicate_names and return undef;
 
-        # Warn if we have missing dependencies
-        my $missing = $self->missing_dependencies;
-        if ( $missing ) {
-                foreach ( @$missing ) {
-                        next if $NO_MISSING_DEPENDENCIES_WARNING;
-                        print "Warning: Missing dependency '$_' in $self->{class}\n";
-                }
-        }
+	# Warn if we have missing dependencies
+	my $missing = $self->missing_dependencies;
+	if ( $missing ) {
+		foreach ( @$missing ) {
+			next if $NO_MISSING_DEPENDENCIES_WARNING;
+			print "Warning: Missing dependency '$_' in $self->{class}\n";
+		}
+	}
 
-        # Quickly predetermine if there will be an unknown number
-        # of unit tests in the file
-        my $unknown = grep { ! defined $_->tests } @$Sections;
-        unless ( $unknown or grep { $_->tests } @$Sections ) {
-                $unknown = 1;
-        }
+	# Quickly predetermine if there will be an unknown number
+	# of unit tests in the file
+	my $unknown = grep { ! defined $_->tests } @$Sections;
+	unless ( $unknown or grep { $_->tests } @$Sections ) {
+		$unknown = 1;
+	}
 
-        # Flag all sections that need count checking in advance
-        if ( $check_count ) {
-                foreach my $Section ( @$Sections ) {
-                        next unless defined $Section->tests;
-                        next unless $unknown or $check_count > 1;
+	# Flag all sections that need count checking in advance
+	if ( $check_count ) {
+		foreach my $Section ( @$Sections ) {
+			next unless defined $Section->tests;
+			next unless $unknown or $check_count > 1;
 
-                        # Each count check is itself a test, so
-                        # increment the number of tests for the section
-                        # when we enable the check flag.
-                        $Section->{check_count} = 1;
-                        $Section->{tests}++;
-                }
-        }
+			# Each count check is itself a test, so
+			# increment the number of tests for the section
+			# when we enable the check flag.
+			$Section->{check_count} = 1;
+			$Section->{tests}++;
+		}
+	}
 
-        $self;
+	$self;
 }
 
 =pod
@@ -135,8 +135,8 @@ filename value C<foo_bar.t>.
 
   my $config = $File->config;
 
-The C<config> method returns the config object for the file, assuming that
-it has one. If more than one are found, the first will be used, and any
+The C<config> method returns the config object for the file, assuming that 
+it has one. If more than one are found, the first will be used, and any 
 additional config sections discarded.
 
 Returns a L<Test::Inline::Config> object on success, or false if the
@@ -192,41 +192,41 @@ error.
 =cut
 
 sub sorted {
-        my $self = shift;
-        return $self->{sorted} if $self->{sorted};
+	my $self = shift;
+	return $self->{sorted} if $self->{sorted};
 
-        # Handle the simple case there there are no dependencies,
-        # so we don't have to load the dependency algorithm code.
-        unless ( map { $_->depends } $self->sections ) {
-                return $self->{sorted} = [ $self->setup, $self->sections ];
-        }
+	# Handle the simple case there there are no dependencies,
+	# so we don't have to load the dependency algorithm code.
+	unless ( map { $_->depends } $self->sections ) {
+		return $self->{sorted} = [ $self->setup, $self->sections ];
+	}
 
-        # Create the dependency algorithm object
-        my $Algorithm = Algorithm::Dependency::Ordered->new(
-                source         => $self,
-                ignore_orphans => 1, # Be lenient to non-existant dependencies
-                ) or return undef;
+	# Create the dependency algorithm object
+	my $Algorithm = Algorithm::Dependency::Ordered->new(
+		source         => $self,
+		ignore_orphans => 1, # Be lenient to non-existant dependencies
+		) or return undef;
 
-        # Pull the schedule from the algorithm. If we get an error back, it
-        # should be because there is a circular dependency.
-        my $schedule = $Algorithm->schedule_all;
-        unless ( $schedule ) {
-                warn " (Failed to build $self->{class} test schedule) ";
-                return undef;
-        }
+	# Pull the schedule from the algorithm. If we get an error back, it
+	# should be because there is a circular dependency.
+	my $schedule = $Algorithm->schedule_all;
+	unless ( $schedule ) {
+		warn " (Failed to build $self->{class} test schedule) ";
+		return undef;
+	}
 
-        # Index the sections by name
-        my %hash = map { $_->name => $_ } grep { $_->name } $self->sections;
+	# Index the sections by name
+	my %hash = map { $_->name => $_ } grep { $_->name } $self->sections;
 
-        # Merge together the setup, schedule, and anonymous parts into a
-        # single sorted list.
-        my @sorted = (
-                $self->setup,
-                ( map { $hash{$_} } @$schedule ),
-                ( grep { $_->anonymous } $self->sections )
-                );
+	# Merge together the setup, schedule, and anonymous parts into a
+	# single sorted list.
+	my @sorted = (
+		$self->setup,
+		( map { $hash{$_} } @$schedule ),
+		( grep { $_->anonymous } $self->sections )
+		);
 
-        $self->{sorted} = \@sorted;
+	$self->{sorted} = \@sorted;
 }
 
 =pod
@@ -243,19 +243,19 @@ number of tests is not known.
 =cut
 
 sub tests {
-        my $self = shift;
-        return $self->{tests} if exists $self->{tests};
+	my $self = shift;
+	return $self->{tests} if exists $self->{tests};
 
-        # Add up the tests
-        my $total = 0;
-        foreach my $Section ( $self->setup, $self->sections ) {
-                # Return undef if section has an unknown number of tests
-                return undef unless defined $Section->tests;
-                $total += $Section->tests;
-        }
+	# Add up the tests
+	my $total = 0;
+	foreach my $Section ( $self->setup, $self->sections ) {
+		# Return undef if section has an unknown number of tests
+		return undef unless defined $Section->tests;
+		$total += $Section->tests;
+	}
 
-        # If the total is zero, it's probably screwed, go with "unknown"
-        $self->{tests} = $total || undef;
+	# If the total is zero, it's probably screwed, go with "unknown"
+	$self->{tests} = $total || undef;
 }
 
 =pod
@@ -274,76 +274,76 @@ have been empty ), or C<undef> on error.
 =cut
 
 sub merged_content {
-        my $self = shift;
-        return $self->{content} if exists $self->{content};
+	my $self = shift;
+	return $self->{content} if exists $self->{content};
 
-        # Get the sorted Test::Inline::Section objects
-        my $sorted = $self->sorted or return undef;
+	# Get the sorted Test::Inline::Section objects
+	my $sorted = $self->sorted or return undef;
 
-        # Prepare
-        $self->{_example_count} = 0;
+	# Prepare
+	$self->{_example_count} = 0;
 
-        # Strip out empty sections
-        @$sorted = grep { $_->content =~ /\S/ } @$sorted;
+	# Strip out empty sections
+	@$sorted = grep { $_->content =~ /\S/ } @$sorted;
 
-        # Generate wrapped code chunks
-        my @content = map { $self->_wrap_content($_) } @$sorted;
-        return '' unless @content;
+	# Generate wrapped code chunks
+	my @content = map { $self->_wrap_content($_) } @$sorted;
+	return '' unless @content;
 
-        # Merge to create the core testing code
-        $self->{content} = join "\n\n\n", @content;
+	# Merge to create the core testing code
+	$self->{content} = join "\n\n\n", @content;
 
-        # Clean up and return
-        delete $self->{_example_count};
-        $self->{content};
+	# Clean up and return
+	delete $self->{_example_count};
+	$self->{content};
 }
 
 # Take a single generated section of code, and wrap it
 # in the standard boilerplate.
 sub _wrap_content {
-        my $self    = shift;
-        my $Section = _INSTANCE(shift, 'Test::Inline::Section') or return undef;
-        my $code    = $Section->content;
+	my $self    = shift;
+	my $Section = _INSTANCE(shift, 'Test::Inline::Section') or return undef;
+	my $code    = $Section->content;
 
-        # Wrap in compilation test code if an example
-        if ( $Section->example ) {
-                $self->{_example_count}++;
-                $code =~ s/^/    /mg;
-                $code = "eval q{\n"
-                        . "  my \$example = sub {\n"
-                        . "    local \$^W = 0;\n"
-                        . $code
-                        . "  };\n"
-                        . "};\n"
-                        . "is(\$@, '', 'Example $self->{_example_count} compiles cleanly');\n";
-        }
+	# Wrap in compilation test code if an example
+	if ( $Section->example ) {
+		$self->{_example_count}++;
+		$code =~ s/^/    /mg;
+		$code = "eval q{\n"
+			. "  my \$example = sub {\n"
+			. "    local \$^W = 0;\n"
+			. $code
+			. "  };\n"
+			. "};\n"
+			. "is(\$@, '', 'Example $self->{_example_count} compiles cleanly');\n";
+	}
 
-        # Wrap in scope braces unless it is a setup section
-        unless ( $Section->setup ) {
-                $code = "{\n"
-                      . $code
-                      . "}\n";
-        }
+	# Wrap in scope braces unless it is a setup section
+	unless ( $Section->setup ) {
+		$code = "{\n"
+		      . $code
+		      . "}\n";
+	}
 
-        # Add the count-checking code if needed
-        if ( $Section->{check_count} ) {
-                my $increase = $Section->tests - 1;
-                my $were     = $increase == 1 ? 'test was' : 'tests were';
-                my $section  =
-                $code = "\$::__tc = Test::Builder->new->current_test;\n"
-                      . $code
-                      . "is( Test::Builder->new->current_test - \$::__tc, "
-                        . ($increase || '0')
-                        . ",\n"
-                      . "\t'$increase $were run in the section' );\n";
-        }
+	# Add the count-checking code if needed
+	if ( $Section->{check_count} ) {
+		my $increase = $Section->tests - 1;
+		my $were     = $increase == 1 ? 'test was' : 'tests were';
+		my $section  = 
+		$code = "\$::__tc = Test::Builder->new->current_test;\n"
+		      . $code
+		      . "is( Test::Builder->new->current_test - \$::__tc, "
+		        . ($increase || '0')
+		        . ",\n"
+		      . "\t'$increase $were run in the section' );\n";
+	}
 
-        # Add the section header
-        $code = "# $Section->{begin}\n"
-              . $code;
+	# Add the section header
+	$code = "# $Section->{begin}\n"
+	      . $code;
 
-        # Aaaaaaaand we're done
-        $code;
+	# Aaaaaaaand we're done
+	$code;
 }
 
 
@@ -360,9 +360,9 @@ sub load { 1 }
 
 # Pull a single item by name, section in the sections for it
 sub item {
-        my $self = shift;
-        my $name = shift or return undef;
-        List::Util::first { $_->name eq $name } $self->sections;
+	my $self = shift;
+	my $name = shift or return undef;
+	List::Util::first { $_->name eq $name } $self->sections;
 }
 
 # Return, in their original order, all the items ( named sections )
@@ -378,15 +378,15 @@ sub items { grep { $_->name } $_[0]->sections }
 # These methods, though public, are undocumented.
 
 sub id {
-        $_[0]->{class};
+	$_[0]->{class};
 }
 
 sub depends {
-        my $self = shift;
-        my %depends = map { $_ => 1     }
-                      map { $_->classes }
-                      ($self->setup, $self->sections);
-        keys %depends;
+	my $self = shift;
+	my %depends = map { $_ => 1     }
+	              map { $_->classes }
+	              ($self->setup, $self->sections);
+	keys %depends;	
 }
 
 
@@ -397,13 +397,13 @@ sub depends {
 # Utility Functions
 
 sub _duplicate_names(@) {
-        my $self = shift;
-        my %seen = ();
-        foreach ( map { $_->name } $self->sections ) {
-                next unless $_;
-                return 1 if $seen{$_}++;
-        }
-        undef;
+	my $self = shift;
+	my %seen = ();
+	foreach ( map { $_->name } $self->sections ) {
+		next unless $_;
+		return 1 if $seen{$_}++;
+	}
+	undef;
 }
 
 1;

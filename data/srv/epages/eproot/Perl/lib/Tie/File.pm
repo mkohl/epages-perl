@@ -13,7 +13,7 @@ my $DEFAULT_AUTODEFER_THRESHHOLD = 3; # 3 records
 my $DEFAULT_AUTODEFER_FILELEN_THRESHHOLD = 65536; # 16 disk blocksful
 
 my %good_opt = map {$_ => 1, "-$_" => 1}
-                 qw(memory dw_size mode recsep discipline
+                 qw(memory dw_size mode recsep discipline 
                     autodefer autochomp autodefer_threshhold concurrent);
 
 sub TIEARRAY {
@@ -38,7 +38,7 @@ sub TIEARRAY {
   }
 
   unless (defined $opts{memory}) {
-    # default is the larger of the default cache size and the
+    # default is the larger of the default cache size and the 
     # deferred-write buffer size (if specified)
     $opts{memory} = $DEFAULT_MEMORY_SIZE;
     $opts{memory} = $opts{dw_size}
@@ -69,7 +69,7 @@ sub TIEARRAY {
 
   $opts{offsets} = [0];
   $opts{filename} = $file;
-  unless (defined $opts{recsep}) {
+  unless (defined $opts{recsep}) { 
     $opts{recsep} = _default_recsep();
   }
   $opts{recseplen} = length($opts{recsep});
@@ -86,7 +86,7 @@ sub TIEARRAY {
   my $fh;
 
   if (UNIVERSAL::isa($file, 'GLOB')) {
-    # We use 1 here on the theory that some systems
+    # We use 1 here on the theory that some systems 
     # may not indicate failure if we use 0.
     # MSWin32 does not indicate failure with 0, but I don't know if
     # it will indicate failure with 1 or not.
@@ -100,9 +100,9 @@ sub TIEARRAY {
   } else {
     # $fh = \do { local *FH };  # XXX this is buggy
     if ($] < 5.006) {
-        # perl 5.005 and earlier don't autovivify filehandles
-        require Symbol;
-        $fh = Symbol::gensym();
+	# perl 5.005 and earlier don't autovivify filehandles
+	require Symbol;
+	$fh = Symbol::gensym();
     }
     sysopen $fh, $file, $opts{mode}, 0666 or return;
     binmode $fh;
@@ -204,7 +204,7 @@ sub STORE {
 
 
   # We need this to decide whether the new record will fit
-  # It incidentally populates the offsets table
+  # It incidentally populates the offsets table 
   # Note we have to do this before we alter the cache
   # 20020324 Wait, but this DOES alter the cache.  TODO BUG?
   my $oldrec = $self->_fetch($n);
@@ -251,7 +251,7 @@ sub _delete_deferred {
   my $rec = delete $self->{deferred}{$n};
   return unless defined $rec;
 
-  if (defined $self->{deferred_max}
+  if (defined $self->{deferred_max} 
       && $n == $self->{deferred_max}) {
     undef $self->{deferred_max};
   }
@@ -430,7 +430,7 @@ sub _splice {
   $pos = 0 unless defined $pos;
 
   # Deal with negative and other out-of-range positions
-  # Also set default for $nrecs
+  # Also set default for $nrecs 
   {
     my $oldsize = $self->FETCHSIZE;
     $nrecs = $oldsize unless defined $nrecs;
@@ -490,7 +490,7 @@ sub _splice {
   $self->_oadjust([$pos, $nrecs, @data]);
 
   { # Take this read cache stuff out into a separate function
-    # You made a half-attempt to put it into _oadjust.
+    # You made a half-attempt to put it into _oadjust.  
     # Finish something like that up eventually.
     # STORE also needs to do something similarish
 
@@ -504,7 +504,7 @@ sub _splice {
         $self->{cache}->remove($_);
       }
     }
-
+    
     # update the read cache, part 2
     # moved records - records past the site of the change
     # need to be renumbered
@@ -529,8 +529,8 @@ sub _splice {
 # write data into the file
 # $data is the data to be written.
 # it should be written at position $pos, and should overwrite
-# exactly $len of the following bytes.
-# Note that if length($data) > $len, the subsequent bytes will have to
+# exactly $len of the following bytes.  
+# Note that if length($data) > $len, the subsequent bytes will have to 
 # be moved up, and if length($data) < $len, they will have to
 # be moved down
 sub _twrite {
@@ -580,7 +580,7 @@ sub _twrite {
 
 # _iwrite(D, S, E)
 # Insert text D at position S.
-# Let C = E-S-|D|.  If C < 0; die.
+# Let C = E-S-|D|.  If C < 0; die.  
 # Data in [S,S+C) is copied to [S+D,S+D+C) = [S+D,E).
 # Data in [S+C = E-D, E) is returned.  Data in [E, oo) is untouched.
 #
@@ -615,7 +615,7 @@ sub _mtwrite {
   my $unwritten = "";
   my $delta = 0;
 
-  @_ % 3 == 0
+  @_ % 3 == 0 
     or die "Arguments to _mtwrite did not come in groups of three";
 
   while (@_) {
@@ -635,7 +635,7 @@ sub _mtwrite {
       my $writable = substr($data, 0, $len - $delta, "");
       $self->_write_record($writable);
       $delta += ($dlen - $len); # everything following moves down by this much
-    }
+    } 
 
     # At this point we've written some but maybe not all of the data.
     # There might be a gap to close up, or $data might still contain a
@@ -646,9 +646,9 @@ sub _mtwrite {
     } elsif ($delta < 0) {
       # upcopy (close up gap)
       if (@_) {
-        $self->_upcopy($end, $end + $delta, $_[1] - $end);
+        $self->_upcopy($end, $end + $delta, $_[1] - $end);  
       } else {
-        $self->_upcopy($end, $end + $delta);
+        $self->_upcopy($end, $end + $delta);  
       }
     } else {
       # downcopy (insert data that didn't fit; replace this data in memory
@@ -676,17 +676,17 @@ sub _upcopy {
   } elsif ($dpos == $spos) {
     return;
   }
-
+  
   while (! defined ($len) || $len > 0) {
     my $readsize = ! defined($len) ? $blocksize
                : $len > $blocksize ? $blocksize
                : $len;
-
+      
     my $fh = $self->{fh};
     $self->_seekb($spos);
     my $bytes_read = read $fh, my($data), $readsize;
     $self->_seekb($dpos);
-    if ($data eq "") {
+    if ($data eq "") { 
       $self->_chop_file;
       last;
     }
@@ -709,7 +709,7 @@ sub _downcopy {
   my $fh = $self->{fh};
 
   while (! defined $len || $len > 0) {
-    my $readsize = ! defined($len) ? $blocksize
+    my $readsize = ! defined($len) ? $blocksize 
       : $len > $blocksize? $blocksize : $len;
     $self->_seekb($pos);
     read $fh, my($old), $readsize;
@@ -759,7 +759,7 @@ sub _oadjust {
       $newkey{$i} = $i + $delta_recs;
     }
 
-    $prev_end = $pos + @data - 1; # last record moved on this pass
+    $prev_end = $pos + @data - 1; # last record moved on this pass 
 
     # Remove the offsets for the removed records;
     # replace with the offsets for the inserted records
@@ -885,7 +885,7 @@ sub _fill_offsets {
 
   my $fh = $self->{fh};
   local *OFF = $self->{offsets};
-
+  
   $self->_seek(-1);           # tricky -- see comment at _seek
 
   # Tels says that inlining read_record() would make this loop
@@ -1014,7 +1014,7 @@ sub flock {
   my $fh = $self->{fh};
   $op = LOCK_EX unless defined $op;
   my $locked = flock $fh, $op;
-
+  
   if ($locked && ($op & (LOCK_EX | LOCK_SH))) {
     # If you're locking the file, then presumably it's because
     # there might have been a write access by another process.
@@ -1049,7 +1049,7 @@ sub offset {
     # If it's still undefined, there is no such record, so return 'undef'
     return unless defined $o;
    }
-
+ 
   $self->{offsets}[$n];
 }
 
@@ -1095,7 +1095,7 @@ sub _old_flush {
     --$last_rec;
     $self->_fill_offsets_to($last_rec);
     $self->_extend_file_to($last_rec);
-    $self->_splice($first_rec, $last_rec-$first_rec+1,
+    $self->_splice($first_rec, $last_rec-$first_rec+1, 
                    @{$self->{deferred}}{$first_rec .. $last_rec});
   }
 
@@ -1202,9 +1202,9 @@ sub autodefer {
 # user has made three consecutive STORE calls to three consecutive records.
 # ("Three" is actually ->{autodefer_threshhold}.)
 # A STORE call for record #$n inserts $n into the autodefer history,
-# and if the history contains three consecutive records, we enable
+# and if the history contains three consecutive records, we enable 
 # autodeferment.  An ad_history of [X, Y] means that the most recent
-# STOREs were for records X, X+1, ..., Y, in that order.
+# STOREs were for records X, X+1, ..., Y, in that order.  
 #
 # Inserting a nonconsecutive number erases the history and starts over.
 #
@@ -1291,7 +1291,7 @@ sub _check_integrity {
   my ($self, $file, $warn) = @_;
   my $rsl = $self->{recseplen};
   my $rs  = $self->{recsep};
-  my $good = 1;
+  my $good = 1; 
   local *_;                     # local $_ does not work here
   local $DIAGNOSTIC = 1;
 
@@ -1457,7 +1457,7 @@ sub MAX  () { 2 }
 sub BYTES() { 3 }
 #sub STAT () { 4 } # Array with request statistics for each record
 #sub MISS () { 5 } # Total number of cache misses
-#sub REQ  () { 6 } # Total number of cache requests
+#sub REQ  () { 6 } # Total number of cache requests 
 use strict 'vars';
 
 sub new {
@@ -1481,7 +1481,7 @@ sub set_limit {
 }
 
 # For internal use only
-# Will be called by the heap structure to notify us that a certain
+# Will be called by the heap structure to notify us that a certain 
 # piece of data has moved from one heap element to another.
 # $k is the hash key of the item
 # $n is the new index into the heap at which it is stored
@@ -1559,7 +1559,7 @@ sub lookup {
 #    $self->[REQ]++;
 #    my $hit_rate = 1 - $self->[MISS] / $self->[REQ];
 #    # Do some testing to determine this threshhold
-#    $#$self = STAT - 1 if $hit_rate > 0.20;
+#    $#$self = STAT - 1 if $hit_rate > 0.20; 
 #  }
 
   if (exists $self->[HASH]{$key}) {
@@ -1771,12 +1771,12 @@ sub _nelts {
 sub _nelts_inc {
   my $self = shift;
   ++$self->[0][2];
-}
+}  
 
 sub _nelts_dec {
   my $self = shift;
   --$self->[0][2];
-}
+}  
 
 sub is_empty {
   my $self = shift;
@@ -2009,32 +2009,32 @@ Tie::File - Access the lines of a disk file via a Perl array
 
 =head1 SYNOPSIS
 
-        # This file documents Tie::File version 0.97
-        use Tie::File;
+	# This file documents Tie::File version 0.97
+	use Tie::File;
 
-        tie @array, 'Tie::File', filename or die ...;
+	tie @array, 'Tie::File', filename or die ...;
 
-        $array[13] = 'blah';     # line 13 of the file is now 'blah'
-        print $array[42];        # display line 42 of the file
+	$array[13] = 'blah';     # line 13 of the file is now 'blah'
+	print $array[42];        # display line 42 of the file
 
-        $n_recs = @array;        # how many records are in the file?
-        $#array -= 2;            # chop two records off the end
+	$n_recs = @array;        # how many records are in the file?
+	$#array -= 2;            # chop two records off the end
 
 
-        for (@array) {
-          s/PERL/Perl/g;         # Replace PERL with Perl everywhere in the file
-        }
+	for (@array) {
+	  s/PERL/Perl/g;         # Replace PERL with Perl everywhere in the file
+	}
 
-        # These are just like regular push, pop, unshift, shift, and splice
-        # Except that they modify the file in the way you would expect
+	# These are just like regular push, pop, unshift, shift, and splice
+	# Except that they modify the file in the way you would expect
 
-        push @array, new recs...;
-        my $r1 = pop @array;
-        unshift @array, new recs...;
-        my $r2 = shift @array;
-        @old_recs = splice @array, 3, 7, new recs...;
+	push @array, new recs...;
+	my $r1 = pop @array;
+	unshift @array, new recs...;
+	my $r2 = shift @array;
+	@old_recs = splice @array, 3, 7, new recs...;
 
-        untie @array;            # all finished
+	untie @array;            # all finished
 
 
 =head1 DESCRIPTION
@@ -2060,19 +2060,19 @@ probably C<"\n">.  (Minor exception: on DOS and Win32 systems, a
 definition of "record" by supplying the C<recsep> option in the C<tie>
 call:
 
-        tie @array, 'Tie::File', $file, recsep => 'es';
+	tie @array, 'Tie::File', $file, recsep => 'es';
 
 This says that records are delimited by the string C<es>.  If the file
 contained the following data:
 
-        Curse these pesky flies!\n
+	Curse these pesky flies!\n
 
 then the C<@array> would appear to have four elements:
 
-        "Curse th"
-        "e p"
-        "ky fli"
-        "!\n"
+	"Curse th"
+	"e p"
+	"ky fli"
+	"!\n"
 
 An undefined value is not permitted as a record separator.  Perl's
 special "paragraph mode" semantics (E<agrave> la C<$/ = "">) are not
@@ -2081,7 +2081,7 @@ emulated.
 Records read from the tied array do not have the record separator
 string on the end; this is to allow
 
-        $array[17] .= "extra";
+	$array[17] .= "extra";
 
 to work as expected.
 
@@ -2091,14 +2091,14 @@ file, if they don't have one already.  For example, if the record
 separator string is C<"\n">, then the following two lines do exactly
 the same thing:
 
-        $array[17] = "Cherry pie";
-        $array[17] = "Cherry pie\n";
+	$array[17] = "Cherry pie";
+	$array[17] = "Cherry pie\n";
 
 The result is that the contents of line 17 of the file will be
 replaced with "Cherry pie"; a newline character will separate line 17
 from line 18.  This means that this code will do nothing:
 
-        chomp $array[17];
+	chomp $array[17];
 
 Because the C<chomp>ed value will have the separator reattached when
 it is written back to the file.  There is no way to create a file
@@ -2114,15 +2114,15 @@ Use 'splice' to insert records or to replace one record with several.
 Normally, array elements have the record separator removed, so that if
 the file contains the text
 
-        Gold
-        Frankincense
-        Myrrh
+	Gold
+	Frankincense
+	Myrrh
 
 the tied array will appear to contain C<("Gold", "Frankincense",
 "Myrrh")>.  If you set C<autochomp> to a false value, the record
 separator will not be removed.  If the file above was tied with
 
-        tie @gifts, "Tie::File", $gifts, autochomp => 0;
+	tie @gifts, "Tie::File", $gifts, autochomp => 0;
 
 then the array C<@gifts> would appear to contain C<("Gold\n",
 "Frankincense\n", "Myrrh\n")>, or (on Win32 systems) C<("Gold\r\n",
@@ -2137,17 +2137,17 @@ change this, you may supply alternative flags in the C<mode> option.
 See L<Fcntl> for a listing of available flags.
 For example:
 
-        # open the file if it exists, but fail if it does not exist
-        use Fcntl 'O_RDWR';
-        tie @array, 'Tie::File', $file, mode => O_RDWR;
+	# open the file if it exists, but fail if it does not exist
+	use Fcntl 'O_RDWR';
+	tie @array, 'Tie::File', $file, mode => O_RDWR;
 
-        # create the file if it does not exist
-        use Fcntl 'O_RDWR', 'O_CREAT';
-        tie @array, 'Tie::File', $file, mode => O_RDWR | O_CREAT;
+	# create the file if it does not exist
+	use Fcntl 'O_RDWR', 'O_CREAT';
+	tie @array, 'Tie::File', $file, mode => O_RDWR | O_CREAT;
 
-        # open an existing file in read-only mode
-        use Fcntl 'O_RDONLY';
-        tie @array, 'Tie::File', $file, mode => O_RDONLY;
+	# open an existing file in read-only mode
+	use Fcntl 'O_RDONLY';
+	tie @array, 'Tie::File', $file, mode => O_RDONLY;
 
 Opening the data file in write-only or append mode is not supported.
 
@@ -2170,8 +2170,8 @@ The default memory limit is 2Mib.  You can adjust the maximum read
 cache size by supplying the C<memory> option.  The argument is the
 desired cache size, in bytes.
 
-        # I have a lot of memory, so use a large cache to speed up access
-        tie @array, 'Tie::File', $file, memory => 20_000_000;
+	# I have a lot of memory, so use a large cache to speed up access
+	tie @array, 'Tie::File', $file, memory => 20_000_000;
 
 Setting the memory limit to 0 will inhibit caching; records will be
 fetched from disk every time you examine them.
@@ -2179,7 +2179,7 @@ fetched from disk every time you examine them.
 The C<memory> value is not an absolute or exact limit on the memory
 used.  C<Tie::File> objects contains some structures besides the read
 cache and the deferred write buffer, whose sizes are not charged
-against C<memory>.
+against C<memory>. 
 
 The cache itself consumes about 310 bytes per cached record, so if
 your file has many short records, you may want to decrease the cache
@@ -2219,8 +2219,8 @@ idea.
 
 The C<tie> call returns an object, say C<$o>.  You may call
 
-        $rec = $o->FETCH($n);
-        $o->STORE($n, $rec);
+	$rec = $o->FETCH($n);
+	$o->STORE($n, $rec);
 
 to fetch or store the record at line C<$n>, respectively; similarly
 the other tied array methods.  (See L<perltie> for details.)  You may
@@ -2228,7 +2228,7 @@ also call the following methods on this object:
 
 =head2 C<flock>
 
-        $o->flock(MODE)
+	$o->flock(MODE)
 
 will lock the tied file.  C<MODE> has the same meaning as the second
 argument to the Perl built-in C<flock> function; for example
@@ -2238,7 +2238,7 @@ the C<use Fcntl ':flock'> declaration.)
 C<MODE> is optional; the default is C<LOCK_EX>.
 
 C<Tie::File> maintains an internal table of the byte offset of each
-record it has seen in the file.
+record it has seen in the file.  
 
 When you use C<flock> to lock the file, C<Tie::File> assumes that the
 read cache is no longer trustworthy, because another process might
@@ -2249,8 +2249,8 @@ and the internal record offset table.
 C<Tie::File> promises that the following sequence of operations will
 be safe:
 
-        my $o = tie @array, "Tie::File", $filename;
-        $o->flock;
+	my $o = tie @array, "Tie::File", $filename;
+	$o->flock;
 
 In particular, C<Tie::File> will I<not> read or write the file during
 the C<tie> call.  (Exception: Using C<mode =E<gt> O_TRUNC> will, of
@@ -2276,10 +2276,10 @@ the idiot does not also have a green light at the same time.
 
 =head2 C<autochomp>
 
-        my $old_value = $o->autochomp(0);    # disable autochomp option
-        my $old_value = $o->autochomp(1);    #  enable autochomp option
+	my $old_value = $o->autochomp(0);    # disable autochomp option
+	my $old_value = $o->autochomp(1);    #  enable autochomp option
 
-        my $ac = $o->autochomp();   # recover current value
+	my $ac = $o->autochomp();   # recover current value
 
 See L<"autochomp">, above.
 
@@ -2289,7 +2289,7 @@ See L<"Deferred Writing">, below.
 
 =head2 C<offset>
 
-        $off = $o->offset($n);
+	$off = $o->offset($n);
 
 This method returns the byte offset of the start of the C<$n>th record
 in the file.  If there is no such record, it returns an undefined
@@ -2300,12 +2300,12 @@ value.
 If C<$fh> is a filehandle, such as is returned by C<IO::File> or one
 of the other C<IO> modules, you may use:
 
-        tie @array, 'Tie::File', $fh, ...;
+	tie @array, 'Tie::File', $fh, ...;
 
 Similarly if you opened that handle C<FH> with regular C<open> or
 C<sysopen>, you may use:
 
-        tie @array, 'Tie::File', \*FH, ...;
+	tie @array, 'Tie::File', \*FH, ...;
 
 Handles that were opened write-only won't work.  Handles that were
 opened read-only will work as long as you don't try to modify the
@@ -2334,9 +2334,9 @@ However, under some circumstances, this behavior may be excessively
 slow.  For example, suppose you have a million-record file, and you
 want to do:
 
-        for (@FILE) {
-          $_ = "> $_";
-        }
+	for (@FILE) {
+	  $_ = "> $_";
+	}
 
 The first time through the loop, you will rewrite the entire file,
 from line 0 through the end.  The second time through the loop, you
@@ -2348,11 +2348,11 @@ If the performance in such cases is unacceptable, you may defer the
 actual writing, and then have it done all at once.  The following loop
 will perform much better for large files:
 
-        (tied @a)->defer;
-        for (@a) {
-          $_ = "> $_";
-        }
-        (tied @a)->flush;
+	(tied @a)->defer;
+	for (@a) {
+	  $_ = "> $_";
+	}
+	(tied @a)->flush;
 
 If C<Tie::File>'s memory limit is large enough, all the writing will
 done in memory.  Then, when you call C<-E<gt>flush>, the entire file
@@ -2397,11 +2397,11 @@ might be a bug.  If it is a bug, it will be fixed in a future version.
 =head2 Autodeferring
 
 C<Tie::File> tries to guess when deferred writing might be helpful,
-and to turn it on and off automatically.
+and to turn it on and off automatically. 
 
-        for (@a) {
-          $_ = "> $_";
-        }
+	for (@a) {
+	  $_ = "> $_";
+	}
 
 In this example, only the first two assignments will be done
 immediately; after this, all the changes to the file will be deferred
@@ -2413,14 +2413,14 @@ require fine control over which writes are deferred, or may require
 that all writes be immediate.  To disable the autodeferment feature,
 use
 
-        (tied @o)->autodefer(0);
+	(tied @o)->autodefer(0);
 
 or
 
-        tie @array, 'Tie::File', $file, autodefer => 0;
+       	tie @array, 'Tie::File', $file, autodefer => 0;
 
 
-Similarly, C<-E<gt>autodefer(1)> re-enables autodeferment, and
+Similarly, C<-E<gt>autodefer(1)> re-enables autodeferment, and 
 C<-E<gt>autodefer()> recovers the current value of the autodefer setting.
 
 
@@ -2454,20 +2454,20 @@ moved.
 The behavior of tied arrays is not precisely the same as for regular
 arrays.  For example:
 
-        # This DOES print "How unusual!"
-        undef $a[10];  print "How unusual!\n" if defined $a[10];
+	# This DOES print "How unusual!"
+	undef $a[10];  print "How unusual!\n" if defined $a[10];
 
 C<undef>-ing a C<Tie::File> array element just blanks out the
 corresponding record in the file.  When you read it back again, you'll
 get the empty string, so the supposedly-C<undef>'ed value will be
 defined.  Similarly, if you have C<autochomp> disabled, then
 
-        # This DOES print "How unusual!" if 'autochomp' is disabled
-        undef $a[10];
+	# This DOES print "How unusual!" if 'autochomp' is disabled
+	undef $a[10];
         print "How unusual!\n" if $a[10];
 
 Because when C<autochomp> is disabled, C<$a[10]> will read back as
-C<"\n"> (or whatever the record separator string is.)
+C<"\n"> (or whatever the record separator string is.)  
 
 There are other minor differences, particularly regarding C<exists>
 and C<delete>, but in general, the correspondence is extremely close.
@@ -2527,7 +2527,7 @@ C<mjd-perl-tiefile-subscribe@plover.com>.
 The most recent version of this module, including documentation and
 any news of importance, will be available at
 
-        http://perl.plover.com/TieFile/
+	http://perl.plover.com/TieFile/
 
 
 =head1 LICENSE
@@ -2554,9 +2554,9 @@ Fifth Floor, Boston, MA  02110-1301, USA
 
 For licensing inquiries, contact the author at:
 
-        Mark Jason Dominus
-        255 S. Warnock St.
-        Philadelphia, PA 19107
+	Mark Jason Dominus
+	255 S. Warnock St.
+	Philadelphia, PA 19107
 
 =head1 WARRANTY
 

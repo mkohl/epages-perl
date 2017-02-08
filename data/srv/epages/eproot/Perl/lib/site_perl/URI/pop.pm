@@ -17,19 +17,19 @@ sub user
     my $old = $self->userinfo;
 
     if (@_) {
-        my $new_info = $old;
-        $new_info = "" unless defined $new_info;
-        $new_info =~ s/^[^;]*//;
+	my $new_info = $old;
+	$new_info = "" unless defined $new_info;
+	$new_info =~ s/^[^;]*//;
 
-        my $new = shift;
-        if (!defined($new) && !length($new_info)) {
-            $self->userinfo(undef);
-        } else {
-            $new = "" unless defined $new;
-            $new =~ s/%/%25/g;
-            $new =~ s/;/%3B/g;
-            $self->userinfo("$new$new_info");
-        }
+	my $new = shift;
+	if (!defined($new) && !length($new_info)) {
+	    $self->userinfo(undef);
+	} else {
+	    $new = "" unless defined $new;
+	    $new =~ s/%/%25/g;
+	    $new =~ s/;/%3B/g;
+	    $self->userinfo("$new$new_info");
+	}
     }
 
     return undef unless defined $old;
@@ -43,21 +43,21 @@ sub auth
     my $old = $self->userinfo;
 
     if (@_) {
-        my $new = $old;
-        $new = "" unless defined $new;
-        $new =~ s/(^[^;]*)//;
-        my $user = $1;
-        $new =~ s/;auth=[^;]*//i;
+	my $new = $old;
+	$new = "" unless defined $new;
+	$new =~ s/(^[^;]*)//;
+	my $user = $1;
+	$new =~ s/;auth=[^;]*//i;
 
-
-        my $auth = shift;
-        if (defined $auth) {
-            $auth =~ s/%/%25/g;
-            $auth =~ s/;/%3B/g;
-            $new = ";AUTH=$auth$new";
-        }
-        $self->userinfo("$user$new");
-
+	
+	my $auth = shift;
+	if (defined $auth) {
+	    $auth =~ s/%/%25/g;
+	    $auth =~ s/;/%3B/g;
+	    $new = ";AUTH=$auth$new";
+	}
+	$self->userinfo("$user$new");
+	
     }
 
     return undef unless defined $old;

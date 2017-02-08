@@ -7,7 +7,7 @@
 <!ATTLIST magic target CDATA #REQUIRED>
 ]>
 <!--
-  Associate an image format with a unique identifier.
+  Associate an image format with a unique identifier. 
 
   Many image formats have identifiers that uniquely identify a particular
   image format. For example, the GIF image format always begins with GIF8

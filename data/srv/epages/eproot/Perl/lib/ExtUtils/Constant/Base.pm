@@ -75,10 +75,10 @@ sub macro_from_item {
 sub macro_to_ifdef {
     my ($self, $macro) = @_;
     if (ref $macro) {
-        return $macro->[0];
+	return $macro->[0];
     }
     if (defined $macro && $macro ne "" && $macro ne "1") {
-        return $macro ? "#ifdef $macro\n" : "#if 0\n";
+	return $macro ? "#ifdef $macro\n" : "#if 0\n";
     }
     return "";
 }
@@ -86,11 +86,11 @@ sub macro_to_ifdef {
 sub macro_to_ifndef {
     my ($self, $macro) = @_;
     if (ref $macro) {
-        # Can't invert these stylishly, so "bodge it"
-        return "$macro->[0]#else\n";
+	# Can't invert these stylishly, so "bodge it"
+	return "$macro->[0]#else\n";
     }
     if (defined $macro && $macro ne "" && $macro ne "1") {
-        return $macro ? "#ifndef $macro\n" : "#if 1\n";
+	return $macro ? "#ifndef $macro\n" : "#if 1\n";
     }
     croak "Can't generate an ifndef for unconditional code";
 }
@@ -99,10 +99,10 @@ sub macro_to_endif {
     my ($self, $macro) = @_;
 
     if (ref $macro) {
-        return $macro->[1];
+	return $macro->[1];
     }
     if (defined $macro && $macro ne "" && $macro ne "1") {
-        return "#endif\n";
+	return "#endif\n";
     }
     return "";
 }
@@ -157,7 +157,7 @@ sub memEQ_clause {
 
   if ($len < 2) {
     return $indent . "{\n"
-        if (defined $checked_at and $checked_at == 0) or $len == 0;
+	if (defined $checked_at and $checked_at == 0) or $len == 0;
     # We didn't switch, drop through to the code for the 2 character string
     $checked_at = 1;
   }
@@ -291,7 +291,7 @@ sub dump_names {
   local $Text::Wrap::huge = 'overflow';
   local $Text::Wrap::columns = 80;
   $result .= wrap ($indent . "my \@names = (qw(",
-                   $indent . "               ", join (" ", sort @simple) . ")");
+		   $indent . "               ", join (" ", sort @simple) . ")");
   if (@complex) {
     foreach my $item (sort {$a->{name} cmp $b->{name}} @complex) {
       my $name = perl_stringify $item->{name};
@@ -404,7 +404,7 @@ sub return_clause {
   #      return PERL_constant_ISIV;
   $clause
     .= $self->assign ({indent=>$indent, type=>$type, pre=>$pre, post=>$post,
-                       item=>$item}, ref $value ? @$value : $value);
+		       item=>$item}, ref $value ? @$value : $value);
 
   if (defined $macro && $macro ne "" && $macro ne "1") {
     ##else
@@ -418,7 +418,7 @@ sub return_clause {
       my @default = ref $default ? @$default : $default;
       $type = shift @default;
       $clause .= $self->assign ({indent=>$indent, type=>$type, pre=>$pre,
-                                 post=>$post, item=>$item}, @default);
+				 post=>$post, item=>$item}, @default);
     }
   }
   ##endif
@@ -448,7 +448,7 @@ sub match_clause {
   }
 
   $body .= $self->memEQ_clause ({name => $name, checked_at => $offset,
-                                 indent => length $indent});
+				 indent => length $indent});
   # If we've been presented with an arrayref for $item, then the user string
   # contains in the range 128-255, and we need to check whether it was utf8
   # (or not).
@@ -580,24 +580,24 @@ sub switch_clause {
     confess sprintf "char %#X is out of range", ord $char if ord ($char) > 255;
     $body .= $indent . "case '" . C_stringify ($char) . "':\n";
     foreach my $thisone (sort {
-        # Deal with the case of an item actually being an array ref to 1 or 2
-        # hashrefs. Don't assign to $a or $b, as they're aliases to the orignal
-        my $l = ref $a eq 'ARRAY' ? ($a->[0] || $->[1]) : $a;
-        my $r = ref $b eq 'ARRAY' ? ($b->[0] || $->[1]) : $b;
-        # Sort by weight first
-        ($r->{weight} || 0) <=> ($l->{weight} || 0)
-            # Sort equal weights by name
-            or $l->{name} cmp $r->{name}}
-                         # If this looks evil, maybe it is.  $items is a
-                         # hashref, and we're doing a hash slice on it
-                         @{$items}{@{$best->{$char}}}) {
+	# Deal with the case of an item actually being an array ref to 1 or 2
+	# hashrefs. Don't assign to $a or $b, as they're aliases to the orignal
+	my $l = ref $a eq 'ARRAY' ? ($a->[0] || $->[1]) : $a;
+	my $r = ref $b eq 'ARRAY' ? ($b->[0] || $->[1]) : $b;
+	# Sort by weight first
+	($r->{weight} || 0) <=> ($l->{weight} || 0)
+	    # Sort equal weights by name
+	    or $l->{name} cmp $r->{name}}
+			 # If this looks evil, maybe it is.  $items is a
+			 # hashref, and we're doing a hash slice on it
+			 @{$items}{@{$best->{$char}}}) {
       # warn "You are here";
       if ($do_front_chop) {
         $body .= $self->match_clause ({indent => 2 + length $indent,
-                                       checked_at => \$char}, $thisone);
+				       checked_at => \$char}, $thisone);
       } else {
         $body .= $self->match_clause ({indent => 2 + length $indent,
-                                       checked_at => $offset}, $thisone);
+				       checked_at => $offset}, $thisone);
       }
     }
     $body .= $indent . "  break;\n";
@@ -685,7 +685,7 @@ sub normalise_items
     my $items = shift;
     my @new_items;
     foreach my $orig (@_) {
-        my ($name, $item);
+	my ($name, $item);
       if (ref $orig) {
         # Make a copy which is a normalised version of the ref passed in.
         $name = $orig->{name};
@@ -699,7 +699,7 @@ sub normalise_items
         undef $value if defined $value and $value eq $name;
         $item->{value} = $value if defined $value;
         foreach my $key (qw(default pre post def_pre def_post weight
-                            not_constant)) {
+			    not_constant)) {
           my $value = $orig->{$key};
           $item->{$key} = $value if defined $value;
           # warn "$key $value";
@@ -710,13 +710,13 @@ sub normalise_items
         $what->{$default_type} = 1;
       }
       warn +(ref ($self) || $self)
-        . "doesn't know how to handle values of type $_ used in macro $name"
-          unless $self->valid_type ($item->{type});
+	. "doesn't know how to handle values of type $_ used in macro $name"
+	  unless $self->valid_type ($item->{type});
       # tr///c is broken on 5.6.1 for utf8, so my original tr/\0-\177//c
       # doesn't work. Upgrade to 5.8
       # if ($name !~ tr/\0-\177//c || $] < 5.005_50) {
       if ($name =~ tr/\0-\177// == length $name || $] < 5.005_50
-         || $args->{disable_utf8_duplication}) {
+	 || $args->{disable_utf8_duplication}) {
         # No characters outside 7 bit ASCII.
         if (exists $items->{$name}) {
           die "Multiple definitions for macro $name";
@@ -935,14 +935,14 @@ sub C_constant {
       . ' of names given here.  However, subsequent manual editing may have'
         . ' added or removed some.';
     $body .= $self->switch_clause ({indent=>2, comment=>$comment},
-                                   $namelen, $items, @items);
+				   $namelen, $items, @items);
   } else {
     # We are the top level.
     $body .= "  /* Initially switch on the length of the name.  */\n";
     $body .= $self->dogfood ({package => $package, subname => $subname,
-                              default_type => $default_type, what => $what,
-                              indent => $indent, breakout => $breakout},
-                             @items);
+			      default_type => $default_type, what => $what,
+			      indent => $indent, breakout => $breakout},
+			     @items);
     $body .= '  switch ('.$self->namelen_param().") {\n";
     # Need to group names of the same length
     my @by_length;
@@ -950,7 +950,7 @@ sub C_constant {
       push @{$by_length[length $_->{name}]}, $_;
     }
     foreach my $i (0 .. $#by_length) {
-      next unless $by_length[$i];       # None of this length
+      next unless $by_length[$i];	# None of this length
       $body .= "  case $i:\n";
       if (@{$by_length[$i]} == 1) {
         my $only_thing = $by_length[$i]->[0];
@@ -967,7 +967,7 @@ sub C_constant {
         }
       } elsif (@{$by_length[$i]} < $breakout) {
         $body .= $self->switch_clause ({indent=>4},
-                                       $i, $items, @{$by_length[$i]});
+				       $i, $items, @{$by_length[$i]});
       } else {
         # Only use the minimal set of parameters actually needed by the types
         # of the names of this length.
@@ -978,17 +978,17 @@ sub C_constant {
         }
         $params = $self->params ($what);
         push @subs, $self->C_constant ({package=>$package,
-                                        subname=>"${subname}_$i",
-                                        default_type => $default_type,
-                                        types => $what, indent => $indent,
-                                        breakout => [$i, $items]},
-                                       @{$by_length[$i]});
+					subname=>"${subname}_$i",
+					default_type => $default_type,
+					types => $what, indent => $indent,
+					breakout => [$i, $items]},
+				       @{$by_length[$i]});
         $body .= "    return ${subname}_$i ("
-          # Eg "aTHX_ "
-          . $self->C_constant_prefix_param($params)
-            # Probably "name"
-            . $self->name_param($params);
-        $body .= $self->C_constant_other_params($params);
+	  # Eg "aTHX_ "
+	  . $self->C_constant_prefix_param($params)
+	    # Probably "name"
+	    . $self->name_param($params);
+	$body .= $self->C_constant_other_params($params);
         $body .= ");\n";
       }
       $body .= "    break;\n";

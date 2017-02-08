@@ -13,17 +13,17 @@ our @ISA = qw(Exporter);
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 
-# This allows declaration       use XML::CanonicalizeXML ':all';
+# This allows declaration	use XML::CanonicalizeXML ':all';
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
 # will save memory.
 our %EXPORT_TAGS = ( 'all' => [ qw(
-
+	
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw(
-
+	
 );
 
 our $VERSION = '0.05';
@@ -39,14 +39,14 @@ sub AUTOLOAD {
     my ($error, $val) = constant($constname);
     if ($error) { croak $error; }
     {
-        no strict 'refs';
-        # Fixed between 5.005_53 and 5.005_61
-#XXX    if ($] >= 5.00561) {
-#XXX        *$AUTOLOAD = sub () { $val };
-#XXX    }
-#XXX    else {
-            *$AUTOLOAD = sub { $val };
-#XXX    }
+	no strict 'refs';
+	# Fixed between 5.005_53 and 5.005_61
+#XXX	if ($] >= 5.00561) {
+#XXX	    *$AUTOLOAD = sub () { $val };
+#XXX	}
+#XXX	else {
+	    *$AUTOLOAD = sub { $val };
+#XXX	}
     }
     goto &$AUTOLOAD;
 }
@@ -70,11 +70,11 @@ XML::CanonicalizeXML - Perl extension for inclusive and exclusive canonicalizati
 =head1 SYNOPSIS
 
 use XML::CanonicalizeXML;
-
+ 
 
 =head1 DESCRIPTION
 
-useage:
+useage:  
 
 canonicalize (xml, xpath, namespace, exclusive, with_comments)
 

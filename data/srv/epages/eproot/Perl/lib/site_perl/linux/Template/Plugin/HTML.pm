@@ -60,7 +60,7 @@ sub attributes {
     my @keys = keys %$hash;
     @keys = sort @keys if $self->{ _SORTED };
 
-    join(' ', map {
+    join(' ', map { 
         "$_=\"" . $self->escape( $hash->{ $_ } ) . '"';
     } @keys);
 }
@@ -138,23 +138,23 @@ Template::Plugin::HTML - Plugin to create HTML elements
 =head1 SYNOPSIS
 
     [% USE HTML %]
-
+    
     [% HTML.escape("if (a < b && c > d) ..." %]
-
+    
     [% HTML.element(table => { border => 1, cellpadding => 2 }) %]
-
+    
     [% HTML.attributes(border => 1, cellpadding => 2) %]
 
 =head1 DESCRIPTION
 
 The C<HTML> plugin is a very basic plugin, implementing a few useful
-methods for generating HTML.
+methods for generating HTML.  
 
 =head1 METHODS
 
 =head2 escape(text)
 
-Returns the source text with any HTML reserved characters such as
+Returns the source text with any HTML reserved characters such as 
 C<E<lt>>, C<E<gt>>, etc., correctly escaped to their entity equivalents.
 
 =head2 attributes(hash)

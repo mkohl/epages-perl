@@ -16,7 +16,7 @@ sub _reset_globals {
     %history    = ();
     @FAILDETAIL = ();
     $ntest      = 1;
-    $TestLevel  = 0;            # how many extra stack frames to skip
+    $TestLevel  = 0;		# how many extra stack frames to skip
     $planned    = 0;
 }
 
@@ -159,21 +159,21 @@ sub plan {
 
     my $max=0;
     while (@_) {
-        my ($k,$v) = splice(@_, 0, 2);
-        if ($k =~ /^test(s)?$/) { $max = $v; }
-        elsif ($k eq 'todo' or
-               $k eq 'failok') { for (@$v) { $todo{$_}=1; }; }
-        elsif ($k eq 'onfail') {
-            ref $v eq 'CODE' or croak "Test::plan(onfail => $v): must be CODE";
-            $ONFAIL = $v;
-        }
-        else { carp "Test::plan(): skipping unrecognized directive '$k'" }
+	my ($k,$v) = splice(@_, 0, 2);
+	if ($k =~ /^test(s)?$/) { $max = $v; }
+	elsif ($k eq 'todo' or
+	       $k eq 'failok') { for (@$v) { $todo{$_}=1; }; }
+	elsif ($k eq 'onfail') {
+	    ref $v eq 'CODE' or croak "Test::plan(onfail => $v): must be CODE";
+	    $ONFAIL = $v;
+	}
+	else { carp "Test::plan(): skipping unrecognized directive '$k'" }
     }
     my @todo = sort { $a <=> $b } keys %todo;
     if (@todo) {
-        print $TESTOUT "1..$max todo ".join(' ', @todo).";\n";
+	print $TESTOUT "1..$max todo ".join(' ', @todo).";\n";
     } else {
-        print $TESTOUT "1..$max\n";
+	print $TESTOUT "1..$max\n";
     }
     ++$planned;
     print $TESTOUT "# Running under perl version $] for $^O",
@@ -332,7 +332,7 @@ as the value for comparing.  For example:
       4
     ;
 
-The above test passes two values to C<ok(arg1, arg2)> -- the first
+The above test passes two values to C<ok(arg1, arg2)> -- the first 
 a coderef, and the second is the number 4.  Before C<ok> compares them,
 it calls the coderef, and uses its return value as the real value of
 this parameter. Assuming that C<$bytecount> returns 4, C<ok> ends up
@@ -373,7 +373,7 @@ sub ok ($;$$) {
     my ($pkg,$file,$line) = caller($TestLevel);
     my $repetition = ++$history{"$file:$line"};
     my $context = ("$file at line $line".
-                   ($repetition > 1 ? " fail \#$repetition" : ''));
+		   ($repetition > 1 ? " fail \#$repetition" : ''));
 
     # Are we comparing two values?
     my $compare = 0;
@@ -382,34 +382,34 @@ sub ok ($;$$) {
     my $result = _to_value(shift);
     my ($expected, $isregex, $regex);
     if (@_ == 0) {
-        $ok = $result;
+	$ok = $result;
     } else {
         $compare = 1;
-        $expected = _to_value(shift);
-        if (!defined $expected) {
-            $ok = !defined $result;
-        } elsif (!defined $result) {
-            $ok = 0;
-        } elsif (ref($expected) eq 'Regexp') {
-            $ok = $result =~ /$expected/;
+	$expected = _to_value(shift);
+	if (!defined $expected) {
+	    $ok = !defined $result;
+	} elsif (!defined $result) {
+	    $ok = 0;
+	} elsif (ref($expected) eq 'Regexp') {
+	    $ok = $result =~ /$expected/;
             $regex = $expected;
-        } elsif (($regex) = ($expected =~ m,^ / (.+) / $,sx) or
-            (undef, $regex) = ($expected =~ m,^ m([^\w\s]) (.+) \1 $,sx)) {
-            $ok = $result =~ /$regex/;
-        } else {
-            $ok = $result eq $expected;
-        }
+	} elsif (($regex) = ($expected =~ m,^ / (.+) / $,sx) or
+	    (undef, $regex) = ($expected =~ m,^ m([^\w\s]) (.+) \1 $,sx)) {
+	    $ok = $result =~ /$regex/;
+	} else {
+	    $ok = $result eq $expected;
+	}
     }
     my $todo = $todo{$ntest};
     if ($todo and $ok) {
-        $context .= ' TODO?!' if $todo;
-        print $TESTOUT "ok $ntest # ($context)\n";
+	$context .= ' TODO?!' if $todo;
+	print $TESTOUT "ok $ntest # ($context)\n";
     } else {
         # Issuing two seperate prints() causes problems on VMS.
         if (!$ok) {
             print $TESTOUT "not ok $ntest\n";
         }
-        else {
+	else {
             print $TESTOUT "ok $ntest\n";
         }
 
@@ -695,7 +695,7 @@ sub skip ($;$$$) {
 
     my $whyskip = _to_value(shift);
     if (!@_ or $whyskip) {
-        $whyskip = '' if $whyskip =~ m/^\d+$/;
+	$whyskip = '' if $whyskip =~ m/^\d+$/;
         $whyskip =~ s/^[Ss]kip(?:\s+|$)//;  # backwards compatibility, old
                                             # versions required the reason
                                             # to start with 'skip'
@@ -715,7 +715,7 @@ sub skip ($;$$$) {
 #the documented interface as this has been deprecated.
 #WARN
 
-        local($TestLevel) = $TestLevel+1;  #to ignore this stack frame
+	local($TestLevel) = $TestLevel+1;  #to ignore this stack frame
         return &ok(@_);
     }
 }
@@ -936,7 +936,7 @@ L<Test::Inline> and L<SelfTest> let you embed tests in code.
 
 =head1 AUTHOR
 
-Copyright (c) 1998-2000 Joshua Nathaniel Pritikin.
+Copyright (c) 1998-2000 Joshua Nathaniel Pritikin. 
 
 Copyright (c) 2001-2002 Michael G. Schwern.
 

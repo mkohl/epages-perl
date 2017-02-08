@@ -78,15 +78,15 @@ sub client_step {
     my $outtok;
     my $inflags = GSS_C_INTEG_FLAG | GSS_C_MUTUAL_FLAG;#todo:set according to ssf props
     my $outflags;
-    $status = $self->{gss_ctx}->init($self->{gss_cred}, $self->{gss_name},
-                             $self->{gss_mech},
-                             $inflags,
-                             0, GSS_C_NO_CHANNEL_BINDINGS, $challenge, undef,
-                             $outtok, $outflags, undef);
+    $status = $self->{gss_ctx}->init($self->{gss_cred}, $self->{gss_name}, 
+			     $self->{gss_mech},
+			     $inflags, 
+			     0, GSS_C_NO_CHANNEL_BINDINGS, $challenge, undef, 
+			     $outtok, $outflags, undef);
 
     print STDERR "state(0): ".
-                $status->generic_message.';'.$status->specific_message.
-                "; output token sz: ".length($outtok)."\n"
+		$status->generic_message.';'.$status->specific_message.
+		"; output token sz: ".length($outtok)."\n"
       if ($debug & 1);
 
     if (GSSAPI::Status::GSS_ERROR($status->major)) {
@@ -100,11 +100,11 @@ sub client_step {
   elsif ($self->{gss_state} == 1) {
     # If the server has an empty output token when it COMPLETEs, Cyrus SASL
     # kindly sends us that empty token. We need to ignore it, which introduces
-    # another round into the process.
+    # another round into the process. 
     print STDERR "  state(1): challenge is EMPTY\n"
       if ($debug and $challenge eq '');
     return '' if ($challenge eq '');
-
+ 
     my $unwrapped;
     $status = $self->{gss_ctx}->unwrap($challenge, $unwrapped, undef, undef)
       or return $self->set_error("GSSAPI Error (unwrap challenge): ".$status);
@@ -132,29 +132,29 @@ sub client_step {
     $self->{gss_layer} = $choice;
 
     if ($choice > 1) {
-        # determine maximum plain text message size for peer's cipher buffer
-        my $psz;
-        $status = $self->{gss_ctx}->wrap_size_limit($choice & 4, 0, $rsz, $psz)
-            or return $self->set_error("GSSAPI Error (wrap size): ".$status);
-        return $self->set_error("GSSAPI wrap size = 0") unless ($psz);
-        $self->property(maxout => $psz);
-        # set SSF property; if we have just integrity protection SSF is set
-        # to 1. If we have confidentiality, SSF would be an estimate of the
-        # strength of the actual encryption ciphers in use which is not
-        # available through the GSSAPI interface; for now just set it to
-        # the lowest value that signifies confidentiality.
-        $self->property(ssf => (($choice & 4) ? 2 : 1));
+	# determine maximum plain text message size for peer's cipher buffer
+	my $psz;
+	$status = $self->{gss_ctx}->wrap_size_limit($choice & 4, 0, $rsz, $psz)
+	    or return $self->set_error("GSSAPI Error (wrap size): ".$status);
+	return $self->set_error("GSSAPI wrap size = 0") unless ($psz);
+	$self->property(maxout => $psz);
+	# set SSF property; if we have just integrity protection SSF is set
+	# to 1. If we have confidentiality, SSF would be an estimate of the
+	# strength of the actual encryption ciphers in use which is not
+	# available through the GSSAPI interface; for now just set it to
+	# the lowest value that signifies confidentiality.
+	$self->property(ssf => (($choice & 4) ? 2 : 1));
     } else {
-        # our advertised buffer size should be 0 if no layer selected
-        $lsz = 0;
-        $self->property(ssf => 0);
+	# our advertised buffer size should be 0 if no layer selected
+	$lsz = 0;
+	$self->property(ssf => 0);
     }
 
     print STDERR "state(1): layermask $layer,rsz $rsz,lsz $lsz,choice $choice\n"
-        if ($debug & 1);
+	if ($debug & 1);
 
     my $message = pack('CCCC', $choice,
-                        ($lsz >> 16)&0xff, ($lsz >> 8)&0xff, $lsz&0xff);
+			($lsz >> 16)&0xff, ($lsz >> 8)&0xff, $lsz&0xff);
 
     # append authorization identity if we have one
     my $authz = $self->_call('authname');
@@ -163,7 +163,7 @@ sub client_step {
     my $outtok;
     $status = $self->{gss_ctx}->wrap(0, 0, $message, undef, $outtok)
       or return $self->set_error("GSSAPI Error (wrap token): ".$status);
-
+    
     $self->{gss_state} = 0;
     return $outtok;
   }
@@ -194,7 +194,7 @@ sub _layer {
   $ourmask &= $theirmask;
 
   return $ourmask unless $self->property('COMPAT_CYRUSLIB_REPLY_MASK_BUG');
-
+	
   # in cyrus sasl bug compat mode, select the highest bit set
   return 4 if ($ourmask & 4);
   return 2 if ($ourmask & 2);
@@ -233,7 +233,7 @@ Authen::SASL::Perl::GSSAPI - GSSAPI (Kerberosv5) Authentication class
   $sasl = Authen::SASL->new( mechanism => 'GSSAPI' );
 
   $sasl = Authen::SASL->new( mechanism => 'GSSAPI',
-                             callback => { pass => $mycred });
+ 			     callback => { pass => $mycred });
 
   $sasl->client_start( $service, $host );
 
@@ -268,7 +268,7 @@ The authorization identity to be used in SASL exchange
 
 The GSS mechanism to be used in the connection
 
-=item pass
+=item pass 
 
 The GSS credentials to be used in the connection (optional)
 
@@ -311,7 +311,7 @@ The GSS credentials to be used in the connection (optional)
  my $mesg = $ldap->search(base   => $ldap_base,
                           filter => $ldap_filter);
 
- # -------- evaluate $mesg
+ # -------- evaluate $mesg 
 
 =head2 PROPERTIES
 
@@ -366,10 +366,10 @@ and Peter Marschall.
 Please report any bugs, or post any suggestions, to the perl-ldap mailing list
 <perl-ldap@perl.org>
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT 
 
 Copyright (c) 2006 Simon Wilkinson, Achim Grolms and Peter Marschall.
-All rights reserved. This program is free software; you can redistribute
+All rights reserved. This program is free software; you can redistribute 
 it and/or modify it under the same terms as Perl itself.
 
 =cut

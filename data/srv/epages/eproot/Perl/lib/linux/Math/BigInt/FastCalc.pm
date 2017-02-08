@@ -2,7 +2,7 @@ package Math::BigInt::FastCalc;
 
 use 5.006;
 use strict;
-# use warnings; # dont use warnings for older Perls
+# use warnings;	# dont use warnings for older Perls
 
 use DynaLoader;
 use Math::BigInt::Calc;
@@ -20,7 +20,7 @@ bootstrap Math::BigInt::FastCalc $VERSION;
 
 # announce that we are compatible with MBI v1.70 and up
 sub api_version () { 1; }
-
+ 
 BEGIN
   {
   # use Calc to override the methods that we do not provide in XS
@@ -43,8 +43,8 @@ BEGIN
     *{'Math::BigInt::FastCalc::_' . $method} = \&{'Math::BigInt::Calc::_' . $method};
     }
   my ($AND_BITS, $XOR_BITS, $OR_BITS, $BASE_LEN_SMALL, $MAX_VAL);
-
-  # store BASE_LEN and BASE to later pass it to XS code
+ 
+  # store BASE_LEN and BASE to later pass it to XS code 
   ($BASE_LEN, $AND_BITS, $XOR_BITS, $OR_BITS, $BASE_LEN_SMALL, $MAX_VAL, $BASE) =
     Math::BigInt::Calc::_base_len();
 
@@ -78,12 +78,12 @@ In order to allow for multiple big integer libraries, Math::BigInt was
 rewritten to use library modules for core math routines. Any module which
 follows the same API as this can be used instead by using the following:
 
-        use Math::BigInt lib => 'libname';
+	use Math::BigInt lib => 'libname';
 
 'libname' is either the long name ('Math::BigInt::Pari'), or only the short
 version like 'Pari'. To use this library:
 
-        use Math::BigInt lib => 'FastCalc';
+	use Math::BigInt lib => 'FastCalc';
 
 Note that from L<Math::BigInt> v1.76 onwards, FastCalc will be loaded
 automatically, if possible.
@@ -97,17 +97,17 @@ chopped into parts.
 
 The following functions are now implemented in FastCalc.xs:
 
-        _is_odd         _is_even        _is_one         _is_zero
-        _is_two         _is_ten
-        _zero           _one            _two            _ten
-        _acmp           _len            _num
-        _inc            _dec
-        __strip_zeros   _copy
+	_is_odd		_is_even	_is_one		_is_zero
+	_is_two		_is_ten
+	_zero		_one		_two		_ten
+	_acmp		_len		_num
+	_inc		_dec
+	__strip_zeros	_copy
 
 =head1 LICENSE
-
+ 
 This program is free software; you may redistribute it and/or modify it under
-the same terms as Perl itself.
+the same terms as Perl itself. 
 
 =head1 AUTHORS
 

@@ -4,7 +4,7 @@ package Net::AMQP::Frame::OOBBody;
 
 Net::AMQP::Frame::OOBBody - AMQP wire-level out-of-band body Frame object
 
-=head1 DESCRIPTION
+=head1 DESCRIPTION 
 
 Inherits from L<Net::AMQP::Frame::Body>.
 

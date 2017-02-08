@@ -9,12 +9,12 @@ require Crypt::SSLeay::CTX;
 
 my $ctx = &main_ctx();
 
-sub main_ctx {
+sub main_ctx { 
     my $ssl_version = shift || 23;
 
     my $ctx = Crypt::SSLeay::CTX->new($ssl_version);
     $ctx->set_cipher_list($ENV{CRYPT_SSLEAY_CIPHER})
-      if $ENV{CRYPT_SSLEAY_CIPHER};
+      if $ENV{CRYPT_SSLEAY_CIPHER};    
 
     $ctx;
 }

@@ -66,18 +66,18 @@ EXIT_LAYER: {
     local *___exit;
   TEST_TRAP_EXITING: {
       {
-        no warnings 'redefine';
-        *___exit = sub {
-          if ($$ != $pid) {
-            return $outer->(@_) if $outer;
-            # XXX: This is fuzzy ... how to test this right?
-            CORE::exit(shift);
-          }
-          $self->{exit} = shift;
-          $self->{leaveby} = 'exit';
-          no warnings 'exiting';
-          last TEST_TRAP_EXITING;
-        };
+	no warnings 'redefine';
+	*___exit = sub {
+	  if ($$ != $pid) {
+	    return $outer->(@_) if $outer;
+	    # XXX: This is fuzzy ... how to test this right?
+	    CORE::exit(shift);
+	  }
+	  $self->{exit} = shift;
+	  $self->{leaveby} = 'exit';
+	  no warnings 'exiting';
+	  last TEST_TRAP_EXITING;
+	};
       }
       local *CORE::GLOBAL::exit;
       *CORE::GLOBAL::exit = \&_global_exit;
@@ -185,29 +185,29 @@ $B->layer( output => $_ ) for sub {
 ########################
 
 $B->accessor( simple => [ qw/ leaveby stdout stderr wantarray / ],
-              flexible =>
-              { list => sub {
-                  $_[0]{wantarray};
-                },
-                scalar => sub {
-                  my $x = $_[0]{wantarray};
-                  !$x and defined $x;
-                },
-                void => sub {
-                  not defined $_[0]{wantarray};
-                },
-              },
-            );
+	      flexible =>
+	      { list => sub {
+		  $_[0]{wantarray};
+		},
+		scalar => sub {
+		  my $x = $_[0]{wantarray};
+		  !$x and defined $x;
+		},
+		void => sub {
+		  not defined $_[0]{wantarray};
+		},
+	      },
+	    );
 $B->accessor( is_leaveby => 1,
-              simple => [ qw/ exit die / ],
-            );
+	      simple => [ qw/ exit die / ],
+	    );
 $B->accessor( is_array => 1,
-              simple => [ qw/ warn / ],
-            );
+	      simple => [ qw/ warn / ],
+	    );
 $B->accessor( is_array => 1,
-              is_leaveby => 1,
-              simple => [ qw/ return / ],
-            );
+	      is_leaveby => 1,
+	      simple => [ qw/ return / ],
+	    );
 
 ####################
 #  Standard tests  #

@@ -9,38 +9,38 @@
 
 # This file returns the 982 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{Script=Cuneiform}
 #         \p{Sc=Xsux}
 #         \p{Is_Script=Cuneiform}
 #         \p{Is_Sc=Xsux}
-#
+# 
 #         \p{Cuneiform}
 #         \p{Is_Cuneiform}
 #         \p{Xsux}
 #         \p{Is_Xsux}
-#
+# 
 #     Note that contrary to what you might expect, the above is NOT the same
 #     as \p{Block=Cuneiform}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Sc: Cuneiform}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-12000   1236E    # [879]
-12400   12462    # [99]
-12470   12473    # [4]
+12000	1236E	 # [879]
+12400	12462	 # [99]
+12470	12473	 # [4]
 END

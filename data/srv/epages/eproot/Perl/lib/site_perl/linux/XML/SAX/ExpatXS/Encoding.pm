@@ -25,7 +25,7 @@ if ($have_File_Spec) {
 else {
   @Encoding_Path = (grep(-d $_, map($_ . '/XML/SAX/ExpatXS/Encodings', @INC)), '.');
 }
-
+  
 sub load_encoding {
   my ($file) = @_;
 
@@ -169,7 +169,7 @@ XML::SAX::ExpatXS::Encoding - Encoding support for XML::SAX::ExpatXS
 =head1 DESCRIPTION
 
 This module is derived from XML::Parser::Expat. It provides XML::SAX::ExpatXS
-parser with support of not-built-in encodings.
+parser with support of not-built-in encodings. 
 
 =head1 AUTHORS
 

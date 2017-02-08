@@ -1659,7 +1659,7 @@ sub WriteExif($$$)
             }
             $set{$tagID} = $tagInfo;
         }
-
+        
         # fix base offsets (some cameras incorrectly write maker notes in IFD0)
         if ($dirName eq 'MakerNotes' and $$dirInfo{Parent} =~ /^(ExifIFD|IFD0)$/ and
             $$exifTool{TIFF_TYPE} !~ /^(ARW|SR2)$/ and not $$exifTool{LeicaTrailerPos} and
@@ -3298,7 +3298,7 @@ NoOverwrite:            next if $isNew > 0;
                     my $subIfdDataFixup = new Image::ExifTool::Fixup;
                     $subIfdDataFixup->AddFixup($entry + 8);
                     # save fixup in imageData list
-                    $$blockInfo[4] = $subIfdDataFixup;
+                    $$blockInfo[4] = $subIfdDataFixup; 
                 }
                 # must reset entry pointer so we don't use it again in a parent IFD!
                 $$blockInfo[3] = undef;

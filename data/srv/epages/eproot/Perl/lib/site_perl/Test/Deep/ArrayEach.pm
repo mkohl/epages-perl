@@ -7,21 +7,21 @@ use Test::Deep::Cmp;
 
 sub init
 {
-        my $self = shift;
+	my $self = shift;
 
-        my $val = shift;
+	my $val = shift;
 
-        $self->{val} = $val;
+	$self->{val} = $val;
 }
 
 sub descend
 {
-        my $self = shift;
-        my $got = shift;
+	my $self = shift;
+	my $got = shift;
 
-        my $exp = [ ($self->{val}) x @$got ];
+	my $exp = [ ($self->{val}) x @$got ];
 
-        return Test::Deep::descend($got, $exp);
+	return Test::Deep::descend($got, $exp);
 }
 
 1;

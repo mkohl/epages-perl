@@ -673,7 +673,7 @@ store natively as a BLOB use the following code:
 
   use DBI qw(:sql_types);
   my $dbh = DBI->connect("dbi:SQLite:dbfile","","");
-
+  
   my $blob = `cat foo.jpg`;
   my $sth = $dbh->prepare("INSERT INTO mytable VALUES (1, ?)");
   $sth->bind_param(1, $blob, SQL_BLOB);
@@ -685,7 +685,7 @@ And then retrieval just works:
   $sth->execute();
   my $row = $sth->fetch;
   my $blobo = $row->[1];
-
+  
   # now $blobo == $blob
 
 =head2 Functions And Bind Parameters
@@ -714,7 +714,7 @@ As shown above in the C<BLOB> section, you can always use
 C<bind_param()> to tell the type of a bind value.
 
   use DBI qw(:sql_types);  # Don't forget this
-
+  
   my $sth = $dbh->prepare(q{
     SELECT bar FROM foo GROUP BY bar HAVING count(*) > ?;
   });
@@ -841,7 +841,7 @@ updates:
   use DBI qw(:sql_types);
   $dbh->{sqlite_unicode} = 1;
   my $sth = $dbh->prepare("INSERT INTO mytable (blobcolumn) VALUES (?)");
-
+  
   # Binary_data will be stored as is.
   $sth->bind_param(1, $binary_data, SQL_BLOB);
 
@@ -1057,38 +1057,38 @@ Here is a simple aggregate function which returns the variance
 (example adapted from pysqlite):
 
   package variance;
-
+  
   sub new { bless [], shift; }
-
+  
   sub step {
       my ( $self, $value ) = @_;
-
+  
       push @$self, $value;
   }
-
+  
   sub finalize {
       my $self = $_[0];
-
+  
       my $n = @$self;
-
+  
       # Variance is NULL unless there is more than one row
       return undef unless $n || $n == 1;
-
+  
       my $mu = 0;
       foreach my $v ( @$self ) {
           $mu += $v;
       }
       $mu /= $n;
-
+  
       my $sigma = 0;
       foreach my $v ( @$self ) {
           $sigma += ($x - $mu)**2;
       }
       $sigma = $sigma / ($n - 1);
-
+  
       return $sigma;
   }
-
+  
   $dbh->sqlite_create_aggregate( "variance", 1, 'variance' );
 
 The aggregate function can then be used as:

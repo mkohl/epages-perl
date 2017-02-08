@@ -14,7 +14,7 @@
 # AUTHORS
 #   Andy Wardley <abw@wardley.org>
 #
-#   Refactored by Bill Moseley for v2.19 to add negative caching (i.e.
+#   Refactored by Bill Moseley for v2.19 to add negative caching (i.e. 
 #   tracking templates that are NOTFOUND so that we can decline quickly)
 #   and to provide better support for subclassing the provider.
 #
@@ -26,11 +26,11 @@
 #
 # WARNING:
 #   This code is ugly and contorted and is being totally re-written for TT3.
-#   In particular, we'll be throwing errors rather than messing around
-#   returning (value, status) pairs.  With the benefit of hindsight, that
+#   In particular, we'll be throwing errors rather than messing around 
+#   returning (value, status) pairs.  With the benefit of hindsight, that 
 #   was a really bad design decision on my part. I deserve to be knocked
 #   to the ground and kicked around a bit by hoards of angry TT developers
-#   for that one.  Bill's refactoring has made the module easier to subclass,
+#   for that one.  Bill's refactoring has made the module easier to subclass, 
 #   (so you can ease off the kicking now), but it really needs to be totally
 #   redesigned and rebuilt from the ground up along with the bits of TT that
 #   use it.                                           -- abw 2007/04/27
@@ -1127,7 +1127,7 @@ Template::Provider - Provider module for loading/compiling templates
 =head1 SYNOPSIS
 
     $provider = Template::Provider->new(\%options);
-
+    
     ($template, $error) = $provider->fetch($name);
 
 =head1 DESCRIPTION
@@ -1149,7 +1149,7 @@ This documentation needs work.
 
 =head1 PUBLIC METHODS
 
-=head2 new(\%options)
+=head2 new(\%options) 
 
 Constructor method which instantiates and returns a new C<Template::Provider>
 object.  A reference to a hash array of configuration options may be passed.
@@ -1167,12 +1167,12 @@ the method returns C<(undef, STATUS_DECLINED)> instead of returning an error.
 
 =head2 load($name)
 
-Loads a template without parsing or compiling it.  This is used by the
+Loads a template without parsing or compiling it.  This is used by the 
 the L<INSERT|Template::Manual::Directives#INSERT> directive.
 
 =head2 store($name, $template)
 
-Stores the compiled template, C<$template>, in the cache under the name,
+Stores the compiled template, C<$template>, in the cache under the name, 
 C<$name>.  Susbequent calls to C<fetch($name)> will return this template in
 preference to any disk-based file.
 
@@ -1186,14 +1186,14 @@ the new value.
 
 This method generates a copy of the C<INCLUDE_PATH> list.  Any elements in the
 list which are dynamic generators (e.g. references to subroutines or objects
-implementing a C<paths()> method) will be called and the list of directories
+implementing a C<paths()> method) will be called and the list of directories 
 returned merged into the output list.
 
 It is possible to provide a generator which returns itself, thus sending
 this method into an infinite loop.  To detect and prevent this from happening,
 the C<$MAX_DIRS> package variable, set to C<64> by default, limits the maximum
 number of paths that can be added to, or generated for the output list.  If
-this number is exceeded then the method will immediately return an error
+this number is exceeded then the method will immediately return an error 
 reporting as much.
 
 =head1 CONFIGURATION OPTIONS
@@ -1215,7 +1215,7 @@ specify one or more directories in which template files are located.
 
     # multiple paths
     my $provider = Template::Provider->new({
-        INCLUDE_PATH => [ '/usr/local/templates',
+        INCLUDE_PATH => [ '/usr/local/templates', 
                           '/tmp/my/templates' ],
     });
 
@@ -1298,7 +1298,7 @@ before checking to see if the source template has changed.
 
 The L<COMPILE_EXT|Template::Manual::Config#COMPILE_EXT> option can be
 provided to specify a filename extension for compiled template files.
-It is undefined by default and no attempt will be made to read or write
+It is undefined by default and no attempt will be made to read or write 
 any compiled template files.
 
     my $provider = Template::Provider->new({
@@ -1337,14 +1337,14 @@ debugging messages from the L<Template::Provider> module by setting it to includ
 the C<DEBUG_PROVIDER> value.
 
     use Template::Constants qw( :debug );
-
+    
     my $template = Template->new({
         DEBUG => DEBUG_PROVIDER,
     });
 
 =head1 SUBCLASSING
 
-The C<Template::Provider> module can be subclassed to provide templates from a
+The C<Template::Provider> module can be subclassed to provide templates from a 
 different source (e.g. a database).  In most cases you'll just need to provide
 custom implementations of the C<_template_modified()> and C<_template_content()>
 methods.  If your provider requires and custom initialisation then you'll also

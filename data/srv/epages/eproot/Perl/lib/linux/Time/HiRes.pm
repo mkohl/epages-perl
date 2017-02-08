@@ -10,18 +10,18 @@ require DynaLoader;
 
 @EXPORT = qw( );
 @EXPORT_OK = qw (usleep sleep ualarm alarm gettimeofday time tv_interval
-                 getitimer setitimer nanosleep clock_gettime clock_getres
-                 clock clock_nanosleep
-                 CLOCK_HIGHRES CLOCK_MONOTONIC CLOCK_PROCESS_CPUTIME_ID
-                 CLOCK_REALTIME CLOCK_SOFTTIME CLOCK_THREAD_CPUTIME_ID
-                 CLOCK_TIMEOFDAY CLOCKS_PER_SEC
-                 ITIMER_REAL ITIMER_VIRTUAL ITIMER_PROF ITIMER_REALPROF
-                 TIMER_ABSTIME
-                 d_usleep d_ualarm d_gettimeofday d_getitimer d_setitimer
-                 d_nanosleep d_clock_gettime d_clock_getres
-                 d_clock d_clock_nanosleep
-                 stat
-                );
+		 getitimer setitimer nanosleep clock_gettime clock_getres
+		 clock clock_nanosleep
+		 CLOCK_HIGHRES CLOCK_MONOTONIC CLOCK_PROCESS_CPUTIME_ID
+		 CLOCK_REALTIME CLOCK_SOFTTIME CLOCK_THREAD_CPUTIME_ID
+		 CLOCK_TIMEOFDAY CLOCKS_PER_SEC
+		 ITIMER_REAL ITIMER_VIRTUAL ITIMER_PROF ITIMER_REALPROF
+		 TIMER_ABSTIME
+		 d_usleep d_ualarm d_gettimeofday d_getitimer d_setitimer
+		 d_nanosleep d_clock_gettime d_clock_getres
+		 d_clock d_clock_nanosleep
+		 stat
+		);
 
 $VERSION = '1.9719';
 $XS_VERSION = $VERSION;
@@ -39,8 +39,8 @@ sub AUTOLOAD {
         die "$error at $file line $line.\n";
     }
     {
-        no strict 'refs';
-        *$AUTOLOAD = sub { $val };
+	no strict 'refs';
+	*$AUTOLOAD = sub { $val };
     }
     goto &$AUTOLOAD;
 }
@@ -48,16 +48,16 @@ sub AUTOLOAD {
 sub import {
     my $this = shift;
     for my $i (@_) {
-        if (($i eq 'clock_getres'    && !&d_clock_getres)    ||
-            ($i eq 'clock_gettime'   && !&d_clock_gettime)   ||
-            ($i eq 'clock_nanosleep' && !&d_clock_nanosleep) ||
-            ($i eq 'clock'           && !&d_clock)           ||
-            ($i eq 'nanosleep'       && !&d_nanosleep)       ||
-            ($i eq 'usleep'          && !&d_usleep)          ||
-            ($i eq 'ualarm'          && !&d_ualarm)) {
-            require Carp;
-            Carp::croak("Time::HiRes::$i(): unimplemented in this platform");
-        }
+	if (($i eq 'clock_getres'    && !&d_clock_getres)    ||
+	    ($i eq 'clock_gettime'   && !&d_clock_gettime)   ||
+	    ($i eq 'clock_nanosleep' && !&d_clock_nanosleep) ||
+	    ($i eq 'clock'           && !&d_clock)           ||
+	    ($i eq 'nanosleep'       && !&d_nanosleep)       ||
+	    ($i eq 'usleep'          && !&d_usleep)          ||
+	    ($i eq 'ualarm'          && !&d_ualarm)) {
+	    require Carp;
+	    Carp::croak("Time::HiRes::$i(): unimplemented in this platform");
+	}
     }
     Time::HiRes->export_to_level(1, $this, @_);
 }
@@ -85,7 +85,7 @@ Time::HiRes - High resolution alarm, sleep, gettimeofday, interval timers
 =head1 SYNOPSIS
 
   use Time::HiRes qw( usleep ualarm gettimeofday tv_interval nanosleep
-                      clock_gettime clock_getres clock_nanosleep clock
+		      clock_gettime clock_getres clock_nanosleep clock
                       stat );
 
   usleep ($microseconds);
@@ -114,7 +114,7 @@ Time::HiRes - High resolution alarm, sleep, gettimeofday, interval timers
   getitimer ($which);
 
   use Time::HiRes qw( clock_gettime clock_getres clock_nanosleep
-                      ITIMER_REAL ITIMER_VIRTUAL ITIMER_PROF ITIMER_REALPROF );
+		      ITIMER_REAL ITIMER_VIRTUAL ITIMER_PROF ITIMER_REALPROF );
 
   $realtime   = clock_gettime(CLOCK_REALTIME);
   $resolution = clock_getres(CLOCK_REALTIME);
@@ -216,7 +216,7 @@ ualarm(0) will cancel an outstanding ualarm().
 
 Note that the interaction between alarms and sleeps is unspecified.
 
-=item tv_interval
+=item tv_interval 
 
 tv_interval ( $ref_to_gettimeofday [, $ref_to_later_gettimeofday] )
 
@@ -440,7 +440,7 @@ time stamp from t1: it may be equal or I<less>.
   # get seconds and microseconds since the epoch
   ($s, $usec) = gettimeofday();
 
-  # measure elapsed time
+  # measure elapsed time 
   # (could also do by subtracting 2 gettimeofday return values)
   $t0 = [gettimeofday];
   # do bunch of stuff here
@@ -449,7 +449,7 @@ time stamp from t1: it may be equal or I<less>.
   $t0_t1 = tv_interval $t0, $t1;
 
   $elapsed = tv_interval ($t0, [gettimeofday]);
-  $elapsed = tv_interval ($t0); # equivalent code
+  $elapsed = tv_interval ($t0);	# equivalent code
 
   #
   # replacements for time, alarm and sleep that know about

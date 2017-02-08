@@ -5,27 +5,27 @@ Server's method
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::NetscapeMail;
+	use Authen::Passphrase::NetscapeMail;
 
-        $ppr = Authen::Passphrase::NetscapeMail->new(
-                salt => "8fd9d0a03491ce8f99cfbc9ab39f0dd5",
-                hash_hex => "983757d7b519e86d9b5d472aca4eea3a");
+	$ppr = Authen::Passphrase::NetscapeMail->new(
+		salt => "8fd9d0a03491ce8f99cfbc9ab39f0dd5",
+		hash_hex => "983757d7b519e86d9b5d472aca4eea3a");
 
-        $ppr = Authen::Passphrase::NetscapeMail->new(
-                salt_random => 1,
-                passphrase => "passphrase");
+	$ppr = Authen::Passphrase::NetscapeMail->new(
+		salt_random => 1,
+		passphrase => "passphrase");
 
-        $ppr = Authen::Passphrase::NetscapeMail->from_rfc2307(
-                "{NS-MTA-MD5}8fd9d0a03491ce8f99cfbc9ab39f0dd5".
-                "983757d7b519e86d9b5d472aca4eea3a");
+	$ppr = Authen::Passphrase::NetscapeMail->from_rfc2307(
+		"{NS-MTA-MD5}8fd9d0a03491ce8f99cfbc9ab39f0dd5".
+		"983757d7b519e86d9b5d472aca4eea3a");
 
-        $salt = $ppr->salt;
-        $hash = $ppr->hash;
-        $hash_hex = $ppr->hash_hex;
+	$salt = $ppr->salt;
+	$hash = $ppr->hash;
+	$hash_hex = $ppr->hash_hex;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $userPassword = $ppr->as_rfc2307;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -101,50 +101,50 @@ The salt must be given, and either the hash or the passphrase.
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "salt") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $value =~ m#\A[\x00-\xff]{32}\z#
-                                or croak "not a valid salt";
-                        $self->{salt} = "$value";
-                } elsif($attr eq "salt_random") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $self->{salt} = unpack("H*", rand_bits(128));
-                } elsif($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[\x00-\xff]{16}\z#
-                                or croak "not a valid MD5 hash";
-                        $self->{hash} = "$value";
-                } elsif($attr eq "hash_hex") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[0-9A-Fa-f]{32}\z#
-                                or croak "\"$value\" is not a valid ".
-                                                "hex MD5 hash";
-                        $self->{hash} = pack("H*", $value);
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        croak "salt not specified" unless exists $self->{salt};
-        $self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
-        croak "hash not specified" unless exists $self->{hash};
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "salt") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$value =~ m#\A[\x00-\xff]{32}\z#
+				or croak "not a valid salt";
+			$self->{salt} = "$value";
+		} elsif($attr eq "salt_random") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$self->{salt} = unpack("H*", rand_bits(128));
+		} elsif($attr eq "hash") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[\x00-\xff]{16}\z#
+				or croak "not a valid MD5 hash";
+			$self->{hash} = "$value";
+		} elsif($attr eq "hash_hex") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[0-9A-Fa-f]{32}\z#
+				or croak "\"$value\" is not a valid ".
+						"hex MD5 hash";
+			$self->{hash} = pack("H*", $value);
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	croak "salt not specified" unless exists $self->{salt};
+	$self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
+	croak "hash not specified" unless exists $self->{hash};
+	return $self;
 }
 
 =item Authen::Passphrase::NetscapeMail->from_rfc2307(USERPASSWORD)
@@ -158,14 +158,14 @@ contain any character that cannot appear in an RFC 2307 string.
 =cut
 
 sub from_rfc2307 {
-        my($class, $userpassword) = @_;
-        if($userpassword =~ /\A\{(?i:ns-mta-md5)\}/) {
-                $userpassword =~ /\A\{.*?\}([0-9a-fA-F]{32})([!-~]{32})\z/
-                        or croak "malformed {NS-MTA-MD5} data";
-                my($hash, $salt) = ($1, $2);
-                return $class->new(salt => $salt, hash_hex => $hash);
-        }
-        return $class->SUPER::from_rfc2307($userpassword);
+	my($class, $userpassword) = @_;
+	if($userpassword =~ /\A\{(?i:ns-mta-md5)\}/) {
+		$userpassword =~ /\A\{.*?\}([0-9a-fA-F]{32})([!-~]{32})\z/
+			or croak "malformed {NS-MTA-MD5} data";
+		my($hash, $salt) = ($1, $2);
+		return $class->new(salt => $salt, hash_hex => $hash);
+	}
+	return $class->SUPER::from_rfc2307($userpassword);
 }
 
 =back
@@ -181,8 +181,8 @@ Returns the salt value, as a string of 32 bytes.
 =cut
 
 sub salt {
-        my($self) = @_;
-        return $self->{salt};
+	my($self) = @_;
+	return $self->{salt};
 }
 
 =item $ppr->hash
@@ -192,8 +192,8 @@ Returns the hash value, as a string of 16 bytes.
 =cut
 
 sub hash {
-        my($self) = @_;
-        return $self->{hash};
+	my($self) = @_;
+	return $self->{hash};
 }
 
 =item $ppr->hash_hex
@@ -203,8 +203,8 @@ Returns the hash value, as a string of 32 hexadecimal digits.
 =cut
 
 sub hash_hex {
-        my($self) = @_;
-        return unpack("H*", $self->{hash});
+	my($self) = @_;
+	return unpack("H*", $self->{hash});
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -216,26 +216,26 @@ These methods are part of the standard L<Authen::Passphrase> interface.
 =cut
 
 sub _hash_of {
-        my($self, $passphrase) = @_;
-        my $ctx = Digest::MD5->new;
-        $ctx->add($self->{salt});
-        $ctx->add("\x59");
-        $ctx->add($passphrase);
-        $ctx->add("\xf7");
-        $ctx->add($self->{salt});
-        return $ctx->digest;
+	my($self, $passphrase) = @_;
+	my $ctx = Digest::MD5->new;
+	$ctx->add($self->{salt});
+	$ctx->add("\x59");
+	$ctx->add($passphrase);
+	$ctx->add("\xf7");
+	$ctx->add($self->{salt});
+	return $ctx->digest;
 }
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $self->_hash_of($passphrase) eq $self->{hash};
+	my($self, $passphrase) = @_;
+	return $self->_hash_of($passphrase) eq $self->{hash};
 }
 
 sub as_rfc2307 {
-        my($self) = @_;
-        croak "can't put this salt into an RFC 2307 string"
-                if $self->{salt} =~ /[^!-~]/;
-        return "{NS-MTA-MD5}".$self->hash_hex.$self->{salt};
+	my($self) = @_;
+	croak "can't put this salt into an RFC 2307 string"
+		if $self->{salt} =~ /[^!-~]/;
+	return "{NS-MTA-MD5}".$self->hash_hex.$self->{salt};
 }
 
 =back

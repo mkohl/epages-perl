@@ -4,30 +4,30 @@ Data::Entropy::Algorithms - basic entropy-using algorithms
 
 =head1 SYNOPSIS
 
-        use Data::Entropy::Algorithms
-                qw(rand_bits rand_int rand_prob);
+	use Data::Entropy::Algorithms
+		qw(rand_bits rand_int rand_prob);
 
-        $str = rand_bits(17);
-        $i = rand_int(12345);
-        $i = rand_int(Math::BigInt->new("1000000000000"));
-        $j = rand_prob(1, 2, 3);
-        $j = rand_prob([ 1, 2, 3 ]);
+	$str = rand_bits(17);
+	$i = rand_int(12345);
+	$i = rand_int(Math::BigInt->new("1000000000000"));
+	$j = rand_prob(1, 2, 3);
+	$j = rand_prob([ 1, 2, 3 ]);
 
-        use Data::Entropy::Algorithms qw(rand_fix rand rand_flt);
+	use Data::Entropy::Algorithms qw(rand_fix rand rand_flt);
 
-        $x = rand_fix(48);
-        $x = rand(7);
-        $x = rand_flt(0.0, 7.0);
+	$x = rand_fix(48);
+	$x = rand(7);
+	$x = rand_flt(0.0, 7.0);
 
-        use Data::Entropy::Algorithms
-                qw(pick pick_r choose choose_r shuffle shuffle_r);
+	use Data::Entropy::Algorithms
+		qw(pick pick_r choose choose_r shuffle shuffle_r);
 
-        $item = pick($item0, $item1, $item2);
-        $item = pick_r(\@items);
-        @chosen = choose(3, $item0, $item1, $item2, $item3, $item4);
-        $chosen = choose_r(3, \@items);
-        @shuffled = shuffle($item0, $item1, $item2, $item3, $item4);
-        $shuffled = shuffle_r(\@items);
+	$item = pick($item0, $item1, $item2);
+	$item = pick_r(\@items);
+	@chosen = choose(3, $item0, $item1, $item2, $item3, $item4);
+	$chosen = choose_r(3, \@items);
+	@shuffled = shuffle($item0, $item1, $item2, $item3, $item4);
+	$shuffled = shuffle_r(\@items);
 
 =head1 DESCRIPTION
 
@@ -46,8 +46,8 @@ use strict;
 use Carp qw(croak);
 use Data::Entropy qw(entropy_source);
 use Data::Float 0.008 qw(
-        have_subnormal min_normal_exp significand_bits
-        float_is_finite float_parts float_sign mult_pow2 copysign
+	have_subnormal min_normal_exp significand_bits
+	float_is_finite float_parts float_sign mult_pow2 copysign
 );
 use Params::Classify 0.000 qw(is_ref);
 
@@ -55,9 +55,9 @@ our $VERSION = "0.007";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
-        rand_bits rand_int rand_prob
-        rand_fix rand rand_flt
-        pick_r pick choose_r choose shuffle_r shuffle
+	rand_bits rand_int rand_prob
+	rand_fix rand rand_flt
+	pick_r pick choose_r choose shuffle_r shuffle
 );
 
 =head1 FUNCTIONS
@@ -81,10 +81,10 @@ significant bits set to zero.
 =cut
 
 sub rand_bits($) {
-        my($nbits) = @_;
-        croak "need a non-negative number of bits to dispense"
-                unless $nbits >= 0;
-        return entropy_source->get_bits($nbits);
+	my($nbits) = @_;
+	croak "need a non-negative number of bits to dispense"
+		unless $nbits >= 0;
+	return entropy_source->get_bits($nbits);
 }
 
 =item rand_int(LIMIT)
@@ -97,10 +97,10 @@ the returned number is of the same type.
 =cut
 
 sub rand_int($) {
-        my($limit) = @_;
-        croak "need a positive upper limit for random variable"
-                unless $limit > 0;
-        return entropy_source->get_int($limit);
+	my($limit) = @_;
+	croak "need a positive upper limit for random variable"
+		unless $limit > 0;
+	return entropy_source->get_int($limit);
 }
 
 =item rand_prob(PROB ...)
@@ -124,19 +124,19 @@ the probability of returning 1, and so on.
 =cut
 
 sub rand_prob(@) {
-        my $probs = @_ == 1 && is_ref($_[0], "ARRAY") ? $_[0] : \@_;
-        my $total = 0;
-        for(my $i = @$probs; $i--; ) {
-                my $prob = $probs->[$i];
-                croak "probabilities must be non-negative" unless $prob >= 0;
-                $total += $prob;
-        }
-        croak "can't have nothing possible" if $total == 0;
-        for(my $i = @$probs; $i--; ) {
-                my $prob = $probs->[$i];
-                $total -= $prob;
-                return $i if entropy_source->get_prob($total, $prob);
-        }
+	my $probs = @_ == 1 && is_ref($_[0], "ARRAY") ? $_[0] : \@_;
+	my $total = 0;
+	for(my $i = @$probs; $i--; ) {
+		my $prob = $probs->[$i];
+		croak "probabilities must be non-negative" unless $prob >= 0;
+		$total += $prob;
+	}
+	croak "can't have nothing possible" if $total == 0;
+	for(my $i = @$probs; $i--; ) {
+		my $prob = $probs->[$i];
+		$total -= $prob;
+		return $i if entropy_source->get_prob($total, $prob);
+	}
 }
 
 =back
@@ -160,18 +160,18 @@ Unix C<drand48> function.
 =cut
 
 sub rand_fix($) {
-        my($nbits) = @_;
-        croak "need a non-negative number of bits to dispense"
-                unless $nbits >= 0;
-        croak "can't generate more than ".(significand_bits+1).
-                        " bits of fixed-point fraction"
-                if $nbits > significand_bits+1;
-        my $frac = 0.0;
-        for(my $pos = 24; $pos <= $nbits; $pos += 24) {
-                $frac += mult_pow2(rand_int(1 << 24), -$pos);
-        }
-        $frac += mult_pow2(rand_int(1 << ($nbits % 24)), -$nbits);
-        return $frac;
+	my($nbits) = @_;
+	croak "need a non-negative number of bits to dispense"
+		unless $nbits >= 0;
+	croak "can't generate more than ".(significand_bits+1).
+			" bits of fixed-point fraction"
+		if $nbits > significand_bits+1;
+	my $frac = 0.0;
+	for(my $pos = 24; $pos <= $nbits; $pos += 24) {
+		$frac += mult_pow2(rand_int(1 << 24), -$pos);
+	}
+	$frac += mult_pow2(rand_int(1 << ($nbits % 24)), -$nbits);
+	return $frac;
 }
 
 =item rand([LIMIT])
@@ -194,13 +194,13 @@ changes, to maintain the match.
 Where the source of a module can't be readily modified, it can be made
 to use this C<rand> by an incantation such as
 
-        *Foreign::Module::rand = \&Data::Entropy::Algorithms::rand;
+	*Foreign::Module::rand = \&Data::Entropy::Algorithms::rand;
 
 This must be done before the module is loaded, most likely in a C<BEGIN>
 block.  It is also possible to override C<CORE::rand> for all modules,
 by performing this similarly early:
 
-        *CORE::GLOBAL::rand = \&Data::Entropy::Algorithms::rand;
+	*CORE::GLOBAL::rand = \&Data::Entropy::Algorithms::rand;
 
 This function should not be used in any new code, because the kind
 of output supplied by C<rand> is hardly ever the right thing to use.
@@ -216,9 +216,9 @@ C<rand_flt> to generate floating point numbers.
 use constant RAND_NBITS => 48 > significand_bits+1 ? significand_bits+1 : 48;
 
 sub rand(;$) {
-        my($limit) = @_;
-        return rand_fix(RAND_NBITS) *
-                (!defined($limit) || $limit == 0.0 ? 1.0 : $limit);
+	my($limit) = @_;
+	return rand_fix(RAND_NBITS) *
+		(!defined($limit) || $limit == 0.0 ? 1.0 : $limit);
 }
 
 =item rand_flt(MIN, MAX)
@@ -246,87 +246,87 @@ randomly-chosen sign.
 =cut
 
 sub rand_flt($$) {
-        my($a, $b) = @_;
-        croak "bounds for rand_flt() must be finite"
-                unless float_is_finite($a) && float_is_finite($b);
-        if($a == $b) {
-                return $_[rand_int(2)]
-                        if $a == 0.0 && float_sign($a) ne float_sign($b);
-                return $_[0];
-        }
-        ($a, $b) = ($b, $a) if abs($a) < abs($b);
-        my($prm_sign, $prm_max_exp, $prm_max_sgnf) =
-                $a == 0.0 ? ("+", min_normal_exp, 0.0) : float_parts($a);
-        my($b_sign, $b_exp, $b_sgnf) =
-                $b == 0.0 ? ("+", min_normal_exp, 0.0) : float_parts($b);
-        my($min_exp, $min_sgnf);
-        my($opp_max_exp, $opp_max_sgnf);
-        if($b_sign eq $prm_sign) {
-                ($min_exp, $min_sgnf) = ($b_exp, $b_sgnf);
-                ($opp_max_exp, $opp_max_sgnf) = (min_normal_exp, 0.0);
-        } else {
-                ($min_exp, $min_sgnf) = (min_normal_exp, 0.0);
-                ($opp_max_exp, $opp_max_sgnf) = ($b_exp, $b_sgnf);
-        }
-        TRY_AGAIN:
-        my $exp = $prm_max_exp;
-        my $bdone = significand_bits;
-        $bdone = 28 if $bdone > 28;
-        my $prm_frng = $prm_max_sgnf * (1 << $bdone);
-        if($prm_max_sgnf < 1.0) {
-                # subnormal limit
-                my $desired_rng = 1 << $bdone;
-                while($bdone != significand_bits) {
-                        $bdone++;
-                        $prm_frng += $prm_frng;
-                        last if $prm_frng >= $desired_rng;
-                }
-        }
-        my $prm_rng = int($prm_frng);
-        $prm_rng++ if $prm_frng != $prm_rng;
-        my $min_b = $bdone - ($exp - $min_exp);
-        my $min_rng = $min_b >= 0 ? int(mult_pow2($min_sgnf, $min_b)) : 0;
-        my $opp_b = $bdone - ($exp - $opp_max_exp);
-        my $opp_frng = $opp_b >= 0 ? mult_pow2($opp_max_sgnf, $opp_b) : 0;
-        my $opp_rng = int($opp_frng);
-        $opp_rng++ if $opp_frng != $opp_rng;
-        my $n = $min_rng + rand_int($prm_rng - $min_rng + $opp_rng);
-        my($sg, $max_exp, $max_sgnf) = ($a, $prm_max_exp, $prm_max_sgnf);
-        if($n >= $prm_rng) {
-                $n -= $prm_rng;
-                ($sg, $max_exp, $max_sgnf) = ($b, $opp_max_exp, $opp_max_sgnf);
-        }
-        while($n == 0 && $exp - $bdone - 1 >= min_normal_exp) {
-                $exp -= $bdone + 1;
-                $n = rand_int(2 << $bdone);
-        }
-        for(my $bit = 16; $bit; $bit >>= 1) {
-                if($bdone >= $bit && $exp - $bit >= min_normal_exp &&
-                                $n < (2 << ($bdone - $bit))) {
-                        $bdone -= $bit;
-                        $exp -= $bit;
-                }
-        }
-        goto TRY_AGAIN if $exp < $min_exp;
-        my $top_sgnf = $exp == $max_exp ? $max_sgnf : 2.0;
-        my $bot_sgnf = $exp == $min_exp ? $min_sgnf : 1.0;
-        my $sgnf = mult_pow2($n, -$bdone);
-        if(!have_subnormal && $exp == min_normal_exp && $sgnf < 1.0) {
-                $top_sgnf = 1.0;
-                $sgnf = 0.0;
-        } else {
-                $bot_sgnf = 1.0 if !have_subnormal && $exp == min_normal_exp &&
-                                        $bot_sgnf < 1.0;
-                while($bdone != significand_bits) {
-                        my $bseg = significand_bits - $bdone;
-                        $bseg = 28 if $bseg > 28;
-                        $bdone += $bseg;
-                        $sgnf += mult_pow2(rand_int(1 << $bseg), -$bdone);
-                }
-        }
-        goto TRY_AGAIN if $sgnf < $bot_sgnf || $sgnf >= $top_sgnf;
-        $sgnf = $top_sgnf if $sgnf == $bot_sgnf && rand_int(2);
-        return copysign($sgnf == 0.0 ? 0.0 : mult_pow2($sgnf, $exp), $sg);
+	my($a, $b) = @_;
+	croak "bounds for rand_flt() must be finite"
+		unless float_is_finite($a) && float_is_finite($b);
+	if($a == $b) {
+		return $_[rand_int(2)]
+			if $a == 0.0 && float_sign($a) ne float_sign($b);
+		return $_[0];
+	}
+	($a, $b) = ($b, $a) if abs($a) < abs($b);
+	my($prm_sign, $prm_max_exp, $prm_max_sgnf) =
+		$a == 0.0 ? ("+", min_normal_exp, 0.0) : float_parts($a);
+	my($b_sign, $b_exp, $b_sgnf) =
+		$b == 0.0 ? ("+", min_normal_exp, 0.0) : float_parts($b);
+	my($min_exp, $min_sgnf);
+	my($opp_max_exp, $opp_max_sgnf);
+	if($b_sign eq $prm_sign) {
+		($min_exp, $min_sgnf) = ($b_exp, $b_sgnf);
+		($opp_max_exp, $opp_max_sgnf) = (min_normal_exp, 0.0);
+	} else {
+		($min_exp, $min_sgnf) = (min_normal_exp, 0.0);
+		($opp_max_exp, $opp_max_sgnf) = ($b_exp, $b_sgnf);
+	}
+	TRY_AGAIN:
+	my $exp = $prm_max_exp;
+	my $bdone = significand_bits;
+	$bdone = 28 if $bdone > 28;
+	my $prm_frng = $prm_max_sgnf * (1 << $bdone);
+	if($prm_max_sgnf < 1.0) {
+		# subnormal limit
+		my $desired_rng = 1 << $bdone;
+		while($bdone != significand_bits) {
+			$bdone++;
+			$prm_frng += $prm_frng;
+			last if $prm_frng >= $desired_rng;
+		}
+	}
+	my $prm_rng = int($prm_frng);
+	$prm_rng++ if $prm_frng != $prm_rng;
+	my $min_b = $bdone - ($exp - $min_exp);
+	my $min_rng = $min_b >= 0 ? int(mult_pow2($min_sgnf, $min_b)) : 0;
+	my $opp_b = $bdone - ($exp - $opp_max_exp);
+	my $opp_frng = $opp_b >= 0 ? mult_pow2($opp_max_sgnf, $opp_b) : 0;
+	my $opp_rng = int($opp_frng);
+	$opp_rng++ if $opp_frng != $opp_rng;
+	my $n = $min_rng + rand_int($prm_rng - $min_rng + $opp_rng);
+	my($sg, $max_exp, $max_sgnf) = ($a, $prm_max_exp, $prm_max_sgnf);
+	if($n >= $prm_rng) {
+		$n -= $prm_rng;
+		($sg, $max_exp, $max_sgnf) = ($b, $opp_max_exp, $opp_max_sgnf);
+	}
+	while($n == 0 && $exp - $bdone - 1 >= min_normal_exp) {
+		$exp -= $bdone + 1;
+		$n = rand_int(2 << $bdone);
+	}
+	for(my $bit = 16; $bit; $bit >>= 1) {
+		if($bdone >= $bit && $exp - $bit >= min_normal_exp &&
+				$n < (2 << ($bdone - $bit))) {
+			$bdone -= $bit;
+			$exp -= $bit;
+		}
+	}
+	goto TRY_AGAIN if $exp < $min_exp;
+	my $top_sgnf = $exp == $max_exp ? $max_sgnf : 2.0;
+	my $bot_sgnf = $exp == $min_exp ? $min_sgnf : 1.0;
+	my $sgnf = mult_pow2($n, -$bdone);
+	if(!have_subnormal && $exp == min_normal_exp && $sgnf < 1.0) {
+		$top_sgnf = 1.0;
+		$sgnf = 0.0;
+	} else {
+		$bot_sgnf = 1.0 if !have_subnormal && $exp == min_normal_exp &&
+					$bot_sgnf < 1.0;
+		while($bdone != significand_bits) {
+			my $bseg = significand_bits - $bdone;
+			$bseg = 28 if $bseg > 28;
+			$bdone += $bseg;
+			$sgnf += mult_pow2(rand_int(1 << $bseg), -$bdone);
+		}
+	}
+	goto TRY_AGAIN if $sgnf < $bot_sgnf || $sgnf >= $top_sgnf;
+	$sgnf = $top_sgnf if $sgnf == $bot_sgnf && rand_int(2);
+	return copysign($sgnf == 0.0 ? 0.0 : mult_pow2($sgnf, $exp), $sg);
 }
 
 =back
@@ -352,10 +352,10 @@ references to avoid expensive copying of arrays.
 =cut
 
 sub pick_r($) {
-        my($a) = @_;
-        croak "need a non-empty array to pick from"
-                unless is_ref($a, "ARRAY") && @$a;
-        return $a->[rand_int(@$a)];
+	my($a) = @_;
+	croak "need a non-empty array to pick from"
+		unless is_ref($a, "ARRAY") && @$a;
+	return $a->[rand_int(@$a)];
 }
 
 sub pick(@) { pick_r(\@_) }
@@ -379,23 +379,23 @@ references to avoid expensive copying of arrays.
 =cut
 
 sub choose_r($$) {
-        my($nchoose, $a) = @_;
-        croak "need a non-negative number of items to choose"
-                unless $nchoose >= 0;
-        croak "need a sufficiently large array to pick from"
-                unless is_ref($a, "ARRAY") && @$a >= $nchoose;
-        my $ntotal = @$a;
-        my $nleave = $ntotal - $nchoose;
-        my @chosen;
-        for(my $i = 0; $i != $ntotal; $i++) {
-                if(entropy_source->get_prob($nleave, $nchoose)) {
-                        push @chosen, $a->[$i];
-                        $nchoose--;
-                } else {
-                        $nleave--;
-                }
-        }
-        return \@chosen;
+	my($nchoose, $a) = @_;
+	croak "need a non-negative number of items to choose"
+		unless $nchoose >= 0;
+	croak "need a sufficiently large array to pick from"
+		unless is_ref($a, "ARRAY") && @$a >= $nchoose;
+	my $ntotal = @$a;
+	my $nleave = $ntotal - $nchoose;
+	my @chosen;
+	for(my $i = 0; $i != $ntotal; $i++) {
+		if(entropy_source->get_prob($nleave, $nchoose)) {
+			push @chosen, $a->[$i];
+			$nchoose--;
+		} else {
+			$nleave--;
+		}
+	}
+	return \@chosen;
 }
 
 sub choose(@) { @{choose_r(shift, \@_)} }
@@ -417,15 +417,15 @@ references to avoid expensive copying of arrays.
 =cut
 
 sub shuffle_r($) {
-        my($a) = @_;
-        croak "need an array to shuffle"
-                unless is_ref($a, "ARRAY");
-        $a = [ @$a ];
-        for(my $i = @$a; $i > 1; ) {
-                my $j = rand_int($i--);
-                @{$a}[$i, $j] = @{$a}[$j, $i];
-        }
-        return $a;
+	my($a) = @_;
+	croak "need an array to shuffle"
+		unless is_ref($a, "ARRAY");
+	$a = [ @$a ];
+	for(my $i = @$a; $i > 1; ) {
+		my $j = rand_int($i--);
+		@{$a}[$i, $j] = @{$a}[$j, $i];
+	}
+	return $a;
 }
 
 sub shuffle(@) { @{shuffle_r(\@_)} }

@@ -31,8 +31,8 @@ use PPI::Token ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Token';
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Token';
 }
 
 =pod
@@ -45,21 +45,21 @@ C<content> because C<-Foo'Bar> expands to C<-Foo::Bar>.
 =begin testing literal 9
 
 my @pairs = (
-        "-foo",        '-foo',
-        "-Foo::Bar",   '-Foo::Bar',
-        "-Foo'Bar",    '-Foo::Bar',
+	"-foo",        '-foo',
+	"-Foo::Bar",   '-Foo::Bar',
+	"-Foo'Bar",    '-Foo::Bar',
 );
 while ( @pairs ) {
-        my $from  = shift @pairs;
-        my $to    = shift @pairs;
-        my $doc   = PPI::Document->new( \"( $from => 1 );" );
-        isa_ok( $doc, 'PPI::Document' );
-        my $word = $doc->find_first('Token::DashedWord');
-        SKIP: {
-                skip( "PPI::Token::DashedWord is deactivated", 2 );
-                isa_ok( $word, 'PPI::Token::DashedWord' );
-                is( $word && $word->literal, $to, "The source $from becomes $to ok" );
-        }
+	my $from  = shift @pairs;
+	my $to    = shift @pairs;
+	my $doc   = PPI::Document->new( \"( $from => 1 );" );
+	isa_ok( $doc, 'PPI::Document' );
+	my $word = $doc->find_first('Token::DashedWord');
+	SKIP: {
+		skip( "PPI::Token::DashedWord is deactivated", 2 );
+		isa_ok( $word, 'PPI::Token::DashedWord' );
+		is( $word && $word->literal, $to, "The source $from becomes $to ok" );
+	}
 }
 
 =end testing
@@ -74,25 +74,25 @@ while ( @pairs ) {
 # Tokenizer Methods
 
 sub __TOKENIZER__on_char {
-        my $t = $_[1];
+	my $t = $_[1];
 
-        # Suck to the end of the dashed bareword
-        my $line = substr( $t->{line}, $t->{line_cursor} );
-        if ( $line =~ /^(\w+)/ ) {
-                $t->{token}->{content} .= $1;
-                $t->{line_cursor} += length $1;
-        }
+	# Suck to the end of the dashed bareword
+	my $line = substr( $t->{line}, $t->{line_cursor} );
+	if ( $line =~ /^(\w+)/ ) {
+		$t->{token}->{content} .= $1;
+		$t->{line_cursor} += length $1;
+	}
 
-        # Are we a file test operator?
-        if ( $t->{token}->{content} =~ /^\-[rwxoRWXOezsfdlpSbctugkTBMAC]$/ ) {
-                # File test operator
-                $t->{class} = $t->{token}->set_class( 'Operator' );
-        } else {
-                # No, normal dashed bareword
-                $t->{class} = $t->{token}->set_class( 'Word' );
-        }
+	# Are we a file test operator?
+	if ( $t->{token}->{content} =~ /^\-[rwxoRWXOezsfdlpSbctugkTBMAC]$/ ) {
+		# File test operator
+		$t->{class} = $t->{token}->set_class( 'Operator' );
+	} else {
+		# No, normal dashed bareword
+		$t->{class} = $t->{token}->set_class( 'Word' );
+	}
 
-        $t->_finalize_token->__TOKENIZER__on_char( $t );
+	$t->_finalize_token->__TOKENIZER__on_char( $t );
 }
 
 1;

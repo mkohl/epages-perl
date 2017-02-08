@@ -9,54 +9,54 @@ use Config;
 use Data::Dumper ();
 
 sub new {
-        my ($pack, $args) = @_;
-        return bless {
-                values => ($args ? { %$args } : {}),
-        }, $pack;
+	my ($pack, $args) = @_;
+	return bless {
+		values => ($args ? { %$args } : {}),
+	}, $pack;
 }
 
 sub clone {
-        my $self = shift;
-        return __PACKAGE__->new($self->{values});
+	my $self = shift;
+	return __PACKAGE__->new($self->{values});
 }
 
 sub get {
-        my ($self, $key) = @_;
-        return exists $self->{values}{$key} ? $self->{values}{$key} : $Config{$key};
+	my ($self, $key) = @_;
+	return exists $self->{values}{$key} ? $self->{values}{$key} : $Config{$key};
 }
 
 sub set {
-        my ($self, $key, $val) = @_;
-        $self->{values}{$key} = $val;
-        delete $self->{serialized};
-        return;
+	my ($self, $key, $val) = @_;
+	$self->{values}{$key} = $val;
+	delete $self->{serialized};
+	return;
 }
 
 sub clear {
-        my ($self, $key) = @_;
-        delete $self->{values}{$key};
-        delete $self->{serialized};
-        return;
+	my ($self, $key) = @_;
+	delete $self->{values}{$key};
+	delete $self->{serialized};
+	return;
 }
 
 sub exists {
-        my ($self, $key) = @_;
-        return exists $self->{values}{$key} || exists $Config{$key};
+	my ($self, $key) = @_;
+	return exists $self->{values}{$key} || exists $Config{$key};
 }
 
 sub values_set {
-        my $self = shift;
-        return { %{$self->{values}} };
+	my $self = shift;
+	return { %{$self->{values}} };
 }
 
 sub all_config {
-        my $self = shift;
-        return { %Config, %{ $self->{values}} };
+	my $self = shift;
+	return { %Config, %{ $self->{values}} };
 }
 
 sub serialize {
-        my $self = shift;
-        return $self->{serialized} ||= Data::Dumper->new([$self->values_set])->Terse(1)->Sortkeys(1)->Dump;
+	my $self = shift;
+	return $self->{serialized} ||= Data::Dumper->new([$self->values_set])->Terse(1)->Sortkeys(1)->Dump;
 }
 
 1;

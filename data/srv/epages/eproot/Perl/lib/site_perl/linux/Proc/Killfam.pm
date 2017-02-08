@@ -15,8 +15,8 @@ BEGIN {
     $ppt_OK = 1;
     eval "require Proc::ProcessTable";
     if ($@) {
-        $ppt_OK = 0;
-        warn "Proc::ProcessTable missing, can't kill sub-children.";
+	$ppt_OK = 0;
+	warn "Proc::ProcessTable missing, can't kill sub-children.";
     }
 }
 
@@ -25,10 +25,10 @@ sub killfam {
     my($signal, @pids) = @_;
 
     if ($ppt_OK) {
-        my $pt = Proc::ProcessTable->new;
-        my(@procs) =  @{$pt->table};
-        my(@kids) = get_pids \@procs, @pids;
-        @pids = (@pids, @kids);
+	my $pt = Proc::ProcessTable->new;
+	my(@procs) =  @{$pt->table};
+	my(@kids) = get_pids \@procs, @pids;
+	@pids = (@pids, @kids);
     }
 
     kill $signal, @pids;
@@ -41,12 +41,12 @@ sub get_pids {
 
     my @pids;
     foreach my $kid (@kids) {
-        foreach my $proc (@$procs) {
-            if ($proc->ppid == $kid) {
-                my $pid = $proc->pid;
-                push @pids, $pid, get_pids $procs, $pid;
-            }
-        }
+	foreach my $proc (@$procs) {
+	    if ($proc->ppid == $kid) {
+		my $pid = $proc->pid;
+		push @pids, $pid, get_pids $procs, $pid;
+	    } 
+	}
     }
     @pids;
 

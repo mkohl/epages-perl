@@ -31,7 +31,7 @@ Net::LDAP::Control::PostRead - LDAPv3 Post-Read control object
 
  my $mesg = $ldap->modify( "cn=Barbara Jensen, o=University of Michigan, c=US",
                            replace => { givenName => "Babs" },
-                           control => $postread );
+			   control => $postread );
 
  if ($mesg->code eq LDAP_SUCCESS) {
    my ($afterwards) = $mesg->control( LDAP_CONTROL_PREREAD );
@@ -42,8 +42,8 @@ Net::LDAP::Control::PostRead - LDAPv3 Post-Read control object
            join("', '", $entry->get_value(givenName") .
            "' to 'Babs'\n");
    }
- }
-
+ }  
+   
 
 =head1 DESCRIPTION
 

@@ -40,13 +40,13 @@ our $VERSION = '0.020';
 
 {
     my %perl_version_introduced = (
-        '?<='   => '5.005',
-        '?<!'   => '5.005',
+	'?<='	=> '5.005',
+	'?<!'	=> '5.005',
     );
 
     sub perl_version_introduced {
-        my ( $self ) = @_;
-        return $perl_version_introduced{ $self->content() } || MINIMUM_PERL;
+	my ( $self ) = @_;
+	return $perl_version_introduced{ $self->content() } || MINIMUM_PERL;
     }
 }
 
@@ -61,8 +61,8 @@ sub __PPIX_TOKENIZER__regexp {
     # punctuation characters may itself be escaped if it is also used to
     # quote the entire expression.
     if ( my $assert = $tokenizer->find_regexp(
-            qr{ \A \\? \? <? \\? [=!] }smx ) ) {
-        return $assert;
+	    qr{ \A \\? \? <? \\? [=!] }smx ) ) {
+	return $assert;
     }
 
     return;

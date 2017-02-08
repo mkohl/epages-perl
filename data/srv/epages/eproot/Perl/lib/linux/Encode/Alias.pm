@@ -291,7 +291,7 @@ Encode::Alias - alias definitions to encodings
 =head1 DESCRIPTION
 
 Allows newName to be used as an alias for ENCODING. ENCODING may be
-either the name of an encoding or an encoding object (as described
+either the name of an encoding or an encoding object (as described 
 in L<Encode>).
 
 Currently I<newName> can be specified in the following ways:
@@ -332,7 +332,7 @@ As of Encode 1.87, the older form
 
   define_alias( sub { return  /^iso8859-(\d+)$/i ? "iso-8859-$1" : undef } );
 
-no longer works.
+no longer works. 
 
 Encode up to 1.86 internally used "local $_" to implement ths older
 form.  But consider the code below;

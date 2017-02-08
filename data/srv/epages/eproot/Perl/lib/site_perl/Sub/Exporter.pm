@@ -83,8 +83,8 @@ The generator for that would look something like this:
 
     return sub {
       my $data      = shift;
-      my $tolerance = shift || $arg->{tolerance};
-      my $passes    = shift || $arg->{passes};
+      my $tolerance = shift || $arg->{tolerance}; 
+      my $passes    = shift || $arg->{passes}; 
 
       analyze($data, $tolerance, $passes);
     }
@@ -310,8 +310,8 @@ rewritten as:
 
    return sub {
      my $data      = shift;
-     my $tolerance = shift || $arg->{tolerance} || $col->{defaults}{tolerance};
-     my $passes    = shift || $arg->{passes}    || $col->{defaults}{passes};
+     my $tolerance = shift || $arg->{tolerance} || $col->{defaults}{tolerance}; 
+     my $passes    = shift || $arg->{passes}    || $col->{defaults}{passes}; 
 
      analyze($data, $tolerance, $passes);
    }
@@ -361,7 +361,7 @@ C<use> statement) are parsed as follows:
 
 First, the collectors gather any collections found in the arguments.  Any
 reference type may be given as the value for a collector.  For each collection
-given in the arguments, its validator (if any) is called.
+given in the arguments, its validator (if any) is called.  
 
 Next, groups are expanded.  If the group is implemented by a group generator,
 the generator is called.  There are two special arguments which, if given to a
@@ -784,7 +784,7 @@ sub _do_import {
     }
 
     my $code = $arg->{generator}->(
-      {
+      { 
         class     => $arg->{class},
         name      => $name,
         arg       => $import_arg,
@@ -810,7 +810,7 @@ sub _do_import {
 ## no Module::Whatever qw(arg arg arg);
 # sub _unexport {
 #   my (undef, undef, undef, undef, undef, $as, $into) = @_;
-#
+# 
 #   if (ref $as eq 'SCALAR') {
 #     undef $$as;
 #   } elsif (ref $as) {
@@ -983,7 +983,7 @@ a good idea, not a missing feature.
 
 For simple uses, setting up Sub::Exporter is about as easy as Exporter.  For
 complex uses, Sub::Exporter makes hard things possible, which would not be
-possible with Exporter.
+possible with Exporter. 
 
 When using a module that uses Sub::Exporter, users familiar with Exporter will
 probably see no difference in the basics.  These two lines do about the same
@@ -1083,7 +1083,7 @@ Ian Langworth and Shawn Sorichetti asked some good questions and hepled me
 improve my documentation quite a bit.  Yuval Kogman helped me find a bunch of
 little problems.
 
-Thanks, guys!
+Thanks, guys! 
 
 =head1 BUGS
 

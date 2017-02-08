@@ -19,11 +19,11 @@ our @EXPORT_OK = qw{
     TOKEN_UNKNOWN
 };
 
-use constant COOKIE_CLASS       => ']';
-use constant COOKIE_QUANT       => '}';
-use constant COOKIE_QUOTE       => '\\E';
+use constant COOKIE_CLASS	=> ']';
+use constant COOKIE_QUANT	=> '}';
+use constant COOKIE_QUOTE	=> '\\E';
 
-use constant MINIMUM_PERL       => '5.000';
+use constant MINIMUM_PERL	=> '5.000';
 
 use constant MODIFIER_GROUP_MATCH_SEMANTICS => 'match_semantics';
 
@@ -36,10 +36,10 @@ use constant MODIFIER_GROUP_MATCH_SEMANTICS => 'match_semantics';
 
 use constant RE_CAPTURE_NAME => ' [_[:alpha:]] \w* ';
 
-use constant STRUCTURE_UNKNOWN  => 'PPIx::Regexp::Structure::Unknown';
+use constant STRUCTURE_UNKNOWN	=> 'PPIx::Regexp::Structure::Unknown';
 
-use constant TOKEN_LITERAL      => 'PPIx::Regexp::Token::Literal';
-use constant TOKEN_UNKNOWN      => 'PPIx::Regexp::Token::Unknown';
+use constant TOKEN_LITERAL	=> 'PPIx::Regexp::Token::Literal';
+use constant TOKEN_UNKNOWN	=> 'PPIx::Regexp::Token::Unknown';
 
 1;
 

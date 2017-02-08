@@ -41,16 +41,16 @@ sub connect {
     my $self = { lc_columns => 1, result_class => 'DBIx::Simple::Result' };
     if (defined $arguments[0] and UNIVERSAL::isa($arguments[0], 'DBI::db')) {
         $self->{dont_disconnect} = 1;
-        $self->{dbh} = shift @arguments;
-        Carp::carp("Additional arguments for $class->connect are ignored")
-            if @arguments;
+	$self->{dbh} = shift @arguments;
+	Carp::carp("Additional arguments for $class->connect are ignored")
+	    if @arguments;
     } else {
-        $arguments[3]->{PrintError} = 0
-            unless defined $arguments[3] and exists $arguments[3]{PrintError};
+	$arguments[3]->{PrintError} = 0
+	    unless defined $arguments[3] and exists $arguments[3]{PrintError};
         $arguments[3]->{RaiseError} = 1
             unless $no_raiseerror
             or defined $arguments[3] and exists $arguments[3]{RaiseError};
-        $self->{dbh} = DBI->connect(@arguments);
+	$self->{dbh} = DBI->connect(@arguments);
     }
 
     return undef unless $self->{dbh};
@@ -176,7 +176,7 @@ sub query {
         }
 
         $self->{reason} = "Execute failed ($DBI::errstr)";
-        return _dummy;
+	return _dummy;
     };
 
     $self->{success} = 1;
@@ -194,8 +194,8 @@ sub last_insert_id {
     my ($self) = @_;
 
     ($self->{dbi_version} ||= DBI->VERSION) >= 1.38 or Carp::croak(
-        "DBI v1.38 required for last_insert_id" .
-        "--this is only $self->{dbi_version}, stopped"
+    	"DBI v1.38 required for last_insert_id" .
+	"--this is only $self->{dbi_version}, stopped"
     );
 
     return shift->{dbh}->last_insert_id(@_);

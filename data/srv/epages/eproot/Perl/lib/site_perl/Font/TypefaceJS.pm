@@ -9,9 +9,9 @@ Font::TypefaceJS - Generate fonts for use with typeface.js
 
 use Font::TypefaceJS;
 
-my $typeface = Font::TypefaceJS->new(
-        input_filename => "truetype_font.ttf",
-        unicode_range_names => ['Basic Latin', 'Latin-1 Supplement'],
+my $typeface = Font::TypefaceJS->new( 
+	input_filename => "truetype_font.ttf",
+	unicode_range_names => ['Basic Latin', 'Latin-1 Supplement'],
 );
 
 $typeface->write_file( output_filename => 'font.typeface.js' );
@@ -19,11 +19,11 @@ $typeface->write_file( output_filename => 'font.typeface.js' );
 =head1 DESCRIPTION
 
 Font::TypefaceJS converts truetype fonts to a format that typeface.js can read.  typeface.js is
-a javascript library that uses web browsers' vector drawing capability (<canvas> and VML) to
-draw text in HTML documents. See http://typeface.neocracy.org.
+a javascript library that uses web browsers' vector drawing capability (<canvas> and VML) to 
+draw text in HTML documents. See http://typeface.neocracy.org.  
 
-Many font vendors specifically prohibit embedding fonts in documents, and this module attempts
-to honor those restrictions.
+Many font vendors specifically prohibit embedding fonts in documents, and this module attempts 
+to honor those restrictions.  
 
 =head1 METHODS
 
@@ -31,8 +31,8 @@ Methods take named parameters.
 
 =item new()
 
-Takes an C<input_filename> which should be a truetype font file, and optional arrayref of
-C<unicode_range_names> to support.  If no range names are specified it is assumed we want all
+Takes an C<input_filename> which should be a truetype font file, and optional arrayref of 
+C<unicode_range_names> to support.  If no range names are specified it is assumed we want all 
 that are supported by the font.  See F<Unicode::UCD>.  Specify a true value for C<verbose>
 to see more output.
 
@@ -44,19 +44,19 @@ flag is in effect.  See http://www.microsoft.com/typography/tt/ttf_spec/ttch02.d
 
 =item get_unicode_range_counts()
 
-Returns a hashref containing information about which characters and which unicode ranges are
+Returns a hashref containing information about which characters and which unicode ranges are 
 supported within this font.  See F<Unicode::UCD>.
 
 =item get_json_data()
 
-Returns the JSON data structure used by typeface.js.  This contains glyph outline information as
+Returns the JSON data structure used by typeface.js.  This contains glyph outline information as 
 selected font metadata.
 
 =item write_file()
 
-Writes the font in typeface.js format, composed of javascript and JSON.  Takes an optional
-C<output_filename> parameter which defaults to reasonable name if not specified.  Returns the
-output filename on success, whether it was specified or derived.  Returns undef on failure.
+Writes the font in typeface.js format, composed of javascript and JSON.  Takes an optional 
+C<output_filename> parameter which defaults to reasonable name if not specified.  Returns the 
+output filename on success, whether it was specified or derived.  Returns undef on failure. 
 
 =head1 AUTHOR
 
@@ -88,220 +88,220 @@ use Unicode::UCD;
 our $VERSION = '0.11.1';
 
 sub new {
+	
+	my $self = shift;
+	my %args = @_;
 
-        my $self = shift;
-        my %args = @_;
+	die "couldn't find filename: $args{input_filename}" unless -e $args{input_filename};
 
-        die "couldn't find filename: $args{input_filename}" unless -e $args{input_filename};
+	my $truetype_font = Font::TTF::Font->open($args{input_filename}) || die "couldn't load font: $args{input_filename}";
 
-        my $truetype_font = Font::TTF::Font->open($args{input_filename}) || die "couldn't load font: $args{input_filename}";
+	$truetype_font->{'OS/2'}->read;
+	$truetype_font->{'name'}->read;
 
-        $truetype_font->{'OS/2'}->read;
-        $truetype_font->{'name'}->read;
+	my $freetype = Font::FreeType->new;
+	my $freetype_face = $freetype->face($args{input_filename}, options => FT_LOAD_NO_HINTING);
 
-        my $freetype = Font::FreeType->new;
-        my $freetype_face = $freetype->face($args{input_filename}, options => FT_LOAD_NO_HINTING);
+	my $family_name = $freetype_face->family_name;
+	my $font_style = $freetype_face->style_name;
 
-        my $family_name = $freetype_face->family_name;
-        my $font_style = $freetype_face->style_name;
+	(my $output_filename = lc "${family_name}_$font_style.typeface.js") =~ s/\s+/_/g;
+	
+	my $charblocks = Unicode::UCD::charblocks;
+	my %export_unicode_range_names = map { $_ => 1 } @{ $args{export_unicode_range_names} // [ keys %{ $charblocks } ] };
 
-        (my $output_filename = lc "${family_name}_$font_style.typeface.js") =~ s/\s+/_/g;
+	my %export_subset_characters;
+	if (defined $args{export_subset_characters}) {
+	    %export_subset_characters = map { $_ => 1 } split '', $args{export_subset_characters};
+	}
 
-        my $charblocks = Unicode::UCD::charblocks;
-        my %export_unicode_range_names = map { $_ => 1 } @{ $args{export_unicode_range_names} // [ keys %{ $charblocks } ] };
+	$self = {
+		input_filename => $args{input_filename},
+		truetype_font => $truetype_font,
+		freetype_face => $freetype_face,
+		family_name => $family_name,
+		font_style => $font_style,
+		output_filename => $output_filename,
+		unicode_ranges => {},
+		export_unicode_range_names => \%export_unicode_range_names,
+		export_subset_characters => \%export_subset_characters,
+		verbose => $args{verbose},
+	};
 
-        my %export_subset_characters;
-        if (defined $args{export_subset_characters}) {
-            %export_subset_characters = map { $_ => 1 } split '', $args{export_subset_characters};
-        }
-
-        $self = {
-                input_filename => $args{input_filename},
-                truetype_font => $truetype_font,
-                freetype_face => $freetype_face,
-                family_name => $family_name,
-                font_style => $font_style,
-                output_filename => $output_filename,
-                unicode_ranges => {},
-                export_unicode_range_names => \%export_unicode_range_names,
-                export_subset_characters => \%export_subset_characters,
-                verbose => $args{verbose},
-        };
-
-        bless $self;
-        $self->_convert_font;
-        return $self;
+	bless $self;
+	$self->_convert_font;
+	return $self;
 }
 
 sub check_embed_license {
+	
+	my $self = shift;
 
-        my $self = shift;
+	my $truetype_font = $self->{truetype_font};	
 
-        my $truetype_font = $self->{truetype_font};
+	if (!defined $truetype_font->{'OS/2'}->{fsType} || $truetype_font->{'OS/2'}->{fsType} == 0x0002) {
 
-        if (!defined $truetype_font->{'OS/2'}->{fsType} || $truetype_font->{'OS/2'}->{fsType} == 0x0002) {
+		# if the vendor for this font has indicated that the font should not be embedable, return false.
+		# see http://www.microsoft.com/typography/tt/ttf_spec/ttch02.doc
 
-                # if the vendor for this font has indicated that the font should not be embedable, return false.
-                # see http://www.microsoft.com/typography/tt/ttf_spec/ttch02.doc
+		if ($self->{verbose}) {
+			warn "failed embed check: $truetype_font->{'OS/2'}->{fsType}";
+		}
+		return 0;
+	}
 
-                if ($self->{verbose}) {
-                        warn "failed embed check: $truetype_font->{'OS/2'}->{fsType}";
-                }
-                return 0;
-        }
-
-        return 1;
+	return 1;
 }
 
 sub get_json_data {
-        my $self = shift;
-        return $self->{typeface_data};
+	my $self = shift;
+	return $self->{typeface_data};
 }
 
 sub get_unicode_range_counts {
-        my $self = shift;
-        return $self->{unicode_range_counts};
+	my $self = shift;
+	return $self->{unicode_range_counts};
 }
 
 sub write_file {
 
-        my ($self, %args) = @_;
+	my ($self, %args) = @_;
 
-        return unless $self->{font_embedable};
+	return unless $self->{font_embedable};
 
-        my $output_filename = $args{output_filename} || $self->{output_filename};
+	my $output_filename = $args{output_filename} || $self->{output_filename};
 
-        open F, ">$output_filename";
-        print F $self->{typeface_data} || warn "couldn't write file: $!" && return;
-        close F;
+	open F, ">$output_filename";
+	print F $self->{typeface_data} || warn "couldn't write file: $!" && return;
+	close F;
 
-        if ($self->{verbose}) {
-                print "wrote $output_filename\n";
-        }
+	if ($self->{verbose}) {
+		print "wrote $output_filename\n";
+	}
 
-        return $output_filename;
+	return $output_filename;
 }
 
 sub _convert_font {
 
-        my $self = shift;
+	my $self = shift;
 
-        return unless $self->{font_embedable} = $self->check_embed_license;
+	return unless $self->{font_embedable} = $self->check_embed_license;
 
-        my $face = $self->{freetype_face};
+	my $face = $self->{freetype_face};
 
-        my $resolution = 1000;
+	my $resolution = 1000;
 
-        # load font at 100pt, $resolution dpi;
-        $face->set_char_size(100, 100, $resolution, $resolution);
+	# load font at 100pt, $resolution dpi;
+	$face->set_char_size(100, 100, $resolution, $resolution);
 
-        # http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&item_id=IWS-Chapter08#3054f18b
-        my @ttf_name_table_names = qw(
-                copyright
-                font_family_name
-                font_sub_family_name
-                unique_font_identifier
-                full_font_name
-                version_string
-                postscript_name
-                trademark
-                manufacturer_name
-                designer
-                description
-                vendor_url
-                designer_url
-                license_description
-                license_url
-        );
+	# http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&item_id=IWS-Chapter08#3054f18b
+	my @ttf_name_table_names = qw(
+		copyright
+		font_family_name
+		font_sub_family_name 
+		unique_font_identifier
+		full_font_name
+		version_string
+		postscript_name
+		trademark
+		manufacturer_name
+		designer
+		description
+		vendor_url
+		designer_url
+		license_description
+		license_url
+	);
 
-        my $original_name_table;
-        my $index = 0;
-        for my $key (@ttf_name_table_names) {
-                $original_name_table->{$key} = $self->{truetype_font}->{name}->find_name($index++);
-        }
+	my $original_name_table;
+	my $index = 0;
+	for my $key (@ttf_name_table_names) {
+		$original_name_table->{$key} = $self->{truetype_font}->{name}->find_name($index++);
+	}
 
-        my $typeface = {
-                lineHeight => $face->height,
-                ascender => $face->ascender,
-                descender => $face->descender,
-                familyName => $self->{family_name},
-                resolution => $resolution,
-                cssFontStyle => $face->is_italic ? 'italic' : 'normal',
-                cssFontWeight => $face->is_bold ? 'bold' : 'normal',
-                underlineThickness => $face->underline_thickness,
-                underlinePosition => $face->underline_position,
-                original_font_information => $original_name_table,
-        };
+	my $typeface = {
+		lineHeight => $face->height,
+		ascender => $face->ascender,
+		descender => $face->descender,
+		familyName => $self->{family_name},
+		resolution => $resolution,
+		cssFontStyle => $face->is_italic ? 'italic' : 'normal',
+		cssFontWeight => $face->is_bold ? 'bold' : 'normal',
+		underlineThickness => $face->underline_thickness,
+		underlinePosition => $face->underline_position,
+		original_font_information => $original_name_table,
+	};
 
-        my $unicode_range_counts;
+	my $unicode_range_counts;
 
-        $face->foreach_char( sub {
+	$face->foreach_char( sub {
 
-                my $glyph = $_;
-                my $character = chr($glyph->char_code);
+		my $glyph = $_;
+		my $character = chr($glyph->char_code);
 
-                my $unicode_range_name = Unicode::UCD::charblock($glyph->char_code);
-                my $unicode_range = $self->{unicode_ranges}->{ $unicode_range_name || 'Miscelaneous' };
+		my $unicode_range_name = Unicode::UCD::charblock($glyph->char_code);
+		my $unicode_range = $self->{unicode_ranges}->{ $unicode_range_name || 'Miscelaneous' };
 
-                $unicode_range->{count}++;
-                $self->{unicode_ranges}->{$unicode_range_name}->{parsed} = 1;
-                push @{ $unicode_range->{characters} }, $character;
+		$unicode_range->{count}++;
+		$self->{unicode_ranges}->{$unicode_range_name}->{parsed} = 1;
+		push @{ $unicode_range->{characters} }, $character;
 
-                return unless $self->{export_unicode_range_names}->{$unicode_range_name};
+		return unless $self->{export_unicode_range_names}->{$unicode_range_name};
+		
+		if (
+			keys %{ $self->{export_subset_characters} } 
+			&& ! $self->{export_subset_characters}->{ $character } 
+		) {
+			return;
+		}
 
-                if (
-                        keys %{ $self->{export_subset_characters} }
-                        && ! $self->{export_subset_characters}->{ $character }
-                ) {
-                        return;
-                }
+		$typeface->{glyphs}->{$character}->{ha} = $glyph->horizontal_advance;
 
-                $typeface->{glyphs}->{$character}->{ha} = $glyph->horizontal_advance;
+		my $bbox;
+		($bbox->{xMin}, $bbox->{yMin}, $bbox->{xMax}, $bbox->{yMax}) = $glyph->outline_bbox();
 
-                my $bbox;
-                ($bbox->{xMin}, $bbox->{yMin}, $bbox->{xMax}, $bbox->{yMax}) = $glyph->outline_bbox();
+		$typeface->{glyphs}->{$character}->{x_min} = $bbox->{xMin}; 
+		$typeface->{glyphs}->{$character}->{x_max} = $bbox->{xMax}; 
+		
+		# d is for dimension
+		for my $d qw(xMax yMax) {
+			$typeface->{boundingBox}->{$d} ||= $bbox->{$d} || 0;
+			$typeface->{boundingBox}->{$d} = 
+				($bbox->{$d} > $typeface->{boundingBox}->{$d}) ? 
+					$bbox->{$d} : 
+					$typeface->{boundingBox}->{$d};
+		}
 
-                $typeface->{glyphs}->{$character}->{x_min} = $bbox->{xMin};
-                $typeface->{glyphs}->{$character}->{x_max} = $bbox->{xMax};
+		for my $d qw(xMin yMin) {
+			$typeface->{boundingBox}->{$d} ||= $bbox->{$d} || 0;
+			$typeface->{boundingBox}->{$d} = 
+				($bbox->{$d} < $typeface->{boundingBox}->{$d}) ? 
+					$bbox->{$d} : 
+					$typeface->{boundingBox}->{$d};
+		}
 
-                # d is for dimension
-                for my $d qw(xMax yMax) {
-                        $typeface->{boundingBox}->{$d} ||= $bbox->{$d} || 0;
-                        $typeface->{boundingBox}->{$d} =
-                                ($bbox->{$d} > $typeface->{boundingBox}->{$d}) ?
-                                        $bbox->{$d} :
-                                        $typeface->{boundingBox}->{$d};
-                }
+		my $callback_abbreviations = {
+			move_to => 'm',
+			line_to => 'l',
+			conic_to => 'q',
+			cubic_to => 'b',
+		};
+			
+		my $callbacks;
+		while (my ($callback_name, $op_abbreviation) = each %$callback_abbreviations) {
+			$callbacks->{$callback_name} = sub {
+				$typeface->{glyphs}->{$character}->{o} .= join ' ', $op_abbreviation, (map { sprintf "%d", $_ } @_), '';
+			}
+		}
 
-                for my $d qw(xMin yMin) {
-                        $typeface->{boundingBox}->{$d} ||= $bbox->{$d} || 0;
-                        $typeface->{boundingBox}->{$d} =
-                                ($bbox->{$d} < $typeface->{boundingBox}->{$d}) ?
-                                        $bbox->{$d} :
-                                        $typeface->{boundingBox}->{$d};
-                }
+		$glyph->outline_decompose( %$callbacks );
 
-                my $callback_abbreviations = {
-                        move_to => 'm',
-                        line_to => 'l',
-                        conic_to => 'q',
-                        cubic_to => 'b',
-                };
+	} );
 
-                my $callbacks;
-                while (my ($callback_name, $op_abbreviation) = each %$callback_abbreviations) {
-                        $callbacks->{$callback_name} = sub {
-                                $typeface->{glyphs}->{$character}->{o} .= join ' ', $op_abbreviation, (map { sprintf "%d", $_ } @_), '';
-                        }
-                }
+	$self->{typeface_data} = qq[if (_typeface_js && _typeface_js.loadFace) _typeface_js.loadFace(] . encode_json($typeface) . ');';
 
-                $glyph->outline_decompose( %$callbacks );
-
-        } );
-
-        $self->{typeface_data} = qq[if (_typeface_js && _typeface_js.loadFace) _typeface_js.loadFace(] . encode_json($typeface) . ');';
-
-        $self->{unicode_range_counts} = $unicode_range_counts;
+	$self->{unicode_range_counts} = $unicode_range_counts;
 }
 
 1;

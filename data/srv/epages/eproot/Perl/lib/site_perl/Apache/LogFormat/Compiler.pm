@@ -134,7 +134,7 @@ sub compile {
              \%(?:[<>])?([a-zA-Z\%])
         )
     ! $1 ? $block_handler->($1, $2, $extra_block_handlers) : $char_handler->($3, $extra_char_handlers) !egx;
-
+    
     my @abbr = qw( Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec );
     my $c = {};
     $fmt = q~sub {
@@ -143,7 +143,7 @@ sub compile {
         if ( ! exists $c->{tz_cache} || ! exists $c->{isdst_cache} || $lt[8] != $c->{isdst_cache} ) {
             $c->{tz_cache} = POSIX::strftime::Compiler::strftime('%z',@lt);
             $c->{isdst_cache} = $lt[8];
-        }
+        }    
         my $t = sprintf '%02d/%s/%04d:%02d:%02d:%02d %s', $lt[3], $abbr[$lt[4]], $lt[5]+1900,
           $lt[2], $lt[1], $lt[0], $c->{tz_cache};
         q!~ . $fmt . q~!
@@ -175,7 +175,7 @@ __END__
 
 =head1 NAME
 
-Apache::LogFormat::Compiler - Compile a log format string to perl-code
+Apache::LogFormat::Compiler - Compile a log format string to perl-code 
 
 =head1 SYNOPSIS
 
@@ -240,7 +240,7 @@ Generates log line.
   $reqtime  The time taken to serve request in microseconds. optional
   $time     Time the request was received. optional. If $time is undefined. current timestamp is used.
 
-Sample psgi
+Sample psgi 
 
   use Plack::Builder;
   use Time::HiRes;

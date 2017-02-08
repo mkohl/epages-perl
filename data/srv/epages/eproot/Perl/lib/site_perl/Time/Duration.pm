@@ -97,31 +97,31 @@ use constant YEAR => 365 * DAY;
 
 sub _separate {
   # Breakdown of seconds into units, starting with the most significant
-
+  
   my $remainder = abs $_[0]; # remainder
   my $this; # scratch
   my @wheel; # retval
-
+  
   # Years:
   $this = int($remainder / (365 * 24 * 60 * 60));
   push @wheel, ['year', $this, 1_000_000_000];
   $remainder -= $this * (365 * 24 * 60 * 60);
-
+    
   # Days:
   $this = int($remainder / (24 * 60 * 60));
   push @wheel, ['day', $this, 365];
   $remainder -= $this * (24 * 60 * 60);
-
+    
   # Hours:
   $this = int($remainder / (60 * 60));
   push @wheel, ['hour', $this, 24];
   $remainder -= $this * (60 * 60);
-
+  
   # Minutes:
   $this = int($remainder / 60);
   push @wheel, ['minute', $this, 60];
   $remainder -= $this * 60;
-
+  
   push @wheel, ['second', int($remainder), 60];
   return @wheel;
 }
@@ -136,7 +136,7 @@ sub _approximate {
     # Constraints for leaving this block:
     #  1) number of nonzero wheels must be <= $precision
     #  2) no wheels can be improperly expressed (like having "60" for mins)
-
+  
     my $nonzero_count = 0;
     my $improperly_expressed;
 
@@ -146,7 +146,7 @@ sub _approximate {
       next if $this->[1] == 0; # Zeros require no attention.
       ++$nonzero_count;
       next if $i == 0; # the years wheel is never improper or over any limit; skip
-
+      
       if($nonzero_count > $precision) {
         # This is one nonzero wheel too many!
         DEBUG and print '', $this->[0], " is one nonzero too many!\n";
@@ -164,15 +164,15 @@ sub _approximate {
       } elsif($this->[1] >= $this->[-1]) {
         # It's an improperly expressed wheel.  (Like "60" on the mins wheel)
         $improperly_expressed = $i;
-        DEBUG and print '', $this->[0], ' (', $this->[1],
+        DEBUG and print '', $this->[0], ' (', $this->[1], 
            ") is improper!\n";
       }
     }
-
+    
     if(defined $improperly_expressed) {
       # Only fix the least-significant improperly expressed wheel (at a time).
       DEBUG and printf "incrementing %s from %s to %s\n",
-       $wheel[$improperly_expressed-1][0], $wheel[$improperly_expressed-1][1],
+       $wheel[$improperly_expressed-1][0], $wheel[$improperly_expressed-1][1], 
         1 + $wheel[$improperly_expressed-1][1], ;
       ++$wheel[ $improperly_expressed - 1][1];
       $wheel[ $improperly_expressed][1] = 0;
@@ -180,7 +180,7 @@ sub _approximate {
       #  it's only by having been rounded up to the limit.
       redo Fix; # Start over.
     }
-
+    
     # Otherwise there's not too many nonzero wheels, and there's no
     #  improperly expressed wheels, so fall thru...
   }
@@ -231,7 +231,7 @@ Example use in a program that ends by noting its runtime:
 
   my $start_time = time();
   use Time::Duration;
-
+  
   # then things that take all that time, and then ends:
   print "Runtime ", duration(time() - $start_time), ".\n";
 
@@ -266,7 +266,7 @@ If the $age is 3 seconds, this prints
 it's "from B<1 second ago>".  If it's 125 seconds, you get "I<file> was
 modified B<2 minutes and 5 seconds ago>".  If it's 3820 seconds (which
 is exactly 1h, 3m, 40s), you get it rounded to fit within two expressed
-units: "I<file> was modified B<1 hour and 4 minutes ago>".
+units: "I<file> was modified B<1 hour and 4 minutes ago>".  
 Using ago_exact instead
 would return "I<file> was modified B<1 hour, 3 minutes, and 40 seconds
 ago>".  And if the file's
@@ -287,7 +287,7 @@ by default when you call C<use Time::Duration;>.
 
 =item duration($seconds, $precision)
 
-Returns English text expressing the approximate time duration
+Returns English text expressing the approximate time duration 
 of abs($seconds), with at most S<C<$precision || 2>> expressed units.
 (That is, duration($seconds) is the same as duration($seconds,2).)
 
@@ -339,7 +339,7 @@ Same as ago($seconds), except that the returned value is an exact
 
 =item from_now_exact($seconds)
 
-The same as ago(-$seconds), ago(-$seconds, $precision),
+The same as ago(-$seconds), ago(-$seconds, $precision), 
 ago_exact(-$seconds).  For example, from_now(120) is "2 minutes from now".
 
 
@@ -366,14 +366,14 @@ Same as later($seconds), except that the returned value is an exact
 
 =item earlier_exact($seconds)
 
-The same as later(-$seconds), later(-$seconds, $precision),
+The same as later(-$seconds), later(-$seconds, $precision), 
 later_exact(-$seconds).  For example, earlier(120) is "2 minutes earlier".
 
 
 =item concise( I<function(> ... ) )
 
 Concise takes the string output of one of the above functions and makes
-it more concise.  For example,
+it more concise.  For example, 
 C<< ago(4567) >> returns "1 hour and 16 minutes ago", but
 C<< concise(ago(4567)) >> returns "1h16m ago".
 

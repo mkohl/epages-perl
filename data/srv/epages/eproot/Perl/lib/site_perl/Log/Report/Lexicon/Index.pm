@@ -40,7 +40,7 @@ sub new($;@)
 sub directory() {shift->{dir}}
 
 
-sub index()
+sub index() 
 {   my $self = shift;
     return $self->{index} if exists $self->{index};
 

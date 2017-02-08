@@ -24,7 +24,7 @@ BEGIN {
                            $token_chars/];
     $vars {parts}   = [qw /$future_extension/];
     $vars {connect} = [qw /$provider_hostname $provider_tag $service_provider
-                           $private_prefix $local_network_prefix
+                           $private_prefix $local_network_prefix 
                            $global_network_prefix $network_prefix/];
     $vars {phone}   = [qw /$phone_context_ident $phone_context_tag
                            $area_specifier $post_dial $isdn_subaddress
@@ -162,7 +162,7 @@ might change without notice.
 
 =item B<[RFC 2616]>
 
-Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L.,
+Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L., 
 Leach, P. and Berners-Lee, Tim: I<Hypertext Transfer Protocol -- HTTP/1.1>.
 June 1999.
 

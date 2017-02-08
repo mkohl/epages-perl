@@ -32,7 +32,7 @@ $VERSION = "0.15";
 # attr         = AttributeDescription from Section 4.1.5 of [1]
 # matchingrule = MatchingRuleId from Section 4.1.9 of [1]
 # value        = AttributeValue from Section 4.1.6 of [1]
-#
+# 
 # Special Character encodings
 # ---------------------------
 #    *               \2a, \*
@@ -46,7 +46,7 @@ my $ErrStr;
 sub new {
   my $self = shift;
   my $class = ref($self) || $self;
-
+  
   my $me = bless {}, $class;
 
   if (@_) {
@@ -79,12 +79,12 @@ sub errstr { $ErrStr }
 
 sub _unescape {
   $_[0] =~ s/
-             \\([\da-fA-F]{2}|.)
-            /
-             length($1) == 1
-               ? $1
-               : chr(hex($1))
-            /soxeg;
+	     \\([\da-fA-F]{2}|.)
+	    /
+	     length($1) == 1
+	       ? $1
+	       : chr(hex($1))
+	    /soxeg;
   $_[0];
 }
 
@@ -106,10 +106,10 @@ sub _encode {
 
     return ( {
       extensibleMatch => {
-        matchingRule => $rule,
-        type         => length($type) ? $type : undef,
-        matchValue   => _unescape($val),
-        dnAttributes => $dn ? 1 : undef
+	matchingRule => $rule,
+	type         => length($type) ? $type : undef,
+	matchValue   => _unescape($val), 
+	dnAttributes => $dn ? 1 : undef
       }
     });
   }
@@ -124,7 +124,7 @@ sub _encode {
 
     while ($val =~ s/^((\\.|[^\\*]+)*)\*//) {
       push(@$n, { $type, _unescape("$1") })         # $1 is readonly, copy it
-        if length($1) or $type eq 'any';
+	if length($1) or $type eq 'any';
 
       $type = 'any';
     }
@@ -134,8 +134,8 @@ sub _encode {
 
     return ({
       substrings => {
-        type       => $attr,
-        substrings => $n
+	type       => $attr,
+	substrings => $n
       }
     });
   }
@@ -186,16 +186,16 @@ sub parse {
 
     elsif ($filter =~ s/^\)\s*//o) {
       unless (@stack) {
-        $ErrStr = "Bad filter, unmatched )";
-        return undef;
+	$ErrStr = "Bad filter, unmatched )";
+	return undef;
       }
       my($myop,$mydata) = ($op,$cur);
       ($op,$cur) = @{ pop @stack };
-        # Need to do more checking here
+	# Need to do more checking here
       push @$cur, { $Op{$myop} => $myop eq '!' ? $mydata->[0] : $mydata };
       next if @stack;
     }
-
+    
     # present is a special case (attr=*)
 
     elsif ($filter =~ s/^\(\s*($Attr)=\*\)\s*//o) {

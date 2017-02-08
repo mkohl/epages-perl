@@ -81,9 +81,9 @@ foreach my $piece (@$diffs) {
     next unless $oldhunk;
 
     if ($hunk->does_overlap($oldhunk)) {
-        $hunk->prepend_hunk($oldhunk);
+	$hunk->prepend_hunk($oldhunk);
     } else {
-        $oldhunk->output_diff(\@f1, \@f2);
+	$oldhunk->output_diff(\@f1, \@f2);
     }
 
 } continue {
@@ -151,11 +151,11 @@ sub new {
 
     # At first, a hunk will have just one Block in it
     my $hunk = {
-            "start1" => $start1,
-            "start2" => $start2,
-            "end1" => $end1,
-            "end2" => $end2,
-            "blocks" => [$block],
+	    "start1" => $start1,
+	    "start2" => $start2,
+	    "end1" => $end1,
+	    "end2" => $end2,
+	    "blocks" => [$block],
               };
     bless $hunk, $class;
 
@@ -239,19 +239,19 @@ sub output_unified_diff {
     map {s/^/ /} @outlist; # assume it's just context
 
     foreach my $block (@{$hunk->{"blocks"}}) {
-        foreach my $item ($block->remove) {
-            my $op = $item->{"sign"}; # -
-            my $offset = $item->{"item_no"} - $low + $num_added;
-            $outlist[$offset] =~ s/^ /$op/;
-            $num_removed++;
-        }
-        foreach my $item ($block->insert) {
-            my $op = $item->{"sign"}; # +
-            my $i = $item->{"item_no"};
-            my $offset = $i - $hunk->{"start2"} + $num_removed;
-            splice(@outlist,$offset,0,"$op$$fileref2[$i]");
-            $num_added++;
-        }
+	foreach my $item ($block->remove) {
+	    my $op = $item->{"sign"}; # -
+	    my $offset = $item->{"item_no"} - $low + $num_added;
+	    $outlist[$offset] =~ s/^ /$op/;
+	    $num_removed++;
+	}
+	foreach my $item ($block->insert) {
+	    my $op = $item->{"sign"}; # +
+	    my $i = $item->{"item_no"};
+	    my $offset = $i - $hunk->{"start2"} + $num_removed;
+	    splice(@outlist,$offset,0,"$op$$fileref2[$i]");
+	    $num_added++;
+	}
     }
 
     map {s/$/\n/} @outlist; # add \n's
@@ -274,32 +274,32 @@ sub output_context_diff {
     my $low = $hunk->{"start1"};
     my $hi  = $hunk->{"end1"};
     if (@blocklist = grep {$_->remove} @{$hunk->{"blocks"}}) {
-        my @outlist = @$fileref1[$low..$hi];
-        map {s/^/  /} @outlist; # assume it's just context
-        foreach my $block (@blocklist) {
-            my $op = $block->op; # - or !
-            foreach my $item ($block->remove) {
-                $outlist[$item->{"item_no"} - $low] =~ s/^ /$op/;
-            }
-        }
-        map {s/$/\n/} @outlist; # add \n's
-        print @outlist;
+	my @outlist = @$fileref1[$low..$hi];
+	map {s/^/  /} @outlist; # assume it's just context
+	foreach my $block (@blocklist) {
+	    my $op = $block->op; # - or !
+	    foreach my $item ($block->remove) {
+		$outlist[$item->{"item_no"} - $low] =~ s/^ /$op/;
+	    }
+	}
+	map {s/$/\n/} @outlist; # add \n's
+	print @outlist;
     }
 
     print "--- $range2 ----\n";
     $low = $hunk->{"start2"};
     $hi  = $hunk->{"end2"};
     if (@blocklist = grep {$_->insert} @{$hunk->{"blocks"}}) {
-        my @outlist = @$fileref2[$low..$hi];
-        map {s/^/  /} @outlist; # assume it's just context
-        foreach my $block (@blocklist) {
-            my $op = $block->op; # + or !
-            foreach my $item ($block->insert) {
-                $outlist[$item->{"item_no"} - $low] =~ s/^ /$op/;
-            }
-        }
-        map {s/$/\n/} @outlist; # add \n's
-        print @outlist;
+	my @outlist = @$fileref2[$low..$hi];
+	map {s/^/  /} @outlist; # assume it's just context
+	foreach my $block (@blocklist) {
+	    my $op = $block->op; # + or !
+	    foreach my $item ($block->insert) {
+		$outlist[$item->{"item_no"} - $low] =~ s/^ /$op/;
+	    }
+	}
+	map {s/$/\n/} @outlist; # add \n's
+	print @outlist;
     }
 }
 
@@ -347,9 +347,9 @@ sub new {
 
 # This just turns each change into a hash.
     foreach my $item (@$chunk) {
-        my ($sign, $item_no, $text) = @$item;
-        my $hashref = {"sign" => $sign, "item_no" => $item_no};
-        push @changes, $hashref;
+	my ($sign, $item_no, $text) = @$item;
+	my $hashref = {"sign" => $sign, "item_no" => $item_no};
+	push @changes, $hashref;
     }
 
     my $block = { "changes" => \@changes };

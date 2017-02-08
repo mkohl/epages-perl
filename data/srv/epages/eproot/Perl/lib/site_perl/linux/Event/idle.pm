@@ -14,13 +14,13 @@ sub new {
     my $class = shift;
     my %arg = @_;
     my $o = allocate($class, delete $arg{attach_to} || {});
-
+    
     # deprecated
     for (qw(min max repeat)) {
-        if (exists $arg{"e_$_"}) {
-            carp "'e_$_' is renamed to '$_'";
-            $arg{$_} = delete $arg{"e_$_"};
-        }
+	if (exists $arg{"e_$_"}) {
+	    carp "'e_$_' is renamed to '$_'";
+	    $arg{$_} = delete $arg{"e_$_"};
+	}
     }
 
     $o->repeat(1) if defined $arg{min} || defined $arg{max};

@@ -31,8 +31,8 @@ sub request
 
     my $method = $request->method;
     unless (exists $METHOD{$method}) {
-        return HTTP::Response->new(&HTTP::Status::RC_BAD_REQUEST,
-                                   "Bad method '$method'");
+	return HTTP::Response->new(&HTTP::Status::RC_BAD_REQUEST,
+				   "Bad method '$method'");
     }
 
     my $r = HTTP::GHTTP->new($request->uri);
@@ -56,15 +56,15 @@ sub request
     # XXX How can get the headers out of $r??  This way is too stupid.
     my @headers;
     eval {
-        # Wrapped in eval because this method is not always available
-        @headers = $r->get_headers;
+	# Wrapped in eval because this method is not always available
+	@headers = $r->get_headers;
     };
     @headers = qw(Date Connection Server Content-type
                   Accept-Ranges Server
                   Content-Length Last-Modified ETag) if $@;
     for (@headers) {
-        my $v = $r->get_header($_);
-        $response->header($_ => $v) if defined $v;
+	my $v = $r->get_header($_);
+	$response->header($_ => $v) if defined $v;
     }
 
     return $self->collect_once($arg, $response, $r->get_body);

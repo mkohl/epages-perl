@@ -1,5 +1,5 @@
-#!/srv/epages/eproot/Perl/bin/perl
-#!d:\perl\bin\perl.exe
+#!/srv/epages/eproot/Perl/bin/perl 
+#!d:\perl\bin\perl.exe 
 #
 # Filename: stubmaker.pl
 # Authors: Byrne Reese <byrne at majordojo dot com>
@@ -17,11 +17,11 @@ use Getopt::Long;
 my $VERBOSE = 0;
 my $DIRECTORY = ".";
 GetOptions(
-           'd=s' => \$DIRECTORY,
-           'v' => \$VERBOSE,
-           help => sub { HELP_MESSAGE(); },
-           version => sub { VERSION_MESSAGE(); exit(0); },
-           ) or HELP_MESSAGE();
+	   'd=s' => \$DIRECTORY,
+	   'v' => \$VERBOSE,
+	   help => sub { HELP_MESSAGE(); },
+	   version => sub { VERSION_MESSAGE(); exit(0); },
+	   ) or HELP_MESSAGE();
 
 HELP_MESSAGE() unless $ARGV[0];
 
@@ -34,8 +34,8 @@ my %services = %{SOAP::Schema->schema_url($WSDL_URL)
                              ->parse()
                              ->load
                              ->services};
-Carp::croak "More than one service in service description. Service and port names have to be specified\n"
-    if keys %services > 1;
+Carp::croak "More than one service in service description. Service and port names have to be specified\n" 
+    if keys %services > 1; 
 
 sub VERSION_MESSAGE {
     print "$0 $SOAP::Lite::VERSION (C) 2005 Byrne Reese.\n";
@@ -89,7 +89,7 @@ Outputs the current version of stubmaker.pl.
 =head2 STUB SUBROUTINES
 
 The "class" or "package" created by stubmaker.pl is actually a sub-class of
-the core SOAP::Lite object. As a result, all methods one can call upon
+the core SOAP::Lite object. As a result, all methods one can call upon 
 L<SOAP::Lite> one can also call upon generated stubs.
 
 For example, suppose you wanted to obtain readable output from the generated
@@ -118,7 +118,7 @@ SOAP::Lite will return the return value of the method.
 
 > perl stubmaker.pl http://www.xmethods.net/sd/StockQuoteService.wsdl
 Or:
-> perl "-MStockQuoteService qw(:all)" -le "print getQuote('MSFT')"
+> perl "-MStockQuoteService qw(:all)" -le "print getQuote('MSFT')" 
 
 =head2 Working with stub classes
 

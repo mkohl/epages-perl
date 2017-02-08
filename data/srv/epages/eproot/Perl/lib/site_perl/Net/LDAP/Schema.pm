@@ -46,8 +46,8 @@ sub parse {
     }
     elsif (UNIVERSAL::isa($arg, 'Net::LDAP::Search')) {
       unless ($entry = $arg->entry) {
-        $schema->_error('Bad Argument');
-        return undef;
+	$schema->_error('Bad Argument');
+	return undef;
       }
     }
     else {
@@ -109,14 +109,14 @@ sub merge {
 }
 
 
-sub all_attributes              { values %{shift->{at}}  }
-sub all_objectclasses           { values %{shift->{oc}}  }
-sub all_syntaxes                { values %{shift->{syn}} }
-sub all_matchingrules           { values %{shift->{mr}}  }
-sub all_matchingruleuses        { values %{shift->{mru}} }
-sub all_ditstructurerules       { values %{shift->{dts}} }
-sub all_ditcontentrules         { values %{shift->{dtc}} }
-sub all_nameforms               { values %{shift->{nfm}} }
+sub all_attributes		{ values %{shift->{at}}  }
+sub all_objectclasses		{ values %{shift->{oc}}  }
+sub all_syntaxes		{ values %{shift->{syn}} }
+sub all_matchingrules		{ values %{shift->{mr}}  }
+sub all_matchingruleuses	{ values %{shift->{mru}} }
+sub all_ditstructurerules	{ values %{shift->{dts}} }
+sub all_ditcontentrules		{ values %{shift->{dtc}} }
+sub all_nameforms		{ values %{shift->{nfm}} }
 
 sub superclass {
   my $self = shift;
@@ -158,7 +158,7 @@ sub _must_or_may {
 
     my $elem = $self->objectclass( $oc ) or next;
     if (my $res  = $elem->{$must_or_may}) {
-    @res{ @$res } = ();         # Add in, getting uniqueness
+    @res{ @$res } = (); 	# Add in, getting uniqueness
     }
     my $sup = $elem->{sup} or next;
     push @oc, @$sup;
@@ -189,14 +189,14 @@ sub _get {
   wantarray ? @elem : $elem[0];
 }
 
-sub attribute           { _get(@_,'at')  }
-sub objectclass         { _get(@_,'oc')  }
-sub syntax              { _get(@_,'syn') }
-sub matchingrule        { _get(@_,'mr')  }
-sub matchingruleuse     { _get(@_,'mru') }
-sub ditstructurerule    { _get(@_,'dts') }
-sub ditcontentrule      { _get(@_,'dtc') }
-sub nameform            { _get(@_,'nfm') }
+sub attribute		{ _get(@_,'at')  }
+sub objectclass		{ _get(@_,'oc')  }
+sub syntax		{ _get(@_,'syn') }
+sub matchingrule	{ _get(@_,'mr')  }
+sub matchingruleuse	{ _get(@_,'mru') }
+sub ditstructurerule	{ _get(@_,'dts') }
+sub ditcontentrule	{ _get(@_,'dtc') }
+sub nameform		{ _get(@_,'nfm') }
 
 
 #
@@ -212,14 +212,14 @@ sub nameform            { _get(@_,'nfm') }
 # have a unique name. This avoids a lot of checking in the access routines.
 #
 # ->{oid}->{$oid}->{
-#                       name    => $canonical_name, (created for syn)
-#                       aliases => list of non. canon names
-#                       type    => at/oc/syn
-#                       desc    => description
-#                       must    => list of can. names of mand. atts [if OC]
-#                       may     => list of can. names of opt. atts [if OC]
-#                       syntax  => can. name of syntax [if AT]
-#                       ... etc per oid details
+#			name	=> $canonical_name, (created for syn)
+#			aliases	=> list of non. canon names
+#			type	=> at/oc/syn
+#			desc	=> description
+#			must	=> list of can. names of mand. atts [if OC]
+#			may	=> list of can. names of opt. atts [if OC]
+#			syntax	=> can. name of syntax [if AT]
+#			... etc per oid details
 #
 # These next items are optimisations, to avoid always searching the OID
 # lists. Could be removed in theory. Each is a hash ref mapping
@@ -239,14 +239,14 @@ sub nameform            { _get(@_,'nfm') }
 # These items have no following arguments
 #
 my %flags = map { ($_,1) } qw(
-                              single-value
-                              obsolete
-                              collective
-                              no-user-modification
-                              abstract
-                              structural
-                              auxiliary
-                             );
+			      single-value
+			      obsolete
+			      collective
+			      no-user-modification
+			      abstract
+			      structural
+			      auxiliary
+			     );
 
 my %xat_flags = map { ($_,1) } qw(indexed system-only);
 
@@ -260,15 +260,15 @@ my %listops = map { ($_,1) } qw(must may sup);
 # Map schema attribute names to internal names
 #
 my %type2attr = qw(
-        at      attributetypes
+	at	attributetypes
         xat     extendedAttributeInfo
-        oc      objectclasses
-        syn     ldapsyntaxes
-        mr      matchingrules
-        mru     matchingruleuse
-        dts     ditstructurerules
-        dtc     ditcontentrules
-        nfm     nameforms
+	oc	objectclasses
+	syn	ldapsyntaxes
+	mr	matchingrules
+	mru	matchingruleuse
+	dts	ditstructurerules
+	dtc	ditcontentrules
+	nfm	nameforms
 );
 
 #
@@ -286,9 +286,9 @@ sub _parse_schema {
     my $vals = $entry->get_value($attr, asref => 1);
 
     my %names;
-    $schema->{$type} = \%names;         # Save reference to hash of names => element
+    $schema->{$type} = \%names;		# Save reference to hash of names => element
 
-    next unless $vals;                  # Just leave empty ref if nothing
+    next unless $vals;			# Just leave empty ref if nothing
 
     foreach my $val (@$vals) {
       #
@@ -328,29 +328,29 @@ sub _parse_schema {
 
       my $flags = ($type eq 'xat') ? \%xat_flags : \%flags;
       while(@tokens) {
-        my $tag = lc shift @tokens;
+	my $tag = lc shift @tokens;
 
-        if (exists $flags->{$tag}) {
-          $schema_entry{$tag} = 1;
-        }
-        elsif (@tokens) {
-          if (($schema_entry{$tag} = shift @tokens) eq '(') {
-            my @arr;
-            $schema_entry{$tag} = \@arr;
-            while(1) {
-              my $tmp = shift @tokens;
-              last if $tmp eq ')';
-              push @arr,$tmp unless $tmp eq '$';
+	if (exists $flags->{$tag}) {
+	  $schema_entry{$tag} = 1;
+	}
+	elsif (@tokens) {
+	  if (($schema_entry{$tag} = shift @tokens) eq '(') {
+	    my @arr;
+	    $schema_entry{$tag} = \@arr;
+	    while(1) {
+	      my $tmp = shift @tokens;
+	      last if $tmp eq ')';
+	      push @arr,$tmp unless $tmp eq '$';
 
               # Drop of end of list ?
-              die "Cannot parse [$val] {$tag}" unless @tokens;
-            }
-          }
+	      die "Cannot parse [$val] {$tag}" unless @tokens;
+	    }
+	  }
 
           # Ensure items that can be lists are stored as array refs
-          $schema_entry{$tag} = [ $schema_entry{$tag} ]
-            if exists $listops{$tag} and !ref $schema_entry{$tag};
-        }
+	  $schema_entry{$tag} = [ $schema_entry{$tag} ]
+	    if exists $listops{$tag} and !ref $schema_entry{$tag};
+	}
         else {
           die "Cannot parse [$val] {$tag}";
         }
@@ -360,21 +360,21 @@ sub _parse_schema {
       # Extract the maximum length of a syntax
       #
       $schema_entry{max_length} = $1
-        if exists $schema_entry{syntax} and $schema_entry{syntax} =~ s/{(\d+)}//;
+	if exists $schema_entry{syntax} and $schema_entry{syntax} =~ s/{(\d+)}//;
 
       #
       # Force a name if we don't have one
       #
       $schema_entry{name} = $schema_entry{oid}
-        unless exists $schema_entry{name};
+	unless exists $schema_entry{name};
 
       #
       # If we have multiple names, make the name be the first and demote the rest to aliases
       #
       if (ref $schema_entry{name}) {
-        my $aliases;
-        $schema_entry{name} = shift @{$aliases = $schema_entry{name}};
-        $schema_entry{aliases} = $aliases if @$aliases;
+	my $aliases;
+	$schema_entry{name} = shift @{$aliases = $schema_entry{name}};
+	$schema_entry{aliases} = $aliases if @$aliases;
       }
 
       #
@@ -386,8 +386,8 @@ sub _parse_schema {
       # We also index elements by name within each type
       #
       foreach my $name ( @{$schema_entry{aliases}}, $schema_entry{name} ) {
-        my $lc_name = lc $name;
-        $names{lc $name} =  \%schema_entry;
+	my $lc_name = lc $name;
+	$names{lc $name} =  \%schema_entry;
       }
     }
   }
@@ -418,11 +418,11 @@ sub attribute_syntax {
     my $syntax;
 
     while ($attr) {
-        my $elem = $self->attribute( $attr ) or return undef;
+	my $elem = $self->attribute( $attr ) or return undef;
 
-        $syntax = $elem->{syntax} and return $self->syntax($syntax);
+	$syntax = $elem->{syntax} and return $self->syntax($syntax);
 
-        $attr = ${$elem->{sup} || []}[0];
+	$attr = ${$elem->{sup} || []}[0];
     }
 
     return undef;
@@ -447,12 +447,12 @@ sub matchingrule_for_attribute {
 
     my $attrtype = $self->attribute( $attr );
     if (exists $attrtype->{$matchtype}) {
-        return $attrtype->{$matchtype};
+	return $attrtype->{$matchtype};
     } elsif (exists $attrtype->{'sup'}) {
-        # the assumption is that all superiors result in the same ruleset
-        return $self->matchingrule_for_attribute(
-                                         $attrtype->{'sup'}[0],
-                                         $matchtype);
+	# the assumption is that all superiors result in the same ruleset
+	return $self->matchingrule_for_attribute(
+				 	 $attrtype->{'sup'}[0],
+					 $matchtype);
     }
     return undef;
 }

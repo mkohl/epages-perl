@@ -539,7 +539,7 @@ sub summary {
             $fi->fid, $fi->filename_without_inc;
 }
 
-sub dump {
+sub dump {      
     my ($self, $separator, $fh, $path, $prefix, $opts) = @_;
 
     my @values = @{$self}[
@@ -558,7 +558,7 @@ sub dump {
         for my $si ($self->subs_defined_sorted) {
             my ($fl, $ll) = ($si->first_line, $si->last_line);
             defined $_ or $_ = 'undef' for ($fl, $ll);
-            printf $fh "%s%s%s%s%s%s-%s\n",
+            printf $fh "%s%s%s%s%s%s-%s\n", 
                 $prefix, 'sub', $separator,
                 $si->subname(' and '),  $separator,
                 $fl, $ll;
@@ -573,7 +573,7 @@ sub dump {
                 my @sc = @{$subs_called->{$subname}};
                 $sc[NYTP_SCi_CALLING_SUB] = join "|", keys %{ $sc[NYTP_SCi_CALLING_SUB] };
 
-                printf $fh "%s%s%s%s%s%s%s[ %s ]\n",
+                printf $fh "%s%s%s%s%s%s%s[ %s ]\n", 
                     $prefix, 'call', $separator,
                     $line,  $separator, $subname, $separator,
                     join(" ", map { defined($_) ? $_ : 'undef' } @sc)
@@ -591,7 +591,7 @@ sub dump {
             my @has_evals = map { $_->has_evals(1) } @$eval_fis;
             my @merged_fids = map { @{ $_->meta->{merged_fids}||[]} } @$eval_fis;
 
-            printf $fh "%s%s%s%d%s[ count %d nested %d merged %d ]\n",
+            printf $fh "%s%s%s%d%s[ count %d nested %d merged %d ]\n", 
                 $prefix, 'eval', $separator,
                 $eval_fis->[0]->eval_line, $separator,
                 scalar @$eval_fis, # count of evals executed on this line
@@ -601,7 +601,7 @@ sub dump {
 
     }
 
-}
+}   
 
 # vim: ts=8:sw=4:et
 1;

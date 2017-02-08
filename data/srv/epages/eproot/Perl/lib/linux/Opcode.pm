@@ -15,11 +15,11 @@ use XSLoader ();
 BEGIN {
     @ISA = qw(Exporter);
     @EXPORT_OK = qw(
-        opset ops_to_opset
-        opset_to_ops opset_to_hex invert_opset
-        empty_opset full_opset
-        opdesc opcodes opmask define_optag
-        opmask_add verify_opset opdump
+	opset ops_to_opset
+	opset_to_ops opset_to_hex invert_opset
+	empty_opset full_opset
+	opdesc opcodes opmask define_optag
+	opmask_add verify_opset opdump
     );
 }
 
@@ -32,7 +32,7 @@ XSLoader::load 'Opcode', $VERSION;
 
 _init_optags();
 
-sub ops_to_opset { opset @_ }   # alias for old name
+sub ops_to_opset { opset @_ }	# alias for old name
 
 sub opset_to_hex ($) {
     return "(invalid opset)" unless verify_opset($_[0]);
@@ -40,12 +40,12 @@ sub opset_to_hex ($) {
 }
 
 sub opdump (;$) {
-        my $pat = shift;
+	my $pat = shift;
     # handy utility: perl -MOpcode=opdump -e 'opdump File'
     foreach(opset_to_ops(full_opset)) {
         my $op = sprintf "  %12s  %s\n", $_, opdesc($_);
-                next if defined $pat and $op !~ m/$pat/i;
-                print $op;
+		next if defined $pat and $op !~ m/$pat/i;
+		print $op;
     }
 }
 
@@ -58,23 +58,23 @@ sub _init_optags {
     local($_);
     local($/) = "\n=cut"; # skip to optags definition section
     <DATA>;
-    $/ = "\n=";         # now read in 'pod section' chunks
+    $/ = "\n=";		# now read in 'pod section' chunks
     while(<DATA>) {
-        next unless m/^item\s+(:\w+)/;
-        my $tag = $1;
+	next unless m/^item\s+(:\w+)/;
+	my $tag = $1;
 
-        # Split into lines, keep only indented lines
-        my @lines = grep { m/^\s/    } split(/\n/);
-        foreach (@lines) { s/--.*//  } # delete comments
-        my @ops   = map  { split ' ' } @lines; # get op words
+	# Split into lines, keep only indented lines
+	my @lines = grep { m/^\s/    } split(/\n/);
+	foreach (@lines) { s/--.*//  } # delete comments
+	my @ops   = map  { split ' ' } @lines; # get op words
 
-        foreach(@ops) {
-            warn "$tag - $_ already tagged in $seen{$_}\n" if $seen{$_};
-            $seen{$_} = $tag;
-            delete $all{$_};
-        }
-        # opset will croak on invalid names
-        define_optag($tag, opset(@ops));
+	foreach(@ops) {
+	    warn "$tag - $_ already tagged in $seen{$_}\n" if $seen{$_};
+	    $seen{$_} = $tag;
+	    delete $all{$_};
+	}
+	# opset will croak on invalid names
+	define_optag($tag, opset(@ops));
     }
     close(DATA);
     warn "Untagged opnames: ".join(' ',keys %all)."\n" if %all;
@@ -264,8 +264,8 @@ If an optional pattern is given then only lines which match the
 
 It's designed to be used as a handy command line utility:
 
-        perl -MOpcode=opdump -e opdump
-        perl -MOpcode=opdump -e 'opdump Eval'
+	perl -MOpcode=opdump -e opdump
+	perl -MOpcode=opdump -e 'opdump Eval'
 
 =back
 
@@ -288,9 +288,9 @@ invert_opset function.
 
 =head1 TO DO (maybe)
 
-    $bool = opset_eq($opset1, $opset2)  true if opsets are logically eqiv
+    $bool = opset_eq($opset1, $opset2)	true if opsets are logically eqiv
 
-    $yes = opset_can($opset, @ops)      true if $opset has all @ops set
+    $yes = opset_can($opset, @ops)	true if $opset has all @ops set
 
     @diff = opset_diff($opset1, $opset2) => ('foo', '!bar', ...)
 
@@ -542,7 +542,7 @@ SystemV Interprocess Communications:
 This tag holds opcodes related to loading modules and getting information
 about calling environment and args.
 
-    require dofile
+    require dofile 
     caller
 
 =item :still_to_be_decided

@@ -37,11 +37,11 @@ Reads the table into memory
 sub read
 {
     my ($self, $fh) = @_;
-
+    
     my ($classes, $states) = AAT_read_state_table($fh, 0);
     $self->{'classes'} = $classes;
     $self->{'states'} = $states;
-
+            
     $self;
 }
 
@@ -52,7 +52,7 @@ sub read
 sub pack_sub
 {
     my ($self) = @_;
-
+    
     return AAT_pack_state_table($self->{'classes'}, $self->{'states'}, 0);
 }
 
@@ -65,9 +65,9 @@ Prints a human-readable representation of the table
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     my $post = $self->post();
-
+    
     $fh = 'STDOUT' unless defined $fh;
 
     $self->print_classes($fh);

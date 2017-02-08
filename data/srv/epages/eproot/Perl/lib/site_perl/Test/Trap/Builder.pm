@@ -89,7 +89,7 @@ TEST_TRAP_BUILDER_INTERNAL_EXCEPTION: {
     }
     for (reverse @{$trap->Prop->{teardown}}) {
     TEST_TRAP_BUILDER_INTERNAL_EXCEPTION: {
-        eval { $_->(); 1} or $trap->Exception("Rethrowing teardown exception: $@");
+	eval { $_->(); 1} or $trap->Exception("Rethrowing teardown exception: $@");
       }
     }
     last if @{$trap->Prop->{exception}||[]};
@@ -180,23 +180,23 @@ DIAGNOSTIC
     my ($apkgs, $anames, $tpkgs, $tnames) = @_;
     for my $apkg (@$apkgs ? @$apkgs : _register_packages 'accessor') {
       for my $aname (@$anames ? @$anames : _register_names accessor => $apkg) {
-        my $adef = _register_value accessor => $apkg => $aname;
-        for my $tpkg (@$tpkgs ? @$tpkgs : _register_packages 'test') {
-          my $mpkg = $apkg->isa($tpkg) ? $apkg
-                   : $tpkg->isa($apkg) ? $tpkg
-                   : next;
-          for my $tname (@$tnames ? @$tnames : _register_names test => $tpkg) {
-            my $tdef = _register_value test => $tpkg => $tname;
-            my $mname = sprintf $tdef->{pattern}, $mpkg, $aname;
-            no strict 'refs';
-            *$mname = sub {
-              my ($trap) = @_;
-              unshift @_, $adef, $tdef;
-              goto &$wrong_leaveby if $adef->{is_leaveby} and $trap->leaveby ne $adef->{name};
-              goto &$basic_test;
-            };
-          }
-        }
+	my $adef = _register_value accessor => $apkg => $aname;
+	for my $tpkg (@$tpkgs ? @$tpkgs : _register_packages 'test') {
+	  my $mpkg = $apkg->isa($tpkg) ? $apkg
+		   : $tpkg->isa($apkg) ? $tpkg
+		   : next;
+	  for my $tname (@$tnames ? @$tnames : _register_names test => $tpkg) {
+	    my $tdef = _register_value test => $tpkg => $tname;
+	    my $mname = sprintf $tdef->{pattern}, $mpkg, $aname;
+	    no strict 'refs';
+	    *$mname = sub {
+	      my ($trap) = @_;
+	      unshift @_, $adef, $tdef;
+	      goto &$wrong_leaveby if $adef->{is_leaveby} and $trap->leaveby ne $adef->{name};
+	      goto &$basic_test;
+	    };
+	  }
+	}
       }
     }
   }
@@ -208,9 +208,9 @@ DIAGNOSTIC
     my @targs = map { $argspec{$_} || croak "Unrecognized identifier $_ in argspec" } $targs =~ /(\w+)/g;
     _register test => $tpkg => $tname =>
       { argspec => \@targs,
-        code    => $code,
-        pattern => "%s::%s_$tname",
-        builder => $self,
+	code    => $code,
+	pattern => "%s::%s_$tname",
+	builder => $self,
       };
     # make the test methods:
     _accessor_test( [], [], [$tpkg], [$tname] );
@@ -224,8 +224,8 @@ BEGIN { # Accessor registration:
     *{"$apkg\::$aname"} = $code;
     _register accessor => $apkg => $aname =>
       { %$par,
-        code => $code,
-        name => $aname,
+	code => $code,
+	name => $aname,
       };
     # make the test methods:
     _accessor_test( [$apkg], [$aname], [], [] );
@@ -233,17 +233,17 @@ BEGIN { # Accessor registration:
 
   my %accessor_factory =
     ( scalar => sub {
-        my $name = shift;
-        return sub { $_[0]{$name} };
+	my $name = shift;
+	return sub { $_[0]{$name} };
       },
       array => sub {
-        my $name = shift;
-        return sub {
-          my $trap = shift;
-          return   $trap->{$name}      unless @_;
-          return @{$trap->{$name}}[@_] if wantarray;
-          return   $trap->{$name}[shift];
-        };
+	my $name = shift;
+	return sub {
+	  my $trap = shift;
+	  return   $trap->{$name}      unless @_;
+	  return @{$trap->{$name}}[@_] if wantarray;
+	  return   $trap->{$name}[shift];
+	};
       },
     );
 
@@ -292,17 +292,17 @@ BEGIN { # Layer registration:
       my ($arg) = @_;
       my $implementation = $self->first_output_layer_backend($arg);
       return sub {
-        my $trap = shift;
-        $trap->{$name} = ''; # XXX: Encapsulation violation!
-        my $fileno;
-        # common stuff:
-        unless (tied *$globref or defined($fileno = fileno *$globref)) {
-          return $trap->Next;
-        }
-        my $m = $implementation; # placate Devel::Cover:
-        $m = $trap->Prop->{output_backend} unless $m;
-        $m = $self->output_layer_backend('tempfile') unless $m;
-        $trap->$m($name, $fileno, $globref);
+	my $trap = shift;
+	$trap->{$name} = ''; # XXX: Encapsulation violation!
+	my $fileno;
+	# common stuff:
+	unless (tied *$globref or defined($fileno = fileno *$globref)) {
+	  return $trap->Next;
+	}
+	my $m = $implementation; # placate Devel::Cover:
+	$m = $trap->Prop->{output_backend} unless $m;
+	$m = $self->output_layer_backend('tempfile') unless $m;
+	$trap->$m($name, $fileno, $globref);
       };
     };
     $export_layer->(scalar caller, $name, $code);
@@ -515,7 +515,7 @@ callbacks.
 This is intended for diagnostics:
 
   diag( sprintf 'Expected %s in %s; got %s',
-        $expected, $self->TestAccessor, dump($got),
+	$expected, $self->TestAccessor, dump($got),
       );
 
 =head2 TestFailure
@@ -710,9 +710,9 @@ sprung), and a I<cmp_ok> test method template:
     my $self = shift;
     eval {
       local $SIG{ALRM} = sub {
-        $self->{timeout} = 1; # simple truth
-        $SIG{ALRM} = sub {die};
-        die;
+	$self->{timeout} = 1; # simple truth
+	$SIG{ALRM} = sub {die};
+	die;
       };
       ualarm 1000, 1; # one second max, then die repeatedly!
       $self->Next;
@@ -724,8 +724,8 @@ sprung), and a I<cmp_ok> test method template:
     }
   };
   $B->accessor( is_leaveby => 1,
-                simple => ['timeout'],
-              );
+		simple => ['timeout'],
+	      );
 
   # example (layer:simpletee):
   $B->layer( simpletee => $_ ) for sub {

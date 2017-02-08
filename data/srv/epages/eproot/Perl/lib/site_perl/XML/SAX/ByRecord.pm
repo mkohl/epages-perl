@@ -87,7 +87,7 @@ through the filter pipeline.
 
 Here's a quick little filter to uppercase text content:
 
-
+    
     package My::Filter::Uc;
 
     use vars qw( @ISA );
@@ -118,7 +118,7 @@ When fed a document like:
     </root>
 
 the output looks like:
-
+        
     <root> a
         <rec>B</rec> c
         <rec>C</rec> e

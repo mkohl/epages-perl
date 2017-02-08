@@ -67,7 +67,7 @@ Perl normally assumes character semantics in the presence of character
 data (i.e. data that has come from a source that has been marked as
 being of a particular character encoding). When C<use bytes> is in
 effect, the encoding is temporarily ignored, and each string is treated
-as a series of bytes.
+as a series of bytes. 
 
 As an example, when Perl sees C<$x = chr(400)>, it encodes the character
 in UTF-8 and stores it in $x. Then it is marked as character data, so,
@@ -78,7 +78,7 @@ up the UTF8 encoding - and C<length $x> returns C<2>:
     $x = chr(400);
     print "Length is ", length $x, "\n";     # "Length is 1"
     printf "Contents are %vd\n", $x;         # "Contents are 400"
-    {
+    { 
         use bytes; # or "require bytes; bytes::length()"
         print "Length is ", length $x, "\n"; # "Length is 2"
         printf "Contents are %vd\n", $x;     # "Contents are 198.144"

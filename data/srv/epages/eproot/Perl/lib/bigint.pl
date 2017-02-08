@@ -25,9 +25,9 @@ package bigint;
 # Output values always in canonical form
 #
 # Actual math is done in an internal format consisting of an array
-#   whose first element is the sign (/^[+-]$/) and whose remaining
+#   whose first element is the sign (/^[+-]$/) and whose remaining 
 #   elements are base 100000 digits with the least significant digit first.
-# The string 'NaN' is used to represent the result when input arguments
+# The string 'NaN' is used to represent the result when input arguments 
 #   are not numbers, as well as the result of dividing by zero
 #
 # routines provided are:
@@ -61,11 +61,11 @@ sub main'bnorm { #(num_str) return num_str
     local($_) = @_;
     s/\s+//g;                           # strip white space
     if (s/^([+-]?)0*(\d+)$/$1$2/) {     # test if number
-        substr($_,$[,0) = '+' unless $1; # Add missing sign
-        s/^-0/+0/;
-        $_;
+	substr($_,$[,0) = '+' unless $1; # Add missing sign
+	s/^-0/+0/;
+	$_;
     } else {
-        'NaN';
+	'NaN';
     }
 }
 
@@ -109,11 +109,11 @@ sub abs { # post-normalized abs for internal use
 sub main'bcmp { #(num_str, num_str) return cond_code
     local($x,$y) = (&'bnorm($_[$[]),&'bnorm($_[$[+1]));
     if ($x eq 'NaN') {
-        undef;
+	undef;
     } elsif ($y eq 'NaN') {
-        undef;
+	undef;
     } else {
-        &cmp($x,$y);
+	&cmp($x,$y);
     }
 }
 
@@ -141,38 +141,38 @@ sub cmp { # post-normalized compare for internal use
 sub main'badd { #(num_str, num_str) return num_str
     local(*x, *y); ($x, $y) = (&'bnorm($_[$[]),&'bnorm($_[$[+1]));
     if ($x eq 'NaN') {
-        'NaN';
+	'NaN';
     } elsif ($y eq 'NaN') {
-        'NaN';
+	'NaN';
     } else {
-        @x = &internal($x);             # convert to internal form
-        @y = &internal($y);
-        local($sx, $sy) = (shift @x, shift @y); # get signs
-        if ($sx eq $sy) {
-            &external($sx, &add(*x, *y)); # if same sign add
-        } else {
-            ($x, $y) = (&abs($x),&abs($y)); # make abs
-            if (&cmp($y,$x) > 0) {
-                &external($sy, &sub(*y, *x));
-            } else {
-                &external($sx, &sub(*x, *y));
-            }
-        }
+	@x = &internal($x);             # convert to internal form
+	@y = &internal($y);
+	local($sx, $sy) = (shift @x, shift @y); # get signs
+	if ($sx eq $sy) {
+	    &external($sx, &add(*x, *y)); # if same sign add
+	} else {
+	    ($x, $y) = (&abs($x),&abs($y)); # make abs
+	    if (&cmp($y,$x) > 0) {
+		&external($sy, &sub(*y, *x));
+	    } else {
+		&external($sx, &sub(*x, *y));
+	    }
+	}
     }
 }
 
 sub main'bsub { #(num_str, num_str) return num_str
-    &'badd($_[$[],&'bneg($_[$[+1]));
+    &'badd($_[$[],&'bneg($_[$[+1]));    
 }
 
 # GCD -- Euclids algorithm Knuth Vol 2 pg 296
 sub main'bgcd { #(num_str, num_str) return num_str
     local($x,$y) = (&'bnorm($_[$[]),&'bnorm($_[$[+1]));
     if ($x eq 'NaN' || $y eq 'NaN') {
-        'NaN';
+	'NaN';
     } else {
-        ($x, $y) = ($y,&'bmod($x,$y)) while $y ne '+0';
-        $x;
+	($x, $y) = ($y,&'bmod($x,$y)) while $y ne '+0';
+	$x;
     }
 }
 
@@ -183,12 +183,12 @@ sub add { #(int_num_array, int_num_array) return int_num_array
     local(*x, *y) = @_;
     $car = 0;
     for $x (@x) {
-        last unless @y || $car;
-        $x -= 1e5 if $car = (($x += shift(@y) + $car) >= 1e5) ? 1 : 0;
+	last unless @y || $car;
+	$x -= 1e5 if $car = (($x += shift(@y) + $car) >= 1e5) ? 1 : 0;
     }
     for $y (@y) {
-        last unless $car;
-        $y -= 1e5 if $car = (($y += $car) >= 1e5) ? 1 : 0;
+	last unless $car;
+	$y -= 1e5 if $car = (($y += $car) >= 1e5) ? 1 : 0;
     }
     (@x, @y, $car);
 }
@@ -198,8 +198,8 @@ sub sub { #(int_num_array, int_num_array) return int_num_array
     local(*sx, *sy) = @_;
     $bar = 0;
     for $sx (@sx) {
-        last unless @y || $bar;
-        $sx += 1e5 if $bar = (($sx -= shift(@sy) + $bar) < 0);
+	last unless @y || $bar;
+	$sx += 1e5 if $bar = (($sx -= shift(@sy) + $bar) < 0);
     }
     @sx;
 }
@@ -208,31 +208,31 @@ sub sub { #(int_num_array, int_num_array) return int_num_array
 sub main'bmul { #(num_str, num_str) return num_str
     local(*x, *y); ($x, $y) = (&'bnorm($_[$[]), &'bnorm($_[$[+1]));
     if ($x eq 'NaN') {
-        'NaN';
+	'NaN';
     } elsif ($y eq 'NaN') {
-        'NaN';
+	'NaN';
     } else {
-        @x = &internal($x);
-        @y = &internal($y);
-        local($signr) = (shift @x ne shift @y) ? '-' : '+';
-        @prod = ();
-        for $x (@x) {
-            ($car, $cty) = (0, $[);
-            for $y (@y) {
-                $prod = $x * $y + $prod[$cty] + $car;
+	@x = &internal($x);
+	@y = &internal($y);
+	local($signr) = (shift @x ne shift @y) ? '-' : '+';
+	@prod = ();
+	for $x (@x) {
+	    ($car, $cty) = (0, $[);
+	    for $y (@y) {
+		$prod = $x * $y + $prod[$cty] + $car;
                 if ($use_mult) {
-                    $prod[$cty++] =
-                        $prod - ($car = int($prod * 1e-5)) * 1e5;
+		    $prod[$cty++] =
+		        $prod - ($car = int($prod * 1e-5)) * 1e5;
                 }
                 else {
-                    $prod[$cty++] =
-                        $prod - ($car = int($prod / 1e5)) * 1e5;
+		    $prod[$cty++] =
+		        $prod - ($car = int($prod / 1e5)) * 1e5;
                 }
-            }
-            $prod[$cty] += $car if $car;
-            $x = shift @prod;
-        }
-        &external($signr, @x, @prod);
+	    }
+	    $prod[$cty] += $car if $car;
+	    $x = shift @prod;
+	}
+	&external($signr, @x, @prod);
     }
 }
 
@@ -244,79 +244,79 @@ sub main'bmod { #(num_str, num_str) return num_str
 sub main'bdiv { #(dividend: num_str, divisor: num_str) return num_str
     local (*x, *y); ($x, $y) = (&'bnorm($_[$[]), &'bnorm($_[$[+1]));
     return wantarray ? ('NaN','NaN') : 'NaN'
-        if ($x eq 'NaN' || $y eq 'NaN' || $y eq '+0');
+	if ($x eq 'NaN' || $y eq 'NaN' || $y eq '+0');
     return wantarray ? ('+0',$x) : '+0' if (&cmp(&abs($x),&abs($y)) < 0);
     @x = &internal($x); @y = &internal($y);
     $srem = $y[$[];
     $sr = (shift @x ne shift @y) ? '-' : '+';
     $car = $bar = $prd = 0;
     if (($dd = int(1e5/($y[$#y]+1))) != 1) {
-        for $x (@x) {
-            $x = $x * $dd + $car;
+	for $x (@x) {
+	    $x = $x * $dd + $car;
             if ($use_mult) {
-            $x -= ($car = int($x * 1e-5)) * 1e5;
+	    $x -= ($car = int($x * 1e-5)) * 1e5;
             }
             else {
-            $x -= ($car = int($x / 1e5)) * 1e5;
+	    $x -= ($car = int($x / 1e5)) * 1e5;
             }
-        }
-        push(@x, $car); $car = 0;
-        for $y (@y) {
-            $y = $y * $dd + $car;
+	}
+	push(@x, $car); $car = 0;
+	for $y (@y) {
+	    $y = $y * $dd + $car;
             if ($use_mult) {
-            $y -= ($car = int($y * 1e-5)) * 1e5;
+	    $y -= ($car = int($y * 1e-5)) * 1e5;
             }
             else {
-            $y -= ($car = int($y / 1e5)) * 1e5;
+	    $y -= ($car = int($y / 1e5)) * 1e5;
             }
-        }
+	}
     }
     else {
-        push(@x, 0);
+	push(@x, 0);
     }
     @q = (); ($v2,$v1) = @y[-2,-1];
     while ($#x > $#y) {
-        ($u2,$u1,$u0) = @x[-3..-1];
-        $q = (($u0 == $v1) ? 99999 : int(($u0*1e5+$u1)/$v1));
-        --$q while ($v2*$q > ($u0*1e5+$u1-$q*$v1)*1e5+$u2);
-        if ($q) {
-            ($car, $bar) = (0,0);
-            for ($y = $[, $x = $#x-$#y+$[-1; $y <= $#y; ++$y,++$x) {
-                $prd = $q * $y[$y] + $car;
+	($u2,$u1,$u0) = @x[-3..-1];
+	$q = (($u0 == $v1) ? 99999 : int(($u0*1e5+$u1)/$v1));
+	--$q while ($v2*$q > ($u0*1e5+$u1-$q*$v1)*1e5+$u2);
+	if ($q) {
+	    ($car, $bar) = (0,0);
+	    for ($y = $[, $x = $#x-$#y+$[-1; $y <= $#y; ++$y,++$x) {
+		$prd = $q * $y[$y] + $car;
                 if ($use_mult) {
-                $prd -= ($car = int($prd * 1e-5)) * 1e5;
+		$prd -= ($car = int($prd * 1e-5)) * 1e5;
                 }
                 else {
-                $prd -= ($car = int($prd / 1e5)) * 1e5;
+		$prd -= ($car = int($prd / 1e5)) * 1e5;
                 }
-                $x[$x] += 1e5 if ($bar = (($x[$x] -= $prd + $bar) < 0));
-            }
-            if ($x[$#x] < $car + $bar) {
-                $car = 0; --$q;
-                for ($y = $[, $x = $#x-$#y+$[-1; $y <= $#y; ++$y,++$x) {
-                    $x[$x] -= 1e5
-                        if ($car = (($x[$x] += $y[$y] + $car) > 1e5));
-                }
-            }
-        }
-        pop(@x); unshift(@q, $q);
+		$x[$x] += 1e5 if ($bar = (($x[$x] -= $prd + $bar) < 0));
+	    }
+	    if ($x[$#x] < $car + $bar) {
+		$car = 0; --$q;
+		for ($y = $[, $x = $#x-$#y+$[-1; $y <= $#y; ++$y,++$x) {
+		    $x[$x] -= 1e5
+			if ($car = (($x[$x] += $y[$y] + $car) > 1e5));
+		}
+	    }   
+	}
+	pop(@x); unshift(@q, $q);
     }
     if (wantarray) {
-        @d = ();
-        if ($dd != 1) {
-            $car = 0;
-            for $x (reverse @x) {
-                $prd = $car * 1e5 + $x;
-                $car = $prd - ($tmp = int($prd / $dd)) * $dd;
-                unshift(@d, $tmp);
-            }
-        }
-        else {
-            @d = @x;
-        }
-        (&external($sr, @q), &external($srem, @d, $zero));
+	@d = ();
+	if ($dd != 1) {
+	    $car = 0;
+	    for $x (reverse @x) {
+		$prd = $car * 1e5 + $x;
+		$car = $prd - ($tmp = int($prd / $dd)) * $dd;
+		unshift(@d, $tmp);
+	    }
+	}
+	else {
+	    @d = @x;
+	}
+	(&external($sr, @q), &external($srem, @d, $zero));
     } else {
-        &external($sr, @q);
+	&external($sr, @q);
     }
 }
 1;

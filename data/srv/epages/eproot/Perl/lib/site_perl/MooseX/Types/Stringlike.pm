@@ -46,8 +46,8 @@ version 0.002
   package Foo;
   use Moose;
   use MooseX::Types::Stringlike qw/Stringlike Stringable/;
-
-  has path => (
+  
+  has path => ( 
     is => 'ro',
     isa => Stringlike,
     coerce => 1

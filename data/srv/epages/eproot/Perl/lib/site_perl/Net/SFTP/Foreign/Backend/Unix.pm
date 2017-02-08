@@ -12,7 +12,7 @@ use Fcntl qw(O_NONBLOCK F_SETFL F_GETFL);
 use POSIX ();
 use Net::SFTP::Foreign::Helpers qw(_tcroak _ensure_list _debug _hexdump $debug);
 use Net::SFTP::Foreign::Constants qw(SSH2_FX_BAD_MESSAGE
-                                     SFTP_ERR_REMOTE_BAD_MESSAGE);
+				     SFTP_ERR_REMOTE_BAD_MESSAGE);
 use Time::HiRes qw(sleep time);
 
 sub _new { shift }
@@ -24,9 +24,9 @@ sub _defaults {
 sub _init_transport_streams {
     my (undef, $sftp) = @_;
     for my $dir (qw(ssh_in ssh_out)) {
-        binmode $sftp->{$dir};
-        my $flags = fcntl($sftp->{$dir}, F_GETFL, 0);
-        fcntl($sftp->{$dir}, F_SETFL, $flags | O_NONBLOCK);
+	binmode $sftp->{$dir};
+	my $flags = fcntl($sftp->{$dir}, F_GETFL, 0);
+	fcntl($sftp->{$dir}, F_SETFL, $flags | O_NONBLOCK);
     }
 }
 
@@ -34,8 +34,8 @@ sub _open_dev_null {
     my $sftp = shift;
     my $dev_null;
     unless (open $dev_null, '>', "/dev/null") {
-        $sftp->_conn_failed("Unable to redirect stderr to /dev/null");
-        return;
+	$sftp->_conn_failed("Unable to redirect stderr to /dev/null");
+	return;
     }
     $dev_null
 }
@@ -116,7 +116,7 @@ sub _init_transport {
     my $transport = delete $opts->{transport};
 
     if (defined $transport) {
-        if (ref $transport eq 'ARRAY') {
+	if (ref $transport eq 'ARRAY') {
             @{$sftp}{qw(ssh_in ssh_out pid)} = @$transport;
         }
         else {
@@ -128,14 +128,14 @@ sub _init_transport {
         my $user = delete $opts->{user};
         my $pass = delete $opts->{passphrase};
         my $ask_for_username_at_login;
-        my $pass_is_passphrase;
+	my $pass_is_passphrase;
         my $password_prompt;
         if (defined $pass) {
             $pass_is_passphrase = 1;
         }
         else {
             $pass = delete $opts->{password};
-            if (defined $pass) {
+	    if (defined $pass) {
                 $sftp->{_password_authentication} = 1;
                 $password_prompt = $sftp->{_password_prompt} = delete $opts->{password_prompt};
                 if (defined $password_prompt) {
@@ -157,12 +157,12 @@ sub _init_transport {
         }
 
         delete $opts->{expect_log_user}; # backward compatibility, not used anymore
-        my $stderr_discard = delete $opts->{stderr_discard};
-        my $stderr_fh = ($stderr_discard ? undef : delete $opts->{stderr_fh});
+	my $stderr_discard = delete $opts->{stderr_discard};
+	my $stderr_fh = ($stderr_discard ? undef : delete $opts->{stderr_fh});
         my $open2_cmd = delete $opts->{open2_cmd};
         my $ssh_cmd_interface = delete $opts->{ssh_cmd_interface};
 
-        my @open2_cmd;
+	my @open2_cmd;
         if (defined $open2_cmd) {
             @open2_cmd = _ensure_list($open2_cmd);
         }
@@ -183,7 +183,7 @@ sub _init_transport {
             }
 
             my $port = delete $opts->{port};
-            my $ssh1 = delete $opts->{ssh1};
+	    my $ssh1 = delete $opts->{ssh1};
 
             my $more = delete $opts->{more};
             defined $more and !ref($more) and $more =~ /^-\w\s+\S/ and
@@ -207,10 +207,10 @@ sub _init_transport {
             }
             elsif ($ssh_cmd_interface eq 'ssh') {
                 push @open2_cmd, -p => $port if defined $port;
-                if (defined $pass and !$pass_is_passphrase) {
-                    push @open2_cmd, -o => 'NumberOfPasswordPrompts=1';
+		if (defined $pass and !$pass_is_passphrase) {
+		    push @open2_cmd, -o => 'NumberOfPasswordPrompts=1';
                     push @preferred_authentications, ('keyboard-interactive', 'password');
-                }
+		}
                 if (@preferred_authentications
                     and not grep { $more[$_] eq '-o' and
                                        $more[$_ + 1] =~ /^PreferredAuthentications\W/ } 0..$#more-1) {
@@ -226,7 +226,7 @@ sub _init_transport {
             push @open2_cmd, -l => $user if defined $user;
             push @open2_cmd, @more;
             push @open2_cmd, $host;
-            push @open2_cmd, ($ssh1 ? "/usr/lib/sftp-server" : -s => 'sftp');
+	    push @open2_cmd, ($ssh1 ? "/usr/lib/sftp-server" : -s => 'sftp');
         }
 
         my $redirect_stderr_to_tty = ( defined $pass and
@@ -236,18 +236,18 @@ sub _init_transport {
             and croak "stderr_discard or stderr_fh can not be used together with password/passphrase "
                           . "authentication when Tectia client is used";
 
-        $debug and $debug & 1 and _debug "ssh cmd: @open2_cmd\n";
+	$debug and $debug & 1 and _debug "ssh cmd: @open2_cmd\n";
 
-        %$opts and return; # Net::SFTP::Foreign will find the
+	%$opts and return; # Net::SFTP::Foreign will find the
                            # unhandled options and croak
 
-        if (${^TAINT} and Scalar::Util::tainted($ENV{PATH})) {
+	if (${^TAINT} and Scalar::Util::tainted($ENV{PATH})) {
             _tcroak('Insecure $ENV{PATH}')
         }
 
-        if ($stderr_discard) {
-            $stderr_fh = $backend->_open_dev_null($sftp) or return;
-        }
+	if ($stderr_discard) {
+	    $stderr_fh = $backend->_open_dev_null($sftp) or return;
+	}
 
         if (defined $pass) {
             # user has requested to use a password or a passphrase for
@@ -260,7 +260,7 @@ sub _init_transport {
 
             my $name = $pass_is_passphrase ? 'Passphrase' : 'Password';
 
-            my $child;
+	    my $child;
             my $pty = IO::Pty->new;
 
             $redirect_stderr_to_tty and $stderr_fh = $pty->slave;
@@ -350,10 +350,10 @@ sub _init_transport {
 
             }
             $debug and $debug & 65536 and _debug "password authentication done";
-            $pty->close_slave();
+	    $pty->close_slave();
         }
         else {
-            $sftp->{pid} = $backend->_open4($sftp, $sftp->{ssh_in}, $sftp->{ssh_out}, $stderr_fh, undef, @open2_cmd);
+	    $sftp->{pid} = $backend->_open4($sftp, $sftp->{ssh_in}, $sftp->{ssh_out}, $stderr_fh, undef, @open2_cmd);
             unless (defined $sftp->{pid}) {
                 $sftp->_conn_failed("Bad ssh command", $!);
                 return;
@@ -394,10 +394,10 @@ sub _do_io {
     my $len;
     while (1) {
         my $lbin = length $$bin;
-        if (defined $len) {
+	if (defined $len) {
             return 1 if $lbin >= $len;
-        }
-        elsif ($lbin >= 4) {
+	}
+	elsif ($lbin >= 4) {
             $len = 4 + unpack N => $$bin;
             if ($len > 256 * 1024) {
                 $sftp->_set_status(SSH2_FX_BAD_MESSAGE);
@@ -418,12 +418,12 @@ sub _do_io {
             if (vec($wv1, $fnoout, 1)) {
                 my $written = syswrite($sftp->{ssh_out}, $$bout, 64 * 1024);
                 if ($debug and $debug & 32) {
-                    _debug (sprintf "_do_io write queue: %d, syswrite: %s, max: %d, \$!: %s",
-                            length $$bout,
-                            (defined $written ? $written : 'undef'),
-                            64 * 1024, $!);
-                    $debug & 2048 and $written and _hexdump(substr($$bout, 0, $written));
-                }
+		    _debug (sprintf "_do_io write queue: %d, syswrite: %s, max: %d, \$!: %s",
+			    length $$bout,
+			    (defined $written ? $written : 'undef'),
+			    64 * 1024, $!);
+		    $debug & 2048 and $written and _hexdump(substr($$bout, 0, $written));
+		}
                 if ($written) {
                     substr($$bout, 0, $written, '');
                 }
@@ -435,12 +435,12 @@ sub _do_io {
             if (vec($rv1, $fnoin, 1)) {
                 my $read = sysread($sftp->{ssh_in}, $$bin, 64 * 1024, length($$bin));
                 if ($debug and $debug & 32) {
-                    _debug (sprintf "_do_io read sysread: %s, total read: %d, \$!: %s",
-                            (defined $read ? $read : 'undef'),
-                            length $$bin,
-                            $!);
-                    $debug & 1024 and $read and _hexdump(substr($$bin, -$read));
-                }
+		    _debug (sprintf "_do_io read sysread: %s, total read: %d, \$!: %s",
+			    (defined $read ? $read : 'undef'),
+			    length $$bin,
+			    $!);
+		    $debug & 1024 and $read and _hexdump(substr($$bin, -$read));
+		}
                 if (!$read and $! != Errno::EAGAIN() and $! != Errno::EINTR()) {
                     $sftp->_conn_lost;
                     return undef;

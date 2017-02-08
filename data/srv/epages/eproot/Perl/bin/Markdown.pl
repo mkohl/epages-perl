@@ -109,8 +109,8 @@ if ($cli_opts{'shortversion'}) {        # Just the version number string.
 }
 if ($cli_opts{'help'}) {
     for my $dir (split m/:/, $ENV{PATH}) {
-        my $cmd = "$dir/perldoc";
-        exec($cmd, $0) if (-f $cmd and -x $cmd);
+	my $cmd = "$dir/perldoc";
+	exec($cmd, $0) if (-f $cmd and -x $cmd);
     }
     die "perldoc could not be found in your path - Cannot show help, sorry\n";
 }
@@ -124,7 +124,7 @@ else {
 
 sub main {
     my (@fns) = @_;
-
+    
     my $f;
     if (scalar @fns) {
         foreach my $fn (@fns) {
@@ -140,7 +140,7 @@ sub main {
         local $/;               # Slurp the whole file
         $f = <>;
     }
-
+    
     return $m->markdown($f);
 }
 

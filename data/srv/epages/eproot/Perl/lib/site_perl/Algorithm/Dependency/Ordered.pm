@@ -28,8 +28,8 @@ use Algorithm::Dependency ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.110';
-        @ISA     = 'Algorithm::Dependency';
+	$VERSION = '1.110';
+	@ISA     = 'Algorithm::Dependency';
 }
 
 
@@ -37,58 +37,58 @@ BEGIN {
 
 
 sub schedule {
-        my $self   = shift;
-        my $source = $self->{source};
-        my @items  = @_ or return undef;
-        return undef if grep { ! $source->item($_) } @items;
+	my $self   = shift;
+	my $source = $self->{source};
+	my @items  = @_ or return undef;
+	return undef if grep { ! $source->item($_) } @items;
 
-        # The actual items to select will be the same as for the unordered
-        # version, so we can simplify the algorithm greatly by using the
-        # normal unordered ->schedule method to get the starting list.
-        my $rv    = $self->SUPER::schedule( @items );
-        my @queue = $rv ? @$rv : return undef;
+	# The actual items to select will be the same as for the unordered
+	# version, so we can simplify the algorithm greatly by using the
+	# normal unordered ->schedule method to get the starting list.
+	my $rv    = $self->SUPER::schedule( @items );
+	my @queue = $rv ? @$rv : return undef;
 
-        # Get a working copy of the selected index
-        my %selected = %{ $self->{selected} };
+	# Get a working copy of the selected index
+	my %selected = %{ $self->{selected} };
 
-        # If at any time we check every item in the stack without finding
-        # a suitable candidate for addition to the schedule, we have found
-        # a circular reference error. We need to create a marker to track this.
-        my $error_marker = '';
+	# If at any time we check every item in the stack without finding
+	# a suitable candidate for addition to the schedule, we have found
+	# a circular reference error. We need to create a marker to track this.
+	my $error_marker = '';
 
-        # Begin the processing loop
-        my @schedule = ();
-        while ( my $id = shift @queue ) {
-                # Have we checked every item in the stack?
-                return undef if $id eq $error_marker;
+	# Begin the processing loop
+	my @schedule = ();
+	while ( my $id = shift @queue ) {
+		# Have we checked every item in the stack?
+		return undef if $id eq $error_marker;
 
-                # Are there any un-met dependencies
-                my $Item    = $self->{source}->item($id) or return undef;
-                my @missing = grep { ! $selected{$_} } $Item->depends;
+		# Are there any un-met dependencies
+		my $Item    = $self->{source}->item($id) or return undef;
+		my @missing = grep { ! $selected{$_} } $Item->depends;
 
-                # Remove orphans if we are ignoring them
-                if ( $self->{ignore_orphans} ) {
-                        @missing = grep { $self->{source}->item($_) } @missing;
-                }
+		# Remove orphans if we are ignoring them
+		if ( $self->{ignore_orphans} ) {
+			@missing = grep { $self->{source}->item($_) } @missing;
+		}
 
-                if ( @missing ) {
-                        # Set the error marker if not already
-                        $error_marker = $id unless $error_marker;
+		if ( @missing ) {
+			# Set the error marker if not already
+			$error_marker = $id unless $error_marker;
 
-                        # Add the id back to the end of the queue
-                        push @queue, $id;
-                        next;
-                }
+			# Add the id back to the end of the queue
+			push @queue, $id;
+			next;
+		}
 
-                # All dependencies have been met. Add the item to the schedule and
-                # to the selected index, and clear the error marker.
-                push @schedule, $id;
-                $selected{$id} = 1;
-                $error_marker  = '';
-        }
+		# All dependencies have been met. Add the item to the schedule and
+		# to the selected index, and clear the error marker.
+		push @schedule, $id;
+		$selected{$id} = 1;
+		$error_marker  = '';
+	}
 
-        # All items have been added
-        \@schedule;
+	# All items have been added
+	\@schedule;
 }
 
 1;

@@ -139,7 +139,7 @@ Note that these two syntaxes specify the same operation:
     $h->traverse([\&foo,\&foo], ...);
     $h->traverse( \&foo       , ...);
 
-The return values from calls to your pre- or post-order
+The return values from calls to your pre- or post-order 
 routines are significant, and are used to control recursion
 into the tree.
 
@@ -259,11 +259,11 @@ pre-order traversal, like so:
      my @to_do = ($tree); # start-node
      while(@to_do) {
        my $this = shift @to_do;
-
+       
        # "Visit" the node:
        $this->attr('id', $counter++)
         unless defined $this->attr('id');
-
+       
        unshift @to_do, grep ref $_, $this->content_list;
         # Put children on the stack -- they'll be visited next
      }
@@ -278,7 +278,7 @@ is insignificant.
 
 =head2 Pruning and Whatnot
 
-The C<traverse> method does have the fairly neat features of
+The C<traverse> method does have the fairly neat features of 
 the C<ABORT>, C<PRUNE_UP> and C<PRUNE_SOFTLY> signals.  None of these
 can be implemented I<totally> straightforwardly with recursive
 routines, but it is quite possible.  C<ABORT>-like behavior can be
@@ -328,14 +328,14 @@ Copyright 2000,2001 Sean M. Burke
 
 =head1 AUTHOR
 Current Author:
-        Jeff Fearn C<< <jfearn@cpan.org> >>.
+	Jeff Fearn C<< <jfearn@cpan.org> >>.
 
 Original HTML-Tree author:
-        Gisle Aas.
+	Gisle Aas.
 
 Former Authors:
-        Sean M. Burke.
-        Andy Lester.
-        Pete Krawczyk C<< <petek@cpan.org> >>.
+	Sean M. Burke.
+	Andy Lester.
+	Pete Krawczyk C<< <petek@cpan.org> >>.
 
 =cut

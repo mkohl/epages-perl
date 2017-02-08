@@ -56,7 +56,7 @@ sub _replace {
     if ($replength > $max_width) {
         return substr($replacement, 0, $max_width);
     }
-
+    
     # length of replacement is less than min: pad
     if ($alignment eq '-') {
         # left align; pad in front
@@ -121,7 +121,7 @@ arbitrary format definitions
   my $format = "I like %a, %b, and %g, but not %m or %w.";
 
   print stringf($format, %fruit);
-
+  
   # prints:
   # I like apples, bannanas, and grapefruits, but not melons or watermelons.
 
@@ -171,7 +171,7 @@ reference; if it is a subroutine reference, then anything between the
 subroutine reference.  This allows for entries such as this:
 
   %args = (
-      d => sub { POSIX::strftime($_[0], localtime) },
+      d => sub { POSIX::strftime($_[0], localtime) }, 
   );
 
 Which can be invoked with this format string:

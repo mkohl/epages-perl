@@ -52,7 +52,7 @@ sub create
     push @options,'vertical'    if ($coverage & 0x8000) != 0;
     push @options,'crossStream' if ($coverage & 0x4000) != 0;
     push @options,'variation'   if ($coverage & 0x2000) != 0;
-
+    
     my ($subTable) = $subclass->new(@options);
 
     map { $subTable->{$_} = 1 } @options;
@@ -72,18 +72,18 @@ Writes the table to a file
 sub out
 {
     my ($self, $fh) = @_;
-
+    
     my $subtableStart = $fh->tell();
     my $type = $self->{'type'};
     my $coverage = $type;
     $coverage += 0x8000 if $self->{'vertical'};
     $coverage += 0x4000 if $self->{'crossStream'};
     $coverage += 0x2000 if $self->{'variation'};
-
+    
     $fh->print(TTF_Pack("LSS", 0, $coverage, $self->{'tupleIndex'}));    # placeholder for length
-
+    
     $self->out_sub($fh);
-
+    
     my $length = $fh->tell() - $subtableStart;
     my $padBytes = (4 - ($length & 3)) & 3;
     $fh->print(pack("C*", (0) x $padBytes));
@@ -102,7 +102,7 @@ Prints a human-readable representation of the table
 sub post
 {
     my ($self) = @_;
-
+    
     my $post = $self->{' PARENT'}{' PARENT'}{'post'};
     if (defined $post) {
         $post->read;
@@ -110,14 +110,14 @@ sub post
     else {
         $post = {};
     }
-
+    
     return $post;
 }
 
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     my $post = $self->post();
     $fh = 'STDOUT' unless defined $fh;
 }
@@ -131,9 +131,9 @@ Prints a human-readable representation of the table
 sub print_classes
 {
     my ($self, $fh) = @_;
-
+    
     my $post = $self->post();
-
+    
     my $classes = $self->{'classes'};
     foreach (0 .. $#$classes) {
         my $class = $classes->[$_];
@@ -147,7 +147,7 @@ sub dumpClasses
 {
     my ($self, $classes, $fh) = @_;
     my $post = $self->post();
-
+    
     foreach (0 .. $#$classes) {
         my $c = $classes->[$_];
         if ($#$c > -1) {

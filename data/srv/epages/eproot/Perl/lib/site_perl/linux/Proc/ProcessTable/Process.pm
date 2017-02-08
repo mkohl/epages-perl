@@ -11,7 +11,7 @@ require AutoLoader;
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
-
+	
 );
 $VERSION = '0.02';
 
@@ -24,14 +24,14 @@ sub AUTOLOAD {
   my $self = shift;
   my $type = ref($self)
     or croak "$self is not an object";
-
+  
   my $name = $AUTOLOAD;
-  $name =~ s/.*://;             # strip fully-qualified portion
-
+  $name =~ s/.*://;		# strip fully-qualified portion
+  
   unless (exists $self->{$name} ) {
     croak "Can't access `$name' field in class $type";
   }
-
+  
   if (@_) {
     return $self->{$name} = shift;
   } else {
@@ -48,7 +48,7 @@ sub kill {
 }
 
 ########################################################
-# Get/set accessors for priority and process group
+# Get/set accessors for priority and process group 
 # (everything else is just a get, so handled by autoload)
 #########################################################
 
@@ -149,25 +149,25 @@ they are named. Currently supported are:
   stime       kernel mode time                   (Linux only)
   cutime      child utime                        (Linux only)
   cstime      child stime                        (Linux only)
-  time        user + system time
+  time        user + system time                 
   ctime       child user + system time
-  timensec    user + system nanoseconds part     (Solaris only)
+  timensec    user + system nanoseconds part	 (Solaris only)
   ctimensec   child user + system nanoseconds    (Solaris only)
   qtime       cumulative cpu time                (IRIX only)
   size        virtual memory size (bytes)
   rss         resident set size (bytes)
-  wchan       address of current system call
+  wchan       address of current system call 
   fname       file name
   start       start time (seconds since the epoch)
   pctcpu      percent cpu used since process started
   state       state of process
-  pctmem      percent memory
+  pctmem      percent memory			 
   cmndline    full command line of process
   ttydev      path of process's tty
   clname      scheduling class name              (IRIX only)
 
 See the "README.osname" files in the distribution for more
-up-to-date information.
+up-to-date information. 
 
 =back
 

@@ -55,10 +55,10 @@ sub post_setup_hook {
 Gets or sets the class to use for creating the C<$cgi> object passed to
 C<handle_request>.
 
-Called with a single argument, it sets the coderef. Called with no arguments,
+Called with a single argument, it sets the coderef. Called with no arguments, 
 it returns this field's current value.
 
-To provide an initialization subroutine to be run in the post_setup_hook,
+To provide an initialization subroutine to be run in the post_setup_hook, 
 see L</cgi_init>.
 
 e.g.
@@ -91,7 +91,7 @@ sub cgi_class {
 
 A coderef to run in the post_setup_hook.
 
-Called with a single argument, it sets the coderef. Called with no arguments,
+Called with a single argument, it sets the coderef. Called with no arguments, 
 it returns this field's current value.
 
 =cut
@@ -102,7 +102,7 @@ sub cgi_init {
         $self->{cgi_init} = shift;
     }
     return $self->{cgi_init} || $DEFAULT_CGI_INIT;
-
+    
 }
 
 

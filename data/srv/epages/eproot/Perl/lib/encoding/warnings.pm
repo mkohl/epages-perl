@@ -18,7 +18,7 @@ June 5, 2007.
     use encoding::warnings; # or 'FATAL' to raise fatal exceptions
 
     utf8::encode($a = chr(20000));  # a byte-string (raw bytes)
-    $b = chr(20000);                # a unicode-string (wide characters)
+    $b = chr(20000);		    # a unicode-string (wide characters)
 
     # "Bytes implicitly upgraded into wide characters as iso-8859-1"
     $c = $a . $b;
@@ -31,7 +31,7 @@ By default, there is a fundamental asymmetry in Perl's unicode model:
 implicit upgrading from byte-strings to unicode-strings assumes that
 they were encoded in I<ISO 8859-1 (Latin-1)>, but unicode-strings are
 downgraded with UTF-8 encoding.  This happens because the first 256
-codepoints in Unicode happens to agree with Latin-1.
+codepoints in Unicode happens to agree with Latin-1.  
 
 However, this silent upgrading can easily cause problems, if you happen
 to mix unicode strings with non-Latin1 data -- i.e. byte-strings encoded
@@ -119,9 +119,9 @@ some people:
     use encoding 'big5';
 
     my $byte_string = pack("C*", 0xA4, 0x40);
-    print length $a;    # 2 here.
-    $a .= "";           # concatenating with a unicode string...
-    print length $a;    # 1 here!
+    print length $a;	# 2 here.
+    $a .= "";		# concatenating with a unicode string...
+    print length $a;	# 1 here!
 
 In other words, do not C<use encoding> unless you are certain that the
 program will not deal with any raw, 8-bit binary data at all.
@@ -163,11 +163,11 @@ sub import {
 
     # Install a warning handler for decode()
     my $decoder = bless(
-        [
-            $ascii,
-            $latin1,
-            (($fatal eq 'FATAL') ? 'Carp::croak' : 'Carp::carp'),
-        ], $class,
+	[
+	    $ascii,
+	    $latin1,
+	    (($fatal eq 'FATAL') ? 'Carp::croak' : 'Carp::carp'),
+	], $class,
     );
 
     ${^ENCODING} = $decoder;

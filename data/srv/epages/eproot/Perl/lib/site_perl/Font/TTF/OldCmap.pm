@@ -124,7 +124,7 @@ sub read
         } elsif ($form == 6)
         {
             my ($start, $ecount);
-
+            
             $fh->read($dat, 4);
             ($start, $ecount) = unpack("n2", $dat);
             $fh->read($dat, $ecount << 1);
@@ -157,7 +157,7 @@ sub read
                     else
                     { $id = unpack("n", substr($dat, ($j << 1) + $num * 6 +
                                         2 + ($k - $start) * 2 + $range, 2)) + $delta; }
-                            $id -= 65536 if $id > 65536;
+		            $id -= 65536 if $id > 65536;
                     push (@ids, $id);
                 }
                 $s->{'val'}->fastadd_segment($start, 0, @ids);
@@ -233,7 +233,7 @@ sub out
 
     for ($i = 0; $i < $self->{'Num'}; $i++)
     { $fh->print(pack("nnN", $self->{'Tables'}[$i]{'Platform'}, $self->{'Tables'}[$i]{'Encoding'}, 0)); }
-
+    
     for ($i = 0; $i < $self->{'Num'}; $i++)
     {
         $s = $self->{'Tables'}[$i];

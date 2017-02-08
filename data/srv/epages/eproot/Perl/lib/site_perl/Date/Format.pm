@@ -25,13 +25,13 @@ sub strftime ($\@;$)
 sub ctime ($;$)
 {
  my($t,$tz) = @_;
- Date::Format::Generic->time2str("%a %b %e %T %Y\n", $t, $tz);
+ Date::Format::Generic->time2str("%a %b %e %T %Y\n", $t, $tz); 
 }
 
 sub asctime (\@;$)
 {
  my($t,$tz) = @_;
- Date::Format::Generic->strftime("%a %b %e %T %Y\n", $t, $tz);
+ Date::Format::Generic->strftime("%a %b %e %T %Y\n", $t, $tz); 
 }
 
 ##
@@ -47,28 +47,28 @@ use Time::Local;
 sub ctime
 {
  my($me,$t,$tz) = @_;
- $me->time2str("%a %b %e %T %Y\n", $t, $tz);
+ $me->time2str("%a %b %e %T %Y\n", $t, $tz); 
 }
 
 sub asctime
 {
  my($me,$t,$tz) = @_;
- $me->strftime("%a %b %e %T %Y\n", $t, $tz);
+ $me->strftime("%a %b %e %T %Y\n", $t, $tz); 
 }
 
 sub _subs
 {
  my $fn;
  $_[1] =~ s/
-                %(O?[%a-zA-Z])
-           /
+		%(O?[%a-zA-Z])
+	   /
                 ($_[0]->can("format_$1") || sub { $1 })->($_[0]);
-           /sgeox;
+	   /sgeox;
 
  $_[1];
 }
 
-sub strftime
+sub strftime 
 {
  my($pkg,$fmt,$time);
 
@@ -81,7 +81,7 @@ sub strftime
    $tzname = uc $tzname;
 
    $tzname = sprintf("%+05d",$tzname)
-        unless($tzname =~ /\D/);
+	unless($tzname =~ /\D/);
 
    $epoch = timegm(@{$time}[0..5]);
 
@@ -111,7 +111,7 @@ sub time2str
    $tzname = uc $tzname;
 
    $tzname = sprintf("%+05d",$tzname)
-        unless($tzname =~ /\D/);
+	unless($tzname =~ /\D/);
 
    $time += tz_offset($tzname);
    @$me = gmtime($time);
@@ -214,10 +214,10 @@ sub format_L { $_[0]->[4] + 1 }
 sub format_m { sprintf("%02d",$_[0]->[4] + 1) }
 sub format_M { sprintf("%02d",$_[0]->[1]) }
 sub format_q { sprintf("%01d",int($_[0]->[4] / 3) + 1) }
-sub format_s {
+sub format_s { 
    $epoch = timelocal(@{$_[0]}[0..5])
-        unless defined $epoch;
-   sprintf("%d",$epoch)
+	unless defined $epoch;
+   sprintf("%d",$epoch) 
 }
 sub format_S { sprintf("%02d",$_[0]->[0]) }
 sub format_U { wkyr(0, $_[0]->[6], $_[0]->[7]) }
@@ -238,8 +238,8 @@ sub format_z {
 }
 
 sub format_c { &format_x . " " . &format_X }
-sub format_D { &format_m . "/" . &format_d . "/" . &format_y  }
-sub format_r { &format_I . ":" . &format_M . ":" . &format_S . " " . &format_p  }
+sub format_D { &format_m . "/" . &format_d . "/" . &format_y  }      
+sub format_r { &format_I . ":" . &format_M . ":" . &format_S . " " . &format_p  }   
 sub format_R { &format_H . ":" . &format_M }
 sub format_T { &format_H . ":" . &format_M . ":" . &format_S }
 sub format_t { "\t" }
@@ -273,21 +273,21 @@ Date::Format - Date formating subroutines
 
 =head1 SYNOPSIS
 
-        use Date::Format;
-
-        @lt = localtime(time);
-
-        print time2str($template, time);
-        print strftime($template, @lt);
-
-        print time2str($template, time, $zone);
-        print strftime($template, @lt, $zone);
-
-        print ctime(time);
-        print asctime(@lt);
-
-        print ctime(time, $zone);
-        print asctime(@lt, $zone);
+	use Date::Format;
+	
+	@lt = localtime(time);
+	
+	print time2str($template, time);
+	print strftime($template, @lt);
+	
+	print time2str($template, time, $zone);
+	print strftime($template, @lt, $zone);
+	
+	print ctime(time);
+	print asctime(@lt);
+	
+	print ctime(time, $zone);
+	print asctime(@lt, $zone);
 
 =head1 DESCRIPTION
 
@@ -325,8 +325,8 @@ conversion specification C<"%a %b %e %T %Y\n">
 Date::Format is capable of formating into several languages by creating
 a language specific object and calling methods, see L<Date::Language>
 
-        my $lang = Date::Language->new('German');
-        $lang->time2str("%a %b %e %T %Y\n", time);
+	my $lang = Date::Language->new('German');
+	$lang->time2str("%a %b %e %T %Y\n", time);
 
 I am open to suggestions on this.
 
@@ -337,46 +337,46 @@ characters   as   described  in  the  following  list.   The
 appropriate  characters  are  determined  by   the   LC_TIME
 category of the program's locale.
 
-        %%      PERCENT
-        %a      day of the week abbr
-        %A      day of the week
-        %b      month abbr
-        %B      month
-        %c      MM/DD/YY HH:MM:SS
-        %C      ctime format: Sat Nov 19 21:05:57 1994
-        %d      numeric day of the month, with leading zeros (eg 01..31)
-        %e      like %d, but a leading zero is replaced by a space (eg  1..32)
-        %D      MM/DD/YY
-        %G      GPS week number (weeks since January 6, 1980)
-        %h      month abbr
-        %H      hour, 24 hour clock, leading 0's)
-        %I      hour, 12 hour clock, leading 0's)
-        %j      day of the year
-        %k      hour
-        %l      hour, 12 hour clock
-        %L      month number, starting with 1
-        %m      month number, starting with 01
-        %M      minute, leading 0's
-        %n      NEWLINE
-        %o      ornate day of month -- "1st", "2nd", "25th", etc.
-        %p      AM or PM
-        %P      am or pm (Yes %p and %P are backwards :)
-        %q      Quarter number, starting with 1
-        %r      time format: 09:05:57 PM
-        %R      time format: 21:05
-        %s      seconds since the Epoch, UCT
-        %S      seconds, leading 0's
-        %t      TAB
-        %T      time format: 21:05:57
-        %U      week number, Sunday as first day of week
-        %w      day of the week, numerically, Sunday == 0
-        %W      week number, Monday as first day of week
-        %x      date format: 11/19/94
-        %X      time format: 21:05:57
-        %y      year (2 digits)
-        %Y      year (4 digits)
-        %Z      timezone in ascii. eg: PST
-        %z      timezone in format -/+0000
+	%%	PERCENT
+	%a	day of the week abbr
+	%A	day of the week
+	%b	month abbr
+	%B 	month
+	%c	MM/DD/YY HH:MM:SS
+	%C 	ctime format: Sat Nov 19 21:05:57 1994
+	%d 	numeric day of the month, with leading zeros (eg 01..31)
+	%e 	like %d, but a leading zero is replaced by a space (eg  1..32)
+	%D 	MM/DD/YY
+	%G	GPS week number (weeks since January 6, 1980)
+	%h 	month abbr
+	%H 	hour, 24 hour clock, leading 0's)
+	%I 	hour, 12 hour clock, leading 0's)
+	%j 	day of the year
+	%k 	hour
+	%l 	hour, 12 hour clock
+	%L 	month number, starting with 1
+	%m 	month number, starting with 01
+	%M 	minute, leading 0's
+	%n 	NEWLINE
+	%o	ornate day of month -- "1st", "2nd", "25th", etc.
+	%p 	AM or PM 
+	%P 	am or pm (Yes %p and %P are backwards :)
+	%q	Quarter number, starting with 1
+	%r 	time format: 09:05:57 PM
+	%R 	time format: 21:05
+	%s	seconds since the Epoch, UCT
+	%S 	seconds, leading 0's
+	%t 	TAB
+	%T 	time format: 21:05:57
+	%U 	week number, Sunday as first day of week
+	%w 	day of the week, numerically, Sunday == 0
+	%W 	week number, Monday as first day of week
+	%x 	date format: 11/19/94
+	%X 	time format: 21:05:57
+	%y	year (2 digits)
+	%Y	year (4 digits)
+	%Z 	timezone in ascii. eg: PST
+	%z	timezone in format -/+0000
 
 C<%d>, C<%e>, C<%H>, C<%I>, C<%j>, C<%k>, C<%l>, C<%m>, C<%M>, C<%q>,
 C<%y> and C<%Y> can be output in Roman numerals by prefixing the letter

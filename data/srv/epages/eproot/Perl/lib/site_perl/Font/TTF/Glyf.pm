@@ -35,7 +35,7 @@ Reads the C<loca> table instead!
 sub read
 {
     my ($self) = @_;
-
+    
     $self->{' PARENT'}{'loca'}->read;
     $self->{' read'} = 1;
     $self;
@@ -87,7 +87,7 @@ sub out_xml
 
     $loca = $self->{' PARENT'}{'loca'}{'glyphs'};
     $numGlyphs = $self->{' PARENT'}{'maxp'}{'numGlyphs'};
-
+    
     for ($i = 0; $i < $numGlyphs; $i++)
     {
         $context->{'gid'} = $i;

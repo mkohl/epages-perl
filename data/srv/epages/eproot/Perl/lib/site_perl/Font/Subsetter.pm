@@ -863,7 +863,7 @@ sub fix_ttopen {
             }
         }
     }
-
+    
     # Remove all features that are not wanted
     # and update all references to those features (in the languages list),
     # and update the features' lookup references
@@ -914,7 +914,7 @@ sub fix_gpos {
             # the FEATURES->*->LOOKUPS lists too, so don't do that yet.)
             #
             # The rest depends on Type:
-            #
+            # 
             # Lookup Type 1 (Single Adjustment Positioning Subtable):
             # Format 1: Just COVERAGE, applies same value to all
             # Format 2: Just COVERAGE, RULES[n] gives value for each
@@ -1247,7 +1247,7 @@ sub fix_gsub {
                     # (We need to have empty rules, and can't just delete them
                     # entirely, else FontTools becomes unhappy.)
                     # (TODO: Maybe we do want alternate glyphs?
-                    # If so, be sure to update find_wanted_glyphs too)
+                    # If so, be sure to update find_wanted_glyphs too) 
                     for (@{$sub->{RULES}}) {
                         for (@$_) {
                             $_->{ACTION} = [];

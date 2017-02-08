@@ -27,13 +27,13 @@ sub open
     return $self->new(@_) unless ref($self);
 
     if (@_) {
-        my $bufref = ref($_[0]) ? $_[0] : \$_[0];
-        $$bufref = "" unless defined $$bufref;
-        *$self->{buf} = $bufref;
+	my $bufref = ref($_[0]) ? $_[0] : \$_[0];
+	$$bufref = "" unless defined $$bufref;
+	*$self->{buf} = $bufref;
     }
     else {
-        my $buf = "";
-        *$self->{buf} = \$buf;
+	my $buf = "";
+	*$self->{buf} = \$buf;
     }
     *$self->{pos} = 0;
     *$self->{lno} = 0;
@@ -122,20 +122,20 @@ sub print
 {
     my $self = shift;
     if (defined $\) {
-        if (defined $,) {
-            $self->write(join($,, @_).$\);
-        }
-        else {
-            $self->write(join("",@_).$\);
-        }
+	if (defined $,) {
+	    $self->write(join($,, @_).$\);
+	}
+	else {
+	    $self->write(join("",@_).$\);
+	}
     }
     else {
-        if (defined $,) {
-            $self->write(join($,, @_));
-        }
-        else {
-            $self->write(join("",@_));
-        }
+	if (defined $,) {
+	    $self->write(join($,, @_));
+	}
+	else {
+	    $self->write(join("",@_));
+	}
     }
     return 1;
 }
@@ -156,15 +156,15 @@ my($SEEK_SET, $SEEK_CUR, $SEEK_END);
 sub _init_seek_constants
 {
     if ($IO_CONSTANTS) {
-        require IO::Handle;
-        $SEEK_SET = &IO::Handle::SEEK_SET;
-        $SEEK_CUR = &IO::Handle::SEEK_CUR;
-        $SEEK_END = &IO::Handle::SEEK_END;
+	require IO::Handle;
+	$SEEK_SET = &IO::Handle::SEEK_SET;
+	$SEEK_CUR = &IO::Handle::SEEK_CUR;
+	$SEEK_END = &IO::Handle::SEEK_END;
     }
     else {
-        $SEEK_SET = 0;
-        $SEEK_CUR = 1;
-        $SEEK_END = 2;
+	$SEEK_SET = 0;
+	$SEEK_CUR = 1;
+	$SEEK_END = 2;
     }
 }
 
@@ -195,11 +195,11 @@ sub pos
     my $self = shift;
     my $old = *$self->{pos};
     if (@_) {
-        my $pos = shift || 0;
-        my $buf = *$self->{buf};
-        my $len = $buf ? length($$buf) : 0;
-        $pos = $len if $pos > $len;
-        *$self->{pos} = $pos;
+	my $pos = shift || 0;
+	my $buf = *$self->{buf};
+	my $len = $buf ? length($$buf) : 0;
+	$pos = $len if $pos > $len;
+	*$self->{pos} = $pos;
     }
     return $old;
 }
@@ -221,38 +221,38 @@ sub getline
     return if $pos >= $len;
 
     unless (defined $/) {  # slurp
-        *$self->{pos} = $len;
-        return substr($$buf, $pos);
+	*$self->{pos} = $len;
+	return substr($$buf, $pos);
     }
 
     unless (length $/) {  # paragraph mode
-        # XXX slow&lazy implementation using getc()
-        my $para = "";
-        my $eol = 0;
-        my $c;
-        while (defined($c = $self->getc)) {
-            if ($c eq "\n") {
-                $eol++;
-                next if $eol > 2;
-            }
-            elsif ($eol > 1) {
-                $self->ungetc($c);
-                last;
-            }
-            else {
-                $eol = 0;
-            }
-            $para .= $c;
-        }
-        return $para;   # XXX wantarray
+	# XXX slow&lazy implementation using getc()
+	my $para = "";
+	my $eol = 0;
+	my $c;
+	while (defined($c = $self->getc)) {
+	    if ($c eq "\n") {
+		$eol++;
+		next if $eol > 2;
+	    }
+	    elsif ($eol > 1) {
+		$self->ungetc($c);
+		last;
+	    }
+	    else {
+		$eol = 0;
+	    }
+	    $para .= $c;
+	}
+	return $para;   # XXX wantarray
     }
 
     my $idx = index($$buf,$/,$pos);
     if ($idx < 0) {
-        # return rest of it
-        *$self->{pos} = $len;
-        $. = ++ *$self->{lno};
-        return substr($$buf, $pos);
+	# return rest of it
+	*$self->{pos} = $len;
+	$. = ++ *$self->{lno};
+	return substr($$buf, $pos);
     }
     $len = $idx - $pos + length($/);
     *$self->{pos} += $len;
@@ -289,11 +289,11 @@ sub truncate
     my $len = shift || 0;
     my $buf = *$self->{buf};
     if (length($$buf) >= $len) {
-        substr($$buf, $len) = '';
-        *$self->{pos} = $len if $len < *$self->{pos};
+	substr($$buf, $len) = '';
+	*$self->{pos} = $len if $len < *$self->{pos};
     }
     else {
-        $$buf .= ($self->pad x ($len - length($$buf)));
+	$$buf .= ($self->pad x ($len - length($$buf)));
     }
     return 1;
 }
@@ -310,10 +310,10 @@ sub read
     $len = $rem if $len > $rem;
     return undef if $len < 0;
     if (@_ > 2) { # read offset
-        substr($_[0],$_[2]) = substr($$buf, $pos, $len);
+	substr($_[0],$_[2]) = substr($$buf, $pos, $len);
     }
     else {
-        $_[0] = substr($$buf, $pos, $len);
+	$_[0] = substr($$buf, $pos, $len);
     }
     *$self->{pos} += $len;
     return $len;
@@ -330,17 +330,17 @@ sub write
     my $len = $slen;
     my $off = 0;
     if (@_ > 1) {
-        $len = $_[1] if $_[1] < $len;
-        if (@_ > 2) {
-            $off = $_[2] || 0;
-            die "Offset outside string" if $off > $slen;
-            if ($off < 0) {
-                $off += $slen;
-                die "Offset outside string" if $off < 0;
-            }
-            my $rem = $slen - $off;
-            $len = $rem if $rem < $len;
-        }
+	$len = $_[1] if $_[1] < $len;
+	if (@_ > 2) {
+	    $off = $_[2] || 0;
+	    die "Offset outside string" if $off > $slen;
+	    if ($off < 0) {
+		$off += $slen;
+		die "Offset outside string" if $off < 0;
+	    }
+	    my $rem = $slen - $off;
+	    $len = $rem if $rem < $len;
+	}
     }
     substr($$buf, $pos, $len) = substr($_[0], $off, $len);
     *$self->{pos} += $len;
@@ -388,7 +388,7 @@ my $notmuch = sub { return };
 
 *fileno    = $notmuch;
 *error     = $notmuch;
-*clearerr  = $notmuch;
+*clearerr  = $notmuch; 
 *sync      = $notmuch;
 *flush     = $notmuch;
 *setbuf    = $notmuch;

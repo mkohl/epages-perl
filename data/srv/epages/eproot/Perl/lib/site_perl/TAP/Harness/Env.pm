@@ -54,7 +54,7 @@ sub _default_inc {
 }
 
 sub create {
-        my $package = shift;
+	my $package = shift;
     my %input = %{ shift || {} };
 
     my @libs         = @{ delete $input{libs}     || [] };

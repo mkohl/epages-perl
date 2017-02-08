@@ -54,7 +54,7 @@ my %operator = map { $_ => 1 } qw{ | - };
 sub _treat_as_literal {
     my ( $token ) = @_;
     return __instance( $token, 'PPIx::Regexp::Token::Literal' ) ||
-        __instance( $token, 'PPIx::Regexp::Token::Interpolation' );
+	__instance( $token, 'PPIx::Regexp::Token::Interpolation' );
 }
 
 sub __PPIX_TOKENIZER__regexp {
@@ -66,16 +66,16 @@ sub __PPIX_TOKENIZER__regexp {
     # character class.
     if ( $character eq '-' ) {
 
-        _treat_as_literal( $tokenizer->prior() )
-            or return $tokenizer->make_token( 1, TOKEN_LITERAL );
-
-        my @tokens = ( $tokenizer->make_token( 1 ) );
-        push @tokens, $tokenizer->get_token();
-
-        _treat_as_literal( $tokens[1] )
-            or bless $tokens[0], TOKEN_LITERAL;
-
-        return ( @tokens );
+	_treat_as_literal( $tokenizer->prior() )
+	    or return $tokenizer->make_token( 1, TOKEN_LITERAL );
+	
+	my @tokens = ( $tokenizer->make_token( 1 ) );
+	push @tokens, $tokenizer->get_token();
+	
+	_treat_as_literal( $tokens[1] )
+	    or bless $tokens[0], TOKEN_LITERAL;
+	
+	return ( @tokens );
     }
 
     return $operator{$character};

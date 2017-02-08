@@ -24,7 +24,7 @@ if ($have_File_Spec) {
 else {
   @Encoding_Path = (grep(-d $_, map($_ . '/XML/Parser/Encodings', @INC)), '.');
 }
-
+  
 
 bootstrap XML::Parser::Expat $VERSION;
 
@@ -309,7 +309,7 @@ sub NamespaceStart {
   my ($self, $prefix, $uri) = @_;
 
   $prefix = '#default' unless defined $prefix;
-  my $stack = $self->{Prefix_Table}->{$prefix};
+  my $stack = $self->{Prefix_Table}->{$prefix}; 
 
   if (defined $stack) {
     push(@$stack, $uri);
@@ -342,7 +342,7 @@ sub NamespaceEnd {
 
 sub specified_attr {
   my $self = shift;
-
+  
   if ($self->{_State_} == 1) {
     return GetSpecifiedAttributeCount($self->{Parser});
   }
@@ -368,16 +368,16 @@ sub position_in_context {
     my $ptr = ('=' x ($col - 1)) . '^' . "\n";
     my $ret;
     my $dosplit = $linepos < length($string);
-
+  
     $string .= "\n" unless $string =~ /\n$/;
-
+  
     if ($dosplit) {
       $ret = substr($string, 0, $linepos) . $ptr
         . substr($string, $linepos);
     } else {
       $ret = $string . $ptr;
     }
-
+  
     return $ret;
   }
 }
@@ -440,7 +440,7 @@ sub parse {
   my $parser = $self->{Parser};
   my $ioref;
   my $result = 0;
-
+  
   if (defined $arg) {
     if (ref($arg) and UNIVERSAL::isa($arg, 'IO::Handle')) {
       $ioref = $arg;
@@ -458,22 +458,22 @@ sub parse {
       undef $@;
     }
   }
-
+  
   if (defined($ioref)) {
     my $delim = $self->{Stream_Delimiter};
     my $prev_rs;
-
+    
     $prev_rs = ref($ioref)->input_record_separator("\n$delim\n")
       if defined($delim);
-
+    
     $result = ParseStream($parser, $ioref, $delim);
-
+    
     ref($ioref)->input_record_separator($prev_rs)
       if defined($delim);
   } else {
     $result = ParseString($parser, $arg);
   }
-
+  
   $self->{_State_} = 2;
   $result or croak $self->{ErrorMessage};
 }
@@ -693,7 +693,7 @@ XML::Parser::Expat - Lowlevel access to James Clark's expat XML parser
    $p->setHandlers('Char' => \&ch)  # Special elements won't contain
      if ($el eq 'special');         # other special elements
    ...
- }
+ } 
 
 =head1 DESCRIPTION
 

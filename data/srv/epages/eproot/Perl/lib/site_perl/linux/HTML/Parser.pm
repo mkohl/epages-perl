@@ -32,53 +32,53 @@ sub init
     my %arg = @_;
     my $api_version = delete $arg{api_version} || (@_ ? 3 : 2);
     if ($api_version >= 4) {
-        require Carp;
-        Carp::croak("API version $api_version not supported " .
-                    "by HTML::Parser $VERSION");
+	require Carp;
+	Carp::croak("API version $api_version not supported " .
+		    "by HTML::Parser $VERSION");
     }
 
     if ($api_version < 3) {
-        # Set up method callbacks compatible with HTML-Parser-2.xx
-        $self->handler(text    => "text",    "self,text,is_cdata");
-        $self->handler(end     => "end",     "self,tagname,text");
-        $self->handler(process => "process", "self,token0,text");
-        $self->handler(start   => "start",
-                                  "self,tagname,attr,attrseq,text");
+	# Set up method callbacks compatible with HTML-Parser-2.xx
+	$self->handler(text    => "text",    "self,text,is_cdata");
+	$self->handler(end     => "end",     "self,tagname,text");
+	$self->handler(process => "process", "self,token0,text");
+	$self->handler(start   => "start",
+		                  "self,tagname,attr,attrseq,text");
 
-        $self->handler(comment =>
-                       sub {
-                           my($self, $tokens) = @_;
-                           for (@$tokens) {
-                               $self->comment($_);
-                           }
-                       }, "self,tokens");
+	$self->handler(comment =>
+		       sub {
+			   my($self, $tokens) = @_;
+			   for (@$tokens) {
+			       $self->comment($_);
+			   }
+		       }, "self,tokens");
 
-        $self->handler(declaration =>
-                       sub {
-                           my $self = shift;
-                           $self->declaration(substr($_[0], 2, -1));
-                       }, "self,text");
+	$self->handler(declaration =>
+		       sub {
+			   my $self = shift;
+			   $self->declaration(substr($_[0], 2, -1));
+		       }, "self,text");
     }
 
     if (my $h = delete $arg{handlers}) {
-        $h = {@$h} if ref($h) eq "ARRAY";
-        while (my($event, $cb) = each %$h) {
-            $self->handler($event => @$cb);
-        }
+	$h = {@$h} if ref($h) eq "ARRAY";
+	while (my($event, $cb) = each %$h) {
+	    $self->handler($event => @$cb);
+	}
     }
 
     # In the end we try to assume plain attribute or handler
     while (my($option, $val) = each %arg) {
-        if ($option =~ /^(\w+)_h$/) {
-            $self->handler($1 => @$val);
-        }
+	if ($option =~ /^(\w+)_h$/) {
+	    $self->handler($1 => @$val);
+	}
         elsif ($option =~ /^(text|start|end|process|declaration|comment)$/) {
-            require Carp;
-            Carp::croak("Bad constructor option '$option'");
+	    require Carp;
+	    Carp::croak("Bad constructor option '$option'");
         }
-        else {
-            $self->$option($val);
-        }
+	else {
+	    $self->$option($val);
+	}
     }
 
     return $self;
@@ -93,13 +93,13 @@ sub parse_file
         # Assume $file is a filename
         local(*F);
         open(F, "<", $file) || return undef;
-        binmode(F);  # should we? good for byte counts
+	binmode(F);  # should we? good for byte counts
         $opened++;
         $file = *F;
     }
     my $chunk = '';
     while (read($file, $chunk, 512)) {
-        $self->parse($chunk) || last;
+	$self->parse($chunk) || last;
     }
     close($file) if $opened;
     $self->eof;
@@ -111,7 +111,7 @@ sub netscape_buggy_comment  # legacy
     my $self = shift;
     require Carp;
     Carp::carp("netscape_buggy_comment() is deprecated.  " .
-               "Please use the strict_comment() method instead");
+	       "Please use the strict_comment() method instead");
     my $old = !$self->strict_comment;
     $self->strict_comment(!shift) if @_;
     return $old;
@@ -218,13 +218,13 @@ This creates a new parser object with a text event handler subroutine
 that receives the original text with general entities decoded.
 
  $p = HTML::Parser->new(api_version => 3,
-                        start_h => [ 'my_start', "self,tokens" ]);
+			start_h => [ 'my_start', "self,tokens" ]);
 
 This creates a new parser object with a start event handler method
 that receives the $p and the tokens array.
 
  $p = HTML::Parser->new(api_version => 3,
-                        handlers => { text => [\@array, "event,text"],
+		        handlers => { text => [\@array, "event,text"],
                                       comment => [\@array, "event,text"],
                                     });
 
@@ -992,13 +992,13 @@ This is equivalent to the following method calls:
    $p->handler(process => "process", "self, token0, text");
    $p->handler(comment =>
              sub {
-                 my($self, $tokens) = @_;
-                 for (@$tokens) {$self->comment($_);}},
+		 my($self, $tokens) = @_;
+		 for (@$tokens) {$self->comment($_);}},
              "self, tokens");
    $p->handler(declaration =>
              sub {
-                 my $self = shift;
-                 $self->declaration(substr($_[0], 2, -1));},
+		 my $self = shift;
+		 $self->declaration(substr($_[0], 2, -1));},
              "self, text");
 
 Setting up these handlers can also be requested with the "api_version =>
@@ -1047,7 +1047,7 @@ parsing as soon as the title end tag is seen:
     my $self = shift;
     $self->handler(text => sub { print shift }, "dtext");
     $self->handler(end  => sub { shift->eof if shift eq "title"; },
-                           "tagname,self");
+		           "tagname,self");
   }
 
   my $p = HTML::Parser->new(api_version => 3);

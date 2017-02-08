@@ -15,15 +15,15 @@ $VERSION = "0.13";
 
 # OO purists will hate this :)
 my %schema_typemap = qw(
-        attribute-type          at
-        objectclass-type        oc
+	attribute-type		at
+	objectclass-type	oc
 );
-#       syn
-#       mr
-#       mru
-#       dts
-#       dtc
-#       nfm
+#	syn
+#	mr
+#	mru
+#	dts
+#	dtc
+#	nfm
 
 sub new {
   my $pkg = shift;
@@ -53,27 +53,27 @@ sub start_document {
 }
 
 my %start_jumptable = qw(
-        entry                   entry
-        attr                    entry_attr
-        objectclass             entry_attr
-        value                   entry_value
-        oc-value                entry_value
-        directory-schema        schema
-        attribute-type          schema_element
-        objectclass-type        schema_element
-        name                    schema_name
-        object-identifier       schema_value
-        syntax                  schema_syntax
-        description             schema_value
-        equality                schema_value
-        substring               schema_value
-        ordering                schema_value
-        attribute               schema_attr
+	entry			entry
+	attr			entry_attr
+	objectclass		entry_attr
+	value			entry_value
+	oc-value		entry_value
+	directory-schema	schema
+	attribute-type		schema_element
+	objectclass-type	schema_element
+	name			schema_name
+	object-identifier	schema_value
+	syntax			schema_syntax
+	description		schema_value
+	equality		schema_value
+	substring		schema_value
+	ordering		schema_value
+	attribute		schema_attr
 );
 
 sub start_element {
   my ($self, $data) = @_;
-
+  
   (my $tag = lc $data->{Name}) =~ s/^dsml://;
 
   my $label = $start_jumptable{$tag} or return;
@@ -91,12 +91,12 @@ entry_attr:
     my $name = $tag eq 'objectclass' ? $tag : lc $data->{Attributes}{'{}name'}{Value};
     $state->{attr} = $state->{attrs}{$name}
       ||= do {
-        my $aref = [];
-        push @{$state->{entry}{attributes}}, {
-          type => $data->{Attributes}{'{}name'}{Value},
-          vals => $aref
-        };
-        $aref;
+	my $aref = [];
+	push @{$state->{entry}{attributes}}, {
+	  type => $data->{Attributes}{'{}name'}{Value},
+	  vals => $aref
+	};
+	$aref;
       };
     return;
   }
@@ -129,9 +129,9 @@ schema_element:
     }
 
     foreach my $attr (qw(
-        single-value
-        obsolete
-        user-modification
+	single-value
+	obsolete
+	user-modification
     )) {
       my $value = $Attrs->{"{}$attr"}{Value};
       $elem->{$attr} = 1 if defined $value and $value =~ /^true$/i;
@@ -182,21 +182,21 @@ schema_attr:
 }
 
 my %end_jumptable = qw(
-        entry                   entry
-        attr                    entry_attr
-        objectclass             entry_attr
-        value                   value
-        oc-value                value
-        syntax                  value
-        description             value
-        equality                value
-        substring               value
-        ordering                value
-        name                    value
-        object-identifier       value
-        attribute-type          schema_element
-        objectclass-type        schema_element
-        directory-schema        schema
+	entry			entry
+	attr			entry_attr
+	objectclass		entry_attr
+	value			value
+	oc-value		value
+	syntax			value
+	description		value
+	equality		value
+	substring		value
+	ordering		value
+	name			value
+	object-identifier	value
+	attribute-type		schema_element
+	objectclass-type	schema_element
+	directory-schema	schema
 );
 
 sub end_element {
@@ -247,12 +247,12 @@ schema_element:
       $name = $oid;
     }
     else {
-        croak "Schema element without a name or object-identifier";
+	croak "Schema element without a name or object-identifier";
     }
 
     $elem->{oid} ||= $name;
     $state->{schema}{oid}{$oid} = $state->{schema}{$elem->{type}}{lc $name} = $elem;
-
+ 
     return;
   }
 
@@ -263,22 +263,22 @@ schema:
     foreach my $elem (values %{$schema->{oc}}) {
       if (my $sup = $elem->{superior}) {
         $sup =~ /#(.*)|(.*)/;
-        if (my $ref = $id->{$+}) {
-          $elem->{superior} = $ref->{name};
-        }
-        else {
-          $elem->{superior} = $+;
-        }
+	if (my $ref = $id->{$+}) {
+	  $elem->{superior} = $ref->{name};
+	}
+	else {
+	  $elem->{superior} = $+;
+	}
       }
       foreach my $mm (qw(must may)) {
-        if (my $mmref = $elem->{$mm}) {
-          my @mm = map {
-            /#(.*)|(.*)/;
-            my $ref = $id->{$+};
-            $ref ? $ref->{name} : $+;
-          } @$mmref;
-          $elem->{$mm} = \@mm;
-        }
+	if (my $mmref = $elem->{$mm}) {
+	  my @mm = map {
+	    /#(.*)|(.*)/;
+	    my $ref = $id->{$+};
+	    $ref ? $ref->{name} : $+;
+	  } @$mmref;
+	  $elem->{$mm} = \@mm;
+	}
       }
     }
     require Net::LDAP::Schema;
@@ -296,8 +296,8 @@ sub characters {
   my $state = $self->{reader};
   if (my $sref = $state->{value}) {
     $$sref = ($state->{encoding}||'') eq 'base64'
-        ? do { require MIME::Base64; MIME::Base64::decode_base64($data->{Data}) }
-        : $data->{Data};
+	? do { require MIME::Base64; MIME::Base64::decode_base64($data->{Data}) }
+	: $data->{Data};
   }
 }
 
@@ -340,25 +340,25 @@ sub _dsml_context {
     $self->_dsml_context('dsml') unless $new eq 'dsml' or @$context;
     push @$context, $new;
     my %data = (
-      Name         => "dsml:$new",
-      LocalName    => $new,
+      Name	   => "dsml:$new",
+      LocalName	   => $new,
       NamespaceURI => 'http://www.dsml.org/DSML',
-      Prefix       => 'dsml',
+      Prefix	   => 'dsml',
     );
 
     if ($new eq 'dsml') {
       $handler->start_prefix_mapping({
-        NamespaceURI => 'http://www.dsml.org/DSML',
-        Prefix       => 'dsml'
+	NamespaceURI => 'http://www.dsml.org/DSML',
+	Prefix       => 'dsml'
       });
       $data{Attributes} = {
-        '{http://www.w3.org/2000/xmlns/}dsml' => {
-          Name         => 'xmlns:dsml',
-          LocalName    => 'dsml',
-          NamespaceURI => 'http://www.w3.org/2000/xmlns/',
-          Value        => 'http://www.dsml.org/DSML',
-          Prefix       => 'xmlns'
-        }
+	'{http://www.w3.org/2000/xmlns/}dsml' => {
+	  Name         => 'xmlns:dsml',
+	  LocalName    => 'dsml',
+	  NamespaceURI => 'http://www.w3.org/2000/xmlns/',
+	  Value        => 'http://www.dsml.org/DSML',
+	  Prefix       => 'xmlns'
+	}
       };
     }
     $handler->start_element(\%data);
@@ -400,38 +400,38 @@ sub write_entry {
       my $is_oc = lc($name) eq "objectclass";
 
       if ($is_oc) {
-        @data{qw(Name LocalName)} = qw(dsml:objectclass objectclass);
-        %attr = ();
-        $handler->start_element(\%data);
-        @data{qw(Name LocalName)} = qw(dsml:oc-value oc-value);
+	@data{qw(Name LocalName)} = qw(dsml:objectclass objectclass);
+	%attr = ();
+	$handler->start_element(\%data);
+	@data{qw(Name LocalName)} = qw(dsml:oc-value oc-value);
       }
       else {
-        @data{qw(Name LocalName)} = qw(dsml:attr attr);
-        %attr = ( "{}name" => { Value => $name, Name => "name" } );
-        $handler->start_element(\%data);
-        @data{qw(Name LocalName)} = qw(dsml:value value);
+	@data{qw(Name LocalName)} = qw(dsml:attr attr);
+	%attr = ( "{}name" => { Value => $name, Name => "name" } );
+	$handler->start_element(\%data);
+	@data{qw(Name LocalName)} = qw(dsml:value value);
       }
 
       my %chdata;
       foreach my $val (@{$attr->{vals}}) {
-        if ($val =~ /(^[ :]|[\x00-\x1f\x7f-\xff])/) {
-          require MIME::Base64;
-          $chdata{Data} = MIME::Base64::encode($val,"");
-          %attr = ( '{}encoding' => { Value => 'base64', Name => "encoding"} );
-        }
-        else {
-          $chdata{Data} = $val;
-          %attr = ();
-        }
-        $handler->start_element(\%data);
-        $handler->characters(\%chdata);
-        %attr = ();
-        $handler->end_element(\%data);
+	if ($val =~ /(^[ :]|[\x00-\x1f\x7f-\xff])/) {
+	  require MIME::Base64;
+	  $chdata{Data} = MIME::Base64::encode($val,"");
+	  %attr = ( '{}encoding' => { Value => 'base64', Name => "encoding"} );
+	}
+	else {
+	  $chdata{Data} = $val;
+	  %attr = ();
+	}
+	$handler->start_element(\%data);
+	$handler->characters(\%chdata);
+	%attr = ();
+	$handler->end_element(\%data);
       }
 
       @data{qw(Name LocalName)} = $is_oc
-        ? qw(dsml:objectclass objectclass)
-        : qw(dsml:attr attr);
+	? qw(dsml:objectclass objectclass)
+	: qw(dsml:attr attr);
       %attr = ();
       $handler->end_element(\%data);
     }
@@ -464,13 +464,13 @@ sub write_schema {
     if (my $sup = $attr->{superior}) {
       my $sup_a = $schema->attribute($sup);
       $attr{"{}superior"} = {
-        Value => "#" . ($sup_a ? $sup_a->{name} : $sup),
-        Name  => 'superior'
+	Value => "#" . ($sup_a ? $sup_a->{name} : $sup),
+	Name  => 'superior'
       };
     }
     foreach my $flag (qw(obsolete single-value)) {
       $attr{"{}$flag"} = {
-        Value => 'true', Name => $flag
+	Value => 'true', Name => $flag
       } if $attr->{$flag};
     }
     $attr{"{}user-modification"} = {
@@ -490,9 +490,9 @@ sub write_schema {
     if (my $aliases = $attr->{aliases}) {
       @data{qw(Name LocalName)} = qw(dsml:name name);
       foreach my $name (@$aliases) {
-        $handler->start_element(\%data);
-        $handler->characters({Data => $name});
-        $handler->end_element(\%data);
+	$handler->start_element(\%data);
+	$handler->characters({Data => $name});
+	$handler->end_element(\%data);
       }
     }
     if (my $oid = $attr->{oid}) {
@@ -502,10 +502,10 @@ sub write_schema {
       $handler->end_element(\%data);
     }
     foreach my $elem (qw(
-        description
-        equality
-        ordering
-        substring
+	description
+	equality
+	ordering
+	substring
     )) {
       defined(my $text = $attr->{$elem}) or next;
       @data{qw(Name LocalName)} = ("dsml:$elem",$elem);
@@ -515,10 +515,10 @@ sub write_schema {
     }
     if (my $syn = $attr->{syntax}) {
       if (defined(my $bound = $attr->{max_length})) {
-        $attr{'{}bound'} = {
-          Value => $bound,
-          Name => 'bound',
-        };
+	$attr{'{}bound'} = {
+	  Value => $bound,
+	  Name => 'bound',
+	};
       }
       @data{qw(Name LocalName)} = qw(dsml:syntax syntax);
       $handler->start_element(\%data);
@@ -538,20 +538,20 @@ sub write_schema {
     if (my $sup = $oc->{superior}) {
       my $sup_a = $schema->objectclass($sup);
       $attr{"{}superior"} = {
-        Value => "#" . ($sup_a ? $sup_a->{name} : $sup),
-        Name  => 'superior'
+	Value => "#" . ($sup_a ? $sup_a->{name} : $sup),
+	Name  => 'superior'
       };
     }
     if (my $type = (grep { $oc->{$_} } qw(structural abstract auxilary))[0]) {
       $attr{"{}type"} = {
-        Value => $type,
-        Name  => 'type',
+	Value => $type,
+	Name  => 'type',
       };
     }
     if ($oc->{obsolete}) {
       $attr{"{}type"} = {
-        Value => 'true',
-        Name  => 'obsolete',
+	Value => 'true',
+	Name  => 'obsolete',
       };
     }
 
@@ -568,14 +568,14 @@ sub write_schema {
     if (my $aliases = $oc->{aliases}) {
       @data{qw(Name LocalName)} = qw(dsml:name name);
       foreach my $name (@$aliases) {
-        $handler->start_element(\%data);
-        $handler->characters({Data => $name});
-        $handler->end_element(\%data);
+	$handler->start_element(\%data);
+	$handler->characters({Data => $name});
+	$handler->end_element(\%data);
       }
     }
     foreach my $elem (qw(
-        description
-        object-identifier
+	description
+	object-identifier
     )) {
       defined(my $text = $oc->{$elem}) or next;
       @data{qw(Name LocalName)} = ("dsml:$elem",$elem);
@@ -586,20 +586,20 @@ sub write_schema {
     @data{qw(Name LocalName)} = qw(dsml:attribute attribute);
     foreach my $mm (qw(must may)) {
       %attr = (
-        '{}required' => {
-          Value => ($mm eq 'must' ? 'true' : 'false'),
-          Name => 'required'
-        },
-        '{}ref' => {
-          Name => 'ref'
-        },
+	'{}required' => {
+	  Value => ($mm eq 'must' ? 'true' : 'false'),
+	  Name => 'required'
+	},
+	'{}ref' => {
+	  Name => 'ref'
+	},
       );
       my $mmref = $oc->{$mm} or next;
       foreach my $attr (@$mmref) {
-        my $a_ref = $schema->attribute($attr);
-        $attr{'{}ref'}{Value} = $a_ref ? $a_ref->{name} : $attr;
-        $handler->start_element(\%data);
-        $handler->end_element(\%data);
+	my $a_ref = $schema->attribute($attr);
+	$attr{'{}ref'}{Value} = $a_ref ? $a_ref->{name} : $attr;
+	$handler->start_element(\%data);
+	$handler->end_element(\%data);
       }
     }
 
@@ -625,17 +625,17 @@ sub start_element {
   my $handler = $self->{handler};
   $handler->start_element($data);
   unless ($data->{Name} =~ /^(?:dsml:)?(?:
-         value
-        |oc-value
-        |name
-        |syntax
-        |equality
-        |substring
-        |object-identifier
-        |description
-        |ordering
-        |attribute
-        )$/ix
+	 value
+	|oc-value
+	|name
+	|syntax
+	|equality
+	|substring
+	|object-identifier
+	|description
+	|ordering
+	|attribute
+	)$/ix
   ) {
     $handler->ignorable_whitespace({Data => "\n"});
   }
@@ -733,7 +733,7 @@ NET::LDAP::DSML -- A DSML Writer for Net::LDAP
  #
 
  my @data = ();
- $dsml = Net::LDAP::DSML->new(output => \@data, pretty_print => 1)
+ $dsml = Net::LDAP::DSML->new(output => \@data, pretty_print => 1) 
      or die ("DSML object cration problem using an output array.\n");
 
 
@@ -742,11 +742,11 @@ NET::LDAP::DSML -- A DSML Writer for Net::LDAP
                            scope    => 'sub',
                            filter   => 'ou=accounting',
                            callback => sub {
-                                         my ($mesg,$entry) =@_;
-                                         $dsml->write_entry($entry)
+					 my ($mesg,$entry) =@_;
+					 $dsml->write_entry($entry) 
                                           if (ref $entry eq 'Net::LDAP::Entry');
-                                       }
-                            );
+				       }
+                            );  
 
  die ("search failed with ",$mesg->code(),"\n") if $mesg->code();
 
@@ -769,31 +769,31 @@ NET::LDAP::DSML -- A DSML Writer for Net::LDAP
 Directory Service Markup Language (DSML) is the XML standard for
 representing directory service information in XML.
 
-At the moment this module only writes DSML entry and schema entities.
+At the moment this module only writes DSML entry and schema entities. 
 Reading DSML entities is a future project.
 
 Eventually this module will be a full level 2 consumer and producer
-enabling you to give you full DSML conformance.  Currently this
-module has the ability to be a level 2 producer.  The user must
-understand the his/her directory server will determine the
-consumer and producer level they can achieve.
+enabling you to give you full DSML conformance.  Currently this 
+module has the ability to be a level 2 producer.  The user must 
+understand the his/her directory server will determine the 
+consumer and producer level they can achieve.  
 
-To determine conformance, it is useful to divide DSML documents into
+To determine conformance, it is useful to divide DSML documents into 
 four types:
 
-  1.Documents containing no directory schema nor any references to
-    an external schema.
-  2.Documents containing no directory schema but containing at
-    least one reference to an external schema.
-  3.Documents containing only a directory schema.
-  4.Documents containing both a directory schema and entries.
+  1.Documents containing no directory schema nor any references to 
+    an external schema. 
+  2.Documents containing no directory schema but containing at 
+    least one reference to an external schema. 
+  3.Documents containing only a directory schema. 
+  4.Documents containing both a directory schema and entries. 
 
 A producer of DSML must be able to produce documents of type 1.
-A producer of DSML may, in addition, be able to produce documents of
+A producer of DSML may, in addition, be able to produce documents of 
 types 2 thru 4.
 
-A producer that can produce documents of type 1 is said to be a level
-1 producer. A producer than can produce documents of all four types is
+A producer that can produce documents of type 1 is said to be a level 
+1 producer. A producer than can produce documents of all four types is 
 said to be a level 2 producer.
 
 =head1 CALLBACKS
@@ -804,7 +804,7 @@ parse large DSML files. Every time a single entry or schema is processed
 we pass the Net::LDAP object (either an Entry or Schema object) to the
 callback routine.
 
-=head1 CONSTRUCTOR
+=head1 CONSTRUCTOR 
 
 =over 4
 
@@ -822,15 +822,15 @@ easier for a human.
 
 B<Example>
 
-  my $dsml = Net::LDAP::DSML->new();
+  my $dsml = Net::LDAP::DSML->new();  
   Prints xml data to standard out.
 
-  my $dsml = Net::LDAP::DSML->new(output => \@array);
-  my $dsml = Net::LDAP::DSML->new(output => *FILE);
+  my $dsml = Net::LDAP::DSML->new(output => \@array);  
+  my $dsml = Net::LDAP::DSML->new(output => *FILE);  
   Prints xml data to a file or array.
 
-  my $dsml = Net::LDAP::DSML->new(output => \@array, pretty_print => 1);
-  my $dsml = Net::LDAP::DSML->new(output => *FILE, pretty_print => 1);
+  my $dsml = Net::LDAP::DSML->new(output => \@array, pretty_print => 1);  
+  my $dsml = Net::LDAP::DSML->new(output => *FILE, pretty_print => 1);  
   Prints xml data to a file or array in pretty print style.
 
 =back
@@ -861,7 +861,7 @@ B<Example>
 
 =item write_schema ( SCHEMA )
 
-Schema is a Net::LDAP::Schema object. The write_schema method will
+Schema is a Net::LDAP::Schema object. The write_schema method will 
 parse the LDAP data in the Schema object and put it into DSML XML
 format.
 

@@ -94,6 +94,6 @@ Copyright 2004, Casey West F<<casey@geeknest.com>>.
 Copyright 2003 by Simon Cozens
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+it under the same terms as Perl itself. 
 
 =cut

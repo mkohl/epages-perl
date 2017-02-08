@@ -23,7 +23,7 @@ use Params::Util '_INSTANCE';
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '2.212';
+	$VERSION = '2.212';
 }
 
 =pod
@@ -38,8 +38,8 @@ Returns a new C<Test::Inline::Content> object.
 =cut
 
 sub new {
-        my $class = ref $_[0] || $_[0];
-        bless {}, $class;
+	my $class = ref $_[0] || $_[0];
+	bless {}, $class;
 }
 
 =pod
@@ -58,13 +58,13 @@ Returns the content of the script as a string, or C<undef> on error.
 =cut
 
 sub process {
-        my $self   = shift;
-        my $Inline = _INSTANCE(shift, 'Test::Inline')         or return undef;
-        my $Script = _INSTANCE(shift, 'Test::Inline::Script') or return undef;
+	my $self   = shift;
+	my $Inline = _INSTANCE(shift, 'Test::Inline')         or return undef;
+	my $Script = _INSTANCE(shift, 'Test::Inline::Script') or return undef;
 
-        # If used directly, create a valid script file that just dies
-        my $class   = $Script->class;
-        my $content = <<"END_PERL";
+	# If used directly, create a valid script file that just dies
+	my $class   = $Script->class;
+	my $content = <<"END_PERL";
 #!/usr/bin/perl
 
 use strict;
@@ -75,7 +75,7 @@ fail('Generation of inline test script for $class failed' );
 exit(0);
 END_PERL
 
-        return $content;
+	return $content;
 }
 
 1;

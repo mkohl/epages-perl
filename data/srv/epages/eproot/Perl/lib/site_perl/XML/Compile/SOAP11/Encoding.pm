@@ -210,7 +210,7 @@ sub array($$$@)
     my $type   = $self->prefixed($itemtype)."$nested\[$size]";
 
     $el->setAttribute(id => $opts{id}) if defined $opts{id};
-    my $at     = $opts{array_type} ? $opts{arrayType}
+    my $at     = $opts{array_type} ? $opts{arrayType} 
                : $self->prefixed($encns, 'arrayType');
     $el->setAttribute($at, $type) if defined $at;
 
@@ -348,7 +348,7 @@ sub _init_decoding($)
 sub dec(@)
 {   my $self  = shift;
     my $data  = $self->_dec( [@_] );
-
+ 
     my ($index, $hrefs) = ({}, []);
     $self->_dec_find_ids_hrefs($index, $hrefs, \$data);
     $self->_dec_resolve_hrefs ($index, $hrefs);
@@ -582,7 +582,7 @@ sub _dec_array_hook($$$)
 
     my ($preftype, $dims) = ($1, $2);
     my @dims = split /\,/, $dims;
-
+   
     my $basetype;
     if(index($preftype, ':') >= 0)
     {   my ($prefix, $local) = split /\:/, $preftype;

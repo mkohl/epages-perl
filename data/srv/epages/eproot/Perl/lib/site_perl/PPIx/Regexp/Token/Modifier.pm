@@ -97,11 +97,11 @@ our $VERSION = '0.020';
 # Define modifiers that are to be aggregated internally for ease of
 # computation.
 my %aggregate = (
-    a   => MODIFIER_GROUP_MATCH_SEMANTICS,
-    aa  => MODIFIER_GROUP_MATCH_SEMANTICS,
-    d   => MODIFIER_GROUP_MATCH_SEMANTICS,
-    l   => MODIFIER_GROUP_MATCH_SEMANTICS,
-    u   => MODIFIER_GROUP_MATCH_SEMANTICS,
+    a	=> MODIFIER_GROUP_MATCH_SEMANTICS,
+    aa	=> MODIFIER_GROUP_MATCH_SEMANTICS,
+    d	=> MODIFIER_GROUP_MATCH_SEMANTICS,
+    l	=> MODIFIER_GROUP_MATCH_SEMANTICS,
+    u	=> MODIFIER_GROUP_MATCH_SEMANTICS,
 );
 my %de_aggregate;
 foreach my $value ( values %aggregate ) {
@@ -126,13 +126,13 @@ sub asserts {
     my ( $self, $modifier ) = @_;
     $self->{modifiers} ||= $self->_decode();
     if ( defined $modifier ) {
-        my $bin = $aggregate{$modifier}
-            or return $self->{modifiers}{$modifier};
-        return $self->{modifiers}{$bin} eq $modifier;
+	my $bin = $aggregate{$modifier}
+	    or return $self->{modifiers}{$modifier};
+	return $self->{modifiers}{$bin} eq $modifier;
     } else {
-        return ( sort grep { defined $_ && $self->{modifiers}{$_} }
-            map { $de_aggregate{$_} ? $self->{modifiers}{$_} : $_ }
-            keys %{ $self->{modifiers} } );
+	return ( sort grep { defined $_ && $self->{modifiers}{$_} }
+	    map { $de_aggregate{$_} ? $self->{modifiers}{$_} : $_ }
+	    keys %{ $self->{modifiers} } );
     }
 }
 
@@ -171,9 +171,9 @@ sub modifiers {
     $self->{modifiers} ||= $self->_decode();
     my %mods = %{ $self->{modifiers} };
     foreach my $bin ( keys %de_aggregate ) {
-        defined ( my $val = delete $mods{$bin} )
-            or next;
-        $mods{$bin} = $val;
+	defined ( my $val = delete $mods{$bin} )
+	    or next;
+	$mods{$bin} = $val;
     }
     return wantarray ? %mods : \%mods;
 }
@@ -199,10 +199,10 @@ sub negates {
     # aggregated modifiers will never be false (at least, not unless '0'
     # becomes a modifier) we need no special logic to handle them.
     defined $modifier
-        or return ( sort grep { ! $self->{modifiers}{$_} }
-            keys %{ $self->{modifiers} } );
+	or return ( sort grep { ! $self->{modifiers}{$_} }
+	    keys %{ $self->{modifiers} } );
     return exists $self->{modifiers}{$modifier}
-        && ! $self->{modifiers}{$modifier};
+	&& ! $self->{modifiers}{$modifier};
 }
 
 sub perl_version_introduced {
@@ -214,31 +214,31 @@ sub perl_version_introduced {
     # Match semantics modifiers became available as regular expression
     # modifiers in 5.13.10.
     defined $match_semantics
-        and $is_statement_modifier
-        and return '5.013010';
+	and $is_statement_modifier
+	and return '5.013010';
 
     # /aa was introduced in 5.13.10.
     defined $match_semantics
-        and 'aa' eq $match_semantics
-        and return '5.013010';
+	and 'aa' eq $match_semantics
+	and return '5.013010';
 
     # /a was introduced in 5.13.9, but only in (?...), not as modifier
     # of the entire regular expression.
     defined $match_semantics
-        and not $is_statement_modifier
-        and 'a' eq $match_semantics
-        and return '5.013009';
+	and not $is_statement_modifier
+	and 'a' eq $match_semantics
+	and return '5.013009';
 
     # /d, /l, and /u were introduced in 5.13.6, but only in (?...), not
     # as modifiers of the entire regular expression.
     defined $match_semantics
-        and not $is_statement_modifier
-        and return '5.013006';
+	and not $is_statement_modifier
+	and return '5.013006';
 
     $self->asserts( 'r' ) and return '5.013002';
     $self->asserts( 'p' ) and return '5.009005';
     $self->content() =~ m/ \A [(]? [?] .* - /smx
-                        and return '5.005';
+			and return '5.005';
     $self->asserts( 'c' ) and return '5.004';
     return MINIMUM_PERL;
 }
@@ -254,8 +254,8 @@ sub perl_version_introduced {
 # the string.
 sub __PPIX_TOKEN__recognize {
     return (
-        [ qr{ \A [(] [?] [[:lower:]]* -? [[:lower:]]* [)] }smx ],
-        [ qr{ \A [(] [?] \^ [[:lower:]]* [)] }smx ],
+	[ qr{ \A [(] [?] [[:lower:]]* -? [[:lower:]]* [)] }smx ],
+	[ qr{ \A [(] [?] \^ [[:lower:]]* [)] }smx ],
     );
 }
 
@@ -264,7 +264,7 @@ sub __PPIX_TOKEN__recognize {
 sub __PPIX_TOKEN__post_make {
     my ( $self, $tokenizer ) = @_;
     defined $tokenizer
-        and $tokenizer->modifier_modify( $self->modifiers() );
+	and $tokenizer->modifier_modify( $self->modifiers() );
     return;
 }
 
@@ -274,52 +274,52 @@ sub __PPIX_TOKEN__post_make {
     # set. Both are passed as hash references, and a reference to the
     # new hash is returned.
     sub __PPIX_TOKENIZER__modifier_modify {
-        my ( @args ) = @_;
+	my ( @args ) = @_;
 
-        my %merged;
-        foreach my $hash ( @args ) {
-            while ( my ( $key, $val ) = each %{ $hash } ) {
-                if ( $val ) {
-                    $merged{$key} = $val;
-                } else {
-                    delete $merged{$key};
-                }
-            }
-        }
+	my %merged;
+	foreach my $hash ( @args ) {
+	    while ( my ( $key, $val ) = each %{ $hash } ) {
+		if ( $val ) {
+		    $merged{$key} = $val;
+		} else {
+		    delete $merged{$key};
+		}
+	    }
+	}
 
-        return \%merged;
+	return \%merged;
 
     }
 
     # Decode modifiers from the content of the token.
     sub _decode {
-        my ( $self ) = @_;
-        my $value = 1;
-        my %present;
-        my $content = $self->content();
-        if ( $content =~ m/ \^ /smx ) {
-            %present = (
-                MODIFIER_GROUP_MATCH_SEMANTICS()        => 'd',
-                i       => 0,
-                s       => 0,
-                m       => 0,
-                x       => 0,
-            );
-        }
-        # Have to do the global match rather than a split, because the
-        # expression modifiers come through here too, and we need to
-        # distinguish between s/.../.../e and s/.../.../ee.
-        while ( $content =~ m/ ( ( [[:alpha:]-] ) \2* ) /smxg ) {
-            if ( $1 eq '-' ) {
-                $value = 0;
-            } elsif ( my $bin = $aggregate{$1} ) {
-                $present{$bin} = $1;
-            } else {
-                $present{$1} = $value;
-            }
-        }
+	my ( $self ) = @_;
+	my $value = 1;
+	my %present;
+	my $content = $self->content();
+	if ( $content =~ m/ \^ /smx ) {
+	    %present = (
+		MODIFIER_GROUP_MATCH_SEMANTICS()	=> 'd',
+		i	=> 0,
+		s	=> 0,
+		m	=> 0,
+		x	=> 0,
+	    );
+	}
+	# Have to do the global match rather than a split, because the
+	# expression modifiers come through here too, and we need to
+	# distinguish between s/.../.../e and s/.../.../ee.
+	while ( $content =~ m/ ( ( [[:alpha:]-] ) \2* ) /smxg ) {
+	    if ( $1 eq '-' ) {
+		$value = 0;
+	    } elsif ( my $bin = $aggregate{$1} ) {
+		$present{$bin} = $1;
+	    } else {
+		$present{$1} = $value;
+	    }
+	}
 
-        return \%present;
+	return \%present;
     }
 }
 

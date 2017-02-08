@@ -88,7 +88,7 @@ While L<Moose> attributes provide you with a way to name your accessors,
 readers, writers, clearers and predicates, this library provides commonly
 used attribute helper methods for more specific types of data.
 
-As seen in the L</SYNOPSIS>, you specify the extension via the
+As seen in the L</SYNOPSIS>, you specify the extension via the 
 C<metaclass> parameter. Available meta classes are:
 
 =head1 PARAMETERS
@@ -161,19 +161,19 @@ Common methods for array references.
 
 =item L<Collection::List|MooseX::AttributeHelpers::Collection::List>
 
-Common list methods for array references.
+Common list methods for array references. 
 
 =back
 
 =head1 CAVEAT
 
-This is an early release of this module. Right now it is in great need
-of documentation and tests in the test suite. However, we have used this
+This is an early release of this module. Right now it is in great need 
+of documentation and tests in the test suite. However, we have used this 
 module to great success at C<$work> where it has been tested very thoroughly
 and deployed into a major production site.
 
-I plan on getting better docs and tests in the next few releases, but until
-then please refer to the few tests we do have and feel free email and/or
+I plan on getting better docs and tests in the next few releases, but until 
+then please refer to the few tests we do have and feel free email and/or 
 message me on irc.perl.org if you have any questions.
 
 =head1 TODO
@@ -182,7 +182,7 @@ We need tests and docs badly.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

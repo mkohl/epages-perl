@@ -45,20 +45,20 @@ sub new ($) {
     bless($self, (ref($class) || $class));
 
     if (my $comp = $attr->{'compression'}) {
-        if ($comp eq 'off') {
-            $self->{'compression'} = undef;
-        } elsif ($comp eq 'gzip') {
-            require Compress::Zlib;
-            $self->{'compression'} = 'gzip';
-        } else {
-            die "Unknown compression type ($comp), use 'off' or 'gzip'";
-        }
+	if ($comp eq 'off') {
+	    $self->{'compression'} = undef;
+	} elsif ($comp eq 'gzip') {
+	    require Compress::Zlib;
+	    $self->{'compression'} = 'gzip';
+	} else {
+	    die "Unknown compression type ($comp), use 'off' or 'gzip'";
+	}
     }
     if (my $cipher = $attr->{'cipher'}) {
-        $self->{'cipher'} = $cipher;
+	$self->{'cipher'} = $cipher;
     }
     if (my $maxmessage = $attr->{'maxmessage'}) {
-        $self->{'maxmessage'} = $maxmessage;
+	$self->{'maxmessage'} = $maxmessage;
     }
 
     $self;
@@ -90,25 +90,25 @@ sub Write ($$$) {
 
     my $encodedMsg = Storable::nfreeze($msg);
     $encodedMsg = Compress::Zlib::compress($encodedMsg)
-        if ($self->{'compression'});
+	if ($self->{'compression'});
 
     my($encodedSize) = length($encodedMsg);
     if (my $cipher = $self->{'cipher'}) {
-        my $size = $cipher->blocksize;
-        if (my $addSize = length($encodedMsg) % $size) {
-            $encodedMsg .= chr(0) x ($size - $addSize);
-        }
-        $msg = '';
-        for (my $i = 0;  $i < length($encodedMsg);  $i += $size) {
-            $msg .= $cipher->encrypt(substr($encodedMsg, $i, $size));
-        }
-        $encodedMsg = $msg;
+	my $size = $cipher->blocksize;
+	if (my $addSize = length($encodedMsg) % $size) {
+	    $encodedMsg .= chr(0) x ($size - $addSize);
+	}
+	$msg = '';
+	for (my $i = 0;  $i < length($encodedMsg);  $i += $size) {
+	    $msg .= $cipher->encrypt(substr($encodedMsg, $i, $size));
+	}
+	$encodedMsg = $msg;
     }
 
     local $\;
     if (!$socket->print(pack("N", $encodedSize), $encodedMsg)  ||
-        !$socket->flush()) {
-        die "Error while writing socket: $!";
+	!$socket->flush()) {
+	die "Error while writing socket: $!";
     }
 }
 
@@ -137,43 +137,43 @@ sub Read($$) {
     $readSize = 4;
     $encodedSize = '';
     while ($readSize > 0) {
-        my $result = $socket->read($encodedSize, $readSize,
-                                   length($encodedSize));
-        if (!$result) {
-            return undef if defined($result);
-            die "Error while reading socket: $!";
-        }
-        $readSize -= $result;
+	my $result = $socket->read($encodedSize, $readSize,
+				   length($encodedSize));
+	if (!$result) {
+	    return undef if defined($result);
+	    die "Error while reading socket: $!";
+	}
+	$readSize -= $result;
     }
     $encodedSize = unpack("N", $encodedSize);
     my $max = $self->getMaxMessage();
     die "Maximum message size of $max exceeded, use option 'maxmessage' to"
-        . " increase" if $max  &&  $encodedSize > $max;
+	. " increase" if $max  &&  $encodedSize > $max;
     $readSize = $encodedSize;
     if ($self->{'cipher'}) {
-        $blockSize = $self->{'cipher'}->blocksize;
-        if (my $addSize = ($encodedSize % $blockSize)) {
-            $readSize += ($blockSize - $addSize);
-        }
+	$blockSize = $self->{'cipher'}->blocksize;
+	if (my $addSize = ($encodedSize % $blockSize)) {
+	    $readSize += ($blockSize - $addSize);
+	}
     }
     my $msg = '';
     my $rs = $readSize;
     while ($rs > 0) {
-        my $result = $socket->read($msg, $rs, length($msg));
-        if (!$result) {
-            die "Unexpected EOF" if defined $result;
-            die "Error while reading socket: $!";
-        }
-        $rs -= $result;
+	my $result = $socket->read($msg, $rs, length($msg));
+	if (!$result) {
+	    die "Unexpected EOF" if defined $result;
+	    die "Error while reading socket: $!";
+	}
+	$rs -= $result;
     }
     if ($self->{'cipher'}) {
-        my $cipher = $self->{'cipher'};
-        my $encodedMsg = $msg;
-        $msg = '';
-        for (my $i = 0;  $i < $readSize;  $i += $blockSize) {
-            $msg .= $cipher->decrypt(substr($encodedMsg, $i, $blockSize));
-        }
-        $msg = substr($msg, 0, $encodedSize);
+	my $cipher = $self->{'cipher'};
+	my $encodedMsg = $msg;
+	$msg = '';
+	for (my $i = 0;  $i < $readSize;  $i += $blockSize) {
+	    $msg .= $cipher->decrypt(substr($encodedMsg, $i, $blockSize));
+	}
+	$msg = substr($msg, 0, $encodedSize);
     }
     $msg = Compress::Zlib::uncompress($msg) if ($self->{'compression'});
     Storable::thaw($msg);
@@ -207,7 +207,7 @@ sub Read($$) {
 sub getMaxMessage() {
     my $self = shift;
     return defined($self->{'maxmessage'}) ?
-        $self->{'maxmessage'} : 65536;
+	$self->{'maxmessage'} : 65536;
 }
 
 

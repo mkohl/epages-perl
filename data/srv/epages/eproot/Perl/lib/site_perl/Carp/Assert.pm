@@ -125,7 +125,7 @@ delete @ENV{qw(PERL_NDEBUG NDEBUG)};
 
 =end testing
 
-    "We are ready for any unforseen event that may or may not
+    "We are ready for any unforseen event that may or may not 
     occur."
         - Dan Quayle
 
@@ -331,7 +331,7 @@ sub affirm (&;$) {
                 require B::Deparse;
                 $name = B::Deparse->new->coderef2text($_[0]);
             };
-            $name =
+            $name = 
               'code display non-functional on this version of Perl, sorry'
                 if $@;
         }
@@ -447,7 +447,7 @@ evaluated.
 
 =head1 Differences from ANSI C
 
-assert() is intended to act like the function from ANSI C fame.
+assert() is intended to act like the function from ANSI C fame. 
 Unfortunately, due to Perl's lack of macros or strong inlining, it's not
 nearly as unobtrusive.
 
@@ -537,7 +537,7 @@ L<assertions> is a new module available in 5.9.0 which provides assertions which
 
 Copyright 2001-2007 by Michael G Schwern E<lt>schwern@pobox.comE<gt>.
 
-This program is free software; you can redistribute it and/or
+This program is free software; you can redistribute it and/or 
 modify it under the same terms as Perl itself.
 
 See F<http://dev.perl.org/licenses/>

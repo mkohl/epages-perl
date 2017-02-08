@@ -11,48 +11,48 @@ Test::Object - Thoroughly testing objects via registered handlers
   ###################################################################
   # In your test module, register test handlers again class names   #
   ###################################################################
-
+  
   package My::ModuleTester;
-
+  
   use Test::More;
   use Test::Object;
-
+  
   # Foo::Bar is a subclass of Foo
   Test::Object->register(
-        class => 'Foo',
-        tests => 5,
-        code  => \&foo_ok,
-        );
+  	class => 'Foo',
+  	tests => 5,
+  	code  => \&foo_ok,
+  	);
   Test::Object->register(
-        class => 'Foo::Bar',
-        # No fixed number of tests
-        code  => \&foobar_ok,
-        );
-
+  	class => 'Foo::Bar',
+  	# No fixed number of tests
+  	code  => \&foobar_ok,
+  	);
+  
   sub foo_ok {
-        my $object = shift;
-        ok( $object->foo, '->foo returns true' );
+  	my $object = shift;
+  	ok( $object->foo, '->foo returns true' );
   }
-
+  
   sub foobar_ok {
-        my $object = shift;
-        is( $object->foo, 'bar', '->foo returns "bar"' );
+  	my $object = shift;
+  	is( $object->foo, 'bar', '->foo returns "bar"' );
   }
-
+  
   1;
-
-
-
+  
+  
+  
   ###################################################################
   # In test script, test object against all registered classes      #
   ###################################################################
-
+  
   #!/usr/bin/perl -w
-
+  
   use Test::More 'no_plan';
   use Test::Object;
   use My::ModuleTester;
-
+  
   my $object = Foo::Bar->new;
   isa_ok( $object, 'Foo::Bar' );
   object_ok( $object );
@@ -100,9 +100,9 @@ use Test::Object::Test ();
 
 use vars qw{$VERSION @ISA @EXPORT};
 BEGIN {
-        $VERSION = '0.07';
-        @ISA     = 'Exporter';
-        @EXPORT  = 'object_ok';
+	$VERSION = '0.07';
+	@ISA     = 'Exporter';
+	@EXPORT  = 'object_ok';
 }
 
 
@@ -115,8 +115,8 @@ BEGIN {
 my @TESTS = ();
 
 sub register {
-        my $class = shift;
-        push @TESTS, Test::Object::Test->new( @_ );
+	my $class = shift;
+	push @TESTS, Test::Object::Test->new( @_ );
 }
 
 
@@ -127,15 +127,15 @@ sub register {
 # Testing Functions
 
 sub object_ok {
-        my $object = Scalar::Util::blessed($_[0]) ? shift
-                : Carp::croak("Did not provide an object to object_ok");
+	my $object = Scalar::Util::blessed($_[0]) ? shift
+		: Carp::croak("Did not provide an object to object_ok");
 
-        # Iterate over the tests and run any we ->isa
-        foreach my $test ( @TESTS ) {
-                $test->run( $object ) if $object->isa( $test->class );
-        }
+	# Iterate over the tests and run any we ->isa
+	foreach my $test ( @TESTS ) {
+		$test->run( $object ) if $object->isa( $test->class );
+	}
 
-        1;
+	1;
 }
 
 1;

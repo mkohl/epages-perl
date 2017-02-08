@@ -244,10 +244,10 @@ HTTP::Config - Configuration for request and response objects
  use HTTP::Config;
  my $c = HTTP::Config->new;
  $c->add(m_domain => ".example.com", m_scheme => "http", verbose => 1);
-
+ 
  use HTTP::Request;
  my $request = HTTP::Request->new(GET => "http://www.example.com");
-
+ 
  if (my @m = $c->matching($request)) {
     print "Yadayada\n" if $m[0]->{verbose};
  }

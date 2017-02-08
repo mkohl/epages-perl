@@ -73,7 +73,7 @@ sub slice
     my ( $href, @list ) = @_;
     if( @list )
     {
-        return map { $_ => $href->{$_} } @list;
+	return map { $_ => $href->{$_} } @list;
     }
     %{$href};
 }
@@ -83,7 +83,7 @@ sub slice_exists
     my ( $href, @list ) = @_;
     if( @list )
     {
-        return map { $_ => $href->{$_} } grep {exists( $href->{$_} ) } @list;
+	return map { $_ => $href->{$_} } grep {exists( $href->{$_} ) } @list;
     }
     %{$href};
 }
@@ -148,7 +148,7 @@ C<< BLOCK >> is given, following routine will be used:
       my ($k, $v, $r) = @_;
       return exists( $r->{$v} )
              ? ( ref($r->{$v}) ? [ @{$r->{$v}}, $k ] : [ $r->{$v}, $k ] )
-             : $k;
+	     : $k;
   };
 
 The C<BLOCK> will be called with 3 arguments:
@@ -181,17 +181,17 @@ sub safe_reverse
     {
         $hash = $code;
         $code = sub {
-              my ($k, $v, $r) = @_;
-              return exists( $r->{$v} )
-                     ? ( ref($r->{$v}) ? [ @{$r->{$v}}, $k ] : [ $r->{$v}, $k ] )
-                     : $k;
-        };
+	      my ($k, $v, $r) = @_;
+	      return exists( $r->{$v} )
+		     ? ( ref($r->{$v}) ? [ @{$r->{$v}}, $k ] : [ $r->{$v}, $k ] )
+		     : $k;
+	};
     }
 
     my %reverse;
     while( my ( $key, $val ) = each %{$hash} )
     {
-        $reverse{$val} = &{$code}( $key, $val, \%reverse );
+	$reverse{$val} = &{$code}( $key, $val, \%reverse );
     }
     return %reverse;
 }

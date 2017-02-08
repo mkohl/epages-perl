@@ -72,11 +72,11 @@ use IPC::Run qw( Win32_MODE );
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '0.89';
-        if ( Win32_MODE ) {
-                eval "use IPC::Run::Win32Helper; require IPC::Run::Win32IO; 1"
-                or ( $@ && die ) or die "$!";
-        }
+	$VERSION = '0.89';
+	if ( Win32_MODE ) {
+		eval "use IPC::Run::Win32Helper; require IPC::Run::Win32IO; 1"
+		or ( $@ && die ) or die "$!";
+	}
 }
 
 sub _empty($);
@@ -155,15 +155,15 @@ sub _new_internal {
          ## filter in the chain writes directly to the scalar itself.  See
          ## _init_filters().  For CODE refs, however, we need to adapt from
          ## the SCALAR to calling the CODE.
-         unshift(
+         unshift( 
             @{$self->{FILTERS}},
             sub {
                my ( $in_ref ) = @_;
 
                return IPC::Run::input_avail() && do {
-                  $self->{DEST}->( $$in_ref );
-                  $$in_ref = '';
-                  1;
+        	  $self->{DEST}->( $$in_ref );
+        	  $$in_ref = '';
+        	  1;
                }
             }
          );
@@ -180,12 +180,12 @@ sub _new_internal {
                return 0 if length $$out_ref;
 
                return undef
-                  if $self->{SOURCE_EMPTY};
+        	  if $self->{SOURCE_EMPTY};
 
                my $in = $internal->();
                unless ( defined $in ) {
-                  $self->{SOURCE_EMPTY} = 1;
-                  return undef
+        	  $self->{SOURCE_EMPTY} = 1;
+        	  return undef 
                }
                return 0 unless length $in;
                $$out_ref = $in;
@@ -203,12 +203,12 @@ sub _new_internal {
 
                ## pump() clears auto_close_ins, finish() sets it.
                return $self->{HARNESS}->{auto_close_ins} ? undef : 0
-                  if IPC::Run::_empty ${$self->{SOURCE}}
-                     || $self->{SOURCE_EMPTY};
+        	  if IPC::Run::_empty ${$self->{SOURCE}}
+        	     || $self->{SOURCE_EMPTY};
 
                $$out_ref = $$internal;
                eval { $$internal = '' }
-                  if $self->{HARNESS}->{clear_ins};
+        	  if $self->{HARNESS}->{clear_ins};
 
                $self->{SOURCE_EMPTY} = $self->{HARNESS}->{auto_close_ins};
 
@@ -429,7 +429,7 @@ sub mode {
    croak "IPC::Run::IO: unexpected arguments for mode(): @_" if @_;
 
    ## TODO: Optimize this
-   return ( $self->{TYPE} =~ /</     ? 'w' : 'r' ) .
+   return ( $self->{TYPE} =~ /</     ? 'w' : 'r' ) . 
           ( $self->{TYPE} =~ /<<|>>/ ? 'a' : ''  );
 }
 
@@ -554,14 +554,14 @@ sub _do_filters {
    my $redos = 0;
    my $r;
    {
-           $@ = '';
-           $r = eval { IPC::Run::get_more_input(); };
+	   $@ = '';
+	   $r = eval { IPC::Run::get_more_input(); };
 
-           # Detect Resource temporarily unavailable and re-try to a point (200 or 2 seconds),  assuming select behaves (which it doesn't always? need ref)
-           if($@ && $@ =~ m/^Resource temporarily/ && $redos++ < 200) {
-               select(undef, undef, undef, 0.01);
-               redo;
-           }
+	   # Detect Resource temporarily unavailable and re-try to a point (200 or 2 seconds),  assuming select behaves (which it doesn't always? need ref)
+	   if($@ && $@ =~ m/^Resource temporarily/ && $redos++ < 200) {
+	       select(undef, undef, undef, 0.01);
+	       redo;
+	   }
    }
    ( $IPC::Run::filter_op, $IPC::Run::filter_num ) = ( $saved_op, $saved_num );
    $self->{HARNESS} = undef;

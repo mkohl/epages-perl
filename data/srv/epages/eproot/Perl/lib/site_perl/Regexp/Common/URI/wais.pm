@@ -13,7 +13,7 @@ $VERSION = '2010010201';
 
 
 my $scheme = 'wais';
-my $uri    = "(?k:(?k:$scheme)://(?k:$host)(?::(?k:$port))?/(?k:(?k:$database)"
+my $uri    = "(?k:(?k:$scheme)://(?k:$host)(?::(?k:$port))?/(?k:(?k:$database)" 
            . "(?k:[?](?k:$search)|/(?k:$wtype)/(?k:$wpath))?))";
 
 register_uri $scheme => $uri;
@@ -80,7 +80,7 @@ The I<database>.
 
 =item $7
 
-The part following the I<database> if given, including the question mark
+The part following the I<database> if given, including the question mark 
 or slash.
 
 =item $8

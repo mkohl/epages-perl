@@ -8,12 +8,12 @@ filetest - Perl pragma to control the filetest permission operators
 
 =head1 SYNOPSIS
 
-    $can_perhaps_read = -r "file";      # use the mode bits
+    $can_perhaps_read = -r "file";	# use the mode bits
     {
-        use filetest 'access';          # intuit harder
+        use filetest 'access';		# intuit harder
         $can_really_read = -r "file";
     }
-    $can_perhaps_read = -r "file";      # use the mode bits again
+    $can_perhaps_read = -r "file";	# use the mode bits again
 
 =head1 DESCRIPTION
 
@@ -100,17 +100,17 @@ $filetest::hint_bits = 0x00400000; # HINT_FILETEST_ACCESS
 
 sub import {
     if ( $_[1] eq 'access' ) {
-        $^H |= $filetest::hint_bits;
+	$^H |= $filetest::hint_bits;
     } else {
-        die "filetest: the only implemented subpragma is 'access'.\n";
+	die "filetest: the only implemented subpragma is 'access'.\n";
     }
 }
 
 sub unimport {
     if ( $_[1] eq 'access' ) {
-        $^H &= ~$filetest::hint_bits;
+	$^H &= ~$filetest::hint_bits;
     } else {
-        die "filetest: the only implemented subpragma is 'access'.\n";
+	die "filetest: the only implemented subpragma is 'access'.\n";
     }
 }
 

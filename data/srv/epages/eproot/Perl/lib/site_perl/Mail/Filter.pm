@@ -28,10 +28,10 @@ sub _filter($)
     foreach my $sub ( @{$self->{filters}} )
     {   my $mail
           = ref $sub eq 'CODE' ? $sub->($self,$mail)
-          : !ref $sub          ? $self->$sub($mail)
-          : carp "Cannot call filter '$sub', ignored";
+	  : !ref $sub          ? $self->$sub($mail)
+	  : carp "Cannot call filter '$sub', ignored";
 
-        ref $mail or last;
+	ref $mail or last;
     }
 
     $mail;
@@ -41,20 +41,20 @@ sub filter
 {   my ($self, $obj) = @_;
     if($obj->isa('Mail::Folder'))
     {   $self->{folder} = $obj;
-        foreach my $m ($obj->message_list)
-        {   my $mail = $obj->get_message($m) or next;
-            $self->{msgnum} = $m;
-            $self->_filter($mail);
-        }
-        delete $self->{folder};
-        delete $self->{msgnum};
+	foreach my $m ($obj->message_list)
+	{   my $mail = $obj->get_message($m) or next;
+	    $self->{msgnum} = $m;
+	    $self->_filter($mail);
+	}
+	delete $self->{folder};
+	delete $self->{msgnum};
     }
     elsif($obj->isa('Mail::Internet'))
     {   return $self->filter($obj);
     }
     else
     {   carp "Cannot process '$obj'";
-        return undef;
+	return undef;
     }
 }
 

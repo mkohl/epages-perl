@@ -33,18 +33,18 @@ my $N = do { my $foo = eval { pack "L!", 0 }; $@ ? '' : '!' };
     use Class::Struct qw(struct);
 
     struct 'IPC::SharedMem::stat' => [
-        uid     => '$',
-        gid     => '$',
-        cuid    => '$',
-        cgid    => '$',
-        mode    => '$',
-        segsz   => '$',
-        lpid    => '$',
-        cpid    => '$',
-        nattch  => '$',
-        atime   => '$',
-        dtime   => '$',
-        ctime   => '$',
+	uid	=> '$',
+	gid	=> '$',
+	cuid	=> '$',
+	cgid	=> '$',
+	mode	=> '$',
+	segsz	=> '$',
+	lpid	=> '$',
+	cpid	=> '$',
+	nattch	=> '$',
+	atime	=> '$',
+	dtime	=> '$',
+	ctime	=> '$',
     ];
 }
 

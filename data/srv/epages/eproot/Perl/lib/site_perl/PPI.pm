@@ -8,9 +8,9 @@ use strict;
 # Set the version for CPAN
 use vars qw{$VERSION $XS_COMPATIBLE @XS_EXCLUDE};
 BEGIN {
-        $VERSION       = '1.215';
-        $XS_COMPATIBLE = '0.845';
-        @XS_EXCLUDE    = ();
+	$VERSION       = '1.215';
+	$XS_COMPATIBLE = '0.845';
+	@XS_EXCLUDE    = ();
 }
 
 # Load everything
@@ -30,9 +30,9 @@ use PPI::Lexer                ();
 
 # If it is installed, load in PPI::XS
 unless ( $PPI::XS_DISABLE ) {
-        eval { require PPI::XS };
-        # Only ignore the failure to load PPI::XS if not installed
-        die if $@ && $@ !~ /^Can't locate .*? at /;
+	eval { require PPI::XS };
+	# Only ignore the failure to load PPI::XS if not installed
+	die if $@ && $@ !~ /^Can't locate .*? at /;
 }
 
 1;
@@ -48,28 +48,28 @@ PPI - Parse, Analyze and Manipulate Perl (without perl)
 =head1 SYNOPSIS
 
   use PPI;
-
+  
   # Create a new empty document
   my $Document = PPI::Document->new;
-
+  
   # Create a document from source
   $Document = PPI::Document->new(\'print "Hello World!\n"');
-
+  
   # Load a Document from a file
   $Document = PPI::Document->new('Module.pm');
-
+  
   # Does it contain any POD?
   if ( $Document->find_any('PPI::Token::Pod') ) {
       print "Module contains POD\n";
   }
-
+  
   # Get the name of the main package
   $pkg = $Document->find_first('PPI::Statement::Package')->namespace;
-
+  
   # Remove all that nasty documentation
   $Document->prune('PPI::Token::Pod');
   $Document->prune('PPI::Token::Comment');
-
+  
   # Save the file
   $Document->save('Module.pm.stripped');
 
@@ -101,7 +101,7 @@ One example of the sorts of things the prevent Perl being easily parsed are
 function signatures, as demonstrated by the following.
 
   @result = (dothis $foo, $bar);
-
+  
   # Which of the following is it equivalent to?
   @result = (dothis($foo), $bar);
   @result = dothis($foo, $bar);

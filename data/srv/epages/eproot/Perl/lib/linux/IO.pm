@@ -15,11 +15,11 @@ sub import {
 
     warnings::warnif('deprecated', qq{Parameterless "use IO" deprecated})
         if @_ == 0 ;
-
+    
     my @l = @_ ? @_ : qw(Handle Seekable File Pipe Socket Dir);
 
     eval join("", map { "require IO::" . (/(\w+)/)[0] . ";\n" } @l)
-        or croak $@;
+	or croak $@;
 }
 
 1;

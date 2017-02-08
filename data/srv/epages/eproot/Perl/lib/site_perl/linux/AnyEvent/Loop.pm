@@ -6,7 +6,7 @@ AnyEvent::Loop - AnyEvent's Pure-Perl event loop
 
    use AnyEvent;
    # use AnyEvent::Loop;
-
+  
    # this module gets loaded automatically when no other loop can be found
 
    # Explicit use:
@@ -313,7 +313,7 @@ sub AnyEvent::Loop::io::DESTROY {
 
 sub timer($$$) {
    my ($after, $interval, $cb) = @_;
-
+   
    my $self;
 
    if ($interval) {

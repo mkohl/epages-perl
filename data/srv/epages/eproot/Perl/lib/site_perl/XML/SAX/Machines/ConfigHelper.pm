@@ -47,14 +47,14 @@ package XML::SAX::Machines::SiteConfig;
 $LegalProcessorClassOptions = {
 #     ConstructWithOptionsHashes => "Use Foo->new( { Handler => $h } ) instead of Foo->new( Handler => $h )",
 };
-
+    
 
 #
 # SAX Processor specific configs.
 #
 # Per-processor options
 # =====================
-#
+# 
 # ConstructWithOptionsHashes (boolean)
 #
 #     tells XML::SAX::Machine to construct the processor like:

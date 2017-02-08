@@ -32,7 +32,7 @@ sub Char {
   my $class = "${$expat}{Pkg}::Characters";
   my $clist = $expat->{Curlist};
   my $pos = $#$clist;
-
+  
   if ($pos >= 0 and ref($clist->[$pos]) eq $class) {
     $clist->[$pos]->{Text} .= $text;
   } else {

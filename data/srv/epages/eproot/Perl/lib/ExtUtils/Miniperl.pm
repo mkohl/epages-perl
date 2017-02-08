@@ -3,7 +3,7 @@
 # It was generated automatically by minimod.PL from the contents
 # of miniperlmain.c. Don't edit this file!
 #
-#       ANY CHANGES MADE HERE WILL BE LOST!
+#       ANY CHANGES MADE HERE WILL BE LOST! 
 #
 
 
@@ -121,11 +121,11 @@ main(int argc, char **argv, char **env)
 #endif
 
     if (!PL_do_undump) {
-        my_perl = perl_alloc();
-        if (!my_perl)
-            exit(1);
-        perl_construct(my_perl);
-        PL_perl_destruct_level = 0;
+	my_perl = perl_alloc();
+	if (!my_perl)
+	    exit(1);
+	perl_construct(my_perl);
+	PL_perl_destruct_level = 0;
     }
     PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
     exitstatus = perl_parse(my_perl, xs_init, argc, argv, (char **)NULL);
@@ -134,9 +134,9 @@ main(int argc, char **argv, char **env)
 
     /* Unregister our signal handler before destroying my_perl */
     for (i = 0; PL_sig_name[i]; i++) {
-        if (rsignal_state(PL_sig_num[i]) == (Sighandler_t) PL_csighandlerp) {
-            rsignal(PL_sig_num[i], (Sighandler_t) SIG_DFL);
-        }
+	if (rsignal_state(PL_sig_num[i]) == (Sighandler_t) PL_csighandlerp) {
+	    rsignal(PL_sig_num[i], (Sighandler_t) SIG_DFL);
+	}
     }
 
     exitstatus = perl_destruct(my_perl);
@@ -196,10 +196,10 @@ sub writemain{
     print $head;
 
     foreach $_ (@exts){
-        my($pname) = canon('/', $_);
-        my($mname, $cname);
-        ($mname = $pname) =~ s!/!::!g;
-        ($cname = $pname) =~ s!/!__!g;
+	my($pname) = canon('/', $_);
+	my($mname, $cname);
+	($mname = $pname) =~ s!/!::!g;
+	($cname = $pname) =~ s!/!__!g;
         print "EXTERN_C void boot_${cname} (pTHX_ CV* cv);\n";
     }
 
@@ -211,36 +211,36 @@ sub writemain{
     print $tail2;
 
     foreach $_ (@exts){
-        my($pname) = canon('/', $_);
-        my($mname, $cname, $ccode);
-        ($mname = $pname) =~ s!/!::!g;
-        ($cname = $pname) =~ s!/!__!g;
-        print "\t{\n";
-        if ($pname eq $dl){
-            # Must NOT install 'DynaLoader::boot_DynaLoader' as 'bootstrap'!
-            # boot_DynaLoader is called directly in DynaLoader.pm
-            $ccode = "\t/* DynaLoader is a special case */\n
+	my($pname) = canon('/', $_);
+	my($mname, $cname, $ccode);
+	($mname = $pname) =~ s!/!::!g;
+	($cname = $pname) =~ s!/!__!g;
+	print "\t{\n";
+	if ($pname eq $dl){
+	    # Must NOT install 'DynaLoader::boot_DynaLoader' as 'bootstrap'!
+	    # boot_DynaLoader is called directly in DynaLoader.pm
+	    $ccode = "\t/* DynaLoader is a special case */\n
 \tnewXS(\"${mname}::boot_${cname}\", boot_${cname}, file);\n";
-            print $ccode unless $SEEN{$ccode}++;
-        } else {
-            $ccode = "\tnewXS(\"${mname}::bootstrap\", boot_${cname}, file);\n";
-            print $ccode unless $SEEN{$ccode}++;
-        }
-        print "\t}\n";
+	    print $ccode unless $SEEN{$ccode}++;
+	} else {
+	    $ccode = "\tnewXS(\"${mname}::bootstrap\", boot_${cname}, file);\n";
+	    print $ccode unless $SEEN{$ccode}++;
+	}
+	print "\t}\n";
     }
     print $tail3;
 }
 
 sub canon{
     my($as, @ext) = @_;
-        foreach(@ext){
-            # might be X::Y or lib/auto/X/Y/Y.a
-                next if s!::!/!g;
-            s:^(lib|ext)/(auto/)?::;
-            s:/\w+\.\w+$::;
-        }
-        grep(s:/:$as:, @ext) if ($as ne '/');
-        @ext;
+	foreach(@ext){
+	    # might be X::Y or lib/auto/X/Y/Y.a
+		next if s!::!/!g;
+	    s:^(lib|ext)/(auto/)?::;
+	    s:/\w+\.\w+$::;
+	}
+	grep(s:/:$as:, @ext) if ($as ne '/');
+	@ext;
 }
 
 1;

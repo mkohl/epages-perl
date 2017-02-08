@@ -55,7 +55,7 @@ sub _V {
 ## Source directory  : .
 ## Configuration time: Thu Nov 19 10:01:15 CET 2015
 ## Configured by     : root
-## Target system     : linux lin-build-32 2.6.32-431.el6.i686 #1 smp fri nov 22 00:26:36 utc 2013 i686 i686 i386 gnulinux
+## Target system     : linux lin-build-32 2.6.32-431.el6.i686 #1 smp fri nov 22 00:26:36 utc 2013 i686 i686 i386 gnulinux 
 #
 #: Configure command line arguments.
 #
@@ -99,19 +99,19 @@ my $summary_expanded;
 sub myconfig {
     return $summary_expanded if $summary_expanded;
     ($summary_expanded = $summary) =~ s{\$(\w+)}
-                 {
-                        my $c;
-                        if ($1 eq 'git_ancestor_line') {
-                                if ($Config::Config{git_ancestor}) {
-                                        $c= "\n  Ancestor: $Config::Config{git_ancestor}";
-                                } else {
-                                        $c= "";
-                                }
-                        } else {
-                                $c = $Config::Config{$1};
-                        }
-                        defined($c) ? $c : 'undef'
-                }ge;
+		 { 
+			my $c;
+			if ($1 eq 'git_ancestor_line') {
+				if ($Config::Config{git_ancestor}) {
+					$c= "\n  Ancestor: $Config::Config{git_ancestor}";
+				} else {
+					$c= "";
+				}
+			} else {
+                     		$c = $Config::Config{$1}; 
+			}
+			defined($c) ? $c : 'undef' 
+		}ge;
     $summary_expanded;
 }
 
@@ -1249,10 +1249,10 @@ libs_nolargefiles='-lz -lnsl -lgdbm -ldl -lm -lpthread -lc -lcrypt -lutil'
 libswanted_nolargefiles='sfio socket inet nsl nm ndbm gdbm dbm db malloc dl dld ld sun m crypt sec util pthread c cposix posix ucb BSD gdbm_compat'
 EOVIRTUAL
 eval {
-        # do not have hairy conniptions if this isnt available
-        require 'Config_git.pl';
-        $Config_SH_expanded .= $Config::Git_Data;
-        1;
+	# do not have hairy conniptions if this isnt available
+	require 'Config_git.pl';
+	$Config_SH_expanded .= $Config::Git_Data;
+	1;
 } or warn "Warning: failed to load Config_git.pl, something strange about this perl...\n";
 
 # Search for it in the big string
@@ -1269,7 +1269,7 @@ sub fetch_string {
 
     my $value = substr($Config_SH_expanded, $start,
                        index($Config_SH_expanded, "'\n", $start)
-                       - $start);
+		       - $start);
     # So we can say "if $Config{'foo'}".
     $value = undef if $value eq 'undef';
     $self->{$key} = $value; # cache it
@@ -1314,23 +1314,23 @@ sub config_re {
 sub config_vars {
     # implements -V:cfgvar option (see perlrun -V:)
     foreach (@_) {
-        # find optional leading, trailing colons; and query-spec
-        my ($notag,$qry,$lncont) = m/^(:)?(.*?)(:)?$/;  # flags fore and aft,
-        # map colon-flags to print decorations
-        my $prfx = $notag ? '': "$qry=";                # tag-prefix for print
-        my $lnend = $lncont ? ' ' : ";\n";              # line ending for print
+	# find optional leading, trailing colons; and query-spec
+	my ($notag,$qry,$lncont) = m/^(:)?(.*?)(:)?$/;	# flags fore and aft, 
+	# map colon-flags to print decorations
+	my $prfx = $notag ? '': "$qry=";		# tag-prefix for print
+	my $lnend = $lncont ? ' ' : ";\n";		# line ending for print
 
-        # all config-vars are by definition \w only, any \W means regex
-        if ($qry =~ /\W/) {
-            my @matches = config_re($qry);
-            print map "$_$lnend", @matches ? @matches : "$qry: not found"               if !$notag;
-            print map { s/\w+=//; "$_$lnend" } @matches ? @matches : "$qry: not found"  if  $notag;
-        } else {
-            my $v = (exists $Config::Config{$qry}) ? $Config::Config{$qry}
-                                                   : 'UNKNOWN';
-            $v = 'undef' unless defined $v;
-            print "${prfx}'${v}'$lnend";
-        }
+	# all config-vars are by definition \w only, any \W means regex
+	if ($qry =~ /\W/) {
+	    my @matches = config_re($qry);
+	    print map "$_$lnend", @matches ? @matches : "$qry: not found"		if !$notag;
+	    print map { s/\w+=//; "$_$lnend" } @matches ? @matches : "$qry: not found"	if  $notag;
+	} else {
+	    my $v = (exists $Config::Config{$qry}) ? $Config::Config{$qry}
+						   : 'UNKNOWN';
+	    $v = 'undef' unless defined $v;
+	    print "${prfx}'${v}'$lnend";
+	}
     }
 }
 

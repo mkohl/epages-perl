@@ -45,39 +45,39 @@ our $VERSION = '0.020';
 {
 
     my %perl_version_introduced = (
-        g => '5.009005',        # \g1 \g-1 \g{1} \g{-1}
-        k => '5.009005',        # \k<name> \k'name'
-        '?' => '5.009005',      # (?P=name)     (PCRE/Python)
+	g => '5.009005',	# \g1 \g-1 \g{1} \g{-1}
+	k => '5.009005',	# \k<name> \k'name'
+	'?' => '5.009005',	# (?P=name)	(PCRE/Python)
     );
 
     sub perl_version_introduced {
-        my ( $self ) = @_;
-        return $perl_version_introduced{substr( $self->content(), 1, 1 )} ||
-            MINIMUM_PERL;
+	my ( $self ) = @_;
+	return $perl_version_introduced{substr( $self->content(), 1, 1 )} ||
+	    MINIMUM_PERL;
     }
 
 }
 
-my @external = (        # Recognition used externally
+my @external = (	# Recognition used externally
     [ qr{ \A \( \? P = ( @{[ RE_CAPTURE_NAME ]} ) \) }smxo,
-        { is_named => 1 },
-        ],
+	{ is_named => 1 },
+	],
 );
 
-my @recognize = (       # recognition used internally
+my @recognize = (	# recognition used internally
     [
-        qr{ \A \\ (?:           # numbered (including relative)
-            ( \d+ )     |
-            g (?: ( -? \d+ ) | \{ ( -? \d+ ) \} )
-        )
-        }smx, { is_named => 0 }, ],
+	qr{ \A \\ (?:		# numbered (including relative)
+	    ( \d+ )	|
+	    g (?: ( -? \d+ ) | \{ ( -? \d+ ) \} )
+	)
+	}smx, { is_named => 0 }, ],
     [
-        qr{ \A \\ (?:           # named
-            g \{ ( @{[ RE_CAPTURE_NAME ]} ) \} |
-            k (?: \< ( @{[ RE_CAPTURE_NAME ]} ) \> |    # named with angles
-                ' ( @{[ RE_CAPTURE_NAME ]} ) ' )        #   or quotes
-        )
-        }smxo, { is_named => 1 }, ],
+	qr{ \A \\ (?:		# named
+	    g \{ ( @{[ RE_CAPTURE_NAME ]} ) \} |
+	    k (?: \< ( @{[ RE_CAPTURE_NAME ]} ) \> |	# named with angles
+		' ( @{[ RE_CAPTURE_NAME ]} ) ' )	#   or quotes
+	)
+	}smxo, { is_named => 1 }, ],
 );
 
 # This must be implemented by tokens which do not recognize themselves.
@@ -88,8 +88,8 @@ my @recognize = (       # recognition used internally
 # the string.
 sub __PPIX_TOKEN__recognize {
     return __PACKAGE__->isa( scalar caller ) ?
-        ( @external, @recognize ) :
-        ( @external );
+	( @external, @recognize ) :
+	( @external );
 }
 
 sub __PPIX_TOKENIZER__regexp {
@@ -100,12 +100,12 @@ sub __PPIX_TOKENIZER__regexp {
 
     # All the other styles are escaped.
     $character eq '\\'
-        or return;
+	or return;
 
     foreach ( @recognize ) {
-        my ( $re, $arg ) = @{ $_ };
-        my $accept = $tokenizer->find_regexp( $re ) or next;
-        return $tokenizer->make_token( $accept, __PACKAGE__, $arg );
+	my ( $re, $arg ) = @{ $_ };
+	my $accept = $tokenizer->find_regexp( $re ) or next;
+	return $tokenizer->make_token( $accept, __PACKAGE__, $arg );
     }
 
     return;

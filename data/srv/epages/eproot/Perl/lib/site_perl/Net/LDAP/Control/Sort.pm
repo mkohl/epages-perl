@@ -55,14 +55,14 @@ sub value {
   unless (defined $self->{value}) {
     $self->{value} = $SortRequest->encode(
       order => [
-        map {
-          /^(-)?([^:]+)(?::(.+))?/;
-          {
-            type => $2,
-            (defined $1 ? (reverseOrder => 1)  : ()),
-            (defined $3 ? (orderingRule => $3) : ())
-          }
-        } @{$self->{order} || []}
+	map {
+	  /^(-)?([^:]+)(?::(.+))?/;
+	  {
+	    type => $2,
+	    (defined $1 ? (reverseOrder => 1)  : ()), 
+	    (defined $3 ? (orderingRule => $3) : ())
+	  }
+	} @{$self->{order} || []}
       ]
     ) or $self->{error} = $@;
   }

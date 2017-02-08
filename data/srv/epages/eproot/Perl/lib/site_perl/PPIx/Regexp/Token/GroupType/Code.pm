@@ -50,14 +50,14 @@ our $VERSION = '0.020';
 
 {
     my %perl_version_introduced = (
-        '?'     => '5.005',
-        '?p'    => '5.005',     # Presumed. I can find no documentation.
-        '??'    => '5.006',
+	'?'	=> '5.005',
+	'?p'	=> '5.005',	# Presumed. I can find no documentation.
+	'??'	=> '5.006',
     );
 
     sub perl_version_introduced {
-        my ( $self ) = @_;
-        return $perl_version_introduced{ $self->content() } || '5.005';
+	my ( $self ) = @_;
+	return $perl_version_introduced{ $self->content() } || '5.005';
     }
 
 }
@@ -65,12 +65,12 @@ our $VERSION = '0.020';
 {
 
     my %perl_version_removed = (
-        '?p'    => '5.009005',
+	'?p'	=> '5.009005',
     );
 
     sub perl_version_removed {
-        my ( $self ) = @_;
-        return $perl_version_removed{ $self->content() };
+	my ( $self ) = @_;
+	return $perl_version_removed{ $self->content() };
     }
 }
 
@@ -82,14 +82,14 @@ sub __PPIX_TOKENIZER__regexp {
     # non-open-bracket characters may appear as delimiters to the
     # expression.
     if ( my $accept = $tokenizer->find_regexp(
-            qr{ \A \\? \? \\? [?p]? \{ }smx ) ) {
+	    qr{ \A \\? \? \\? [?p]? \{ }smx ) ) {
 
-        --$accept;      # Don't want the curly bracket.
+	--$accept;	# Don't want the curly bracket.
 
-        # Code token comes after.
-        $tokenizer->expect( 'PPIx::Regexp::Token::Code' );
+	# Code token comes after.
+	$tokenizer->expect( 'PPIx::Regexp::Token::Code' );
 
-        return $accept;
+	return $accept;
     }
 
     return;

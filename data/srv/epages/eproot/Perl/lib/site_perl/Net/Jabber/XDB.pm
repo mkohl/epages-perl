@@ -40,7 +40,7 @@ Net::Jabber::XDB - Jabber XDB Library
   for each Net::Jabber::Data::* module.  To see the list of avilable
   namspaces and modules see Net::Jabber::Data.
 
-  To initialize the XDB with a Jabber <xdb/> you must pass it the
+  To initialize the XDB with a Jabber <xdb/> you must pass it the 
   XML::Parser Tree array.  For example:
 
     my $xdb = new Net::Jabber::XDB(@tree);
@@ -143,12 +143,12 @@ Net::Jabber::XDB - Jabber XDB Library
         error=>string)        specific Set functions below.
 
                               $XDB->SetXDB(type=>"get",
-                                           to=>"bob\@jabber.org",
-                                           data=>"info");
+ 		   			   to=>"bob\@jabber.org",
+	  				   data=>"info");
 
                               $XDB->SetXDB(to=>"bob\@jabber.org",
-                                           errorcode=>403,
-                                           error=>"Permission Denied");
+			 		   errorcode=>403,
+					   error=>"Permission Denied");
 
   SetTo(string) - sets the to attribute.  You can either pass a string
   SetTo(JID)      or a JID object.  They must be a valid Jabber

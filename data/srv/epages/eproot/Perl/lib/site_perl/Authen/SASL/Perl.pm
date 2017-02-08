@@ -11,9 +11,9 @@ use Carp;
 $VERSION = "2.14";
 
 my %secflags = (
-        noplaintext  => 1,
-        noanonymous  => 1,
-        nodictionary => 1,
+	noplaintext  => 1,
+	noanonymous  => 1,
+	nodictionary => 1,
 );
 my %have;
 

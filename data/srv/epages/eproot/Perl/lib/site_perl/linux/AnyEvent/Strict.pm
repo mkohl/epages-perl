@@ -95,7 +95,7 @@ sub io {
    ref $arg{cb}
       or croak "AnyEvent->io called with illegal cb argument '$arg{cb}'";
    $cb = wrap delete $arg{cb};
-
+ 
    $arg{poll} =~ /^[rw]$/
       or croak "AnyEvent->io called with illegal poll argument '$arg{poll}'";
 
@@ -113,7 +113,7 @@ sub io {
       and croak "AnyEvent->io called with fh argument pointing to a file";
 
    delete $arg{poll};
-
+ 
    croak "AnyEvent->io called with unsupported parameter(s) " . join ", ", keys %arg
       if keys %arg;
 
@@ -136,15 +136,15 @@ sub timer {
    ref $arg{cb}
       or croak "AnyEvent->timer called with illegal cb argument '$arg{cb}'";
    my $cb = wrap delete $arg{cb};
-
+ 
    exists $arg{after}
       or croak "AnyEvent->timer called without mandatory 'after' parameter";
    delete $arg{after};
-
+ 
    !$arg{interval} or $arg{interval} > 0
       or croak "AnyEvent->timer called with illegal interval argument '$arg{interval}'";
    delete $arg{interval};
-
+ 
    croak "AnyEvent->timer called with unsupported parameter(s) " . join ", ", keys %arg
       if keys %arg;
 
@@ -158,11 +158,11 @@ sub signal {
    ref $arg{cb}
       or croak "AnyEvent->signal called with illegal cb argument '$arg{cb}'";
    my $cb = wrap delete $arg{cb};
-
+ 
    defined AnyEvent::Base::sig2num $arg{signal} and $arg{signal} == 0
       or croak "AnyEvent->signal called with illegal signal name '$arg{signal}'";
    delete $arg{signal};
-
+ 
    croak "AnyEvent->signal called with unsupported parameter(s) " . join ", ", keys %arg
       if keys %arg;
 
@@ -176,11 +176,11 @@ sub child {
    ref $arg{cb}
       or croak "AnyEvent->child called with illegal cb argument '$arg{cb}'";
    my $cb = wrap delete $arg{cb};
-
+ 
    $arg{pid} =~ /^-?\d+$/
       or croak "AnyEvent->child called with malformed pid value '$arg{pid}'";
    delete $arg{pid};
-
+ 
    croak "AnyEvent->child called with unsupported parameter(s) " . join ", ", keys %arg
       if keys %arg;
 
@@ -194,7 +194,7 @@ sub idle {
    ref $arg{cb}
       or croak "AnyEvent->idle called with illegal cb argument '$arg{cb}'";
    my $cb = wrap delete $arg{cb};
-
+ 
    croak "AnyEvent->idle called with unsupported parameter(s) " . join ", ", keys %arg
       if keys %arg;
 
@@ -208,7 +208,7 @@ sub condvar {
    !exists $arg{cb} or ref $arg{cb}
       or croak "AnyEvent->condvar called with illegal cb argument '$arg{cb}'";
    my @cb = exists $arg{cb} ? (cb => wrap delete $arg{cb}) : ();
-
+ 
    croak "AnyEvent->condvar called with unsupported parameter(s) " . join ", ", keys %arg
       if keys %arg;
 

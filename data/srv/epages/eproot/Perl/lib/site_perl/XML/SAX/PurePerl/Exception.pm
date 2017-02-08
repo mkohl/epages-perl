@@ -19,7 +19,7 @@ sub new {
     my $class = shift;
     my %opts = @_;
     die "Invalid options" unless exists $opts{Message};
-
+    
     if ($opts{reader}) {
         return bless { Message => $opts{Message},
                         Exception => undef, # not sure what this is for!!!
@@ -38,7 +38,7 @@ sub new {
 sub stringify {
     my $self = shift;
     local $^W;
-    return $self->{Message} . " [Ln: " . $self->{LineNumber} .
+    return $self->{Message} . " [Ln: " . $self->{LineNumber} . 
                 ", Col: " . $self->{ColumnNumber} . "]" .
                 ($StackTrace ? stackstring($self->{StackTrace}) : "") . "\n";
 }

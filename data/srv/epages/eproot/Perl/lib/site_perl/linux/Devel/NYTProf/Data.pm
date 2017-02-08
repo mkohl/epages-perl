@@ -506,8 +506,8 @@ sub _dump_elements {
         else {
 
             # special case some common cases to be more compact:
-            #           fid_*_time   [fid][line] = [N,N]
-            #           sub_subinfo {subname} = [fid,startline,endline,calls,incl_time]
+            #		fid_*_time   [fid][line] = [N,N]
+            #		sub_subinfo {subname} = [fid,startline,endline,calls,incl_time]
             my $as_compact = $format->{$key1}{compact};
             if (not defined $as_compact) {    # so guess...
                 $as_compact =

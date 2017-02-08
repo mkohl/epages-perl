@@ -387,17 +387,17 @@ sub decode {
     ### Warn if necessary:
     my $force = shift || 0;
     unless (($force eq "I_NEED_TO_FIX_THIS") ||
-            ($force eq "I_KNOW_WHAT_I_AM_DOING")) {
-        usage "decode is deprecated for safety";
+	    ($force eq "I_KNOW_WHAT_I_AM_DOING")) {
+	usage "decode is deprecated for safety";
     }
 
     my ($tag, $i, @decoded);
     foreach $tag ($self->tags) {
-        @decoded = map { scalar(decode_mimewords($_, Field=>$tag))
-                         } $self->get_all($tag);
-        for ($i = 0; $i < @decoded; $i++) {
-            $self->replace($tag, $decoded[$i], $i);
-        }
+	@decoded = map { scalar(decode_mimewords($_, Field=>$tag))
+			 } $self->get_all($tag);
+	for ($i = 0; $i < @decoded; $i++) {
+	    $self->replace($tag, $decoded[$i], $i);
+	}
     }
     $self->{MH_Decoded} = 1;
     $self;
@@ -667,12 +667,12 @@ sub mime_attr {
     ### Set or get?
     my $field = MIME::Field::ParamVal->parse($self->get($tag, 0));
     if (@_ > 2) {   ### set it:
-        $field->param($subtag, $value);             ### set subfield
-        $self->replace($tag, $field->stringify);    ### replace!
-        return $value;
+	$field->param($subtag, $value);             ### set subfield
+	$self->replace($tag, $field->stringify);    ### replace!
+	return $value;
     }
     else {          ### get it:
-        return $field->param($subtag);
+	return $field->param($subtag);
     }
 }
 
@@ -777,21 +777,21 @@ Returns undef if no filename could be suggested.
 
 sub recommended_filename
 {
-        my $self = shift;
+	my $self = shift;
 
-        # Try these headers in order, taking the first defined,
-        # non-blank one we find.
-        my $wd = supported MIME::WordDecoder 'UTF-8';
-        foreach my $attr_name ( qw( content-disposition.filename content-type.name ) ) {
-                my $value = $self->mime_attr( $attr_name );
-                if ( defined $value
-                    && $value ne ''
-                    && $value =~ /\S/ ) {
-                        return $wd->decode($value);
-                }
-        }
+	# Try these headers in order, taking the first defined,
+	# non-blank one we find.
+	my $wd = supported MIME::WordDecoder 'UTF-8';
+	foreach my $attr_name ( qw( content-disposition.filename content-type.name ) ) {
+		my $value = $self->mime_attr( $attr_name );
+		if ( defined $value
+		    && $value ne ''
+		    && $value =~ /\S/ ) {
+			return $wd->decode($value);
+		}
+	}
 
-        return undef;
+	return undef;
 }
 
 #------------------------------
@@ -850,7 +850,7 @@ In my mind's eye, I see an abstract class, call it MIME::Attrs, which does
 what Achim suggests... so you could say:
 
      my $attrs = new MIME::Attrs type => "text/plain",
-                                 charset => ...,
+				 charset => ...,
                                  disposition => ..., ... ;
 
 We could even make it a superclass of MIME::Head: that way, MIME::Head
@@ -876,13 +876,13 @@ occurences; e.g.:
 
     Received: from gsfc.nasa.gov by eryq.pr.mcs.net  with smtp
         (Linux Smail3.1.28.1 #5) id m0tStZ7-0007X4C;
-         Thu, 21 Dec 95 16:34 CST
+	 Thu, 21 Dec 95 16:34 CST
     Received: from rhine.gsfc.nasa.gov by gsfc.nasa.gov
-         (5.65/Ultrix3.0-C) id AA13596;
-         Thu, 21 Dec 95 17:20:38 -0500
+	 (5.65/Ultrix3.0-C) id AA13596;
+	 Thu, 21 Dec 95 17:20:38 -0500
     Received: (from eryq@localhost) by rhine.gsfc.nasa.gov
-         (8.6.12/8.6.12) id RAA28069;
-         Thu, 21 Dec 1995 17:27:54 -0500
+	 (8.6.12/8.6.12) id RAA28069;
+	 Thu, 21 Dec 1995 17:27:54 -0500
     Date: Thu, 21 Dec 1995 17:27:54 -0500
     From: Eryq <eryq@rhine.gsfc.nasa.gov>
     Message-Id: <199512212227.RAA28069@rhine.gsfc.nasa.gov>

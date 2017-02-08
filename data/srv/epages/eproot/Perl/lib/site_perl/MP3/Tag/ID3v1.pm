@@ -13,7 +13,7 @@ $VERSION="1.00";
 @ISA = 'MP3::Tag::__hasparent';
 
 # allowed fields in ID3v1.1 and max length of this fields (except for track and genre which are coded later)
-%ok_length = (title => 30, artist => 30, album => 30, comment => 28, track => 3, genre => 3000, year=>4, genreID=>1);
+%ok_length = (title => 30, artist => 30, album => 30, comment => 28, track => 3, genre => 3000, year=>4, genreID=>1); 
 
 =pod
 
@@ -36,7 +36,7 @@ MP3::Tag::ID3v1 is designed to be called from the MP3::Tag module.
   $id3v1 = $mp3->new_tag("ID3v1");
 
 See L<MP3::Tag|according documentation> for information on the above used functions.
-
+  
 * Reading the tag
 
     print "  Title: " .$id3v1->title . "\n";
@@ -50,7 +50,7 @@ See L<MP3::Tag|according documentation> for information on the above used functi
     # or at once
     @tagdata = $mp3->all();
     foreach $tag (@tagdata) {
-        print $tag;
+	print $tag;
     }
 
 * Changing / Writing the tag
@@ -118,12 +118,12 @@ sub AUTOLOAD {
     $new =~ s/ *$//;
     if ($attr eq "genre") {
       if ($new =~ /^\d+$/) {
-        $self->{genreID} = $new;
+	$self->{genreID} = $new;
       } else {
-        $self->{genreID} = genre2id($new);
+	$self->{genreID} = genre2id($new);
       }
       $new = id2genre($self->{genreID})
-        if defined $self->{genreID} and $self->{genreID} < @winamp_genres;
+	if defined $self->{genreID} and $self->{genreID} < @winamp_genres;
     }
     $new = substr  $new, 0, $ok_length{$attr};
     $self->{$attr}=$new;
@@ -140,7 +140,7 @@ sub AUTOLOAD {
   @tagdata = $id3v1->all;
   @tagdata = $id3v1->all($title, $artist, $album, $year, $comment, $track, $genre);
 
-Returns all information of the tag in a list.
+Returns all information of the tag in a list. 
 You can use this sub also to set the data of the complete tag.
 
 The order of the data is always title, artist, album, year, comment, track, and  genre.
@@ -153,18 +153,18 @@ sub all {
   if ($#_ == 6) {
       my $new;
       for (qw/title artist album year comment track genre/) {
-          $new = shift;
-          $new =~ s/ +$//;
-          $new = substr  $new, 0, $ok_length{$_};
-          $self->{$_}=$new;
+	  $new = shift;
+	  $new =~ s/ +$//;
+	  $new = substr  $new, 0, $ok_length{$_};
+	  $self->{$_}=$new;
       }
       if ($self->{genre} =~ /^\d+$/) {
-          $self->{genreID} = $self->{genre};
+	  $self->{genreID} = $self->{genre};
       } else {
-          $self->{genreID} = genre2id($self->{genre});
+	  $self->{genreID} = genre2id($self->{genre});
       }
       $self->{genre} = id2genre($self->{genreID})
-        if defined $self->{genreID} and $self->{genreID} < @winamp_genres;
+	if defined $self->{genreID} and $self->{genreID} < @winamp_genres;
       $self->{changed} = 1;
   }
   for (qw/title artist album year comment track genre/) {
@@ -172,7 +172,7 @@ sub all {
   }
   if (wantarray) {
       return ($self->{title},$self->{artist},$self->{album},
-              $self->{year},$self->{comment}, $self->{track}, $self->{genre});
+	      $self->{year},$self->{comment}, $self->{track}, $self->{genre});
   }
   return $self->{title};
 }
@@ -196,21 +196,21 @@ sub fits_tag {
     }
     my $s = '';
     for $elt (qw(title artist album comment year)) {
-        next unless defined (my $data = $hash->{$elt});
-        $data = $data->[0] if ref $data;
-        return if $data =~ /[^\x00-\xFF]/;
-        $s .= $data;
-        next if $ok_length{$elt} >= length $data;
-        next
-          if $elt eq 'comment' and not $hash->{track} and length $data <= 30;
-        return;
+	next unless defined (my $data = $hash->{$elt});
+	$data = $data->[0] if ref $data;
+	return if $data =~ /[^\x00-\xFF]/;
+	$s .= $data;
+	next if $ok_length{$elt} >= length $data;
+	next
+	  if $elt eq 'comment' and not $hash->{track} and length $data <= 30;
+	return;
     }
     if (defined (my $genre = $hash->{genre})) {
-        $genre = $genre->[0] if ref $genre;
+	$genre = $genre->[0] if ref $genre;
         my @g = MP3::Tag::Implemenation::_massage_genres($genre);
-        return if @g > 1;
-        my $id = MP3::Tag::Implemenation::_massage_genres($genre, 'num');
-        return if not defined $id or $id eq '' or $id == 255;
+	return if @g > 1;
+	my $id = MP3::Tag::Implemenation::_massage_genres($genre, 'num');
+	return if not defined $id or $id eq '' or $id == 255;
     }
     if ($s =~ /[^\x00-\x7E]/) {
       my $w = ($self->get_config('encode_encoding_v1') || [0])->[0];
@@ -219,9 +219,9 @@ sub fits_tag {
       # Safe: per-standard and read+write is idempotent:
       return 1 if $r eq $w and $w eq 'iso-8859-1';
       return !(($self->get_config('encoded_v1_fits')||[0])->[0])
-        if $w eq 'iso-8859-1';  # read+write not idempotent
+	if $w eq 'iso-8859-1';	# read+write not idempotent
       return if $w ne $r
-          and not (($self->get_config('encoded_v1_fits')||[0])->[0]);
+	  and not (($self->get_config('encoded_v1_fits')||[0])->[0]);
     }
     return 1;
 }
@@ -247,7 +247,7 @@ sub as_bin {
     my($t) = ( $self->{track} =~ m[^(\d+)(?:/|$)], 0 );
     my (%f, $f, $e);
     for $f (qw(title artist album comment) ) {
-        $f{$f} = $self->{$f};
+	$f{$f} = $self->{$f};
     }
 
     if ($e = $self->get_config('encode_encoding_v1') and $e->[0]) {
@@ -263,7 +263,7 @@ sub as_bin {
     $self->{genreID}=255 unless $self->{genreID} =~ /^\d+$/;
 
     return pack("a3a30a30a30a4a30C","TAG",$f{title}, $f{artist},
-                $f{album}, $self->{year}, $f{comment}, $self->{genreID});
+		$f{album}, $self->{year}, $f{comment}, $self->{genreID});
 }
 
 sub write_tag {
@@ -274,18 +274,18 @@ sub write_tag {
     my $mp3tag;
     $mp3obj->close;
     if ($mp3obj->open("write")) {
-        $mp3obj->seek(-128,2);
-        $mp3obj->read(\$mp3tag, 3);
-        if ($mp3tag eq "TAG") {
-            $mp3obj->seek(-125,2); # neccessary for windows
-            $mp3obj->write(substr $data, 3);
-        } else {
-            $mp3obj->seek(0,2);
-            $mp3obj->write($data);
-        }
+	$mp3obj->seek(-128,2);
+	$mp3obj->read(\$mp3tag, 3);
+	if ($mp3tag eq "TAG") {
+	    $mp3obj->seek(-125,2); # neccessary for windows
+	    $mp3obj->write(substr $data, 3);
+	} else {
+	    $mp3obj->seek(0,2);
+	    $mp3obj->write($data);
+	}
     } else {
-        warn "Couldn't open file `" . $mp3obj->filename() . "' to write tag";
-        return 0;
+	warn "Couldn't open file `" . $mp3obj->filename() . "' to write tag";
+	return 0;
     }
     return 1;
 }
@@ -338,7 +338,7 @@ sub remove_tag {
 
   @allgenres = $id3v1->genres;
   $genreName = $id3v1->genres($genreID);
-  $genreID   = $id3v1->genres($genreName);
+  $genreID   = $id3v1->genres($genreName);  
 
 Returns a list of all genres, or the according name or id to
 a given id or name.
@@ -349,25 +349,25 @@ sub genres {
     # return an array with all genres, of if a parameter is given, the according genre
     my ($self, $genre) = @_;
     if ( (defined $self) and (not defined $genre) and ($self !~ /MP3::Tag/)) {
-        ## genres may be called directly via MP3::Tag::ID3v1::genres()
-        ## and $self is then not used for an id3v1 object
-        $genre = $self;
+	## genres may be called directly via MP3::Tag::ID3v1::genres()
+	## and $self is then not used for an id3v1 object
+	$genre = $self;
     }
 
     return \@winamp_genres unless defined $genre;
 
     if ($genre =~ /^\d+$/) {
-        return $winamp_genres[$genre] if $genre<scalar @winamp_genres;
-        return undef;
+	return $winamp_genres[$genre] if $genre<scalar @winamp_genres;
+	return undef;
     }
 
     my ($id, $found)=0;
     foreach (@winamp_genres) {
-        if (uc $_ eq uc $genre) {
-            $found = 1;
-            last;
-        }
-        $id++;
+	if (uc $_ eq uc $genre) {
+	    $found = 1;
+	    last;
+	}
+	$id++;
     }
     $id=255 unless $found;
     return $id;
@@ -384,13 +384,13 @@ returned, if now ID3v1 tag is found in the $mp3obj.
 Please use
 
    $mp3 = MP3::Tag->new($filename);
-   $id3v1 = $mp3->new_tag("ID3v1");     # Empty new tag
+   $id3v1 = $mp3->new_tag("ID3v1");	# Empty new tag
 
 or
 
    $mp3 = MP3::Tag->new($filename);
    $mp3->get_tags();
-   $id3v1 = $mp3->{ID3v1};              # Existing tag (if present)
+   $id3v1 = $mp3->{ID3v1};		# Existing tag (if present)
 
 instead of using this function directly
 
@@ -405,16 +405,16 @@ sub new {
     my $buffer;
 
     if ($create) {
-        $self->{new} = 1;
+	$self->{new} = 1;
     } else {
-        $fileobj->open or return unless $fileobj->is_open;
-        $fileobj->seek(-128,2);
-        $fileobj->read(\$buffer, 128);
-        return undef unless substr ($buffer,0,3) eq "TAG";
+	$fileobj->open or return unless $fileobj->is_open;
+	$fileobj->seek(-128,2);
+	$fileobj->read(\$buffer, 128);
+	return undef unless substr ($buffer,0,3) eq "TAG";
     }
 
     bless $self, $class;
-    $self->read_tag($buffer);   # $buffer unused if ->{new}
+    $self->read_tag($buffer);	# $buffer unused if ->{new}
     return $self;
 }
 
@@ -435,33 +435,33 @@ sub read_tag {
     my ($id3v1, $e);
 
     if ($self->{new}) {
-        ($self->{title}, $self->{artist}, $self->{album}, $self->{year},
-         $self->{comment}, $self->{track}, $self->{genre}, $self->{genreID}) = ("","","","","",'',"",255);
-        $self->{changed} = 1;
+	($self->{title}, $self->{artist}, $self->{album}, $self->{year}, 
+	 $self->{comment}, $self->{track}, $self->{genre}, $self->{genreID}) = ("","","","","",'',"",255);
+	$self->{changed} = 1;
     } else {
-        (undef, $self->{title}, $self->{artist}, $self->{album}, $self->{year},
-         $self->{comment}, $id3v1, $self->{track}, $self->{genreID}) =
-           unpack (($] < 5.6
-                    ? "a3 A30 A30 A30 A4 A28 C C C"     # Trailing spaces stripped too
-                    : "a3 Z30 Z30 Z30 Z4 Z28 C C C"),
-                   $buffer);
+	(undef, $self->{title}, $self->{artist}, $self->{album}, $self->{year}, 
+	 $self->{comment}, $id3v1, $self->{track}, $self->{genreID}) = 
+	   unpack (($] < 5.6
+		    ? "a3 A30 A30 A30 A4 A28 C C C"	# Trailing spaces stripped too
+		    : "a3 Z30 Z30 Z30 Z4 Z28 C C C"),
+		   $buffer);
+	
+	if ($id3v1!=0) { # ID3v1 tag found: track is not valid, comment two chars longer
+	    $self->{comment} .= chr($id3v1);
+	    $self->{comment} .= chr($self->{track})
+		if $self->{track} and $self->{track}!=32;
+	    $self->{track} = '';
+	};
+	$self->{track} = '' unless $self->{track};
+	$self->{genre} = id2genre($self->{genreID});
+	if ($e = $self->get_config('decode_encoding_v1') and $e->[0]) {
+	    my $field;
+	    require Encode;
 
-        if ($id3v1!=0) { # ID3v1 tag found: track is not valid, comment two chars longer
-            $self->{comment} .= chr($id3v1);
-            $self->{comment} .= chr($self->{track})
-                if $self->{track} and $self->{track}!=32;
-            $self->{track} = '';
-        };
-        $self->{track} = '' unless $self->{track};
-        $self->{genre} = id2genre($self->{genreID});
-        if ($e = $self->get_config('decode_encoding_v1') and $e->[0]) {
-            my $field;
-            require Encode;
-
-            for $field (qw(title artist album comment)) {
-              $self->{$field} = Encode::decode($e->[0], $self->{$field});
-            }
-        }
+	    for $field (qw(title artist album comment)) {
+	      $self->{$field} = Encode::decode($e->[0], $self->{$field});
+	    }
+	}
     }
 }
 
@@ -488,41 +488,41 @@ sub DESTROY {
 ######## define all the genres
 
 BEGIN { @mp3_genres = ( 'Blues', 'Classic Rock', 'Country', 'Dance',
-                        'Disco', 'Funk', 'Grunge', 'Hip-Hop', 'Jazz', 'Metal', 'New Age',
-                        'Oldies', 'Other', 'Pop', 'R&B', 'Rap', 'Reggae', 'Rock', 'Techno',
-                        'Industrial', 'Alternative', 'Ska', 'Death Metal', 'Pranks',
-                        'Soundtrack', 'Euro-Techno', 'Ambient', 'Trip-Hop', 'Vocal',
-                        'Jazz+Funk', 'Fusion', 'Trance', 'Classical', 'Instrumental', 'Acid',
-                        'House', 'Game', 'Sound Clip', 'Gospel', 'Noise', 'AlternRock',
-                        'Bass', 'Soul', 'Punk', 'Space', 'Meditative', 'Instrumental Pop',
-                        'Instrumental Rock', 'Ethnic', 'Gothic', 'Darkwave',
-                        'Techno-Industrial', 'Electronic', 'Pop-Folk', 'Eurodance', 'Dream',
-                        'Southern Rock', 'Comedy', 'Cult', 'Gangsta', 'Top 40',
-                        'Christian Rap', 'Pop/Funk', 'Jungle', 'Native American', 'Cabaret', 'New Wave',
-                        'Psychadelic', 'Rave', 'Showtunes', 'Trailer', 'Lo-Fi', 'Tribal',
-                        'Acid Punk', 'Acid Jazz', 'Polka', 'Retro', 'Musical', 'Rock & Roll',
-                        'Hard Rock', );
+			'Disco', 'Funk', 'Grunge', 'Hip-Hop', 'Jazz', 'Metal', 'New Age',
+			'Oldies', 'Other', 'Pop', 'R&B', 'Rap', 'Reggae', 'Rock', 'Techno',
+			'Industrial', 'Alternative', 'Ska', 'Death Metal', 'Pranks',
+			'Soundtrack', 'Euro-Techno', 'Ambient', 'Trip-Hop', 'Vocal',
+			'Jazz+Funk', 'Fusion', 'Trance', 'Classical', 'Instrumental', 'Acid',
+			'House', 'Game', 'Sound Clip', 'Gospel', 'Noise', 'AlternRock',
+			'Bass', 'Soul', 'Punk', 'Space', 'Meditative', 'Instrumental Pop',
+			'Instrumental Rock', 'Ethnic', 'Gothic', 'Darkwave',
+			'Techno-Industrial', 'Electronic', 'Pop-Folk', 'Eurodance', 'Dream',
+			'Southern Rock', 'Comedy', 'Cult', 'Gangsta', 'Top 40', 
+			'Christian Rap', 'Pop/Funk', 'Jungle', 'Native American', 'Cabaret', 'New Wave',
+			'Psychadelic', 'Rave', 'Showtunes', 'Trailer', 'Lo-Fi', 'Tribal',
+			'Acid Punk', 'Acid Jazz', 'Polka', 'Retro', 'Musical', 'Rock & Roll',
+			'Hard Rock', );
 
-        @winamp_genres = ( @mp3_genres, 'Folk', 'Folk-Rock',
-                           'National Folk', 'Swing', 'Fast Fusion', 'Bebob', 'Latin', 'Revival',
-                           'Celtic', 'Bluegrass', 'Avantgarde', 'Gothic Rock',
-                           'Progressive Rock', 'Psychedelic Rock', 'Symphonic Rock',
-                           'Slow Rock', 'Big Band', 'Chorus', 'Easy Listening',
-                           'Acoustic', 'Humour', 'Speech', 'Chanson', 'Opera',
-                           'Chamber Music', 'Sonata', 'Symphony', 'Booty Bass', 'Primus',
-                           'Porn Groove', 'Satire', 'Slow Jam', 'Club', 'Tango', 'Samba',
-                           'Folklore', 'Ballad', 'Power Ballad', 'Rhythmic Soul',
-                           'Freestyle', 'Duet', 'Punk Rock', 'Drum Solo', 'Acapella',
-                           'Euro-House', 'Dance Hall',
-                           # More from MP3::Info
-                           'Goa', 'Drum & Bass', 'Club-House', 'Hardcore',
-                           'Terror', 'Indie', 'BritPop', 'Negerpunk',
-                           'Polsk Punk', 'Beat', 'Christian Gangsta Rap',
-                           'Heavy Metal', 'Black Metal', 'Crossover',
-                           'Contemporary Christian Music', 'Christian Rock',
-                           'Merengue', 'Salsa', 'Thrash Metal', 'Anime',
-                           'JPop', 'SynthPop',                  # 149
-                         );
+  	@winamp_genres = ( @mp3_genres, 'Folk', 'Folk-Rock', 
+			   'National Folk', 'Swing', 'Fast Fusion', 'Bebob', 'Latin', 'Revival',
+			   'Celtic', 'Bluegrass', 'Avantgarde', 'Gothic Rock',
+			   'Progressive Rock', 'Psychedelic Rock', 'Symphonic Rock',
+			   'Slow Rock', 'Big Band', 'Chorus', 'Easy Listening',
+			   'Acoustic', 'Humour', 'Speech', 'Chanson', 'Opera', 
+			   'Chamber Music', 'Sonata', 'Symphony', 'Booty Bass', 'Primus', 
+			   'Porn Groove', 'Satire', 'Slow Jam', 'Club', 'Tango', 'Samba',
+			   'Folklore', 'Ballad', 'Power Ballad', 'Rhythmic Soul',
+			   'Freestyle', 'Duet', 'Punk Rock', 'Drum Solo', 'Acapella',
+			   'Euro-House', 'Dance Hall',
+			   # More from MP3::Info
+			   'Goa', 'Drum & Bass', 'Club-House', 'Hardcore',
+			   'Terror', 'Indie', 'BritPop', 'Negerpunk',
+			   'Polsk Punk', 'Beat', 'Christian Gangsta Rap',
+			   'Heavy Metal', 'Black Metal', 'Crossover',
+			   'Contemporary Christian Music', 'Christian Rock',
+			   'Merengue', 'Salsa', 'Thrash Metal', 'Anime',
+			   'JPop', 'SynthPop',			# 149
+			 ); 
 }
 
 =pod

@@ -185,7 +185,7 @@ version 0.47
 =head1 SYNOPSIS
 
     my $object = $cache->get_object($key);
-
+    
     my $key        = $object->key();
     my $value      = $object->value();
     my $expires_at = $object->expires_at();

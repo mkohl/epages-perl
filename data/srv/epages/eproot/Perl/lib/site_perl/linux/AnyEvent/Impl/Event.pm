@@ -6,7 +6,7 @@ AnyEvent::Impl::Event - AnyEvent adaptor for Event
 
    use AnyEvent;
    use Event;
-
+  
    # this module gets loaded automatically as required
 
 =head1 DESCRIPTION

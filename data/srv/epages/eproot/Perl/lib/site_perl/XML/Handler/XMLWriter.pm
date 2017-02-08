@@ -20,10 +20,10 @@ $VERSION = "0.08";
 @ISA = qw{ XML::Handler::Subs };
 
 $escapes = { '&' => '&amp;',
-             '<' => '&lt;',
-             '>' => '&gt;',
-             '"' => '&quot;'
-         };
+	     '<' => '&lt;',
+	     '>' => '&gt;',
+	     '"' => '&quot;'
+	 };
 
 sub start_document {
     my ($self, $document) = @_;
@@ -33,15 +33,15 @@ sub start_document {
     # create a temporary Output_ in case we're creating a standard
     # output file that we'll delete later.
     if (!$self->{AsString} && !defined($self->{Output})) {
-        require IO::File;
-        import IO::File;
-        $self->{Output_} = new IO::File(">-");
+	require IO::File;
+	import IO::File;
+	$self->{Output_} = new IO::File(">-");
     } elsif (defined($self->{Output})) {
-        $self->{Output_} = $self->{Output};
+	$self->{Output_} = $self->{Output};
     }
 
     if ($self->{AsString}) {
-        $self->{Strings} = [];
+	$self->{Strings} = [];
     }
 
     $self->print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -53,15 +53,15 @@ sub end_document {
     my ($self, $document) = @_;
 
     if (defined($self->{Output_})) {
-        $self->{Output_}->print("\n");
-        delete $self->{Output_};
+	$self->{Output_}->print("\n");
+	delete $self->{Output_};
     }
 
     my $string = undef;
     if (defined($self->{AsString})) {
-        push @{$self->{Strings}}, "\n";
-        $string = join('', @{$self->{Strings}});
-        delete $self->{Strings};
+	push @{$self->{Strings}}, "\n";
+	$string = join('', @{$self->{Strings}});
+	delete $self->{Strings};
     }
 
     $self->SUPER::end_document($document);
@@ -73,7 +73,7 @@ sub start_element {
     my ($self, $element) = @_;
 
     if ($self->SUPER::start_element($element) == 0) {
-        $self->print_start_element($element);
+	$self->print_start_element($element);
     }
 }
 
@@ -82,15 +82,15 @@ sub print_start_element {
 
     my $output = "<$element->{Name}";
     if (defined($element->{Attributes})) {
-        foreach my $name (sort keys %{$element->{Attributes}}) {
-            my $esc_value = $element->{Attributes}{$name};
-            $esc_value =~ s/([\&\<\>\"])/$escapes->{$1}/ge;
-            $output .= " $name=\"$esc_value\"";
-        }
+	foreach my $name (sort keys %{$element->{Attributes}}) {
+	    my $esc_value = $element->{Attributes}{$name};
+	    $esc_value =~ s/([\&\<\>\"])/$escapes->{$1}/ge;
+	    $output .= " $name=\"$esc_value\"";
+	}
     }
 
     if ($self->{Newlines}) {
-        $output .= "\n";
+	$output .= "\n";
     }
 
     $output .= ">";
@@ -102,7 +102,7 @@ sub end_element {
     my ($self, $element) = @_;
 
     if ($self->SUPER::end_element($element) == 0) {
-        $self->print_end_element($element);
+	$self->print_end_element($element);
     }
 }
 
@@ -110,7 +110,7 @@ sub print_end_element {
     my ($self, $element) = @_;
 
     my $output = "</$element->{Name}"
-        . ($self->{Newlines} ? "\n" : "") . ">";
+	. ($self->{Newlines} ? "\n" : "") . ">";
 
     $self->print($output);
 }
@@ -131,13 +131,13 @@ sub processing_instruction {
 
     my $output;
     if ($self->{IsSGML}) {
-        $output = "<?$pi->{Data}>\n";
+	$output = "<?$pi->{Data}>\n";
     } else {
-        if ($pi->{Data}) {
-            $output = "<?$pi->{Target} $pi->{Data}?>$nl";
-        } else {
-            $output = "<?$pi->{Target}?>$nl";
-        }
+	if ($pi->{Data}) {
+	    $output = "<?$pi->{Target} $pi->{Data}?>$nl";
+	} else {
+	    $output = "<?$pi->{Target}?>$nl";
+	}
     }
 
     $self->print($output);
@@ -163,10 +163,10 @@ sub print {
     my ($self, $output) = @_;
 
     $self->{Output_}->print($output)
-        if (defined($self->{Output_}));
+	if (defined($self->{Output_}));
 
     push(@{$self->{Strings}}, $output)
-        if (defined($self->{AsString}));
+	if (defined($self->{AsString}));
 }
 
 1;

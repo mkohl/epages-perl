@@ -15,7 +15,7 @@ our @ISA = qw(Exporter);
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 
-# This allows declaration       use CheckDigits ':all';
+# This allows declaration	use CheckDigits ':all';
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
 # will save memory.
 our %EXPORT_TAGS = (
@@ -219,13 +219,13 @@ Algorithm::CheckDigits - Perl extension to generate and test check digits
 or
 
   use Algorithm::CheckDigits;
-
+  
   @ml = Algorithm::CheckDigits->method_list();
 
   $isbn = CheckDigits('ISBN');
 
   if ($isbn->is_valid('3-930673-48-7')) {
-        # do something
+	# do something
   }
 
   $cn = $isbn->complete('3-930673-48');     # $cn = '3-930673-48-7'

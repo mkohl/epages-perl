@@ -20,7 +20,7 @@ sub new
 {
     my ($class) = @_;
     my ($self) = {};
-
+    
     $class = ref($class) || $class;
     bless $self, $class;
 }
@@ -34,7 +34,7 @@ Reads the table into memory
 sub read
 {
     my ($self, $fh) = @_;
-
+ 
     my $subtableStart = $fh->tell() - 8;
     my $dat;
     $fh->read($dat, 8);
@@ -48,7 +48,7 @@ sub read
     foreach (TTF_Unpack("S*", $dat)) {
         push @{$leftClasses->[($_ - $array) / $rowWidth]}, $firstGlyph++;
     }
-
+    
     $fh->seek($subtableStart + $rightClassTable, IO::File::SEEK_SET);
     $fh->read($dat, 4);
     ($firstGlyph, $nGlyphs) = unpack("nn", $dat);
@@ -57,7 +57,7 @@ sub read
     foreach (TTF_Unpack("S*", $dat)) {
         push @{$rightClasses->[$_ / 2]}, $firstGlyph++;
     }
-
+    
     $fh->seek($subtableStart + $array, IO::File::SEEK_SET);
     $fh->read($dat, $self->{'length'} - $array);
 
@@ -66,14 +66,14 @@ sub read
     while ($offset < length($dat)) {
         push @$kernArray, [ TTF_Unpack("s*", substr($dat, $offset, $rowWidth)) ];
         $offset += $rowWidth;
-    }
+    }    
 
     $self->{'leftClasses'} = $leftClasses;
     $self->{'rightClasses'} = $rightClasses;
     $self->{'kernArray'} = $kernArray;
-
+    
     $fh->seek($subtableStart + $self->{'length'}, IO::File::SEEK_SET);
-
+    
     $self;
 }
 
@@ -96,28 +96,28 @@ Prints a human-readable representation of the table
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     my $post = $self->post();
-
+    
     $fh = 'STDOUT' unless defined $fh;
 
-
+    
 }
 
 sub dumpXML
 {
     my ($self, $fh) = @_;
     my $post = $self->post();
-
+    
     $fh = 'STDOUT' unless defined $fh;
     $fh->printf("<leftClasses>\n");
-    $self->dumpClasses($self->{'leftClasses'}, $fh);
+    $self->dumpClasses($self->{'leftClasses'}, $fh);    
     $fh->printf("</leftClasses>\n");
 
     $fh->printf("<rightClasses>\n");
-    $self->dumpClasses($self->{'rightClasses'}, $fh);
+    $self->dumpClasses($self->{'rightClasses'}, $fh);    
     $fh->printf("</rightClasses>\n");
-
+    
     $fh->printf("<kernArray>\n");
     my $kernArray = $self->{'kernArray'};
     foreach (0 .. $#$kernArray) {

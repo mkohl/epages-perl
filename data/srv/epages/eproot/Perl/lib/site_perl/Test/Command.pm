@@ -46,7 +46,7 @@ our @EXPORT = qw(
    stderr_is_file
 
    );
-
+                  
 =head1 NAME
 
 Test::Command - Test routines for external commands
@@ -76,7 +76,7 @@ Test the exit status, signal, STDOUT or STDERR of an external command.
 
    exit_isnt_num($cmd, 0);
 
-   ## testing terminating signal
+   ## testing terminating signal 
 
    $cmd = 'true';
 
@@ -342,7 +342,7 @@ sub _build_name
 
    defined $cmd or confess '$cmd is undefined';
 
-   if ( ref $cmd && UNIVERSAL::isa($cmd, 'Test::Command') )
+   if ( ref $cmd && UNIVERSAL::isa($cmd, 'Test::Command') ) 
       {
       $cmd = $cmd->{'cmd'};
       }
@@ -363,7 +363,7 @@ sub _get_result
 
    defined $cmd or confess '$cmd is undefined';
 
-   if ( ref $cmd && UNIVERSAL::isa($cmd, 'Test::Command') )
+   if ( ref $cmd && UNIVERSAL::isa($cmd, 'Test::Command') ) 
       {
 
       ## run the command if needed
@@ -411,9 +411,9 @@ sub _run_cmd
 
    ## run the command
    system(@{ $cmd });
-
-   my $system_return = defined ${^CHILD_ERROR_NATIVE} ? ${^CHILD_ERROR_NATIVE} : $?;
-
+   
+   my $system_return = defined ${^CHILD_ERROR_NATIVE} ? ${^CHILD_ERROR_NATIVE} : $?; 
+   
    my $exit_status;
    my $term_signal;
 
@@ -461,7 +461,7 @@ sub exit_value
    my ($cmd) = @_;
 
    my $result = _get_result($cmd);
-
+   
    return $result->{'exit_status'};
    }
 
@@ -479,7 +479,7 @@ sub exit_is_num
    my ($cmd, $exp, $name) = @_;
 
    my $result = _get_result($cmd);
-
+   
    $name = _build_name($name, @_);
 
    return __PACKAGE__->builder->is_num($result->{'exit_status'}, $exp, $name);
@@ -587,7 +587,7 @@ sub signal_value
    my ($cmd) = @_;
 
    my $result = _get_result($cmd);
-
+   
    return $result->{'term_signal'};
    }
 
@@ -605,7 +605,7 @@ sub signal_is_num
    my ($cmd, $exp, $name) = @_;
 
    my $result = _get_result($cmd);
-
+   
    $name = _build_name($name, @_);
 
    return __PACKAGE__->builder->is_num($result->{'term_signal'}, $exp, $name);
@@ -714,7 +714,7 @@ sub stdout_value
 
    my $result      = _get_result($cmd);
    my $stdout_text = _slurp($result->{'stdout_file'});
-
+   
    return $stdout_text;
    }
 
@@ -948,7 +948,7 @@ sub stderr_value
 
    my $result      = _get_result($cmd);
    my $stderr_text = _slurp($result->{'stderr_file'});
-
+   
    return $stderr_text;
    }
 

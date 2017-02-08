@@ -156,7 +156,7 @@ sub read
     } elsif (int($self->{'FormatType'} + .5) == 2)
     {
         my (@strings);
-
+        
         $fh->read($dat, ($numGlyphs + 1) << 1);
         for ($i = 0; $i < $numGlyphs; $i++)
         {
@@ -233,7 +233,7 @@ sub out
     {
         my (@ind);
         my ($count) = 0;
-
+        
         $fh->print(pack("n", $num));
         for ($i = 0; $i < $num; $i++)
         {
@@ -257,7 +257,7 @@ sub out
         { $fh->print(pack("c", defined $base_set{$self->{'VAL'}[$i]} ?
                     $base_set{$self->{'VAL'}[$i]} - $i : -$i)); }
     }
-
+        
     $self;
 }
 

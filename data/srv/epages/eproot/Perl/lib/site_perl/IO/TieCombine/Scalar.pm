@@ -31,7 +31,7 @@ sub STORE {
 
   Carp::croak "you may only append, not reassign, a $class tie"
     unless index($value, $$output_ref) == 0;
-
+  
   my $extra = substr $value, length $$output_ref, length $value;
 
   ${ $self->{combined_ref} } .= $extra;

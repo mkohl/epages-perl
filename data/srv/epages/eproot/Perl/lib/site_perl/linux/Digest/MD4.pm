@@ -18,15 +18,15 @@ eval {
 if ($@) {
     my $olderr = $@;
     eval {
-        # Try to load the pure perl version
-        require Digest::Perl::MD4;
+	# Try to load the pure perl version
+	require Digest::Perl::MD4;
 
-        Digest::Perl::MD4->import(qw(md4 md4_hex md4_base64));
-        push(@ISA, "Digest::Perl::MD4");  # make OO interface work
+	Digest::Perl::MD4->import(qw(md4 md4_hex md4_base64));
+	push(@ISA, "Digest::Perl::MD4");  # make OO interface work
     };
     if ($@) {
-        # restore the original error
-        die $olderr;
+	# restore the original error
+	die $olderr;
     }
 }
 else {
@@ -37,15 +37,15 @@ sub hash {
     my ($self, $data) = @_;
     if (ref($self))
     {
-        # This is an instance method call so reset the current context
-        $self->reset();
+	# This is an instance method call so reset the current context
+	$self->reset();
     }
     else
     {
-        # This is a static method invocation, create a temporary MD4 context
-        $self = new Digest::MD4;
+	# This is a static method invocation, create a temporary MD4 context
+	$self = new Digest::MD4;
     }
-
+    
     # Now do the hash
     $self->add($data);
     $self->digest();
@@ -166,8 +166,8 @@ stream.  Example:
 
     my $md4 = Digest::MD4->new;
     while (<>) {
-        $md4->add($_);
-        print "Line $.: ", $md4->clone->hexdigest, "\n";
+	$md4->add($_);
+	print "Line $.: ", $md4->clone->hexdigest, "\n";
     }
 
 =item $md4->add($data,...)
@@ -245,12 +245,12 @@ The above example would print out the message:
 The same checksum can also be calculated in OO style:
 
     use Digest::MD4;
-
+    
     $md4 = Digest::MD4->new;
     $md4->add('foo', 'bar');
     $md4->add('baz');
     $digest = $md4->hexdigest;
-
+    
     print "Digest is $digest\n";
 
 With OO style you can break the message arbitrary.  This means that we

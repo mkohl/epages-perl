@@ -224,7 +224,7 @@ sub group {
   $newgrp = (defined($grp) and length($grp)) ? $grp : ""
     unless defined($newgrp) and length($newgrp);
 
-  return
+  return 
     unless $nntp->_GROUP($newgrp) and $nntp->message =~ /(\d+)\s+(\d+)\s+(\d+)\s+(\S+)/;
 
   my ($count, $first, $last, $group) = ($1, $2, $3, $4);
@@ -769,7 +769,7 @@ empty list.
 =item article ( [ MSGID|MSGNUM ], [FH] )
 
 Retrieve the header, a blank line, then the body (text) of the
-specified article.
+specified article. 
 
 If C<FH> is specified then it is expected to be a valid filehandle
 and the result will be printed to it, on success a true value will be
@@ -883,7 +883,7 @@ C<SINCE> is a time value and C<DISTRIBUTIONS> is either a distribution
 pattern or a reference to a list of distribution patterns.
 The result is the same as C<list>, but the
 groups return will be limited to those created after C<SINCE> and, if
-specified, in one of the distribution areas in C<DISTRIBUTIONS>.
+specified, in one of the distribution areas in C<DISTRIBUTIONS>. 
 
 =item newnews ( SINCE [, GROUPS [, DISTRIBUTIONS ]])
 
@@ -982,7 +982,7 @@ match C<PATTERN> and each value is the description text for the group.
 
 =item xhdr ( HEADER, MESSAGE-SPEC )
 
-Obtain the header field C<HEADER> for all the messages specified.
+Obtain the header field C<HEADER> for all the messages specified. 
 
 The return value will be a reference
 to a hash where the keys are the message numbers and each value contains

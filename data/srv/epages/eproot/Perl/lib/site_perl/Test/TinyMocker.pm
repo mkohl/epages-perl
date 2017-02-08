@@ -120,7 +120,7 @@ Test::TinyMocker - a very simple tool to mock external modules
             return $mocked_value;
         };
 
-    # or
+    # or 
 
     mock 'Some::Module::some_method'
         => should {
@@ -129,13 +129,13 @@ Test::TinyMocker - a very simple tool to mock external modules
 
     # Some::Module::some_method() will now always return $mocked_value;
 
-        # To restore the original method
+	# To restore the original method
+	
+	unmock 'Some::Module::some_method';
 
-        unmock 'Some::Module::some_method';
-
-        # or
-
-        unmock 'Some::Module' => method 'some_method';
+	# or
+	
+	unmock 'Some::Module' => method 'some_method';
 
     # or
 

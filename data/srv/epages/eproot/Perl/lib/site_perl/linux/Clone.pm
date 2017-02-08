@@ -34,16 +34,16 @@ Clone - recursively copy Perl datatypes
 =head1 SYNOPSIS
 
   use Clone;
-
+  
   push @Foo::ISA, 'Clone';
 
   $a = new Foo;
   $b = $a->clone();
-
+  
   # or
 
   use Clone qw(clone);
-
+  
   $a = { 'foo' => 'bar', 'move' => 'zig' };
   $b = [ 'alpha', 'beta', 'gamma', 'vlissides' ];
   $c = new Foo();
@@ -55,20 +55,20 @@ Clone - recursively copy Perl datatypes
 =head1 DESCRIPTION
 
 This module provides a clone() method which makes recursive
-copies of nested hash, array, scalar and reference types,
+copies of nested hash, array, scalar and reference types, 
 including tied variables and objects.
 
 
-clone() takes a scalar argument and an optional parameter that
+clone() takes a scalar argument and an optional parameter that 
 can be used to limit the depth of the copy. To duplicate lists,
 arrays or hashes, pass them in by reference. e.g.
-
+    
     my $copy = clone (\@array);
 
     # or
 
     my %copy = %{ clone (\%hash) };
-
+    
 
 For a slower, but more flexible solution see Storable's dclone().
 

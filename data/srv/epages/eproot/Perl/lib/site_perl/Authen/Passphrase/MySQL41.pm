@@ -4,19 +4,19 @@ Authen::Passphrase::MySQL41 - passphrases using the MySQL v4.1 algorithm
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::MySQL41;
+	use Authen::Passphrase::MySQL41;
 
-        $ppr = Authen::Passphrase::MySQL41->new(
-                hash_hex => "9CD12C48C4C5DD62914B".
-                            "3FABB93131746E9E9115");
+	$ppr = Authen::Passphrase::MySQL41->new(
+		hash_hex => "9CD12C48C4C5DD62914B".
+			    "3FABB93131746E9E9115");
 
-        $ppr = Authen::Passphrase::MySQL41->new(
-                passphrase => "passphrase");
+	$ppr = Authen::Passphrase::MySQL41->new(
+		passphrase => "passphrase");
 
-        $hash = $ppr->hash;
-        $hash_hex = $ppr->hash_hex;
+	$hash = $ppr->hash;
+	$hash_hex = $ppr->hash_hex;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
 =head1 DESCRIPTION
 
@@ -82,39 +82,39 @@ Either the hash or the passphrase must be given.
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[\x00-\xff]{20}\z#
-                                or croak "not a valid MySQL v4.1 hash";
-                        $self->{hash} = "$value";
-                } elsif($attr eq "hash_hex") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[0-9A-Fa-f]{40}\z#
-                                or croak "\"$value\" is not a valid ".
-                                                "hex MySQL v4.1 hash";
-                        $self->{hash} = pack("H*", $value);
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        $self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
-        croak "hash not specified" unless exists $self->{hash};
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "hash") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[\x00-\xff]{20}\z#
+				or croak "not a valid MySQL v4.1 hash";
+			$self->{hash} = "$value";
+		} elsif($attr eq "hash_hex") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[0-9A-Fa-f]{40}\z#
+				or croak "\"$value\" is not a valid ".
+						"hex MySQL v4.1 hash";
+			$self->{hash} = pack("H*", $value);
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	$self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
+	croak "hash not specified" unless exists $self->{hash};
+	return $self;
 }
 
 =back
@@ -130,8 +130,8 @@ Returns the hash value, as a string of 20 bytes.
 =cut
 
 sub hash {
-        my($self) = @_;
-        return $self->{hash};
+	my($self) = @_;
+	return $self->{hash};
 }
 
 =item $ppr->hash_hex
@@ -141,8 +141,8 @@ Returns the hash value, as a string of 40 uppercase hexadecimal digits.
 =cut
 
 sub hash_hex {
-        my($self) = @_;
-        return uc(unpack("H*", $self->{hash}));
+	my($self) = @_;
+	return uc(unpack("H*", $self->{hash}));
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -152,13 +152,13 @@ This method is part of the standard L<Authen::Passphrase> interface.
 =cut
 
 sub _hash_of {
-        my($self, $passphrase) = @_;
-        return sha1(sha1($passphrase));
+	my($self, $passphrase) = @_;
+	return sha1(sha1($passphrase));
 }
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $self->_hash_of($passphrase) eq $self->{hash};
+	my($self, $passphrase) = @_;
+	return $self->_hash_of($passphrase) eq $self->{hash};
 }
 
 =back

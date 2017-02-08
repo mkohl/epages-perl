@@ -15,7 +15,7 @@ sub import {
   my ($self,@forbidden_modules) = @_;
 
   my $forbidden = get_forbidden_list;
-
+  
   for (@forbidden_modules) {
       $forbidden->{$_} = $INC{ module2file($_) };
   };

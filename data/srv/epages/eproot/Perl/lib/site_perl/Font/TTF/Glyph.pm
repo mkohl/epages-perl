@@ -101,7 +101,7 @@ The glyph number of the glyph which comprises this component of the composite.
 NOTE: In some badly generated fonts, C<glyph> may contain a numerical value
 but that glyph might not actually exist in the font file.  This could
 occur in any glyph, but is particularly likely for glyphs that have
-no strokes, such as SPACE, U+00A0 NO-BREAK SPACE, or
+no strokes, such as SPACE, U+00A0 NO-BREAK SPACE, or 
 U+200B ZERO WIDTH SPACE.
 
 =item args
@@ -188,7 +188,7 @@ the following information is required for each component.
     args
     scale
     metric              (glyph instance variable)
-
+    
 
 =head1 METHODS
 
@@ -200,8 +200,8 @@ use Font::TTF::Utils;
 use Font::TTF::Table;
 
 @field_info = (
-    'numberOfContours' => 's',
-    'xMin' => 's',
+    'numberOfContours' => 's', 
+    'xMin' => 's', 
     'yMin' => 's',
     'xMax' => 's',
     'yMax' => 's');
@@ -294,7 +294,7 @@ sub read_dat
         $self->{'hints'} = substr($dat, $fp + 2, $self->{'instLen'});
         $fp += 2 + $self->{'instLen'};
 # read the flags array
-        for ($i = 0; $i < $max; $i++)
+        for ($i = 0; $i < $max; $i++)                   
         {
             $flag = unpack("C", substr($dat, $fp++));
             $self->{'flags'}[$i] = $flag;
@@ -343,7 +343,7 @@ sub read_dat
             $self->{'y'}[$i] = $i == 0 ? $val : $self->{'y'}[$i - 1] + $val;
         }
     }
-
+    
 # compound glyph
     elsif ($num < 0)
     {
@@ -362,7 +362,7 @@ sub read_dat
                 $self->{'comps'}[$i]{'args'} = [unpack("c2", substr($dat, $fp))];
                 $fp += 2;
             }
-
+            
             if ($flag & 8)
             {
                 $val = TTF_Unpack("F", substr($dat, $fp));
@@ -433,7 +433,7 @@ sub out_xml
     {
         $context->{'fh'}->printf("%s<glyph gid='%s' id='%s'>\n", $depth, $context->{'gid'}, $addr);
     }
-
+    
     $ndepth = $depth . $context->{'indent'};
     $self->read_dat;
     foreach $k (sort grep {$_ !~ m/^\s/o} keys %{$self})
@@ -444,7 +444,7 @@ sub out_xml
     delete $context->{'done_points'};
     $self;
 }
-
+    
 
 sub XML_element
 {
@@ -452,7 +452,7 @@ sub XML_element
     my ($fh) = $context->{'fh'};
     my ($dind) = $depth . $context->{'indent'};
     my ($i);
-
+    
     if ($self->{'numberOfContours'} >= 0 && ($key eq 'x' || $key eq 'y' || $key eq 'flags'))
     {
         return $self if ($context->{'done_points'});
@@ -477,7 +477,7 @@ sub XML_element
     else
     { return Font::TTF::Table::XML_element(@_); }
 
-    $self;
+    $self;    
 }
 
 
@@ -576,13 +576,13 @@ sub update
                 } else
                 { $flag |= 128; }
             }
-
+            
             $flag |= 512 if (defined $self->{'metric'} && $self->{'metric'} == $i);
             if ($i == $#{$self->{'comps'}})
             { $flag |= 256 if (defined $self->{'instLen'} && $self->{'instLen'} > 0); }
             else
             { $flag |= 32; }
-
+            
             $self->{' DAT'} .= pack("n", $flag);
             $self->{' DAT'} .= pack("n", $comp->{'glyph'});
             $comp->{'flag'} = $flag;
@@ -648,7 +648,7 @@ sub update_bbox
         {
             my ($gnx, $gny, $gxx, $gxy);
             my ($sxx, $sxy, $syx, $syy);
-
+            
             my $otherg = $self->{' PARENT'}{'loca'}{'glyphs'}[$comp->{'glyph'}];
             # work around bad fonts: see documentation for 'comps' above
             next unless (defined $otherg);
@@ -683,12 +683,12 @@ sub update_bbox
     $self;
 }
 
-
+            
 =head2 $g->maxInfo
 
 Returns lots of information about a glyph so that the C<maxp> table can update
-itself. Returns array containing contributions of this glyph to maxPoints, maxContours,
-maxCompositePoints, maxCompositeContours, maxSizeOfInstructions, maxComponentElements,
+itself. Returns array containing contributions of this glyph to maxPoints, maxContours, 
+maxCompositePoints, maxCompositeContours, maxSizeOfInstructions, maxComponentElements, 
 and maxComponentDepth.
 
 =cut
@@ -709,13 +709,13 @@ sub maxInfo
     {
         for ($i = 0; $i <= $#{$self->{'comps'}}; $i++)
         {
-            my $otherg =
+            my $otherg = 
                 $self->{' PARENT'}{'loca'}{'glyphs'}
                     [$self->{'comps'}[$i]{'glyph'}];
-
+            
             # work around bad fonts: see documentation for 'comps' above
             next unless (defined $otherg );
-
+            
             @n = $otherg->maxInfo;
 
             $res[2] += $n[2] == 0 ? $n[0] : $n[2];
@@ -740,7 +740,7 @@ sub empty
     my (%keep) = map {(" $_" => 1)} ('LOC', 'OUTLOC', 'PARENT', 'INFILE', 'BASE',
                                 'OUTLEN', 'LEN');
     map {delete $self->{$_} unless $keep{$_}} keys %$self;
-
+    
     $self;
 }
 
@@ -798,7 +798,7 @@ is all the compounds and their references and so on. If this glyph is not a
 compound, then returns an empty array.
 
 Please note the warning about bad fonts that reference nonexistant glyphs
-under INSTANCE VARIABLES above.  This function will not attempt to
+under INSTANCE VARIABLES above.  This function will not attempt to 
 filter out nonexistant glyph numbers.
 
 =cut

@@ -9,7 +9,7 @@
 # from the internal AppConfig::State and delegates the parsing of command
 # line arguments to it.  Internal variable values are updated by callback
 # from GetOptions().
-#
+# 
 # Written by Andy Wardley <abw@wardley.org>
 #
 # Copyright (C) 1997-2007 Andy Wardley.  All Rights Reserved.
@@ -28,9 +28,9 @@ our $VERSION = '1.65';
 #------------------------------------------------------------------------
 # new($state, \@args)
 #
-# Module constructor.  The first, mandatory parameter should be a
-# reference to an AppConfig::State object to which all actions should
-# be applied.  The second parameter may be a reference to a list of
+# Module constructor.  The first, mandatory parameter should be a 
+# reference to an AppConfig::State object to which all actions should 
+# be applied.  The second parameter may be a reference to a list of 
 # command line arguments.  This list reference is passed to parse() for
 # processing.
 #
@@ -45,8 +45,8 @@ sub new {
    };
 
     bless $self, $class;
-
-    # call parse() to parse any arg list passed
+        
+    # call parse() to parse any arg list passed 
     $self->parse(@_)
         if @_;
 
@@ -67,7 +67,7 @@ sub parse {
     my $self  = shift;
     my $state = $self->{ STATE };
     my (@config, $args, $getopt);
-
+    
     local $" = ', ';
 
     # we trap $SIG{__WARN__} errors and patch them into AppConfig::State
@@ -75,13 +75,13 @@ sub parse {
         my $msg = shift;
 
         # AppConfig::State doesn't expect CR terminated error messages
-        # and it uses printf, so we protect any embedded '%' chars
+        # and it uses printf, so we protect any embedded '%' chars 
         chomp($msg);
         $state->_error("%s", $msg);
     };
-
+    
     # slurp all config items into @config
-    push(@config, shift) while defined $_[0] && ! ref($_[0]);
+    push(@config, shift) while defined $_[0] && ! ref($_[0]);   
 
     # add debug status if appropriate (hmm...can't decide about this)
 #    push(@config, 'debug') if $state->_debug();
@@ -115,7 +115,7 @@ sub parse {
         return 0;
     }
 
-    # udpdate any args reference passed to include only that which is left
+    # udpdate any args reference passed to include only that which is left 
     # in @ARGV
     @$args = @ARGV if defined $args;
 
@@ -132,7 +132,7 @@ package AppConfig::State;
 #------------------------------------------------------------------------
 # _getopt_state()
 #
-# Constructs option specs in the Getopt::Long format for each variable
+# Constructs option specs in the Getopt::Long format for each variable 
 # definition.
 #
 # Returns a list of specification strings.
@@ -151,7 +151,7 @@ sub _getopt_state {
         unless (defined ($args = $self->{ ARGS }->{ $var })) {
             # otherwise, construct a basic one from ARGCOUNT
             ARGCOUNT: {
-                last ARGCOUNT unless
+                last ARGCOUNT unless 
                     defined ($argcount = $self->{ ARGCOUNT }->{ $var });
 
                 $args = "=s",  last ARGCOUNT if $argcount eq ARGCOUNT_ONE;
@@ -190,7 +190,7 @@ AppConfig::Getopt - Perl5 module for processing command line arguments via deleg
 =head1 OVERVIEW
 
 AppConfig::Getopt is a Perl5 module which delegates to Johan Vroman's
-Getopt::Long module to parse command line arguments and update values
+Getopt::Long module to parse command line arguments and update values 
 in an AppConfig::State object accordingly.
 
 AppConfig::Getopt is distributed as part of the AppConfig bundle.
@@ -204,27 +204,27 @@ in your Perl script:
 
     use AppConfig::Getopt;
 
-AppConfig::Getopt is used automatically if you use the AppConfig module
+AppConfig::Getopt is used automatically if you use the AppConfig module 
 and create an AppConfig::Getopt object through the getopt() method.
-
-AppConfig::Getopt is implemented using object-oriented methods.  A new
+      
+AppConfig::Getopt is implemented using object-oriented methods.  A new 
 AppConfig::Getopt object is created and initialised using the new() method.
 This returns a reference to a new AppConfig::Getopt object.  A reference to
 an AppConfig::State object should be passed in as the first parameter:
-
+       
     my $state  = AppConfig::State->new();
     my $getopt = AppConfig::Getopt->new($state);
 
-This will create and return a reference to a new AppConfig::Getopt object.
+This will create and return a reference to a new AppConfig::Getopt object. 
 
 =head2 PARSING COMMAND LINE ARGUMENTS
 
-The C<parse()> method is used to read a list of command line arguments and
-update the state accordingly.
+The C<parse()> method is used to read a list of command line arguments and 
+update the state accordingly.  
 
-The first (non-list reference) parameters may contain a number of
-configuration strings to pass to Getopt::Long::Configure.  A reference
-to a list of arguments may additionally be passed or @ARGV is used by
+The first (non-list reference) parameters may contain a number of 
+configuration strings to pass to Getopt::Long::Configure.  A reference 
+to a list of arguments may additionally be passed or @ARGV is used by 
 default.
 
     $getopt->parse();                       # uses @ARGV
@@ -234,7 +234,7 @@ default.
 
 See Getopt::Long for details of the configuartion options available.
 
-A Getopt::Long specification string is constructed for each variable
+A Getopt::Long specification string is constructed for each variable 
 defined in the AppConfig::State.  This consists of the name, any aliases
 and the ARGS value for the variable.
 
@@ -254,13 +254,13 @@ Copyright (C) 1997-2007 Andy Wardley.  All Rights Reserved.
 
 Copyright (C) 1997,1998 Canon Research Centre Europe Ltd.
 
-This module is free software; you can redistribute it and/or modify it
+This module is free software; you can redistribute it and/or modify it 
 under the same terms as Perl itself.
 
 =head1 ACKNOWLEDGMENTS
 
-Many thanks are due to Johan Vromans for the Getopt::Long module.  He was
-kind enough to offer assistance and access to early releases of his code to
+Many thanks are due to Johan Vromans for the Getopt::Long module.  He was 
+kind enough to offer assistance and access to early releases of his code to 
 enable this module to be written.
 
 =head1 SEE ALSO

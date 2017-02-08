@@ -37,7 +37,7 @@ use vars qw(@ISA $VERSION $drh);
 
 $VERSION = "0.40";
 
-$drh = undef;           # holds driver handle(s) once initialized
+$drh = undef;		# holds driver handle(s) once initialized
 
 my %accessors = (
     get_meta   => "get_file_meta",
@@ -59,36 +59,36 @@ sub driver ($;$)
     $drh->{$class} and return $drh->{$class};
 
     $attr ||= {};
-    {   no strict "refs";
-        unless ($attr->{Attribution}) {
-            $class eq "DBD::File" and
-                $attr->{Attribution} = "$class by Jeff Zucker";
-            $attr->{Attribution} ||= ${$class . "::ATTRIBUTION"} ||
-                "oops the author of $class forgot to define this";
-            }
-        $attr->{Version} ||= ${$class . "::VERSION"};
-        $attr->{Name} or ($attr->{Name} = $class) =~ s/^DBD\:\://;
-        }
+    {	no strict "refs";
+	unless ($attr->{Attribution}) {
+	    $class eq "DBD::File" and
+		$attr->{Attribution} = "$class by Jeff Zucker";
+	    $attr->{Attribution} ||= ${$class . "::ATTRIBUTION"} ||
+		"oops the author of $class forgot to define this";
+	    }
+	$attr->{Version} ||= ${$class . "::VERSION"};
+	$attr->{Name} or ($attr->{Name} = $class) =~ s/^DBD\:\://;
+	}
 
     $drh->{$class} = $class->SUPER::driver ($attr);
 
     my $prefix = DBI->driver_prefix ($class);
     if ($prefix) {
-        my $dbclass = $class . "::db";
-        while (my ($accessor, $funcname) = each %accessors) {
-            my $method = $prefix . $accessor;
-            $dbclass->can ($method) and next;
-            my $inject = sprintf <<'EOI', $dbclass, $method, $dbclass, $funcname;
+	my $dbclass = $class . "::db";
+	while (my ($accessor, $funcname) = each %accessors) {
+	    my $method = $prefix . $accessor;
+	    $dbclass->can ($method) and next;
+	    my $inject = sprintf <<'EOI', $dbclass, $method, $dbclass, $funcname;
 sub %s::%s
 {
     my $func = %s->can (q{%s});
     goto &$func;
     }
 EOI
-            eval $inject;
-            $dbclass->install_method ($method);
-            }
-        }
+	    eval $inject;
+	    $dbclass->install_method ($method);
+	    }
+	}
 
     # XXX inject DBD::XXX::Statement unless exists
 
@@ -125,27 +125,27 @@ sub data_sources ($;$)
 {
     my ($drh, $attr) = @_;
     my $dir = $attr && exists $attr->{f_dir}
-        ? $attr->{f_dir}
-        : File::Spec->curdir ();
+	? $attr->{f_dir}
+	: File::Spec->curdir ();
     my %attrs;
     $attr and %attrs = %$attr;
     delete $attrs{f_dir};
     my $dsnextra = join ";", map { $_ . "=" . dsn_quote ($attrs{$_}) } keys %attrs;
     my ($dirh) = Symbol::gensym ();
     unless (opendir $dirh, $dir) {
-        $drh->set_err ($DBI::stderr, "Cannot open directory $dir: $!");
-        return;
-        }
+	$drh->set_err ($DBI::stderr, "Cannot open directory $dir: $!");
+	return;
+	}
 
     my ($file, @dsns, %names, $driver);
     $driver = $drh->{ImplementorClass} =~ m/^dbd\:\:([^\:]+)\:\:/i ? $1 : "File";
 
     while (defined ($file = readdir ($dirh))) {
-        my $d = File::Spec->catdir ($dir, $file);
-        # allow current dir ... it can be a data_source too
-        $file ne File::Spec->updir () && -d $d and
-            push @dsns, "DBI:$driver:f_dir=" . dsn_quote ($d) . ($dsnextra ? ";$dsnextra" : "");
-        }
+	my $d = File::Spec->catdir ($dir, $file);
+	# allow current dir ... it can be a data_source too
+	$file ne File::Spec->updir () && -d $d and
+	    push @dsns, "DBI:$driver:f_dir=" . dsn_quote ($d) . ($dsnextra ? ";$dsnextra" : "");
+	}
     return @dsns;
     } # data_sources
 
@@ -188,23 +188,23 @@ sub init_valid_attributes
     my $dbh = shift;
 
     $dbh->{f_valid_attrs} = {
-        f_version        => 1, # DBD::File version
-        f_dir            => 1, # base directory
-        f_ext            => 1, # file extension
-        f_schema         => 1, # schema name
-        f_meta           => 1, # meta data for tables
-        f_meta_map       => 1, # mapping table for identifier case
-        f_lock           => 1, # Table locking mode
-        f_lockfile       => 1, # Table lockfile extension
-        f_encoding       => 1, # Encoding of the file
-        f_valid_attrs    => 1, # File valid attributes
-        f_readonly_attrs => 1, # File readonly attributes
-        };
+	f_version        => 1, # DBD::File version
+	f_dir            => 1, # base directory
+	f_ext            => 1, # file extension
+	f_schema         => 1, # schema name
+	f_meta           => 1, # meta data for tables
+	f_meta_map       => 1, # mapping table for identifier case
+	f_lock           => 1, # Table locking mode
+	f_lockfile       => 1, # Table lockfile extension
+	f_encoding       => 1, # Encoding of the file
+	f_valid_attrs    => 1, # File valid attributes
+	f_readonly_attrs => 1, # File readonly attributes
+	};
     $dbh->{f_readonly_attrs} = {
-        f_version        => 1, # DBD::File version
-        f_valid_attrs    => 1, # File valid attributes
-        f_readonly_attrs => 1, # File readonly attributes
-        };
+	f_version        => 1, # DBD::File version
+	f_valid_attrs    => 1, # File valid attributes
+	f_readonly_attrs => 1, # File readonly attributes
+	};
 
     return $dbh->SUPER::init_valid_attributes ();
     } # init_valid_attributes
@@ -221,47 +221,47 @@ sub init_default_attributes
     unless (defined $phase) {
         # we have an "old" driver here
         $phase = defined $dbh->{sql_init_phase};
-        $phase and $phase = $dbh->{sql_init_phase};
-        }
+	$phase and $phase = $dbh->{sql_init_phase};
+	}
 
     if (0 == $phase) {
-        # check whether we're running in a Gofer server or not (see
-        # validate_FETCH_attr for details)
-        $dbh->{f_in_gofer} = (defined $INC{"DBD/Gofer.pm"} && (caller(5))[0] eq "DBI::Gofer::Execute");
-        # f_ext should not be initialized
-        # f_map is deprecated (but might return)
-        $dbh->{f_dir}      = Cwd::abs_path (File::Spec->curdir ());
-        $dbh->{f_meta}     = {};
-        $dbh->{f_meta_map} = {}; # choose new name because it contains other keys
+	# check whether we're running in a Gofer server or not (see
+	# validate_FETCH_attr for details)
+	$dbh->{f_in_gofer} = (defined $INC{"DBD/Gofer.pm"} && (caller(5))[0] eq "DBI::Gofer::Execute");
+	# f_ext should not be initialized
+	# f_map is deprecated (but might return)
+	$dbh->{f_dir}      = Cwd::abs_path (File::Spec->curdir ());
+	$dbh->{f_meta}     = {};
+	$dbh->{f_meta_map} = {}; # choose new name because it contains other keys
 
-        # complete derived attributes, if required
-        (my $drv_class = $dbh->{ImplementorClass}) =~ s/::db$//;
-        my $drv_prefix = DBI->driver_prefix ($drv_class);
-        my $valid_attrs = $drv_prefix . "valid_attrs";
-        my $ro_attrs = $drv_prefix . "readonly_attrs";
+	# complete derived attributes, if required
+	(my $drv_class = $dbh->{ImplementorClass}) =~ s/::db$//;
+	my $drv_prefix = DBI->driver_prefix ($drv_class);
+	my $valid_attrs = $drv_prefix . "valid_attrs";
+	my $ro_attrs = $drv_prefix . "readonly_attrs";
 
-        my @comp_attrs = ();
-        if (exists $dbh->{$drv_prefix . "meta"} and !$dbh->{f_in_gofer}) {
-            my $attr = $dbh->{$drv_prefix . "meta"};
-            defined $attr and defined $dbh->{$valid_attrs} and
-                !defined $dbh->{$valid_attrs}{$attr} and
-                $dbh->{$valid_attrs}{$attr} = 1;
+	my @comp_attrs = ();
+	if (exists $dbh->{$drv_prefix . "meta"} and !$dbh->{f_in_gofer}) {
+	    my $attr = $dbh->{$drv_prefix . "meta"};
+	    defined $attr and defined $dbh->{$valid_attrs} and
+		!defined $dbh->{$valid_attrs}{$attr} and
+		$dbh->{$valid_attrs}{$attr} = 1;
 
-            my %h;
-            tie %h, "DBD::File::TieTables", $dbh;
-            $dbh->{$attr} = \%h;
+	    my %h;
+	    tie %h, "DBD::File::TieTables", $dbh;
+	    $dbh->{$attr} = \%h;
 
-            push @comp_attrs, "meta";
-            }
+	    push @comp_attrs, "meta";
+	    }
 
-        foreach my $comp_attr (@comp_attrs) {
-            my $attr = $drv_prefix . $comp_attr;
-            defined $dbh->{$valid_attrs} and !defined $dbh->{$valid_attrs}{$attr} and
-                $dbh->{$valid_attrs}{$attr} = 1;
-            defined $dbh->{$ro_attrs} and !defined $dbh->{$ro_attrs}{$attr} and
-                $dbh->{$ro_attrs}{$attr} = 1;
-            }
-        }
+	foreach my $comp_attr (@comp_attrs) {
+	    my $attr = $drv_prefix . $comp_attr;
+	    defined $dbh->{$valid_attrs} and !defined $dbh->{$valid_attrs}{$attr} and
+		$dbh->{$valid_attrs}{$attr} = 1;
+	    defined $dbh->{$ro_attrs} and !defined $dbh->{$ro_attrs}{$attr} and
+		$dbh->{$ro_attrs}{$attr} = 1;
+	    }
+	}
 
     return $dbh;
     } # init_default_attributes
@@ -284,11 +284,11 @@ sub validate_FETCH_attr
     # tie-hash. It's not as good as liked, but the best we can do in this
     # situation.
     if ($dbh->{f_in_gofer}) {
-        (my $drv_class = $dbh->{ImplementorClass}) =~ s/::db$//;
-        my $drv_prefix = DBI->driver_prefix ($drv_class);
-        exists $dbh->{$drv_prefix . "meta"} && $attrib eq $dbh->{$drv_prefix . "meta"} and
-            $attrib = "f_meta";
-        }
+	(my $drv_class = $dbh->{ImplementorClass}) =~ s/::db$//;
+	my $drv_prefix = DBI->driver_prefix ($drv_class);
+	exists $dbh->{$drv_prefix . "meta"} && $attrib eq $dbh->{$drv_prefix . "meta"} and
+	    $attrib = "f_meta";
+	}
 
     return $attrib;
     } # validate_FETCH_attr
@@ -298,28 +298,28 @@ sub validate_STORE_attr
     my ($dbh, $attrib, $value) = @_;
 
     if ($attrib eq "f_dir") {
-        -d $value or
-            return $dbh->set_err ($DBI::stderr, "No such directory '$value'");
-        File::Spec->file_name_is_absolute ($value) or
-            $value = Cwd::abs_path ($value);
-        }
+	-d $value or
+	    return $dbh->set_err ($DBI::stderr, "No such directory '$value'");
+	File::Spec->file_name_is_absolute ($value) or
+	    $value = Cwd::abs_path ($value);
+	}
 
     if ($attrib eq "f_ext") {
-        $value eq "" || $value =~ m{^\.\w+(?:/[rR]*)?$} or
-            carp "'$value' doesn't look like a valid file extension attribute\n";
-        }
+	$value eq "" || $value =~ m{^\.\w+(?:/[rR]*)?$} or
+	    carp "'$value' doesn't look like a valid file extension attribute\n";
+	}
 
     (my $drv_class = $dbh->{ImplementorClass}) =~ s/::db$//;
     my $drv_prefix = DBI->driver_prefix ($drv_class);
 
     if (exists $dbh->{$drv_prefix . "meta"}) {
-        my $attr = $dbh->{$drv_prefix . "meta"};
-        if ($attrib eq $attr) {
-            while (my ($k, $v) = each %$value) {
-                $dbh->{$attrib}{$k} = $v;
-                }
-            }
-        }
+	my $attr = $dbh->{$drv_prefix . "meta"};
+	if ($attrib eq $attr) {
+	    while (my ($k, $v) = each %$value) {
+		$dbh->{$attrib}{$k} = $v;
+		}
+	    }
+	}
 
     return $dbh->SUPER::validate_STORE_attr ($attrib, $value);
     } # validate_STORE_attr
@@ -333,18 +333,18 @@ sub get_f_versions
     my (undef, $meta);
     $table and (undef, $meta) = $class->get_table_meta ($dbh, $table, 1);
     unless ($meta) {
-        $meta = {};
-        $class->bootstrap_table_meta ($dbh, $meta, $table);
-        }
+	$meta = {};
+	$class->bootstrap_table_meta ($dbh, $meta, $table);
+	}
 
     my $dver;
     my $dtype = "IO::File";
     eval {
-        $dver = IO::File->VERSION ();
+	$dver = IO::File->VERSION ();
 
-        # when we're still alive here, everthing went ok - no need to check for $@
-        $dtype .= " ($dver)";
-        };
+	# when we're still alive here, everthing went ok - no need to check for $@
+	$dtype .= " ($dver)";
+	};
 
     $meta->{f_encoding} and $dtype .= " + " . $meta->{f_encoding} . " encoding";
 
@@ -357,7 +357,7 @@ sub get_single_table_meta
     my $meta;
 
     $table eq "." and
-        return $dbh->FETCH ($attr);
+	return $dbh->FETCH ($attr);
 
     (my $class = $dbh->{ImplementorClass}) =~ s/::db$/::Table/;
     (undef, $meta) = $class->get_table_meta ($dbh, $table, 1);
@@ -374,30 +374,30 @@ sub get_file_meta
     my $gstm = $dbh->{ImplementorClass}->can ("get_single_table_meta");
 
     $table eq "*" and
-        $table = [ ".", keys %{$dbh->{f_meta}} ];
+	$table = [ ".", keys %{$dbh->{f_meta}} ];
     $table eq "+" and
-        $table = [ grep { m/^[_A-Za-z0-9]+$/ } keys %{$dbh->{f_meta}} ];
+	$table = [ grep { m/^[_A-Za-z0-9]+$/ } keys %{$dbh->{f_meta}} ];
     ref $table eq "Regexp" and
-        $table = [ grep { $_ =~ $table } keys %{$dbh->{f_meta}} ];
+	$table = [ grep { $_ =~ $table } keys %{$dbh->{f_meta}} ];
 
     ref $table || ref $attr or
-        return &$gstm ($dbh, $table, $attr);
+	return &$gstm ($dbh, $table, $attr);
 
     ref $table or $table = [ $table ];
     ref $attr  or $attr  = [ $attr  ];
     "ARRAY" eq ref $table or
-        croak "Invalid argument for \$table - SCALAR, Regexp or ARRAY expected but got " . ref $table;
+	croak "Invalid argument for \$table - SCALAR, Regexp or ARRAY expected but got " . ref $table;
     "ARRAY" eq ref $attr or
-        croak "Invalid argument for \$attr - SCALAR or ARRAY expected but got " . ref $attr;
+	croak "Invalid argument for \$attr - SCALAR or ARRAY expected but got " . ref $attr;
 
     my %results;
     foreach my $tname (@{$table}) {
-        my %tattrs;
-        foreach my $aname (@{$attr}) {
-            $tattrs{$aname} = &$gstm ($dbh, $tname, $aname);
-            }
-        $results{$tname} = \%tattrs;
-        }
+	my %tattrs;
+	foreach my $aname (@{$attr}) {
+	    $tattrs{$aname} = &$gstm ($dbh, $tname, $aname);
+	    }
+	$results{$tname} = \%tattrs;
+	}
 
     return \%results;
     } # get_file_meta
@@ -408,7 +408,7 @@ sub set_single_table_meta
     my $meta;
 
     $table eq "." and
-        return $dbh->STORE ($attr, $value);
+	return $dbh->STORE ($attr, $value);
 
     (my $class = $dbh->{ImplementorClass}) =~ s/::db$/::Table/;
     (undef, $meta) = $class->get_table_meta ($dbh, $table, 1);
@@ -425,28 +425,28 @@ sub set_file_meta
     my $sstm = $dbh->{ImplementorClass}->can ("set_single_table_meta");
 
     $table eq "*" and
-        $table = [ ".", keys %{$dbh->{f_meta}} ];
+	$table = [ ".", keys %{$dbh->{f_meta}} ];
     $table eq "+" and
-        $table = [ grep { m/^[_A-Za-z0-9]+$/ } keys %{$dbh->{f_meta}} ];
+	$table = [ grep { m/^[_A-Za-z0-9]+$/ } keys %{$dbh->{f_meta}} ];
     ref ($table) eq "Regexp" and
-        $table = [ grep { $_ =~ $table } keys %{$dbh->{f_meta}} ];
+	$table = [ grep { $_ =~ $table } keys %{$dbh->{f_meta}} ];
 
     ref $table || ref $attr or
-        return &$sstm ($dbh, $table, $attr, $value);
+	return &$sstm ($dbh, $table, $attr, $value);
 
     ref $table or $table = [ $table ];
     ref $attr  or $attr  = { $attr => $value };
     "ARRAY" eq ref $table or
-        croak "Invalid argument for \$table - SCALAR, Regexp or ARRAY expected but got " . ref $table;
+	croak "Invalid argument for \$table - SCALAR, Regexp or ARRAY expected but got " . ref $table;
     "HASH" eq ref $attr or
-        croak "Invalid argument for \$attr - SCALAR or HASH expected but got " . ref $attr;
+	croak "Invalid argument for \$attr - SCALAR or HASH expected but got " . ref $attr;
 
     foreach my $tname (@{$table}) {
-        my %tattrs;
-        while (my ($aname, $aval) = each %$attr) {
-            &$sstm ($dbh, $tname, $aname, $aval);
-            }
-        }
+	my %tattrs;
+	while (my ($aname, $aval) = each %$attr) {
+	    &$sstm ($dbh, $tname, $aname, $aval);
+	    }
+	}
 
     return $dbh;
     } # set_file_meta
@@ -471,26 +471,26 @@ sub get_avail_tables
     my $dirh   = Symbol::gensym ();
 
     unless (opendir $dirh, $dir) {
-        $dbh->set_err ($DBI::stderr, "Cannot open directory $dir: $!");
-        return @tables;
-        }
+	$dbh->set_err ($DBI::stderr, "Cannot open directory $dir: $!");
+	return @tables;
+	}
 
     my $class = $dbh->FETCH ("ImplementorClass");
     $class =~ s/::db$/::Table/;
     my ($file, %names);
     my $schema = exists $dbh->{f_schema}
-        ? defined $dbh->{f_schema} && $dbh->{f_schema} ne ""
-            ? $dbh->{f_schema} : undef
-        : eval { getpwuid ((stat $dir)[4]) }; # XXX Win32::pwent
+	? defined $dbh->{f_schema} && $dbh->{f_schema} ne ""
+	    ? $dbh->{f_schema} : undef
+	: eval { getpwuid ((stat $dir)[4]) }; # XXX Win32::pwent
     my %seen;
     while (defined ($file = readdir ($dirh))) {
-        my ($tbl, $meta) = $class->get_table_meta ($dbh, $file, 0, 0) or next; # XXX
-        # $tbl && $meta && -f $meta->{f_fqfn} or next;
-        $seen{defined $schema ? $schema : "\0"}{$tbl}++ or
-            push @tables, [ undef, $schema, $tbl, "TABLE", "FILE" ];
-        }
+	my ($tbl, $meta) = $class->get_table_meta ($dbh, $file, 0, 0) or next; # XXX
+	# $tbl && $meta && -f $meta->{f_fqfn} or next;
+	$seen{defined $schema ? $schema : "\0"}{$tbl}++ or
+	    push @tables, [ undef, $schema, $tbl, "TABLE", "FILE" ];
+	}
     closedir $dirh or
-        $dbh->set_err ($DBI::stderr, "Cannot close directory $dir: $!");
+	$dbh->set_err ($DBI::stderr, "Cannot close directory $dir: $!");
 
     return @tables;
     } # get_avail_tables
@@ -586,8 +586,8 @@ sub STORE
     $meta or croak "Invalid table name '$table'";
 
     while (my ($meta_attr, $meta_val) = each %$tbl_meta) {
-        $self->{tblClass}->set_table_meta_attr ($meta, $meta_attr, $meta_val);
-        }
+	$self->{tblClass}->set_table_meta_attr ($meta, $meta_attr, $meta_val);
+	}
 
     return;
     } # STORE
@@ -619,7 +619,7 @@ sub NEXTKEY
 sub EXISTS
 {
     exists $_[0]->{dbh}->{f_meta}->{$_[1]} or
-        exists $_[0]->{dbh}->{f_meta_map}->{$_[1]};
+	exists $_[0]->{dbh}->{f_meta_map}->{$_[1]};
     } # EXISTS
 
 sub DELETE
@@ -666,41 +666,41 @@ sub FETCH
     my ($sth, $attr) = @_;
 
     if ($supported_attrs{$attr}) {
-        my $stmt = $sth->{sql_stmt};
+	my $stmt = $sth->{sql_stmt};
 
-        if (exists $sth->{ImplementorClass} &&
-            exists $sth->{sql_stmt} &&
-            $sth->{sql_stmt}->isa ("SQL::Statement")) {
+	if (exists $sth->{ImplementorClass} &&
+	    exists $sth->{sql_stmt} &&
+	    $sth->{sql_stmt}->isa ("SQL::Statement")) {
 
-            # fill overall_defs unless we know
-            unless (exists $sth->{f_overall_defs} && ref $sth->{f_overall_defs}) {
-                my $all_meta =
-                    $sth->{Database}->func ("*", "table_defs", "get_file_meta");
-                while (my ($tbl, $meta) = each %$all_meta) {
-                    exists $meta->{table_defs} && ref $meta->{table_defs} or next;
-                    foreach (keys %{$meta->{table_defs}{columns}}) {
-                        $sth->{f_overall_defs}{$_} = $meta->{table_defs}{columns}{$_};
-                        }
-                    }
-                }
+	    # fill overall_defs unless we know
+	    unless (exists $sth->{f_overall_defs} && ref $sth->{f_overall_defs}) {
+		my $all_meta =
+		    $sth->{Database}->func ("*", "table_defs", "get_file_meta");
+		while (my ($tbl, $meta) = each %$all_meta) {
+		    exists $meta->{table_defs} && ref $meta->{table_defs} or next;
+		    foreach (keys %{$meta->{table_defs}{columns}}) {
+			$sth->{f_overall_defs}{$_} = $meta->{table_defs}{columns}{$_};
+			}
+		    }
+		}
 
-            my @colnames = $sth->sql_get_colnames ();
+	    my @colnames = $sth->sql_get_colnames ();
 
-            $attr eq "TYPE"      and
-                return [ map { $sth->{f_overall_defs}{$_}{data_type}   || "CHAR" }
-                            @colnames ];
+	    $attr eq "TYPE"      and
+		return [ map { $sth->{f_overall_defs}{$_}{data_type}   || "CHAR" }
+			    @colnames ];
 
-            $attr eq "PRECISION" and
-                return [ map { $sth->{f_overall_defs}{$_}{data_length} || 0 }
-                            @colnames ];
+	    $attr eq "PRECISION" and
+		return [ map { $sth->{f_overall_defs}{$_}{data_length} || 0 }
+			    @colnames ];
 
-            $attr eq "NULLABLE"  and
-                return [ map { ( grep m/^NOT NULL$/ =>
-                            @{ $sth->{f_overall_defs}{$_}{constraints} || [] })
-                               ? 0 : 1 }
-                            @colnames ];
-            }
-        }
+	    $attr eq "NULLABLE"  and
+		return [ map { ( grep m/^NOT NULL$/ =>
+			    @{ $sth->{f_overall_defs}{$_}{constraints} || [] })
+			       ? 0 : 1 }
+			    @colnames ];
+	    }
+	}
 
     return $sth->SUPER::FETCH ($attr);
     } # FETCH
@@ -722,9 +722,9 @@ sub open_table ($$$$$)
     $class =~ s/::Statement/::Table/;
 
     my $flags = {
-        createMode      => $createMode,
-        lockMode        => $lockMode,
-        };
+	createMode	=> $createMode,
+	lockMode	=> $lockMode,
+	};
     $self->{command} eq "DROP" and $flags->{dropMode} = 1;
 
     return $class->new ($data, { table => $table }, $flags);
@@ -761,85 +761,85 @@ sub file2table
 {
     my ($self, $meta, $file, $file_is_table, $respect_case) = @_;
 
-    $file eq "." || $file eq ".."       and return; # XXX would break a possible DBD::Dir
+    $file eq "." || $file eq ".."	and return; # XXX would break a possible DBD::Dir
 
     my ($ext, $req) = ("", 0);
     if ($meta->{f_ext}) {
-        ($ext, my $opt) = split m/\//, $meta->{f_ext};
-        if ($ext && $opt) {
-            $opt =~ m/r/i and $req = 1;
-            }
-        }
+	($ext, my $opt) = split m/\//, $meta->{f_ext};
+	if ($ext && $opt) {
+	    $opt =~ m/r/i and $req = 1;
+	    }
+	}
 
     # (my $tbl = $file) =~ s/$ext$//i;
     my ($tbl, $basename, $dir, $fn_ext, $user_spec_file);
     if ($file_is_table and defined $meta->{f_file}) {
-        $tbl = $file;
-        ($basename, $dir, $fn_ext) = File::Basename::fileparse ($meta->{f_file}, $fn_any_ext_regex);
-        $file = $basename . $fn_ext;
-        $user_spec_file = 1;
-        }
+	$tbl = $file;
+	($basename, $dir, $fn_ext) = File::Basename::fileparse ($meta->{f_file}, $fn_any_ext_regex);
+	$file = $basename . $fn_ext;
+	$user_spec_file = 1;
+	}
     else {
-        ($basename, $dir, undef) = File::Basename::fileparse ($file, $ext);
-        $file = $tbl = $basename;
-        $user_spec_file = 0;
-        }
+	($basename, $dir, undef) = File::Basename::fileparse ($file, $ext);
+	$file = $tbl = $basename;
+	$user_spec_file = 0;
+	}
 
     if (!$respect_case and $meta->{sql_identifier_case} == 1) { # XXX SQL_IC_UPPER
         $basename = uc $basename;
         $tbl = uc $tbl;
-        }
+	}
     if( !$respect_case and $meta->{sql_identifier_case} == 2) { # XXX SQL_IC_LOWER
         $basename = lc $basename;
         $tbl = lc $tbl;
-        }
+	}
 
     my $searchdir = File::Spec->file_name_is_absolute ($dir)
-        ? ($dir =~ s|/$||, $dir)
-        : Cwd::abs_path (File::Spec->catdir ($meta->{f_dir}, $dir));
+	? ($dir =~ s|/$||, $dir)
+	: Cwd::abs_path (File::Spec->catdir ($meta->{f_dir}, $dir));
     -d $searchdir or
-        croak "-d $searchdir: $!";
+	croak "-d $searchdir: $!";
 
     $searchdir eq $meta->{f_dir} and
-        $dir = "";
+	$dir = "";
 
     unless ($user_spec_file) {
-        $file_is_table and $file = "$basename$ext";
+	$file_is_table and $file = "$basename$ext";
 
-        # Fully Qualified File Name
-        my $cmpsub;
-        if ($respect_case) {
-            $cmpsub = sub {
-                my ($fn, undef, $sfx) = File::Basename::fileparse ($_, $fn_any_ext_regex);
-                $sfx = '' if $^O eq 'VMS' and $sfx eq '.';  # no extension turns up as a dot
-                $fn eq $basename and
-                    return (lc $sfx eq lc $ext or !$req && !$sfx);
-                return 0;
-                }
-            }
-        else {
-            $cmpsub = sub {
-                my ($fn, undef, $sfx) = File::Basename::fileparse ($_, $fn_any_ext_regex);
-                $sfx = '' if $^O eq 'VMS' and $sfx eq '.';  # no extension turns up as a dot
-                lc $fn eq lc $basename and
-                    return (lc $sfx eq lc $ext or !$req && !$sfx);
-                return 0;
-                }
-            }
+	# Fully Qualified File Name
+	my $cmpsub;
+	if ($respect_case) {
+	    $cmpsub = sub {
+		my ($fn, undef, $sfx) = File::Basename::fileparse ($_, $fn_any_ext_regex);
+		$sfx = '' if $^O eq 'VMS' and $sfx eq '.';  # no extension turns up as a dot
+		$fn eq $basename and
+		    return (lc $sfx eq lc $ext or !$req && !$sfx);
+		return 0;
+		}
+	    }
+	else {
+	    $cmpsub = sub {
+		my ($fn, undef, $sfx) = File::Basename::fileparse ($_, $fn_any_ext_regex);
+		$sfx = '' if $^O eq 'VMS' and $sfx eq '.';  # no extension turns up as a dot
+		lc $fn eq lc $basename and
+		    return (lc $sfx eq lc $ext or !$req && !$sfx);
+		return 0;
+		}
+	    }
 
-        opendir my $dh, $searchdir or croak "Can't open '$searchdir': $!";
-        my @f = sort { length $b <=> length $a } grep { &$cmpsub ($_) } readdir $dh;
-        @f > 0 && @f <= 2 and $file = $f[0];
-        !$respect_case && $meta->{sql_identifier_case} == 4 and # XXX SQL_IC_MIXED
-            ($tbl = $file) =~ s/$ext$//i;
-        closedir $dh or croak "Can't close '$searchdir': $!";
+	opendir my $dh, $searchdir or croak "Can't open '$searchdir': $!";
+	my @f = sort { length $b <=> length $a } grep { &$cmpsub ($_) } readdir $dh;
+	@f > 0 && @f <= 2 and $file = $f[0];
+	!$respect_case && $meta->{sql_identifier_case} == 4 and # XXX SQL_IC_MIXED
+	    ($tbl = $file) =~ s/$ext$//i;
+	closedir $dh or croak "Can't close '$searchdir': $!";
 
-        my $tmpfn = $file;
-        if ($ext && $req) {
+	my $tmpfn = $file;
+	if ($ext && $req) {
             # File extension required
             $tmpfn =~ s/$ext$//i or return;
             }
-        }
+	}
 
     my $fqfn = File::Spec->catfile ($searchdir, $file);
     my $fqbn = File::Spec->catfile ($searchdir, $basename);
@@ -847,7 +847,7 @@ sub file2table
     $meta->{f_fqfn} = $fqfn;
     $meta->{f_fqbn} = $fqbn;
     defined $meta->{f_lockfile} && $meta->{f_lockfile} and
-        $meta->{f_fqln} = $meta->{f_fqbn} . $meta->{f_lockfile};
+	$meta->{f_fqln} = $meta->{f_fqbn} . $meta->{f_lockfile};
 
     $dir && !$user_spec_file  and $tbl = File::Spec->catfile ($dir, $tbl);
     $meta->{table_name} = $tbl;
@@ -859,12 +859,12 @@ sub bootstrap_table_meta
 {
     my ($self, $dbh, $meta, $table) = @_;
 
-    exists  $meta->{f_dir}      or $meta->{f_dir}       = $dbh->{f_dir};
-    defined $meta->{f_ext}      or $meta->{f_ext}       = $dbh->{f_ext};
-    defined $meta->{f_encoding} or $meta->{f_encoding}  = $dbh->{f_encoding};
-    exists  $meta->{f_lock}     or $meta->{f_lock}      = $dbh->{f_lock};
-    exists  $meta->{f_lockfile} or $meta->{f_lockfile}  = $dbh->{f_lockfile};
-    defined $meta->{f_schema}   or $meta->{f_schema}    = $dbh->{f_schema};
+    exists  $meta->{f_dir}	or $meta->{f_dir}	= $dbh->{f_dir};
+    defined $meta->{f_ext}	or $meta->{f_ext}	= $dbh->{f_ext};
+    defined $meta->{f_encoding}	or $meta->{f_encoding}	= $dbh->{f_encoding};
+    exists  $meta->{f_lock}	or $meta->{f_lock}	= $dbh->{f_lock};
+    exists  $meta->{f_lockfile}	or $meta->{f_lockfile}	= $dbh->{f_lockfile};
+    defined $meta->{f_schema}	or $meta->{f_schema}	= $dbh->{f_schema};
     defined $meta->{sql_identifier_case} or
         $meta->{sql_identifier_case} = $dbh->{sql_identifier_case};
     } # bootstrap_table_meta
@@ -880,43 +880,43 @@ sub get_table_meta ($$$$;$)
 {
     my ($self, $dbh, $table, $file_is_table, $respect_case) = @_;
     unless (defined $respect_case) {
-        $respect_case = 0;
-        $table =~ s/^\"// and $respect_case = 1;    # handle quoted identifiers
-        $table =~ s/\"$//;
-        }
+	$respect_case = 0;
+	$table =~ s/^\"// and $respect_case = 1;    # handle quoted identifiers
+	$table =~ s/\"$//;
+	}
 
     unless ($respect_case) {
-        defined $dbh->{f_meta_map}{$table} and $table = $dbh->{f_meta_map}{$table};
-        }
+	defined $dbh->{f_meta_map}{$table} and $table = $dbh->{f_meta_map}{$table};
+	}
 
     my $meta = {};
     defined $dbh->{f_meta}{$table} and $meta = $dbh->{f_meta}{$table};
 
     unless ($meta->{initialized}) {
-        $self->bootstrap_table_meta ($dbh, $meta, $table);
+	$self->bootstrap_table_meta ($dbh, $meta, $table);
 
-        unless (defined $meta->{f_fqfn}) {
-            $self->file2table ($meta, $table, $file_is_table, $respect_case) or return;
-            }
+	unless (defined $meta->{f_fqfn}) {
+	    $self->file2table ($meta, $table, $file_is_table, $respect_case) or return;
+	    }
 
-        if (defined $meta->{table_name} and $table ne $meta->{table_name}) {
-            $dbh->{f_meta_map}{$table} = $meta->{table_name};
-            $table = $meta->{table_name};
-            }
+	if (defined $meta->{table_name} and $table ne $meta->{table_name}) {
+	    $dbh->{f_meta_map}{$table} = $meta->{table_name};
+	    $table = $meta->{table_name};
+	    }
 
-        # now we know a bit more - let's check if user can't use consequent spelling
-        # XXX add know issue about reset sql_identifier_case here ...
-        if (defined $dbh->{f_meta}{$table} && defined $dbh->{f_meta}{$table}{initialized}) {
-            $meta = $dbh->{f_meta}{$table};
-            $self->file2table ($meta, $table, $file_is_table, $respect_case) or
-                return unless $dbh->{f_meta}{$table}{initialized};
-            }
-        unless ($dbh->{f_meta}{$table}{initialized}) {
-            $self->init_table_meta ($dbh, $meta, $table);
-            $meta->{initialized} = 1;
-            $dbh->{f_meta}{$table} = $meta;
-            }
-        }
+	# now we know a bit more - let's check if user can't use consequent spelling
+	# XXX add know issue about reset sql_identifier_case here ...
+	if (defined $dbh->{f_meta}{$table} && defined $dbh->{f_meta}{$table}{initialized}) {
+	    $meta = $dbh->{f_meta}{$table};
+	    $self->file2table ($meta, $table, $file_is_table, $respect_case) or
+		return unless $dbh->{f_meta}{$table}{initialized};
+	    }
+	unless ($dbh->{f_meta}{$table}{initialized}) {
+	    $self->init_table_meta ($dbh, $meta, $table);
+	    $meta->{initialized} = 1;
+	    $dbh->{f_meta}{$table} = $meta;
+	    }
+	}
 
     return ($table, $meta);
     } # get_table_meta
@@ -948,9 +948,9 @@ sub get_table_meta_attr
 {
     my ($class, $meta, $attrib) = @_;
     exists $compat_map{$attrib} and
-        $attrib = $compat_map{$attrib};
+	$attrib = $compat_map{$attrib};
     exists $meta->{$attrib} and
-        return $meta->{$attrib};
+	return $meta->{$attrib};
     return;
     } # get_table_meta_attr
 
@@ -958,7 +958,7 @@ sub set_table_meta_attr
 {
     my ($class, $meta, $attrib, $value) = @_;
     exists $compat_map{$attrib} and
-        $attrib = $compat_map{$attrib};
+	$attrib = $compat_map{$attrib};
     $class->table_meta_attr_changed ($meta, $attrib, $value);
     $meta->{$attrib} = $value;
     } # set_table_meta_attr
@@ -967,8 +967,8 @@ sub table_meta_attr_changed
 {
     my ($class, $meta, $attrib, $value) = @_;
     defined $reset_on_modify{$attrib} and
-        delete $meta->{$reset_on_modify{$attrib}} and
-        $meta->{initialized} = 0;
+	delete $meta->{$reset_on_modify{$attrib}} and
+	$meta->{initialized} = 0;
     } # table_meta_attr_changed
 
 # ====== FILE OPEN =============================================================
@@ -981,63 +981,63 @@ sub open_file ($$$)
 
     my ($fh, $fn);
     unless ($meta->{f_dontopen}) {
-        $fn = $meta->{f_fqfn};
-        if ($flags->{createMode}) {
-            -f $meta->{f_fqfn} and
-                croak "Cannot create table $attrs->{table}: Already exists";
-            $fh = IO::File->new ($fn, "a+") or
-                croak "Cannot open $fn for writing: $! (" . ($!+0) . ")";
-            }
-        else {
-            unless ($fh = IO::File->new ($fn, ($flags->{lockMode} ? "r+" : "r"))) {
-                croak "Cannot open $fn: $! (" . ($!+0) . ")";
-                }
-            }
+	$fn = $meta->{f_fqfn};
+	if ($flags->{createMode}) {
+	    -f $meta->{f_fqfn} and
+		croak "Cannot create table $attrs->{table}: Already exists";
+	    $fh = IO::File->new ($fn, "a+") or
+		croak "Cannot open $fn for writing: $! (" . ($!+0) . ")";
+	    }
+	else {
+	    unless ($fh = IO::File->new ($fn, ($flags->{lockMode} ? "r+" : "r"))) {
+		croak "Cannot open $fn: $! (" . ($!+0) . ")";
+		}
+	    }
 
-        if ($fh) {
-            $fh->seek (0, 0) or
-                croak "Error while seeking back: $!";
-            if (my $enc = $meta->{f_encoding}) {
-                binmode $fh, ":encoding($enc)" or
-                    croak "Failed to set encoding layer '$enc' on $fn: $!";
-                }
-            else {
-                binmode $fh or croak "Failed to set binary mode on $fn: $!";
-                }
-            }
+	if ($fh) {
+	    $fh->seek (0, 0) or
+		croak "Error while seeking back: $!";
+	    if (my $enc = $meta->{f_encoding}) {
+		binmode $fh, ":encoding($enc)" or
+		    croak "Failed to set encoding layer '$enc' on $fn: $!";
+		}
+	    else {
+		binmode $fh or croak "Failed to set binary mode on $fn: $!";
+		}
+	    }
 
-        $meta->{fh} = $fh;
-        }
+	$meta->{fh} = $fh;
+	}
     if ($meta->{f_fqln}) {
-        $fn = $meta->{f_fqln};
-        if ($flags->{createMode}) {
-            -f $fn and
-                croak "Cannot create table lock for $attrs->{table}: Already exists";
-            $fh = IO::File->new ($fn, "a+") or
-                croak "Cannot open $fn for writing: $! (" . ($!+0) . ")";
-            }
-        else {
-            unless ($fh = IO::File->new ($fn, ($flags->{lockMode} ? "r+" : "r"))) {
-                croak "Cannot open $fn: $! (" . ($!+0) . ")";
-                }
-            }
+	$fn = $meta->{f_fqln};
+	if ($flags->{createMode}) {
+	    -f $fn and
+		croak "Cannot create table lock for $attrs->{table}: Already exists";
+	    $fh = IO::File->new ($fn, "a+") or
+		croak "Cannot open $fn for writing: $! (" . ($!+0) . ")";
+	    }
+	else {
+	    unless ($fh = IO::File->new ($fn, ($flags->{lockMode} ? "r+" : "r"))) {
+		croak "Cannot open $fn: $! (" . ($!+0) . ")";
+		}
+	    }
 
-        $meta->{lockfh} = $fh;
-        }
+	$meta->{lockfh} = $fh;
+	}
 
     if ($locking && $fh) {
-        my $lm = defined $flags->{f_lock}
-                      && $flags->{f_lock} =~ m/^[012]$/
-                       ? $flags->{f_lock}
-                       : $flags->{lockMode} ? 2 : 1;
-        if ($lm == 2) {
-            flock $fh, 2 or croak "Cannot obtain exclusive lock on $fn: $!";
-            }
-        elsif ($lm == 1) {
-            flock $fh, 1 or croak "Cannot obtain shared lock on $fn: $!";
-            }
-        # $lm = 0 is forced no locking at all
-        }
+	my $lm = defined $flags->{f_lock}
+		      && $flags->{f_lock} =~ m/^[012]$/
+		       ? $flags->{f_lock}
+		       : $flags->{lockMode} ? 2 : 1;
+	if ($lm == 2) {
+	    flock $fh, 2 or croak "Cannot obtain exclusive lock on $fn: $!";
+	    }
+	elsif ($lm == 1) {
+	    flock $fh, 1 or croak "Cannot obtain shared lock on $fn: $!";
+	    }
+	# $lm = 0 is forced no locking at all
+	}
     } # open_file
 
 # ====== SQL::Eval API =========================================================
@@ -1054,17 +1054,17 @@ sub new
     # Being a bit dirty here, as SQL::Statement::Structure does not offer
     # me an interface to the data I want
     $flags->{createMode} && $data->{sql_stmt}{table_defs} and
-        $meta->{table_defs} = $data->{sql_stmt}{table_defs};
+	$meta->{table_defs} = $data->{sql_stmt}{table_defs};
 
     $className->open_file ($meta, $attrs, $flags);
 
     my $columns = {};
     my $array   = [];
     my $tbl     = {
-        %{$attrs},
-        meta          => $meta,
-        col_names     => $meta->{col_names} || [],
-        };
+	%{$attrs},
+	meta          => $meta,
+	col_names     => $meta->{col_names} || [],
+	};
     return $className->SUPER::new ($tbl);
     } # new
 
@@ -1089,14 +1089,14 @@ sub seek ($$$$)
     my ($self, $data, $pos, $whence) = @_;
     my $meta = $self->{meta};
     if ($whence == 0 && $pos == 0) {
-        $pos = defined $meta->{first_row_pos} ? $meta->{first_row_pos} : 0;
-        }
+	$pos = defined $meta->{first_row_pos} ? $meta->{first_row_pos} : 0;
+	}
     elsif ($whence != 2 || $pos != 0) {
-        croak "Illegal seek position: pos = $pos, whence = $whence";
-        }
+	croak "Illegal seek position: pos = $pos, whence = $whence";
+	}
 
     $meta->{fh}->seek ($pos, $whence) or
-        croak "Error while seeking in " . $meta->{f_fqfn} . ": $!";
+	croak "Error while seeking in " . $meta->{f_fqfn} . ": $!";
     } # seek
 
 sub truncate ($$)
@@ -1104,7 +1104,7 @@ sub truncate ($$)
     my ($self, $data) = @_;
     my $meta = $self->{meta};
     $meta->{fh}->truncate ($meta->{fh}->tell ()) or
-        croak "Error while truncating " . $meta->{f_fqfn} . ": $!";
+	croak "Error while truncating " . $meta->{f_fqfn} . ": $!";
     return 1;
     } # truncate
 
@@ -1432,9 +1432,9 @@ Signature:
 
     sub f_versions (;$)
     {
-        my ($table_name) = @_;
-        $table_name ||= ".";
-        ...
+	my ($table_name) = @_;
+	$table_name ||= ".";
+	...
     }
 
 Returns the versions of the driver, including the DBI version, the Perl
@@ -1463,8 +1463,8 @@ Signature:
 
     sub f_get_meta ($$)
     {
-        my ($table_name, $attrib) = @_;
-        ...
+	my ($table_name, $attrib) = @_;
+	...
     }
 
 Returns the value of a meta attribute set for a specific table, if any.
@@ -1480,8 +1480,8 @@ Signature:
 
     sub f_set_meta ($$$)
     {
-        my ($table_name, $attrib, $value) = @_;
-        ...
+	my ($table_name, $attrib, $value) = @_;
+	...
     }
 
 Sets the value of a meta attribute set for a specific table.
@@ -1497,8 +1497,8 @@ Signature:
 
     sub f_clear_meta ($)
     {
-        my ($table_name) = @_;
-        ...
+	my ($table_name) = @_;
+	...
     }
 
 Clears the table specific meta information in the private storage of the

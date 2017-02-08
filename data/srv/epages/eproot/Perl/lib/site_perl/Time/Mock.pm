@@ -194,22 +194,22 @@ sub _hitime () {
   return(($otime + $offset) + (_realtime - $otime) * $accel);
 }
 
-sub time () {
+sub time () { 
   return sprintf("%0.0f", _hitime);
 }
 
 sub localtime (;$) {
-        my ($time) = @_;
+	my ($time) = @_;
 
   $time = time unless(defined $time);
-        return CORE::localtime($time);
+	return CORE::localtime($time);
 }
 
 sub gmtime (;$) {
-        my ($time) = @_;
+	my ($time) = @_;
 
   $time = time unless(defined $time);
-        return CORE::gmtime($time);;
+	return CORE::gmtime($time);;
 }
 sub sleep (;$) {
   my ($length) = @_;

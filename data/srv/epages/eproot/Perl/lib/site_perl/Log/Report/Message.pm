@@ -58,7 +58,7 @@ sub inClass($)
     ? (first { $_ =~ $_[0] } @classes)
     : (first { $_ eq $_[0] } @classes);
 }
-
+    
 
 sub toString(;$)
 {   my ($self, $locale) = @_;

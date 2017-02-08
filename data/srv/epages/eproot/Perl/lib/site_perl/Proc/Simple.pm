@@ -3,7 +3,7 @@ package Proc::Simple;
 ######################################################################
 # Copyright 1996-2001 by Michael Schilli, all rights reserved.
 #
-# This program is free software, you can redistribute it and/or
+# This program is free software, you can redistribute it and/or 
 # modify it under the same terms as Perl itself.
 #
 # The newest version of this module is available on
@@ -26,7 +26,7 @@ Proc::Simple -- launch and control background processes
    $myproc->start("shell-command-line"); # Launch an external program
    $myproc->start("command",             # Launch an external program
                   "param", ...);         # with parameters
-
+                                        
    $myproc->start(sub { ... });          # Launch a perl subroutine
    $myproc->start(\&subroutine);         # Launch a perl subroutine
    $myproc->start(\&subroutine,          # Launch a perl subroutine
@@ -61,7 +61,7 @@ processes from a user's point of view. A new process object is created by
 Either external programs or perl subroutines can be launched and
 controlled as processes in the background.
 
-A 10-second sleep process, for example, can be launched
+A 10-second sleep process, for example, can be launched 
 as an external program as in
 
    $myproc->start("/bin/sleep 10");    # or
@@ -85,7 +85,7 @@ The I<poll> method checks if the process is still running
 
    $running = $myproc->poll();
 
-and returns I<1> if it is, I<0> if it's not. Finally,
+and returns I<1> if it is, I<0> if it's not. Finally, 
 
    $myproc->kill();
 
@@ -105,7 +105,7 @@ destroyed or if the process exits. By default this
 behaviour is turned off (see the kill_on_destroy and
 signal_on_destroy methods).
 
-=cut
+=cut 
 
 require 5.003;
 use strict;
@@ -146,17 +146,17 @@ or
 
 It takes no arguments.
 
-=cut
+=cut 
 
 ######################################################################
 # $proc_obj=Proc::Simple->new(); - Constructor
 ######################################################################
-sub new {
+sub new { 
   my $proto = shift;
   my $class = ref($proto) || $proto;
 
   my $self  = {};
-
+  
   # Init instance variables
   $self->{'kill_on_destroy'}   = undef;
   $self->{'signal_on_destroy'} = undef;
@@ -172,7 +172,7 @@ sub new {
 =item start
 
 Launches a new process.
-The C<start()> method can be used to launch both external programs
+The C<start()> method can be used to launch both external programs 
 (like C</bin/echo>) or one of your self-defined subroutines
 (like C<foo()>) in a new process.
 
@@ -190,7 +190,7 @@ or in several arguments like in
 
  $status = $proc->start("/bin/echo", "hello", "world");
 
-Just as in Perl's function C<system()>, there's a big difference
+Just as in Perl's function C<system()>, there's a big difference 
 between the two methods: If you provide one argument containing
 a blank-separated command line, your shell is going to
 process any meta-characters (if you choose to use some) before
@@ -226,7 +226,7 @@ specified process in background, i.e. non-blocking mode.
 It returns I<1> if the process has been launched
 successfully and I<0> if not.
 
-=cut
+=cut 
 
 ######################################################################
 # $ret = $proc_obj->start("prg"); - Launch process
@@ -246,8 +246,8 @@ sub start {
         # Mark it as process group leader, so that we can kill
         # the process group later. Note that there's a race condition
         # here because there's a window in time (while you're reading
-        # this comment) between child startup and its new process group
-        # id being defined. This means that killpg() to the child during
+        # this comment) between child startup and its new process group 
+        # id being defined. This means that killpg() to the child during 
         # this time frame will fail. Proc::Simple's kill() method deals l
         # with it, see comments there.
       POSIX::setsid();
@@ -280,7 +280,7 @@ sub start {
       $EXIT_STATUS{$self->{'pid'}} = undef;
       $INTERVAL{$self->{'pid'}}{'t1'} = undef;
       return 1;                      #   return OK
-  } else {
+  } else {      
       return 0;                      #   this shouldn't occur
   }
 }
@@ -295,7 +295,7 @@ The I<poll> method checks if the process is still running
 
 and returns I<1> if it is, I<0> if it's not.
 
-=cut
+=cut 
 
 ######################################################################
 # $ret = $proc_obj->poll(); - Check process status
@@ -306,9 +306,9 @@ sub poll {
 
   $self->dprt("Polling");
 
-  # There's some weirdness going on with the signal handler.
+  # There's some weirdness going on with the signal handler. 
   # It runs into timing problems, so let's have poll() call
-  # the REAPER every time to make sure we're getting rid of
+  # the REAPER every time to make sure we're getting rid of 
   # defuncts.
   $self->THE_REAPER();
 
@@ -342,20 +342,20 @@ option, another signal can be specified.
 sends the SIGUSR1 signal to the running process. I<kill> returns I<1> if
 it succeeds in sending the signal, I<0> if it doesn't.
 
-=cut
+=cut 
 
 ######################################################################
 # $ret = $proc_obj->kill([SIGXXX]); - Send signal to process
 #                                     Default-Signal: SIGTERM
 ######################################################################
-sub kill {
+sub kill { 
   my $self = shift;
   my $sig  = shift;
 
   # If no signal specified => SIGTERM-Signal
   $sig = POSIX::SIGTERM() unless defined $sig;
 
-  # Use numeric signal if we get a string
+  # Use numeric signal if we get a string 
   if( $sig !~ /^[-\d]+$/ ) {
       $sig =~ s/^SIG//g;
       $sig = eval "POSIX::SIG${sig}()";
@@ -378,7 +378,7 @@ sub kill {
   } else {
       $self->dprt("KILL($sig, $self->{'pid'}) failed ($!)");
         # Have we hit the race condition of a newly forked child
-        # that hasn't called setsid() yet? Call kill again with
+        # that hasn't called setsid() yet? Call kill again with 
         # a positive sig number.
       if( $sig and $self->poll() ) {
           $self->dprt("We've hit the race condition, using kill(+sig) instead");
@@ -403,7 +403,7 @@ The current value is returned.
   $proc->kill_on_destroy(1); # Set flag to true
   $proc->kill_on_destroy(0); # Set flag to false
 
-=cut
+=cut 
 
 ######################################################################
 # Method to set the kill_on_destroy flag
@@ -425,7 +425,7 @@ kill_on_destroy is true). Returns the current setting.
   $current = $proc->signal_on_destroy;
   $proc->signal_on_destroy("KILL");
 
-=cut
+=cut 
 
 ######################################################################
 # Send a signal on destroy
@@ -446,16 +446,16 @@ Specify undef to leave the stderr/stdout handles of the process alone.
 
   # stdout to a file, left stderr unchanged
   $proc->redirect_output ("/tmp/someapp.stdout", undef);
-
+  
   # stderr to a file, left stdout unchanged
   $proc->redirect_output (undef, "/tmp/someapp.stderr");
-
+  
   # stdout and stderr to a separate file
   $proc->redirect_output ("/tmp/someapp.stdout", "/tmp/someapp.stderr");
 
 Call this method before running the start method.
 
-=cut
+=cut 
 
 ######################################################################
 sub redirect_output {
@@ -476,7 +476,7 @@ this object
 
   $pid = $proc->pid;
 
-=cut
+=cut 
 
 ######################################################################
 sub pid {
@@ -499,7 +499,7 @@ this object
 
   $t0 = $proc->t0();
 
-=cut
+=cut 
 
 ######################################################################
 sub t0 {
@@ -518,7 +518,7 @@ this object
 
   $t1 = $proc->t1();
 
-=cut
+=cut 
 
 ######################################################################
 sub t1 {
@@ -536,7 +536,7 @@ perl). If kill_on_destroy is true the process
 associated with the object is sent the signal_on_destroy
 signal (SIGTERM if undefined).
 
-=cut
+=cut 
 
 ######################################################################
 # Destroy method
@@ -579,7 +579,7 @@ sub DESTROY {
 Returns the exit status of the process as the $! variable indicates.
 If the process is still running, C<undef> is returned.
 
-=cut
+=cut 
 
 ######################################################################
 # returns the exit status of the child process, undef if the child
@@ -600,7 +600,7 @@ The I<wait> method:
 
 waits until the process is done and returns its exit status.
 
-=cut
+=cut 
 
 ######################################################################
 # waits until the child process terminates and then
@@ -643,7 +643,7 @@ sub THE_REAPER {
     my $now = time();
 
     if(defined $WNOHANG) {
-        # Try to reap every process we've ever started and
+        # Try to reap every process we've ever started and 
         # whichs Proc::Simple object hasn't been destroyed.
         #
         # This is getting really ugly. But if we just call the REAPER
@@ -651,14 +651,14 @@ sub THE_REAPER {
         #
         # use Proc::Simple;
         # $proc = Proc::Simple->new(); $proc->start(\&func); sleep(5);
-        # sub func { open(PIPE, "/bin/ls |"); @a = <PIPE>; sleep(1);
+        # sub func { open(PIPE, "/bin/ls |"); @a = <PIPE>; sleep(1); 
         #            close(PIPE) or die "PIPE failed"; }
-        #
+        # 
         # Reason: close() doesn't like it if the spawn has
         # been reaped already. Oh well.
         #
 
-        # First, check if we can reap the processes which
+        # First, check if we can reap the processes which 
         # went out of business because their kill_on_destroy
         # flag was set and their objects were destroyed.
         foreach my $pid (keys %DESTROYED) {
@@ -668,7 +668,7 @@ sub THE_REAPER {
                 dprt("", "Reaped: $pid");
             }
         }
-
+        
         foreach my $pid (keys %EXIT_STATUS) {
             dprt("", "Trying to reap $pid");
             if( defined $EXIT_STATUS{$pid} ) {
@@ -684,7 +684,7 @@ sub THE_REAPER {
                 dprt("", "waitpid returned '$res'");
             }
         }
-    } else {
+    } else { 
         # If we don't have $WNOHANG, we don't have a choice anyway.
         # Just reap everything.
         dprt("", "reap everything for lack of WNOHANG");
@@ -705,7 +705,7 @@ sub THE_REAPER {
 Switches debug messages on and off -- Proc::Simple::debug(1) switches
 them on, Proc::Simple::debug(0) keeps Proc::Simple quiet.
 
-=cut
+=cut 
 
 # Proc::Simple::debug($level) - Turn debug on/off
 sub debug { $Debug = shift; }
@@ -720,13 +720,13 @@ this data keeps occupying more and more memory and if you have a long-running
 program, you might want to run C<Proc::Simple-E<gt>cleanup()> every once in a
 while to get rid of data pertaining to processes no longer in use.
 
-=cut
+=cut 
 
 sub cleanup {
 
     for my $pid ( keys %INTERVAL ) {
         if( !exists $DESTROYED{ $pid } ) {
-              # process has been reaped already, safe to delete
+              # process has been reaped already, safe to delete 
               # its start/stop time
             delete $INTERVAL{ $pid };
         }
@@ -750,7 +750,7 @@ sub get_system_nohang {
 ######################################################################
 # This is for getting the WNOHANG constant of the system -- but since
 # the waitpid(-1, &WNOHANG) isn't supported on all Unix systems, and
-# we still want Proc::Simple to run on every system, we have to
+# we still want Proc::Simple to run on every system, we have to 
 # quietly perform some tests to figure out if -- or if not.
 # The function returns the constant, or undef if it's not available.
 ######################################################################
@@ -793,9 +793,9 @@ repeatedly with the I<poll> routine after sending the signal.
 
 =head1 Shell Processes
 
-If you pass a shell program to Proc::Simple, it'll use C<exec()> to
+If you pass a shell program to Proc::Simple, it'll use C<exec()> to 
 launch it. As noted in Perl's C<exec()> manpage, simple commands for
-the one-argument version of C<exec()> will be passed to
+the one-argument version of C<exec()> will be passed to 
 C<execvp()> directly, while commands containing characters
 like C<;> or C<*> will be passed to a shell to make sure those get
 the shell expansion treatment.
@@ -840,7 +840,7 @@ Brad Cavanagh fixed RT33440 (unreliable $?)
 =head1 AUTHOR
 
     1996, Mike Schilli <cpan@perlmeister.com>
-
+    
 =head1 LICENSE
 
 Copyright 1996-2011 by Mike Schilli, all rights reserved.

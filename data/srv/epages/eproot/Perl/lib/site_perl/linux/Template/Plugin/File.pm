@@ -7,8 +7,8 @@
 #
 # AUTHOR
 #   Originally written by Michael Stevens <michael@etla.org> as the
-#   Directory plugin, then mutilated by Andy Wardley <abw@kfs.org>
-#   into separate File and Directory plugins, with some additional
+#   Directory plugin, then mutilated by Andy Wardley <abw@kfs.org> 
+#   into separate File and Directory plugins, with some additional 
 #   code for working with views, etc.
 #
 # COPYRIGHT
@@ -30,7 +30,7 @@ use base 'Template::Plugin';
 
 our $VERSION = 2.71;
 
-our @STAT_KEYS = qw( dev ino mode nlink uid gid rdev size
+our @STAT_KEYS = qw( dev ino mode nlink uid gid rdev size 
                      atime mtime ctime blksize blocks );
 
 
@@ -38,7 +38,7 @@ our @STAT_KEYS = qw( dev ino mode nlink uid gid rdev size
 # new($context, $file, \%config)
 #
 # Create a new File object.  Takes the pathname of the file as
-# the argument following the context and an optional
+# the argument following the context and an optional 
 # hash reference of configuration parameters.
 #------------------------------------------------------------------------
 
@@ -75,7 +75,7 @@ sub new {
     $home = join('/', ('..') x @fields);
     $abs = File::Spec->catfile($root ? $root : (), $path);
 
-    my $self = {
+    my $self = { 
         path  => $path,
         name  => $name,
         root  => $root,
@@ -86,8 +86,8 @@ sub new {
         user  => '',
         group => '',
         isdir => '',
-        stat  => defined $config->{ stat }
-                       ? $config->{ stat }
+        stat  => defined $config->{ stat } 
+                       ? $config->{ stat } 
                        : ! $config->{ nostat },
         map { ($_ => '') } @STAT_KEYS,
     };
@@ -158,9 +158,9 @@ Template::Plugin::File - Plugin providing information about files
 
 =head1 DESCRIPTION
 
-This plugin provides an abstraction of a file.  It can be used to
+This plugin provides an abstraction of a file.  It can be used to 
 fetch details about files from the file system, or to represent abstract
-files (e.g. when creating an index page) that may or may not exist on
+files (e.g. when creating an index page) that may or may not exist on 
 a file system.
 
 A file name or path should be specified as a constructor argument.  e.g.
@@ -176,13 +176,13 @@ to the current working directory.  The constructor performs a C<stat()>
 on the file and makes the 13 elements returned available as the plugin
 items:
 
-    dev ino mode nlink uid gid rdev size
+    dev ino mode nlink uid gid rdev size 
     atime mtime ctime blksize blocks
 
 e.g.
 
     [% USE File('/foo/bar/baz.html') %]
-
+    
     [% File.mtime %]
     [% File.mode %]
     ...
@@ -230,7 +230,7 @@ type, regardless of the capitalisation of the plugin named used.
     [% USE file('foo.html') %]
     [% file.mtime %]
 
-As with any other Template Toolkit plugin, an alternate name can be
+As with any other Template Toolkit plugin, an alternate name can be 
 specified for the object created.
 
     [% USE foo = file('foo.html') %]
@@ -240,10 +240,10 @@ The C<nostat> option can be specified to prevent the plugin constructor
 from performing a C<stat()> on the file specified.  In this case, the
 file does not have to exist in the file system, no attempt will be made
 to verify that it does, and no error will be thrown if it doesn't.
-The entries for the items usually returned by C<stat()> will be set
+The entries for the items usually returned by C<stat()> will be set 
 empty.
 
-    [% USE file('/some/where/over/the/rainbow.html', nostat=1)
+    [% USE file('/some/where/over/the/rainbow.html', nostat=1) 
     [% file.mtime %]     # nothing
 
 =head1 METHODS
@@ -274,7 +274,7 @@ The directory element of the path with the filename removed.
 
 =head2 ext
 
-The file extension, if any, appearing at the end of the path following
+The file extension, if any, appearing at the end of the path following 
 a 'C<.>' (not included in the extension).
 
     [% USE file('/foo/bar.html') %]
@@ -287,10 +287,10 @@ from a file to its root directory.
 
     [% USE file('bar.html') %]
     [% file.home %]     # nothing
-
+    
     [% USE file('foo/bar.html') %]
     [% file.home %]     # ..
-
+    
     [% USE file('foo/bar/baz.html') %]
     [% file.home %]     # ../..
 
@@ -305,7 +305,7 @@ set empty.
 
 =head2 abs
 
-This returns the absolute file path by constructing a path from the
+This returns the absolute file path by constructing a path from the 
 C<root> and C<path> options.
 
     [% USE file('foo/bar.html', root='/tmp') %]
@@ -316,7 +316,7 @@ C<root> and C<path> options.
 =head2 rel(path)
 
 This returns a relative path from the current file to another path specified
-as an argument.  It is constructed by appending the path to the 'C<home>'
+as an argument.  It is constructed by appending the path to the 'C<home>' 
 item.
 
     [% USE file('foo/bar/baz.html') %]
@@ -325,7 +325,7 @@ item.
 =head1 EXAMPLES
 
     [% USE file('/foo/bar/baz.html') %]
-
+    
     [% file.path  %]      # /foo/bar/baz.html
     [% file.dir   %]      # /foo/bar
     [% file.name  %]      # baz.html
@@ -339,7 +339,7 @@ item.
     [% file.user  %]      # abw
 
     [% USE file('foo.html') %]
-
+    
     [% file.path %]           # foo.html
     [% file.dir  %]       # ''
     [% file.name %]           # foo.html
@@ -348,7 +348,7 @@ item.
     [% file.abs  %]       # foo.html
 
     [% USE file('foo/bar/baz.html') %]
-
+    
     [% file.path %]           # foo/bar/baz.html
     [% file.dir  %]       # foo/bar
     [% file.name %]           # baz.html
@@ -357,7 +357,7 @@ item.
     [% file.abs  %]       # foo/bar/baz.html
 
     [% USE file('foo/bar/baz.html', root='/tmp') %]
-
+    
     [% file.path %]           # foo/bar/baz.html
     [% file.dir  %]       # foo/bar
     [% file.name %]           # baz.html
@@ -367,7 +367,7 @@ item.
 
     # calculate other file paths relative to this file and its root
     [% USE file('foo/bar/baz.html', root => '/tmp/tt2') %]
-
+    
     [% file.path('baz/qux.html') %]         # ../../baz/qux.html
     [% file.dir('wiz/woz.html')  %]     # ../../wiz/woz.html
 

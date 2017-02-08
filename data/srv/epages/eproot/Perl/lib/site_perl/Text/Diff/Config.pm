@@ -21,20 +21,20 @@ __END__
 
 =head1 NAME
 
-Text::Diff::Config - global configuration for Text::Diff (as a
+Text::Diff::Config - global configuration for Text::Diff (as a 
 separate module).
 
 =head1 SYNOPSIS
 
   use Text::Diff::Config;
-
+  
   $Text::Diff::Config::Output_Unicode = 1;
 
 =head1 DESCRIPTION
 
 This module configures Text::Diff and its related modules. Currently it contains
 only one global variable $Text::Diff::Config::Output_Unicode  which is a boolean
-flag, that if set outputs unicode characters as themselves without escaping them
+flag, that if set outputs unicode characters as themselves without escaping them 
 as C< \x{HHHH} > first.
 
 It is initialized to the value of C< $ENV{DIFF_OUTPUT_UNICODE} >, but can be
@@ -91,20 +91,20 @@ __END__
 
 =head1 NAME
 
-Text::Diff::Config - global configuration for Text::Diff (as a
+Text::Diff::Config - global configuration for Text::Diff (as a 
 separate module).
 
 =head1 SYNOPSIS
 
   use Text::Diff::Config;
-
+  
   $Text::Diff::Config::Output_Unicode = 1;
 
 =head1 DESCRIPTION
 
 This module configures Text::Diff and its related modules. Currently it contains
 only one global variable $Text::Diff::Config::Output_Unicode  which is a boolean
-flag, that if set outputs unicode characters as themselves without escaping them
+flag, that if set outputs unicode characters as themselves without escaping them 
 as C< \x{HHHH} > first.
 
 It is initialized to the value of C< $ENV{DIFF_OUTPUT_UNICODE} >, but can be

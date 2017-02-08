@@ -67,12 +67,12 @@ sub out
     my ($descs);
 
     return $self->SUPER::out($fh) unless $self->{' read'};
-
+    
     $fh->print(TTF_Pack("v", $self->{'version'}));
-
+    
     $descs = $self->{'descriptors'} or {};
-
-    $fh->print(pack("N", scalar keys %$descs));
+    
+    $fh->print(pack("N", scalar keys %$descs));    
     foreach (sort keys %$descs) {
         $fh->print($_);
         $fh->print(($_ eq 'nalf') ? pack("N", $descs->{$_}) : TTF_Pack("f", $descs->{$_}));
@@ -105,7 +105,7 @@ sub print
             $fh->printf("Descriptor '%s' = %f\n", $k, $descs->{$k});
         }
     }
-
+    
     $self;
 }
 

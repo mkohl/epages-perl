@@ -10,10 +10,10 @@ Params::Util - Simple, compact and correct param-checking functions
 
   # Import some functions
   use Params::Util qw{_SCALAR _HASH _INSTANCE};
-
+  
   # If you are lazy, or need a lot of them...
   use Params::Util ':ALL';
-
+  
   sub foo {
       my $object  = _INSTANCE(shift, 'Foo') or return undef;
       my $image   = _SCALAR(shift)          or return undef;
@@ -66,27 +66,27 @@ use vars qw{$VERSION @ISA @EXPORT_OK %EXPORT_TAGS};
 
 $VERSION   = '1.04';
 @ISA       = qw{
-        Exporter
-        DynaLoader
+	Exporter
+	DynaLoader
 };
 @EXPORT_OK = qw{
-        _STRING     _IDENTIFIER
-        _CLASS      _CLASSISA   _SUBCLASS  _DRIVER
-        _NUMBER     _POSINT     _NONNEGINT
-        _SCALAR     _SCALAR0
-        _ARRAY      _ARRAY0     _ARRAYLIKE
-        _HASH       _HASH0      _HASHLIKE
-        _CODE       _CODELIKE
-        _INVOCANT   _REGEX      _INSTANCE
-        _SET        _SET0
-        _HANDLE
+	_STRING     _IDENTIFIER
+	_CLASS      _CLASSISA   _SUBCLASS  _DRIVER
+	_NUMBER     _POSINT     _NONNEGINT
+	_SCALAR     _SCALAR0
+	_ARRAY      _ARRAY0     _ARRAYLIKE
+	_HASH       _HASH0      _HASHLIKE
+	_CODE       _CODELIKE
+	_INVOCANT   _REGEX      _INSTANCE
+	_SET        _SET0
+	_HANDLE
 };
 %EXPORT_TAGS = ( ALL => \@EXPORT_OK );
 
 eval {
-        local $ENV{PERL_DL_NONLAZY} = 0 if $ENV{PERL_DL_NONLAZY};
-        bootstrap Params::Util $VERSION;
-        1;
+	local $ENV{PERL_DL_NONLAZY} = 0 if $ENV{PERL_DL_NONLAZY};
+	bootstrap Params::Util $VERSION;
+	1;
 } unless $ENV{PERL_PARAMS_UTIL_PP};
 
 
@@ -109,7 +109,7 @@ C<'0'> false negative case, but will return it.
 
   # '0' not considered valid data
   my $name = _STRING(shift) or die "Bad name";
-
+  
   # '0' is considered valid data
   my $string = _STRING($_[0]) ? shift : die "Bad string";
 
@@ -123,7 +123,7 @@ C<undef> if not.
 
 eval <<'END_PERL' unless defined &_STRING;
 sub _STRING ($) {
-        (defined $_[0] and ! ref $_[0] and length($_[0])) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and length($_[0])) ? $_[0] : undef;
 }
 END_PERL
 
@@ -142,7 +142,7 @@ C<undef> if not.
 
 eval <<'END_PERL' unless defined &_IDENTIFIER;
 sub _IDENTIFIER ($) {
-        (defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*\z/s) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*\z/s) ? $_[0] : undef;
 }
 END_PERL
 
@@ -165,7 +165,7 @@ C<undef> if not.
 
 eval <<'END_PERL' unless defined &_CLASS;
 sub _CLASS ($) {
-        (defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s) ? $_[0] : undef;
 }
 END_PERL
 
@@ -191,7 +191,7 @@ C<undef> if not.
 
 eval <<'END_PERL' unless defined &_CLASSISA;
 sub _CLASSISA ($$) {
-        (defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s and $_[0]->isa($_[1])) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s and $_[0]->isa($_[1])) ? $_[0] : undef;
 }
 END_PERL
 
@@ -217,7 +217,7 @@ C<undef> if not.
 
 eval <<'END_PERL' unless defined &_SUBCLASS;
 sub _SUBCLASS ($$) {
-        (defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s and $_[0] ne $_[1] and $_[0]->isa($_[1])) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*\z/s and $_[0] ne $_[1] and $_[0]->isa($_[1])) ? $_[0] : undef;
 }
 END_PERL
 
@@ -239,9 +239,9 @@ number.
 
 eval <<'END_PERL' unless defined &_NUMBER;
 sub _NUMBER ($) {
-        ( defined $_[0] and ! ref $_[0] and Scalar::Util::looks_like_number($_[0]) )
-        ? $_[0]
-        : undef;
+	( defined $_[0] and ! ref $_[0] and Scalar::Util::looks_like_number($_[0]) )
+	? $_[0]
+	: undef;
 }
 END_PERL
 
@@ -263,7 +263,7 @@ name.
 
 eval <<'END_PERL' unless defined &_POSINT;
 sub _POSINT ($) {
-        (defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[1-9]\d*$/) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[1-9]\d*$/) ? $_[0] : undef;
 }
 END_PERL
 
@@ -293,7 +293,7 @@ name.
 
 eval <<'END_PERL' unless defined &_NONNEGINT;
 sub _NONNEGINT ($) {
-        (defined $_[0] and ! ref $_[0] and $_[0] =~ m/^(?:0|[1-9]\d*)$/) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^(?:0|[1-9]\d*)$/) ? $_[0] : undef;
 }
 END_PERL
 
@@ -315,7 +315,7 @@ if the value provided is not a C<SCALAR> reference.
 
 eval <<'END_PERL' unless defined &_SCALAR;
 sub _SCALAR ($) {
-        (ref $_[0] eq 'SCALAR' and defined ${$_[0]} and ${$_[0]} ne '') ? $_[0] : undef;
+	(ref $_[0] eq 'SCALAR' and defined ${$_[0]} and ${$_[0]} ne '') ? $_[0] : undef;
 }
 END_PERL
 
@@ -337,7 +337,7 @@ if the value provided is not a C<SCALAR> reference.
 
 eval <<'END_PERL' unless defined &_SCALAR0;
 sub _SCALAR0 ($) {
-        ref $_[0] eq 'SCALAR' ? $_[0] : undef;
+	ref $_[0] eq 'SCALAR' ? $_[0] : undef;
 }
 END_PERL
 
@@ -359,7 +359,7 @@ if the value provided is not an C<ARRAY> reference.
 
 eval <<'END_PERL' unless defined &_ARRAY;
 sub _ARRAY ($) {
-        (ref $_[0] eq 'ARRAY' and @{$_[0]}) ? $_[0] : undef;
+	(ref $_[0] eq 'ARRAY' and @{$_[0]}) ? $_[0] : undef;
 }
 END_PERL
 
@@ -382,7 +382,7 @@ if the value provided is not an C<ARRAY> reference.
 
 eval <<'END_PERL' unless defined &_ARRAY0;
 sub _ARRAY0 ($) {
-        ref $_[0] eq 'ARRAY' ? $_[0] : undef;
+	ref $_[0] eq 'ARRAY' ? $_[0] : undef;
 }
 END_PERL
 
@@ -398,11 +398,11 @@ C<_ARRAYLIKE> returns C<undef>.
 
 eval <<'END_PERL' unless defined &_ARRAYLIKE;
 sub _ARRAYLIKE {
-        (defined $_[0] and ref $_[0] and (
-                (Scalar::Util::reftype($_[0]) eq 'ARRAY')
-                or
-                overload::Method($_[0], '@{}')
-        )) ? $_[0] : undef;
+	(defined $_[0] and ref $_[0] and (
+		(Scalar::Util::reftype($_[0]) eq 'ARRAY')
+		or
+		overload::Method($_[0], '@{}')
+	)) ? $_[0] : undef;
 }
 END_PERL
 
@@ -424,7 +424,7 @@ if the value provided is not an C<HASH> reference.
 
 eval <<'END_PERL' unless defined &_HASH;
 sub _HASH ($) {
-        (ref $_[0] eq 'HASH' and scalar %{$_[0]}) ? $_[0] : undef;
+	(ref $_[0] eq 'HASH' and scalar %{$_[0]}) ? $_[0] : undef;
 }
 END_PERL
 
@@ -446,7 +446,7 @@ if the value provided is not an C<HASH> reference.
 
 eval <<'END_PERL' unless defined &_HASH0;
 sub _HASH0 ($) {
-        ref $_[0] eq 'HASH' ? $_[0] : undef;
+	ref $_[0] eq 'HASH' ? $_[0] : undef;
 }
 END_PERL
 
@@ -462,11 +462,11 @@ C<_HASHLIKE> returns C<undef>.
 
 eval <<'END_PERL' unless defined &_HASHLIKE;
 sub _HASHLIKE {
-        (defined $_[0] and ref $_[0] and (
-                (Scalar::Util::reftype($_[0]) eq 'HASH')
-                or
-                overload::Method($_[0], '%{}')
-        )) ? $_[0] : undef;
+	(defined $_[0] and ref $_[0] and (
+		(Scalar::Util::reftype($_[0]) eq 'HASH')
+		or
+		overload::Method($_[0], '%{}')
+	)) ? $_[0] : undef;
 }
 END_PERL
 
@@ -485,7 +485,7 @@ if the value provided is not an C<CODE> reference.
 
 eval <<'END_PERL' unless defined &_CODE;
 sub _CODE ($) {
-        ref $_[0] eq 'CODE' ? $_[0] : undef;
+	ref $_[0] eq 'CODE' ? $_[0] : undef;
 }
 END_PERL
 
@@ -533,12 +533,12 @@ I apologise for any inconvenience caused.
 
 eval <<'END_PERL' unless defined &_CODELIKE;
 sub _CODELIKE($) {
-        (
-                (Scalar::Util::reftype($_[0])||'') eq 'CODE'
-                or
-                Scalar::Util::blessed($_[0]) and overload::Method($_[0],'&{}')
-        )
-        ? $_[0] : undef;
+	(
+		(Scalar::Util::reftype($_[0])||'') eq 'CODE'
+		or
+		Scalar::Util::blessed($_[0]) and overload::Method($_[0],'&{}')
+	)
+	? $_[0] : undef;
 }
 END_PERL
 
@@ -556,13 +556,13 @@ returns C<undef>.
 
 eval <<'END_PERL' unless defined &_INVOCANT;
 sub _INVOCANT($) {
-        (defined $_[0] and
-                (defined Scalar::Util::blessed($_[0])
-                or
-                # We used to check for stash definedness, but any class-like name is a
-                # valid invocant for UNIVERSAL methods, so we stopped. -- rjbs, 2006-07-02
-                Params::Util::_CLASS($_[0]))
-        ) ? $_[0] : undef;
+	(defined $_[0] and
+		(defined Scalar::Util::blessed($_[0])
+		or      
+		# We used to check for stash definedness, but any class-like name is a
+		# valid invocant for UNIVERSAL methods, so we stopped. -- rjbs, 2006-07-02
+		Params::Util::_CLASS($_[0]))
+	) ? $_[0] : undef;
 }
 END_PERL
 
@@ -581,7 +581,7 @@ provided is not an object of that type.
 
 eval <<'END_PERL' unless defined &_INSTANCE;
 sub _INSTANCE ($$) {
-        (Scalar::Util::blessed($_[0]) and $_[0]->isa($_[1])) ? $_[0] : undef;
+	(Scalar::Util::blessed($_[0]) and $_[0]->isa($_[1])) ? $_[0] : undef;
 }
 END_PERL
 
@@ -599,7 +599,7 @@ provided is not a regular expression.
 
 eval <<'END_PERL' unless defined &_REGEX;
 sub _REGEX ($) {
-        (defined $_[0] and 'Regexp' eq ref($_[0])) ? $_[0] : undef;
+	(defined $_[0] and 'Regexp' eq ref($_[0])) ? $_[0] : undef;
 }
 END_PERL
 
@@ -624,12 +624,12 @@ the value provided is not a set of that class.
 
 eval <<'END_PERL' unless defined &_SET;
 sub _SET ($$) {
-        my $set = shift;
-        _ARRAY($set) or return undef;
-        foreach my $item ( @$set ) {
-                _INSTANCE($item,$_[0]) or return undef;
-        }
-        $set;
+	my $set = shift;
+	_ARRAY($set) or return undef;
+	foreach my $item ( @$set ) {
+		_INSTANCE($item,$_[0]) or return undef;
+	}
+	$set;
 }
 END_PERL
 
@@ -654,12 +654,12 @@ the value provided is not a set of that class.
 
 eval <<'END_PERL' unless defined &_SET0;
 sub _SET0 ($$) {
-        my $set = shift;
-        _ARRAY0($set) or return undef;
-        foreach my $item ( @$set ) {
-                _INSTANCE($item,$_[0]) or return undef;
-        }
-        $set;
+	my $set = shift;
+	_ARRAY0($set) or return undef;
+	foreach my $item ( @$set ) {
+		_INSTANCE($item,$_[0]) or return undef;
+	}
+	$set;
 }
 END_PERL
 
@@ -686,54 +686,54 @@ detectors in existance (and we stole from the best of them).
 # done millions of times, so doing it slowly is not a big speed hit.
 eval <<'END_PERL' unless defined &_HANDLE;
 sub _HANDLE {
-        my $it = shift;
+	my $it = shift;
 
-        # It has to be defined, of course
-        unless ( defined $it ) {
-                return undef;
-        }
+	# It has to be defined, of course
+	unless ( defined $it ) {
+		return undef;
+	}
 
-        # Normal globs are considered to be file handles
-        if ( ref $it eq 'GLOB' ) {
-                return $it;
-        }
+	# Normal globs are considered to be file handles
+	if ( ref $it eq 'GLOB' ) {
+		return $it;
+	}
 
-        # Check for a normal tied filehandle
-        # Side Note: 5.5.4's tied() and can() doesn't like getting undef
-        if ( tied($it) and tied($it)->can('TIEHANDLE') ) {
-                return $it;
-        }
+	# Check for a normal tied filehandle
+	# Side Note: 5.5.4's tied() and can() doesn't like getting undef
+	if ( tied($it) and tied($it)->can('TIEHANDLE') ) {
+		return $it;
+	}
 
-        # There are no other non-object handles that we support
-        unless ( Scalar::Util::blessed($it) ) {
-                return undef;
-        }
+	# There are no other non-object handles that we support
+	unless ( Scalar::Util::blessed($it) ) {
+		return undef;
+	}
 
-        # Check for a common base classes for conventional IO::Handle object
-        if ( $it->isa('IO::Handle') ) {
-                return $it;
-        }
+	# Check for a common base classes for conventional IO::Handle object
+	if ( $it->isa('IO::Handle') ) {
+		return $it;
+	}
 
 
-        # Check for tied file handles using Tie::Handle
-        if ( $it->isa('Tie::Handle') ) {
-                return $it;
-        }
+	# Check for tied file handles using Tie::Handle
+	if ( $it->isa('Tie::Handle') ) {
+		return $it;
+	}
 
-        # IO::Scalar is not a proper seekable, but it is valid is a
-        # regular file handle
-        if ( $it->isa('IO::Scalar') ) {
-                return $it;
-        }
+	# IO::Scalar is not a proper seekable, but it is valid is a
+	# regular file handle
+	if ( $it->isa('IO::Scalar') ) {
+		return $it;
+	}
 
-        # Yet another special case for IO::String, which refuses (for now
-        # anyway) to become a subclass of IO::Handle.
-        if ( $it->isa('IO::String') ) {
-                return $it;
-        }
+	# Yet another special case for IO::String, which refuses (for now
+	# anyway) to become a subclass of IO::Handle.
+	if ( $it->isa('IO::String') ) {
+		return $it;
+	}
 
-        # This is not any sort of object we know about
-        return undef;
+	# This is not any sort of object we know about
+	return undef;
 }
 END_PERL
 
@@ -763,7 +763,7 @@ or the class fails the isa test.
 
 eval <<'END_PERL' unless defined &_DRIVER;
 sub _DRIVER ($$) {
-        (defined _CLASS($_[0]) and eval "require $_[0];" and ! $@ and $_[0]->isa($_[1]) and $_[0] ne $_[1]) ? $_[0] : undef;
+	(defined _CLASS($_[0]) and eval "require $_[0];" and ! $@ and $_[0]->isa($_[1]) and $_[0] ne $_[1]) ? $_[0] : undef;
 }
 END_PERL
 

@@ -42,21 +42,21 @@ our $VERSION = '0.020';
 sub perl_version_introduced {
     my ( $self ) = @_;
     $self->content() =~ m/ \A [(] \d+ [)] \z /smx
-        and return '5.005';
+	and return '5.005';
     return '5.009005';
 }
 
 my @recognize = (
     [ qr{ \A \( (?: ( \d+ ) | R (\d+) ) \) }smx,
-        { is_named => 0 } ],
+	{ is_named => 0 } ],
     [ qr{ \A \( R \) }smx,
-        { is_named => 0, capture => '0' } ],
+	{ is_named => 0, capture => '0' } ],
     [ qr{ \A \( (?: < ( @{[ RE_CAPTURE_NAME ]} ) > |
-            ' ( @{[ RE_CAPTURE_NAME ]} ) ' |
-            R & ( @{[ RE_CAPTURE_NAME ]} ) ) \) }smxo,
-        { is_named => 1} ],
+	    ' ( @{[ RE_CAPTURE_NAME ]} ) ' |
+	    R & ( @{[ RE_CAPTURE_NAME ]} ) ) \) }smxo,
+	{ is_named => 1} ],
     [ qr{ \A \( DEFINE \) }smx,
-        { is_named => 0, capture => '0' } ],
+	{ is_named => 0, capture => '0' } ],
 );
 
 # This must be implemented by tokens which do not recognize themselves.
@@ -77,9 +77,9 @@ sub __PPIX_TOKENIZER__regexp {
     my ( $class, $tokenizer, $character ) = @_;
 
     foreach ( @recognize ) {
-        my ( $re, $arg ) = @{ $_ };
-        my $accept = $tokenizer->find_regexp( $re ) or next;
-        return $tokenizer->make_token( $accept, __PACKAGE__, $arg );
+	my ( $re, $arg ) = @{ $_ };
+	my $accept = $tokenizer->find_regexp( $re ) or next;
+	return $tokenizer->make_token( $accept, __PACKAGE__, $arg );
     }
 
     return;

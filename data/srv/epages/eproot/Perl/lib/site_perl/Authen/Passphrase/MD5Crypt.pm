@@ -5,29 +5,29 @@ crypt()
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::MD5Crypt;
+	use Authen::Passphrase::MD5Crypt;
 
-        $ppr = Authen::Passphrase::MD5Crypt->new(
-                        salt => "Vd3f8aG6",
-                        hash_base64 => "GcsdF4YCXb0PM2UmXjIoI1");
+	$ppr = Authen::Passphrase::MD5Crypt->new(
+			salt => "Vd3f8aG6",
+			hash_base64 => "GcsdF4YCXb0PM2UmXjIoI1");
 
-        $ppr = Authen::Passphrase::MD5Crypt->new(
-                        salt_random => 1,
-                        passphrase => "passphrase");
+	$ppr = Authen::Passphrase::MD5Crypt->new(
+			salt_random => 1,
+			passphrase => "passphrase");
 
-        $ppr = Authen::Passphrase::MD5Crypt->from_crypt(
-                '$1$Vd3f8aG6$GcsdF4YCXb0PM2UmXjIoI1');
+	$ppr = Authen::Passphrase::MD5Crypt->from_crypt(
+		'$1$Vd3f8aG6$GcsdF4YCXb0PM2UmXjIoI1');
 
-        $ppr = Authen::Passphrase::MD5Crypt->from_rfc2307(
-                '{CRYPT}$1$Vd3f8aG6$GcsdF4YCXb0PM2UmXjIoI1');
+	$ppr = Authen::Passphrase::MD5Crypt->from_rfc2307(
+		'{CRYPT}$1$Vd3f8aG6$GcsdF4YCXb0PM2UmXjIoI1');
 
-        $salt = $ppr->salt;
-        $hash_base64 = $ppr->hash_base64;
+	$salt = $ppr->salt;
+	$hash_base64 = $ppr->hash_base64;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $passwd = $ppr->as_crypt;
-        $userPassword = $ppr->as_rfc2307;
+	$passwd = $ppr->as_crypt;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -130,48 +130,48 @@ The salt must be given, and either the hash or the passphrase.
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "salt") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $value =~ m#\A[\x00-\xff]*\z#
-                                or croak "not a valid salt";
-                        $self->{salt} = "$value";
-                } elsif($attr eq "salt_random") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $self->{salt} = "";
-                        for(my $i = 8; $i--; ) {
-                                $self->{salt} .= chr(rand_int(64));
-                        }
-                        $self->{salt} =~ tr#\x00-\x3f#./0-9A-Za-z#;
-                } elsif($attr eq "hash_base64") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash_base64}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[./0-9A-Za-z]{21}[./01]\z#
-                                or croak "\"$value\" is not a valid ".
-                                                "MD5-based crypt() hash";
-                        $self->{hash_base64} = "$value";
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if exists($self->{hash_base64}) ||
-                                        defined($passphrase);
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        croak "salt not specified" unless exists $self->{salt};
-        $self->{hash_base64} = $self->_hash_base64_of($passphrase)
-                if defined $passphrase;
-        croak "hash not specified" unless exists $self->{hash_base64};
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "salt") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$value =~ m#\A[\x00-\xff]*\z#
+				or croak "not a valid salt";
+			$self->{salt} = "$value";
+		} elsif($attr eq "salt_random") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$self->{salt} = "";
+			for(my $i = 8; $i--; ) {
+				$self->{salt} .= chr(rand_int(64));
+			}
+			$self->{salt} =~ tr#\x00-\x3f#./0-9A-Za-z#;
+		} elsif($attr eq "hash_base64") {
+			croak "hash specified redundantly"
+				if exists($self->{hash_base64}) ||
+					defined($passphrase);
+			$value =~ m#\A[./0-9A-Za-z]{21}[./01]\z#
+				or croak "\"$value\" is not a valid ".
+						"MD5-based crypt() hash";
+			$self->{hash_base64} = "$value";
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if exists($self->{hash_base64}) ||
+					defined($passphrase);
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	croak "salt not specified" unless exists $self->{salt};
+	$self->{hash_base64} = $self->_hash_base64_of($passphrase)
+		if defined $passphrase;
+	croak "hash not specified" unless exists $self->{hash_base64};
+	return $self;
 }
 
 =item Authen::Passphrase::MD5Crypt->from_crypt(PASSWD)
@@ -185,14 +185,14 @@ or any character that cannot appear in a crypt string.
 =cut
 
 sub from_crypt {
-        my($class, $passwd) = @_;
-        if($passwd =~ /\A\$1\$/) {
-                $passwd =~ m:\A\$1\$([!-#%-9;-~]{0,8})\$([./0-9A-Za-z]{22})\z:
-                        or croak "malformed \$1\$ data";
-                my($salt, $hash) = ($1, $2);
-                return $class->new(salt => $salt, hash_base64 => $hash);
-        }
-        return $class->SUPER::from_crypt($passwd);
+	my($class, $passwd) = @_;
+	if($passwd =~ /\A\$1\$/) {
+		$passwd =~ m:\A\$1\$([!-#%-9;-~]{0,8})\$([./0-9A-Za-z]{22})\z:
+			or croak "malformed \$1\$ data";
+		my($salt, $hash) = ($1, $2);
+		return $class->new(salt => $salt, hash_base64 => $hash);
+	}
+	return $class->SUPER::from_crypt($passwd);
 }
 
 =item Authen::Passphrase::MD5Crypt->from_rfc2307(USERPASSWORD)
@@ -214,8 +214,8 @@ Returns the salt, in raw form.
 =cut
 
 sub salt {
-        my($self) = @_;
-        return $self->{salt};
+	my($self) = @_;
+	return $self->{salt};
 }
 
 =item $ppr->hash_base64
@@ -225,8 +225,8 @@ Returns the hash value, as a string of 22 base 64 digits.
 =cut
 
 sub hash_base64 {
-        my($self) = @_;
-        return $self->{hash_base64};
+	my($self) = @_;
+	return $self->{hash_base64};
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -243,27 +243,27 @@ bytes, and it cannot contain any NUL or "B<$>" characters.
 =cut
 
 sub _hash_base64_of {
-        my($self, $passphrase) = @_;
-        die "can't use a crypt-incompatible salt yet ".
-                        "(need generalised Crypt::MD5Passwd)"
-                if $self->{salt} =~ /[^\!-\#\%-9\;-\~]/ ||
-                        length($self->{salt}) > 8;
-        my $hash = unix_md5_crypt($passphrase, $self->{salt});
-        $hash =~ s/\A.*\$//;
-        return $hash;
+	my($self, $passphrase) = @_;
+	die "can't use a crypt-incompatible salt yet ".
+			"(need generalised Crypt::MD5Passwd)"
+		if $self->{salt} =~ /[^\!-\#\%-9\;-\~]/ ||
+			length($self->{salt}) > 8;
+	my $hash = unix_md5_crypt($passphrase, $self->{salt});
+	$hash =~ s/\A.*\$//;
+	return $hash;
 }
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $self->_hash_base64_of($passphrase) eq $self->{hash_base64};
+	my($self, $passphrase) = @_;
+	return $self->_hash_base64_of($passphrase) eq $self->{hash_base64};
 }
 
 sub as_crypt {
-        my($self) = @_;
-        croak "can't put this salt into a crypt string"
-                if $self->{salt} =~ /[^\!-\#\%-9\;-\~]/ ||
-                        length($self->{salt}) > 8;
-        return "\$1\$".$self->{salt}."\$".$self->{hash_base64};
+	my($self) = @_;
+	croak "can't put this salt into a crypt string"
+		if $self->{salt} =~ /[^\!-\#\%-9\;-\~]/ ||
+			length($self->{salt}) > 8;
+	return "\$1\$".$self->{salt}."\$".$self->{hash_base64};
 }
 
 =back

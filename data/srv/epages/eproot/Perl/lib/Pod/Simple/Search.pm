@@ -25,7 +25,7 @@ use Cwd qw( cwd );
 #==========================================================================
 __PACKAGE__->_accessorize(  # Make my dumb accessor methods
  'callback', 'progress', 'dir_prefix', 'inc', 'laborious', 'limit_glob',
- 'limit_re', 'shadows', 'verbose', 'name2path', 'path2name',
+ 'limit_re', 'shadows', 'verbose', 'name2path', 'path2name', 
 );
 #==========================================================================
 
@@ -89,26 +89,26 @@ sub survey {
     } else {
       $self->{'_dirs_visited'}{$start_in} = 1;
     }
-
+  
     unless(-e $start_in) {
       $verbose and print "Skipping non-existent $start_in\n";
       next;
     }
 
     my $closure = $self->_make_search_callback;
-
+    
     if(-d $start_in) {
       # Normal case:
       $verbose and print "Beginning excursion under $start_in\n";
       $self->_recurse_dir( $start_in, $closure, $modname_prefix );
       $verbose and print "Back from excursion under $start_in\n\n";
-
+        
     } elsif(-f _) {
       # A excursion consisting of just one file!
       $_ = basename($start_in);
       $verbose and print "Pondering $start_in ($_)\n";
       $closure->($start_in, $_, 0, []);
-
+        
     } else {
       $verbose and print "Skipping mysterious $start_in\n";
     }
@@ -164,7 +164,7 @@ sub _make_search_callback {
       return; # (not pruning);
     }
 
-
+      
     # Make sure it's a file even worth even considering
     if($laborious) {
       unless(
@@ -184,7 +184,7 @@ sub _make_search_callback {
     $verbose and print "Considering item $file\n";
     my $name = $self->_path2modname( $file, $shortname, $modname_bits );
     $verbose > 0.01 and print " Nominating $file as $name\n";
-
+        
     if($limit_re and $name !~ m/$limit_re/i) {
       $verbose and print "Shunning $name as not matching $limit_re\n";
       return;
@@ -196,7 +196,7 @@ sub _make_search_callback {
         join(' ', grep($path2name->{$_} eq $name, keys %$path2name)), "\n";
       return;
     }
-
+        
     # Put off until as late as possible the expense of
     #  actually reading the file:
     if( m/\.pod\z/is ) {
@@ -331,7 +331,7 @@ sub _recurse_dir {
 
       if(!-r $i_full) {
         $verbose and print "Skipping unreadable $i_full\n";
-
+       
       } elsif(-f $i_full) {
         $_ = $i;
         $callback->(          $i_full, $i, 0, $modname_bits );
@@ -360,7 +360,7 @@ sub _recurse_dir {
 
   undef $recursor;  # allow it to be GC'd
 
-  return;
+  return;  
 }
 
 
@@ -374,11 +374,11 @@ sub run {
   $self->callback( sub {
     my($file, $name) = @_;
     my $version = '';
-
+     
     # Yes, I know we won't catch the version in like a File/Thing.pm
     #  if we see File/Thing.pod first.  That's just the way the
     #  cookie crumbles.  -- SMB
-
+     
     if($file =~ m/\.pod$/i) {
       # Don't bother looking for $VERSION in .pod files
       DEBUG and print "Not looking for \$VERSION in .pod $file\n";
@@ -403,12 +403,12 @@ sub run {
              or m{\$Revision:\s*([0-9_]+(?:\.[0-9_]+)*)\s*\$}s
              # like in sprintf("%d.%02d", q$Revision: 4.13 $ =~ /(\d+)\.(\d+)/);
           ;
-
+           
           # Like in sprintf("%d.%s", map {s/_//g; $_} q$Name: release-0_55-public $ =~ /-(\d+)_([\d_]+)/)
           $_ = sprintf("v%d.%s",
             map {s/_//g; $_}
               $1 =~ m/-(\d+)_([\d_]+)/) # snare just the numeric part
-           if m{\$Name:\s*([^\$]+)\$}s
+           if m{\$Name:\s*([^\$]+)\$}s 
           ;
           $version = $_;
           DEBUG and print "Noting $version as version\n";
@@ -429,13 +429,13 @@ sub run {
 
 sub simplify_name {
   my($self, $str) = @_;
-
+    
   # Remove all path components
   #                             XXX Why not just use basename()? -- SMB
 
   if ($^O eq 'MacOS') { $str =~ s{^.*:+}{}s }
   else                { $str =~ s{^.*/+}{}s }
-
+  
   $self->_simplify_base($str);
   return $str;
 }
@@ -460,7 +460,7 @@ sub _simplify_base {   # Internal method only
 
 sub _expand_inc {
   my($self, $search_dirs) = @_;
-
+  
   return unless $self->{'inc'};
 
   if ($^O eq 'MacOS') {
@@ -536,7 +536,7 @@ sub find {
   $verbose and print "Chomping {$pod} => {@parts}\n";
 
   #@search_dirs = File::Spec->curdir unless @search_dirs;
-
+  
   if( $self->inc ) {
     if( $^O eq 'MacOS' ) {
       push @search_dirs, $self->_mac_whammy(@INC);
@@ -547,7 +547,7 @@ sub find {
     # Add location of pod documentation for perl man pages (eg perlfunc)
     # This is a pod directory in the private install tree
     #my $perlpoddir = File::Spec->catdir($Config::Config{'installprivlib'},
-    #                                   'pod');
+    #					'pod');
     #push (@search_dirs, $perlpoddir)
     #  if -d $perlpoddir;
 
@@ -604,7 +604,7 @@ sub contains_pod {
 
   sleep($SLEEPY - 1) if $SLEEPY;
    # avoid totally hogging the processor on OSs with poor process control
-
+  
   local $_;
   while( <MAYBEPOD> ) {
     if(m/^=(head\d|pod|over|item)\b/s) {
@@ -788,7 +788,7 @@ is called.
 
 =item $search->laborious( I<true-or-false> );
 
-Unless you set this attribute to a true value, Pod::Search will
+Unless you set this attribute to a true value, Pod::Search will 
 apply Perl-specific heuristics to find the correct module PODs quickly.
 This attribute's default value is false.  You won't normally need
 to set this to true.
@@ -841,7 +841,7 @@ and usually dir_prefix.)
 =item $search->progress( I<some-progress-object> );
 
 If you set a value for this attribute, the value is expected
-to be an object (probably of a class that you define) that has a
+to be an object (probably of a class that you define) that has a 
 C<reach> method and a C<done> method.  This is meant for reporting
 progress during the search, if you don't want to use a simple
 callback.
@@ -982,7 +982,7 @@ The C<verbose> and C<inc> attributes influence the behavior of this
 search; notably, C<inc>, if true, adds @INC I<and also
 $Config::Config{'scriptdir'}> to the list of directories to search.
 
-It is common to simply say C<< $filename = Pod::Simple::Search-> new
+It is common to simply say C<< $filename = Pod::Simple::Search-> new 
 ->find("perlvar") >> so that just the @INC (well, and scriptdir)
 directories are searched.  (This happens because the C<inc>
 attribute is true by default.)

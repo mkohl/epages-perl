@@ -18,12 +18,12 @@ Ready?  Ok...
     $top = MIME::Entity->build(From    => 'me@myhost.com',
                                To      => 'you@yourhost.com',
                                Subject => "Hello, nurse!",
-                               Data    => \@my_message);
+			       Data    => \@my_message);
 
     ### Attach stuff to it:
     $top->attach(Path     => $gif_path,
-                 Type     => "image/gif",
-                 Encoding => "base64");
+		 Type     => "image/gif",
+		 Encoding => "base64");
 
     ### Sign it:
     $top->sign;
@@ -97,12 +97,12 @@ Suppose you don't know ahead of time that you'll have attachments?
 No problem: you can "attach" to singleparts as well:
 
     $top = MIME::Entity->build(From    => 'me@myhost.com',
-                               To      => 'you@yourhost.com',
-                               Subject => "Hello, nurse!",
-                               Data    => \@my_message);
+			       To      => 'you@yourhost.com',
+			       Subject => "Hello, nurse!",
+			       Data    => \@my_message);
     if ($GIF_path) {
-        $top->attach(Path     => $GIF_path,
-                     Type     => 'image/gif');
+	$top->attach(Path     => $GIF_path,
+	             Type     => 'image/gif');
     }
 
 Copy an entity (headers, parts... everything but external body data):
@@ -138,14 +138,14 @@ Muck about with the body data:
 
     ### Read the (unencoded) body data:
     if ($io = $ent->open("r")) {
-        while (defined($_ = $io->getline)) { print $_ }
-        $io->close;
+	while (defined($_ = $io->getline)) { print $_ }
+	$io->close;
     }
 
     ### Write the (unencoded) body data:
     if ($io = $ent->open("w")) {
-        foreach (@lines) { $io->print($_) }
-        $io->close;
+	foreach (@lines) { $io->print($_) }
+	$io->close;
     }
 
     ### Delete the files for any external (on-disk) data:
@@ -404,7 +404,7 @@ A quick-and-easy catch-all way to create an entity.  Use it like this
 to build a "normal" single-part entity:
 
    $ent = MIME::Entity->build(Type     => "image/gif",
-                              Encoding => "base64",
+		              Encoding => "base64",
                               Path     => "/path/to/xyz12345.gif",
                               Filename => "saveme.gif",
                               Disposition => "attachment");
@@ -449,8 +449,8 @@ standard list of header fields (you don't need to worry about case):
 
     Bcc           Encrypted     Received      Sender
     Cc            From          References    Subject
-    Comments      Keywords      Reply-To      To
-    Content-*     Message-ID    Resent-*      X-*
+    Comments	  Keywords      Reply-To      To
+    Content-*	  Message-ID    Resent-*      X-*
     Date          MIME-Version  Return-Path
                   Organization
 
@@ -571,42 +571,42 @@ sub build {
 
     ### Type-check sanity:
     if ($type =~ m{^(multipart|message)/}) {
-        ($encoding =~ /^(|7bit|8bit|binary|-suggest)$/i)
-            or croak "can't have encoding $encoding for message type $type!";
+	($encoding =~ /^(|7bit|8bit|binary|-suggest)$/i)
+	    or croak "can't have encoding $encoding for message type $type!";
     }
 
     ### Multipart or not? Do sanity check and fixup:
     if ($is_multipart) {      ### multipart...
 
-        ### Get any supplied boundary, and check it:
-        if (defined($boundary = $params{Boundary})) {  ### they gave us one...
-            if ($boundary eq '') {
-                whine "empty string not a legal boundary: I'm ignoring it";
-                $boundary = undef;
-            }
-            elsif ($boundary =~ m{[^0-9a-zA-Z_\'\(\)\+\,\.\/\:\=\?\- ]}) {
-                whine "boundary ignored: illegal characters ($boundary)";
-                $boundary = undef;
-            }
-        }
+	### Get any supplied boundary, and check it:
+	if (defined($boundary = $params{Boundary})) {  ### they gave us one...
+	    if ($boundary eq '') {
+		whine "empty string not a legal boundary: I'm ignoring it";
+		$boundary = undef;
+	    }
+	    elsif ($boundary =~ m{[^0-9a-zA-Z_\'\(\)\+\,\.\/\:\=\?\- ]}) {
+		whine "boundary ignored: illegal characters ($boundary)";
+		$boundary = undef;
+	    }
+	}
 
-        ### If we have to roll our own boundary, do so:
-        defined($boundary) or $boundary = make_boundary();
+	### If we have to roll our own boundary, do so:
+	defined($boundary) or $boundary = make_boundary();
     }
     else {                    ### single part...
-        ### Create body:
-        if ($params{Path}) {
-            $self->bodyhandle(new MIME::Body::File $params{Path});
-        }
-        elsif (defined($params{Data})) {
-            $self->bodyhandle(new MIME::Body::InCore $params{Data});
-        }
-        else {
-            die "can't build entity: no body, and not multipart\n";
-        }
+	### Create body:
+	if ($params{Path}) {
+	    $self->bodyhandle(new MIME::Body::File $params{Path});
+	}
+	elsif (defined($params{Data})) {
+	    $self->bodyhandle(new MIME::Body::InCore $params{Data});
+	}
+	else {
+	    die "can't build entity: no body, and not multipart\n";
+	}
 
-        ### Check whether we need to binmode():   [Steve Kilbane]
-        $self->bodyhandle->binmode(1) unless textual_type($type);
+	### Check whether we need to binmode():   [Steve Kilbane]
+	$self->bodyhandle->binmode(1) unless textual_type($type);
     }
 
 
@@ -628,18 +628,18 @@ sub build {
     ### Now that both body and content-type are available, we can suggest
     ### content-transfer-encoding (if desired);
     if (!$encoding) {
-        $encoding = $self->suggest_encoding_lite;
+	$encoding = $self->suggest_encoding_lite;
     }
     elsif (lc($encoding) eq '-suggest') {
-        $encoding = $self->suggest_encoding;
+	$encoding = $self->suggest_encoding;
     }
 
     ### Add content-disposition field (if not multipart):
     unless ($is_multipart) {
-        $field = new Mail::Field 'Content_disposition';  ### not a typo :-(
-        $field->type($disposition);
-        $field->filename($filename) if defined($filename);
-        $head->replace('Content-disposition', $field->stringify);
+	$field = new Mail::Field 'Content_disposition';  ### not a typo :-(
+	$field->type($disposition);
+	$field->filename($filename) if defined($filename);
+	$head->replace('Content-disposition', $field->stringify);
     }
 
     ### Add other MIME fields:
@@ -650,34 +650,34 @@ sub build {
     # did not do this.  So, we check, and add if the caller has not done so
     # already.
     if( defined $id ) {
-        if( $id !~ /^<.*>$/ ) {
-                $id = "<$id>";
-        }
-        $head->replace('Content-id', $id);
+	if( $id !~ /^<.*>$/ ) {
+		$id = "<$id>";
+	}
+	$head->replace('Content-id', $id);
     }
     $head->replace('MIME-Version', '1.0')                  if $top;
 
     ### Add the X-Mailer field, if top level (use default value if not given):
     $top and $head->replace('X-Mailer',
-                            "MIME-tools ".(MIME::Tools->version).
-                            " (Entity "  .($VERSION).")");
+			    "MIME-tools ".(MIME::Tools->version).
+			    " (Entity "  .($VERSION).")");
 
     ### Add remaining user-specified fields, if any:
     while (@paramlist) {
-        my ($tag, $value) = (shift @paramlist, shift @paramlist);
+	my ($tag, $value) = (shift @paramlist, shift @paramlist);
 
-        ### Get fieldname, if that's what it is:
-        if    ($tag =~ /^-(.*)/s)  { $tag = lc($1) }    ### old style, b.c.
-        elsif ($tag =~ /(.*):$/s ) { $tag = lc($1) }    ### new style
-        elsif (known_field(lc($tag)))     { 1 }    ### known field
-        else { next; }                             ### not a field
+	### Get fieldname, if that's what it is:
+	if    ($tag =~ /^-(.*)/s)  { $tag = lc($1) }    ### old style, b.c.
+	elsif ($tag =~ /(.*):$/s ) { $tag = lc($1) }    ### new style
+	elsif (known_field(lc($tag)))     { 1 }    ### known field
+	else { next; }                             ### not a field
 
-        ### Clear head, get list of values, and add them:
-        $head->delete($tag);
-        foreach $value (ref($value) ? @$value : ($value)) {
-            (defined($value) && ($value ne '')) or next;
-            $head->add($tag, $value);
-        }
+	### Clear head, get list of values, and add them:
+	$head->delete($tag);
+	foreach $value (ref($value) ? @$value : ($value)) {
+	    (defined($value) && ($value ne '')) or next;
+	    $head->add($tag, $value);
+	}
     }
 
     ### Done!
@@ -712,7 +712,7 @@ sub dup {
 
     ### Preamble and epilogue:
     foreach (qw(ME_Preamble ME_Epilogue)) {
-        $dup->{$_} = [@{$self->{$_}}]  if $self->{$_};
+	$dup->{$_} = [@{$self->{$_}}]  if $self->{$_};
     }
 
     ### Parts:
@@ -766,20 +766,20 @@ or raw data (via read()).
 =cut
 
 sub body {
-        my ($self, $value) = @_;
-        if (@_ > 1) {      ### setting body line(s)...
-                croak "you cannot use body() to set the encoded contents\n";
-        } else {
-                my $output = '';
-                my $fh = IO::File->new(\$output, '>:') or croak("Cannot open in-memory file: $!");
-                $self->print_body($fh);
-                close($fh);
-                my @ary = split(/\n/, $output);
-                # Each line needs the terminating newline
-                @ary = map { "$_\n" } @ary;
+	my ($self, $value) = @_;
+	if (@_ > 1) {      ### setting body line(s)...
+		croak "you cannot use body() to set the encoded contents\n";
+	} else {
+		my $output = '';
+		my $fh = IO::File->new(\$output, '>:') or croak("Cannot open in-memory file: $!");
+		$self->print_body($fh);
+		close($fh);
+		my @ary = split(/\n/, $output);
+		# Each line needs the terminating newline
+		@ary = map { "$_\n" } @ary;
 
-                return \@ary;
-        }
+		return \@ary;
+	}
 }
 
 #------------------------------
@@ -1132,14 +1132,14 @@ sub make_multipart {
 
     ### Remove content headers from top-level, and set it up as a multipart:
     foreach $tag (grep {/^content-/i} $self->head->tags) {
-        $self->head->delete($tag);
+	$self->head->delete($tag);
     }
     $self->head->mime_attr('Content-type'          => "multipart/$subtype");
     $self->head->mime_attr('Content-type.boundary' => make_boundary());
 
     ### Remove NON-content headers from the part:
     foreach $tag (grep {!/^content-/i} $part->head->tags) {
-        $part->head->delete($tag);
+	$part->head->delete($tag);
     }
 
     ### Add the [sole] part:
@@ -1178,23 +1178,23 @@ sub make_singlepart {
     }
 
     if ($self->parts == 1) {    ### one part
-        my $part = $self->parts(0);
+	my $part = $self->parts(0);
 
-        ### Populate ourselves with any content info from the part:
-        foreach $tag (grep {/^content-/i} $part->head->tags) {
-            foreach ($part->head->get($tag)) { $self->head->add($tag, $_) }
-        }
+	### Populate ourselves with any content info from the part:
+	foreach $tag (grep {/^content-/i} $part->head->tags) {
+	    foreach ($part->head->get($tag)) { $self->head->add($tag, $_) }
+	}
 
-        ### Save reconstructed header, replace our guts, and restore header:
-        my $new_head = $self->head;
-        %$self = %$part;               ### shallow copy is ok!
-        $self->head($new_head);
+	### Save reconstructed header, replace our guts, and restore header:
+	my $new_head = $self->head;
+	%$self = %$part;               ### shallow copy is ok!
+	$self->head($new_head);
 
-        ### One more thing: the part *may* have been a multi with 0 or 1 parts!
-        return $self->make_singlepart(@_) if $self->is_multipart;
+	### One more thing: the part *may* have been a multi with 0 or 1 parts!
+	return $self->make_singlepart(@_) if $self->is_multipart;
     }
     else {                      ### no parts!
-        $self->head->mime_attr('Content-type'=>'text/plain');   ### simple
+	$self->head->mime_attr('Content-type'=>'text/plain');   ### simple
     }
     'DONE';
 }
@@ -1249,10 +1249,10 @@ sub _do_remove_sig {
 
     my $line = int(@$body) || return;
     while ($i++ < $nlines and $line--) {
-        if ($body->[$line] =~ /\A--[ \040][\r\n]+\Z/) {
-            $#{$body} = $line-1;
-            return;
-        }
+	if ($body->[$line] =~ /\A--[ \040][\r\n]+\Z/) {
+	    $#{$body} = $line-1;
+	    return;
+	}
     }
 }
 
@@ -1291,16 +1291,16 @@ sub remove_sig {
     # may not always be correct.  It is also possibly incorrect on
     # multipart/alternative (both may have sigs).
     if( $self->is_multipart ) {
-        my $first_part = $self->parts(0);
-        if( $first_part ) {
+	my $first_part = $self->parts(0);
+	if( $first_part ) {
             return $first_part->remove_sig(@_);
-        }
-        return undef;
+	}
+	return undef;
     }
 
     ### Refuse non-textual unless forced:
     textual_type($self->head->mime_type)
-        or return error "I won't un-sign a non-text message unless I'm forced";
+	or return error "I won't un-sign a non-text message unless I'm forced";
 
     ### Get body data, as an array of newline-terminated lines:
     $self->bodyhandle or return undef;
@@ -1385,54 +1385,54 @@ sub sign {
 
     ### If multipart and not attaching, try to sign our first part:
     if ($self->is_multipart and !$params{Attach}) {
-        return $self->parts(0)->sign(@_);
+	return $self->parts(0)->sign(@_);
     }
 
     ### Get signature:
     my $sig;
     if (defined($sig = $params{Signature})) {    ### scalar or array
-        $sig = (ref($sig) ? join('', @$sig) : $sig);
+	$sig = (ref($sig) ? join('', @$sig) : $sig);
     }
     elsif ($params{File}) {                      ### file contents
-        my $fh = IO::File->new( $params{File} ) or croak "can't open $params{File}: $!";
-        $sig = join('', $fh->getlines);
-        $fh->close or croak "can't close $params{File}: $!";
+	my $fh = IO::File->new( $params{File} ) or croak "can't open $params{File}: $!";
+	$sig = join('', $fh->getlines);
+	$fh->close or croak "can't close $params{File}: $!";
     }
     else {
-        croak "no signature given!";
+	croak "no signature given!";
     }
 
     ### Add signature to message as appropriate:
     if ($params{Attach}) {      ### Attach .sig as new part...
-        return $self->attach(Type        => 'text/plain',
-                             Description => 'Signature',
-                             Disposition => 'inline',
-                             Encoding    => '-SUGGEST',
-                             Data        => $sig);
+	return $self->attach(Type        => 'text/plain',
+			     Description => 'Signature',
+			     Disposition => 'inline',
+			     Encoding    => '-SUGGEST',
+			     Data        => $sig);
     }
     else {                      ### Add text of .sig to body data...
 
-        ### Refuse non-textual unless forced:
-        ($self->head->mime_type =~ m{text/}i or $params{Force}) or
-            return error "I won't sign a non-text message unless I'm forced";
+	### Refuse non-textual unless forced:
+	($self->head->mime_type =~ m{text/}i or $params{Force}) or
+	    return error "I won't sign a non-text message unless I'm forced";
 
-        ### Get body data, as an array of newline-terminated lines:
-        $self->bodyhandle or return undef;
-        my @body = $self->bodyhandle->as_lines;
+	### Get body data, as an array of newline-terminated lines:
+	$self->bodyhandle or return undef;
+	my @body = $self->bodyhandle->as_lines;
 
-        ### Nuke any existing sig?
-        if (!defined($params{Remove}) || ($params{Remove} > 0)) {
-            _do_remove_sig(\@body, $params{Remove});
-        }
+	### Nuke any existing sig?
+	if (!defined($params{Remove}) || ($params{Remove} > 0)) {
+	    _do_remove_sig(\@body, $params{Remove});
+	}
 
-        ### Output data back into body, followed by signature:
-        my $line;
-        $io = $self->open("w") or croak("open: $!");
-        foreach $line (@body) { $io->print($line) };      ### body data
-        (($body[-1]||'') =~ /\n\Z/) or $io->print("\n");  ### ensure final \n
-        $io->print("-- \n$sig");                          ### separator + sig
-        $io->close or croak("close: $!");
-        return 1;         ### done!
+	### Output data back into body, followed by signature:
+	my $line;
+	$io = $self->open("w") or croak("open: $!");
+	foreach $line (@body) { $io->print($line) };      ### body data
+	(($body[-1]||'') =~ /\n\Z/) or $io->print("\n");  ### ensure final \n
+	$io->print("-- \n$sig");                          ### separator + sig
+	$io->close or croak("close: $!");
+	return 1;         ### done!
     }
 }
 
@@ -1465,24 +1465,24 @@ sub suggest_encoding {
 
     my ($type) = split '/', $self->effective_type;
     if (($type eq 'text') || ($type eq 'message')) {    ### scan message body
-        $self->bodyhandle || return ($self->parts ? 'binary' : '7bit');
-        my ($IO, $unclean);
-        if ($IO = $self->bodyhandle->open("r")) {
-            ### Scan message for 7bit-cleanliness
-            local $_;
-            while (defined($_ = $IO->getline)) {
-                last if ($unclean = ((length($_) > 999) or /[\200-\377]/));
-            }
+	$self->bodyhandle || return ($self->parts ? 'binary' : '7bit');
+	my ($IO, $unclean);
+	if ($IO = $self->bodyhandle->open("r")) {
+	    ### Scan message for 7bit-cleanliness
+	    local $_;
+	    while (defined($_ = $IO->getline)) {
+		last if ($unclean = ((length($_) > 999) or /[\200-\377]/));
+	    }
 
-            ### Return '7bit' if clean; try and encode if not...
-            ### Note that encodings are not permitted for messages!
-            return ($unclean
-                    ? (($type eq 'message') ? 'binary' : 'quoted-printable')
-                    : '7bit');
-        }
+	    ### Return '7bit' if clean; try and encode if not...
+	    ### Note that encodings are not permitted for messages!
+	    return ($unclean
+		    ? (($type eq 'message') ? 'binary' : 'quoted-printable')
+		    : '7bit');
+	}
     }
     else {
-        return ($type eq 'multipart') ? 'binary' : 'base64';
+	return ($type eq 'multipart') ? 'binary' : 'base64';
     }
 }
 
@@ -1558,42 +1558,42 @@ sub sync_headers {
 
     ### What to do with "nonstandard" MIME fields?
     if ($o_nonstandard eq 'ERASE') {       ### Erase them...
-        my $tag;
-        foreach $tag ($head->tags()) {
-            if (($tag =~ /\AContent-/i) &&
-                ($tag !~ /\AContent-$StandardFields\Z/io)) {
-                $head->delete($tag);
-            }
-        }
+	my $tag;
+	foreach $tag ($head->tags()) {
+	    if (($tag =~ /\AContent-/i) &&
+		($tag !~ /\AContent-$StandardFields\Z/io)) {
+		$head->delete($tag);
+	    }
+	}
     }
 
     ### What to do with the "Content-Length" MIME field?
     if ($o_length eq 'COMPUTE') {        ### Compute the content length...
-        my $content_length = '';
+	my $content_length = '';
 
-        ### We don't have content-lengths in multiparts...
-        if ($self->is_multipart) {           ### multipart...
-            $head->delete('Content-length');
-        }
-        else {                               ### singlepart...
+	### We don't have content-lengths in multiparts...
+	if ($self->is_multipart) {           ### multipart...
+	    $head->delete('Content-length');
+	}
+	else {                               ### singlepart...
 
-            ### Get the encoded body, if we don't have it already:
-            unless ($ENCBODY) {
-                $ENCBODY = tmpopen() || die "can't open tmpfile";
-                $self->print_body($ENCBODY);    ### write encoded to tmpfile
-            }
+	    ### Get the encoded body, if we don't have it already:
+	    unless ($ENCBODY) {
+		$ENCBODY = tmpopen() || die "can't open tmpfile";
+		$self->print_body($ENCBODY);    ### write encoded to tmpfile
+	    }
 
-            ### Analyse it:
-            $ENCBODY->seek(0,2);                ### fast-forward
-            $content_length = $ENCBODY->tell;   ### get encoded length
-            $ENCBODY->seek(0,0);                ### rewind
+	    ### Analyse it:
+	    $ENCBODY->seek(0,2);                ### fast-forward
+	    $content_length = $ENCBODY->tell;   ### get encoded length
+	    $ENCBODY->seek(0,0);                ### rewind
 
-            ### Remember:
-            $self->head->replace('Content-length', $content_length);
-        }
+	    ### Remember:
+	    $self->head->replace('Content-length', $content_length);
+	}
     }
     elsif ($o_length eq 'ERASE') {         ### Erase the content-length...
-        $head->delete('Content-length');
+	$head->delete('Content-length');
     }
 
     ### Done with everything for us!
@@ -1689,7 +1689,7 @@ sub dump_skeleton {
     print $fh $ind, "Num-parts: ", int(@parts), "\n" if @parts;
     print $fh $ind, "--\n";
     foreach $part (@parts) {
-        $part->dump_skeleton($fh, $indent+1);
+	$part->dump_skeleton($fh, $indent+1);
     }
 }
 
@@ -1812,52 +1812,52 @@ sub print_body {
 
     ### Multipart...
     if ($type eq 'multipart') {
-        my $boundary = $self->head->multipart_boundary;
+	my $boundary = $self->head->multipart_boundary;
 
-        ### Preamble:
-        my $plines = $self->preamble;
-        if (defined $plines) {
-            # Defined, so output the preamble if it exists (avoiding additional
-            # newline as per ticket 60931)
-            $out->print( join('', @$plines) . "\n") if (@$plines > 0);
-        } else {
-            # Undefined, so use default preamble
-            $out->print( join('', @$DefPreamble) . "\n" );
-        }
+	### Preamble:
+	my $plines = $self->preamble;
+	if (defined $plines) {
+	    # Defined, so output the preamble if it exists (avoiding additional
+	    # newline as per ticket 60931)
+	    $out->print( join('', @$plines) . "\n") if (@$plines > 0);
+	} else {
+	    # Undefined, so use default preamble
+	    $out->print( join('', @$DefPreamble) . "\n" );
+	}
 
-        ### Parts:
-        my $part;
-        foreach $part ($self->parts) {
-            $out->print("--$boundary\n");
-            $part->print($out);
-            $out->print("\n");           ### needed for next delim/close
-        }
-        $out->print("--$boundary--\n");
+	### Parts:
+	my $part;
+	foreach $part ($self->parts) {
+	    $out->print("--$boundary\n");
+	    $part->print($out);
+	    $out->print("\n");           ### needed for next delim/close
+	}
+	$out->print("--$boundary--\n");
 
-        ### Epilogue:
-        my $epilogue = join('', @{ $self->epilogue || $DefEpilogue });
-        if ($epilogue ne '') {
-            $out->print($epilogue);
-            $out->print("\n") if ($epilogue !~ /\n\Z/);  ### be nice
-        }
+	### Epilogue:
+	my $epilogue = join('', @{ $self->epilogue || $DefEpilogue });
+	if ($epilogue ne '') {
+	    $out->print($epilogue);
+	    $out->print("\n") if ($epilogue !~ /\n\Z/);  ### be nice
+	}
     }
 
     ### Singlepart type with parts...
     ###    This makes $ent->print handle message/rfc822 bodies
     ###    when parse_nested_messages('NEST') is on [idea by Marc Rouleau].
     elsif ($self->parts) {
-        my $need_sep = 0;
-        my $part;
-        foreach $part ($self->parts) {
-            $out->print("\n\n") if $need_sep++;
-            $part->print($out);
-        }
+	my $need_sep = 0;
+	my $part;
+	foreach $part ($self->parts) {
+	    $out->print("\n\n") if $need_sep++;
+	    $part->print($out);
+	}
     }
 
     ### Singlepart type, or no parts: output body...
     else {
-        $self->bodyhandle ? $self->print_bodyhandle($out)
-                          : whine "missing body; treated as empty";
+	$self->bodyhandle ? $self->print_bodyhandle($out)
+	                  : whine "missing body; treated as empty";
     }
     1;
 }
@@ -1917,12 +1917,12 @@ You can also use C<as_string()>.
 =cut
 
 sub stringify {
-        my ($self) = @_;
-        my $output = '';
-        my $fh = IO::File->new( \$output, '>:' ) or croak("Cannot open in-memory file: $!");
-        $self->print($fh);
-        $fh->close;
-        return $output;
+	my ($self) = @_;
+	my $output = '';
+	my $fh = IO::File->new( \$output, '>:' ) or croak("Cannot open in-memory file: $!");
+	$self->print($fh);
+	$fh->close;
+	return $output;
 }
 
 sub as_string { shift->stringify };      ### silent BC
@@ -1939,21 +1939,21 @@ If you want the I<unencoded> body, and you are dealing with a
 singlepart message (like a "text/plain"), use C<bodyhandle()> instead:
 
     if ($ent->bodyhandle) {
-        $unencoded_data = $ent->bodyhandle->as_string;
+	$unencoded_data = $ent->bodyhandle->as_string;
     }
     else {
-        ### this message has no body data (but it might have parts!)
+	### this message has no body data (but it might have parts!)
     }
 
 =cut
 
 sub stringify_body {
-        my ($self) = @_;
-        my $output = '';
-        my $fh = IO::File->new( \$output, '>:' ) or croak("Cannot open in-memory file: $!");
-        $self->print_body($fh);
-        $fh->close;
-        return $output;
+	my ($self) = @_;
+	my $output = '';
+	my $fh = IO::File->new( \$output, '>:' ) or croak("Cannot open in-memory file: $!");
+	$self->print_body($fh);
+	$fh->close;
+	return $output;
 }
 
 sub body_as_string { shift->stringify_body }
@@ -2126,23 +2126,23 @@ its own (e.g., a "multipart" message): in this case, you should access
 the components via the parts() method.  Like this:
 
     if ($bh = $entity->bodyhandle) {
-        $io = $bh->open;
-        ...access unencoded data via $io->getline or $io->read...
-        $io->close;
+	$io = $bh->open;
+	...access unencoded data via $io->getline or $io->read...
+	$io->close;
     }
     else {
-        foreach my $part (@parts) {
-            ...do something with the part...
-        }
+	foreach my $part (@parts) {
+	    ...do something with the part...
+	}
     }
 
 You can also use:
 
     if ($bh = $entity->bodyhandle) {
-        $unencoded_data = $bh->as_string;
+	$unencoded_data = $bh->as_string;
     }
     else {
-        ...do stuff with the parts...
+	...do stuff with the parts...
     }
 
 

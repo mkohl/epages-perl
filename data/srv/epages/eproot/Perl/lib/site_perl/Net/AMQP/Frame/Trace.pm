@@ -4,7 +4,7 @@ package Net::AMQP::Frame::Trace;
 
 Net::AMQP::Frame::Trace - AMQP wire-level trace Frame object
 
-=head1 DESCRIPTION
+=head1 DESCRIPTION 
 
 Inherits from L<Net::AMQP::Frame>.
 

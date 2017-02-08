@@ -1463,8 +1463,8 @@ sub tag {
     die "Element '$tag' can't be allowed in valid XML message. Died."
         if $tag !~ /^$SOAP::Constants::NSMASK$/o;
 
-        warn "Element '$tag' uses the reserved prefix 'XML' (in any case)"
-                if $tag !~ /^(?![Xx][Mm][Ll])/;
+	warn "Element '$tag' uses the reserved prefix 'XML' (in any case)"
+		if $tag !~ /^(?![Xx][Mm][Ll])/;
 
     my $prolog = $readable ? "\n" : "";
     my $epilog = $readable ? "\n" : "";

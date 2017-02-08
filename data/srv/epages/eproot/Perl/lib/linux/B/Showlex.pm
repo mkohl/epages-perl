@@ -34,13 +34,13 @@ sub shownamearray {
     my $i;
     print $walkHandle "$name has $count entries\n";
     for ($i = 0; $i < $count; $i++) {
-        my $sv = $els[$i];
-        if (class($sv) ne "SPECIAL") {
-            printf $walkHandle "$i: %s (0x%lx) %s\n", class($sv), $$sv, $sv->PVX;
-        } else {
-            printf $walkHandle "$i: %s\n", $sv->terse;
-            #printf $walkHandle "$i: %s\n", B::Concise::concise_sv($sv);
-        }
+	my $sv = $els[$i];
+	if (class($sv) ne "SPECIAL") {
+	    printf $walkHandle "$i: %s (0x%lx) %s\n", class($sv), $$sv, $sv->PVX;
+	} else {
+	    printf $walkHandle "$i: %s\n", $sv->terse;
+	    #printf $walkHandle "$i: %s\n", B::Concise::concise_sv($sv);
+	}
     }
 }
 
@@ -51,8 +51,8 @@ sub showvaluearray {
     my $i;
     print $walkHandle "$name has $count entries\n";
     for ($i = 0; $i < $count; $i++) {
-        printf $walkHandle "$i: %s\n", $els[$i]->terse;
-        #print $walkHandle "$i: %s\n", B::Concise::concise_sv($els[$i]);
+	printf $walkHandle "$i: %s\n", $els[$i]->terse;
+	#print $walkHandle "$i: %s\n", B::Concise::concise_sv($els[$i]);
     }
 }
 
@@ -72,8 +72,8 @@ sub newlex { # drop-in for showlex
     print $walkHandle "$objname Pad has $count entries\n";
     printf $walkHandle "0: %s\n", $names[0]->terse unless $nosp1;
     for (my $i = 1; $i < $count; $i++) {
-        printf $walkHandle "$i: %s = %s\n", $names[$i]->terse, $vals[$i]->terse
-            unless $nosp1 and $names[$i]->terse =~ /SPECIAL/;
+	printf $walkHandle "$i: %s = %s\n", $names[$i]->terse, $vals[$i]->terse
+	    unless $nosp1 and $names[$i]->terse =~ /SPECIAL/;
     }
 }
 
@@ -85,37 +85,37 @@ sub showlex_obj {
 }
 
 sub showlex_main {
-    showlex("comppadlist", comppadlist->ARRAY)  if !$newlex;
-    newlex ("main", comppadlist->ARRAY)         if  $newlex;
+    showlex("comppadlist", comppadlist->ARRAY)	if !$newlex;
+    newlex ("main", comppadlist->ARRAY)		if  $newlex;
 }
 
 sub compile {
     my @options = grep(/^-/, @_);
     my @args = grep(!/^-/, @_);
     for my $o (@options) {
-        $newlex = 1 if $o eq "-newlex";
-        $nosp1  = 1 if $o eq "-nosp";
+	$newlex = 1 if $o eq "-newlex";
+	$nosp1  = 1 if $o eq "-nosp";
     }
 
     return \&showlex_main unless @args;
     return sub {
-        my $objref;
-        foreach my $objname (@args) {
-            next unless $objname;       # skip nulls w/o carping
+	my $objref;
+	foreach my $objname (@args) {
+	    next unless $objname;	# skip nulls w/o carping
 
-            if (ref $objname) {
-                print $walkHandle "B::Showlex::compile($objname)\n";
-                $objref = $objname;
-            } else {
-                $objname = "main::$objname" unless $objname =~ /::/;
-                print $walkHandle "$objname:\n";
-                no strict 'refs';
-                die "err: unknown function ($objname)\n"
-                    unless *{$objname}{CODE};
-                $objref = \&$objname;
-            }
-            showlex_obj($objname, $objref);
-        }
+	    if (ref $objname) {
+		print $walkHandle "B::Showlex::compile($objname)\n";
+		$objref = $objname;
+	    } else {
+		$objname = "main::$objname" unless $objname =~ /::/;
+		print $walkHandle "$objname:\n";
+		no strict 'refs';
+		die "err: unknown function ($objname)\n"
+		    unless *{$objname}{CODE};
+		$objref = \&$objname;
+	    }
+	    showlex_obj($objname, $objref);
+	}
     }
 }
 
@@ -129,7 +129,7 @@ B::Showlex - Show lexical variables used in functions or files
 
 =head1 SYNOPSIS
 
-        perl -MO=Showlex[,-OPTIONS][,SUBROUTINE] foo.pl
+	perl -MO=Showlex[,-OPTIONS][,SUBROUTINE] foo.pl
 
 =head1 DESCRIPTION
 

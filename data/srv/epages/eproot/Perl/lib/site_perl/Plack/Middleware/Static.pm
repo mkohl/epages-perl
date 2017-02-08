@@ -117,9 +117,9 @@ the request on to the application it is wrapping.
 
 =item content_type
 
-The C<content_type> option can be used to provide access to a different MIME
+The C<content_type> option can be used to provide access to a different MIME 
 database than L<Plack::MIME>.
-L<Plack::MIME> works fast and good for a list of well known file endings,
+L<Plack::MIME> works fast and good for a list of well known file endings, 
 but if you need a more accurate content based checking you can use modules
 like L<File::MimeInfo> or L<File::MMagic> for example.
 The callback should work on $_[0] which is the filename of the file.

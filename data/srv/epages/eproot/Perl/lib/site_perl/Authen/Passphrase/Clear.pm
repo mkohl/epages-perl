@@ -4,15 +4,15 @@ Authen::Passphrase::Clear - cleartext passphrases
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::Clear;
+	use Authen::Passphrase::Clear;
 
-        $ppr = Authen::Passphrase::Clear->new("passphrase");
+	$ppr = Authen::Passphrase::Clear->new("passphrase");
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $passphrase = $ppr->passphrase;
+	$passphrase = $ppr->passphrase;
 
-        $userPassword = $ppr->as_rfc2307;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -55,9 +55,9 @@ passphrase in cleartext and accepts only that passphrase.
 =cut
 
 sub new {
-        my($class, $passphrase) = @_;
-        $passphrase = "$passphrase";
-        return bless(\$passphrase, $class);
+	my($class, $passphrase) = @_;
+	$passphrase = "$passphrase";
+	return bless(\$passphrase, $class);
 }
 
 =item Authen::Passphrase::Clear->from_rfc2307(USERPASSWORD)
@@ -69,14 +69,14 @@ followed by the passphrase.
 =cut
 
 sub from_rfc2307 {
-        my($class, $userpassword) = @_;
-        if($userpassword =~ /\A\{(?i:cleartext)\}/) {
-                $userpassword =~ /\A\{.*?\}([!-~]*)\z/
-                        or croak "malformed {CLEARTEXT} data";
-                my $text = $1;
-                return $class->new($text);
-        }
-        return $class->SUPER::from_rfc2307($userpassword);
+	my($class, $userpassword) = @_;
+	if($userpassword =~ /\A\{(?i:cleartext)\}/) {
+		$userpassword =~ /\A\{.*?\}([!-~]*)\z/
+			or croak "malformed {CLEARTEXT} data";
+		my $text = $1;
+		return $class->new($text);
+	}
+	return $class->SUPER::from_rfc2307($userpassword);
 }
 
 =back
@@ -97,17 +97,17 @@ The L</passphrase> method trivially works.
 =cut
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $passphrase eq $$self;
+	my($self, $passphrase) = @_;
+	return $passphrase eq $$self;
 }
 
 sub passphrase { ${$_[0]} }
 
 sub as_rfc2307 {
-        my($self) = @_;
-        croak "can't put this passphrase into an RFC 2307 string"
-                if $$self =~ /[^!-~]/;
-        return "{CLEARTEXT}".$$self;
+	my($self) = @_;
+	croak "can't put this passphrase into an RFC 2307 string"
+		if $$self =~ /[^!-~]/;
+	return "{CLEARTEXT}".$$self;
 }
 
 =back

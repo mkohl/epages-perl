@@ -4,7 +4,7 @@ package Net::AMQP::Frame::Heartbeat;
 
 Net::AMQP::Frame::Heartbeat - AMQP wire-level heartbeat Frame object
 
-=head1 DESCRIPTION
+=head1 DESCRIPTION 
 
 Inherits from L<Net::AMQP::Frame>.
 

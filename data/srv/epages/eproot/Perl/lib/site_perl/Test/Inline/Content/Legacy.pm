@@ -13,31 +13,31 @@ custom generator functions
 
   my $header = "....";
   my $function = sub {
-        my $Object = shift;
-        my $Script = shift;
-        return $header . $Script->merged_content;
+  	my $Object = shift;
+	my $Script = shift;
+	return $header . $Script->merged_content;
   };
-
+  
   my $Inline = Test::Inline->new(
-        ...
-        file_content => $function,
-        );
+  	...
+  	file_content => $function,
+  	);
 
 Migrating this same code to Test::Inline 2.100+ ContentHandler objects
 
   my $header = "....";
   my $function = sub {
-        my $Object = shift;
-        my $Script = shift;
-        return $header . $Script->merged_content;
+  	my $Object = shift;
+	my $Script = shift;
+	return $header . $Script->merged_content;
   };
-
+  
   my $ContentHandler = Test::Inline::Content::Legacy->new( $function );
-
+  
   my $Inline = Test::Inline->new(
-        ...
-        ContentHandler => $ContentHandler,
-        );
+  	...
+  	ContentHandler => $ContentHandler,
+  	);
 
 =head1 DESCRIPTION
 
@@ -56,8 +56,8 @@ use Test::Inline::Content ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '2.212';
-        @ISA     = 'Test::Inline::Content';
+	$VERSION = '2.212';
+	@ISA     = 'Test::Inline::Content';
 }
 
 =pod
@@ -74,10 +74,10 @@ passed a C<CODE> reference.
 =cut
 
 sub new {
-        my $class = ref $_[0] ? ref shift : shift;
-        my $self  = $class->SUPER::new(@_);
-        $self->{coderef} = _CODE(shift) or return undef;
-        $self;
+	my $class = ref $_[0] ? ref shift : shift;
+	my $self  = $class->SUPER::new(@_);
+	$self->{coderef} = _CODE(shift) or return undef;
+	$self;
 }
 
 =pod
@@ -101,12 +101,12 @@ to the legacy function, and returning it's result as the return value.
 =cut
 
 sub process {
-        my $self   = shift;
-        my $Inline = _INSTANCE(shift, 'Test::Inline')         or return undef;
-        my $Script = _INSTANCE(shift, 'Test::Inline::Script') or return undef;
+	my $self   = shift;
+	my $Inline = _INSTANCE(shift, 'Test::Inline')         or return undef;
+	my $Script = _INSTANCE(shift, 'Test::Inline::Script') or return undef;
 
-        # Pass through the params, pass back the result
-        $self->coderef->( $Inline, $Script );
+	# Pass through the params, pass back the result
+	$self->coderef->( $Inline, $Script );	
 }
 
 1;

@@ -119,7 +119,7 @@ version 0.110001
 
 =head1 DESCRIPTION
 
-This transport delivers into an mbox.  The mbox file may be given by the
+This transport delivers into an mbox.  The mbox file may be given by the 
 F<filename> argument to the constructor, and defaults to F<mbox>.
 
 The transport I<currently> assumes that the mbox is in F<mboxo> format, but

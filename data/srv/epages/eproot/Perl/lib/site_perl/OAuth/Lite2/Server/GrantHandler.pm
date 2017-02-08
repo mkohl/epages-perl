@@ -35,7 +35,7 @@ Constructor
 =head2 is_required_client_authentication
 
 Return whether each grant type requires the client authentication
-The grant type which are defined in spec require client authentication,
+The grant type which are defined in spec require client authentication, 
 but additional grant type may not.
 
 =head2 handle_request( $data_handler )

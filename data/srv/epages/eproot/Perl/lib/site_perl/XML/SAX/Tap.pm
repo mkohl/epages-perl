@@ -49,7 +49,7 @@ in a pipeline; these comprise the "tapping" processors:
             |           +----------------------------------+--> downstream
             |                                              |
             +----------------------------------------------+
-
+   
 The events are not copied, since they may be data structures that are
 difficult or impossibly to copy properly, like parts of a C-based DOM
 implementation.

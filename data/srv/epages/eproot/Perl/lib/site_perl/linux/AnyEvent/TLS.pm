@@ -509,7 +509,7 @@ you wish to fine-tune something...
 
 #=item trust => $trust
 #
-#Sets the expected (root) certificate use on this context, i.e. what
+#Sets the expected (root) certificate use on this context, i.e. what 
 #certificates to trust. The default is C<compat>, and the following strings
 #are supported:
 #
@@ -746,7 +746,7 @@ sub verify_hostname($$$);
 
 sub _verify_hostname {
    my ($self, $cn, $cert) = @_;
-
+   
    return 1
       unless defined $cn;
 
@@ -813,7 +813,7 @@ sub _get_session($$;$$) {
 #   Net::SSLeay::set_ex_data ($session, $REF_IDX, $ref+0);
 #   Scalar::Util::weaken ($REF_MAP{$ref+0} = $ref)
 #      if ref $ref;
-
+   
    if ($self->{debug}) {
       #d# Net::SSLeay::set_info_callback ($session, 50000);
    }

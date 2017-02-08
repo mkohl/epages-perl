@@ -20,18 +20,18 @@ modules, inside a specific tagged L<POD|perlpod> segment, like the
 following.
 
   =begin testing
-
+  
   # This code assumes we have a cpuinfo file
   ok( -f /proc/cpuinfo, 'Host has a standard /proc/cpuinfo file' );
-
+  
   =end testing
-
+  
   =begin testing label
-
+  
   # Test generation of the <label> HTML tag
   is( My::HTML->label('foo'),        '<label>foo</label>',           '->label(simple) works' );
   is( My::HTML->label('bar', 'foo'), '<label for="bar">foo</label>', '->label(for) works'    );
-
+  
   =end testing
 
 You can add as many, or as few, of these chunks of tests as you wish.
@@ -145,8 +145,8 @@ use Test::Inline::IO::File         ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '2.212';
-        @ISA     = 'Algorithm::Dependency::Source';
+	$VERSION = '2.212';
+	@ISA     = 'Algorithm::Dependency::Source';
 }
 
 
@@ -229,66 +229,66 @@ Returns C<undef> if there is a problem with one of the options.
 
 # For now, the various Handlers are hard-coded
 sub new {
-        my $class  = Params::Util::_CLASS(shift);
-        my %params = @_;
-        unless ( $class ) {
-                die '->new is a static method';
-        }
+	my $class  = Params::Util::_CLASS(shift);
+	my %params = @_;
+	unless ( $class ) {
+		die '->new is a static method';
+	}
 
-        # Create the object
-        my $self = bless {
-                # Return errors via exceptions?
-                exception      => !! $params{exception},
+	# Create the object
+	my $self = bless {
+		# Return errors via exceptions?
+		exception      => !! $params{exception},
 
-                # Extensibility provided through the use of Handler classes
-                InputHandler   => $params{InputHandler},
-                ExtractHandler => $params{ExtractHandler},
-                ContentHandler => $params{ContentHandler},
-                OutputHandler  => $params{OutputHandler},
+		# Extensibility provided through the use of Handler classes
+		InputHandler   => $params{InputHandler},
+		ExtractHandler => $params{ExtractHandler},
+		ContentHandler => $params{ContentHandler},
+		OutputHandler  => $params{OutputHandler},
 
-                # Store the ::TestFile objects
-                Classes        => {},
-        }, $class;
+		# Store the ::TestFile objects
+		Classes        => {},
+	}, $class;
 
-        # Run in verbose mode?
-        $self->{verbose}  = !! $params{verbose};
+	# Run in verbose mode?
+	$self->{verbose}  = !! $params{verbose};
 
-        # Generate tests with read-only permissions?
-        $self->{readonly} = !! $params{readonly};
+	# Generate tests with read-only permissions?
+	$self->{readonly} = !! $params{readonly};
 
-        # Generate a manifest file?
-        $self->{manifest} = $params{manifest} if $params{manifest};
+	# Generate a manifest file?
+	$self->{manifest} = $params{manifest} if $params{manifest};
 
-        # Do count checking?
-        $self->{check_count} = exists $params{check_count}
-                ? $params{check_count}
-                        ? $params{check_count} >= 2
-                                ? 2 # Paranoid count checking
-                                : 1 # Smart count checking
-                        : 0 # No count checking
-                : 1; # Smart count checking (default)
+	# Do count checking?
+	$self->{check_count} = exists $params{check_count}
+		? $params{check_count}
+			? $params{check_count} >= 2
+				? 2 # Paranoid count checking
+				: 1 # Smart count checking
+			: 0 # No count checking
+		: 1; # Smart count checking (default)
 
-        # Support the legacy file_content param
-        if ( $params{file_content} ) {
-                Params::Util::_CODE($params{file_content}) or return undef;
-                $self->{ContentHandler} = Test::Inline::Content::Legacy->new(
-                        $params{file_content}
-                ) or return undef;
-        }
+	# Support the legacy file_content param
+	if ( $params{file_content} ) {
+		Params::Util::_CODE($params{file_content}) or return undef;
+		$self->{ContentHandler} = Test::Inline::Content::Legacy->new(
+			$params{file_content}
+		) or return undef;
+	}
 
-        # Set the default Handlers
-        $self->{ExtractHandler} ||= 'Test::Inline::Extract';
-        $self->{ContentHandler} ||= Test::Inline::Content::Default->new;
-        $self->{InputHandler}   ||= Test::Inline::IO::File->new( File::Spec->curdir );
-        $self->{OutputHandler}  ||= Test::Inline::IO::File->new(
-                path     => File::Spec->curdir,
-                readonly => $self->{readonly},
-        );
+	# Set the default Handlers
+	$self->{ExtractHandler} ||= 'Test::Inline::Extract';
+	$self->{ContentHandler} ||= Test::Inline::Content::Default->new;
+	$self->{InputHandler}   ||= Test::Inline::IO::File->new( File::Spec->curdir );
+	$self->{OutputHandler}  ||= Test::Inline::IO::File->new(
+		path     => File::Spec->curdir,
+		readonly => $self->{readonly},
+	);
 
-        # Where to write test file to, within the context of the OutputHandler
-        $self->{output} = defined $params{output} ? $params{output} : '';
+	# Where to write test file to, within the context of the OutputHandler
+	$self->{output} = defined $params{output} ? $params{output} : '';
 
-        $self;
+	$self;
 }
 
 =pod
@@ -301,7 +301,7 @@ be returned via exceptions.
 =cut
 
 sub exception {
-        $_[0]->{exception};
+	$_[0]->{exception};
 }
 
 =pod
@@ -314,7 +314,7 @@ used to find and load the source code.
 =cut
 
 sub InputHandler {
-        $_[0]->{InputHandler};
+	$_[0]->{InputHandler};
 }
 
 =pod
@@ -327,7 +327,7 @@ to extract the test sections from the source code.
 =cut
 
 sub ExtractHandler {
-        $_[0]->{ExtractHandler};
+	$_[0]->{ExtractHandler};
 }
 
 =pod
@@ -339,7 +339,7 @@ The C<ContentHandler> accessor return the script content generation handler.
 =cut
 
 sub ContentHandler {
-        $_[0]->{ContentHandler};
+	$_[0]->{ContentHandler};
 }
 
 =pod
@@ -352,7 +352,7 @@ generated test scripts will be written to.
 =cut
 
 sub OutputHandler {
-        $_[0]->{OutputHandler};
+	$_[0]->{OutputHandler};
 }
 
 
@@ -381,15 +381,15 @@ on error.
 =cut
 
 sub add {
-        my $self   = shift;
-        my $source = $self->_source(shift) or return undef;
-        if ( ref $source ) {
-                # Add a chunk of source code
-                return $self->_add_source($source);
-        } else {
-                # Add a whole directory
-                return $self->_add_directory($source);
-        }
+	my $self   = shift;
+	my $source = $self->_source(shift) or return undef;
+	if ( ref $source ) {
+		# Add a chunk of source code
+		return $self->_add_source($source);
+	} else {
+		# Add a whole directory
+		return $self->_add_directory($source);
+	}
 }
 
 =pod
@@ -403,37 +403,37 @@ The C<add_class> method adds a class to the list of those to have their tests
 generated. Optionally, the C<recursive> option can be provided to add not just
 the class you provide, but all classes below it as well.
 
-Returns the number of classes found with inline tests, and added, including
-C<0> if no classes with tests are found. Returns C<undef> if an error occurs
+Returns the number of classes found with inline tests, and added, including 
+C<0> if no classes with tests are found. Returns C<undef> if an error occurs 
 while adding the class or it's children.
 
 =cut
 
 sub add_class {
-        my $self    = shift;
-        my $name    = shift or return undef;
-        my %options = @_;
+	my $self    = shift;
+	my $name    = shift or return undef;
+	my %options = @_;
 
-        # Determine the files to add
-        $self->_verbose("Checking $name\n");
-        my $files = $options{recursive}
-                ? $self->InputHandler->find( $name )
-                : $self->InputHandler->file( $name );
-        return $files unless $files; # 0 or undef
+	# Determine the files to add
+	$self->_verbose("Checking $name\n");
+	my $files = $options{recursive}
+		? $self->InputHandler->find( $name )
+		: $self->InputHandler->file( $name );
+	return $files unless $files; # 0 or undef
 
-        # Add the files
-        my $added = 0;
-        foreach my $file ( @$files ) {
-                my $rv = $self->add( $file );
-                return undef unless defined $rv;
-                $added += $rv;
-        }
+	# Add the files
+	my $added = 0;
+	foreach my $file ( @$files ) {
+		my $rv = $self->add( $file );
+		return undef unless defined $rv;
+		$added += $rv;
+	}
 
-        # Clear the caches
-        delete $self->{schedule};
-        delete $self->{filenames};
+	# Clear the caches
+	delete $self->{schedule};
+	delete $self->{filenames};
 
-        $added;
+	$added;
 }
 
 =pod
@@ -449,79 +449,79 @@ C<undef> on error.
 =cut
 
 sub add_all {
-        my $self = shift;
-        my $rv = eval {
-                $self->_add_directory('.');
-        };
-        return $self->_error($@) if $@;
-        return $rv;
+	my $self = shift;
+	my $rv = eval {
+		$self->_add_directory('.');
+	};
+	return $self->_error($@) if $@;
+	return $rv;
 }
 
 # Recursively add an entire directory of files
 sub _add_directory {
-        my $self = shift;
+	my $self = shift;
 
-        # Find all module files in the directory
-        my $files = $self->InputHandler->find(shift) or return undef;
+	# Find all module files in the directory
+	my $files = $self->InputHandler->find(shift) or return undef;
 
-        # Add each file
-        my $added = 0;
-        foreach my $file ( @$files ) {
-                my $source = $self->InputHandler->read($file) or return undef;
-                my $rv = $self->_add_source($source);
-                return undef unless defined $rv;
-                $added += $rv;
-        }
+	# Add each file
+	my $added = 0;
+	foreach my $file ( @$files ) {
+		my $source = $self->InputHandler->read($file) or return undef;
+		my $rv = $self->_add_source($source);
+		return undef unless defined $rv;
+		$added += $rv;
+	}
 
-        $added;
+	$added;
 }
 
 # Actually add the source code
 sub _add_source {
-        my $self   = shift;
-        my $source = Params::Util::_SCALAR(shift) or return undef;
+	my $self   = shift;
+	my $source = Params::Util::_SCALAR(shift) or return undef;
 
-        # Extract the elements from the source code
-        my $Extract = $self->ExtractHandler->new( $source )
-                or return $self->_error("Failed to create ExtractHandler");
-        my $elements = $Extract->elements or return 0;
+	# Extract the elements from the source code
+	my $Extract = $self->ExtractHandler->new( $source )
+		or return $self->_error("Failed to create ExtractHandler");
+	my $elements = $Extract->elements or return 0;
 
-        # Parse the elements into sections
-        my $Sections = Test::Inline::Section->parse( $elements )
-                or return $self->_error("Failed to parse sections: $Test::Inline::Section::errstr");
+	# Parse the elements into sections
+	my $Sections = Test::Inline::Section->parse( $elements )
+		or return $self->_error("Failed to parse sections: $Test::Inline::Section::errstr");
 
-        # Split up the Sections by class
-        my %classes = ();
-        foreach my $Section ( @$Sections ) {
-                # All sections MUST have a package
-                my $context = $Section->context
-                        or return $self->_error("Section does not have a package context");
-                $classes{$context} ||= [];
-                push @{$classes{$context}}, $Section;
-        }
+	# Split up the Sections by class
+	my %classes = ();
+	foreach my $Section ( @$Sections ) {
+		# All sections MUST have a package
+		my $context = $Section->context
+			or return $self->_error("Section does not have a package context");
+		$classes{$context} ||= [];
+		push @{$classes{$context}}, $Section;
+	}
 
-        # Convert the collection of Sections into class-specific test file objects
-        my $added = 0;
-        my $Classes = $self->{Classes};
-        foreach my $_class ( keys %classes ) {
-                # We can't safely spread tests for the same class across
-                # different files. Error if we spot a duplicate.
-                if ( $Classes->{$_class} ) {
-                        return $self->_error("Caught duplicate test class");
-                }
+	# Convert the collection of Sections into class-specific test file objects
+	my $added = 0;
+	my $Classes = $self->{Classes};
+	foreach my $_class ( keys %classes ) {
+		# We can't safely spread tests for the same class across
+		# different files. Error if we spot a duplicate.
+		if ( $Classes->{$_class} ) {
+			return $self->_error("Caught duplicate test class");
+		}
 
-                # Create a new ::TestFile object for the collection of Sections
-                my $File = Test::Inline::Script->new(
-                        $_class,
-                        $classes{$_class},
-                        $self->{check_count}
-                ) or return $self->_error("Failed to create a new TestFile for '$_class'");
-                $self->_verbose("Adding $File to schedule\n");
-                $Classes->{$_class} = $File;
-                $added++;
-        }
+		# Create a new ::TestFile object for the collection of Sections
+		my $File = Test::Inline::Script->new(
+			$_class,
+			$classes{$_class},
+			$self->{check_count}
+		) or return $self->_error("Failed to create a new TestFile for '$_class'");
+		$self->_verbose("Adding $File to schedule\n");
+		$Classes->{$_class} = $File;
+		$added++;
+	}
 
-        $added++;
+	$added++;
 }
 
 =pod
@@ -535,8 +535,8 @@ nothing has been added.
 =cut
 
 sub classes {
-        my $self = shift;
-        sort keys %{$self->{Classes}};
+	my $self = shift;
+	sort keys %{$self->{Classes}};
 }
 
 =pod
@@ -568,31 +568,31 @@ Returns C<undef> on  error.
 =cut
 
 sub filenames {
-        my $self = shift;
-        return $self->{filenames} if $self->{filenames};
+	my $self = shift;
+	return $self->{filenames} if $self->{filenames};
 
-        # Create an Algorithm::Dependency for the classes
-        my $Algorithm = Algorithm::Dependency::Ordered->new(
-                source         => $self,
-                ignore_orphans => 1,
-                ) or return undef;
+	# Create an Algorithm::Dependency for the classes
+	my $Algorithm = Algorithm::Dependency::Ordered->new(
+		source         => $self,
+		ignore_orphans => 1,
+		) or return undef;
 
-        # Get the build schedule
-        $self->_verbose("Checking dependencies\n");
-        unless ( $Algorithm->source->items ) {
-                return 0;
-        }
-        my $schedule = $Algorithm->schedule_all or return undef;
+	# Get the build schedule
+	$self->_verbose("Checking dependencies\n");
+	unless ( $Algorithm->source->items ) {
+		return 0;
+	}
+	my $schedule = $Algorithm->schedule_all or return undef;
 
-        # Merge the test position counter with the class base names
-        my %filenames = ();
-        for ( my $i = 0; $i <= $#$schedule; $i++ ) {
-                my $class = $schedule->[$i];
-                $filenames{$class} = $self->{Classes}->{$class}->filename;
-        }
+	# Merge the test position counter with the class base names
+	my %filenames = ();
+	for ( my $i = 0; $i <= $#$schedule; $i++ ) {
+		my $class = $schedule->[$i];
+		$filenames{$class} = $self->{Classes}->{$class}->filename;
+	}
 
-        $self->{schedule}  = [ map { $filenames{$_} } @$schedule ];
-        $self->{filenames} = \%filenames;
+	$self->{schedule}  = [ map { $filenames{$_} } @$schedule ];
+	$self->{filenames} = \%filenames;
 }
 
 =pod
@@ -612,13 +612,13 @@ Returns C<undef> on error.
 =cut
 
 sub schedule {
-        my $self = shift;
-        return $self->{schedule} if $self->{schedule};
+	my $self = shift;
+	return $self->{schedule} if $self->{schedule};
 
-        # Generate the file names and schedule
-        $self->filenames or return undef;
+	# Generate the file names and schedule
+	$self->filenames or return undef;
 
-        $self->{schedule};
+	$self->{schedule};
 }
 
 =pod
@@ -634,27 +634,27 @@ is either not wanted or needed, or C<undef> on error.
 =cut
 
 sub manifest {
-        my $self = shift;
+	my $self = shift;
 
-        # Do we need to create a file?
-        my $schedule = $self->schedule or return undef;
-        return '' unless $self->{manifest};
-        return '' unless @$schedule;
+	# Do we need to create a file?
+	my $schedule = $self->schedule or return undef;
+	return '' unless $self->{manifest};
+	return '' unless @$schedule;
 
-        # Each manifest entry should be listed by it's path relative to
-        # the location of the manifest file.
-        my $manifest_dir  = (File::Spec->splitpath($self->{manifest}))[1];
-        my $relative_path = Test::Inline::Util->relative(
-                $manifest_dir => $self->{output},
-                );
-        return undef unless defined $relative_path;
+	# Each manifest entry should be listed by it's path relative to
+	# the location of the manifest file.
+	my $manifest_dir  = (File::Spec->splitpath($self->{manifest}))[1];
+	my $relative_path = Test::Inline::Util->relative(
+		$manifest_dir => $self->{output},
+		);
+	return undef unless defined $relative_path;
 
-        # Generate and merge the manifest entries
-        my @manifest = @$schedule;
-        if ( length $relative_path ) {
-                @manifest = map { File::Spec->catfile( $relative_path, $_ ) } @manifest;
-        }
-        join '', map { "$_\n" } @manifest;
+	# Generate and merge the manifest entries
+	my @manifest = @$schedule;
+	if ( length $relative_path ) {
+		@manifest = map { File::Spec->catfile( $relative_path, $_ ) } @manifest;
+	}
+	join '', map { "$_\n" } @manifest;
 }
 
 =pod
@@ -671,73 +671,73 @@ Returns the number of test files generated. Returns C<undef> on error.
 =cut
 
 sub save {
-        my $self = shift;
+	my $self = shift;
 
-        # Get the file names to save to
-        my $filenames = $self->filenames;
-        return $filenames unless $filenames; # undef or 0
+	# Get the file names to save to
+	my $filenames = $self->filenames;
+	return $filenames unless $filenames; # undef or 0
 
-        # Write the manifest if needed
-        my $manifest = $self->manifest;
-        return undef unless defined $manifest;
-        if ( $manifest ) {
-                if ( $self->OutputHandler->write( $self->{manifest}, $manifest ) ) {
-                        $self->_verbose( "Wrote manifest file '$self->{manifest}'\n" );
-                } else {
-                        $self->_verbose( "Failed to write manifest file '$self->{manifest}'\n" );
-                        return undef;
-                }
-        }
+	# Write the manifest if needed
+	my $manifest = $self->manifest;
+	return undef unless defined $manifest;
+	if ( $manifest ) {
+		if ( $self->OutputHandler->write( $self->{manifest}, $manifest ) ) {
+			$self->_verbose( "Wrote manifest file '$self->{manifest}'\n" );
+		} else {
+			$self->_verbose( "Failed to write manifest file '$self->{manifest}'\n" );
+			return undef;
+		}
+	}
 
-        # Write the files
-        my $written = 0;
-        foreach my $class ( sort keys %$filenames ) {
-                $self->_save( $class ) or return undef;
-                $written++;
-        }
+	# Write the files
+	my $written = 0;
+	foreach my $class ( sort keys %$filenames ) {
+		$self->_save( $class ) or return undef;
+		$written++;
+	}
 
-        $written;
+	$written;
 }
 
 sub _file {
-        my $self      = shift;
-        my $filenames = $self->filenames or return undef;
-        $filenames->{$_[0]};
+	my $self      = shift;
+	my $filenames = $self->filenames or return undef;
+	$filenames->{$_[0]};
 }
 
 sub _save {
-        my $self     = shift;
-        my $class    = shift                or return undef;
-        my $filename = $self->_file($class) or return undef;
-        local $| = 1;
+	my $self     = shift;
+	my $class    = shift                or return undef;
+	my $filename = $self->_file($class) or return undef;
+	local $| = 1;
 
-        # Write the file
-        my $content = $self->_content($class) or return undef;
-        $self->_verbose("Saving...");
-        if ( $self->{output} ) {
-                $filename = File::Spec->catfile( $self->{output}, $filename );
-        }
-        unless ( $self->OutputHandler->write( $filename, $content ) ) {
-                $self->_verbose("Failed\n");
-                return undef;
-        }
-        $self->_verbose("Done\n");
+	# Write the file
+	my $content = $self->_content($class) or return undef;
+	$self->_verbose("Saving...");
+	if ( $self->{output} ) {
+		$filename = File::Spec->catfile( $self->{output}, $filename );
+	}
+	unless ( $self->OutputHandler->write( $filename, $content ) ) {
+		$self->_verbose("Failed\n");
+		return undef;
+	}
+	$self->_verbose("Done\n");
 
-        1;
+	1;
 }
 
 sub _content {
-        my $self     = shift;
-        my $class    = shift                or return undef;
-        my $filename = $self->_file($class) or return undef;
-        my $Script   = $self->class($class) or return undef;
+	my $self     = shift;
+	my $class    = shift                or return undef;
+	my $filename = $self->_file($class) or return undef;
+	my $Script   = $self->class($class) or return undef;
 
-        # Get the file content
-        $self->_verbose("Generating $filename for $class...");
-        my $content = $self->ContentHandler->process( $self, $Script );
-        $self->_verbose("Failed\n") unless defined $content;
+	# Get the file content
+	$self->_verbose("Generating $filename for $class...");
+	my $content = $self->ContentHandler->process( $self, $Script );
+	$self->_verbose("Failed\n") unless defined $content;
 
-        $content; # content or undef
+	$content; # content or undef
 }
 
 
@@ -750,8 +750,8 @@ sub _content {
 sub load { 1 }
 sub item { $_[0]->{Classes}->{$_[1]} }
 sub items {
-        my $classes = shift->{Classes};
-        map { $classes->{$_} } sort keys %$classes;
+	my $classes = shift->{Classes};
+	map { $classes->{$_} } sort keys %$classes;
 }
 
 
@@ -763,49 +763,49 @@ sub items {
 
 # Get the source code from a variety of places
 sub _source {
-        my $self = shift;
-        return undef unless defined $_[0];
-        unless ( ref $_[0] ) {
-                if ( $self->InputHandler->exists_file($_[0]) ) {
-                        # File path
-                        return $self->InputHandler->read(shift);
-                } elsif ( $self->InputHandler->exists_dir($_[0]) ) {
-                        # Directory path
-                        return shift; # Handled seperately
-                }
-                return undef;
-        }
-        if ( Params::Util::_SCALAR($_[0]) ) {
-                # Reference to SCALAR containing code
-                return shift;
-        }
-        if ( Params::Util::_INSTANCE($_[0], 'IO::Handle') ) {
-                my $fh   = shift;
-                my $old  = $fh->input_record_separator(undef);
-                my $code = $fh->getline;
-                $fh->input_record_separator($old);
-                return \$code;
-        }
+	my $self = shift;
+	return undef unless defined $_[0];
+	unless ( ref $_[0] ) {
+		if ( $self->InputHandler->exists_file($_[0]) ) {
+			# File path
+			return $self->InputHandler->read(shift);
+		} elsif ( $self->InputHandler->exists_dir($_[0]) ) {
+			# Directory path
+			return shift; # Handled seperately
+		}
+		return undef;
+	}
+	if ( Params::Util::_SCALAR($_[0]) ) {
+		# Reference to SCALAR containing code
+		return shift;
+	}
+	if ( Params::Util::_INSTANCE($_[0], 'IO::Handle') ) {
+		my $fh   = shift;
+		my $old  = $fh->input_record_separator(undef);
+		my $code = $fh->getline;
+		$fh->input_record_separator($old);
+		return \$code;
+	}
 
-        # Unknown
-        undef;
+	# Unknown
+	undef;
 }
 
 # Print a message if we are in verbose mode
 sub _verbose {
-        my $self = shift;
-        return 1 unless $self->{verbose};
-        print @_;
+	my $self = shift;
+	return 1 unless $self->{verbose};
+	print @_;
 }
 
 # Warn and return
 sub _error {
-        my $self = shift;
-        if ( $self->exception ) {
-                Carp::croak("Error: $_[0]");
-        }
-        $self->_verbose(map { "Error: $_" } @_);
-        undef;
+	my $self = shift;
+	if ( $self->exception ) {
+		Carp::croak("Error: $_[0]");
+	}
+	$self->_verbose(map { "Error: $_" } @_);
+	undef;
 }
 
 1;

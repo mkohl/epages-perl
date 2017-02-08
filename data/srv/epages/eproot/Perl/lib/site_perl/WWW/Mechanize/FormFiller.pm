@@ -173,7 +173,7 @@ WWW::Mechanize::FormFiller - framework to automate HTML forms
   my $f = WWW::Mechanize::FormFiller->new(
       values => [
                  [q => Fixed => "Corion Homepage"],
-                                                        ]);
+  							]);
   my $form = HTML::Form->parse($html,"http://www.google.com/intl/en/");
   $f->fill_form($form);
 
@@ -213,7 +213,7 @@ expression.
 
                  # We are less discriminate with the other dates
                  [qr/date_birth/ => 'Random::Date' => string => '%d.%m.%Y'],
-                                                        ]);
+  							]);
   my $form = HTML::Form->parse($html,"http://www.example.com");
   $f->fill_form($form);
 
@@ -228,10 +228,10 @@ expression.
 =for example_testing
   $_STDOUT_ =~ s/[\x0a\x0d]+$//;
   like($_STDOUT_,qr"^GET\shttp://www\.example\.com/
-        \?date_birth_spouse=\d\d.\d\d.\d\d\d\d
-        \&date_birth=01.01.1970
-        \&date_birth_kid_1=\d\d.\d\d.\d\d\d\d
-        \&date_birth_kid_2=\d\d.\d\d.\d\d\d\d$"x,'Got the expected HTTP query string');
+  	\?date_birth_spouse=\d\d.\d\d.\d\d\d\d
+  	\&date_birth=01.01.1970
+  	\&date_birth_kid_1=\d\d.\d\d.\d\d\d\d
+  	\&date_birth_kid_2=\d\d.\d\d.\d\d\d\d$"x,'Got the expected HTTP query string');
 
 You are not limited to fixed form values - callbacks and interactive
 editing are also already provided :

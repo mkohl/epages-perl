@@ -6,7 +6,7 @@ AnyEvent::Impl::Glib - AnyEvent adaptor for Glib
 
    use AnyEvent;
    use Glib;
-
+  
    # this module gets loaded automatically as required
 
 =head1 DESCRIPTION
@@ -46,7 +46,7 @@ my %io_cond = (
 
 sub io {
    my ($class, %arg) = @_;
-
+   
    my $cb = $arg{cb};
    my $fd = fileno $arg{fh};
    defined $fd or $fd = $arg{fh};
@@ -61,7 +61,7 @@ sub io {
 
 sub timer {
    my ($class, %arg) = @_;
-
+   
    my $cb   = $arg{cb};
    my $ival = $arg{interval} * 1000;
 
@@ -79,7 +79,7 @@ sub timer {
 
 sub idle {
    my ($class, %arg) = @_;
-
+   
    my $cb = $arg{cb};
    my $source = add Glib::Idle sub { &$cb; 1 };
 

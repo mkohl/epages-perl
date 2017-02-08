@@ -32,7 +32,7 @@ OAuth::Lite2::Client::ClientCredentials - OAuth 2.0 ClientCredentials Profile Cl
         my $your_app = shift;
 
         my $access_token = $client->get_access_token(
-            scope => q{photo},
+            scope => q{photo}, 
         ) or return $your_app->error( $client->errstr );
 
         $your_app->store->save( access_token  => $access_token->access_token  );
@@ -200,7 +200,7 @@ sub get_access_token {
     my $headers = HTTP::Headers->new;
     $headers->header("Content-Type" => q{application/x-www-form-urlencoded});
     $headers->header("Content-Length" => bytes::length($content));
-    $headers->authorization_basic($self->{id}, $self->{secret})
+    $headers->authorization_basic($self->{id}, $self->{secret})    
         if($args{use_basic_schema});
     my $req = HTTP::Request->new( POST => $args{uri}, $headers, $content );
 
@@ -264,7 +264,7 @@ sub refresh_access_token {
     my $headers = HTTP::Headers->new;
     $headers->header("Content-Type" => q{application/x-www-form-urlencoded});
     $headers->header("Content-Length" => bytes::length($content));
-    $headers->authorization_basic($self->{id}, $self->{secret})
+    $headers->authorization_basic($self->{id}, $self->{secret})    
         if($args{use_basic_schema});
     my $req = HTTP::Request->new( POST => $args{uri}, $headers, $content );
 
@@ -328,7 +328,7 @@ sub get_grouping_refresh_token {
     my $headers = HTTP::Headers->new;
     $headers->header("Content-Type" => q{application/x-www-form-urlencoded});
     $headers->header("Content-Length" => bytes::length($content));
-    $headers->authorization_basic($self->{id}, $self->{secret})
+    $headers->authorization_basic($self->{id}, $self->{secret})    
         if($args{use_basic_schema});
     my $req = HTTP::Request->new( POST => $args{uri}, $headers, $content );
 

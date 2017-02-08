@@ -47,16 +47,16 @@ http://xml.org/sax/features/validation = 1
 sub load_parsers {
     my $class = shift;
     my $dir = shift;
-
+    
     # reset parsers
     $known_parsers = [];
-
+    
     # get directory from wherever XML::SAX is installed
     if (!$dir) {
         $dir = $INC{'XML/SAX.pm'};
         $dir = dirname($dir);
     }
-
+    
     my $fh = gensym();
     if (!open($fh, File::Spec->catfile($dir, "SAX", PARSER_DETAILS))) {
         XML::SAX->do_warn("could not find " . PARSER_DETAILS . " in $dir/SAX\n");
@@ -73,7 +73,7 @@ sub _parse_ini_file {
     my ($fh) = @_;
 
     my @config;
-
+    
     my $lineno = 0;
     while (defined(my $line = <$fh>)) {
         $lineno++;
@@ -85,13 +85,13 @@ sub _parse_ini_file {
         $line =~ s/[#;].*$//m;
         # ignore blanks
         next if $line =~ /^$/m;
-
+        
         # heading
         if ($line =~ /^\[\s*(.*)\s*\]$/m) {
             push @config, { Name => $1 };
             next;
         }
-
+        
         # instruction
         elsif ($line =~ /^(.*?)\s*?=\s*(.*)$/) {
             unless(@config) {
@@ -124,12 +124,12 @@ sub remove_parser {
     if (!$known_parsers) {
         $class->load_parsers();
     }
-
+    
     @$known_parsers = grep { $_->{Name} ne $parser_module } @$known_parsers;
 
     return $class;
 }
-
+ 
 sub add_parser {
     my $class = shift;
     my ($parser_module) = @_;
@@ -137,9 +137,9 @@ sub add_parser {
     if (!$known_parsers) {
         $class->load_parsers();
     }
-
+    
     # first load module, then query features, then push onto known_parsers,
-
+    
     my $parser_file = $parser_module;
     $parser_file =~ s/::/\//g;
     $parser_file .= ".pm";
@@ -147,7 +147,7 @@ sub add_parser {
     require $parser_file;
 
     my @features = $parser_module->supported_features();
-
+    
     my $new = { Name => $parser_module };
     foreach my $feature (@features) {
         $new->{Features}{$feature} = 1;
@@ -172,21 +172,21 @@ sub add_parser {
     if (!$done) {
         push @$known_parsers, $new;
     }
-
+    
     return $class;
 }
 
 sub save_parsers {
     my $class = shift;
-
+    
     # get directory from wherever XML::SAX is installed
     my $dir = $INC{'XML/SAX.pm'};
     $dir = dirname($dir);
-
+    
     my $file = File::Spec->catfile($dir, "SAX", PARSER_DETAILS);
     chmod 0644, $file;
     unlink($file);
-
+    
     my $fh = gensym();
     open($fh, ">$file") ||
         die "Cannot write to $file: $!";
@@ -222,10 +222,10 @@ XML::SAX - Simple API for XML
 =head1 SYNOPSIS
 
   use XML::SAX;
-
+  
   # get a list of known parsers
   my $parsers = XML::SAX->parsers();
-
+  
   # add/update a parser
   XML::SAX->add_parser(q(XML::SAX::PurePerl));
 
@@ -299,10 +299,10 @@ cause more than just a warning.
       =~ /^y/i) {
       $script =~ s/install :: (.*)$/install :: $1 install_sax_driver/m;
       $script .= <<"INSTALL";
-
+  
   install_sax_driver :
   \t\@\$(PERL) -MXML::SAX -e "XML::SAX->add_parser(q(\$(NAME)))->save_parsers()"
-
+  
   INSTALL
     }
     return $script;

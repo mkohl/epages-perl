@@ -51,16 +51,16 @@ sub __PPIX_TOKENIZER__regexp {
     # The optional escape is because any non-open-bracket character may
     # appear as the regular expression delimiter.
     if ( my $accept = $tokenizer->find_regexp(
-            qr{ \A \\? \? \( }smx ) ) {
+	    qr{ \A \\? \? \( }smx ) ) {
 
-        # Leave the left paren, since it belongs to the condition.
-        --$accept;
+	# Leave the left paren, since it belongs to the condition.
+	--$accept;
 
-        $tokenizer->expect( qw{
-            PPIx::Regexp::Token::Condition
-            } );
+	$tokenizer->expect( qw{
+	    PPIx::Regexp::Token::Condition
+	    } );
 
-        return $accept;
+	return $accept;
 
     }
 

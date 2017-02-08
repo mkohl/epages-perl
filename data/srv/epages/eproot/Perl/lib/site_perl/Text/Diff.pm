@@ -7,9 +7,9 @@ use Exporter        ();
 use Algorithm::Diff ();
 use vars qw{$VERSION @ISA @EXPORT};
 BEGIN {
-        $VERSION = '1.41';
-        @ISA     = 'Exporter';
-        @EXPORT  = 'diff';
+	$VERSION = '1.41';
+	@ISA     = 'Exporter';
+	@EXPORT  = 'diff';
 };
 
 ## Hunks are made of ops.  An op is the starting index for each
@@ -32,14 +32,14 @@ sub diff {
 
     for my $i ( 0 .. 1 ) {
         my $seq = $seqs[$i];
-        my $type = ref $seq;
+	my $type = ref $seq;
 
         while ( $type eq "CODE" ) {
-            $seqs[$i] = $seq = $seq->( $options );
-            $type = ref $seq;
-        }
+	    $seqs[$i] = $seq = $seq->( $options );
+	    $type = ref $seq;
+	}
 
-        my $AorB = !$i ? "A" : "B";
+	my $AorB = !$i ? "A" : "B";
 
         if ( $type eq "ARRAY" ) {
             ## This is most efficient :)
@@ -54,10 +54,10 @@ sub diff {
         elsif ( ! $type ) {
             $options->{"OFFSET_$AorB"} = 1
                 unless defined $options->{"OFFSET_$AorB"};
-            $options->{"FILENAME_$AorB"} = $seq
-                unless defined $options->{"FILENAME_$AorB"};
-            $options->{"MTIME_$AorB"} = (stat($seq))[9]
-                unless defined $options->{"MTIME_$AorB"};
+	    $options->{"FILENAME_$AorB"} = $seq
+	        unless defined $options->{"FILENAME_$AorB"};
+	    $options->{"MTIME_$AorB"} = (stat($seq))[9]
+	        unless defined $options->{"MTIME_$AorB"};
 
             local $/ = "\n";
             open F, "<$seq" or carp "$!: $seq";
@@ -108,11 +108,11 @@ sub diff {
     $style = "Text::Diff::$style" if exists $internal_styles{$style};
 
     if ( ! $style->can( "hunk" ) ) {
-        eval "require $style; 1" or die $@;
+	eval "require $style; 1" or die $@;
     }
 
     $style = $style->new
-        if ! ref $style && $style->can( "new" );
+	if ! ref $style && $style->can( "new" );
 
     my $ctx_lines = $options->{CONTEXT};
     $ctx_lines = 3 unless defined $ctx_lines;
@@ -130,7 +130,7 @@ sub diff {
 
     my $emit_ops = sub {
         $output_handler->( $style->file_header( @seqs,     $options ) )
-            unless $hunks++;
+	    unless $hunks++;
         $output_handler->( $style->hunk_header( @seqs, @_, $options ) );
         $output_handler->( $style->hunk       ( @seqs, @_, $options ) );
         $output_handler->( $style->hunk_footer( @seqs, @_, $options ) );
@@ -152,8 +152,8 @@ sub diff {
                 push @ops, [@_[0,1]," "];
 
                 if ( $diffs && ++$ctx > $ctx_lines * 2 ) {
-                   $emit_ops->( [ splice @ops, 0, $#ops - $ctx_lines ] );
-                   $ctx = $diffs = 0;
+        	   $emit_ops->( [ splice @ops, 0, $#ops - $ctx_lines ] );
+        	   $ctx = $diffs = 0;
                 }
 
                 ## throw away context lines that aren't needed any more
@@ -246,7 +246,7 @@ SCOPE: {
 
     sub new         {
         my $proto = shift;
-        return bless { @_ }, ref $proto || $proto;
+	return bless { @_ }, ref $proto || $proto;
     }
 
     sub file_header { return "" }

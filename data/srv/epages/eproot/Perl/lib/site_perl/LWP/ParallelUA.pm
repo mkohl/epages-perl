@@ -7,7 +7,7 @@ use LWP::Parallel::UserAgent qw(:CALLBACK);
 
 require 5.004;
 @ISA = qw(LWP::Parallel::UserAgent Exporter);
-@EXPORT = qw();
+@EXPORT = qw(); 
 @EXPORT_OK = @LWP::Parallel::UserAgent::EXPORT_OK;
 %EXPORT_TAGS = %LWP::Parallel::UserAgent::EXPORT_TAGS;
 
@@ -17,7 +17,7 @@ __END__
 
 =head1 NAME
 
-LWP::ParallelUA - Parallel LWP::UserAgent
+LWP::ParallelUA - Parallel LWP::UserAgent 
 
 =head1 SYNOPSIS
 

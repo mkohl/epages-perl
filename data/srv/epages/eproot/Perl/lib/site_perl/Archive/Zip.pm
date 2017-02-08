@@ -300,7 +300,7 @@ sub computeCRC32 {
         $crc  = shift;
     }
 
-        return Compress::Raw::Zlib::crc32( $data, $crc );
+	return Compress::Raw::Zlib::crc32( $data, $crc );
 }
 
 # Report or change chunk size used for reading and writing.
@@ -375,7 +375,7 @@ sub _binmode {
 
 # Attempt to guess whether file handle is seekable.
 # Because of problems with Windows, this only returns true when
-# the file handle is a real file.
+# the file handle is a real file.  
 sub _isSeekable {
     my $fh = shift;
     return 0 unless ref $fh;
@@ -403,7 +403,7 @@ sub _isSeekable {
         ) ? 1 : 0;
 }
 
-# Print to the filehandle, while making sure the pesky Perl special global
+# Print to the filehandle, while making sure the pesky Perl special global 
 # variables don't interfere.
 sub _print
 {
@@ -501,7 +501,7 @@ sub tempFile {
 }
 
 # Return the normalized directory name as used in a zip file (path
-# separators become slashes, etc.).
+# separators become slashes, etc.). 
 # Will translate internal slashes in path components (i.e. on Macs) to
 # underscores.  Discards volume names.
 # When $forceDir is set, returns paths with trailing slashes (or arrays
@@ -518,7 +518,7 @@ sub tempFile {
 # /a/b/         ('','a','b')    /a/b
 # c:\a\b\c.doc  ('','a','b','c.doc')    /a/b/c.doc      # on Windoze
 # "i/o maps:whatever"   ('i_o maps', 'whatever')  "i_o maps/whatever"   # on Macs
-sub _asZipDirName
+sub _asZipDirName    
 {
     my $name      = shift;
     my $forceDir  = shift;
@@ -537,7 +537,7 @@ sub _asZipDirName
 # Assume a directory if zip name has trailing slash.
 # Takes an optional volume name in FS format (like 'a:').
 #
-sub _asLocalName
+sub _asLocalName    
 {
     my $name   = shift;    # zip format
     my $volume = shift;
@@ -569,28 +569,28 @@ Archive::Zip - Provide an interface to ZIP archive files.
    # Create a Zip file
    use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
    my $zip = Archive::Zip->new();
-
+   
    # Add a directory
    my $dir_member = $zip->addDirectory( 'dirname/' );
-
+   
    # Add a file from a string with compression
    my $string_member = $zip->addString( 'This is a test', 'stringMember.txt' );
    $string_member->desiredCompressionMethod( COMPRESSION_DEFLATED );
-
+   
    # Add a file from disk
    my $file_member = $zip->addFile( 'xyz.pl', 'AnotherName.pl' );
-
+   
    # Save the Zip file
    unless ( $zip->writeToFileNamed('someZip.zip') == AZ_OK ) {
        die 'write error';
    }
-
+   
    # Read a Zip file
    my $somezip = Archive::Zip->new();
    unless ( $somezip->read( 'someZip.zip' ) == AZ_OK ) {
        die 'read error';
    }
-
+   
    # Change the compression type for a file in the Zip
    my $member = $somezip->memberNamed( 'stringMember.txt' );
    $member->desiredCompressionMethod( COMPRESSION_STORED );
@@ -722,9 +722,9 @@ as inline subroutines, using the C<use constant> pragma. They can be imported
 into your namespace using the C<:ERROR_CODES> tag:
 
   use Archive::Zip qw( :ERROR_CODES );
-
+  
   ...
-
+  
   unless ( $zip->read( 'myfile.zip' ) == AZ_OK ) {
       die "whoops!";
   }
@@ -771,10 +771,10 @@ compression method:
 
   my $member = $zip->memberNamed( 'xyz.txt' );
   $member->compressionMethod();    # return current compression
-
+  
   # set to read uncompressed
   $member->desiredCompressionMethod( COMPRESSION_STORED );
-
+  
   # set to read compressed
   $member->desiredCompressionMethod( COMPRESSION_DEFLATED );
 
@@ -1335,25 +1335,25 @@ A usage example:
 
   use Archive::Zip;
   my $zip = Archive::Zip->new();
-
+  
   # add all readable files and directories below . as xyz/*
   $zip->addTree( '.', 'xyz' );
-
+  
   # add all readable plain files below /abc as def/*
   $zip->addTree( '/abc', 'def', sub { -f && -r } );
-
+  
   # add all .c files below /tmp as stuff/*
   $zip->addTreeMatching( '/tmp', 'stuff', '\.c$' );
-
+  
   # add all .o files below /tmp as stuff/* if they aren't writable
   $zip->addTreeMatching( '/tmp', 'stuff', '\.o$', sub { ! -w } );
-
+  
   # add all .so files below /tmp that are smaller than 200 bytes as stuff/*
   $zip->addTreeMatching( '/tmp', 'stuff', '\.o$', sub { -s < 200 } );
-
+  
   # and write them into a file
   $zip->writeToFileNamed('xxx.zip');
-
+  
   # now extract the same files into /tmpx
   $zip->extractTree( 'stuff', '/tmpx' );
 
@@ -2054,6 +2054,6 @@ L<Compress::Raw::Zlib>, L<Archive::Tar>, L<Archive::Extract>
 
 There is a Japanese translation of this
 document at L<http://www.memb.jp/~deq/perl/doc-ja/Archive-Zip.html>
-that was done by DEQ E<lt>deq@oct.zaq.ne.jpE<gt> . Thanks!
+that was done by DEQ E<lt>deq@oct.zaq.ne.jpE<gt> . Thanks! 
 
 =cut

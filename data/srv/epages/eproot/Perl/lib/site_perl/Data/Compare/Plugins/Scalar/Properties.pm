@@ -41,7 +41,7 @@ sub sp_sp_compare {
 
     # first check the values
     return 0 unless($sp1 eq $sp2);
-
+    
     # now check that we have all the same properties
     return 0 unless(Data::Compare::Compare([sort $sp1->get_props()], [sort $sp2->get_props()]));
 

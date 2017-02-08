@@ -2,7 +2,7 @@ package DirHandle;
 
 our $VERSION = '1.03';
 
-=head1 NAME
+=head1 NAME 
 
 DirHandle - supply object methods for directory handles
 
@@ -31,10 +31,10 @@ namespace pollution by creating globs to hold directory handles.
 
 =item *
 
-On Mac OS (Classic), the path separator is ':', not '/', and the
-current directory is denoted as ':', not '.'. You should be careful
-about specifying relative pathnames. While a full path always begins
-with a volume name, a relative pathname should always begin with a
+On Mac OS (Classic), the path separator is ':', not '/', and the 
+current directory is denoted as ':', not '.'. You should be careful 
+about specifying relative pathnames. While a full path always begins 
+with a volume name, a relative pathname should always begin with a 
 ':'.  If specifying a volume name only, a trailing ':' is required.
 
 =back
@@ -50,15 +50,15 @@ sub new {
     my $class = shift;
     my $dh = gensym;
     if (@_) {
-        DirHandle::open($dh, $_[0])
-            or return undef;
+	DirHandle::open($dh, $_[0])
+	    or return undef;
     }
     bless $dh, $class;
 }
 
 sub DESTROY {
     my ($dh) = @_;
-    # Don't warn about already being closed as it may have been closed
+    # Don't warn about already being closed as it may have been closed 
     # correctly, or maybe never opened at all.
     local($., $@, $!, $^E, $?);
     no warnings 'io';

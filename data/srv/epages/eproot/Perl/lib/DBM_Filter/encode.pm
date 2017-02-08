@@ -26,13 +26,13 @@ sub Filter
 
     return {
         Store   => sub {
-                         $_ = $encoding->encode($_)
-                             if defined $_ ;
-                   },
+			 $_ = $encoding->encode($_)
+			     if defined $_ ;
+		   },
         Fetch   => sub {
-                         $_ = $encoding->decode($_)
-                             if defined $_ ;
-                        }
+			 $_ = $encoding->decode($_)
+			     if defined $_ ;
+			}
         } ;
 }
 

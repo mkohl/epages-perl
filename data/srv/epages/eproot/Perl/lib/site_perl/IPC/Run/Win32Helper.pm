@@ -24,14 +24,14 @@ use Carp;
 use IO::Handle;
 use vars qw{ $VERSION @ISA @EXPORT };
 BEGIN {
-        $VERSION = '0.89';
-        @ISA = qw( Exporter );
-        @EXPORT = qw(
-                win32_spawn
-                win32_parse_cmd_line
-                _dont_inherit
-                _inherit
-        );
+	$VERSION = '0.89';
+	@ISA = qw( Exporter );
+	@EXPORT = qw(
+		win32_spawn
+		win32_parse_cmd_line
+		_dont_inherit
+		_inherit
+	);
 }
 
 require POSIX;
@@ -101,7 +101,7 @@ redirected input as it runs.
 
 Temporary files are used when receiving from children when output is
 to a scalar or subroutine with or without filters, but only if
-the child in question closes its inputs or takes input from
+the child in question closes its inputs or takes input from 
 unfiltered SCALARs or named files.  Normally, a child inherits its STDIN
 from its parent; to close it, use "0<&-" or the C<< noinherit => 1 >> option.
 If data is sent to the child from CODE refs, filehandles or from
@@ -195,22 +195,22 @@ sub optimize {
          if _debugging_details && $veto_output_optimization;
 
       if ( $h->{noinherit} && ! $ok_to_optimize_outputs ) {
-         _debug
-            "Win32 optimizer: (kid $kid->{NUM}) STDIN not inherited from parent oking non-SCALAR output optimization"
-            if _debugging_details && $ok_to_optimize_outputs;
-         $ok_to_optimize_outputs = 1;
+	 _debug
+	    "Win32 optimizer: (kid $kid->{NUM}) STDIN not inherited from parent oking non-SCALAR output optimization"
+	    if _debugging_details && $ok_to_optimize_outputs;
+	 $ok_to_optimize_outputs = 1;
       }
 
       for ( @{$kid->{OPS}} ) {
          if ( substr( $_->{TYPE}, 0, 1 ) eq "<" ) {
             if ( $_->{TYPE} eq "<" ) {
-               if ( @{$_->{FILTERS}} > 1 ) {
-                  ## Can't assume that the filters are idempotent.
-               }
+	       if ( @{$_->{FILTERS}} > 1 ) {
+		  ## Can't assume that the filters are idempotent.
+	       }
                elsif ( ref $_->{SOURCE} eq "SCALAR"
-                  || ref $_->{SOURCE} eq "GLOB"
-                  || UNIVERSAL::isa( $_, "IO::Handle" )
-               ) {
+	          || ref $_->{SOURCE} eq "GLOB"
+		  || UNIVERSAL::isa( $_, "IO::Handle" )
+	       ) {
                   if ( $_->{KFD} == 0 ) {
                      _debug
                         "Win32 optimizer: (kid $kid->{NUM}) 0$_->{TYPE}",
@@ -242,7 +242,7 @@ sub optimize {
                   : defined $_->{FILENAME}
                                           ? $_->{FILENAME}
                                           : "",
-               @{$_->{FILTERS}} > 1 ? " with filters" : (),
+	       @{$_->{FILTERS}} > 1 ? " with filters" : (),
                ", VETOING output opt."
                if _debugging_details || _debugging_not_optimized;
             $veto_output_optimization = 1;
@@ -285,27 +285,27 @@ sub optimize {
             if ( ref $_->{DEST} eq "SCALAR"
                || (
                   ( @{$_->{FILTERS}} > 1
-                     || ref $_->{DEST} eq "CODE"
-                     || ref $_->{DEST} eq "ARRAY"  ## Filters?
-                  )
-                  && ( $ok_to_optimize_outputs && ! $veto_output_optimization )
+		     || ref $_->{DEST} eq "CODE"
+		     || ref $_->{DEST} eq "ARRAY"  ## Filters?
+	          )
+                  && ( $ok_to_optimize_outputs && ! $veto_output_optimization ) 
                )
             ) {
-               $_->{RECV_THROUGH_TEMP_FILE} = 1;
-               next;
+	       $_->{RECV_THROUGH_TEMP_FILE} = 1;
+	       next;
             }
-            _debug
-               "Win32 optimizer: NOT optimizing (kid $kid->{NUM}) ",
-               $_->{KFD},
-               $_->{TYPE},
-               defined $_->{DEST}
-                  ? ref $_->{DEST}      ? ref $_->{DEST}
-                                          : $_->{SOURCE}
-                  : defined $_->{FILENAME}
-                                          ? $_->{FILENAME}
-                                          : "",
-                  @{$_->{FILTERS}} ? " with filters" : (),
-               if _debugging_details;
+	    _debug
+	       "Win32 optimizer: NOT optimizing (kid $kid->{NUM}) ",
+	       $_->{KFD},
+	       $_->{TYPE},
+	       defined $_->{DEST}
+		  ? ref $_->{DEST}      ? ref $_->{DEST}
+					  : $_->{SOURCE}
+		  : defined $_->{FILENAME}
+					  ? $_->{FILENAME}
+					  : "",
+		  @{$_->{FILTERS}} ? " with filters" : (),
+	       if _debugging_details;
          }
       }
    }
@@ -321,7 +321,7 @@ sub optimize {
 returns 4 words. This parses like the bourne shell (see
 the bit about shellwords() in L<Text::ParseWords>), assuming we're
 trying to be a little cross-platform here.  The only difference is
-that "\" is *not* treated as an escape except when it precedes
+that "\" is *not* treated as an escape except when it precedes 
 punctuation, since it's used all over the place in DOS path specs.
 
 TODO: globbing? probably not (it's unDOSish).
@@ -329,7 +329,7 @@ TODO: globbing? probably not (it's unDOSish).
 TODO: shebang emulation? Probably, but perhaps that should be part
 of Run.pm so all spawned processes get the benefit.
 
-LIMITATIONS: shellwords dies silently on malformed input like
+LIMITATIONS: shellwords dies silently on malformed input like 
 
    a\"
 
@@ -404,40 +404,40 @@ sub win32_spawn {
    ## and is not to the "real" child process, since they would not know
    ## what to do with it...unlike Unix, we have no code executing in the
    ## child before the "real" child is exec()ed.
-
+   
    my %saved;      ## Map of parent's orig fd -> saved fd
    my %saved_as;   ## Map of parent's saved fd -> orig fd, used to
                     ## detect collisions between a KFD and the fd a
-                    ## parent's fd happened to be saved to.
-
+		    ## parent's fd happened to be saved to.
+   
    for my $op ( @$ops ) {
       _dont_inherit $op->{FD}  if defined $op->{FD};
 
       if ( defined $op->{KFD} && $op->{KFD} > 2 ) {
-         ## TODO: Detect this in harness()
-         ## TODO: enable temporary redirections if ever necessary, not
-         ## sure why they would be...
-         ## 4>&1 1>/dev/null 1>&4 4>&-
+	 ## TODO: Detect this in harness()
+	 ## TODO: enable temporary redirections if ever necessary, not
+	 ## sure why they would be...
+	 ## 4>&1 1>/dev/null 1>&4 4>&-
          croak "Can't redirect fd #", $op->{KFD}, " on Win32";
       }
 
       ## This is very similar logic to IPC::Run::_do_kid_and_exit().
       if ( defined $op->{TFD} ) {
-         unless ( $op->{TFD} == $op->{KFD} ) {
-            _dup2_gently \%saved, \%saved_as, $op->{TFD}, $op->{KFD};
-            _dont_inherit $op->{TFD};
-         }
+	 unless ( $op->{TFD} == $op->{KFD} ) {
+	    _dup2_gently \%saved, \%saved_as, $op->{TFD}, $op->{KFD};
+	    _dont_inherit $op->{TFD};
+	 }
       }
       elsif ( $op->{TYPE} eq "dup" ) {
          _dup2_gently \%saved, \%saved_as, $op->{KFD1}, $op->{KFD2}
             unless $op->{KFD1} == $op->{KFD2};
       }
       elsif ( $op->{TYPE} eq "close" ) {
-         _save \%saved, \%saved_as, $op->{KFD};
-         IPC::Run::_close( $op->{KFD} );
+	 _save \%saved, \%saved_as, $op->{KFD};
+	 IPC::Run::_close( $op->{KFD} );
       }
       elsif ( $op->{TYPE} eq "init" ) {
-         ## TODO: detect this in harness()
+	 ## TODO: detect this in harness()
          croak "init subs not allowed on Win32";
       }
    }
@@ -452,7 +452,7 @@ sub win32_spawn {
    _debug "cmd line: ", $cmd_line
       if _debugging;
 
-   Win32::Process::Create(
+   Win32::Process::Create( 
       $process,
       $cmd->[0],
       $cmd_line,

@@ -141,7 +141,7 @@ sub _prepare_call($)
     ? sub  # hooked code
       { my $trace = $_[1];
         $create_message->($request, $_[0], $_[2]);
-
+ 
         $trace->{http_request}  = $request;
         $trace->{action}        = $action;
         $trace->{soap_version}  = $version;
@@ -199,7 +199,7 @@ sub _prepare_simple_call($)
 
         lc($ct) ne 'multipart/related'
             or error __x"remote system uses XOP, use XML::Compile::XOP";
-
+        
         info "received ".$response->status_line;
 
         $ct =~ m,[/+]xml$,i

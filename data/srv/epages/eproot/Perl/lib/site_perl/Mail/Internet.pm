@@ -258,7 +258,7 @@ sub reply(@)
     my @reply;
 
     local *MAILHDR;
-    if(open(MAILHDR, "$ENV{HOME}/.mailhdr"))
+    if(open(MAILHDR, "$ENV{HOME}/.mailhdr")) 
     {    # User has defined a mail header template
          @reply = <MAILHDR>;
          close MAILHDR;
@@ -289,7 +289,7 @@ sub reply(@)
     }
 
     my $indent = $arg{Indent} || ">";
-    if($indent =~ /\%/)
+    if($indent =~ /\%/) 
     {   my %hash = ( '%' => '%');
         my @name = $name ? grep( {length $_} split /[\n\s]+/, $name) : '';
 
@@ -317,7 +317,7 @@ sub reply(@)
 
     if($arg{ReplyAll})   # Who shall we copy this to
     {   my %cc;
-        foreach my $addr (Mail::Address->parse($self->get('To'), $self->get('Cc')))
+        foreach my $addr (Mail::Address->parse($self->get('To'), $self->get('Cc'))) 
         {   my $lc   = lc $addr->address;
             $cc{$lc} = $addr->format
                  unless $nocc{$lc};
@@ -359,7 +359,7 @@ sub reply(@)
     unshift @{$body}, (defined $name ? $name . " " : "") . "<$id> writes:\n";
 
     if(defined $arg{Keep} && ref $arg{Keep} eq 'ARRAY')      # Include lines
-    {   foreach my $keep (@{$arg{Keep}})
+    {   foreach my $keep (@{$arg{Keep}}) 
         {    my $ln = $self->get($keep);
              $reply->replace($keep => $ln) if defined $ln;
         }
@@ -390,29 +390,29 @@ sub smtpsend($@)
         if defined $opt{Hello};
 
     push @hello, Port => $opt{Port}
-        if exists $opt{Port};
+	if exists $opt{Port};
 
     push @hello, Debug => $opt{Debug}
-        if exists $opt{Debug};
+	if exists $opt{Debug};
 
     if(!defined $host)
     {   local $SIG{__DIE__};
-        my @hosts = qw(mailhost localhost);
-        unshift @hosts, split /\:/, $ENV{SMTPHOSTS}
+	my @hosts = qw(mailhost localhost);
+	unshift @hosts, split /\:/, $ENV{SMTPHOSTS}
             if defined $ENV{SMTPHOSTS};
 
-        foreach $host (@hosts)
+	foreach $host (@hosts)
         {   $smtp = eval { Net::SMTP->new($host, @hello) };
-            last if defined $smtp;
-        }
+	    last if defined $smtp;
+	}
     }
     elsif(ref($host) && UNIVERSAL::isa($host,'Net::SMTP'))
     {   $smtp = $host;
-        $quit = 0;
+	$quit = 0;
     }
     else
     {   local $SIG{__DIE__};
-        $smtp = eval { Net::SMTP->new($host, @hello) };
+	$smtp = eval { Net::SMTP->new($host, @hello) };
     }
 
     defined $smtp or return ();
@@ -423,7 +423,7 @@ sub smtpsend($@)
 
     my @rcpt = map { ref $_ ? @$_ : $_ } grep { defined } @opt{'To','Cc','Bcc'};
     @rcpt    = map { $head->get($_) } qw(To Cc Bcc)
-        unless @rcpt;
+	unless @rcpt;
 
     my @addr = map {$_->address} Mail::Address->parse(@rcpt);
     @addr or return ();
@@ -467,7 +467,7 @@ sub nntppost
     my $head   = $self->cleaned_header_dup;
 
     # Remove these incase the NNTP host decides to mail as well as me
-    $head->delete(qw(To Cc Bcc));
+    $head->delete(qw(To Cc Bcc)); 
 
     my $news;
     my $quit   = 1;
@@ -475,19 +475,19 @@ sub nntppost
     my $host   = $opt{Host};
     if(ref($host) && UNIVERSAL::isa($host,'Net::NNTP'))
     {   $news = $host;
-        $quit = 0;
+	$quit = 0;
     }
     else
     {   my @opt = $opt{Host};
 
-        push @opt, Port => $opt{Port}
-            if exists $opt{Port};
+	push @opt, Port => $opt{Port}
+	    if exists $opt{Port};
 
-        push @opt, Debug => $opt{Debug}
-            if exists $opt{Debug};
+	push @opt, Debug => $opt{Debug}
+	    if exists $opt{Debug};
 
-        $news = Net::NNTP->new(@opt)
-            or return ();
+	$news = Net::NNTP->new(@opt)
+	    or return ();
     }
 
     $news->post(@{$head->header}, "\n", @{$self->body});
@@ -529,7 +529,7 @@ sub cleaned_header_dup()
 
     if($name =~ /[^\w\s]/)
     {   $name =~ s/"/\"/g;
-        $name = '"' . $name . '"';
+	$name = '"' . $name . '"';
     }
 
     my $from = sprintf "%s <%s>", $name, mailaddress();

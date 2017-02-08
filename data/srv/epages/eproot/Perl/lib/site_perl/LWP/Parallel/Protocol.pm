@@ -22,9 +22,9 @@ original LWP::Parallel library by subclassing from it and adding a few
 subroutines of its own.
 
 Please see the LWP::Protocol for more information about the usage of
-this module.
+this module. 
 
-In addition to the inherited methods from LWP::Protocol, The following
+In addition to the inherited methods from LWP::Protocol, The following 
 methods and functions are provided:
 
 =head1 ADDITIONAL METHODS AND FUNCTIONS
@@ -72,7 +72,7 @@ sub create
 {
     my ($scheme, $ua) = @_;
     my $impclass = LWP::Parallel::Protocol::implementor($scheme) or
-        Carp::croak("Protocol scheme '$scheme' is not supported");
+	Carp::croak("Protocol scheme '$scheme' is not supported");
 
     # hand-off to scheme specific implementation sub-class
     my $protocol = $impclass->new($scheme, $ua);
@@ -93,7 +93,7 @@ sub implementor
     my($scheme, $impclass) = @_;
 
     if ($impclass) {
-        $ImplementedBy{$scheme} = $impclass;
+	$ImplementedBy{$scheme} = $impclass;
     }
     my $ic = $ImplementedBy{$scheme};
     return $ic if $ic;
@@ -107,16 +107,16 @@ sub implementor
     no strict 'refs';
     # check we actually have one for the scheme:
     unless (@{"${ic}::ISA"}) { # fixed in LWP 5.48
-        # try to autoload it
+	# try to autoload it
         #LWP::Debug::debug("Try autoloading $ic");
-        eval "require $ic";
-        if ($@) {
-            if ($@ =~ /Can't locate/) { #' #emacs get confused by '
-                $ic = '';
-            } else { # this msg never gets to the surface - 1002, JB
-                die "$@\n";
-            }
-        }
+	eval "require $ic";
+	if ($@) {
+	    if ($@ =~ /Can't locate/) { #' #emacs get confused by '
+		$ic = '';
+	    } else { # this msg never gets to the surface - 1002, JB
+		die "$@\n";
+	    }
+	}
     }
     $ImplementedBy{$scheme} = $ic if $ic;
     $ic;
@@ -149,19 +149,19 @@ sub receive {
     my ($self, $arg, $response, $content, $entry) = @_;
 
   LWP::Debug::trace("( [self]" .
-                    ", ". (defined $arg ? $arg : '[undef]') .
-                    ", ". (defined $response ?
-                            (defined $response->code ?
-                              $response->code : '???') . " " .
+                    ", ". (defined $arg ? $arg : '[undef]') . 
+                    ", ". (defined $response ? 
+		            (defined $response->code ? 
+			      $response->code : '???') . " " .
                             (defined $response->message ?
-                              $response->message : 'undef')
+			      $response->message : 'undef')
                                                 : '[undef]') .
-                    ", ". (defined $content ?
-                           (ref($content) eq 'SCALAR'?
-                               length($$content) . " bytes"
-                               : '[ref('. ref($content) .')' )
-                            : '[undef]') .
-                    ", ". (defined $entry ? $entry : '[undef]') .
+                    ", ". (defined $content ? 
+		           (ref($content) eq 'SCALAR'? 
+			       length($$content) . " bytes" 
+			       : '[ref('. ref($content) .')' )
+                            : '[undef]') . 
+                    ", ". (defined $entry ? $entry : '[undef]') . 
                     ")");
 
 
@@ -171,9 +171,9 @@ sub receive {
     my $parser;
     if ($parse_head && $response->content_type eq 'text/html') {
         require HTML::HeadParser; # LWP 5.60
-        $parser = HTML::HeadParser->new($response->{'_headers'});
+	$parser = HTML::HeadParser->new($response->{'_headers'});
     }
-
+    
     my $content_size = $entry->content_size;
 
     # Note: We don't need alarms here since we are not making any tcp
@@ -187,78 +187,78 @@ sub receive {
     # forget what I just said - it's irrelevant.
 
     if (!defined($arg) || !$response->is_success ) {
-        # scalar
-        if ($parser) {
-            $parser->parse($$content) or undef($parser);
-        }
+	# scalar
+	if ($parser) {
+	    $parser->parse($$content) or undef($parser);
+	}
         LWP::Debug::debug("read " . length($$content) . " bytes");
-        $response->add_content($$content);
-        $content_size += length($$content);
-        $entry->content_size($content_size); # update persistant size counter
-        if (defined($max_size) && $content_size > $max_size) {
-            LWP::Debug::debug("Aborting because size limit of " .
-                              "$max_size bytes exceeded");
-            $response->push_header("Client-Aborted", "max_size");
-            #my $tot = $response->header("Content-Length") || 0;
-            #$response->header("X-Content-Range", "bytes 0-$content_size/$tot");
-            return 0; # EOF (kind of)
-        }
+	$response->add_content($$content);
+	$content_size += length($$content);
+	$entry->content_size($content_size); # update persistant size counter
+	if (defined($max_size) && $content_size > $max_size) {
+  	    LWP::Debug::debug("Aborting because size limit of " .
+	                      "$max_size bytes exceeded");
+	    $response->push_header("Client-Aborted", "max_size");
+	    #my $tot = $response->header("Content-Length") || 0;
+	    #$response->header("X-Content-Range", "bytes 0-$content_size/$tot");
+	    return 0; # EOF (kind of)
+	} 
     }
     elsif (!ref($arg)) {
-        # Mmmh. Could this take so long that we want to use alarm here?
-        my $file_open;
-        if (defined ($entry->content_size) and ($entry->content_size > 0)) {
-          $file_open = open(OUT, ">>$arg"); # we already have data: append
-        } else {
-          $file_open = open(OUT, ">$arg");  # no content received: open new
-        }
-        unless ( $file_open ) {
-            $response->code(&HTTP::Status::RC_INTERNAL_SERVER_ERROR);
-            $response->message("Cannot write to '$arg': $!");
-            return; # undef means error
-        }
+	# Mmmh. Could this take so long that we want to use alarm here?
+	my $file_open;
+	if (defined ($entry->content_size) and ($entry->content_size > 0)) {
+	  $file_open = open(OUT, ">>$arg"); # we already have data: append
+	} else { 
+	  $file_open = open(OUT, ">$arg");  # no content received: open new
+	}
+	unless ( $file_open ) {
+	    $response->code(&HTTP::Status::RC_INTERNAL_SERVER_ERROR);
+	    $response->message("Cannot write to '$arg': $!");
+	    return; # undef means error
+	}
         binmode(OUT);
         local($\) = ""; # ensure standard $OUTPUT_RECORD_SEPARATOR
-        if ($parser) {
-            $parser->parse($$content) or undef($parser);
-        }
+	if ($parser) {
+	    $parser->parse($$content) or undef($parser);
+	}
         LWP::Debug::debug("[FILE] read " . length($$content) . " bytes");
-        print OUT $$content;
-        $content_size += length($$content);
-        $entry->content_size($content_size); # update persistant size counter
-        close(OUT);
-        if (defined($max_size) && $content_size > $max_size) {
-            LWP::Debug::debug("Aborting because size limit exceeded");
-            $response->push_header("Client-Aborted", "max_size");
-            #my $tot = $response->header("Content-Length") || 0;
-            #$response->header("X-Content-Range", "bytes 0-$content_size/$tot");
-            return 0;
-        }
+	print OUT $$content;
+	$content_size += length($$content);
+	$entry->content_size($content_size); # update persistant size counter
+	close(OUT);
+	if (defined($max_size) && $content_size > $max_size) {
+	    LWP::Debug::debug("Aborting because size limit exceeded");
+	    $response->push_header("Client-Aborted", "max_size");
+	    #my $tot = $response->header("Content-Length") || 0;
+	    #$response->header("X-Content-Range", "bytes 0-$content_size/$tot");
+	    return 0;
+	} 
     }
     elsif (ref($arg) eq 'CODE') {
-        # read into callback
-        if ($parser) {
-            $parser->parse($$content) or undef($parser);
-        }
+	# read into callback
+	if ($parser) {
+	    $parser->parse($$content) or undef($parser);
+	}
         LWP::Debug::debug("[CODE] read " . length($$content) . " bytes");
-        my $retval;
-        eval {
-            $retval = &$arg($$content, $response, $self, $entry);
-        };
-        if ($@) {
-            chomp($@);
-            $response->push_header('X-Died' => $@);
-            $response->push_header("Client-Aborted", "die");
-        } else {
-            # pass return value from callback through to implementor class
-          LWP::Debug::debug("return-code from Callback was '".
-                            (defined $retval ? "$retval'" : "[undef]'"));
-            return $retval;
-        }
+	my $retval;
+	eval {
+	    $retval = &$arg($$content, $response, $self, $entry);
+	};
+	if ($@) {
+	    chomp($@);
+	    $response->push_header('X-Died' => $@);
+	    $response->push_header("Client-Aborted", "die");
+	} else {
+	    # pass return value from callback through to implementor class
+	  LWP::Debug::debug("return-code from Callback was '".
+ 	                    (defined $retval ? "$retval'" : "[undef]'")); 
+	    return $retval; 
+	}
     }
     else {
-        $response->code(&HTTP::Status::RC_INTERNAL_SERVER_ERROR);
-        $response->message("Unexpected collect argument  '$arg'");
+	$response->code(&HTTP::Status::RC_INTERNAL_SERVER_ERROR);
+	$response->message("Unexpected collect argument  '$arg'");
     }
     return length($$content); # otherwise return size of content processed
 }
@@ -279,9 +279,9 @@ sub receive_once {
     my $retval = $self->receive($arg, $response, \$content, $entry);
 
     # and immediately simulate EOF
-    my $no_content = '';
-    $retval = $self->receive($arg, $response, \$no_content, $entry)
-        unless $retval;
+    my $no_content = '';  
+    $retval = $self->receive($arg, $response, \$no_content, $entry) 
+	unless $retval;
 
     return (defined $retval? $retval : 0);
 }

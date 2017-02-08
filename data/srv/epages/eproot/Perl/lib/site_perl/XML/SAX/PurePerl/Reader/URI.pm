@@ -31,18 +31,18 @@ sub new {
         require LWP::UserAgent;
         my $ua = LWP::UserAgent->new;
         $ua->agent("Perl/XML/SAX/PurePerl/1.0 " . $ua->agent);
-
+        
         my $req = HTTP::Request->new(GET => $uri);
-
+        
         my $fh = tempfile();
-
+        
         my $callback = sub {
             my ($data, $response, $protocol) = @_;
             print $fh $data;
         };
-
+        
         my $res = $ua->request($req, $callback, 4096);
-
+        
         if ($res->is_success) {
             seek($fh, 0, 0);
             return XML::SAX::PurePerl::Reader::Stream->new($fh);

@@ -9,7 +9,7 @@ sub _get_syms {
 
     # lifted from UNIVERSAL::exports
     no strict 'refs';
-    my %exports = map { $_ => 1 } @{$package.'::EXPORT'},
+    my %exports = map { $_ => 1 } @{$package.'::EXPORT'}, 
                                   @{$package.'::EXPORT_OK'};
 
     return keys %exports;

@@ -29,14 +29,14 @@ sub LoadFile {
     my $file = shift;
     if ( YAML::Syck::_is_openhandle($file) ) {
         if(-z $file) {
-            die("Cannot load an empty file");
+	    die("Cannot load an empty file");
         }
         YAML::Syck::LoadJSON(do { local $/; <$file> });
     }
     else {
         if(!-e $file || -z $file) {
-            die("'$file' is non-existant or empty");
-        }
+	    die("'$file' is non-existant or empty");
+	}
         open(my $fh, '<', $file) or die "Cannot read from $file: $!";
         YAML::Syck::LoadJSON(do { local $/; <$fh> });
     }
@@ -57,7 +57,7 @@ JSON::Syck - JSON is YAML (but consider using L<JSON::XS> instead!)
 
 =head1 SYNOPSIS
 
-    use JSON::Syck; # no exports by default
+    use JSON::Syck; # no exports by default 
 
     my $data = JSON::Syck::Load($json);
     my $json = JSON::Syck::Dump($data);

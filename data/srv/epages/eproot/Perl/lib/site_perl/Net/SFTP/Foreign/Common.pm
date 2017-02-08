@@ -21,14 +21,14 @@ use Net::SFTP::Foreign::Helpers qw(_gen_wanted _ensure_list _debug _glob_to_rege
 use Net::SFTP::Foreign::Constants qw(:status);
 
 my %status_str = ( SSH2_FX_OK, "OK",
-                   SSH2_FX_EOF, "End of file",
-                   SSH2_FX_NO_SUCH_FILE, "No such file or directory",
-                   SSH2_FX_PERMISSION_DENIED, "Permission denied",
-                   SSH2_FX_FAILURE, "Failure",
-                   SSH2_FX_BAD_MESSAGE, "Bad message",
-                   SSH2_FX_NO_CONNECTION, "No connection",
-                   SSH2_FX_CONNECTION_LOST, "Connection lost",
-                   SSH2_FX_OP_UNSUPPORTED, "Operation unsupported" );
+		   SSH2_FX_EOF, "End of file",
+		   SSH2_FX_NO_SUCH_FILE, "No such file or directory",
+		   SSH2_FX_PERMISSION_DENIED, "Permission denied",
+		   SSH2_FX_FAILURE, "Failure",
+		   SSH2_FX_BAD_MESSAGE, "Bad message",
+		   SSH2_FX_NO_CONNECTION, "No connection",
+		   SSH2_FX_CONNECTION_LOST, "Connection lost",
+		   SSH2_FX_OP_UNSUPPORTED, "Operation unsupported" );
 
 our $debug;
 
@@ -46,10 +46,10 @@ sub _set_status {
             $str = $status_str{$code} || "Unknown status ($code)";
         }
         $debug and $debug & 64 and _debug("_set_status code: $code, str: $str");
-        return $sftp->{_status} = dualvar($code, $str);
+	return $sftp->{_status} = dualvar($code, $str);
     }
     else {
-        return $sftp->{_status} = 0;
+	return $sftp->{_status} = 0;
     }
 }
 
@@ -66,10 +66,10 @@ sub _set_error {
                 if (${^TAINT} && tainted $str);
         }
         else {
-            $str = $code ? "Unknown error $code" : "OK";
-        }
+	    $str = $code ? "Unknown error $code" : "OK";
+	}
         $debug and $debug & 64 and _debug("_set_err code: $code, str: $str");
-        my $error = $sftp->{_error} = dualvar $code, $str;
+	my $error = $sftp->{_error} = dualvar $code, $str;
 
         # FIXME: use a better approach to determine when some error is fatal
         croak $error if $sftp->{_autodie};
@@ -114,26 +114,26 @@ sub _ok_or_autodie {
 sub _set_errno {
     my $sftp = shift;
     if ($sftp->{_error}) {
-        my $status = $sftp->{_status} + 0;
-        my $error = $sftp->{_error} + 0;
-        if ($status == SSH2_FX_EOF) {
-            return;
-        }
+	my $status = $sftp->{_status} + 0;
+	my $error = $sftp->{_error} + 0;
+	if ($status == SSH2_FX_EOF) {
+	    return;
+	}
         elsif ($status == SSH2_FX_NO_SUCH_FILE) {
-            $! = Errno::ENOENT();
-        }
-        elsif ($status == SSH2_FX_PERMISSION_DENIED) {
-            $! = Errno::EACCES();
-        }
-        elsif ($status == SSH2_FX_BAD_MESSAGE) {
-            $! = Errno::EBADMSG();
-        }
-        elsif ($status == SSH2_FX_OP_UNSUPPORTED) {
-            $! = Errno::ENOTSUP()
-        }
-        elsif ($status) {
-            $! = Errno::EIO()
-        }
+	    $! = Errno::ENOENT();
+	}
+	elsif ($status == SSH2_FX_PERMISSION_DENIED) {
+	    $! = Errno::EACCES();
+	}
+	elsif ($status == SSH2_FX_BAD_MESSAGE) {
+	    $! = Errno::EBADMSG();
+	}
+	elsif ($status == SSH2_FX_OP_UNSUPPORTED) {
+	    $! = Errno::ENOTSUP()
+	}
+	elsif ($status) {
+	    $! = Errno::EIO()
+	}
     }
 }
 
@@ -149,7 +149,7 @@ sub _best_effort {
 sub _call_on_error {
     my ($sftp, $on_error, $entry) = @_;
     $on_error and $sftp->error
-        and $on_error->($sftp, $entry);
+	and $on_error->($sftp, $entry);
     $sftp->_clear_error_and_status;
 }
 
@@ -172,9 +172,9 @@ sub find {
     my $names_only = delete $opts{names_only};
     my $atomic_readdir = delete $opts{atomic_readdir};
     my $wanted = _gen_wanted( delete $opts{wanted},
-                              delete $opts{no_wanted} );
+			      delete $opts{no_wanted} );
     my $descend = _gen_wanted( delete $opts{descend},
-                               delete $opts{no_descend} );
+			       delete $opts{no_descend} );
 
     %opts and croak "invalid option(s) '".CORE::join("', '", keys %opts)."'";
 
@@ -192,98 +192,98 @@ sub find {
     # to the state:
 
     my $task = sub {
-        my $entry = shift;
-        my $fn = $entry->{filename};
-        for (1) {
-            my $follow = ($follow_links and _is_lnk($entry->{a}->perm));
+	my $entry = shift;
+	my $fn = $entry->{filename};
+	for (1) {
+	    my $follow = ($follow_links and _is_lnk($entry->{a}->perm));
 
-            if ($follow or $realpath) {
-                unless (defined $entry->{realpath}) {
+	    if ($follow or $realpath) {
+		unless (defined $entry->{realpath}) {
                     my $rp = $entry->{realpath} = $self->realpath($fn);
                     next unless (defined $rp and not $rpdone{$rp}++);
-                }
-            }
+		}
+	    }
 
-            if ($follow) {
+	    if ($follow) {
                 my $a = $self->stat($fn);
                 if (defined $a) {
                     $entry->{a} = $a;
                     # we queue it for reprocessing as it could be a directory
                     unshift @queue, $entry;
                 }
-                next;
-            }
+		next;
+	    }
 
-            if (!$wanted or $wanted->($self, $entry)) {
-                if ($wantarray) {
+	    if (!$wanted or $wanted->($self, $entry)) {
+		if ($wantarray) {
                     push @res, ( $names_only
                                  ? ( exists $entry->{realpath}
                                      ? $entry->{realpath}
                                      : $entry->{filename} )
                                  : $entry )
-                }
-                else {
-                    $res++;
-                }
-            }
-        }
-        continue {
-            $self->_call_on_error($on_error, $entry)
-        }
+		}
+		else {
+		    $res++;
+		}
+	    }
+	}
+	continue {
+	    $self->_call_on_error($on_error, $entry)
+	}
     };
 
     my $try;
     while (@queue) {
-        no warnings 'uninitialized';
-        $try = shift @queue;
-        my $fn = $try->{filename};
+	no warnings 'uninitialized';
+	$try = shift @queue;
+	my $fn = $try->{filename};
 
-        my $a = $try->{a} ||= $self->lstat($fn)
-            or next;
+	my $a = $try->{a} ||= $self->lstat($fn)
+	    or next;
 
-        next if (_is_dir($a->perm) and $done{$fn}++);
+	next if (_is_dir($a->perm) and $done{$fn}++);
 
-        $task->($try);
+	$task->($try);
 
-        if (_is_dir($a->perm)) {
-            if (!$descend or $descend->($self, $try)) {
-                if ($ordered or $atomic_readdir) {
-                    my $ls = $self->ls( $fn,
-                                        ordered => $ordered,
-                                        _wanted => sub {
-                                            my $child = $_[1]->{filename};
-                                            if ($child !~ /^\.\.?$/) {
-                                                $_[1]->{filename} = $self->join($fn, $child);
-                                                return 1;
-                                            }
-                                            undef;
-                                        })
-                        or next;
-                    unshift @queue, @$ls;
-                }
-                else {
-                    $self->ls( $fn,
-                               _wanted => sub {
-                                   my $entry = $_[1];
-                                   my $child = $entry->{filename};
-                                   if ($child !~ /^\.\.?$/) {
-                                       $entry->{filename} = $self->join($fn, $child);
+	if (_is_dir($a->perm)) {
+	    if (!$descend or $descend->($self, $try)) {
+		if ($ordered or $atomic_readdir) {
+		    my $ls = $self->ls( $fn,
+					ordered => $ordered,
+					_wanted => sub {
+					    my $child = $_[1]->{filename};
+					    if ($child !~ /^\.\.?$/) {
+						$_[1]->{filename} = $self->join($fn, $child);
+						return 1;
+					    }
+					    undef;
+					})
+			or next;
+		    unshift @queue, @$ls;
+		}
+		else {
+		    $self->ls( $fn,
+			       _wanted => sub {
+				   my $entry = $_[1];
+				   my $child = $entry->{filename};
+				   if ($child !~ /^\.\.?$/) {
+				       $entry->{filename} = $self->join($fn, $child);
 
-                                       if (_is_dir($entry->{a}->perm)) {
-                                           push @queue, $entry;
-                                       }
-                                       else {
-                                           $task->($entry);
-                                       }
-                                   }
-                                   undef } )
-                        or next;
-                }
-            }
-        }
+				       if (_is_dir($entry->{a}->perm)) {
+					   push @queue, $entry;
+				       }
+				       else {
+					   $task->($entry);
+				       }
+				   }
+				   undef } )
+			or next;
+		}
+	    }
+	}
     }
     continue {
-        $self->_call_on_error($on_error, $try)
+	$self->_call_on_error($on_error, $try)
     }
 
     return wantarray ? @res : $res;
@@ -305,7 +305,7 @@ sub glob {
     my $realpath = delete $opts{realpath};
     my $ordered = delete $opts{ordered};
     my $wanted = _gen_wanted( delete $opts{wanted},
-                              delete $opts{no_wanted});
+			      delete $opts{no_wanted});
     my $strict_leading_dot = delete $opts{strict_leading_dot};
     $strict_leading_dot = 1 unless defined $strict_leading_dot;
 
@@ -327,20 +327,20 @@ sub glob {
     my $res = 0;
 
     while (@parts and @res) {
-        my @parents = @res;
-        @res = ();
-        my $part = shift @parts;
+	my @parents = @res;
+	@res = ();
+	my $part = shift @parts;
         my ($re, $has_wildcards);
         if (ref $part eq 'Regexp') {
             $re = $part;
             $has_wildcards = 1;
         }
-        else {
+	else {
             ($re, $has_wildcards) = _glob_to_regex($part, $strict_leading_dot, $ignore_case);
         }
 
-        for my $parent (@parents) {
-            my $pfn = $parent->{filename};
+	for my $parent (@parents) {
+	    my $pfn = $parent->{filename};
             if ($has_wildcards) {
                 $sftp->ls( $pfn,
                            ordered => $ordered,

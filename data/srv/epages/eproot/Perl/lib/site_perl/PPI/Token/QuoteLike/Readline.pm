@@ -20,10 +20,10 @@ line from a file, or all the lines from a file, as follows.
 
   # Read in a single line
   $line = <FILE>;
-
+  
   # From a scalar handle
   $line = <$filehandle>;
-
+  
   # Read all the lines
   @lines = <FILE>;
 
@@ -43,11 +43,11 @@ use PPI::Token::_QuoteEngine::Full ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = qw{
-                PPI::Token::_QuoteEngine::Full
-                PPI::Token::QuoteLike
-        };
+	$VERSION = '1.215';
+	@ISA     = qw{
+		PPI::Token::_QuoteEngine::Full
+		PPI::Token::QuoteLike
+	};
 }
 
 1;

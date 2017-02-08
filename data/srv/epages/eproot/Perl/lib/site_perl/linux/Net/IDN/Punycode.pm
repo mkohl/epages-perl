@@ -14,9 +14,9 @@ our @EXPORT = ();
 our @EXPORT_OK = qw(encode_punycode decode_punycode);
 our %EXPORT_TAGS = ( 'all' => \@EXPORT_OK );
 
-eval {
+eval { 
   require XSLoader;
-  XSLoader::load('Net::IDN::Punycode');
+  XSLoader::load('Net::IDN::Punycode'); 
 };
 
 if (!defined(&encode_punycode)) {

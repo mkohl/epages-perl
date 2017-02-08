@@ -91,7 +91,7 @@ sub is_exe($)
         if(defined $ENV{PATH})
         {   foreach my $dir (split /$Config{path_sep}/, $ENV{PATH})
             {   return "$dir/$cmd"
-                    if -x "$dir/$name" && ! -d "$dir/$name";
+        	    if -x "$dir/$name" && ! -d "$dir/$name";
             }
         }
     }
@@ -137,8 +137,8 @@ sub open($)
 
     my @to     = $self->who_to($hdrs);
     my $sender = $self->who_sender($hdrs);
-
-    $self->close;       # just in case;
+    
+    $self->close;	# just in case;
 
     if(defined $exe)
     {   # Fork and start a mailer
@@ -180,7 +180,7 @@ sub exec($$$$)
     exec @exe, @$args, @$to;
 }
 
-sub can_cc { 1 }        # overridden in subclass for mailer that can't
+sub can_cc { 1 }	# overridden in subclass for mailer that can't
 
 sub who_to($)
 {   my($self, $hdrs) = @_;

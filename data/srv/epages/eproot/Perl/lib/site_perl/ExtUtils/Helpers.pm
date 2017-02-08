@@ -14,32 +14,32 @@ use Module::Load;
 our @EXPORT_OK = qw/build_script make_executable split_like_shell man1_pagename man3_pagename detildefy/;
 
 BEGIN {
-        my %impl_for = ( MSWin32 => 'Windows', VMS => 'VMS');
-        my $package = 'ExtUtils::Helpers::' . ($impl_for{$^O} || 'Unix');
-        load($package);
-        $package->import();
+	my %impl_for = ( MSWin32 => 'Windows', VMS => 'VMS');
+	my $package = 'ExtUtils::Helpers::' . ($impl_for{$^O} || 'Unix');
+	load($package);
+	$package->import();
 }
 
 sub man1_pagename {
-        my $filename = shift;
-        return basename($filename).".$Config{man1ext}";
+	my $filename = shift;
+	return basename($filename).".$Config{man1ext}";
 }
 
 my %separator = (
-        MSWin32 => '.',
-        VMS => '__',
-        os2 => '.',
-        cygwin => '.',
+	MSWin32 => '.',
+	VMS => '__',
+	os2 => '.',
+	cygwin => '.',
 );
 my $separator = $separator{$^O} || '::';
 
 sub man3_pagename {
-        my ($filename, $base) = @_;
-        $base ||= 'lib';
-        my ($vols, $dirs, $file) = splitpath(canonpath(abs2rel($filename, $base)));
-        $file = basename($file, qw/.pm .pod/);
-        my @dirs = grep { length } splitdir($dirs);
-        return join $separator, @dirs, "$file.$Config{man3ext}";
+	my ($filename, $base) = @_;
+	$base ||= 'lib';
+	my ($vols, $dirs, $file) = splitpath(canonpath(abs2rel($filename, $base)));
+	$file = basename($file, qw/.pm .pod/);
+	my @dirs = grep { length } splitdir($dirs);
+	return join $separator, @dirs, "$file.$Config{man3ext}";
 }
 
 1;

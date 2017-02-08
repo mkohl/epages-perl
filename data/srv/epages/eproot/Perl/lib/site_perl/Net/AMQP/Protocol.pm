@@ -99,7 +99,7 @@ sub load_xml_spec {
                     content     => $child_method->getAttribute('content'),
                     responses   => {},
                 );
-
+                
                 foreach my $child_field ($child_method->getChildrenByTagName('field')) {
                     my $field = {
                         map { $_->name => $_->getValue }
@@ -166,7 +166,7 @@ sub _normalize_name {
 
     # Uppercase the first letter of each word
     $name =~ s{\b(.+?)\b}{\u$1}g;
-
+    
     # Remove hyphens
     $name =~ s{-}{}g;
 

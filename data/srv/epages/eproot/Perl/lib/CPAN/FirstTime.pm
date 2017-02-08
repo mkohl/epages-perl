@@ -201,8 +201,8 @@ Preferred method for determining the current working directory?
 =item halt_on_failure
 
 Normaly, CPAN.pm continues processing the full list of targets and
-dependencies, even if one of them fails.  However, you can specify
-that CPAN should halt after the first failure.
+dependencies, even if one of them fails.  However, you can specify 
+that CPAN should halt after the first failure. 
 
 Do you want to halt on failure (yes/no)?
 
@@ -950,8 +950,8 @@ sub init {
         my_dflt_prompt(makepl_arg => "", $matcher);
         my_dflt_prompt(make_arg => "", $matcher);
         if ( $CPAN::Config->{makepl_arg} =~ /LIBS=|INC=/ ) {
-            $CPAN::Frontend->mywarn(
-                "Warning: Using LIBS or INC in makepl_arg will likely break distributions\n" .
+            $CPAN::Frontend->mywarn( 
+                "Warning: Using LIBS or INC in makepl_arg will likely break distributions\n" . 
                 "that specify their own LIBS or INC options in Makefile.PL.\n"
             );
         }
@@ -1431,7 +1431,7 @@ sub my_prompt_loop {
 # (2) We don't have a copy at all
 #   (2a) If we are allowed to connect, we try to get a new copy.  If it succeeds,
 #        we use it, otherwise, we warn about failure
-#   (2b) If we aren't allowed to connect,
+#   (2b) If we aren't allowed to connect, 
 
 sub conf_sites {
     my %args = @_;
@@ -1506,7 +1506,7 @@ HERE
       }
       else {
         $CPAN::Frontend->mywarn(<<'HERE');
-You will need to provide CPAN mirror URLs yourself or set
+You will need to provide CPAN mirror URLs yourself or set 
 'o conf connect_to_internet_ok 1' and try again.
 HERE
       }
@@ -1768,8 +1768,8 @@ later if you\'re sure it\'s right.\n},
 
 sub _print_urllist {
     $CPAN::Frontend->myprint("New urllist\n");
-    for ( @{$CPAN::Config->{urllist} || []} ) {
-      $CPAN::Frontend->myprint("  $_\n")
+    for ( @{$CPAN::Config->{urllist} || []} ) { 
+      $CPAN::Frontend->myprint("  $_\n") 
     };
 }
 

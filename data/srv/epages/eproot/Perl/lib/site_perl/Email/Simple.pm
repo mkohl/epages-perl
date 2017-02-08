@@ -33,7 +33,7 @@ Email::Simple - simple parsing of RFC2822 message format and headers
   print $email->as_string;
 
 ...or, to create a message from scratch...
-
+  
   my $email = Email::Simple->create(
       header => [
         From    => 'casey@geeknest.com',
@@ -42,9 +42,9 @@ Email::Simple - simple parsing of RFC2822 message format and headers
       ],
       body => '...',
   );
-
+  
   $email->header_set( 'X-Content-Container' => 'bottle/glass' );
-
+  
   print $email->as_string;
 
 =head1 DESCRIPTION

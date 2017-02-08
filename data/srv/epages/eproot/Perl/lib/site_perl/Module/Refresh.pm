@@ -63,7 +63,7 @@ Calls C<new> to initialize the cache if it had not yet been called.
 
 Specifically, it will renew any module that was loaded before the previous call
 to C<refresh> (or C<new>) and has changed on disk since then.  If a module was
-both loaded for the first time B<and> changed on disk between the previous call
+both loaded for the first time B<and> changed on disk between the previous call 
 and this one, it will B<not> be reloaded by this call (or any future one); you
 will need to update the modification time again (by using the Unix C<touch> command or
 making a change to it) in order for it to be reloaded.
@@ -186,7 +186,7 @@ sub unload_subs {
             if ($sym =~ /^(.*::)(.*?)$/) {
                 delete *{$1}->{$2};
             }
-        }
+        } 
     }
 
     return $self;
@@ -224,7 +224,7 @@ L<Apache::StatINC>, L<Module::Reload>
 Copyright 2004,2011 by Jesse Vincent E<lt>jesse@bestpractical.comE<gt>,
 Audrey Tang E<lt>audreyt@audreyt.orgE<gt>
 
-This program is free software; you can redistribute it and/or
+This program is free software; you can redistribute it and/or 
 modify it under the same terms as Perl itself.
 
 See L<http://www.perl.com/perl/misc/Artistic.html>

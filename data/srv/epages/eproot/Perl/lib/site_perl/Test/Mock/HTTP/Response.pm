@@ -28,9 +28,9 @@ our $VERSION = '0.01';
 
 BEGIN {
     $Mock_response = $Mock_resp = Test::MockObject->new;
-    $Mock_resp->fake_module('HTTP::Response');
+    $Mock_resp->fake_module('HTTP::Response');                       
     $Mock_resp->fake_new('HTTP::Response');
-}
+}                                                                          
 
 our %Headers;
 $Mock_resp->mock('header', sub { return $Headers{$_[1]} });

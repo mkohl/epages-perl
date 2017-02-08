@@ -1371,15 +1371,15 @@ sub ExtractInfo($;@)
     } else {
         if (defined $_[0] or $options->{HtmlDump}) {
             %saveOptions = %$options;       # save original options
-
+    
             # require duplicates for html dump
             $self->Options(Duplicates => 1) if $options->{HtmlDump};
-
+    
             if (defined $_[0]) {
                 # only initialize filename if called with arguments
                 $self->{FILENAME} = undef;  # name of file (or '' if we didn't open it)
                 $self->{RAF} = undef;       # RandomAccess object reference
-
+    
                 $self->ParseArguments(@_);  # initialize from our arguments
             }
         }
@@ -2883,7 +2883,7 @@ GR_TAG: foreach $tag (@$rtnTags) {
         $rtnTags = \@tags;
         last;
     }
-    $self->{FOUND_TAGS} = $rtnTags;     # save found tags
+    $self->{FOUND_TAGS} = $rtnTags;     # save found tags 
 
     # return reference to found tag keys (and list of indices of tags to extract by value)
     return wantarray ? ($rtnTags, \@byValue) : $rtnTags;
@@ -5095,7 +5095,7 @@ sub DoProcessTIFF($$;$)
             if ($$self{TIFF_TYPE} eq 'ARW' and not $err) {
                 # write any required ARW trailer and patch other ARW quirks
                 require Image::ExifTool::Sony;
-                my $errStr = Image::ExifTool::Sony::FinishARW($self, $dirInfo, \$newData,
+                my $errStr = Image::ExifTool::Sony::FinishARW($self, $dirInfo, \$newData, 
                                                               $dirInfo{ImageData});
                 $errStr and $self->Error($errStr);
                 delete $dirInfo{ImageData}; # (was copied by FinishARW)
@@ -5577,7 +5577,7 @@ sub HandleTag($$$$;%)
             if ($$subdir{Start}) {
                 my $valuePtr = 0;
                 #### eval Start ($valuePtr)
-                my $off = eval $$subdir{Start};
+                my $off = eval $$subdir{Start};                
                 $subdirStart += $off;
                 $subdirLen -= $off;
             }

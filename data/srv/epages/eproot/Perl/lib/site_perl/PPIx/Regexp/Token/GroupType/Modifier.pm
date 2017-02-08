@@ -43,17 +43,17 @@ our $VERSION = '0.020';
 {
 
     my %perl_version_introduced = (
-        '?:'    => MINIMUM_PERL,
+	'?:'	=> MINIMUM_PERL,
     );
 
     sub perl_version_introduced {
-        my ( $self ) = @_;
-        my $content = $self->content();
-        exists $perl_version_introduced{$content}
-            and return $perl_version_introduced{$content};
-        my $ver = $self->SUPER::perl_version_introduced();
-        $ver > 5.005 and return $ver;
-        return '5.005';
+	my ( $self ) = @_;
+	my $content = $self->content();
+	exists $perl_version_introduced{$content}
+	    and return $perl_version_introduced{$content};
+	my $ver = $self->SUPER::perl_version_introduced();
+	$ver > 5.005 and return $ver;
+	return '5.005';
     }
 
 }
@@ -68,11 +68,11 @@ sub __PPIX_TOKENIZER__regexp {
     # non-open-bracket punctuation characters might be our delimiter.
     my $accept;
     $accept = $tokenizer->find_regexp(
-        qr{ \A \\? [?] [[:lower:]]* \\? -? [[:lower:]]* \\? : }smx )
-        and return $accept;
+	qr{ \A \\? [?] [[:lower:]]* \\? -? [[:lower:]]* \\? : }smx )
+	and return $accept;
     $accept = $tokenizer->find_regexp(
-        qr{ \A \\? [?] \^ [[:lower:]]* \\? : }smx )
-        and return $accept;
+	qr{ \A \\? [?] \^ [[:lower:]]* \\? : }smx )
+	and return $accept;
 
     return;
 }

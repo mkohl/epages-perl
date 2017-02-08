@@ -13,11 +13,11 @@ elsif ($IO::Socket::SSL::VERSION) {
 else {
     eval { require Net::SSL; };     # from Crypt-SSLeay
     if ($@) {
-        require IO::Socket::SSL;
-        $SSL_CLASS = "IO::Socket::SSL";
+	require IO::Socket::SSL;
+	$SSL_CLASS = "IO::Socket::SSL";
     }
     else {
-        $SSL_CLASS = "Net::SSL";
+	$SSL_CLASS = "Net::SSL";
     }
 }
 
@@ -32,15 +32,15 @@ sub _new_socket
     my($self, $host, $port, $timeout) = @_;
     local($^W) = 0;  # IO::Socket::INET can be noisy
     my $sock = $SSL_CLASS->new(PeerAddr  => $host,
-                               PeerPort  => $port,
-                               LocalAddr => $self->{ua}{local_address},
-                               Proto     => 'tcp',
-                               Timeout   => $timeout,
-                              );
+			       PeerPort  => $port,
+			       LocalAddr => $self->{ua}{local_address},
+			       Proto     => 'tcp',
+			       Timeout   => $timeout,
+			      );
     unless ($sock) {
-        # IO::Socket::INET leaves additional error messages in $@
-        $@ =~ s/^.*?: //;
-        die "Can't connect to $host:$port ($@)";
+	# IO::Socket::INET leaves additional error messages in $@
+	$@ =~ s/^.*?: //;
+	die "Can't connect to $host:$port ($@)";
     }
     $sock;
 }
@@ -50,12 +50,12 @@ sub _check_sock
     my($self, $req, $sock) = @_;
     my $check = $req->header("If-SSL-Cert-Subject");
     if (defined $check) {
-        my $cert = $sock->get_peer_certificate ||
-            die "Missing SSL certificate";
-        my $subject = $cert->subject_name;
-        die "Bad SSL certificate subject: '$subject' !~ /$check/"
-            unless $subject =~ /$check/;
-        $req->remove_header("If-SSL-Cert-Subject");  # don't pass it on
+	my $cert = $sock->get_peer_certificate ||
+	    die "Missing SSL certificate";
+	my $subject = $cert->subject_name;
+	die "Bad SSL certificate subject: '$subject' !~ /$check/"
+	    unless $subject =~ /$check/;
+	$req->remove_header("If-SSL-Cert-Subject");  # don't pass it on
     }
 }
 
@@ -67,8 +67,8 @@ sub _get_sock_info
     $res->header("Client-SSL-Cipher" => $sock->get_cipher);
     my $cert = $sock->get_peer_certificate;
     if ($cert) {
-        $res->header("Client-SSL-Cert-Subject" => $cert->subject_name);
-        $res->header("Client-SSL-Cert-Issuer" => $cert->issuer_name);
+	$res->header("Client-SSL-Cert-Subject" => $cert->subject_name);
+	$res->header("Client-SSL-Cert-Issuer" => $cert->issuer_name);
     }
     $res->header("Client-SSL-Warning" => "Peer certificate not verified");
 }

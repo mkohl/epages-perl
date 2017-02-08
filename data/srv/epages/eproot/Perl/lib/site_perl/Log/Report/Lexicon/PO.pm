@@ -289,7 +289,7 @@ sub toString(@)
     push @text, "#, ". join(", ", @flags) . "\n"
         if @flags;
 
-    push @text, "${active}msgid "._escape($msgid, "\n$active")."\n";
+    push @text, "${active}msgid "._escape($msgid, "\n$active")."\n"; 
 
     my @msgstr = @{$self->{msgstr} || []};
     my $plural = $self->{plural};

@@ -5,20 +5,20 @@ use base qw(Business::ISBN);
 use Business::ISBN qw(:all);
 
 use subs qw(
-        _checksum
-        INVALID_GROUP_CODE
-        INVALID_PUBLISHER_CODE
-        BAD_CHECKSUM
-        GOOD_ISBN
-        BAD_ISBN
-        );
+	_checksum
+	INVALID_GROUP_CODE
+	INVALID_PUBLISHER_CODE
+	BAD_CHECKSUM
+	GOOD_ISBN
+	BAD_ISBN
+	);
 
 use vars qw(
-        $VERSION
-        $debug
-        $MAX_GROUP_CODE_LENGTH
-        %ERROR_TEXT
-        );
+	$VERSION
+	$debug
+	$MAX_GROUP_CODE_LENGTH
+	%ERROR_TEXT
+	);
 
 use Carp qw(carp croak cluck);
 
@@ -32,57 +32,57 @@ sub _set_type { $_[0]->{type} = 'ISBN10' }
 
 sub _parse_prefix { '' }
 sub _set_prefix {
-        croak "Cannot set prefix [$_[1]] on an ISBN-10" if length $_[1];
+	croak "Cannot set prefix [$_[1]] on an ISBN-10" if length $_[1];
 
-        $_[0]->{prefix} = $_[1];
-        }
+	$_[0]->{prefix} = $_[1];
+	}
 
 sub _hyphen_positions {
-        [
-        $_[0]->_group_code_length,
-        $_[0]->_group_code_length + $_[0]->_publisher_code_length,
-        9
-        ]
-        }
+	[
+	$_[0]->_group_code_length,
+	$_[0]->_group_code_length + $_[0]->_publisher_code_length,
+	9
+	]
+	}
 
 sub as_isbn10 {
-        my $self = shift;
+	my $self = shift;
 
-        my $isbn10 = Business::ISBN->new( $self->isbn );
-        $isbn10->fix_checksum;
+	my $isbn10 = Business::ISBN->new( $self->isbn );
+	$isbn10->fix_checksum;
 
-        return $isbn10;
-        }
+	return $isbn10;
+	}
 
 sub as_isbn13 {
-        my $self = shift;
+	my $self = shift;
 
-        my $isbn13 = Business::ISBN->new( '978' . $self->isbn );
-        $isbn13->fix_checksum;
+	my $isbn13 = Business::ISBN->new( '978' . $self->isbn );
+	$isbn13->fix_checksum;
 
-        return $isbn13;
-        }
+	return $isbn13;
+	}
 
 #internal function.  you don't get to use this one.
 sub _checksum {
-        my $data = $_[0]->isbn;
+	my $data = $_[0]->isbn;
 
-        return unless defined $data;
+	return unless defined $data;
 
-        my @digits = split //, $data;
-        my $sum    = 0;
+	my @digits = split //, $data;
+	my $sum    = 0;
 
-        foreach( reverse 2..10 ) {
-                $sum += $_ * (shift @digits);
-                }
+	foreach( reverse 2..10 ) {
+		$sum += $_ * (shift @digits);
+		}
 
-        #return what the check digit should be
-        my $checksum = (11 - ($sum % 11))%11;
+	#return what the check digit should be
+	my $checksum = (11 - ($sum % 11))%11;
 
-        $checksum = 'X' if $checksum == 10;
+	$checksum = 'X' if $checksum == 10;
 
-        return $checksum;
-        }
+	return $checksum;
+	}
 
 
 1;

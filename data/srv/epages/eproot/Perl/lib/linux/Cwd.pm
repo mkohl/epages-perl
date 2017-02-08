@@ -19,7 +19,7 @@ current working directory.  It is recommended that getcwd (or another
 *cwd() function) be used in I<all> code to ensure portability.
 
 By default, it exports the functions cwd(), getcwd(), fastcwd(), and
-fastgetcwd() (and, on Win32, getdcwd()) into the caller's namespace.
+fastgetcwd() (and, on Win32, getdcwd()) into the caller's namespace.  
 
 
 =head2 getcwd and friends
@@ -114,7 +114,7 @@ A more dangerous, but potentially faster version of abs_path.
 
 =head2 $ENV{PWD}
 
-If you ask to override your chdir() built-in function,
+If you ask to override your chdir() built-in function, 
 
   use Cwd qw(chdir);
 
@@ -222,7 +222,7 @@ sub _vms_unix_rpt {
         $unix_rpt = VMS::Feature::current("filename_unix_report");
     } else {
         my $env_unix_rpt = $ENV{'DECC$FILENAME_UNIX_REPORT'} || '';
-        $unix_rpt = $env_unix_rpt =~ /^[ET1]/i;
+        $unix_rpt = $env_unix_rpt =~ /^[ET1]/i; 
     }
     return $unix_rpt;
 }
@@ -235,7 +235,7 @@ sub _vms_efs {
         $efs = VMS::Feature::current("efs_charset");
     } else {
         my $env_efs = $ENV{'DECC$EFS_CHARSET'} || '';
-        $efs = $env_efs =~ /^[ET1]/i;
+        $efs = $env_efs =~ /^[ET1]/i; 
     }
     return $efs;
 }
@@ -258,69 +258,69 @@ my %METHOD_MAP =
   (
    VMS =>
    {
-    cwd                 => '_vms_cwd',
-    getcwd              => '_vms_cwd',
-    fastcwd             => '_vms_cwd',
-    fastgetcwd          => '_vms_cwd',
-    abs_path            => '_vms_abs_path',
-    fast_abs_path       => '_vms_abs_path',
+    cwd			=> '_vms_cwd',
+    getcwd		=> '_vms_cwd',
+    fastcwd		=> '_vms_cwd',
+    fastgetcwd		=> '_vms_cwd',
+    abs_path		=> '_vms_abs_path',
+    fast_abs_path	=> '_vms_abs_path',
    },
 
    MSWin32 =>
    {
     # We assume that &_NT_cwd is defined as an XSUB or in the core.
-    cwd                 => '_NT_cwd',
-    getcwd              => '_NT_cwd',
-    fastcwd             => '_NT_cwd',
-    fastgetcwd          => '_NT_cwd',
-    abs_path            => 'fast_abs_path',
-    realpath            => 'fast_abs_path',
+    cwd			=> '_NT_cwd',
+    getcwd		=> '_NT_cwd',
+    fastcwd		=> '_NT_cwd',
+    fastgetcwd		=> '_NT_cwd',
+    abs_path		=> 'fast_abs_path',
+    realpath		=> 'fast_abs_path',
    },
 
-   dos =>
+   dos => 
    {
-    cwd                 => '_dos_cwd',
-    getcwd              => '_dos_cwd',
-    fastgetcwd          => '_dos_cwd',
-    fastcwd             => '_dos_cwd',
-    abs_path            => 'fast_abs_path',
+    cwd			=> '_dos_cwd',
+    getcwd		=> '_dos_cwd',
+    fastgetcwd		=> '_dos_cwd',
+    fastcwd		=> '_dos_cwd',
+    abs_path		=> 'fast_abs_path',
    },
 
    # QNX4.  QNX6 has a $os of 'nto'.
    qnx =>
    {
-    cwd                 => '_qnx_cwd',
-    getcwd              => '_qnx_cwd',
-    fastgetcwd          => '_qnx_cwd',
-    fastcwd             => '_qnx_cwd',
-    abs_path            => '_qnx_abs_path',
-    fast_abs_path       => '_qnx_abs_path',
+    cwd			=> '_qnx_cwd',
+    getcwd		=> '_qnx_cwd',
+    fastgetcwd		=> '_qnx_cwd',
+    fastcwd		=> '_qnx_cwd',
+    abs_path		=> '_qnx_abs_path',
+    fast_abs_path	=> '_qnx_abs_path',
    },
 
    cygwin =>
    {
-    getcwd              => 'cwd',
-    fastgetcwd          => 'cwd',
-    fastcwd             => 'cwd',
-    abs_path            => 'fast_abs_path',
-    realpath            => 'fast_abs_path',
+    getcwd		=> 'cwd',
+    fastgetcwd		=> 'cwd',
+    fastcwd		=> 'cwd',
+    abs_path		=> 'fast_abs_path',
+    realpath		=> 'fast_abs_path',
    },
 
    epoc =>
    {
-    cwd                 => '_epoc_cwd',
-    getcwd              => '_epoc_cwd',
-    fastgetcwd          => '_epoc_cwd',
-    fastcwd             => '_epoc_cwd',
-    abs_path            => 'fast_abs_path',
+    cwd			=> '_epoc_cwd',
+    getcwd	        => '_epoc_cwd',
+    fastgetcwd		=> '_epoc_cwd',
+    fastcwd		=> '_epoc_cwd',
+    abs_path		=> 'fast_abs_path',
    },
 
    MacOS =>
    {
-    getcwd              => 'cwd',
-    fastgetcwd          => 'cwd',
-    fastcwd             => 'cwd',
-    abs_path            => 'fast_abs_path',
+    getcwd		=> 'cwd',
+    fastgetcwd		=> 'cwd',
+    fastcwd		=> 'cwd',
+    abs_path		=> 'fast_abs_path',
    },
   );
 
@@ -332,9 +332,9 @@ $METHOD_MAP{NT} = $METHOD_MAP{MSWin32};
 # so everything works under taint mode.
 my $pwd_cmd;
 foreach my $try ('/bin/pwd',
-                 '/usr/bin/pwd',
-                 '/QOpenSys/bin/pwd', # OS/400 PASE.
-                ) {
+		 '/usr/bin/pwd',
+		 '/QOpenSys/bin/pwd', # OS/400 PASE.
+		) {
 
     if( -x $try ) {
         $pwd_cmd = $try;
@@ -358,7 +358,7 @@ sub _backtick_pwd {
     # Localize %ENV entries in a way that won't create new hash keys
     my @localize = grep exists $ENV{$_}, qw(PATH IFS CDPATH ENV BASH_ENV);
     local @ENV{@localize};
-
+    
     my $cwd = `$pwd_cmd`;
     # Belt-and-suspenders in case someone said "undef $/".
     local $/ = "\n";
@@ -378,20 +378,20 @@ unless ($METHOD_MAP{$^O}{cwd} or defined &cwd) {
 
     # Try again to find a pwd, this time searching the whole PATH.
     if (defined $ENV{PATH} and $os ne 'MSWin32') {  # no pwd on Windows
-        my @candidates = split($sep, $ENV{PATH});
-        while (!$found_pwd_cmd and @candidates) {
-            my $candidate = shift @candidates;
-            $found_pwd_cmd = 1 if -x "$candidate/pwd";
-        }
+	my @candidates = split($sep, $ENV{PATH});
+	while (!$found_pwd_cmd and @candidates) {
+	    my $candidate = shift @candidates;
+	    $found_pwd_cmd = 1 if -x "$candidate/pwd";
+	}
     }
 
     # MacOS has some special magic to make `pwd` work.
     if( $os eq 'MacOS' || $found_pwd_cmd )
     {
-        *cwd = \&_backtick_pwd;
+	*cwd = \&_backtick_pwd;
     }
     else {
-        *cwd = \&getcwd;
+	*cwd = \&getcwd;
     }
 }
 
@@ -421,7 +421,7 @@ sub _perl_getcwd
 #
 # This is a faster version of getcwd.  It's also more dangerous because
 # you might chdir out of a directory that you can't chdir back into.
-
+    
 sub fastcwd_ {
     my($odev, $oino, $cdev, $cino, $tdev, $tino);
     my(@path, $path);
@@ -430,34 +430,34 @@ sub fastcwd_ {
     my($orig_cdev, $orig_cino) = stat('.');
     ($cdev, $cino) = ($orig_cdev, $orig_cino);
     for (;;) {
-        my $direntry;
-        ($odev, $oino) = ($cdev, $cino);
-        CORE::chdir('..') || return undef;
-        ($cdev, $cino) = stat('.');
-        last if $odev == $cdev && $oino == $cino;
-        opendir(DIR, '.') || return undef;
-        for (;;) {
-            $direntry = readdir(DIR);
-            last unless defined $direntry;
-            next if $direntry eq '.';
-            next if $direntry eq '..';
+	my $direntry;
+	($odev, $oino) = ($cdev, $cino);
+	CORE::chdir('..') || return undef;
+	($cdev, $cino) = stat('.');
+	last if $odev == $cdev && $oino == $cino;
+	opendir(DIR, '.') || return undef;
+	for (;;) {
+	    $direntry = readdir(DIR);
+	    last unless defined $direntry;
+	    next if $direntry eq '.';
+	    next if $direntry eq '..';
 
-            ($tdev, $tino) = lstat($direntry);
-            last unless $tdev != $odev || $tino != $oino;
-        }
-        closedir(DIR);
-        return undef unless defined $direntry; # should never happen
-        unshift(@path, $direntry);
+	    ($tdev, $tino) = lstat($direntry);
+	    last unless $tdev != $odev || $tino != $oino;
+	}
+	closedir(DIR);
+	return undef unless defined $direntry; # should never happen
+	unshift(@path, $direntry);
     }
     $path = '/' . join('/', @path);
     if ($^O eq 'apollo') { $path = "/".$path; }
     # At this point $path may be tainted (if tainting) and chdir would fail.
     # Untaint it then check that we landed where we started.
-    $path =~ /^(.*)\z/s         # untaint
-        && CORE::chdir($1) or return undef;
+    $path =~ /^(.*)\z/s		# untaint
+	&& CORE::chdir($1) or return undef;
     ($cdev, $cino) = stat('.');
     die "Unstable directory path, current directory changed unexpectedly"
-        if $cdev != $orig_cdev || $cino != $orig_cino;
+	if $cdev != $orig_cdev || $cino != $orig_cino;
     $path;
 }
 if (not defined &fastcwd) { *fastcwd = \&fastcwd_ }
@@ -465,72 +465,72 @@ if (not defined &fastcwd) { *fastcwd = \&fastcwd_ }
 
 # Keeps track of current working directory in PWD environment var
 # Usage:
-#       use Cwd 'chdir';
-#       chdir $newdir;
+#	use Cwd 'chdir';
+#	chdir $newdir;
 
 my $chdir_init = 0;
 
 sub chdir_init {
     if ($ENV{'PWD'} and $^O ne 'os2' and $^O ne 'dos' and $^O ne 'MSWin32') {
-        my($dd,$di) = stat('.');
-        my($pd,$pi) = stat($ENV{'PWD'});
-        if (!defined $dd or !defined $pd or $di != $pi or $dd != $pd) {
-            $ENV{'PWD'} = cwd();
-        }
+	my($dd,$di) = stat('.');
+	my($pd,$pi) = stat($ENV{'PWD'});
+	if (!defined $dd or !defined $pd or $di != $pi or $dd != $pd) {
+	    $ENV{'PWD'} = cwd();
+	}
     }
     else {
-        my $wd = cwd();
-        $wd = Win32::GetFullPathName($wd) if $^O eq 'MSWin32';
-        $ENV{'PWD'} = $wd;
+	my $wd = cwd();
+	$wd = Win32::GetFullPathName($wd) if $^O eq 'MSWin32';
+	$ENV{'PWD'} = $wd;
     }
     # Strip an automounter prefix (where /tmp_mnt/foo/bar == /foo/bar)
     if ($^O ne 'MSWin32' and $ENV{'PWD'} =~ m|(/[^/]+(/[^/]+/[^/]+))(.*)|s) {
-        my($pd,$pi) = stat($2);
-        my($dd,$di) = stat($1);
-        if (defined $pd and defined $dd and $di == $pi and $dd == $pd) {
-            $ENV{'PWD'}="$2$3";
-        }
+	my($pd,$pi) = stat($2);
+	my($dd,$di) = stat($1);
+	if (defined $pd and defined $dd and $di == $pi and $dd == $pd) {
+	    $ENV{'PWD'}="$2$3";
+	}
     }
     $chdir_init = 1;
 }
 
 sub chdir {
-    my $newdir = @_ ? shift : '';       # allow for no arg (chdir to HOME dir)
+    my $newdir = @_ ? shift : '';	# allow for no arg (chdir to HOME dir)
     $newdir =~ s|///*|/|g unless $^O eq 'MSWin32';
     chdir_init() unless $chdir_init;
     my $newpwd;
     if ($^O eq 'MSWin32') {
-        # get the full path name *before* the chdir()
-        $newpwd = Win32::GetFullPathName($newdir);
+	# get the full path name *before* the chdir()
+	$newpwd = Win32::GetFullPathName($newdir);
     }
 
     return 0 unless CORE::chdir $newdir;
 
     if ($^O eq 'VMS') {
-        return $ENV{'PWD'} = $ENV{'DEFAULT'}
+	return $ENV{'PWD'} = $ENV{'DEFAULT'}
     }
     elsif ($^O eq 'MacOS') {
-        return $ENV{'PWD'} = cwd();
+	return $ENV{'PWD'} = cwd();
     }
     elsif ($^O eq 'MSWin32') {
-        $ENV{'PWD'} = $newpwd;
-        return 1;
+	$ENV{'PWD'} = $newpwd;
+	return 1;
     }
 
     if (ref $newdir eq 'GLOB') { # in case a file/dir handle is passed in
-        $ENV{'PWD'} = cwd();
+	$ENV{'PWD'} = cwd();
     } elsif ($newdir =~ m#^/#s) {
-        $ENV{'PWD'} = $newdir;
+	$ENV{'PWD'} = $newdir;
     } else {
-        my @curdir = split(m#/#,$ENV{'PWD'});
-        @curdir = ('') unless @curdir;
-        my $component;
-        foreach $component (split(m#/#, $newdir)) {
-            next if $component eq '.';
-            pop(@curdir),next if $component eq '..';
-            push(@curdir,$component);
-        }
-        $ENV{'PWD'} = join('/',@curdir) || '/';
+	my @curdir = split(m#/#,$ENV{'PWD'});
+	@curdir = ('') unless @curdir;
+	my $component;
+	foreach $component (split(m#/#, $newdir)) {
+	    next if $component eq '.';
+	    pop(@curdir),next if $component eq '..';
+	    push(@curdir,$component);
+	}
+	$ENV{'PWD'} = join('/',@curdir) || '/';
     }
     1;
 }
@@ -543,72 +543,72 @@ sub _perl_abs_path
 
     unless (@cst = stat( $start ))
     {
-        _carp("stat($start): $!");
-        return '';
+	_carp("stat($start): $!");
+	return '';
     }
 
     unless (-d _) {
         # Make sure we can be invoked on plain files, not just directories.
         # NOTE that this routine assumes that '/' is the only directory separator.
-
+	
         my ($dir, $file) = $start =~ m{^(.*)/(.+)$}
-            or return cwd() . '/' . $start;
-
-        # Can't use "-l _" here, because the previous stat was a stat(), not an lstat().
-        if (-l $start) {
-            my $link_target = readlink($start);
-            die "Can't resolve link $start: $!" unless defined $link_target;
-
-            require File::Spec;
+	    or return cwd() . '/' . $start;
+	
+	# Can't use "-l _" here, because the previous stat was a stat(), not an lstat().
+	if (-l $start) {
+	    my $link_target = readlink($start);
+	    die "Can't resolve link $start: $!" unless defined $link_target;
+	    
+	    require File::Spec;
             $link_target = $dir . '/' . $link_target
                 unless File::Spec->file_name_is_absolute($link_target);
-
-            return abs_path($link_target);
-        }
-
-        return $dir ? abs_path($dir) . "/$file" : "/$file";
+	    
+	    return abs_path($link_target);
+	}
+	
+	return $dir ? abs_path($dir) . "/$file" : "/$file";
     }
 
     $cwd = '';
     $dotdots = $start;
     do
     {
-        $dotdots .= '/..';
-        @pst = @cst;
-        local *PARENT;
-        unless (opendir(PARENT, $dotdots))
-        {
-            # probably a permissions issue.  Try the native command.
-            require File::Spec;
-            return File::Spec->rel2abs( $start, _backtick_pwd() );
-        }
-        unless (@cst = stat($dotdots))
-        {
-            _carp("stat($dotdots): $!");
-            closedir(PARENT);
-            return '';
-        }
-        if ($pst[0] == $cst[0] && $pst[1] == $cst[1])
-        {
-            $dir = undef;
-        }
-        else
-        {
-            do
-            {
-                unless (defined ($dir = readdir(PARENT)))
-                {
-                    _carp("readdir($dotdots): $!");
-                    closedir(PARENT);
-                    return '';
-                }
-                $tst[0] = $pst[0]+1 unless (@tst = lstat("$dotdots/$dir"))
-            }
-            while ($dir eq '.' || $dir eq '..' || $tst[0] != $pst[0] ||
-                   $tst[1] != $pst[1]);
-        }
-        $cwd = (defined $dir ? "$dir" : "" ) . "/$cwd" ;
-        closedir(PARENT);
+	$dotdots .= '/..';
+	@pst = @cst;
+	local *PARENT;
+	unless (opendir(PARENT, $dotdots))
+	{
+	    # probably a permissions issue.  Try the native command.
+	    require File::Spec;
+	    return File::Spec->rel2abs( $start, _backtick_pwd() );
+	}
+	unless (@cst = stat($dotdots))
+	{
+	    _carp("stat($dotdots): $!");
+	    closedir(PARENT);
+	    return '';
+	}
+	if ($pst[0] == $cst[0] && $pst[1] == $cst[1])
+	{
+	    $dir = undef;
+	}
+	else
+	{
+	    do
+	    {
+		unless (defined ($dir = readdir(PARENT)))
+	        {
+		    _carp("readdir($dotdots): $!");
+		    closedir(PARENT);
+		    return '';
+		}
+		$tst[0] = $pst[0]+1 unless (@tst = lstat("$dotdots/$dir"))
+	    }
+	    while ($dir eq '.' || $dir eq '..' || $tst[0] != $pst[0] ||
+		   $tst[1] != $pst[1]);
+	}
+	$cwd = (defined $dir ? "$dir" : "" ) . "/$cwd" ;
+	closedir(PARENT);
     } while (defined $dir);
     chop($cwd) unless $cwd eq '/'; # drop the trailing /
     $cwd;
@@ -628,36 +628,36 @@ sub fast_abs_path {
     ($cwd)  = $cwd  =~ /(.*)/s;
 
     unless (-e $path) {
-        _croak("$path: No such file or directory");
+ 	_croak("$path: No such file or directory");
     }
 
     unless (-d _) {
         # Make sure we can be invoked on plain files, not just directories.
+	
+	my ($vol, $dir, $file) = File::Spec->splitpath($path);
+	return File::Spec->catfile($cwd, $path) unless length $dir;
 
-        my ($vol, $dir, $file) = File::Spec->splitpath($path);
-        return File::Spec->catfile($cwd, $path) unless length $dir;
-
-        if (-l $path) {
-            my $link_target = readlink($path);
-            die "Can't resolve link $path: $!" unless defined $link_target;
-
-            $link_target = File::Spec->catpath($vol, $dir, $link_target)
+	if (-l $path) {
+	    my $link_target = readlink($path);
+	    die "Can't resolve link $path: $!" unless defined $link_target;
+	    
+	    $link_target = File::Spec->catpath($vol, $dir, $link_target)
                 unless File::Spec->file_name_is_absolute($link_target);
-
-            return fast_abs_path($link_target);
-        }
-
-        return $dir eq File::Spec->rootdir
-          ? File::Spec->catpath($vol, $dir, $file)
-          : fast_abs_path(File::Spec->catpath($vol, $dir, '')) . '/' . $file;
+	    
+	    return fast_abs_path($link_target);
+	}
+	
+	return $dir eq File::Spec->rootdir
+	  ? File::Spec->catpath($vol, $dir, $file)
+	  : fast_abs_path(File::Spec->catpath($vol, $dir, '')) . '/' . $file;
     }
 
     if (!CORE::chdir($path)) {
-        _croak("Cannot chdir to $path: $!");
+ 	_croak("Cannot chdir to $path: $!");
     }
     my $realpath = getcwd();
     if (! ((-d $cwd) && (CORE::chdir($cwd)))) {
-        _croak("Cannot chdir back to $cwd: $!");
+ 	_croak("Cannot chdir back to $cwd: $!");
     }
     $realpath;
 }
@@ -712,13 +712,13 @@ sub _vms_abs_path {
             return VMS::Filespec::unixrealpath($path);
         }
 
-        # VMS format
+	# VMS format
 
-        my $new_path = VMS::Filespec::vmsrealpath($path);
+	my $new_path = VMS::Filespec::vmsrealpath($path);
 
-        # Perl expects directories to be in directory format
-        $new_path = VMS::Filespec::pathify($new_path) if -d $path;
-        return $new_path;
+	# Perl expects directories to be in directory format
+	$new_path = VMS::Filespec::pathify($new_path) if -d $path;
+	return $new_path;
     }
 
     # Fallback to older algorithm if correct ones are not
@@ -734,7 +734,7 @@ sub _vms_abs_path {
     # may need to turn foo.dir into [.foo]
     my $pathified = VMS::Filespec::pathify($path);
     $path = $pathified if defined $pathified;
-
+	
     return VMS::Filespec::rmsexpand($path);
 }
 
@@ -761,10 +761,10 @@ sub _win32_cwd {
     # problems (for reasons that we haven't been able to get to the bottom of -
     # rt.cpan.org #56225)
     if (*{$DynaLoader::{boot_DynaLoader}}{CODE}) {
-        $ENV{'PWD'} = Win32::GetCwd();
+	$ENV{'PWD'} = Win32::GetCwd();
     }
     else { # miniperl
-        chomp($ENV{'PWD'} = `cd`);
+	chomp($ENV{'PWD'} = `cd`);
     }
     $ENV{'PWD'} =~ s:\\:/:g ;
     return $ENV{'PWD'};
@@ -784,18 +784,18 @@ sub _dos_cwd {
 }
 
 sub _qnx_cwd {
-        local $ENV{PATH} = '';
-        local $ENV{CDPATH} = '';
-        local $ENV{ENV} = '';
+	local $ENV{PATH} = '';
+	local $ENV{CDPATH} = '';
+	local $ENV{ENV} = '';
     $ENV{'PWD'} = `/usr/bin/fullpath -t`;
     chomp $ENV{'PWD'};
     return $ENV{'PWD'};
 }
 
 sub _qnx_abs_path {
-        local $ENV{PATH} = '';
-        local $ENV{CDPATH} = '';
-        local $ENV{ENV} = '';
+	local $ENV{PATH} = '';
+	local $ENV{CDPATH} = '';
+	local $ENV{ENV} = '';
     my $path = @_ ? shift : '.';
     local *REALPATH;
 

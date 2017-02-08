@@ -115,13 +115,13 @@ it to the user, the C<location> parameter comes in very handy :
 =for example_testing
   isa_ok($browser, "HTML::Display::Dump","The browser");
   is( $main::_STDOUT_,
-        '<html><head><base href="http://www.google.com/" /></head><body><img src="/images/hp0.gif"></body></html>',
-        "HTML gets output");
+  	'<html><head><base href="http://www.google.com/" /></head><body><img src="/images/hp0.gif"></body></html>',
+  	"HTML gets output");
   $main::_STDOUT_ = "";
   $browser->display( html => $html, location => 'http://www.google.com' );
   is( $main::_STDOUT_,
-        '<html><head><base href="http://www.google.com/" /></head><body><img src="/images/hp0.gif"></body></html>',
-        "HTML gets output");
+  	'<html><head><base href="http://www.google.com/" /></head><body><img src="/images/hp0.gif"></body></html>',
+  	"HTML gets output");
 
 =cut
 

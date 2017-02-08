@@ -293,7 +293,7 @@ sub __($)
     ( _msgid  => shift
     , _domain => _default_domain(caller)
     );
-}
+} 
 
 
 # label "msgid" added before first argument
@@ -306,7 +306,7 @@ sub __x($@)
      , _expand => 1
      , _domain => _default_domain(caller)
      );
-}
+} 
 
 
 sub __n($$$@)

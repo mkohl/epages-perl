@@ -12,14 +12,14 @@ sub new {
     my($class, $uri, $scheme) = @_;
     utf8::upgrade($uri);
     return bless {
-        uri => URI->new($uri, $scheme),
+	uri => URI->new($uri, $scheme),
     }, $class;
 }
 
 sub clone {
     my $self = shift;
     return bless {
-        uri => $self->{uri}->clone,
+	uri => $self->{uri}->clone,
     }, ref($self);
 }
 

@@ -257,7 +257,7 @@ sub text_split {
     # For versions of Perl prior to 5.18 we have to be very careful about
     # spelling out each possible combination of arguments because split()
     # is very sensitive to them, for example C<split(' ', ...)> behaves
-    # differently to C<$space=' '; split($space, ...)>.  Test 33 of
+    # differently to C<$space=' '; split($space, ...)>.  Test 33 of 
     # vmethods/text.t depends on this behaviour.
 
     if ($] < 5.018) {

@@ -5,14 +5,14 @@ use strict;
 
 use XML::XPath::Boolean;
 
-use overload
-                '""' => \&to_literal,
+use overload 
+		'""' => \&to_literal,
                 'bool' => \&to_boolean,
         ;
 
 sub new {
-        my $class = shift;
-        bless [], $class;
+	my $class = shift;
+	bless [], $class;
 }
 
 sub sort {
@@ -22,48 +22,48 @@ sub sort {
 }
 
 sub pop {
-        my $self = CORE::shift;
-        CORE::pop @$self;
+	my $self = CORE::shift;
+	CORE::pop @$self;
 }
 
 sub push {
-        my $self = CORE::shift;
-        my (@nodes) = @_;
-        CORE::push @$self, @nodes;
+	my $self = CORE::shift;
+	my (@nodes) = @_;
+	CORE::push @$self, @nodes;
 }
 
 sub append {
-        my $self = CORE::shift;
-        my ($nodeset) = @_;
-        CORE::push @$self, $nodeset->get_nodelist;
+	my $self = CORE::shift;
+	my ($nodeset) = @_;
+	CORE::push @$self, $nodeset->get_nodelist;
 }
 
 sub shift {
-        my $self = CORE::shift;
-        CORE::shift @$self;
+	my $self = CORE::shift;
+	CORE::shift @$self;
 }
 
 sub unshift {
-        my $self = CORE::shift;
-        my (@nodes) = @_;
-        CORE::unshift @$self, @nodes;
+	my $self = CORE::shift;
+	my (@nodes) = @_;
+	CORE::unshift @$self, @nodes;
 }
 
 sub prepend {
-        my $self = CORE::shift;
-        my ($nodeset) = @_;
-        CORE::unshift @$self, $nodeset->get_nodelist;
+	my $self = CORE::shift;
+	my ($nodeset) = @_;
+	CORE::unshift @$self, $nodeset->get_nodelist;
 }
 
 sub size {
-        my $self = CORE::shift;
-        scalar @$self;
+	my $self = CORE::shift;
+	scalar @$self;
 }
 
 sub get_node { # uses array index starting at 1, not 0
-        my $self = CORE::shift;
-        my ($pos) = @_;
-        $self->[$pos - 1];
+	my $self = CORE::shift;
+	my ($pos) = @_;
+	$self->[$pos - 1];
 }
 
 sub getRootNode {
@@ -72,33 +72,33 @@ sub getRootNode {
 }
 
 sub get_nodelist {
-        my $self = CORE::shift;
-        @$self;
+	my $self = CORE::shift;
+	@$self;
 }
 
 sub to_boolean {
-        my $self = CORE::shift;
-        return (@$self > 0) ? XML::XPath::Boolean->True : XML::XPath::Boolean->False;
+	my $self = CORE::shift;
+	return (@$self > 0) ? XML::XPath::Boolean->True : XML::XPath::Boolean->False;
 }
 
 sub string_value {
-        my $self = CORE::shift;
-        return '' unless @$self;
-        return $self->[0]->string_value;
+	my $self = CORE::shift;
+	return '' unless @$self;
+	return $self->[0]->string_value;
 }
 
 sub to_literal {
-        my $self = CORE::shift;
-        return XML::XPath::Literal->new(
-                        join('', map { $_->string_value } @$self)
-                        );
+	my $self = CORE::shift;
+	return XML::XPath::Literal->new(
+			join('', map { $_->string_value } @$self)
+			);
 }
 
 sub to_number {
-        my $self = CORE::shift;
-        return XML::XPath::Number->new(
-                        $self->to_literal
-                        );
+	my $self = CORE::shift;
+	return XML::XPath::Number->new(
+			$self->to_literal
+			);
 }
 
 1;
@@ -115,15 +115,15 @@ each take the same format as described in L<XML::XPath::XMLParser>.
 
 =head1 SYNOPSIS
 
-        my $results = $xp->find('//someelement');
-        if (!$results->isa('XML::XPath::NodeSet')) {
-                print "Found $results\n";
-                exit;
-        }
-        foreach my $context ($results->get_nodelist) {
-                my $newresults = $xp->find('./other/element', $context);
-                ...
-        }
+	my $results = $xp->find('//someelement');
+	if (!$results->isa('XML::XPath::NodeSet')) {
+		print "Found $results\n";
+		exit;
+	}
+	foreach my $context ($results->get_nodelist) {
+		my $newresults = $xp->find('./other/element', $context);
+		...
+	}
 
 =head1 API
 

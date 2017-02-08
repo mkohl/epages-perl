@@ -136,14 +136,14 @@ has ssl => (
     default  => 0,
 );
 
-has sasl => (
+has sasl => ( 
     is       => 'ro',
     isa      => 'Bool',
     required => 1,
     default  => 0
 );
 
-has sasl_mechanism => (
+has sasl_mechanism => ( 
     is       => 'ro',
     isa      => subtype( Str => where { /^GSSAPI|PLAIN$/ } ),
     required => 1,
@@ -408,7 +408,7 @@ sub get_master {
 sub authenticate {
     my ($self, $dbname, $username, $password, $is_digest) = @_;
     my $hash = $password;
-
+    
     # create a hash if the password isn't yet encrypted
     if (!$is_digest) {
         $hash = Digest::MD5::md5_hex("${username}:mongo:${password}");
@@ -431,28 +431,28 @@ sub authenticate {
              nonce => $nonce,
              key => $digest);
     $result = $db->run_command($login);
-
+    
     return $result;
 }
 
 
 sub fsync {
     my ($self, $args) = @_;
-
-        $args ||= {};
+	
+	$args ||= {};
 
     # Pass this in as array-ref to ensure that 'fsync => 1' is the first argument.
     return $self->get_database('admin')->run_command([fsync => 1, %$args]);
 }
 
-sub fsync_unlock {
+sub fsync_unlock { 
     my ($self) = @_;
-
+	
     # Have to fetch from a special collection to unlock.
     return $self->get_database('admin')->get_collection('$cmd.sys.unlock')->find_one();
 }
 
-sub _w_want_safe {
+sub _w_want_safe { 
     my ( $self ) = @_;
 
     my $w = $self->w;
@@ -461,25 +461,25 @@ sub _w_want_safe {
     return 1;
 }
 
-sub _sasl_check {
+sub _sasl_check { 
     my ( $self, $res ) = @_;
 
     die "Invalid SASL response document from server:"
         unless reftype $res eq reftype { };
 
-    if ( $res->{ok} != 1 ) {
+    if ( $res->{ok} != 1 ) { 
         die "SASL authentication error: $res->{errmsg}";
     }
 
     return $res->{conversationId};
 }
 
-sub _sasl_start {
+sub _sasl_start { 
     my ( $self, $payload, $mechanism ) = @_;
 
     # warn "SASL start, payload = [$payload], mechanism = [$mechanism]\n";
 
-    my $res = $self->get_database( '$external' )->run_command( [
+    my $res = $self->get_database( '$external' )->run_command( [ 
         saslStart     => 1,
         mechanism     => $mechanism,
         payload       => $payload,
@@ -490,12 +490,12 @@ sub _sasl_start {
 }
 
 
-sub _sasl_continue {
+sub _sasl_continue { 
     my ( $self, $payload, $conv_id ) = @_;
 
     # warn "SASL continue, payload = [$payload], conv ID = [$conv_id]";
 
-    my $res = $self->get_database( '$external' )->run_command( [
+    my $res = $self->get_database( '$external' )->run_command( [ 
         saslContinue     => 1,
         conversationId   => $conv_id,
         payload          => $payload
@@ -506,17 +506,17 @@ sub _sasl_continue {
 }
 
 
-sub _sasl_plain_authenticate {
+sub _sasl_plain_authenticate { 
     my ( $self ) = @_;
 
     my $username = defined $self->username ? $self->username : "";
-    my $password = defined $self->password ? $self->password : "";
+    my $password = defined $self->password ? $self->password : ""; 
 
     my $auth_bytes = encode( "UTF-8", "\x00" . $username . "\x00" . $password );
-    my $payload = MongoDB::BSON::Binary->new( data => $auth_bytes );
+    my $payload = MongoDB::BSON::Binary->new( data => $auth_bytes ); 
 
-    $self->_sasl_start( $payload, "PLAIN" );
-}
+    $self->_sasl_start( $payload, "PLAIN" );    
+} 
 
 __PACKAGE__->meta->make_immutable( inline_destructor => 0 );
 
@@ -584,22 +584,22 @@ using the C<db_name> property, it will be used instead.
 
 =head2 w
 
-The client I<write concern>.
+The client I<write concern>. 
 
 =over 4
 
 =item * C<-1> Errors ignored. Do not use this.
 
-=item * C<0> Unacknowledged. MongoClient will B<NOT> wait for an acknowledgment that
+=item * C<0> Unacknowledged. MongoClient will B<NOT> wait for an acknowledgment that 
 the server has received and processed the request. Older documentation may refer
 to this as "fire-and-forget" mode. You must call C<getLastError> manually to check
 if a request succeeds. This option is not recommended.
 
-=item * C<1> Acknowledged. This is the default. MongoClient will wait until the
+=item * C<1> Acknowledged. This is the default. MongoClient will wait until the 
 primary MongoDB acknowledges the write.
 
-=item * C<2> Replica acknowledged. MongoClient will wait until at least two
-replicas (primary and one secondary) acknowledge the write. You can set a higher
+=item * C<2> Replica acknowledged. MongoClient will wait until at least two 
+replicas (primary and one secondary) acknowledge the write. You can set a higher 
 number for more replicas.
 
 =item * C<all> All replicas acknowledged.
@@ -608,10 +608,10 @@ number for more replicas.
 
 =back
 
-In MongoDB v2.0+, you can "tag" replica members. With "tagging" you can specify a
+In MongoDB v2.0+, you can "tag" replica members. With "tagging" you can specify a 
 new "getLastErrorMode" where you can create new
-rules on how your data is replicated. To used you getLastErrorMode, you pass in the
-name of the mode to the C<w> parameter. For more infomation see:
+rules on how your data is replicated. To used you getLastErrorMode, you pass in the 
+name of the mode to the C<w> parameter. For more infomation see: 
 http://www.mongodb.org/display/DOCS/Data+Center+Awareness
 
 =head2 wtimeout
@@ -625,7 +625,7 @@ See C<w> above for more information.
 
 =head2 j
 
-If true, awaits the journal commit before returning. If the server is running without
+If true, awaits the journal commit before returning. If the server is running without 
 journaling, it returns immediately, and successfully.
 
 =head2 auto_reconnect
@@ -768,18 +768,18 @@ in order to be consistent with the MongoDB server, which now uses Cyrus.
 
 This attribute is experimental.
 
-This specifies the SASL mechanism to use for authentication with a MongoDB server. (See L</sasl>.)
+This specifies the SASL mechanism to use for authentication with a MongoDB server. (See L</sasl>.) 
 The default is GSSAPI. The supported SASL mechanisms are:
 
 =over 4
 
 =item * C<GSSAPI>. This is the default. GSSAPI will attempt to authenticate against Kerberos
-for MongoDB Enterprise 2.4+. You must run your program from within a C<kinit> session and set
-the C<username> attribute to the Kerberos principal name, e.g. C<user@EXAMPLE.COM>.
+for MongoDB Enterprise 2.4+. You must run your program from within a C<kinit> session and set 
+the C<username> attribute to the Kerberos principal name, e.g. C<user@EXAMPLE.COM>. 
 
 =item * C<PLAIN>. The SASL PLAIN mechanism will attempt to authenticate against LDAP for
 MongoDB Enterprise 2.6+. Because the password is not encrypted, you should only use this
-mechanism over a secure connection. You must set the C<username> and C<password> attributes
+mechanism over a secure connection. You must set the C<username> and C<password> attributes 
 to your LDAP credentials.
 
 =back
@@ -792,7 +792,7 @@ rather than an object.
 
 =head2 inflate_dbrefs
 
-Controls whether L<DBRef|http://docs.mongodb.org/manual/applications/database-references/#dbref>s
+Controls whether L<DBRef|http://docs.mongodb.org/manual/applications/database-references/#dbref>s 
 are automatically inflated into L<MongoDB::DBRef> objects. Defaults to true.
 Set this to C<0> if you don't want to auto-inflate them.
 
@@ -866,7 +866,7 @@ The fsync operation is synchronous by default, to run fsync asynchronously, use 
 
     $client->fsync({async => 1});
 
-The primary use of fsync is to lock the database during backup operations. This will flush all data to the data storage layer and block all write operations until you unlock the database. Note: you can still read while the database is locked.
+The primary use of fsync is to lock the database during backup operations. This will flush all data to the data storage layer and block all write operations until you unlock the database. Note: you can still read while the database is locked. 
 
     $conn->fsync({lock => 1});
 
@@ -874,7 +874,7 @@ The primary use of fsync is to lock the database during backup operations. This 
 
     $conn->fsync_unlock();
 
-Unlocks a database server to allow writes and reverses the operation of a $conn->fsync({lock => 1}); operation.
+Unlocks a database server to allow writes and reverses the operation of a $conn->fsync({lock => 1}); operation. 
 
 =head1 MULTITHREADING
 

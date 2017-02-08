@@ -16,14 +16,14 @@ require Exporter;
 # walkoptree_slow comes from B.pm (you are there),
 # walkoptree comes from B.xs
 @EXPORT_OK = qw(minus_c ppname save_BEGINs
-                class peekop cast_I32 cstring cchar hash threadsv_names
-                main_root main_start main_cv svref_2object opnumber
-                sub_generation amagic_generation perlstring
-                walkoptree_slow walkoptree walkoptree_exec walksymtable
-                parents comppadlist sv_undef compile_stats timing_info
-                begin_av init_av check_av end_av regex_padav dowarn defstash
-                curstash warnhook diehook inc_gv @optype @specialsv_name
-                );
+		class peekop cast_I32 cstring cchar hash threadsv_names
+		main_root main_start main_cv svref_2object opnumber
+		sub_generation amagic_generation perlstring
+		walkoptree_slow walkoptree walkoptree_exec walksymtable
+		parents comppadlist sv_undef compile_stats timing_info
+		begin_av init_av check_av end_av regex_padav dowarn defstash
+		curstash warnhook diehook inc_gv @optype @specialsv_name
+		);
 push @EXPORT_OK, qw(unitcheck_av) if $] > 5.009;
 
 sub OPf_KIDS ();
@@ -69,7 +69,7 @@ use strict;
 # Nullsv *must* come first in the following so that the condition
 # ($$sv == 0) can continue to be used to test (sv == Nullsv).
 @B::specialsv_name = qw(Nullsv &PL_sv_undef &PL_sv_yes &PL_sv_no
-                        (SV*)pWARN_ALL (SV*)pWARN_NONE (SV*)pWARN_STD);
+			(SV*)pWARN_ALL (SV*)pWARN_NONE (SV*)pWARN_STD);
 
 {
     # Stop "-w" from complaining about the lack of a real B::OBJECT class
@@ -83,7 +83,7 @@ sub B::GV::SAFENAME {
   # from toke.c
 
   $name =~ s/^([\cA-\cZ\c\\c[\c]\c?\c_\c^])/"^".
-        chr( utf8::unicode_to_native( 64 ^ ord($1) ))/e;
+	chr( utf8::unicode_to_native( 64 ^ ord($1) ))/e;
 
   # When we say unicode_to_native we really mean ascii_to_native,
   # which matters iff this is a non-ASCII platform (EBCDIC).
@@ -132,21 +132,21 @@ sub walkoptree_slow {
     warn(sprintf("walkoptree: %d. %s\n", $level, peekop($op))) if $debug;
     $op->$method($level) if $op->can($method);
     if ($$op && ($op->flags & OPf_KIDS)) {
-        my $kid;
-        unshift(@parents, $op);
-        for ($kid = $op->first; $$kid; $kid = $kid->sibling) {
-            walkoptree_slow($kid, $method, $level + 1);
-        }
-        shift @parents;
+	my $kid;
+	unshift(@parents, $op);
+	for ($kid = $op->first; $$kid; $kid = $kid->sibling) {
+	    walkoptree_slow($kid, $method, $level + 1);
+	}
+	shift @parents;
     }
     if (class($op) eq 'PMOP'
-        && ref($op->pmreplroot)
-        && ${$op->pmreplroot}
-        && $op->pmreplroot->isa( 'B::OP' ))
+	&& ref($op->pmreplroot)
+	&& ${$op->pmreplroot}
+	&& $op->pmreplroot->isa( 'B::OP' ))
     {
-        unshift(@parents, $op);
-        walkoptree_slow($op->pmreplroot, $method, $level + 1);
-        shift @parents;
+	unshift(@parents, $op);
+	walkoptree_slow($op->pmreplroot, $method, $level + 1);
+	shift @parents;
     }
 }
 
@@ -158,7 +158,7 @@ sub timing_info {
     my ($sec, $min, $hr) = localtime;
     my ($user, $sys) = times;
     sprintf("%02d:%02d:%02d user=$user sys=$sys",
-            $hr, $min, $sec, $user, $sys);
+	    $hr, $min, $sec, $user, $sys);
 }
 
 my %symtable;
@@ -184,48 +184,48 @@ sub walkoptree_exec {
     my ($sym, $ppname);
     my $prefix = "    " x $level;
     for (; $$op; $op = $op->next) {
-        $sym = objsym($op);
-        if (defined($sym)) {
-            print $prefix, "goto $sym\n";
-            return;
-        }
-        savesym($op, sprintf("%s (0x%lx)", class($op), $$op));
-        $op->$method($level);
-        $ppname = $op->name;
-        if ($ppname =~
-            /^(d?or(assign)?|and(assign)?|mapwhile|grepwhile|entertry|range|cond_expr)$/)
-        {
-            print $prefix, uc($1), " => {\n";
-            walkoptree_exec($op->other, $method, $level + 1);
-            print $prefix, "}\n";
-        } elsif ($ppname eq "match" || $ppname eq "subst") {
-            my $pmreplstart = $op->pmreplstart;
-            if ($$pmreplstart) {
-                print $prefix, "PMREPLSTART => {\n";
-                walkoptree_exec($pmreplstart, $method, $level + 1);
-                print $prefix, "}\n";
-            }
-        } elsif ($ppname eq "substcont") {
-            print $prefix, "SUBSTCONT => {\n";
-            walkoptree_exec($op->other->pmreplstart, $method, $level + 1);
-            print $prefix, "}\n";
-            $op = $op->other;
-        } elsif ($ppname eq "enterloop") {
-            print $prefix, "REDO => {\n";
-            walkoptree_exec($op->redoop, $method, $level + 1);
-            print $prefix, "}\n", $prefix, "NEXT => {\n";
-            walkoptree_exec($op->nextop, $method, $level + 1);
-            print $prefix, "}\n", $prefix, "LAST => {\n";
-            walkoptree_exec($op->lastop,  $method, $level + 1);
-            print $prefix, "}\n";
-        } elsif ($ppname eq "subst") {
-            my $replstart = $op->pmreplstart;
-            if ($$replstart) {
-                print $prefix, "SUBST => {\n";
-                walkoptree_exec($replstart, $method, $level + 1);
-                print $prefix, "}\n";
-            }
-        }
+	$sym = objsym($op);
+	if (defined($sym)) {
+	    print $prefix, "goto $sym\n";
+	    return;
+	}
+	savesym($op, sprintf("%s (0x%lx)", class($op), $$op));
+	$op->$method($level);
+	$ppname = $op->name;
+	if ($ppname =~
+	    /^(d?or(assign)?|and(assign)?|mapwhile|grepwhile|entertry|range|cond_expr)$/)
+	{
+	    print $prefix, uc($1), " => {\n";
+	    walkoptree_exec($op->other, $method, $level + 1);
+	    print $prefix, "}\n";
+	} elsif ($ppname eq "match" || $ppname eq "subst") {
+	    my $pmreplstart = $op->pmreplstart;
+	    if ($$pmreplstart) {
+		print $prefix, "PMREPLSTART => {\n";
+		walkoptree_exec($pmreplstart, $method, $level + 1);
+		print $prefix, "}\n";
+	    }
+	} elsif ($ppname eq "substcont") {
+	    print $prefix, "SUBSTCONT => {\n";
+	    walkoptree_exec($op->other->pmreplstart, $method, $level + 1);
+	    print $prefix, "}\n";
+	    $op = $op->other;
+	} elsif ($ppname eq "enterloop") {
+	    print $prefix, "REDO => {\n";
+	    walkoptree_exec($op->redoop, $method, $level + 1);
+	    print $prefix, "}\n", $prefix, "NEXT => {\n";
+	    walkoptree_exec($op->nextop, $method, $level + 1);
+	    print $prefix, "}\n", $prefix, "LAST => {\n";
+	    walkoptree_exec($op->lastop,  $method, $level + 1);
+	    print $prefix, "}\n";
+	} elsif ($ppname eq "subst") {
+	    my $replstart = $op->pmreplstart;
+	    if ($$replstart) {
+		print $prefix, "SUBST => {\n";
+		walkoptree_exec($replstart, $method, $level + 1);
+		print $prefix, "}\n";
+	    }
+	}
     }
 }
 
@@ -238,14 +238,14 @@ sub walksymtable {
     $prefix = '' unless defined $prefix;
     while (($sym, $ref) = each %$symref) {
         $fullname = "*main::".$prefix.$sym;
-        if ($sym =~ /::$/) {
-            $sym = $prefix . $sym;
-            if (svref_2object(\*$sym)->NAME ne "main::" && $sym ne "<none>::" && &$recurse($sym)) {
+	if ($sym =~ /::$/) {
+	    $sym = $prefix . $sym;
+	    if (svref_2object(\*$sym)->NAME ne "main::" && $sym ne "<none>::" && &$recurse($sym)) {
                walksymtable(\%$fullname, $method, $recurse, $sym);
-            }
-        } else {
+	    }
+	} else {
            svref_2object(\*$fullname)->$method();
-        }
+	}
     }
 }
 
@@ -255,63 +255,63 @@ sub walksymtable {
     my %sections;
 
     sub new {
-        my ($class, $section, $symtable, $default) = @_;
-        $output_fh ||= FileHandle->new_tmpfile;
-        my $obj = bless [-1, $section, $symtable, $default], $class;
-        $sections{$section} = $obj;
-        return $obj;
+	my ($class, $section, $symtable, $default) = @_;
+	$output_fh ||= FileHandle->new_tmpfile;
+	my $obj = bless [-1, $section, $symtable, $default], $class;
+	$sections{$section} = $obj;
+	return $obj;
     }
 
     sub get {
-        my ($class, $section) = @_;
-        return $sections{$section};
+	my ($class, $section) = @_;
+	return $sections{$section};
     }
 
     sub add {
-        my $section = shift;
-        while (defined($_ = shift)) {
-            print $output_fh "$section->[1]\t$_\n";
-            $section->[0]++;
-        }
+	my $section = shift;
+	while (defined($_ = shift)) {
+	    print $output_fh "$section->[1]\t$_\n";
+	    $section->[0]++;
+	}
     }
 
     sub index {
-        my $section = shift;
-        return $section->[0];
+	my $section = shift;
+	return $section->[0];
     }
 
     sub name {
-        my $section = shift;
-        return $section->[1];
+	my $section = shift;
+	return $section->[1];
     }
 
     sub symtable {
-        my $section = shift;
-        return $section->[2];
+	my $section = shift;
+	return $section->[2];
     }
 
     sub default {
-        my $section = shift;
-        return $section->[3];
+	my $section = shift;
+	return $section->[3];
     }
 
     sub output {
-        my ($section, $fh, $format) = @_;
-        my $name = $section->name;
-        my $sym = $section->symtable || {};
-        my $default = $section->default;
+	my ($section, $fh, $format) = @_;
+	my $name = $section->name;
+	my $sym = $section->symtable || {};
+	my $default = $section->default;
 
-        seek($output_fh, 0, 0);
-        while (<$output_fh>) {
-            chomp;
-            s/^(.*?)\t//;
-            if ($1 eq $name) {
-                s{(s\\_[0-9a-f]+)} {
-                    exists($sym->{$1}) ? $sym->{$1} : $default;
-                }ge;
-                printf $fh $format, $_;
-            }
-        }
+	seek($output_fh, 0, 0);
+	while (<$output_fh>) {
+	    chomp;
+	    s/^(.*?)\t//;
+	    if ($1 eq $name) {
+		s{(s\\_[0-9a-f]+)} {
+		    exists($sym->{$1}) ? $sym->{$1} : $default;
+		}ge;
+		printf $fh $format, $_;
+	    }
+	}
     }
 }
 
@@ -327,7 +327,7 @@ B - The Perl Compiler Backend
 
 =head1 SYNOPSIS
 
-        use B;
+	use B;
 
 =head1 DESCRIPTION
 

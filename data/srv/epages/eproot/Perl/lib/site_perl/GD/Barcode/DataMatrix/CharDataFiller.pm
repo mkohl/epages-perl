@@ -3,16 +3,16 @@ package GD::Barcode::DataMatrix::CharDataFiller;
 use strict;
 
 sub new {
-        my $self = bless {}, shift;
-        @$self{qw( ncol nrow array )} = @_;
-        $self->fill();
-        return $self;
+	my $self = bless {}, shift;
+	@$self{qw( ncol nrow array )} = @_;
+	$self->fill();
+	return $self;
 }
 
 sub module {
-        my ($self,$i,$j,$k,$l) = @_;
+	my ($self,$i,$j,$k,$l) = @_;
     if($i < 0) {
-        $i += $self->{nrow};
+    	$i += $self->{nrow};
         $j += 4 - ($self->{nrow} + 4) % 8;
     }
     if($j < 0) {
@@ -24,7 +24,7 @@ sub module {
 }
 
 sub utah {
-        my ($self,$i,$j,$k) = @_;
+	my ($self,$i,$j,$k) = @_;
     $self->module($i - 2, $j - 2, $k, 1);
     $self->module($i - 2, $j - 1, $k, 2);
     $self->module($i - 1, $j - 2, $k, 3);
@@ -37,8 +37,8 @@ sub utah {
 }
 
 sub corner1 {
-        my ($self,$i) = @_;
-        my ($ncol,$nrow) = @$self{qw( ncol nrow )};
+	my ($self,$i) = @_;
+	my ($ncol,$nrow) = @$self{qw( ncol nrow )};
     $self->module($nrow - 1, 0, $i, 1);
     $self->module($nrow - 1, 1, $i, 2);
     $self->module($nrow - 1, 2, $i, 3);
@@ -51,8 +51,8 @@ sub corner1 {
 }
 
 sub corner2($) { #(int i)
-        my ($self,$i) = @_;
-        my ($ncol,$nrow) = @$self{qw( ncol nrow )};
+	my ($self,$i) = @_;
+	my ($ncol,$nrow) = @$self{qw( ncol nrow )};
     $self->module($nrow - 3, 0, $i, 1);
     $self->module($nrow - 2, 0, $i, 2);
     $self->module($nrow - 1, 0, $i, 3);
@@ -65,8 +65,8 @@ sub corner2($) { #(int i)
 }
 
 sub corner3($) { #(int i)
-        my ($self,$i) = @_;
-        my ($ncol,$nrow) = @$self{qw( ncol nrow )};
+	my ($self,$i) = @_;
+	my ($ncol,$nrow) = @$self{qw( ncol nrow )};
     $self->module($nrow - 3, 0, $i, 1);
     $self->module($nrow - 2, 0, $i, 2);
     $self->module($nrow - 1, 0, $i, 3);
@@ -79,8 +79,8 @@ sub corner3($) { #(int i)
 }
 
 sub corner4($) { #(int i)
-        my ($self,$i) = @_;
-        my ($ncol,$nrow) = @$self{qw( ncol nrow )};
+	my ($self,$i) = @_;
+	my ($ncol,$nrow) = @$self{qw( ncol nrow )};
     $self->module($nrow - 1, 0, $i, 1);
     $self->module($nrow - 1, $ncol - 1, $i, 2);
     $self->module(0, $ncol - 3, $i, 3);
@@ -93,8 +93,8 @@ sub corner4($) { #(int i)
 }
 
 sub fill { # (int ncol; int nrow; int array;) : void
-        my $self = shift;
-        my ($ncol,$nrow,$array) = @$self{qw( ncol nrow array )};
+	my $self = shift;
+	my ($ncol,$nrow,$array) = @$self{qw( ncol nrow array )};
     my $i = 1;
     my $j = 4;
     my $k = 0;
@@ -124,7 +124,7 @@ sub fill { # (int ncol; int nrow; int array;) : void
         $k++;
     } while($j < $nrow || $k < $ncol);
     $array->[$nrow * $ncol - 1] = $array->[($nrow - 1) * $ncol - 2] = 1
-        if($array->[$nrow * $ncol - 1] == 0);
+    	if($array->[$nrow * $ncol - 1] == 0);
     return;
 }
 

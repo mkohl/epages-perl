@@ -21,10 +21,10 @@ sub new {
     my $a = $class->SUPER::new();
 
     if (my $stat = $param{Stat}) {
-        $a->set_size($stat->[7]);
-        $a->set_ugid($stat->[4], $stat->[5]);
-        $a->set_perm($stat->[2]);
-        $a->set_amtime($stat->[8], $stat->[9]);
+	$a->set_size($stat->[7]);
+	$a->set_ugid($stat->[4], $stat->[5]);
+	$a->set_perm($stat->[2]);
+	$a->set_amtime($stat->[8], $stat->[9]);
     }
     $a;
 }

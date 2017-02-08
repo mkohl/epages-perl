@@ -57,17 +57,17 @@ sub get_int64_no_quads {
     length ${$_[0]} >= 8 or return undef;
     my ($big, $small) = unpack(NN => substr(${$_[0]}, 0, 8, ''));
     if ($big) {
-        # too big for an integer, try to handle it as a float:
-        my $high = $big * 4294967296;
-        my $result = $high + $small;
-        unless ($result - $high == $small) {
-            # too big event for a float, use a BigInt;
-            require Math::BigInt;
-            $result = Math::BigInt->new($big);
-            $result <<= 32;
-            $result += $small;
-        }
-        return $result;
+	# too big for an integer, try to handle it as a float:
+	my $high = $big * 4294967296;
+	my $result = $high + $small;
+	unless ($result - $high == $small) {
+	    # too big event for a float, use a BigInt;
+	    require Math::BigInt;
+	    $result = Math::BigInt->new($big);
+	    $result <<= 32;
+	    $result += $small;
+	}
+	return $result;
     }
     return $small;
 }
@@ -119,12 +119,12 @@ sub put_int64_quads { ${$_[0]} .= pack(Q => $_[1]) }
 
 sub put_int64_no_quads {
     if ($_[1] >= 4294967296) {
-        my $high = int ( $_[1] / 4294967296);
-        my $low = int ($_[1] - $high * 4294967296);
-        ${$_[0]} .= pack(NN => $high, $low)
+	my $high = int ( $_[1] / 4294967296);
+	my $low = int ($_[1] - $high * 4294967296);
+	${$_[0]} .= pack(NN => $high, $low)
     }
     else {
-        ${$_[0]} .= pack(NN => 0, $_[1])
+	${$_[0]} .= pack(NN => 0, $_[1])
     }
 }
 
@@ -141,18 +141,18 @@ sub _attrs_as_buffer {
     my $attrs = shift;
     my $ref = ref $attrs;
     Net::SFTP::Foreign::Attributes->isa($ref)
-            or croak("Object of class Net::SFTP::Foreign::Attributes "
-                     . "expected, $ref found");
+	    or croak("Object of class Net::SFTP::Foreign::Attributes "
+		     . "expected, $ref found");
     $attrs->as_buffer;
 }
 
 sub put_attributes { ${$_[0]} .= ${_attrs_as_buffer $_[1]} }
 
 my %unpack = ( int8 => \&get_int8,
-               int32 => \&get_int32,
-               int64 => \&get_int64,
-               str => \&get_str,
-               attr => \&get_attributtes );
+	       int32 => \&get_int32,
+	       int64 => \&get_int64,
+	       str => \&get_str,
+	       attr => \&get_attributtes );
 
 sub get {
     my $buf = shift;
@@ -160,35 +160,35 @@ sub get {
 }
 
 my %pack = ( int8 => sub { pack C => $_[0] },
-             int32 => sub { pack N => $_[0] },
-             int64 => sub {
-                 if (HAS_QUADS) {
-                     return pack(Q => $_[0])
-                 }
-                 else {
-                     if ($_[0] >= 4294967296) {
-                         my $high = int ( $_[0] / 4294967296);
-                         my $low = int ($_[0] - $high * 4294967296);
-                         return pack(NN => $high, $low)
-                     }
-                     else {
-                         return pack(NN => 0, $_[0])
-                     }
-                 }
-             },
-             str => sub { pack(N => length($_[0])), $_[0] },
-             char => sub { $_[0] },
-             attr => sub { ${_attrs_as_buffer $_[0]} } );
+	     int32 => sub { pack N => $_[0] },
+	     int64 => sub {
+		 if (HAS_QUADS) {
+		     return pack(Q => $_[0])
+		 }
+		 else {
+		     if ($_[0] >= 4294967296) {
+			 my $high = int ( $_[0] / 4294967296);
+			 my $low = int ($_[0] - $high * 4294967296);
+			 return pack(NN => $high, $low)
+		     }
+		     else {
+			 return pack(NN => 0, $_[0])
+		     }
+		 }
+	     },
+	     str => sub { pack(N => length($_[0])), $_[0] },
+	     char => sub { $_[0] },
+	     attr => sub { ${_attrs_as_buffer $_[0]} } );
 
 sub put {
     my $buf =shift;
     @_ & 1 and croak "bad number of arguments for put (@_)";
     my @parts;
     while (@_) {
-        my $type = shift;
-        my $value = shift;
+	my $type = shift;
+	my $value = shift;
         my $packer = $pack{$type} or Carp::confess("internal error: bad packing type '$type'");
-        push @parts, $packer->($value)
+	push @parts, $packer->($value)
     }
     $$buf.=join('', @parts);
 }

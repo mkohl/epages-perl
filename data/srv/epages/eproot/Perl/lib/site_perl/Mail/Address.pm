@@ -79,7 +79,7 @@ sub _tokenise
                 while(s/^(([^\(\)\\]|\\.)*\)\s*)//)
                 {   $field .= $1;
                     last PAREN unless --$depth;
-                    $field .= $1 if s/^(([^\(\)\\]|\\.)+)//;
+	            $field .= $1 if s/^(([^\(\)\\]|\\.)+)//;
                 }
             }
 
@@ -244,13 +244,13 @@ sub name
     # first.last@domain address
     if($name eq '' && $addr =~ /([^\%\.\@_]+([\._][^\%\.\@_]+)+)[\@\%]/)
     {   ($name  = $1) =~ s/[\._]+/ /g;
-        $name   = _extract_name $name;
+	$name   = _extract_name $name;
     }
 
     if($name eq '' && $addr =~ m#/g=#i)    # X400 style address
     {   my ($f) = $addr =~ m#g=([^/]*)#i;
-        my ($l) = $addr =~ m#s=([^/]*)#i;
-        $name   = _extract_name "$f $l";
+	my ($l) = $addr =~ m#s=([^/]*)#i;
+	$name   = _extract_name "$f $l";
     }
 
     length $name ? $name : undef;

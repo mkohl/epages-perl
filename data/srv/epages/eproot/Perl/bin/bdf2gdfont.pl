@@ -49,60 +49,60 @@ while (<>)
       or ($currentchar < $minchar && $currentchar >= 0);
     $maxchar = $currentchar if not defined $maxchar
       or ($currentchar > $maxchar && $currentchar >= 0);
-
+	
     if ($tag eq 'ENDCHAR')
       {
-        next if $currentchar < 0;
-        $gobitmap = 0;
-        my $bottom = $globaltop - $bottom[$currentchar];
+	next if $currentchar < 0;
+	$gobitmap = 0;
+	my $bottom = $globaltop - $bottom[$currentchar];
+		
 
-
-        if ($bottom > 0)
-          { $data[$currentchar] = substr $data[$currentchar], 0, length($data[$currentchar]) - $bottom * $width; }
-        else
-          { $data[$currentchar] .= '0' x (-$bottom * $width); }
+	if ($bottom > 0)
+	  { $data[$currentchar] = substr $data[$currentchar], 0, length($data[$currentchar]) - $bottom * $width; }
+	else
+	  { $data[$currentchar] .= '0' x (-$bottom * $width); }
       }
 
     if ($tag eq 'FONTBOUNDINGBOX')
       {
-        my ($tag, $wid, $hei, $left, $top) = split / /;
-        if (defined $top)
-          {
-            $globalleft = $left;
-            $globaltop = $top;
-            $height = $hei;
-            $width = $wid;
-          }
+	my ($tag, $wid, $hei, $left, $top) = split / /;
+	if (defined $top)
+	  {
+	    $globalleft = $left;
+	    $globaltop = $top;
+	    $height = $hei;
+	    $width = $wid;
+	  }
       }
     if ($tag eq 'FONT' and not defined $fontdef)
       { $fontdef = $value; }
     if ($tag eq 'COPYRIGHT' and not defined $copyright)
       { $copyright = $value; }
-
+	
     if ($tag eq 'BBX')
       {
-        my ($tag, $wid, $hei, $left, $bottom) = split / /;
-        if (defined $bottom)
-          {
-            $left[$currentchar] = $left;
-            $bottom[$currentchar] = $bottom;
-          }
+	my ($tag, $wid, $hei, $left, $bottom) = split / /;
+	if (defined $bottom)
+	  {
+	    $left[$currentchar] = $left;
+	    $bottom[$currentchar] = $bottom;
+	  }
       }
 
     if ($gobitmap)
       {
-        my $value = pack 'H*', $_;
-        my $bits = unpack 'B*', $value;
-        $bits = ('0' x $left[$currentchar]) . $bits;
-        $bits .= '0' x ($width - length $bits);
-        $bits = substr $bits, 0, $width;
-        $data[$currentchar] .= $bits;
+	my $value = pack 'H*', $_;
+	my $bits = unpack 'B*', $value;
+	$bits = ('0' x $left[$currentchar]) . $bits;
+	$bits .= '0' x ($width - length $bits);
+	$bits = substr $bits, 0, $width;
+	$data[$currentchar] .= $bits;
       }
-
+	
     if ($tag eq 'BITMAP')
       {
-        $gobitmap = 1;
-        $data[$currentchar] = '';
+	$gobitmap = 1;
+	$data[$currentchar] = '';
       }
   }
 

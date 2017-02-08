@@ -17,21 +17,21 @@ sub uri_join {
     my $uri = defined($scheme) ? "$scheme:" : "";
     $path = "" unless defined $path;
     if (defined $auth) {
-        $auth =~ s,([/?\#]), URI::Escape::escape_char($1),eg;
-        $uri .= "//$auth";
-        $path = "/$path" if length($path) && $path !~ m,^/,;
+	$auth =~ s,([/?\#]), URI::Escape::escape_char($1),eg;
+	$uri .= "//$auth";
+	$path = "/$path" if length($path) && $path !~ m,^/,;
     }
     elsif ($path =~ m,^//,) {
-        $uri .= "//";  # XXX force empty auth
+	$uri .= "//";  # XXX force empty auth
     }
     unless (length $uri) {
-        $path =~ s,(:), URI::Escape::escape_char($1),e while $path =~ m,^[^:/?\#]+:,;
+	$path =~ s,(:), URI::Escape::escape_char($1),e while $path =~ m,^[^:/?\#]+:,;
     }
     $path =~ s,([?\#]), URI::Escape::escape_char($1),eg;
     $uri .= $path;
     if (defined $query) {
-        $query =~ s,(\#), URI::Escape::escape_char($1),eg;
-        $uri .= "?$query";
+	$query =~ s,(\#), URI::Escape::escape_char($1),eg;
+	$uri .= "?$query";
     }
     $uri .= "#$frag" if defined $frag;
     $uri;

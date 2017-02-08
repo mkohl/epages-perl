@@ -9,24 +9,24 @@
 
 # This file returns the 5 code points in Unicode Version 5.2.0 that match any
 # of the following regular expression constructs:
-#
+# 
 #         \p{PerlSpace}
 #         \p{Is_PerlSpace}
-#
+# 
 #     Meaning: \s, restricted to ASCII
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-0009    000A     # [2]
-000C    000D     # [2]
-0020
+0009	000A	 # [2]
+000C	000D	 # [2]
+0020		
 END

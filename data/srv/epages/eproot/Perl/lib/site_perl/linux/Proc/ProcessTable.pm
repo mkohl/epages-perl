@@ -14,7 +14,7 @@ require DynaLoader;
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
-
+    
 );
 $VERSION = '0.45';
 
@@ -48,7 +48,7 @@ use File::Find;
 my %TTYDEVS;
 our $TTYDEVSFILE = "/tmp/TTYDEVS"; # Where we store the TTYDEVS hash
 
-sub new
+sub new 
 {
   my ($this, %args) = @_;
   my $class = ref($this) || $this;
@@ -57,8 +57,8 @@ sub new
 
   mutex_new(1);
   if ( exists $args{cache_ttys} && $args{cache_ttys} == 1 )
-  {
-    $self->{cache_ttys} = 1
+  { 
+    $self->{cache_ttys} = 1 
   }
 
   if ( exists $args{enable_ttys} && (! $args{enable_ttys}))
@@ -77,7 +77,7 @@ sub new
   mutex_new(0);
   if($status)
   {
-    return $self;
+    return $self; 
   }
   else
   {
@@ -85,7 +85,7 @@ sub new
   }
 }
 
-sub initialize
+sub initialize 
 {
   my ($self) = @_;
 
@@ -122,7 +122,7 @@ sub initialize
   # Call the os-specific initialization
   $self->_initialize_os;
 
-  return 1;
+  return 1; 
 }
 
 ###############################################
@@ -130,11 +130,11 @@ sub initialize
 # This might be faster in Table.xs,
 # but it's a lot more portable here
 ###############################################
-sub _get_tty_list
+sub _get_tty_list 
 {
   my ($self) = @_;
   undef %Proc::ProcessTable::TTYDEVS;
-  find({ wanted =>
+  find({ wanted => 
        sub{
      $File::Find::prune = 1 if -d $_ && ! -x $_;
      my($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
@@ -142,7 +142,7 @@ sub _get_tty_list
      $Proc::ProcessTable::TTYDEVS{$rdev} = $File::Find::name
        if(-c $File::Find::name);
        }, no_chdir => 1},
-       "/dev"
+       "/dev" 
       );
 }
 
@@ -160,7 +160,7 @@ Proc::ProcessTable - Perl extension to access the unix process table
 
   use Proc::ProcessTable;
 
-  $p = new Proc::ProcessTable( 'cache_ttys' => 1 );
+  $p = new Proc::ProcessTable( 'cache_ttys' => 1 ); 
   @fields = $p->fields;
   $ref = $p->table;
 
@@ -216,13 +216,13 @@ are supported directly by internal perl functions.
 
  $FORMAT = "%-6s %-10s %-8s %-24s %s\n";
  $t = new Proc::ProcessTable;
- printf($FORMAT, "PID", "TTY", "STAT", "START", "COMMAND");
+ printf($FORMAT, "PID", "TTY", "STAT", "START", "COMMAND"); 
  foreach $p ( @{$t->table} ){
-   printf($FORMAT,
-          $p->pid,
-          $p->ttydev,
-          $p->state,
-          scalar(localtime($p->start)),
+   printf($FORMAT, 
+          $p->pid, 
+          $p->ttydev, 
+          $p->state, 
+          scalar(localtime($p->start)), 
           $p->cmndline);
  }
 
@@ -237,7 +237,7 @@ are supported directly by internal perl functions.
   foreach $f ($t->fields){
     print $f, ":  ", $p->{$f}, "\n";
   }
- }
+ }              
 
 
 =head1 CAVEATS

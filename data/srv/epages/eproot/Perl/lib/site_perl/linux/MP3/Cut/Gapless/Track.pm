@@ -4,9 +4,9 @@ use strict;
 
 sub new {
     my $class = shift;
-
+    
     my $self;
-
+    
     if ( ref $_[0] eq 'Audio::Cuefile::Parser::Track' ) {
         $self = {
             start_ms  => _parseMSF( $_[0]->index ),
@@ -15,9 +15,9 @@ sub new {
             title     => $_[0]->title,
         };
     }
-
+    
     bless $self, $class;
-
+    
     return $self;
 }
 
@@ -30,11 +30,11 @@ sub end_ms { $_[0]->{end_ms} }
 
 sub _parseMSF {
     my $msf = shift;
-
+    
     my ($min, $sec, $frm) = split /:/, $msf, 3;
-
+    
     return sprintf "%d", ((60 * $min) + $sec + ($frm / 75)) * 1000;
-}
+}    
 
 1;
 __END__
@@ -56,7 +56,7 @@ version 0.02
     for my $track ( $cut->tracks ) {
         $cut->write( $track, $track->position . '.mp3' );
     }
-
+    
 =head1 DESCRIPTION
 
 This is a lightweight object representing a track within a cue sheet.

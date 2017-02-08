@@ -30,32 +30,32 @@ $VERSION = "0.09";
 
 my %Pkg2Type = (
 
-  'Net::LDAP::Control::Sort'            => LDAP_CONTROL_SORTREQUEST,
-  'Net::LDAP::Control::SortResult'      => LDAP_CONTROL_SORTRESULT,
+  'Net::LDAP::Control::Sort'		=> LDAP_CONTROL_SORTREQUEST,
+  'Net::LDAP::Control::SortResult' 	=> LDAP_CONTROL_SORTRESULT,
 
-  'Net::LDAP::Control::VLV'             => LDAP_CONTROL_VLVREQUEST,
-  'Net::LDAP::Control::VLVResponse'     => LDAP_CONTROL_VLVRESPONSE,
+  'Net::LDAP::Control::VLV'		=> LDAP_CONTROL_VLVREQUEST,
+  'Net::LDAP::Control::VLVResponse'	=> LDAP_CONTROL_VLVRESPONSE,
 
-  'Net::LDAP::Control::Paged'           => LDAP_CONTROL_PAGED,
+  'Net::LDAP::Control::Paged'		=> LDAP_CONTROL_PAGED,
 
-  'Net::LDAP::Control::ProxyAuth'       => LDAP_CONTROL_PROXYAUTHENTICATION,
+  'Net::LDAP::Control::ProxyAuth'	=> LDAP_CONTROL_PROXYAUTHENTICATION,
 
-  'Net::LDAP::Control::ManageDsaIT'     => LDAP_CONTROL_MANAGEDSAIT,
+  'Net::LDAP::Control::ManageDsaIT'	=> LDAP_CONTROL_MANAGEDSAIT,
 
-  'Net::LDAP::Control::PersistentSearch'        => LDAP_CONTROL_PERSISTENTSEARCH,
-  'Net::LDAP::Control::EntryChange'     => LDAP_CONTROL_ENTRYCHANGE,
+  'Net::LDAP::Control::PersistentSearch'	=> LDAP_CONTROL_PERSISTENTSEARCH,
+  'Net::LDAP::Control::EntryChange'	=> LDAP_CONTROL_ENTRYCHANGE,
 
-  'Net::LDAP::Control::MatchedValues'   => LDAP_CONTROL_MATCHEDVALUES,
+  'Net::LDAP::Control::MatchedValues'	=> LDAP_CONTROL_MATCHEDVALUES,
 
-  'Net::LDAP::Control::PasswordPolicy'  => LDAP_CONTROL_PASSWORDPOLICY,
+  'Net::LDAP::Control::PasswordPolicy'	=> LDAP_CONTROL_PASSWORDPOLICY,
 
-  'Net::LDAP::Control::PreRead'         => LDAP_CONTROL_PREREAD,
+  'Net::LDAP::Control::PreRead'		=> LDAP_CONTROL_PREREAD,
 
-  'Net::LDAP::Control::PostRead'        => LDAP_CONTROL_POSTREAD,
+  'Net::LDAP::Control::PostRead'	=> LDAP_CONTROL_POSTREAD,
 
-  'Net::LDAP::Control::SyncRequest'     => LDAP_CONTROL_SYNC,
-  'Net::LDAP::Control::SyncState'       => LDAP_CONTROL_SYNC_STATE,
-  'Net::LDAP::Control::SyncDone'        => LDAP_CONTROL_SYNC_DONE,
+  'Net::LDAP::Control::SyncRequest'	=> LDAP_CONTROL_SYNC,
+  'Net::LDAP::Control::SyncState'	=> LDAP_CONTROL_SYNC_STATE,
+  'Net::LDAP::Control::SyncDone'	=> LDAP_CONTROL_SYNC_DONE,
   #
   #LDAP_CONTROL_PWEXPIRED
   #LDAP_CONTROL_PWEXPIRING

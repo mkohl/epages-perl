@@ -14,7 +14,7 @@ sub findfonts
     my ($sub) = @_;
     my ($font_key) = 'SOFTWARE\Microsoft\Windows' . (Win32::IsWinNT() ? ' NT' : '') . '\CurrentVersion\Fonts';
     my ($regFont, $list, $l, $font, $file);
-
+    
 # get entry from registry for a font of this name
     $::HKEY_LOCAL_MACHINE->Open($font_key, $regFont);
     $regFont->GetValues($list);

@@ -26,7 +26,7 @@ sub exec {
     $opt{Port}  ||= 465;
 
     my $smtp = Net::SMTP::SSL->new($host, %opt)
-        or return undef;
+	or return undef;
 
     if($opt{Auth})
     {   $smtp->auth(@{$opt{Auth}})

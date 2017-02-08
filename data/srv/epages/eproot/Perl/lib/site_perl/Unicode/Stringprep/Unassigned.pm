@@ -417,7 +417,7 @@ Unicode::Stringprep::Unassigned - Tables from S<RFC 3454>, S<Appendix A>
 
 =head1 SYNPOSIS
 
-  @Unicode::Stringprep::Unassigned::A1  # Appendix A.1
+  @Unicode::Stringprep::Unassigned::A1	# Appendix A.1
 
 =head1 DESCRIPTION
 

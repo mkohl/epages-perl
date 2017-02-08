@@ -292,7 +292,7 @@ The problem exists because the anonymous subroutine being assigned to the
 C<*Foo::foo> glob will show up in the call stack as being called
 C<__ANON__> and not C<foo> as you might expect. Since C<next::method> uses
 C<caller> to find the name of the method it was called in, it will fail in
-this case.
+this case. 
 
 But fear not, there's a simple solution. The module C<Sub::Name> will
 reach into the perl internals and assign a name to an anonymous subroutine
@@ -360,7 +360,7 @@ Parrot now uses C3
 
 =item L<http://www.call-with-current-continuation.org/eggs/c3.html>
 
-=back
+=back 
 
 =head2 Class::C3
 

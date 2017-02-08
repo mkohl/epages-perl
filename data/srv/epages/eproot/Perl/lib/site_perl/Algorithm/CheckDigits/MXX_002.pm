@@ -83,7 +83,7 @@ CheckDigits::MXX_002 - compute check digits for CAS
   $cas = CheckDigits('cas');
 
   if ($cas->is_valid('1333-74-0')) {
-        # do something
+	# do something
   }
 
   $cn = $cas->complete('1333-74-');
@@ -94,7 +94,7 @@ CheckDigits::MXX_002 - compute check digits for CAS
 
   $bn = $cas->basenumber('1333-74-0');
   # $bn = '1333-74-'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

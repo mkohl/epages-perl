@@ -14,18 +14,18 @@ use Locale::Constants;
 
 
 #-----------------------------------------------------------------------
-#       Public Global Variables
+#	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 $VERSION   = sprintf("%d.%02d", q$Revision: 2.7 $ =~ /(\d+)\.(\d+)/);
 @ISA       = qw(Exporter);
 @EXPORT    = qw(code2script script2code
                 all_script_codes all_script_names
-                script_code2code
-                LOCALE_CODE_ALPHA_2 LOCALE_CODE_ALPHA_3 LOCALE_CODE_NUMERIC);
+		script_code2code
+		LOCALE_CODE_ALPHA_2 LOCALE_CODE_ALPHA_3 LOCALE_CODE_NUMERIC);
 
 #-----------------------------------------------------------------------
-#       Private Global Variables
+#	Private Global Variables
 #-----------------------------------------------------------------------
 my $CODES     = [];
 my $COUNTRIES = [];
@@ -52,12 +52,12 @@ sub code2script
     #-------------------------------------------------------------------
     if ($codeset == LOCALE_CODE_NUMERIC)
     {
-        return undef if ($code =~ /\D/);
-        $code = sprintf("%.3d", $code);
+	return undef if ($code =~ /\D/);
+	$code = sprintf("%.3d", $code);
     }
     else
     {
-        $code = lc($code);
+	$code = lc($code);
     }
 
     if (exists $CODES->[$codeset]->{$code})
@@ -171,17 +171,17 @@ sub all_script_names
         $CODES->[LOCALE_CODE_ALPHA_2]->{$alpha2} = $script;
         $COUNTRIES->[LOCALE_CODE_ALPHA_2]->{"\L$script"} = $alpha2;
 
-        if ($alpha3)
-        {
+	if ($alpha3)
+	{
             $CODES->[LOCALE_CODE_ALPHA_3]->{$alpha3} = $script;
             $COUNTRIES->[LOCALE_CODE_ALPHA_3]->{"\L$script"} = $alpha3;
-        }
+	}
 
-        if ($numeric)
-        {
+	if ($numeric)
+	{
             $CODES->[LOCALE_CODE_NUMERIC]->{$numeric} = $script;
             $COUNTRIES->[LOCALE_CODE_NUMERIC]->{"\L$script"} = $numeric;
-        }
+	}
 
     }
 

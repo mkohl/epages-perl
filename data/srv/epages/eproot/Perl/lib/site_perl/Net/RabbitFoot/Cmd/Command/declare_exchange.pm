@@ -92,7 +92,7 @@ sub _run {
 
     print 'Declared exchange', "\n";
     return;
-}
+} 
 
 1;
 

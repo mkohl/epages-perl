@@ -25,9 +25,9 @@ sub password
     my $self = shift;
     my $pass = $self->_password(@_);
     unless (defined $pass) {
-        my $user = $self->user;
-        if ($user eq 'anonymous' || $user eq 'ftp') {
-            # anonymous ftp login password
+	my $user = $self->user;
+	if ($user eq 'anonymous' || $user eq 'ftp') {
+	    # anonymous ftp login password
             # If there is no ftp anonymous password specified
             # then we'll just use 'anonymous@'
             # We don't try to send the read e-mail address because:
@@ -35,8 +35,8 @@ sub password
             # - We want to stop SPAM
             # - We don't want to let ftp sites to discriminate by the user,
             #   host, country or ftp client being used.
-            $pass = 'anonymous@';
-        }
+	    $pass = 'anonymous@';
+	}
     }
     $pass;
 }

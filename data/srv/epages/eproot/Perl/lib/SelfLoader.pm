@@ -15,12 +15,12 @@ use 5.009005; # due to new regexp features
 $AttrList = qr{
     \s* : \s*
     (?:
-        # one attribute
-        (?> # no backtrack
-            (?! \d) \w+
-            (?<nested> \( (?: [^()]++ | (?&nested)++ )*+ \) ) ?
-        )
-        (?: \s* : \s* | \s+ (?! :) )
+	# one attribute
+	(?> # no backtrack
+	    (?! \d) \w+
+	    (?<nested> \( (?: [^()]++ | (?&nested)++ )*+ \) ) ?
+	)
+	(?: \s* : \s* | \s+ (?! :) )
     )*
 }x;
 
@@ -69,8 +69,8 @@ AUTOLOAD {
     print STDERR "SelfLoader::AUTOLOAD eval: $SL_code\n" if DEBUG;
 
     {
-        no strict;
-        eval $SL_code;
+	no strict;
+	eval $SL_code;
     }
     if ($@) {
         $@ =~ s/ at .*\n//;
@@ -107,7 +107,7 @@ sub _load_stubs {
 
     local($/) = "\n";
     while(defined($line = <$fh>) and $line !~ m/^__END__/) {
-        if ($line =~ m/^\s*sub\s+([\w:]+)\s*((?:\([\\\$\@\%\&\*\;]*\))?(?:$AttrList)?)/) {
+	if ($line =~ m/^\s*sub\s+([\w:]+)\s*((?:\([\\\$\@\%\&\*\;]*\))?(?:$AttrList)?)/) {
             push(@stubs, $self->_add_to_cache($name, $currpack, \@lines, $protoype));
             $protoype = $2;
             @lines = ($line);
@@ -384,32 +384,32 @@ This package has the same copyright and license as the perl core:
 
              Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999,
         2000, 2001, 2002, 2003, 2004, 2005, 2006 by Larry Wall and others
-
-                            All rights reserved.
-
+    
+			    All rights reserved.
+    
     This program is free software; you can redistribute it and/or modify
     it under the terms of either:
-
-        a) the GNU General Public License as published by the Free
-        Software Foundation; either version 1, or (at your option) any
-        later version, or
-
-        b) the "Artistic License" which comes with this Kit.
-
+    
+	a) the GNU General Public License as published by the Free
+	Software Foundation; either version 1, or (at your option) any
+	later version, or
+    
+	b) the "Artistic License" which comes with this Kit.
+    
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See either
     the GNU General Public License or the Artistic License for more details.
-
+    
     You should have received a copy of the Artistic License with this
     Kit, in the file named "Artistic".  If not, I'll be glad to provide one.
-
+    
     You should also have received a copy of the GNU General Public License
-    along with this program in the file named "Copying". If not, write to the
-    Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+    along with this program in the file named "Copying". If not, write to the 
+    Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
     02111-1307, USA or visit their web page on the internet at
     http://www.gnu.org/copyleft/gpl.html.
-
+    
     For those of you that choose to use the GNU General Public License,
     my interpretation of the GNU General Public License is that no Perl
     script falls under the terms of the GPL unless you explicitly put

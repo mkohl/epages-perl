@@ -56,9 +56,9 @@ provides the database of handler names, queryable by type, and
 
 @ISA = qw( Exporter );
 @EXPORT_OK = qw(
-    sax_event_names
-    missing_methods
-    compile_methods
+    sax_event_names 
+    missing_methods 
+    compile_methods 
     compile_missing_methods
 );
 %EXPORT_TAGS = ( all => \@EXPORT_OK );
@@ -155,7 +155,7 @@ for my $event ( keys %event_table, keys %parse_methods_table ) {
         @versions = ( 1, 2 ) unless @versions;
 
         $type = exists $event_flags{$type}
-            ? $event_flags{$type}
+            ? $event_flags{$type} 
             : $parse_method_flags{$type};
 
         push @{$events_db{$type}}, $event;
@@ -212,7 +212,7 @@ No support for boolean logic is provided.
 my %legal_query_terms = map {
     ( $_ => undef );
 } ( 1, 2, values %event_flags, values %parse_method_flags );
-
+   
 
 sub sax_event_names {
     ## This should be really common

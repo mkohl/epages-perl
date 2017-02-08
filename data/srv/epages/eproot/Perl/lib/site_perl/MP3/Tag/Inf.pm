@@ -14,8 +14,8 @@ MP3::Tag::Inf - Module for parsing F<.inf> files associated with music tracks.
 
 =head1 SYNOPSIS
 
-  my $mp3inf = MP3::Tag::Inf->new($filename);   # Name of MP3 or .INF file
-                                                # or an MP3::Tag::File object
+  my $mp3inf = MP3::Tag::Inf->new($filename);	# Name of MP3 or .INF file
+						# or an MP3::Tag::File object
 
   ($title, $artist, $album, $year, $comment, $track) = $mp3inf->parse();
 
@@ -40,7 +40,7 @@ sub new_with_parent {
 
     $filename = $filename->filename if ref $filename;
     my $ext_rex = $self->get_config('extension')->[0];
-    $filename =~ s/($ext_rex)|$/.inf/;          # replace extension
+    $filename =~ s/($ext_rex)|$/.inf/;		# replace extension
     return unless -f $filename;
     $self->{filename} = $filename;
     $self;
@@ -91,19 +91,19 @@ The following fields are also recognized:
 sub return_parsed {
     my ($self,$what) = @_;
     if (defined $what) {
-        return $self->{parsed}{album}  if $what =~/^al/i;
-        return $self->{parsed}{artist} if $what =~/^a/i;
-        return $self->{parsed}{track}  if $what =~/^tr/i;
-        return $self->{parsed}{year}   if $what =~/^y/i;
-        return $self->{parsed}{genre}  if $what =~/^g/i;
-        if ($what =~/^cddb_id/i) {
-          my $o = $self->{parsed}{Cddb_discid};
-          $o =~ s/^0x//i if $o;
-          return $o;
-        }
-        return $self->{parsed}{Cdindex_discid}  if $what =~/^cdindex_id/i;
-        return $self->{parsed}{comment}if $what =~/^c/i;
-        return $self->{parsed}{title};
+	return $self->{parsed}{album}  if $what =~/^al/i;
+	return $self->{parsed}{artist} if $what =~/^a/i;
+	return $self->{parsed}{track}  if $what =~/^tr/i;
+	return $self->{parsed}{year}   if $what =~/^y/i;
+	return $self->{parsed}{genre}  if $what =~/^g/i;
+	if ($what =~/^cddb_id/i) {
+	  my $o = $self->{parsed}{Cddb_discid};
+	  $o =~ s/^0x//i if $o;
+	  return $o;
+	}
+	return $self->{parsed}{Cdindex_discid}  if $what =~/^cdindex_id/i;
+	return $self->{parsed}{comment}if $what =~/^c/i;
+	return $self->{parsed}{title};
     }
 
     return $self->{parsed} unless wantarray;
@@ -113,7 +113,7 @@ sub return_parsed {
 sub parse {
     my ($self,$what) = @_;
 
-    $self->return_parsed($what) if exists $self->{parsed};
+    $self->return_parsed($what)	if exists $self->{parsed};
     local *IN;
     open IN, "< $self->{filename}" or die "Error opening `$self->{filename}': $!";
     my $e;
@@ -122,17 +122,17 @@ sub parse {
     }
     my ($line, %info);
     for $line (<IN>) {
-        $self->{info}{ucfirst lc $1} = $2
-            if $line =~ /^(\S+)\s*=\s*['"]?(.*?)['"]?\s*$/;
+	$self->{info}{ucfirst lc $1} = $2
+	    if $line =~ /^(\S+)\s*=\s*['"]?(.*?)['"]?\s*$/;
     }
     close IN or die "Error closing `$self->{filename}': $!";
     my %parsed;
     @parsed{ qw( title artist album year comment track Cddb_discid Cdindex_discid ) } =
-        @{ $self->{info} }{ qw( Tracktitle Performer Albumtitle
-                                Year Trackcomment Tracknumber
-                                Cddb_discid Cdindex_discid) };
+	@{ $self->{info} }{ qw( Tracktitle Performer Albumtitle 
+				Year Trackcomment Tracknumber
+				Cddb_discid Cdindex_discid) };
     $parsed{artist} = $self->{info}{Albumperformer}
-        unless defined $parsed{artist};
+	unless defined $parsed{artist};
     $self->{parsed} = \%parsed;
     $self->return_parsed($what);
 }

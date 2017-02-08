@@ -112,7 +112,7 @@ sub Compare {
   $opts->{recursion_detector}++;
 
   warn "Yaroo! deep recursion!\n" if($opts->{recursion_detector} == 99);
-
+  
   if(
     (ref($x) && exists($been_there{"$x-$xpos-$xparent"}) && $been_there{"$x-$xpos-$xparent"} > 1) ||
     (ref($y) && exists($been_there{"$y-$ypos-$yparent"}) && $been_there{"$y-$ypos-$yparent"} > 1)

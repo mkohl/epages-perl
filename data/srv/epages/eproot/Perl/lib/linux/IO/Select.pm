@@ -78,8 +78,8 @@ sub _update
    my $i = $fn + FIRST_FD;
    if ($add) {
      if (defined $vec->[$i]) {
-         $vec->[$i] = $f;  # if array rest might be different, so we update
-         next;
+	 $vec->[$i] = $f;  # if array rest might be different, so we update
+	 next;
      }
      $vec->[FD_COUNT]++;
      vec($bits, $fn, 1) = 1;
@@ -132,7 +132,7 @@ sub has_exception
 sub has_error
 {
  warnings::warn("Call to deprecated method 'has_error', use 'has_exception'")
-        if warnings::enabled();
+	if warnings::enabled();
  goto &has_exception;
 }
 
@@ -228,7 +228,7 @@ sub handles
    push(@h, $vec->[$i])
       if !defined($bits) || vec($bits, $i - FIRST_FD, 1);
   }
-
+ 
  @h;
 }
 

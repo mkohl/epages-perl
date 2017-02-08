@@ -6,7 +6,7 @@ AnyEvent::Impl::Tk - AnyEvent adaptor for Tk
 
    use AnyEvent;
    use Tk;
-
+  
    # this module gets loaded automatically as required
 
 =head1 DESCRIPTION
@@ -91,7 +91,7 @@ sub AnyEvent::Impl::Tk::io::DESTROY {
 
 sub timer {
    my (undef, %arg) = @_;
-
+   
    my $after = $arg{after} < 0 ? 0 : $arg{after} * 1000;
    my $cb = $arg{cb};
    my $id;

@@ -127,7 +127,7 @@ sub _plural_algorithm($)
 }
 
 # extract number of plural versions in the language from forms string
-sub _nr_plurals($)
+sub _nr_plurals($) 
 {   my $forms = shift || '';
     $forms =~ m/\bnplurals\=(\d+)/ ? $1 : 2;
 }

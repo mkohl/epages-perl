@@ -55,14 +55,14 @@ sub AUTOLOAD {
     die "&${AUTOLOAD} not defined. The required ImageMagick libraries are not installed or not installed properly.\n" if $constname eq 'constant';
     my $val = constant($constname, @_ ? $_[0] : 0);
     if ($! != 0) {
-        if ($! =~ /Invalid/) {
-                $AutoLoader::AUTOLOAD = $AUTOLOAD;
-                goto &AutoLoader::AUTOLOAD;
-        }
-        else {
-                my($pack,$file,$line) = caller;
-                die "Your vendor has not defined PerlMagick macro $pack\:\:$constname, used at $file line $line.\n";
-        }
+    	if ($! =~ /Invalid/) {
+	        $AutoLoader::AUTOLOAD = $AUTOLOAD;
+	        goto &AutoLoader::AUTOLOAD;
+    	}
+    	else {
+	        my($pack,$file,$line) = caller;
+	        die "Your vendor has not defined PerlMagick macro $pack\:\:$constname, used at $file line $line.\n";
+    	}
     }
     eval "sub $AUTOLOAD { $val }";
     goto &$AUTOLOAD;
@@ -122,8 +122,8 @@ It was originally developed to be used by CGI scripts for Web pages.
 
 A web page has been set up for this extension. See:
 
-         file:///usr/local/share/doc/ImageMagick//www/perl-magick.html
-         http://www.imagemagick.org/script/perl-magick.php
+	 file:///usr/local/share/doc/ImageMagick//www/perl-magick.html
+	 http://www.imagemagick.org/script/perl-magick.php
 
 If you have problems, go to
 
@@ -131,7 +131,7 @@ If you have problems, go to
 
 =head1 AUTHOR
 
-Kyle Shorter    magick-users@imagemagick.org
+Kyle Shorter	magick-users@imagemagick.org
 
 =head1 BUGS
 

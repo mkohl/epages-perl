@@ -13,7 +13,7 @@ beginning with C<=begin test> or C<=begin testing>.
 
 =head2 Types of Sections
 
-There are two types of code sections. The first, beginning with
+There are two types of code sections. The first, beginning with 
 C<=begin testing ...>, contains a set of tests and other code to be executed
 at any time (within a set of specifyable constraints). The second, labelled
 C<=begin testing SETUP>, contains code to be executed at the beginning of the
@@ -28,25 +28,25 @@ Some examples of the different types of test headers are as follows.
 
   # Normal anonymous test
   =begin testing
-
+  
   ok( $foo == $bar, 'This is a test' );
-
+  
   =end testing
-
+  
   # A named test. Also provides the number of tests to run.
   # Any test section can specify the number of tests.
   =begin testing my_method 1
-
+  
   ok( $foo->my_method, '->my_method returns true' );
-
+  
   =end testing
-
+  
   # A named test with pre-requisites.
   # Note that ONLY named tests can have pre-requisites
   =begin testing this after my_method foo bar other_method Other::Class
-
+  
   ok( $foo->this, '->this returns true' );
-
+  
   =end testing
 
 The first example shows a normal anonymous test. All anonymous test sections
@@ -55,15 +55,15 @@ named tests have been run.
 
 Any and all arguments used after "testing" must be in the form of simple
 space seperated words. The first word is considered the "name" of the test.
-The intended use for these is generally to create one named test section for
-each function or method, but you can name them as you please. Test names
+The intended use for these is generally to create one named test section for 
+each function or method, but you can name them as you please. Test names 
 B<must> be unique, and B<are> case sensitive.
 
 After the name, you can provide the word "after" and provide a list of other
 named tests that must be completed first in order to run this test. This is
 provided so that when errors are encounted, they are probably the result of
-this method or set of tests, and not in some other method that this one
-relies on. It makes debugging a lot easier. The word after is only a
+this method or set of tests, and not in some other method that this one 
+relies on. It makes debugging a lot easier. The word after is only a 
 keyword when after the test name, so you can use a test name of after as well.
 The following are both legal
 
@@ -102,9 +102,9 @@ use Algorithm::Dependency::Item ();
 
 use vars qw{$VERSION @ISA $errstr};
 BEGIN {
-        $VERSION = '2.212';
-        @ISA     = 'Algorithm::Dependency::Item';
-        $errstr  = '';
+	$VERSION = '2.212';
+	@ISA     = 'Algorithm::Dependency::Item';
+	$errstr  = '';
 }
 
 
@@ -133,205 +133,205 @@ my $RE_begin   = qr/=begin\s+(?:test|testing)/;
 my $RE_example = qr/=for\s+example\s+begin/;
 
 sub new {
-        $errstr     = '';
-        my $class   = shift;
-        my $pod     = $_[0] =~ /^(?:$RE_begin|$RE_example)\b/ ? shift :
-                return $class->_error("Test section does not begin with =begin test[ing]");
-        my $context = shift;
+	$errstr     = '';
+	my $class   = shift;
+	my $pod     = $_[0] =~ /^(?:$RE_begin|$RE_example)\b/ ? shift :
+		return $class->_error("Test section does not begin with =begin test[ing]");
+	my $context = shift;
 
-        # Split into lines
-        my @lines = split /(?:\015{1,2}\012|\015|\012)/, $pod;
+	# Split into lines
+	my @lines = split /(?:\015{1,2}\012|\015|\012)/, $pod;
 
-        # Handle =for example seperately
-        if ( $pod =~ /^$RE_example\b/ ) {
-                return $class->_example( \@lines, $context );
-        }
+	# Handle =for example seperately
+	if ( $pod =~ /^$RE_example\b/ ) {
+		return $class->_example( \@lines, $context );
+	}
 
-        # Get the begin paragraph ( yes, paragraph. NOT line )
-        my $begin = '';
-        while ( @lines and $lines[0] !~ /^\s*$/ ) {
-                $begin .= ' ' if $begin;
-                $begin .= shift @lines;
-        }
+	# Get the begin paragraph ( yes, paragraph. NOT line )
+	my $begin = '';
+	while ( @lines and $lines[0] !~ /^\s*$/ ) {
+		$begin .= ' ' if $begin;
+		$begin .= shift @lines;
+	}
 
-        # Remove the trailing end tag
-        if ( @lines and $lines[-1] =~ /^=end\s+(?:test|testing)\b/o ) {
-                pop @lines;
-        }
+	# Remove the trailing end tag
+	if ( @lines and $lines[-1] =~ /^=end\s+(?:test|testing)\b/o ) {
+		pop @lines;
+	}
 
-        # Do some cleaning up and checking
-        $class->_trim_empty_lines( \@lines );
-        $class->_check_nesting( \@lines, $begin ) or return undef;
+	# Do some cleaning up and checking
+	$class->_trim_empty_lines( \@lines );
+	$class->_check_nesting( \@lines, $begin ) or return undef;
 
-        # Create the basic object
-        my $self = bless {
-                begin   => $begin,
-                content => join( '', map { "$_\n" } @lines ),
-                setup   => '',       # Is this a setup section
-                example => '',       # Is this an example section
-                context => $context, # Package context
-                name    => undef,    # The name of the test
-                tests   => undef,    # undef means unknown test count
-                after   => {},       # Other named methods this should be after
-                classes => {},       # Other classes this should be after
-                }, $class;
+	# Create the basic object
+	my $self = bless {
+		begin   => $begin,
+		content => join( '', map { "$_\n" } @lines ),
+		setup   => '',       # Is this a setup section
+		example => '',       # Is this an example section
+		context => $context, # Package context
+		name    => undef,    # The name of the test
+		tests   => undef,    # undef means unknown test count
+		after   => {},       # Other named methods this should be after
+		classes => {},       # Other classes this should be after
+		}, $class;
 
-        # Start processing the begin line
-        my @parts = split /\s+/, $begin;
+	# Start processing the begin line
+	my @parts = split /\s+/, $begin;
 
-        # Remove the =begin
-        shift @parts;
+	# Remove the =begin
+	shift @parts;
 
-        # If the line contains a number then this is part of the tests
-        foreach my $i ( 0 .. $#parts ) {
-                next unless $parts[$i] =~ /^(0|[1-9]\d*)$/;
-                $self->{tests} = splice @parts, $i, 1;
-                last;
-        }
+	# If the line contains a number then this is part of the tests
+	foreach my $i ( 0 .. $#parts ) {
+		next unless $parts[$i] =~ /^(0|[1-9]\d*)$/;
+		$self->{tests} = splice @parts, $i, 1;
+		last;
+	}
 
-        # Handle setup sections via =begin test setup or =begin testing SETUP
-        if ( @parts == 2 and $parts[0] eq 'test' and $parts[1] eq 'setup' ) {
-                $self->{setup} = 1;
-        }
-        if ( @parts >= 2 and $parts[0] eq 'testing' and $parts[1] eq 'SETUP' ) {
-                $self->{setup} = 1;
-        }
+	# Handle setup sections via =begin test setup or =begin testing SETUP
+	if ( @parts == 2 and $parts[0] eq 'test' and $parts[1] eq 'setup' ) {
+		$self->{setup} = 1;
+	}
+	if ( @parts >= 2 and $parts[0] eq 'testing' and $parts[1] eq 'SETUP' ) {
+		$self->{setup} = 1;
+	}
 
-        # Any other form of =begin test is not allowed
-        if ( $parts[0] eq 'test' and ! $self->{setup} ) {
-                # Unknown =begin test line
-                return $class->_error("Unsupported '=begin test' line '$begin'");
-        }
+	# Any other form of =begin test is not allowed
+	if ( $parts[0] eq 'test' and ! $self->{setup} ) {
+		# Unknown =begin test line
+		return $class->_error("Unsupported '=begin test' line '$begin'");
+	}
 
-        # Remove the "testing" word
-        shift @parts;
+	# Remove the "testing" word
+	shift @parts;
 
-        # If there are no remaining parts, we are anonymous,
-        # and can just return as is.
-        return $self unless @parts;
+	# If there are no remaining parts, we are anonymous,
+	# and can just return as is.
+	return $self unless @parts;
 
-        # Make sure all remaining parts are only words
-        if ( grep { ! /^[\w:]+$/ } @parts ) {
-                return $class->_error("Found something other than words: $begin");
-        }
+	# Make sure all remaining parts are only words
+	if ( grep { ! /^[\w:]+$/ } @parts ) {
+		return $class->_error("Found something other than words: $begin");
+	}
 
-        # The first word is our name and must match the perl
-        # format for a method name.
-        if ( $self->{setup} ) {
-                shift @parts;
-        } else {
-                $self->{name} = shift @parts;
-                unless ( $self->{name} =~ /^[^\W\d]\w*$/ ) {
-                        return $class->_error("'$self->{name}' is not a valid test name: $begin");
-                }
-        }
-        return $self unless @parts;
+	# The first word is our name and must match the perl
+	# format for a method name.
+	if ( $self->{setup} ) {
+		shift @parts;
+	} else {
+		$self->{name} = shift @parts;
+		unless ( $self->{name} =~ /^[^\W\d]\w*$/ ) {
+			return $class->_error("'$self->{name}' is not a valid test name: $begin");
+		}
+	}
+	return $self unless @parts;
 
-        # The next word MUST be "after"
-        unless ( shift @parts eq 'after' ) {
-                return $class->_error("Word after test name is something other than 'after': $begin");
-        }
+	# The next word MUST be "after"
+	unless ( shift @parts eq 'after' ) {
+		return $class->_error("Word after test name is something other than 'after': $begin");
+	}
 
-        # The remaining words are our dependencies.
-        # Simple words chunks are method dependencies, and anything
-        # containing :: (including at the end) is a dependency on
-        # another module that should be part of the testing process.
-        foreach my $part ( @parts ) {
-                if ( $part =~ /^[^\W\d]\w*$/ ) {
-                        if ( $self->setup ) {
-                                return $class->_error("SETUP sections can only have class dependencies");
-                        }
-                        $self->{after}->{$part} = 1;
-                } elsif ( $part =~ /::/ ) {
-                        $part =~ s/::$//; # Strip trailing ::
-                        $self->{classes}->{$part} = 1;
-                } else {
-                        return $class->_error("Unknown dependency '$part' in begin line: $begin");
-                }
-        }
+	# The remaining words are our dependencies.
+	# Simple words chunks are method dependencies, and anything
+	# containing :: (including at the end) is a dependency on
+	# another module that should be part of the testing process.
+	foreach my $part ( @parts ) {
+		if ( $part =~ /^[^\W\d]\w*$/ ) {
+			if ( $self->setup ) {
+				return $class->_error("SETUP sections can only have class dependencies");
+			}
+			$self->{after}->{$part} = 1;
+		} elsif ( $part =~ /::/ ) {
+			$part =~ s/::$//; # Strip trailing ::
+			$self->{classes}->{$part} = 1;
+		} else {
+			return $class->_error("Unknown dependency '$part' in begin line: $begin");
+		}
+	}
 
-        $self;
+	$self;
 }
 
 # Handle the creation of example sections
 sub _example {
-        my $class   = shift;
-        my @lines   = @{shift()};
-        my $context = shift;
+	my $class   = shift;
+	my @lines   = @{shift()};
+	my $context = shift;
 
-        # Get the begin paragraph ( yes, paragraph. NOT line )
-        my $begin = '';
-        while ( @lines and $lines[0] !~ /^\s*$/ ) {
-                $begin .= ' ' if $begin;
-                $begin .= shift @lines;
-        }
+	# Get the begin paragraph ( yes, paragraph. NOT line )
+	my $begin = '';
+	while ( @lines and $lines[0] !~ /^\s*$/ ) {
+		$begin .= ' ' if $begin;
+		$begin .= shift @lines;
+	}
 
-        # Remove the trailing end tag
-        if ( @lines and $lines[-1] =~ /^=for\s+example\s+end\b/o ) {
-                pop @lines;
-        }
+	# Remove the trailing end tag
+	if ( @lines and $lines[-1] =~ /^=for\s+example\s+end\b/o ) {
+		pop @lines;
+	}
 
-        # Remove any leading and trailing empty lines
-        $class->_trim_empty_lines( \@lines );
-        $class->_check_nesting( \@lines, $begin ) or return undef;
+	# Remove any leading and trailing empty lines
+	$class->_trim_empty_lines( \@lines );
+	$class->_check_nesting( \@lines, $begin ) or return undef;
 
-        # Create the basic object
-        my $self = bless {
-                begin   => $begin,
-                content => join( '', map { "$_\n" } @lines ),
-                setup   => '',       # Is this a setup section
-                example => 1,        # Is this an example section
-                context => $context, # Package context
-                name    => undef,    # Examples arn't named
-                tests   => 1,        # An example always consumes 1 test
-                after   => {},       # Other named methods this should be after
-                classes => {},       # Other classes this should be after
-                }, $class;
+	# Create the basic object
+	my $self = bless {
+		begin   => $begin,
+		content => join( '', map { "$_\n" } @lines ),
+		setup   => '',       # Is this a setup section
+		example => 1,        # Is this an example section
+		context => $context, # Package context
+		name    => undef,    # Examples arn't named
+		tests   => 1,        # An example always consumes 1 test
+		after   => {},       # Other named methods this should be after
+		classes => {},       # Other classes this should be after
+		}, $class;
 
-        $self;
+	$self;
 }
 
 sub _error {
-        $errstr = join ': ', @_;
-        undef;
+	$errstr = join ': ', @_;
+	undef;
 }
 
 sub _short {
-        my $either = shift;
-        my $string = shift;
-        chomp $string;
-        $string =~ s/\n/ /g;
-        if ( length($string) > 30 ) {
-                $string = substr($string, 27);
-                $string =~ s/\s+$//;
-                $string .= '...';
-        }
-        $string;
+	my $either = shift;
+	my $string = shift;
+	chomp $string;
+	$string =~ s/\n/ /g;
+	if ( length($string) > 30 ) {
+		$string = substr($string, 27);
+		$string =~ s/\s+$//;
+		$string .= '...';
+	}
+	$string;
 }
 
 sub _check_nesting {
-        my ($class, $lines, $begin) = @_;
+	my ($class, $lines, $begin) = @_;
 
-        # In the remaining lines there shouldn't be any lines
-        # that look like a POD tag. If there is there is probably
-        # a nesting problem.
-        my $bad_line = List::Util::first { /^=\w+/ } @$lines;
-        if ( $bad_line ) {
-                $bad_line = $class->_short($bad_line);
-                $begin    = $class->_short($begin);
-                return $class->_error(
-                        "POD statement '$bad_line' illegally nested inside of section '$begin'"
-                        );
-        }
+	# In the remaining lines there shouldn't be any lines
+	# that look like a POD tag. If there is there is probably
+	# a nesting problem.
+	my $bad_line = List::Util::first { /^=\w+/ } @$lines;
+	if ( $bad_line ) {
+		$bad_line = $class->_short($bad_line);
+		$begin    = $class->_short($begin);
+		return $class->_error(
+			"POD statement '$bad_line' illegally nested inside of section '$begin'"
+			);
+	}
 
-        1;
+	1;
 }
 
 sub _trim_empty_lines {
-        my $lines = $_[1];
-        while ( @$lines and $lines->[0]  eq '' ) { shift @$lines }
-        while ( @$lines and $lines->[-1] eq '' ) { pop @$lines   }
-        1;
+	my $lines = $_[1];
+	while ( @$lines and $lines->[0]  eq '' ) { shift @$lines }
+	while ( @$lines and $lines->[-1] eq '' ) { pop @$lines   }
+	1;
 }
 
 
@@ -358,30 +358,30 @@ and set it in the Sections.
 =cut
 
 sub parse {
-        $errstr      = '';
-        my $class    = shift;
-        my $elements = _ARRAY(shift) or return undef;
-        my @Sections = ();
+	$errstr      = '';
+	my $class    = shift;
+	my $elements = _ARRAY(shift) or return undef;
+	my @Sections = ();
 
-        # Iterate over the elements and maintain package contexts
-        my $context = '';
-        foreach my $element ( @$elements ) {
-                if ( $element =~ /^package\s+([\w:']+)/ ) {
-                        $context = $1;
-                        next;
-                }
+	# Iterate over the elements and maintain package contexts
+	my $context = '';
+	foreach my $element ( @$elements ) {
+		if ( $element =~ /^package\s+([\w:']+)/ ) {
+			$context = $1;
+			next;
+		}
 
-                # Handle weird unexpected elements
-                unless ( $element =~ /^=/ ) {
-                        return $class->_error("Unexpected element '$element'");
-                }
+		# Handle weird unexpected elements
+		unless ( $element =~ /^=/ ) {
+			return $class->_error("Unexpected element '$element'");
+		}
 
-                # Hand off to the Section constructor
-                my $Section = Test::Inline::Section->new( $element, $context ) or return undef;
-                push @Sections, $Section;
-        }
+		# Hand off to the Section constructor
+		my $Section = Test::Inline::Section->new( $element, $context ) or return undef;
+		push @Sections, $Section;
+	}
 
-        @Sections ? \@Sections : undef;
+	@Sections ? \@Sections : undef;
 }
 
 =pod
@@ -471,8 +471,8 @@ anonymous section, or false if it is a named section or a setup section.
 =cut
 
 sub anonymous {
-        my $self = shift;
-        ! (defined $self->{name} or $self->{setup});
+	my $self = shift;
+	! (defined $self->{name} or $self->{setup});
 }
 
 =pod
@@ -490,7 +490,7 @@ not have to run after any other named tests.
 =cut
 
 sub after {
-        keys %{$_[0]->{after}};
+	keys %{$_[0]->{after}};
 }
 
 =pod
@@ -509,7 +509,7 @@ not have any class-level dependencies.
 =cut
 
 sub classes {
-        keys %{$_[0]->{classes}};
+	keys %{$_[0]->{classes}};
 }
 
 =pod
@@ -518,7 +518,7 @@ sub classes {
 
   my $code = $Section->content;
 
-The C<content> method returns the actual testing code contents of the
+The C<content> method returns the actual testing code contents of the 
 section, with the leading C<=begin> and trailing C<=end> removed.
 
 Returns a string containing the code, or the null string C<""> if the

@@ -48,9 +48,9 @@ The following code removes bold tags from RTF documents, and then spits back
 out RTF.
 
   {
-
+  
     # Create our subclass
-
+      
       package UnboldRTF;
 
     # We'll be doing lots of printing without newlines, so don't buffer output
@@ -58,12 +58,12 @@ out RTF.
       $|++;
 
     # Subclassing magic...
-
+    
       use RTF::Parser;
       @UnboldRTF::ISA = ( 'RTF::Parser' );
-
+                        
     # Redefine the API nicely
-
+        
       sub parse_start { print STDERR "Starting...\n"; }
       sub group_start { print '{' }
       sub group_end   { print '}' }
@@ -76,8 +76,8 @@ out RTF.
 
   my %do_on_control = (
 
-        # What to do when we see any control we don't have
-        #   a specific action for... In this case, we print it.
+	# What to do when we see any control we don't have
+	#   a specific action for... In this case, we print it.
 
     '__DEFAULT__' => sub {
 
@@ -86,9 +86,9 @@ out RTF.
       print "\\$type$arg";
 
      },
-
+     
    # When we come across a bold tag, we just ignore it.
-
+     
      'b' => sub {},
 
   );
@@ -102,11 +102,11 @@ out RTF.
     my $parser = UnboldRTF->new();
 
   # Prime the object with our control handlers...
-
+ 
     $parser->control_definition( \%do_on_control );
-
+  
   # Don't skip undefined destinations...
-
+  
     $parser->dont_skip_destinations(1);
 
   # Start the parsing!
@@ -130,14 +130,14 @@ $VERSION = '1.09';
 my $DEBUG = 0;
 
 # Debugging stuff I'm leaving in in case someone is using it..,
-        use constant PARSER_TRACE => 0;
+	use constant PARSER_TRACE => 0;
+	
+	sub backtrace { 
+  		Carp::confess;			
+	}
 
-        sub backtrace {
-                Carp::confess;
-        }
-
-        $SIG{'INT'} = \&backtrace if PARSER_TRACE;
-        $SIG{__DIE__} = \&backtrace if PARSER_TRACE;
+	$SIG{'INT'} = \&backtrace if PARSER_TRACE;
+	$SIG{__DIE__} = \&backtrace if PARSER_TRACE;
 
 
 =head2 new
@@ -148,19 +148,19 @@ Creates a new RTF::Parser object. Doesn't accept any arguments.
 
 sub new {
 
-        # Get the real class name
-        my $proto = shift;
-        my $class = ref( $proto ) || $proto;
+	# Get the real class name
+	my $proto = shift;
+	my $class = ref( $proto ) || $proto;
+	
+	my $self = {};
+	
+	$self->{_RTF_CONTROL_USED}++ if $INC{'RTF/Control.pm'};
 
-        my $self = {};
+	$self->{_DONT_SKIP_DESTINATIONS} = 0;
+	
+	bless $self, $class;
 
-        $self->{_RTF_CONTROL_USED}++ if $INC{'RTF/Control.pm'};
-
-        $self->{_DONT_SKIP_DESTINATIONS} = 0;
-
-        bless $self, $class;
-
-        return $self;
+	return $self;
 
 }
 
@@ -171,19 +171,19 @@ sub new {
 
 sub _install_do_on_control {
 
-        my $self = shift;
-
-        return if $self->{_DO_ON_CONTROL};
-
-        if ( $self->{_RTF_CONTROL_USED} ) {
-
-                $self->{_DO_ON_CONTROL} = \%RTF::Control::do_on_control;
-
-        } else {
-
-                $self->{_DO_ON_CONTROL} = {};
-
-        }
+	my $self = shift;
+	
+	return if $self->{_DO_ON_CONTROL};
+	
+	if ( $self->{_RTF_CONTROL_USED} ) {
+	
+		$self->{_DO_ON_CONTROL} = \%RTF::Control::do_on_control;
+	
+	} else {
+	
+		$self->{_DO_ON_CONTROL} = {};
+	
+	}
 
 }
 
@@ -200,20 +200,20 @@ begin reading and processing.
 
 sub parse_stream {
 
-        my $self = shift;
-        my $stream = shift;
-        my $reader = shift;
+	my $self = shift;
+	my $stream = shift;
+	my $reader = shift;
+	
+	$self->_install_do_on_control();
+	
+	die("parse_stream no longer accepts a reader") if $reader;
 
-        $self->_install_do_on_control();
+	# Put an appropriately primed RTF::Tokenizer object into our object
+	$self->{_TOKENIZER} = RTF::Tokenizer->new( file => $stream ); 
 
-        die("parse_stream no longer accepts a reader") if $reader;
-
-        # Put an appropriately primed RTF::Tokenizer object into our object
-        $self->{_TOKENIZER} = RTF::Tokenizer->new( file => $stream );
-
-        $self->_parse();
-
-        return $self;
+	$self->_parse();
+	
+	return $self;
 
 }
 
@@ -224,25 +224,25 @@ Pass this function a string to begin reading and processing.
 =cut
 
 sub parse_string {
+ 
+	my $self = shift;
+	my $string = shift;
 
-        my $self = shift;
-        my $string = shift;
+	$self->_install_do_on_control();
 
-        $self->_install_do_on_control();
+	# Put an appropriately primed RTF::Tokenizer object into our object
+	$self->{_TOKENIZER} = RTF::Tokenizer->new( string => $string ); 
 
-        # Put an appropriately primed RTF::Tokenizer object into our object
-        $self->{_TOKENIZER} = RTF::Tokenizer->new( string => $string );
-
-        $self->_parse();
-
-        return $self;
+	$self->_parse();
+	
+	return $self;
 
 }
 
 =head2 control_definition
 
 The code that's executed when we trigger a control event is kept
-in a hash. We're holding this somewhere in our object. Earlier
+in a hash. We're holding this somewhere in our object. Earlier 
 versions would make the assumption we're being subclassed by
 RTF::Control, which isn't something I want to assume. If you are
 using RTF::Control, you don't need to worry about this, because
@@ -261,25 +261,25 @@ current control hash we're holding.
 
 sub control_definition {
 
-        my $self = shift;
+	my $self = shift;
 
-        if (@_) {
+	if (@_) {
+    
+    	if (ref $_[0] eq 'HASH') {
+    	
+      		$self->{_DO_ON_CONTROL} = shift;
+      		
+    	} else {
 
-        if (ref $_[0] eq 'HASH') {
+      		die "argument of control_definition() method must be an HASHREF";
 
-                $self->{_DO_ON_CONTROL} = shift;
-
-        } else {
-
-                die "argument of control_definition() method must be an HASHREF";
-
-                }
-
-        } else {
-
-        return $self->{_DO_ON_CONTROL};
-
-        }
+ 		}
+  
+  	} else {
+    			
+    	return $self->{_DO_ON_CONTROL};
+  
+  	}
 
 }
 
@@ -292,18 +292,18 @@ has been loaded. If you don't pass it an argument, it'll return what it thinks..
 
 sub rtf_control_emulation {
 
-        my $self = shift;
-        my $bool = shift;
+	my $self = shift;
+	my $bool = shift;
+	
+	if ( defined $bool ) {
 
-        if ( defined $bool ) {
-
-                $self->{_RTF_CONTROL_USED} = $bool;
-
-        } else {
-
-                return $self->{_RTF_CONTROL_USED};
-
-        }
+		$self->{_RTF_CONTROL_USED} = $bool;
+	
+	} else {
+	
+		return $self->{_RTF_CONTROL_USED};
+	
+	}
 
 }
 
@@ -317,73 +317,73 @@ to process destinations, 0 to skip the ones we don't understand.
 
 sub dont_skip_destinations {
 
-        my $self = shift;
-        my $bool = shift;
+	my $self = shift;
+	my $bool = shift;
 
-        $self->{_DONT_SKIP_DESTINATIONS} = $bool;
+	$self->{_DONT_SKIP_DESTINATIONS} = $bool;
 
 }
 
 
 # This is how he decided to call control actions. Leaving
 #   it to do the right thing at the moment... Users of the
-#       module don't need to know our dirty little secret...
+#	module don't need to know our dirty little secret...
 
 {
-        package RTF::Action;
-        use RTF::Config;
+	package RTF::Action;		
+ 	use RTF::Config;
 
-        use vars qw($AUTOLOAD);
+	use vars qw($AUTOLOAD);
+	
+	my $default;
+	
+	# The original RTF::Parser allowed $LOGFILE to be set
+	# that made RTF::Config do fun things. We're allowing it
+	# to, but wrapping it up a bit more carefully...
+	if ( $LOG_FILE ) {
+	
+		$default = sub { $RTF::Control::not_processed{$_[1]}++ }
+	
+	}
+      		
+  	my $sub;
 
-        my $default;
+	sub AUTOLOAD {
+    
+    	my $self = $_[0];
+    
+    	$AUTOLOAD =~ s/^.*:://;	
+    	    
+    	no strict 'refs';
+    	
+    	if (defined ($sub = $self->{_DO_ON_CONTROL}->{$AUTOLOAD})) {
+     
+     		# Yuck, empty if. But we're just going to leave it for a while
+     
+			} else {
+			
+				if ( $default ) {
+			
+					$sub = $default 
+			
+				} elsif ( $self->{_DO_ON_CONTROL}->{'__DEFAULT__'} ) {
 
-        # The original RTF::Parser allowed $LOGFILE to be set
-        # that made RTF::Config do fun things. We're allowing it
-        # to, but wrapping it up a bit more carefully...
-        if ( $LOG_FILE ) {
-
-                $default = sub { $RTF::Control::not_processed{$_[1]}++ }
-
-        }
-
-        my $sub;
-
-        sub AUTOLOAD {
-
-        my $self = $_[0];
-
-        $AUTOLOAD =~ s/^.*:://;
-
-        no strict 'refs';
-
-        if (defined ($sub = $self->{_DO_ON_CONTROL}->{$AUTOLOAD})) {
-
-                # Yuck, empty if. But we're just going to leave it for a while
-
-                        } else {
-
-                                if ( $default ) {
-
-                                        $sub = $default
-
-                                } elsif ( $self->{_DO_ON_CONTROL}->{'__DEFAULT__'} ) {
-
-                                        $sub = $self->{_DO_ON_CONTROL}->{'__DEFAULT__'};
-
-                                } else {
-
-                                        $sub = sub {};
-
-                                }
-
-        }
-
-        # I don't understand why he's using goto here...
-        *$AUTOLOAD = $sub;
-        goto &$sub;
-
+					$sub = $self->{_DO_ON_CONTROL}->{'__DEFAULT__'};
+			
+				} else {
+			
+					$sub = sub {};
+			
+				}
+    
+    	}
+    	
+    	# I don't understand why he's using goto here...
+    	*$AUTOLOAD = $sub; 
+    	goto &$sub; 
+  
   }
-
+  
 }
 
 
@@ -444,180 +444,180 @@ sub group_start {}
 sub group_end {}
 sub text {}
 sub char {}
-sub symbol {} # -_~:|{}*'\
+sub symbol {} # -_~:|{}*'\ 
 sub bitmap {} # \{bm(?:[clr]|cwd)
-sub binary {}
+sub binary {}			
 
 # This is the big, bad parse routine that isn't called directly.
 # We loop around RTF::Tokenizer, making event calls when we need to.
 
-        sub _parse {
-
-                # Read in our object
-                        my $self = shift;
-
-                # Execute any pre-parse subroutines
-                        $self->parse_start();
-
-                # Loop until we find the EOF
-                        while (1) {
-
-                                # Read in our initial token
-                                        my ( $token_type, $token_argument, $token_parameter)
-                                                = $self->{_TOKENIZER}->get_token();
-
-                                # Control words
-                                        if ( $token_type eq 'control' ) {
-
-                                                # We have a special handler for control words
-                                                        $self->_control( $token_argument, $token_parameter );
-
-                                # Plain text
-                                        } elsif ( $token_type eq 'text' ) {
-
-                                                # Send it to the text() routine
-                                                        $self->text( $token_argument );
-
-                                # Groups
-                                        } elsif ( $token_type eq 'group' ) {
-
-                                                # Call the appropriate handler
-                                                        $token_argument ?
-                                                                $self->group_start :
-                                                                $self->group_end;
-
-                                # EOF
-                                        } else {
-
-                                                last;
-
-                                        }
-
-                        }
-
-                # All done
-                        $self->parse_end();
-                        $self;
-
-        }
-
+	sub _parse {
+	
+		# Read in our object
+ 			my $self = shift;
+ 			
+ 		# Execute any pre-parse subroutines
+ 			$self->parse_start();
+ 			
+ 		# Loop until we find the EOF
+ 			while (1) {
+ 			
+ 				# Read in our initial token
+ 					my ( $token_type, $token_argument, $token_parameter)
+ 						= $self->{_TOKENIZER}->get_token();
+ 						
+ 				# Control words
+ 					if ( $token_type eq 'control' ) {
+ 				
+ 						# We have a special handler for control words
+ 							$self->_control( $token_argument, $token_parameter );
+ 				
+ 				# Plain text
+ 					} elsif ( $token_type eq 'text' ) {
+ 					
+ 						# Send it to the text() routine
+ 							$self->text( $token_argument );
+ 				
+ 				# Groups
+ 					} elsif ( $token_type eq 'group' ) {
+ 				
+ 						# Call the appropriate handler
+ 							$token_argument ?
+ 								$self->group_start :
+ 								$self->group_end;	
+ 				
+ 				# EOF
+ 					} else {
+ 			
+ 						last;	
+ 					
+ 					}	
+	
+ 			}
+ 			
+ 		# All done
+ 			$self->parse_end();
+ 			$self;
+ 	
+	}
+	
 # Control word handler (yeuch)
-#       purl, be RTF barbie is <reply>Control words are *HARD*!
-        sub _control {
+#	purl, be RTF barbie is <reply>Control words are *HARD*!
+	sub _control {
+	
+		my $self = shift;
+		my $type = shift;
+		my $arg  = shift;
+	
+		#  standard, control_symbols, hex
+		
+		# Funky destination
+			if ( $type eq '*' ) {
+	
+				# We might actually want to process it...
+				if ( $self->{_DONT_SKIP_DESTINATIONS} ) {
 
-                my $self = shift;
-                my $type = shift;
-                my $arg  = shift;
-
-                #  standard, control_symbols, hex
-
-                # Funky destination
-                        if ( $type eq '*' ) {
-
-                                # We might actually want to process it...
-                                if ( $self->{_DONT_SKIP_DESTINATIONS} ) {
-
-                                        $self->_control_execute( '*' );
-
-                                } else {
-
-                                # Grab the next token
-                                        my ( $token_type, $token_argument, $token_parameter)
-                                                = $self->{_TOKENIZER}->get_token();
-
-                                # Basic sanity check
-                                        croak('Malformed RTF - \* not followed by a control...')
-                                                unless $token_type eq 'control';
-
-                                # Do we have a handler for it?
-                                        if ( defined $self->{_DO_ON_CONTROL}->{$token_argument} ) {
-                                                $self->_control_execute( $token_argument, $token_parameter )
-                                        } else {
-                                                $self->_skip_group();
-                                                $self->group_end();
-                                        }
-                                }
-
-                # Binary data
-                        } elsif ( $type eq 'bin' ) {
-
-                                # Grab the next token
-                                        my ( $token_type, $token_argument, $token_parameter)
-                                                = $self->{_TOKENIZER}->get_token();
-
-                                # Basic sanity check
-                                        croak('Malformed RTF - \bin not followed by text...')
-                                                unless $token_type eq 'text';
-
-                                # Send it to the handler
-                                        $self->binary( $token_argument );
-
-                # Implement a bitmap handler here
-
-                # Control symbols
-                        } elsif ( $type =~ m/[-_~:|{}*\\]/ ) {
-
-                                # Send it to the handler
-                                        $self->symbol( $type );
-
-                # Entity
-                        } elsif ( $type eq "'" ) {
-
-                                # Entity handler
-                                        $self->char( $arg );
-
-                # Some other control type - give it to the control executer
-                        } else {
-
-                                # Pass it to our default executer
-                                        $self->_control_execute( $type, $arg )
-
-                        }
-
-
-        }
-
+					$self->_control_execute( '*' );
+				
+				} else {
+	
+				# Grab the next token
+ 					my ( $token_type, $token_argument, $token_parameter)
+ 						= $self->{_TOKENIZER}->get_token();
+ 				
+ 				# Basic sanity check
+ 					croak('Malformed RTF - \* not followed by a control...')
+ 						unless $token_type eq 'control';
+ 						
+ 				# Do we have a handler for it?
+					if ( defined $self->{_DO_ON_CONTROL}->{$token_argument} ) {
+						$self->_control_execute( $token_argument, $token_parameter )
+					} else {
+						$self->_skip_group();
+						$self->group_end();
+					}
+				}
+						
+		# Binary data
+			} elsif ( $type eq 'bin' ) {
+			
+				# Grab the next token
+ 					my ( $token_type, $token_argument, $token_parameter)
+ 						= $self->{_TOKENIZER}->get_token();
+ 				 
+ 				# Basic sanity check
+ 					croak('Malformed RTF - \bin not followed by text...')
+ 						unless $token_type eq 'text';
+ 						
+ 				# Send it to the handler
+ 					$self->binary( $token_argument );		
+ 		
+ 		# Implement a bitmap handler here
+ 		
+ 		# Control symbols
+ 			} elsif ( $type =~ m/[-_~:|{}*\\]/ ) {
+ 			
+ 				# Send it to the handler
+ 					$self->symbol( $type );					
+			
+		# Entity
+			} elsif ( $type eq "'" ) {
+			
+				# Entity handler
+					$self->char( $arg );
+		
+		# Some other control type - give it to the control executer
+			} else {
+			
+				# Pass it to our default executer
+					$self->_control_execute( $type, $arg )
+			
+			}
+	
+	
+	}
+	
 # Control word executer (this is nasty)
-        sub _control_execute {
-
-
-                my $self = shift;
-                my $type = shift;
-                my $arg  = shift;
-
-                no strict 'refs';
-        &{"RTF::Action::$type"}($self, $type, $arg, 'start');
-
-        }
+	sub _control_execute {
+	
+	
+		my $self = shift;
+		my $type = shift;
+		my $arg  = shift;
+	
+		no strict 'refs';		
+    	&{"RTF::Action::$type"}($self, $type, $arg, 'start');
+	
+	}
 
 # Skip a group
-        sub _skip_group {
-
-                my $self = shift;
-
-                my $level_counter = 1;
-
-                while ( $level_counter ) {
-
-                        # Get a token
-                                my ( $token_type, $token_argument, $token_parameter)
-                                        = $self->{_TOKENIZER}->get_token();
-
-                        # Make sure we can't loop forever
-                                last if $token_type eq 'eof';
-
-                        # We're in business if it's a group
-                                if ($token_type eq 'group') {
-
-                                        $token_argument ?
-                                                $level_counter++ :
-                                                $level_counter-- ;
-
-                                }
-
-                }
-
-        }
+	sub _skip_group {
+	
+		my $self = shift;
+	
+		my $level_counter = 1;
+		
+		while ( $level_counter ) {
+		
+			# Get a token
+				my ( $token_type, $token_argument, $token_parameter)
+ 					= $self->{_TOKENIZER}->get_token();
+		
+			# Make sure we can't loop forever
+				last if $token_type eq 'eof';
+				
+			# We're in business if it's a group
+				if ($token_type eq 'group') {
+				
+					$token_argument ?
+						$level_counter++ :
+						$level_counter-- ;
+				
+				}
+		
+		}
+	
+	}
 
 1;
 

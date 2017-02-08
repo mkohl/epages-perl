@@ -7,7 +7,7 @@ package MIME::Tools;
 
 use strict;
 use vars (qw(@ISA %CONFIG @EXPORT_OK %EXPORT_TAGS $VERSION $ME
-             $M_DEBUG $M_WARNING $M_ERROR ));
+	     $M_DEBUG $M_WARNING $M_ERROR ));
 
 require Exporter;
 use IO::File;
@@ -167,9 +167,9 @@ sub textual_type {
 #
 sub tmpopen
 {
-        my ($args) = @_;
-        $args ||= {};
-        return File::Temp->new( %{$args} );
+	my ($args) = @_;
+	$args ||= {};
+	return File::Temp->new( %{$args} );
 }
 
 #------------------------------
@@ -208,7 +208,7 @@ three parts: a text file, an attached GIF, and some more text:
     ### Create the top-level, and set up the mail headers:
     $top = MIME::Entity->build(Type    =>"multipart/mixed",
                                From    => "me\@myhost.com",
-                               To      => "you\@yourhost.com",
+	                       To      => "you\@yourhost.com",
                                Subject => "Hello, nurse!");
 
     ### Part #1: a simple text document:
@@ -245,13 +245,13 @@ GIF files).
 
 You will need the following installed on your system:
 
-        File::Path
-        File::Spec
-        IPC::Open2              (optional)
-        MIME::Base64
-        MIME::QuotedPrint
-        Net::SMTP
-        Mail::Internet, ...     from the MailTools distribution.
+	File::Path
+	File::Spec
+	IPC::Open2              (optional)
+	MIME::Base64
+	MIME::QuotedPrint
+	Net::SMTP
+	Mail::Internet, ...     from the MailTools distribution.
 
 See the Makefile.PL in your distribution for the most-comprehensive
 list of prerequisite modules and their version numbers.
@@ -272,14 +272,14 @@ Here are the classes you'll generally be dealing with directly:
            `-----------'   \ filer()  | MIME::          |
               | parse()     `-------->| Parser::Filer   |
               | gives you             `-----------------'
-              | a...                                  | output_path()
-              |                                       | determines
-              |                                       | path() of...
-              |    head()       .--------.            |
+              | a...                        	      | output_path()
+              |                         	      | determines
+              |					      | path() of...
+              |    head()       .--------.	      |
               |    returns...   | MIME:: | get()      |
               V       .-------->| Head   | etc...     |
            .--------./          `--------'            |
-     .---> | MIME:: |                                 |
+     .---> | MIME:: | 				      |
      `-----| Entity |           .--------.            |
    parts() `--------'\          | MIME:: |           /
    returns            `-------->| Body   |<---------'

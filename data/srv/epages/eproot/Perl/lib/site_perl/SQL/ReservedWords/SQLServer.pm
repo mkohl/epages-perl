@@ -234,11 +234,11 @@ use constant SQLSERVER2005 => 0x04;
     sub is_reserved {
         return $WORDS{ uc pop } || 0;
     }
-
+    
     sub is_reserved_by_sqlserver7 {
         return &is_reserved & SQLSERVER7;
-    }
-
+    }    
+    
     sub is_reserved_by_sqlserver2000 {
         return &is_reserved & SQLSERVER2000;
     }
@@ -246,7 +246,7 @@ use constant SQLSERVER2005 => 0x04;
     sub is_reserved_by_sqlserver2005 {
         return &is_reserved & SQLSERVER2005;
     }
-
+    
     sub reserved_by {
         my $flags       = &is_reserved;
         my @reserved_by = ();

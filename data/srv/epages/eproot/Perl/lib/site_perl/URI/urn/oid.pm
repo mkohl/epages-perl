@@ -9,7 +9,7 @@ sub oid {
     my $self = shift;
     my $old = $self->nss;
     if (@_) {
-        $self->nss(join(".", @_));
+	$self->nss(join(".", @_));
     }
     return split(/\./, $old) if wantarray;
     return $old;

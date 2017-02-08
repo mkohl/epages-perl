@@ -48,7 +48,7 @@ sub run {
         die "STDIN is not a socket: specify a listen location";
     }
 
-    @{$self}{qw(stdin stdout stderr)}
+    @{$self}{qw(stdin stdout stderr)} 
       = (IO::Handle->new, IO::Handle->new, IO::Handle->new);
 
     my %env;
@@ -98,7 +98,7 @@ sub run {
             'psgi.version'      => [1,1],
             'psgi.url_scheme'   => ($env{HTTPS}||'off') =~ /^(?:on|1)$/i ? 'https' : 'http',
             'psgi.input'        => $self->{stdin},
-            'psgi.errors'       =>
+            'psgi.errors'       => 
                 ($self->{keep_stderr} ? \*STDERR : $self->{stderr}),
             'psgi.multithread'  => Plack::Util::FALSE,
             'psgi.multiprocess' => Plack::Util::TRUE,
@@ -351,7 +351,7 @@ Now you can use plackup to listen to the socket that you've just configured in A
   $  plackup -s FCGI --listen /tmp/myapp.sock psgi/myapp.psgi
 
 The above describes the "standalone" method, which is usually appropriate.
-There are other methods, described in more detail at
+There are other methods, described in more detail at 
 L<Catalyst::Engine::FastCGI/Standalone_server_mode> (with regards to Catalyst, but which may be set up similarly for Plack).
 
 See also L<http://www.fastcgi.com/mod_fastcgi/docs/mod_fastcgi.html#FastCgiExternalServer>

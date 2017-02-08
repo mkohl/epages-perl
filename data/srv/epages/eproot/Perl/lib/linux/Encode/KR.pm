@@ -22,7 +22,7 @@ Encode::KR - Korean Encodings
 
 =head1 SYNOPSIS
 
-    use Encode qw/encode decode/;
+    use Encode qw/encode decode/; 
     $euc_kr = encode("euc-kr", $utf8);   # loads Encode::KR implicitly
     $utf8   = decode("euc-kr", $euc_kr); # ditto
 
@@ -32,18 +32,18 @@ This module implements Korean charset encodings.  Encodings supported
 are as follows.
 
 
-  Canonical   Alias             Description
+  Canonical   Alias		Description
   --------------------------------------------------------------------
-  euc-kr      /\beuc.*kr$/i     EUC (Extended Unix Character)
+  euc-kr      /\beuc.*kr$/i	EUC (Extended Unix Character)
           /\bkr.*euc$/i
-  ksc5601-raw                   Korean standard code set (as is)
-  cp949       /(?:x-)?uhc$/i
+  ksc5601-raw			Korean standard code set (as is)
+  cp949	      /(?:x-)?uhc$/i
               /(?:x-)?windows-949$/i
               /\bks_c_5601-1987$/i
-                                Code Page 949 (EUC-KR + 8,822
+                                Code Page 949 (EUC-KR + 8,822 
                                 (additional Hangul syllables)
-  MacKorean                     EUC-KR + Apple Vendor Mappings
-  johab       JOHAB             A supplementary encoding defined in
+  MacKorean			EUC-KR + Apple Vendor Mappings
+  johab       JOHAB             A supplementary encoding defined in 
                                              Annex 3 of KS X 1001:1998
   iso-2022-kr                   iso-2022-kr                  [RFC1557]
   --------------------------------------------------------------------

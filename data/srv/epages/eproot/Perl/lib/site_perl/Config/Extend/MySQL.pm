@@ -45,7 +45,7 @@ This module extends other C<Config::> modules so they can read MySQL
 configuration files. It works by slurping and preprocessing the files
 before letting your favourite C<Config::> module parse the result.
 
-Currently supported modules are C<Config::IniFiles>, C<Config::INI::Reader>
+Currently supported modules are C<Config::IniFiles>, C<Config::INI::Reader> 
 and C<Config::Tiny>.
 
 =head2 Rationale
@@ -54,12 +54,12 @@ This module was written out of a need of reading MySQL configuration
 files from random machines. At first, the author thought they were just
 classical C<.INI> files, but soon discovered that they include additional
 features like C<!include> and C<!includedir>, and bare boolean options,
-which without surprise make most common modules choke or die.
+which without surprise make most common modules choke or die. 
 
 Hence this module which simply slurps all the files, recursing though the
-C<!include> and C<!includedir> directives, inlining their content in
-memory, and transforms the bare boolean options into explicitly assigned
-options.
+C<!include> and C<!includedir> directives, inlining their content in 
+memory, and transforms the bare boolean options into explicitly assigned 
+options. 
 
 As to why this module extends other modules instead of being on its own,
 it's because the author was too lazy to think of yet another API and
@@ -162,7 +162,7 @@ sub __new_from {
         return Config::Format::Ini::read_ini($content_r)
     }
     elsif ($backend eq "Config::Simple") {
-        # can't get Config::Simple to play nicely because it want to
+        # can't get Config::Simple to play nicely because it want to 
         # seek() and flock() the filehandle. seek() works on in-memory
         # filehandles, but flock() doesn't, and can't be faked/replaced
 
@@ -198,7 +198,7 @@ sub __read_config {
         opendir(my $dirh, $path) or return "";
 
         while (my $file = readdir($dirh)) {
-            # skip invisible files and directories we shouldn't
+            # skip invisible files and directories we shouldn't 
             # recurse into, like ../ or CVS/
             next if $skip{$file} or index($file, ".") == 0;
 
@@ -225,17 +225,17 @@ sub __read_config {
 
 =item C<Arguments must be given as a hash reference>
 
-B<(E)> As the message says, the arguments must be given to the
+B<(E)> As the message says, the arguments must be given to the 
 function or method as a hash reference.
 
 =item C<Backend module failed to parse '%s'>
 
-B<(F)> The backend module was unable to parse the given file.
+B<(F)> The backend module was unable to parse the given file. 
 See L<"CAVEATS"> for some hints.
 
 =item C<Can't load module %s: %s>
 
-B<(F)> The backend module could not be loaded.
+B<(F)> The backend module could not be loaded. 
 
 =item C<Can't read in-memory buffer: %s>
 
@@ -269,7 +269,7 @@ same ways, and have different behaviours:
 
 =item *
 
-C<Config::IniFiles> doesn't want to create
+C<Config::IniFiles> doesn't want to create 
 
 =item *
 
@@ -278,15 +278,15 @@ for beginning comments.
 
 =item *
 
-when assigning the same option twice, C<Config::Tiny> replaces the old
+when assigning the same option twice, C<Config::Tiny> replaces the old 
 value with the new one, C<Config::IniFiles> appends it with a newline.
 
 =back
 
 And probably many more.
 
-Also note that in order to keep the code simple, this module wants
-Perl 5.6 or newer. However, a patch to make it work on Perl 5.5.3 is
+Also note that in order to keep the code simple, this module wants 
+Perl 5.6 or newer. However, a patch to make it work on Perl 5.5.3 is 
 included in the distribution (F<patches/patch-for-perl5.5.diff>).
 
 
@@ -305,10 +305,10 @@ SE<eacute>bastien Aperghis-Tramoni, C<< <sebastien at aperghis.net> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests
-to C<bug-config-extend-mysql at rt.cpan.org>, or through the web interface
+Please report any bugs or feature requests 
+to C<bug-config-extend-mysql at rt.cpan.org>, or through the web interface 
 at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Config-Extend-MySQL>.
-I will be notified, and then you'll automatically be notified of
+I will be notified, and then you'll automatically be notified of 
 progress on your bug as I make changes.
 
 

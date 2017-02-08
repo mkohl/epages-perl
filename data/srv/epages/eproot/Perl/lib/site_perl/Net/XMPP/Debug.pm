@@ -41,8 +41,8 @@ Net::XMPP::Debug - XMPP Debug Module
     $Debug = new Net::XMPP::Debug();
 
     $Debug->Init(level=>2,
-                     file=>"stdout",
-                     header=>"MyScript");
+	             file=>"stdout",
+  	             header=>"MyScript");
 
     $Debug->Log0("Connection established");
 

@@ -12,69 +12,69 @@ our @ISA = qw(Algorithm::CheckDigits);
 my @weight = ( 4,2,1,6,3,7,9,10,5,8,4,2 );
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{11})(\d)$/) {
-                return $2 == $self->_compute_checkdigit($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{11})(\d)$/) {
+		return $2 == $self->_compute_checkdigit($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^\d{11}$/) {
-                my $cd = $self->_compute_checkdigit($number);
-                return  0 > $cd ? '' : $number . $cd;
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^\d{11}$/) {
+		my $cd = $self->_compute_checkdigit($number);
+		return  0 > $cd ? '' : $number . $cd;
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{11})(\d)$/) {
-                return $1 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{11})(\d)$/) {
+		return $1 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{11})(\d)$/) {
-                return $2 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{11})(\d)$/) {
+		return $2 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        if ($number =~ /^\d{11}$/) {
+	if ($number =~ /^\d{11}$/) {
 
-                my @digits = split(//,$number);
-                my $sum    = 0;
-                my $cf     = 0;
+		my @digits = split(//,$number);
+		my $sum    = 0;
+		my $cf     = 0;
 
-                for (my $i = 0; $i <= $#digits; $i++) {
+		for (my $i = 0; $i <= $#digits; $i++) {
 
-                        $sum += $weight[$i] * $digits[$i];
+			$sum += $weight[$i] * $digits[$i];
 
-                }
-                $sum %= 11;
-                for (my $i = 0; $i <= 9; $i++) {
-                        return $i
-                                if (10 == ($sum + $weight[11] * $i) % 11);
-                }
-        }
-        return -1;
+		}
+		$sum %= 11;
+		for (my $i = 0; $i <= 9; $i++) {
+			return $i
+				if (10 == ($sum + $weight[11] * $i) % 11);
+		}
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -93,7 +93,7 @@ CheckDigits::M11_003 - compute check digits for PKZ (GDR)
   $pkz = CheckDigits('pkz');
 
   if ($pkz->is_valid('150765400354')) {
-        # do something
+	# do something
   }
 
   $cn = $pkz->complete('15076540035');
@@ -104,7 +104,7 @@ CheckDigits::M11_003 - compute check digits for PKZ (GDR)
 
   $bn = $pkz->basenumber('150765400354');
   # $bn = '150765400354'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

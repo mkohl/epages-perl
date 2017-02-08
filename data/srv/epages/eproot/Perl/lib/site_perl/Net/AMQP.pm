@@ -13,7 +13,7 @@ Net::AMQP - Advanced Message Queue Protocol (de)serialization and representation
   ...
 
   my @frames = Net::AMQP->parse_raw_frames(\$input);
-
+  
   ...
 
   foreach my $frame (@frames) {

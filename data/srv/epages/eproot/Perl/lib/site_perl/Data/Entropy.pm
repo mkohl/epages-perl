@@ -4,15 +4,15 @@ Data::Entropy - entropy (randomness) management
 
 =head1 SYNOPSIS
 
-        use Data::Entropy qw(entropy_source);
+	use Data::Entropy qw(entropy_source);
 
-        $i = entropy_source->get_int(12345);
+	$i = entropy_source->get_int(12345);
 
-        use Data::Entropy qw(with_entropy_source);
+	use Data::Entropy qw(with_entropy_source);
 
-        with_entropy_source $source, sub {
-                @a = shuffle(@a);
-        };
+	with_entropy_source $source, sub {
+		@a = shuffle(@a);
+	};
 
 =head1 DESCRIPTION
 
@@ -67,31 +67,31 @@ C<with_entropy_source>, if any, or otherwise the default entropy source.
 my $default_entropy_source;
 
 sub entropy_source() {
-        if(is_ref($entropy_source, "CODE")) {
-                my $source = $entropy_source->();
-                croak "entropy source thunk returned another thunk"
-                        if is_ref($source, "CODE");
-                $entropy_source = $source;
-        }
-        unless(defined $entropy_source) {
-                unless(defined $default_entropy_source) {
-                        my $key = "";
-                        for(my $i = 32; $i--; ) {
-                                $key .= chr(int(CORE::rand(256)));
-                        }
-                        require Crypt::Rijndael;
-                        require Data::Entropy::RawSource::CryptCounter;
-                        require Data::Entropy::Source;
-                        $default_entropy_source =
-                                Data::Entropy::Source->new(
-                                        Data::Entropy::RawSource::CryptCounter
-                                                ->new(Crypt::Rijndael
-                                                        ->new($key)),
-                                        "getc");
-                }
-                $entropy_source = $default_entropy_source;
-        }
-        return $entropy_source;
+	if(is_ref($entropy_source, "CODE")) {
+		my $source = $entropy_source->();
+		croak "entropy source thunk returned another thunk"
+			if is_ref($source, "CODE");
+		$entropy_source = $source;
+	}
+	unless(defined $entropy_source) {
+		unless(defined $default_entropy_source) {
+			my $key = "";
+			for(my $i = 32; $i--; ) {
+				$key .= chr(int(CORE::rand(256)));
+			}
+			require Crypt::Rijndael;
+			require Data::Entropy::RawSource::CryptCounter;
+			require Data::Entropy::Source;
+			$default_entropy_source =
+				Data::Entropy::Source->new(
+					Data::Entropy::RawSource::CryptCounter
+						->new(Crypt::Rijndael
+							->new($key)),
+					"getc");
+		}
+		$entropy_source = $default_entropy_source;
+	}
+	return $entropy_source;
 }
 
 =item with_entropy_source SOURCE, CLOSURE
@@ -112,9 +112,9 @@ source or C<undef>, but not another function reference.
 =cut
 
 sub with_entropy_source($&) {
-        my($source, $closure) = @_;
-        local $entropy_source = $source;
-        $closure->();
+	my($source, $closure) = @_;
+	local $entropy_source = $source;
+	$closure->();
 }
 
 =back

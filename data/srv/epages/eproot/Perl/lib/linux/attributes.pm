@@ -30,69 +30,69 @@ sub _modify_attrs_and_deprecate {
     # XS, we can't control the warning based on *our* caller's lexical settings,
     # and the warned line is in this package)
     grep {
-        $deprecated{$svtype} && /$deprecated{$svtype}/ ? do {
-            require warnings;
-            warnings::warnif('deprecated', "Attribute \"$1\" is deprecated");
-            0;
-        } : 1
+	$deprecated{$svtype} && /$deprecated{$svtype}/ ? do {
+	    require warnings;
+	    warnings::warnif('deprecated', "Attribute \"$1\" is deprecated");
+	    0;
+	} : 1
     } _modify_attrs(@_);
 }
 
 sub import {
     @_ > 2 && ref $_[2] or do {
-        require Exporter;
-        goto &Exporter::import;
+	require Exporter;
+	goto &Exporter::import;
     };
     my (undef,$home_stash,$svref,@attrs) = @_;
 
     my $svtype = uc reftype($svref);
     my $pkgmeth;
     $pkgmeth = UNIVERSAL::can($home_stash, "MODIFY_${svtype}_ATTRIBUTES")
-        if defined $home_stash && $home_stash ne '';
+	if defined $home_stash && $home_stash ne '';
     my @badattrs;
     if ($pkgmeth) {
-        my @pkgattrs = _modify_attrs_and_deprecate($svtype, $svref, @attrs);
-        @badattrs = $pkgmeth->($home_stash, $svref, @pkgattrs);
-        if (!@badattrs && @pkgattrs) {
+	my @pkgattrs = _modify_attrs_and_deprecate($svtype, $svref, @attrs);
+	@badattrs = $pkgmeth->($home_stash, $svref, @pkgattrs);
+	if (!@badattrs && @pkgattrs) {
             require warnings;
-            return unless warnings::enabled('reserved');
-            @pkgattrs = grep { m/\A[[:lower:]]+(?:\z|\()/ } @pkgattrs;
-            if (@pkgattrs) {
-                for my $attr (@pkgattrs) {
-                    $attr =~ s/\(.+\z//s;
-                }
-                my $s = ((@pkgattrs == 1) ? '' : 's');
-                carp "$svtype package attribute$s " .
-                    "may clash with future reserved word$s: " .
-                    join(' : ' , @pkgattrs);
-            }
-        }
+	    return unless warnings::enabled('reserved');
+	    @pkgattrs = grep { m/\A[[:lower:]]+(?:\z|\()/ } @pkgattrs;
+	    if (@pkgattrs) {
+		for my $attr (@pkgattrs) {
+		    $attr =~ s/\(.+\z//s;
+		}
+		my $s = ((@pkgattrs == 1) ? '' : 's');
+		carp "$svtype package attribute$s " .
+		    "may clash with future reserved word$s: " .
+		    join(' : ' , @pkgattrs);
+	    }
+	}
     }
     else {
-        @badattrs = _modify_attrs_and_deprecate($svtype, $svref, @attrs);
+	@badattrs = _modify_attrs_and_deprecate($svtype, $svref, @attrs);
     }
     if (@badattrs) {
-        croak "Invalid $svtype attribute" .
-            (( @badattrs == 1 ) ? '' : 's') .
-            ": " .
-            join(' : ', @badattrs);
+	croak "Invalid $svtype attribute" .
+	    (( @badattrs == 1 ) ? '' : 's') .
+	    ": " .
+	    join(' : ', @badattrs);
     }
 }
 
 sub get ($) {
     @_ == 1  && ref $_[0] or
-        croak 'Usage: '.__PACKAGE__.'::get $ref';
+	croak 'Usage: '.__PACKAGE__.'::get $ref';
     my $svref = shift;
     my $svtype = uc reftype($svref);
     my $stash = _guess_stash($svref);
     $stash = caller unless defined $stash;
     my $pkgmeth;
     $pkgmeth = UNIVERSAL::can($stash, "FETCH_${svtype}_ATTRIBUTES")
-        if defined $stash && $stash ne '';
+	if defined $stash && $stash ne '';
     return $pkgmeth ?
-                (_fetch_attrs($svref), $pkgmeth->($stash, $svref)) :
-                (_fetch_attrs($svref))
-        ;
+		(_fetch_attrs($svref), $pkgmeth->($stash, $svref)) :
+		(_fetch_attrs($svref))
+	;
 }
 
 sub require_version { goto &UNIVERSAL::VERSION }
@@ -114,7 +114,7 @@ attributes - get/set subroutine or variable attributes
   my ($x,@y,%z) : Bent = 1;
   my $s = sub : method { ... };
 
-  use attributes ();    # optional, to get subroutine declarations
+  use attributes ();	# optional, to get subroutine declarations
   my @attrlist = attributes::get(\&foo);
 
   use attributes 'get'; # import the attributes::get subroutine
@@ -180,8 +180,8 @@ is equivalent to
 
   use attributes __PACKAGE__, \&foo, 'method';
 
-As you might know this calls the C<import> function of C<attributes> at compile
-time with these parameters: 'attributes', the caller's package name, the reference
+As you might know this calls the C<import> function of C<attributes> at compile 
+time with these parameters: 'attributes', the caller's package name, the reference 
 to the code and 'method'.
 
   attributes->import( __PACKAGE__, \&foo, 'method' );
@@ -335,11 +335,11 @@ Some examples of syntactically valid attribute lists:
 
 Some examples of syntactically invalid attribute lists (with annotation):
 
-    switch(10,foo()             # ()-string not balanced
-    Ugly('(')                   # ()-string not balanced
-    5x5                         # "5x5" not a valid identifier
-    Y2::north                   # "Y2::north" not a simple identifier
-    foo + bar                   # "+" neither a colon nor whitespace
+    switch(10,foo()		# ()-string not balanced
+    Ugly('(')			# ()-string not balanced
+    5x5				# "5x5" not a valid identifier
+    Y2::north			# "Y2::north" not a simple identifier
+    foo + bar			# "+" neither a colon nor whitespace
 
 =head1 EXPORTS
 

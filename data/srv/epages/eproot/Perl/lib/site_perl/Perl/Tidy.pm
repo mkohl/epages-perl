@@ -416,7 +416,7 @@ EOM
                 croak <<EOM;
 ------------------------------------------------------------------------
 Please check value of -dump_options_type in call to perltidy;
-saw: '$dump_options_type'
+saw: '$dump_options_type' 
 expecting: 'perltidyrc' or 'full'
 ------------------------------------------------------------------------
 EOM
@@ -460,7 +460,7 @@ EOM
                 my ( $rargv, $msg ) = parse_args($argv);
                 if ($msg) {
                     die <<EOM;
-Error parsing this string passed to to perltidy with 'argv':
+Error parsing this string passed to to perltidy with 'argv': 
 $msg
 EOM
                 }
@@ -1982,7 +1982,7 @@ sub process_command_line {
             if ($config_file) {
                 warn <<EOM;
  Conflict: a perltidyrc configuration file was specified both as this
- perltidy call parameter: $perltidyrc_stream
+ perltidy call parameter: $perltidyrc_stream 
  and with this -profile=$config_file.
  Using -profile=$config_file.
 EOM
@@ -2227,8 +2227,8 @@ sub check_options {
         && $rOpts->{'opening-brace-on-new-line'} )
     {
         warn <<EOM;
- Conflict: you specified both 'opening-brace-always-on-right' (-bar) and
-  'opening-brace-on-new-line' (-bl).  Ignoring -bl.
+ Conflict: you specified both 'opening-brace-always-on-right' (-bar) and 
+  'opening-brace-on-new-line' (-bl).  Ignoring -bl. 
 EOM
         $rOpts->{'opening-brace-on-new-line'} = 0;
     }
@@ -2365,7 +2365,7 @@ sub expand_command_abbreviations {
 
             if ($config_file) {
                 die <<"DIE";
-Please check your configuration file $config_file for circular-references.
+Please check your configuration file $config_file for circular-references. 
 To deactivate it, use -npro.
 DIE
             }
@@ -2385,7 +2385,7 @@ sub dump_short_names {
     print STDOUT <<EOM;
 List of short names.  This list shows how all abbreviations are
 translated into other abbreviations and, eventually, into long names.
-New abbreviations may be defined in a .perltidyrc file.
+New abbreviations may be defined in a .perltidyrc file.  
 For a list of all long names, use perltidy --dump-long-names (-dln).
 --------------------------------------------------------------------------
 EOM
@@ -2957,7 +2957,7 @@ sub readable_options {
 
 sub show_version {
     print <<"EOM";
-This is perltidy, v$VERSION
+This is perltidy, v$VERSION 
 
 Copyright 2000-2010, Steve Hancock
 
@@ -2998,8 +2998,8 @@ I/O control
  -f      force perltidy to read a binary file
  -g      like -log but writes more detailed .LOG file, for debugging scripts
  -opt    write the set of options actually used to a .LOG file
- -npro   ignore .perltidyrc configuration command file
- -pro=file   read configuration commands from file instead of .perltidyrc
+ -npro   ignore .perltidyrc configuration command file 
+ -pro=file   read configuration commands from file instead of .perltidyrc 
  -st     send output to standard output, STDOUT
  -se     send error output to standard error output, STDERR
  -v      display version number to standard output and quit
@@ -3023,11 +3023,11 @@ Whitespace Control
  -bbvtl=s  make -bbvt to apply to selected list of block types
  -pt=n   paren tightness (n=0, 1 or 2)
  -sbt=n  square bracket tightness (n=0, 1, or 2)
- -bvt=n  brace vertical tightness,
+ -bvt=n  brace vertical tightness, 
          n=(0=open, 1=close unless multiple steps on a line, 2=always close)
  -pvt=n  paren vertical tightness (see -bvt for n)
  -sbvt=n square bracket vertical tightness (see -bvt for n)
- -bvtc=n closing brace vertical tightness:
+ -bvtc=n closing brace vertical tightness: 
          n=(0=open, 1=sometimes close, 2=always close)
  -pvtc=n closing paren vertical tightness, see -bvtc for n.
  -sbvtc=n closing square bracket vertical tightness, see -bvtc for n.
@@ -3035,9 +3035,9 @@ Whitespace Control
  -lp     line up parentheses, brackets, and non-BLOCK braces
  -sfs    add space before semicolon in for( ; ; )
  -aws    allow perltidy to add whitespace (default)
- -dws    delete all old non-essential whitespace
+ -dws    delete all old non-essential whitespace 
  -icb    indent closing brace of a code block
- -cti=n  closing indentation of paren, square bracket, or non-block brace:
+ -cti=n  closing indentation of paren, square bracket, or non-block brace: 
          n=0 none, =1 align with opening, =2 one full indentation level
  -icp    equivalent to -cti=2
  -wls=s  want space left of tokens in string; i.e. -nwls='+ - * /'
@@ -3058,7 +3058,7 @@ Line Break Control
  -ce     cuddled else; use this style: '} else {'
  -dnl    delete old newlines (default)
  -l=n    maximum line length;  default n=80
- -bl     opening brace on new line
+ -bl     opening brace on new line 
  -sbl    opening sub brace on new line.  value of -bl is used if not given.
  -bli    opening brace on new line and indented
  -bar    opening brace always on right, even for long clauses
@@ -3091,7 +3091,7 @@ Comment controls
  -cscp=s change closing side comment prefix to be other than '## end'
  -cscl=s change closing side comment to apply to selected list of blocks
  -csci=n minimum number of lines needed to apply a -csc tag, default n=6
- -csct=n maximum number of columns of appended text, default n=20
+ -csct=n maximum number of columns of appended text, default n=20 
  -cscw   causes warning if old side comment is overwritten with -csc
 
  -sbc    use 'static block comments' identified by leading '##' (default)
@@ -3103,18 +3103,18 @@ Comment controls
 
 Delete selected text
  -dac    delete all comments AND pod
- -dbc    delete block comments
- -dsc    delete side comments
+ -dbc    delete block comments     
+ -dsc    delete side comments  
  -dp     delete pod
 
 Send selected text to a '.TEE' file
  -tac    tee all comments AND pod
- -tbc    tee block comments
- -tsc    tee side comments
- -tp     tee pod
+ -tbc    tee block comments       
+ -tsc    tee side comments       
+ -tp     tee pod           
 
 Outdenting
- -olq    outdent long quoted strings (default)
+ -olq    outdent long quoted strings (default) 
  -olc    outdent a long block comment line
  -ola    outdent statement labels
  -okw    outdent control keywords (redo, next, last, goto, return)
@@ -3154,7 +3154,7 @@ HTML
 
 A prefix of "n" negates short form toggle switches, and a prefix of "no"
 negates the long forms.  For example, -nasc means don't add missing
-semicolons.
+semicolons.  
 
 If you are unable to see this entire text, try "perltidy -h | more"
 For more detailed information, and additional options, try "man perltidy",
@@ -4087,7 +4087,7 @@ BUGS file at http://perltidy.sourceforge.net.  If the problem is not
 listed there, please report it so that it can be corrected.  Include the
 smallest possible script which produces this message, along with the
 .LOG file if appropriate.  See the manual pages for contact information.
-Your efforts are appreciated.
+Your efforts are appreciated.  
 Thank you!
 EOM
             my $added_semicolon_count = 0;
@@ -4712,10 +4712,10 @@ sub write_style_sheet_data {
     $fh->print(<<"EOM");
 /* default style sheet generated by perltidy */
 body {background: $bg_color; color: $text_color}
-pre { color: $text_color;
+pre { color: $text_color; 
       background: $pre_bg_color;
       font-family: courier;
-    }
+    } 
 
 EOM
 
@@ -5227,7 +5227,7 @@ ENDCSS
     my $title      = escape_html($input_file);
     my $date       = localtime;
     $html_fh->print( <<"HTML_START");
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!-- Generated by perltidy on $date -->
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -7076,7 +7076,7 @@ sub check_options {
             warn <<EOM;
 -----------------------------------------------------------------------
 Conflict: -lp  conflicts with -io, -fnl, -nanl, or -ndnl; ignoring -lp
-
+    
 The -lp indentation logic requires that perltidy be able to coordinate
 arbitrarily large numbers of line breakpoints.  This isn't possible
 with these flags. Sometimes an acceptable workaround is to use -wocb=3
@@ -7755,7 +7755,7 @@ EOM
             $tokenl eq 'my'
 
             #  /^(for|foreach)$/
-            && $is_for_foreach{$tokenll}
+            && $is_for_foreach{$tokenll} 
             && $tokenr =~ /^\$/
           )
 
@@ -27844,18 +27844,18 @@ sub dump_token_types {
     # adding NEW_TOKENS: add a comment here
     print $fh <<'END_OF_LIST';
 
-Here is a list of the token types currently used for lines of type 'CODE'.
-For the following tokens, the "type" of a token is just the token itself.
+Here is a list of the token types currently used for lines of type 'CODE'.  
+For the following tokens, the "type" of a token is just the token itself.  
 
 .. :: << >> ** && .. || // -> => += -= .= %= &= |= ^= *= <>
 ( ) <= >= == =~ !~ != ++ -- /= x=
-... **= <<= >>= &&= ||= //= <=>
+... **= <<= >>= &&= ||= //= <=> 
 , + - / * | % ! x ~ = \ ? : . < > ^ &
 
 The following additional token types are defined:
 
  type    meaning
-    b    blank (white space)
+    b    blank (white space) 
     {    indent: opening structural curly brace or square bracket or paren
          (code block, anonymous hash reference, or anonymous array reference)
     }    outdent: right structural curly brace or square bracket or paren
@@ -27864,7 +27864,7 @@ The following additional token types are defined:
     (    left non-structural paren (all but a list right of an =)
     )    right non-structural parena
     L    left non-structural curly brace (enclosing a key)
-    R    right non-structural curly brace
+    R    right non-structural curly brace 
     ;    terminal semicolon
     f    indicates a semicolon in a "for" statement
     h    here_doc operator <<
@@ -27890,9 +27890,9 @@ The following additional token types are defined:
     p    unary +
     m    unary -
     pp   pre-increment operator ++
-    mm   pre-decrement operator --
+    mm   pre-decrement operator -- 
     A    : used as attribute separator
-
+    
     Here are the '_line_type' codes used internally:
     SYSTEM         - system-specific code before hash-bang line
     CODE           - line of perl code (including comments)
@@ -28449,9 +28449,9 @@ either a B<getline> or B<print> method, as appropriate.
         destination       - the destination of the formatted output
         stderr            - standard error output
         perltidyrc        - the .perltidyrc file
-        logfile           - the .LOG file stream, if any
+        logfile           - the .LOG file stream, if any 
         errorfile         - the .ERR file stream, if any
-        dump_options      - ref to a hash to receive parameters (see below),
+        dump_options      - ref to a hash to receive parameters (see below), 
         dump_options_type - controls contents of dump_options
         dump_getopt_flags - ref to a hash to receive Getopt flags
         dump_options_category - ref to a hash giving category of options
@@ -28480,7 +28480,7 @@ input stream.
 =item destination
 
 If the B<destination> parameter is given, it will be used to define the
-file or memory location to receive output of perltidy.
+file or memory location to receive output of perltidy.  
 
 =item stderr
 
@@ -28490,7 +28490,7 @@ to what would otherwise go to the standard error output device.
 =item perltidyrc
 
 If the B<perltidyrc> file is given, it will be used instead of any
-F<.perltidyrc> configuration file that would otherwise be used.
+F<.perltidyrc> configuration file that would otherwise be used. 
 
 =item argv
 
@@ -28566,10 +28566,10 @@ B<filter_example.pl> in the perltidy distribution.
 
 The following example passes perltidy a snippet as a reference
 to a string and receives the result back in a reference to
-an array.
+an array.  
 
  use Perl::Tidy;
-
+ 
  # some messy source code to format
  my $source = <<'EOM';
  use strict;
@@ -28577,12 +28577,12 @@ an array.
  print "A poll of 10 random programmers gave these results:\n";
  foreach(0..10) {
  my $i=int ($rand+rand());
- print " $editors[$i] users are from Venus" . ", " .
- "$editors[1-$i] users are from Mars" .
+ print " $editors[$i] users are from Venus" . ", " . 
+ "$editors[1-$i] users are from Mars" . 
  "\n";
  }
  EOM
-
+ 
  # We'll pass it as ref to SCALAR and receive it in a ref to ARRAY
  my @dest;
  perltidy( source => \$source, destination => \@dest );
@@ -28597,13 +28597,13 @@ formatting options which are built into perltidy (beautification or
 html) are ignored.  The following diagram illustrates the logical flow:
 
                     |-- (normal route)   -> code beautification
-  caller->perltidy->|-- (-html flag )    -> create html
+  caller->perltidy->|-- (-html flag )    -> create html 
                     |-- (formatter given)-> callback to write_line
 
-This can be useful for processing perl scripts in some way.  The
+This can be useful for processing perl scripts in some way.  The 
 parameter C<$formatter> in the perltidy call,
 
-        formatter   => $formatter,
+        formatter   => $formatter,  
 
 is an object created by the caller with a C<write_line> method which
 will accept and process tokenized lines, one line per call.  Here is
@@ -28611,7 +28611,7 @@ a simple example of a C<write_line> which merely prints the line number,
 the line type (as determined by perltidy), and the text of the line:
 
  sub write_line {
-
+ 
      # This is called from perltidy line-by-line
      my $self              = shift;
      my $line_of_tokens    = shift;
@@ -28652,11 +28652,11 @@ can slow down processing.  Here is a B<write_line>, from the example
 program B<find_naughty.pl>, which does that:
 
  sub write_line {
-
+ 
      # This is called back from perltidy line-by-line
      # We're looking for $`, $&, and $'
      my ( $self, $line_of_tokens ) = @_;
-
+ 
      # pull out some stuff we might need
      my $line_type         = $line_of_tokens->{_line_type};
      my $input_line_number = $line_of_tokens->{_line_number};
@@ -28664,19 +28664,19 @@ program B<find_naughty.pl>, which does that:
      my $rtoken_type       = $line_of_tokens->{_rtoken_type};
      my $rtokens           = $line_of_tokens->{_rtokens};
      chomp $input_line;
-
+ 
      # skip comments, pod, etc
      return if ( $line_type ne 'CODE' );
-
+ 
      # loop over tokens looking for $`, $&, and $'
      for ( my $j = 0 ; $j < @$rtoken_type ; $j++ ) {
-
+ 
          # we only want to examine token types 'i' (identifier)
          next unless $$rtoken_type[$j] eq 'i';
-
+ 
          # pull out the actual token text
          my $token = $$rtokens[$j];
-
+ 
          # and check it
          if ( $token =~ /^\$[\`\&\']$/ ) {
              print STDERR
@@ -28714,7 +28714,7 @@ to get started is to find one of the examples which most closely matches
 your application and start modifying it.
 
 For help with perltidy's pecular way of breaking lines into tokens, you
-might run, from the command line,
+might run, from the command line, 
 
  perltidy -D filename
 
@@ -28730,7 +28730,7 @@ C<write_debug_entry> in Tidy.pm.
 
 =head1 CREDITS
 
-Thanks to Hugh Myers who developed the initial modular interface
+Thanks to Hugh Myers who developed the initial modular interface 
 to perltidy.
 
 =head1 VERSION

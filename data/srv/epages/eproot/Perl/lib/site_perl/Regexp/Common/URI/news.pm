@@ -16,7 +16,7 @@ my $news_scheme = 'news';
 my $news_uri    = "(?k:(?k:$news_scheme):(?k:$grouppart))";
 
 my $nntp_scheme = 'nntp';
-my $nntp_uri    = "(?k:(?k:$nntp_scheme)://(?k:(?k:(?k:$host)(?::(?k:$port))?)"
+my $nntp_uri    = "(?k:(?k:$nntp_scheme)://(?k:(?k:(?k:$host)(?::(?k:$port))?)" 
                 . "/(?k:$group)(?:/(?k:$digits))?))";
 
 register_uri $news_scheme => $news_uri;

@@ -154,7 +154,7 @@ sub connect {
                 $REAL{$self} = $new_ssl;
                 return $new_ssl;
             }
-                        else {
+			else {
                 # don't die, but do set $@, and return undef
                 eval { $self->die_with_error("SSL negotiation failed") };
                 croak($@);

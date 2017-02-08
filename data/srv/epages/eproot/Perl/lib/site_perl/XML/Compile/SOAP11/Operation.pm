@@ -103,7 +103,7 @@ sub _msg_parts($$$$$)
         my $procedure
             = $style eq 'rpc' ? pack_type($body->{namespace}, $opname)
             : @parts==1 && $parts[0]{type} ? $msgname
-            : $local;
+            : $local; 
 
         $parts{body}  = {procedure => $procedure, %$port_op, use => 'literal',
            %$body, parts => \@parts};
@@ -295,23 +295,23 @@ sub explain($$$@)
         {   my $name = $part->{name};
             my ($kind, $value) = $part->{type} ? (type => $part->{type})
               : (element => $part->{element});
-
+    
             my $type = $schema->prefixed($value) || $value;
             push @main, ''
               , "# Header part '$name' is $kind $type"
               , ($kind eq 'type' && $recurse ? "# See fake element '$name'" : ())
               , "my \$$name = {};";
             push @struct, "    $name => \$$name,";
-
+    
             $recurse or next HEAD_PART;
-
+    
             my $elem = $value;
             if($kind eq 'type')
             {   # generate element with part name, because template requires elem
                 $schema->compileType(READER => $value, element => $name);
                 $elem = $name;
             }
-
+    
             push @attach, '', $sep, "\$$name ="
               , $schema->template(PERL => $elem, skip_header => 1, %args), ';';
         }
@@ -401,7 +401,7 @@ sub explain($$$@)
           , '    if(not $details)'
           , '    {   # system error, no $details'
           , '    }';
-
+    
         push @postproc
           , '    exit 1;'
           , '}';

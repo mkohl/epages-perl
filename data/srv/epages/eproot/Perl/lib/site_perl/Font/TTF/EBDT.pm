@@ -65,7 +65,7 @@ sub read
     $self->SUPER::read || return $self;
 
     # ebdtHeader
-    $fh->read($dat, 4); # version
+    $fh->read($dat, 4);	# version
 
     $bst_array = $eblc->{'bitmapSizeTable'};
 
@@ -147,7 +147,7 @@ sub get_regions
     $first = $l[0];
     $last = $first - 1;
     foreach $e (@l) {
-        if ($last + 1 != $e) {  # not contiguous
+        if ($last + 1 != $e) {	# not contiguous
             $r[++$#r] = [$first, $last];
             $first = $e;
         }
@@ -189,7 +189,7 @@ sub update
         $bst->{'startGlyphIndex'} = $regions[0][0];
         $bst->{'endGlyphIndex'} = $regions[-1][1];
         $bst->{'bitDepth'} = 1;
-        $bst->{'flags'} = 1;    # Horizontal
+        $bst->{'flags'} = 1;	# Horizontal
         $bst_array->[$i] = $bst;
 
         $eblc->{'indexSubTableArray'}[$i] = $ist_array;
@@ -220,9 +220,9 @@ sub update
             # Do we need the element of 0x10007 and absolute offset here,
             # at the end of offsetArray?
 #               if ($j + 1 <= $#regions) {
-#               $offsetArray->[$p++] = 0x10007;
-#               $offsetArray->[$p++] = $offset;
-#               $aotis += 8;
+#       	$offsetArray->[$p++] = 0x10007;
+#       	$offsetArray->[$p++] = $offset;
+#       	$aotis += 8;
 #           }
         }
 

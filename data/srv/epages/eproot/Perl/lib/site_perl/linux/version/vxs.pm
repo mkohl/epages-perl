@@ -17,7 +17,7 @@ eval {
     1;
 } or do {
     require DynaLoader;
-    push @ISA, 'DynaLoader';
+    push @ISA, 'DynaLoader'; 
     local $^W; # shut up the 'redefined' warning for UNIVERSAL::VERSION
     bootstrap version::vxs $VERSION;
 };

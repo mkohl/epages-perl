@@ -9,54 +9,54 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 sub new {
-        my $proto = shift;
-        my $class = ref($proto) || $proto;
-        return bless({}, $class);
+	my $proto = shift;
+	my $class = ref($proto) || $proto;
+	return bless({}, $class);
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]*)([0-9])$/) {
-                return ($2 == _compute_checkdigit($1));
-        }
-        return 0;
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]*)([0-9])$/) {
+		return ($2 == _compute_checkdigit($1));
+	}
+	return 0;
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]*)$/) {
-                return $number . _compute_checkdigit($1);
-        }
-        return undef;
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]*)$/) {
+		return $number . _compute_checkdigit($1);
+	}
+	return undef;
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]*)([0-9])$/) {
-                return $1 if ($2 == _compute_checkdigit($1));
-        }
-        return undef;
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]*)([0-9])$/) {
+		return $1 if ($2 == _compute_checkdigit($1));
+	}
+	return undef;
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]*)([0-9])$/) {
-                return $2 if ($2 == _compute_checkdigit($1));
-        }
-        return undef;
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]*)([0-9])$/) {
+		return $2 if ($2 == _compute_checkdigit($1));
+	}
+	return undef;
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $number = shift;
-        my @digits = split(//,$number);
-        my $even   = 0;
-        my $sum    = 0;
-        foreach my $digit (@digits) {
-                $sum += $digit;
-                $sum += $digit if ($even);
-                $even = not $even;
-        }
-        return $sum % 7;
+	my $number = shift;
+	my @digits = split(//,$number);
+	my $even   = 0;
+	my $sum    = 0;
+	foreach my $digit (@digits) {
+		$sum += $digit;
+		$sum += $digit if ($even);
+		$even = not $even;
+	}
+	return $sum % 7;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -75,7 +75,7 @@ CheckDigits::M07_001 - compute check digits modulo 7 method 1
   $m001 = CheckDigits('m001');
 
   if ($m001->is_valid('1234567892')) {
-        # do something
+	# do something
   }
 
   $cn = $m001->complete('123456789');    # $cn = '1234567892'
@@ -83,7 +83,7 @@ CheckDigits::M07_001 - compute check digits modulo 7 method 1
   $cd = $m001->checkdigit('1234567892'); # $cd = '2'
 
   $bn = $m001->basenumber('1234567892'); # $bn = '123456789'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

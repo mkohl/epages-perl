@@ -417,7 +417,7 @@ sub makeElementHandler
                 ($label => $pairs[1]);
               };
     }
-
+        
     if($max ne 'unbounded' && $min>=$max)
     {   return
         sub { my $tree = shift;
@@ -518,7 +518,7 @@ sub makeElementDefault
        and return sub
         { my $tree = shift;
           return ($childname => $def)
-              if !defined $tree
+              if !defined $tree 
               || $tree->nodeType ne $childname
               || $tree->node->textContent eq '';
 
@@ -631,7 +631,7 @@ sub makeComplexElement
                       , _class => 'misfit';
           ($tag => \%complex);
         };
-
+    
 }
 
 #
@@ -678,14 +678,14 @@ sub makeMixedElement
             my @pairs  = map {$_->($node)} @attrs;
             ($tag => { _ => $node, @pairs
                      , _MIXED_ELEMENT_MODE => 'ATTRIBUTES'});
-          }
+          } 
     : $mixed eq 'TEXTUAL'
     ? sub { my $tree   = shift or return;
             my $node   = $tree->node;
             my @pairs  = map {$_->($node)} @attrs;
             ($tag => { _ => $node->textContent, @pairs
                      , _MIXED_ELEMENT_MODE => 'TEXTUAL'});
-          }
+          } 
     : $mixed eq 'XML_STRING'
     ? sub { my $tree   = shift or return;
             my $node   = $tree->node or return;
@@ -1016,7 +1016,7 @@ sub makeAnyElement
           $tree->nextChild;
           (type_of_node($child), $child);
       };
-
+ 
     bless $any, 'ANY';
 
     # Create filter if requested

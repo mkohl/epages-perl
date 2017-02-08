@@ -57,9 +57,9 @@ events flow along that arrow.
                          +->| Validator   |
                        1/   +-------------+
                        /
-          1   +-------+ 2   +--------------+ 2    +--------+
+          1   +-------+ 2   +--------------+ 2    +--------+      
  upstream ----| Dist. |---->| TOCExtractor |--*-->| Merger |-> STDOUT
-              +-------+     +--------------+ /    +--------+
+              +-------+     +--------------+ /    +--------+   
                        \3                   /3
                         \   +--------------+
                          +->| BodyMasseuse |
@@ -232,7 +232,7 @@ sub end_document {
 
     $self->_replay
         while $self->_change_channels;
-
+    
     @{$self->{BUFFER}} = ();
 
     my $aggie = $self->get_aggregator;

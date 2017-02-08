@@ -731,9 +731,9 @@ from your scripts.
   else { print "Error sending mail: $Mail::Sendmail::error \n" }
 
   print "\n\$Mail::Sendmail::log says:\n", $Mail::Sendmail::log;
-
+ 
 Also see http://alma.ch/perl/Mail-Sendmail-FAQ.html for examples
-of HTML mail and sending attachments.
+of HTML mail and sending attachments. 
 
 =head1 CHANGES
 

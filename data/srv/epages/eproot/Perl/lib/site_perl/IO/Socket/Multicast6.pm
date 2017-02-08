@@ -22,271 +22,271 @@ my $IPv6 = '[\da-fA-F:]+';
 
 
 sub new {
-        my $class = shift;
-        unshift @_,(Proto => 'udp') unless @_;
-        $class->SUPER::new(@_);
+	my $class = shift;
+	unshift @_,(Proto => 'udp') unless @_;
+	$class->SUPER::new(@_);
 }
 
 
 sub configure {
-        my($self,$arg) = @_;
-        $arg->{Proto} ||= 'udp';
-        $arg->{ReuseAddr} ||= 1;
-        $self->SUPER::configure($arg);
+	my($self,$arg) = @_;
+	$arg->{Proto} ||= 'udp';
+	$arg->{ReuseAddr} ||= 1;
+	$self->SUPER::configure($arg);
 }
 
 
 sub mcast_add {
-        my $sock = shift;
-        my $group = shift || croak 'usage: $sock->mcast_add($mcast_addr [,$interface])';
-        my $interface = shift;
-
-        if ($sock->sockdomain() == AF_INET) {
-                my $if_addr = _get_if_ipv4addr($interface);
-                my $ip_mreq = pack_ip_mreq( inet_pton( AF_INET, $group ),
-                                                                        inet_pton( AF_INET, $if_addr ) );
-
-                setsockopt($sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, $ip_mreq )
-                or croak "Could not set IP_ADD_MEMBERSHIP socket option: $!";
-        } elsif ($sock->sockdomain() == AF_INET6) {
-                my $if_index = _get_if_index($interface);
-                my $ipv6_mreq = pack_ipv6_mreq( inet_pton( AF_INET6, $group ),
-                                                                                $if_index );
-
-                setsockopt($sock, IPPROTO_IPV6, IPV6_JOIN_GROUP, $ipv6_mreq )
-                or croak "Could not set IPV6_JOIN_GROUP socket option: $!";
-        } else {
-                croak("mcast_add failed, unsupported socket family." );
-        }
-
-        # Success
-        return 1;
+	my $sock = shift;
+	my $group = shift || croak 'usage: $sock->mcast_add($mcast_addr [,$interface])';
+	my $interface = shift;
+	
+	if ($sock->sockdomain() == AF_INET) {
+		my $if_addr = _get_if_ipv4addr($interface);
+		my $ip_mreq = pack_ip_mreq( inet_pton( AF_INET, $group ),
+									inet_pton( AF_INET, $if_addr ) );
+		
+		setsockopt($sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, $ip_mreq )
+		or croak "Could not set IP_ADD_MEMBERSHIP socket option: $!";
+	} elsif ($sock->sockdomain() == AF_INET6) {
+		my $if_index = _get_if_index($interface);
+		my $ipv6_mreq = pack_ipv6_mreq( inet_pton( AF_INET6, $group ),
+										$if_index );
+		
+		setsockopt($sock, IPPROTO_IPV6, IPV6_JOIN_GROUP, $ipv6_mreq )
+		or croak "Could not set IPV6_JOIN_GROUP socket option: $!";
+	} else {
+		croak("mcast_add failed, unsupported socket family." );
+	}
+	
+	# Success
+	return 1;
 }
 
 sub mcast_add_source {
-        my $sock = shift;
-        my $group = shift || croak 'usage: $sock->mcast_add_source($mcast_addr, $source_addr [,$interface])';
-        my $source = shift || croak 'usage: $sock->mcast_add_source($mcast_addr, $source_addr [,$interface])';
-        my $interface = shift;
+	my $sock = shift;
+	my $group = shift || croak 'usage: $sock->mcast_add_source($mcast_addr, $source_addr [,$interface])';
+	my $source = shift || croak 'usage: $sock->mcast_add_source($mcast_addr, $source_addr [,$interface])';
+	my $interface = shift;
 
-        if ($sock->sockdomain() == AF_INET) {
-                my $if_addr = _get_if_ipv4addr($interface);
-                my $ip_mreq = pack_ip_mreq_source(
-                                                inet_pton( AF_INET, $group ),
-                                                inet_pton( AF_INET, $source ),
-                                                inet_pton( AF_INET, $if_addr ) );
-
-                setsockopt($sock, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, $ip_mreq )
-                or croak "Could not set IP_ADD_SOURCE_MEMBERSHIP socket option: $!";
-        } elsif ($sock->sockdomain() == AF_INET6) {
-                croak("mcast_add_source failed, IPv6 is currently unsupported." );
-        } else {
-                croak("mcast_add_source failed, unsupported socket family." );
-        }
-
-        # Success
-        return 1;
+	if ($sock->sockdomain() == AF_INET) {
+		my $if_addr = _get_if_ipv4addr($interface);
+		my $ip_mreq = pack_ip_mreq_source(
+						inet_pton( AF_INET, $group ),
+						inet_pton( AF_INET, $source ),       
+						inet_pton( AF_INET, $if_addr ) );
+		
+		setsockopt($sock, IPPROTO_IP, IP_ADD_SOURCE_MEMBERSHIP, $ip_mreq )
+		or croak "Could not set IP_ADD_SOURCE_MEMBERSHIP socket option: $!";
+	} elsif ($sock->sockdomain() == AF_INET6) {
+		croak("mcast_add_source failed, IPv6 is currently unsupported." );
+	} else {
+		croak("mcast_add_source failed, unsupported socket family." );
+	}
+	
+	# Success
+	return 1;
 }
 
 
 sub mcast_drop {
-        my $sock = shift;
-        my $group = shift || croak 'usage: $sock->mcast_drop($mcast_addr [,$interface])';
-        my $interface = shift;
-
-        if ($sock->sockdomain() == AF_INET) {
-                my $if_addr = _get_if_ipv4addr($interface);
-                my $ip_mreq = pack_ip_mreq( inet_pton( AF_INET, $group ),
-                                                                        inet_pton( AF_INET, $if_addr ) );
-
-                setsockopt($sock, IPPROTO_IP, IP_DROP_MEMBERSHIP, $ip_mreq )
-                or croak "Could not set IP_ADD_MEMBERSHIP socket option: $!";
-        } elsif ($sock->sockdomain() == AF_INET6) {
-                my $if_index = _get_if_index($interface);
-                my $ipv6_mreq = pack_ipv6_mreq( inet_pton( AF_INET6, $group ),
-                                                                                $if_index );
-
-                setsockopt($sock, IPPROTO_IPV6, IPV6_LEAVE_GROUP, $ipv6_mreq )
-                or croak "Could not set IPV6_LEAVE_GROUP socket option: $!";
-        } else {
-                croak("mcast_add failed, unsupported socket family." );
-        }
-
-        # Success
-        return 1;
+	my $sock = shift;
+	my $group = shift || croak 'usage: $sock->mcast_drop($mcast_addr [,$interface])';
+	my $interface = shift;
+	
+	if ($sock->sockdomain() == AF_INET) {
+		my $if_addr = _get_if_ipv4addr($interface);
+		my $ip_mreq = pack_ip_mreq( inet_pton( AF_INET, $group ),
+									inet_pton( AF_INET, $if_addr ) );
+		
+		setsockopt($sock, IPPROTO_IP, IP_DROP_MEMBERSHIP, $ip_mreq )
+		or croak "Could not set IP_ADD_MEMBERSHIP socket option: $!";
+	} elsif ($sock->sockdomain() == AF_INET6) {
+		my $if_index = _get_if_index($interface);
+		my $ipv6_mreq = pack_ipv6_mreq( inet_pton( AF_INET6, $group ),
+										$if_index );
+		
+		setsockopt($sock, IPPROTO_IPV6, IPV6_LEAVE_GROUP, $ipv6_mreq )
+		or croak "Could not set IPV6_LEAVE_GROUP socket option: $!";
+	} else {
+		croak("mcast_add failed, unsupported socket family." );
+	}
+	
+	# Success
+	return 1;
 }
 
 
 sub mcast_ttl {
-        my $sock = shift;
+	my $sock = shift;
+	
+	my $prev = undef;
+	if ($sock->sockdomain() == AF_INET) {
+		my $packed = getsockopt($sock, IPPROTO_IP, IP_MULTICAST_TTL)
+		or croak "Could not get IP_MULTICAST_TTL socket option: $!";
+		$prev=unpack("I", $packed);
+		if (my $ttl = shift) {
+			setsockopt($sock, IPPROTO_IP, IP_MULTICAST_TTL, pack("I", $ttl ) )
+			or croak "Could not set IP_MULTICAST_TTL socket option: $!";
+		}
+	} elsif ($sock->sockdomain() == AF_INET6) {
+		my $packed = getsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS)
+		or croak "Could not get IPV6_MULTICAST_HOPS socket option: $!";
+		$prev=unpack("I", $packed);
+		if (my $ttl = shift) {
+			setsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, pack("I", $ttl ) )
+			or croak "Could not set IPV6_MULTICAST_HOPS socket option: $!";
+		}
+	} else {
+		croak("mcast_ttl failed, unsupported socket family." );
+	}
 
-        my $prev = undef;
-        if ($sock->sockdomain() == AF_INET) {
-                my $packed = getsockopt($sock, IPPROTO_IP, IP_MULTICAST_TTL)
-                or croak "Could not get IP_MULTICAST_TTL socket option: $!";
-                $prev=unpack("I", $packed);
-                if (my $ttl = shift) {
-                        setsockopt($sock, IPPROTO_IP, IP_MULTICAST_TTL, pack("I", $ttl ) )
-                        or croak "Could not set IP_MULTICAST_TTL socket option: $!";
-                }
-        } elsif ($sock->sockdomain() == AF_INET6) {
-                my $packed = getsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS)
-                or croak "Could not get IPV6_MULTICAST_HOPS socket option: $!";
-                $prev=unpack("I", $packed);
-                if (my $ttl = shift) {
-                        setsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, pack("I", $ttl ) )
-                        or croak "Could not set IPV6_MULTICAST_HOPS socket option: $!";
-                }
-        } else {
-                croak("mcast_ttl failed, unsupported socket family." );
-        }
-
-        return $prev;
+	return $prev;
 }
 
 
 sub mcast_loopback {
-        my $sock = shift;
+	my $sock = shift;
+	
+	my $prev = undef;
+	if ($sock->sockdomain() == AF_INET) {
+		my $packed = getsockopt($sock, IPPROTO_IP, IP_MULTICAST_LOOP)
+		or croak "Could not get IP_MULTICAST_LOOP socket option: $!";
+		$prev=unpack("I", $packed);
+		if (my $loopback = shift) {
+			setsockopt($sock, IPPROTO_IP, IP_MULTICAST_LOOP, pack("I", $loopback ) )
+			or croak "Could not set IP_MULTICAST_LOOP socket option: $!";
+		}
+	} elsif ($sock->sockdomain() == AF_INET6) {
+		my $packed = getsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP)
+		or croak "Could not get IPV6_MULTICAST_LOOP socket option: $!";
+		$prev=unpack("I", $packed);
 
-        my $prev = undef;
-        if ($sock->sockdomain() == AF_INET) {
-                my $packed = getsockopt($sock, IPPROTO_IP, IP_MULTICAST_LOOP)
-                or croak "Could not get IP_MULTICAST_LOOP socket option: $!";
-                $prev=unpack("I", $packed);
-                if (my $loopback = shift) {
-                        setsockopt($sock, IPPROTO_IP, IP_MULTICAST_LOOP, pack("I", $loopback ) )
-                        or croak "Could not set IP_MULTICAST_LOOP socket option: $!";
-                }
-        } elsif ($sock->sockdomain() == AF_INET6) {
-                my $packed = getsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP)
-                or croak "Could not get IPV6_MULTICAST_LOOP socket option: $!";
-                $prev=unpack("I", $packed);
+		if (my $loopback = shift) {
+			setsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, pack("I", $loopback ) )
+			or croak "Could not set IPV6_MULTICAST_LOOP socket option: $!";
+		}
+	} else {
+		croak("mcast_loopback failed, unsupported socket family." );
+	}
 
-                if (my $loopback = shift) {
-                        setsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, pack("I", $loopback ) )
-                        or croak "Could not set IPV6_MULTICAST_LOOP socket option: $!";
-                }
-        } else {
-                croak("mcast_loopback failed, unsupported socket family." );
-        }
-
-        return $prev;
+	return $prev;
 }
 
 
 sub mcast_if {
-        my $sock = shift;
+	my $sock = shift;
+	
+	my $prev = undef;
+	if ($sock->sockdomain() == AF_INET) {
+		my $packed = getsockopt($sock, IPPROTO_IP, IP_MULTICAST_IF)
+		or croak "Could not get IP_MULTICAST_IF socket option: $!";
+		$prev=$sock->addr_to_interface( inet_ntop( AF_INET, $packed ) );
 
-        my $prev = undef;
-        if ($sock->sockdomain() == AF_INET) {
-                my $packed = getsockopt($sock, IPPROTO_IP, IP_MULTICAST_IF)
-                or croak "Could not get IP_MULTICAST_IF socket option: $!";
-                $prev=$sock->addr_to_interface( inet_ntop( AF_INET, $packed ) );
+		if (my $interface = shift) {
+			my $if_addr = _get_if_ipv4addr($interface);
+			setsockopt($sock, IPPROTO_IP, IP_MULTICAST_IF, inet_pton( AF_INET, $if_addr ) )
+			or croak "Could not set IP_MULTICAST_IF socket option: $!";
+		}
+	} elsif ($sock->sockdomain() == AF_INET6) {
+		my $packed = getsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_IF)
+		or croak "Could not get IPV6_MULTICAST_IF socket option: $!";
+		$prev = unpack("I", $packed);
+		if ($prev==0) { $prev='any'; }
+		else { $prev = $sock->if_indextoname($prev); }
 
-                if (my $interface = shift) {
-                        my $if_addr = _get_if_ipv4addr($interface);
-                        setsockopt($sock, IPPROTO_IP, IP_MULTICAST_IF, inet_pton( AF_INET, $if_addr ) )
-                        or croak "Could not set IP_MULTICAST_IF socket option: $!";
-                }
-        } elsif ($sock->sockdomain() == AF_INET6) {
-                my $packed = getsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_IF)
-                or croak "Could not get IPV6_MULTICAST_IF socket option: $!";
-                $prev = unpack("I", $packed);
-                if ($prev==0) { $prev='any'; }
-                else { $prev = $sock->if_indextoname($prev); }
+		if (my $interface = shift) {
+			my $if_index = _get_if_index($interface);
+			setsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_IF, pack("I", $if_index ) )
+			or croak "Could not set IPV6_MULTICAST_IF socket option: $!";
+		}
+	} else {
+		croak("mcast_if failed, unsupported socket family." );
+	}
 
-                if (my $interface = shift) {
-                        my $if_index = _get_if_index($interface);
-                        setsockopt($sock, IPPROTO_IPV6, IPV6_MULTICAST_IF, pack("I", $if_index ) )
-                        or croak "Could not set IPV6_MULTICAST_IF socket option: $!";
-                }
-        } else {
-                croak("mcast_if failed, unsupported socket family." );
-        }
-
-        return $prev;
+	return $prev;
 }
 
 
 sub mcast_dest {
-        my $sock = shift;
-        my ($addr, $port) = @_;
+	my $sock = shift;
+	my ($addr, $port) = @_;
+	
+	my $prev = ${*$sock}{'io_socket_mcast_dest'};
+	if (defined $addr) {
+		if ($sock->sockdomain() == AF_INET) {
+			if (!defined $port and $addr =~ /^($IPv4):(\d+)$/) {
+				$addr = $1; $port = $2;
+			}
+			
+			$addr = pack_sockaddr_in($port,inet_pton(AF_INET, $addr)) if (defined $port);
+			croak "Invalid destination address" if (!defined $addr or length($addr)==0);
+			croak "Destination isn't an IPv4 address" unless (sockaddr_family($addr)==AF_INET);
+			
+		} elsif ($sock->sockdomain() == AF_INET6) {
+			if (!defined $port and $addr =~ /^\[($IPv6)\]:(\d+)$/) {
+				$addr = $1; $port = $2;
+			}
+			
+			$addr = pack_sockaddr_in6($port,inet_pton(AF_INET6, $addr)) if (defined $port);
+			croak "Invalid destination address" if (!defined $addr or length($addr)==0);
+			croak "Destination isn't an IPv6 address" unless (sockaddr_family($addr)==AF_INET6);
+			
+		} else {
+			croak("mcast_dest failed, unsupported socket family." );
+		}
+		
+		${*$sock}{'io_socket_mcast_dest'} = $addr;
+	}
 
-        my $prev = ${*$sock}{'io_socket_mcast_dest'};
-        if (defined $addr) {
-                if ($sock->sockdomain() == AF_INET) {
-                        if (!defined $port and $addr =~ /^($IPv4):(\d+)$/) {
-                                $addr = $1; $port = $2;
-                        }
-
-                        $addr = pack_sockaddr_in($port,inet_pton(AF_INET, $addr)) if (defined $port);
-                        croak "Invalid destination address" if (!defined $addr or length($addr)==0);
-                        croak "Destination isn't an IPv4 address" unless (sockaddr_family($addr)==AF_INET);
-
-                } elsif ($sock->sockdomain() == AF_INET6) {
-                        if (!defined $port and $addr =~ /^\[($IPv6)\]:(\d+)$/) {
-                                $addr = $1; $port = $2;
-                        }
-
-                        $addr = pack_sockaddr_in6($port,inet_pton(AF_INET6, $addr)) if (defined $port);
-                        croak "Invalid destination address" if (!defined $addr or length($addr)==0);
-                        croak "Destination isn't an IPv6 address" unless (sockaddr_family($addr)==AF_INET6);
-
-                } else {
-                        croak("mcast_dest failed, unsupported socket family." );
-                }
-
-                ${*$sock}{'io_socket_mcast_dest'} = $addr;
-        }
-
-        return $prev;
+	return $prev;
 }
 
 
 
 sub mcast_send {
-        my $sock = shift;
-        my $data = shift || croak 'usage: $sock->mcast_send($data [,$address[,$port]])';
-        $sock->mcast_dest(@_) if @_;
-        my $dest = $sock->mcast_dest || croak "no destination specified with mcast_send() or mcast_dest()";
-
-        return send($sock,$data,0,$dest);
+	my $sock = shift;
+	my $data = shift || croak 'usage: $sock->mcast_send($data [,$address[,$port]])';
+	$sock->mcast_dest(@_) if @_;
+	my $dest = $sock->mcast_dest || croak "no destination specified with mcast_send() or mcast_dest()";
+	
+	return send($sock,$data,0,$dest);
 }
 
 
 ## Returns the IPv4 address of an interface
 #
 sub _get_if_ipv4addr {
-        my ($interface) = @_;
-
-        return '0.0.0.0' unless (defined $interface);
-        return '0.0.0.0' if ($interface eq 'any');
-        return $interface if ($interface =~ /^$IPv4$/);
-
-        my $if = new IO::Interface::Simple( $interface );
-        croak "Unknown interface $interface" unless (defined $if);
-        croak "Interface '$interface' is not multicast capable" unless ($if->is_multicast());
-        my $address = $if->address();
-        croak "Interface '$interface' does not have an IPv4 address" unless (defined $address);
-        return $address;
+	my ($interface) = @_;
+	
+	return '0.0.0.0' unless (defined $interface);
+	return '0.0.0.0' if ($interface eq 'any');
+	return $interface if ($interface =~ /^$IPv4$/);
+	
+	my $if = new IO::Interface::Simple( $interface );
+	croak "Unknown interface $interface" unless (defined $if);
+	croak "Interface '$interface' is not multicast capable" unless ($if->is_multicast());
+	my $address = $if->address();
+	croak "Interface '$interface' does not have an IPv4 address" unless (defined $address);
+	return $address;
 }
 
 
 ## Returns the index of an interface
 #
 sub _get_if_index {
-        my ($interface) = @_;
+	my ($interface) = @_;
+	
+	return 0 unless defined $interface;
+	return $interface if ($interface =~ /^\d+$/);
+	return 0 if ($interface =~ /^any$/i);
 
-        return 0 unless defined $interface;
-        return $interface if ($interface =~ /^\d+$/);
-        return 0 if ($interface =~ /^any$/i);
-
-        my $if = new IO::Interface::Simple( $interface );
-        croak "Unknown interface $interface" unless (defined $if);
-        croak "Interface '$interface' is not multicast capable" unless ($if->is_multicast());
-        my $index = $if->index();
-        croak "Can't get index of interface '$interface'." unless (defined $index);
-        return $index;
+	my $if = new IO::Interface::Simple( $interface );
+	croak "Unknown interface $interface" unless (defined $if);
+	croak "Interface '$interface' is not multicast capable" unless ($if->is_multicast());
+	my $index = $if->index();
+	croak "Can't get index of interface '$interface'." unless (defined $index);
+	return $index;
 }
 
 
@@ -303,8 +303,8 @@ IO::Socket::Multicast6 - Send and receive IPv4 and IPv6 multicast messages
 
   # create a new IPv6 UDP socket ready to read datagrams on port 1100
   my $s = IO::Socket::Multicast6->new(
-                                Domain=>AF_INET6,
-                                LocalPort=>1100);
+  				Domain=>AF_INET6,
+  				LocalPort=>1100);
 
   # Add an IPv6 multicast group
   $s->mcast_add('FF15::0561');
@@ -318,9 +318,9 @@ IO::Socket::Multicast6 - Send and receive IPv4 and IPv6 multicast messages
 
   # create a new IPv4 UDP socket ready to send datagrams to port 1100
   my $s = IO::Socket::Multicast6->new(
-                                Domain=>AF_INET,
-                                PeerDest=>'225.0.0.1',
-                                PeerPort=>1100);
+  				Domain=>AF_INET,
+  				PeerDest=>'225.0.0.1',
+  				PeerPort=>1100);
 
   # Set outgoing interface to eth0
   $s->mcast_if('eth0');
@@ -343,7 +343,7 @@ you to manipulate multicast groups.  With this module you will be able to
 receive incoming multicast transmissions and generate your own
 outgoing multicast packets.
 
-This module uses the same API as IO::Socket::Multicast, but with added
+This module uses the same API as IO::Socket::Multicast, but with added 
 support for IPv6 (IPv4 is still supported). Unlike IO::Socket::Multicast,
 this is a pure-perl module.
 
@@ -385,7 +385,7 @@ subscribed groups using the selected port number.
 
 To send transmissions B<to> a multicast group, you can use the
 standard send() method to send messages to the multicast group and
-port of your choice.
+port of your choice. 
 
 To set the number of hops (routers) that outgoing multicast messages
 will cross, call mcast_ttl().  To activate or deactivate the looping
@@ -516,21 +516,21 @@ mcast_add() method.
 The mcast_dest() method is a convenience function that allows you to
 set the default destination group for outgoing multicasts.  Called
 without arguments, returns the current destination as a packed binary
-sockaddr_in/sockaddr_in6 data structure.  Called with a new destination
-address, the method sets the default destination and returns the previous
+sockaddr_in/sockaddr_in6 data structure.  Called with a new destination 
+address, the method sets the default destination and returns the previous 
 one, if any.
 
 Destination addresses may be provided as packed sockaddr_in/sockaddr_in6
 structures, or address and port as strings.
 
-For IPv4 the address can be supplied in the form "XX.XX.XX.XX:YY" where
+For IPv4 the address can be supplied in the form "XX.XX.XX.XX:YY" where 
 the first part is the IPv4 address, and the second the port number.
 
-For IPv6 the address can be supplied in the form
+For IPv6 the address can be supplied in the form 
 "[FFXX:XXXX::XXXX]:YY" where the first part is the IPv6 address,
 and the second the port number.
 
-Alternatively the port can be supplied as an additional parameter,
+Alternatively the port can be supplied as an additional parameter, 
 separate to the address.
 
 
@@ -540,7 +540,7 @@ mcast_send() is a convenience function that simplifies the sending of
 multicast messages.  C<$data> is the message contents, and C<$dest> is
 an optional destination group.  You can use either the dotted IP form
 of the destination address and its port number, or a packed
-sockaddr_in/sockaddr_in6 structure.  If the destination is not supplied,
+sockaddr_in/sockaddr_in6 structure.  If the destination is not supplied, 
 it will default to the most recent value set in mcast_dest() or a previous
 call to mcast_send().
 
@@ -576,7 +576,7 @@ chosen arbitrarily, the FF15:: is a Transient, Site Local prefix).
 
  use constant GROUP => 'FF15::0561';
  use constant PORT  => '2000';
-
+ 
  my $sock = IO::Socket::Multicast6->new(
                     Proto=>'udp',
                     Domain=>AF_INET6,
@@ -609,7 +609,7 @@ output.
                     Domain=>AF_INET6,
                     LocalAddr=>GROUP,
                     LocalPort=>PORT);
-
+                    
  $sock->mcast_add(GROUP) || die "Couldn't set group: $!\n";
 
  while (1) {

@@ -45,9 +45,9 @@ sub xmldump
             $processedVars->{$addr} = 1;
         }
     }
-
+    
     $type = ref $var unless defined $type;
-
+    
     if ($type eq 'REF') {
         printf("%s<ref val=\"%s\"/>\n", $indent, $$var);
     }
@@ -110,17 +110,17 @@ sub xmldump
 sub AAT_read_subtable
 {
     my ($fh, $baseOffset, $subtableStart, $limits) = @_;
-
+    
     my $limit = 0xffffffff;
     foreach (@$limits) {
         $limit = $_ if ($_ > $subtableStart and $_ < $limit);
     }
     die if $limit == 0xffffffff;
-
+    
     my $dat;
     $fh->seek($baseOffset + $subtableStart, IO::File::SEEK_SET);
     $fh->read($dat, $limit - $subtableStart);
-
+    
     $dat;
 }
 
@@ -137,9 +137,9 @@ where the entry is a comma-separated list of nextStateOffset, flags, actions
 sub AAT_pack_state_table
 {
     my ($classes, $states, $numExtraTables, $packEntry) = @_;
-
+    
     my ($dat) = pack("n*", (0) x (4 + $numExtraTables));    # placeholders for stateSize, classTable, stateArray, entryTable
-
+    
     my ($firstGlyph, $lastGlyph) = (0xffff, 0, 0);
     my (@classTable, $i);
     foreach $i (0 .. $#$classes) {
@@ -150,12 +150,12 @@ sub AAT_pack_state_table
             $classTable[$_] = $i;
         }
     }
-
+    
     my $classTable = length($dat);
     $dat .= pack("nnC*", $firstGlyph, $lastGlyph - $firstGlyph + 1,
                     map { defined $classTable[$_] ? $classTable[$_] : 1 } ($firstGlyph .. $lastGlyph));
     $dat .= pack("C", 0) if (($lastGlyph - $firstGlyph) & 1) == 0;    # pad if odd number of glyphs
-
+    
     my $stateArray = length($dat);
     my (@entries, %entries);
     my $state = $states->[0];
@@ -178,24 +178,24 @@ sub AAT_pack_state_table
         }
     }
     $dat .= pack("C", 0) if (@$states & 1) != 0 and ($stateSize & 1) != 0;    # pad if state array size is odd
-
+    
     my $entryTable = length($dat);
     $dat .= map { &$packEntry($_, $entryTable, $#entries + 1) } @entries;
-
+    
     my ($dat1) = pack("nnnn", $stateSize, $classTable, $stateArray, $entryTable);
     substr($dat, 0, length($dat1)) = $dat1;
-
+    
     return $dat;
 }
 
 sub AAT_write_state_table
 {
     my ($fh, $classes, $states, $numExtraTables, $packEntry) = @_;
-
+    
     my $stateTableStart = $fh->tell();
 
     $fh->print(pack("n*", (0) x (4 + $numExtraTables)));    # placeholders for stateSize, classTable, stateArray, entryTable
-
+    
     my ($firstGlyph, $lastGlyph) = (0xffff, 0, 0);
     my (@classTable, $i);
     foreach $i (0 .. $#$classes) {
@@ -206,12 +206,12 @@ sub AAT_write_state_table
             $classTable[$_] = $i;
         }
     }
-
+    
     my $classTable = $fh->tell() - $stateTableStart;
     $fh->print(pack("nnC*", $firstGlyph, $lastGlyph - $firstGlyph + 1,
                     map { defined $classTable[$_] ? $classTable[$_] : 1 } ($firstGlyph .. $lastGlyph)));
     $fh->print(pack("C", 0)) if (($lastGlyph - $firstGlyph) & 1) == 0;    # pad if odd number of glyphs
-
+    
     my $stateArray = $fh->tell() - $stateTableStart;
     my (@entries, %entries);
     my $state = $states->[0];
@@ -234,14 +234,14 @@ sub AAT_write_state_table
         }
     }
     $fh->print(pack("C", 0)) if (@$states & 1) != 0 and ($stateSize & 1) != 0;    # pad if state array size is odd
-
+    
     my $entryTable = $fh->tell() - $stateTableStart;
     $fh->print(map { &$packEntry($_, $entryTable, $#entries + 1) } @entries);
-
+    
     my $length = $fh->tell() - $stateTableStart;
     $fh->seek($stateTableStart, IO::File::SEEK_SET);
     $fh->print(pack("nnnn", $stateSize, $classTable, $stateArray, $entryTable));
-
+    
     $fh->seek($stateTableStart + $length, IO::File::SEEK_SET);
     $length;
 }
@@ -249,7 +249,7 @@ sub AAT_write_state_table
 sub AAT_pack_classes
 {
     my ($classes) = @_;
-
+    
     my ($firstGlyph, $lastGlyph) = (0xffff, 0, 0);
     my (@classTable, $i);
     foreach $i (0 .. $#$classes) {
@@ -260,33 +260,33 @@ sub AAT_pack_classes
             $classTable[$_] = $i;
         }
     }
-
+    
     my ($dat) = pack("nnC*", $firstGlyph, $lastGlyph - $firstGlyph + 1,
                     map { defined $classTable[$_] ? $classTable[$_] : 1 } ($firstGlyph .. $lastGlyph));
     $dat .= pack("C", 0) if (($lastGlyph - $firstGlyph) & 1) == 0;    # pad if odd number of glyphs
-
+    
     return $dat;
 }
 
 sub AAT_write_classes
 {
     my ($fh, $classes) = @_;
-
+    
     $fh->print(AAT_pack_classes($fh, $classes));
 }
 
 sub AAT_pack_states
 {
     my ($classes, $stateArray, $states, $buildEntryProc) = @_;
-
+    
     my ($entries, %entryHash);
     my $state = $states->[0];
     my $stateSize = @$state;
-
+    
     die "stateSize below minimum allowed (4)" if $stateSize < 4;
     die "stateSize (" . $stateSize . ") too small for max class number (" . $#$classes . ")" if $stateSize < $#$classes + 1;
     warn "state array has unreachable columns" if $stateSize > $#$classes + 1;
-
+    
     my ($dat);
     foreach (@$states) {
         die "inconsistent state size" if @$_ != $stateSize;
@@ -308,11 +308,11 @@ sub AAT_pack_states
 sub AAT_write_states
 {
     my ($fh, $classes, $stateArray, $states, $buildEntryProc) = @_;
-
+    
     my ($entries, %entryHash);
     my $state = $states->[0];
     my $stateSize = @$state;
-
+    
     die "stateSize below minimum allowed (4)" if $stateSize < 4;
     die "stateSize (" . $stateSize . ") too small for max class number (" . $#$classes . ")" if $stateSize < $#$classes + 1;
     warn "state array has unreachable columns" if $stateSize > $#$classes + 1;
@@ -341,12 +341,12 @@ sub AAT_write_states
 sub AAT_read_state_table
 {
     my ($fh, $numActionWords) = @_;
-
+    
     my $stateTableStart = $fh->tell();
     my $dat;
     $fh->read($dat, 8);
     my ($stateSize, $classTable, $stateArray, $entryTable) = unpack("nnnn", $dat);
-
+    
     my $classes;    # array of lists of glyphs
 
     $fh->seek($stateTableStart + $classTable, IO::File::SEEK_SET);
@@ -416,17 +416,17 @@ sub AAT_read_lookup
     else {
         die "unsupported value size";
     }
-
+        
     $fh->read($dat, 2);
     my $format = unpack("n", $dat);
     my $lookup;
-
+    
     if ($format == 0) {
         $fh->read($dat, $length - 2);
         my $i = -1;
         $lookup = { map { $i++; ($_ != $default) ? ($i, $_) : () } unpack($unpackChar . "*", $dat) };
     }
-
+    
     elsif ($format == 2) {
         $fh->read($dat, 10);
         my ($unitSize, $nUnits, $searchRange, $entrySelector, $rangeShift) = unpack("nnnnn", $dat);
@@ -441,7 +441,7 @@ sub AAT_read_lookup
             }
         }
     }
-
+    
     elsif ($format == 4) {
         $fh->read($dat, 10);
         my ($unitSize, $nUnits, $searchRange, $entrySelector, $rangeShift) = unpack("nnnnn", $dat);
@@ -461,7 +461,7 @@ sub AAT_read_lookup
             }
         }
     }
-
+    
     elsif ($format == 6) {
         $fh->read($dat, 10);
         my ($unitSize, $nUnits, $searchRange, $entrySelector, $rangeShift) = unpack("nnnnn", $dat);
@@ -472,7 +472,7 @@ sub AAT_read_lookup
             $lookup->{$glyph} = $value if $glyph != 0xffff and $value != $default;
         }
     }
-
+    
     elsif ($format == 8) {
         $fh->read($dat, 4);
         my ($firstGlyph, $glyphCount) = unpack("nn", $dat);
@@ -480,7 +480,7 @@ sub AAT_read_lookup
         $firstGlyph--;
         $lookup = { map { $firstGlyph++; $_ != $default ? ($firstGlyph, $_) : () } unpack($unpackChar . "*", $dat) };
     }
-
+    
     else {
         die "unknown lookup format";
     }
@@ -511,7 +511,7 @@ sub AAT_pack_lookup
     else {
         die "unsupported value size";
     }
-
+        
     my ($dat) = pack("n", $format);
 
     my ($firstGlyph, $lastGlyph) = (0xffff, 0);
@@ -543,7 +543,7 @@ sub AAT_pack_lookup
         $dat .= pack("nnnnn", $unitSize, TTF_bininfo(length($dat1) / $unitSize, $unitSize));
         $dat .= $dat1;
     }
-
+        
     elsif ($format == 4) {
         my $segArray = new Font::TTF::Segarr($valueSize);
         $segArray->add_segment($firstGlyph, 1, map { $lookup->{$_} } ($firstGlyph .. $lastGlyph));
@@ -564,7 +564,7 @@ sub AAT_pack_lookup
             $dat .= pack($packChar . "*", @$dat1);
         }
     }
-
+        
     elsif ($format == 6) {
         die "unsupported" if $valueSize != 2;
         my $dat1 = pack("n*", map { $_, $lookup->{$_} } sort { $a <=> $b } grep { $lookup->{$_} ne $default } keys %$lookup);
@@ -572,19 +572,19 @@ sub AAT_pack_lookup
         $dat .= pack("nnnnn", $unitSize, TTF_bininfo(length($dat1) / $unitSize, $unitSize));
         $dat .= $dat1;
     }
-
+        
     elsif ($format == 8) {
         $dat .= pack("nn", $firstGlyph, $lastGlyph - $firstGlyph + 1);
         $dat .= pack($packChar . "*", map { defined $lookup->{$_} ? $lookup->{$_} : defined $default ? $default : $_ } ($firstGlyph .. $lastGlyph));
     }
-
+    
     else {
         die "unknown lookup format";
     }
-
+    
     my $padBytes = (4 - (length($dat) & 3)) & 3;
     $dat .= pack("C*", (0) x $padBytes);
-
+    
     return $dat;
 }
 
@@ -606,7 +606,7 @@ sub AAT_write_lookup
     else {
         die "unsupported value size";
     }
-
+        
     $fh->print(pack("n", $format));
 
     my ($firstGlyph, $lastGlyph) = (0xffff, 0);
@@ -638,7 +638,7 @@ sub AAT_write_lookup
         $fh->print(pack("nnnnn", $unitSize, TTF_bininfo(length($dat) / $unitSize, $unitSize)));
         $fh->print($dat);
     }
-
+        
     elsif ($format == 4) {
         my $segArray = new Font::TTF::Segarr($valueSize);
         $segArray->add_segment($firstGlyph, 1, map { $lookup->{$_} } ($firstGlyph .. $lastGlyph));
@@ -659,7 +659,7 @@ sub AAT_write_lookup
             $fh->print(pack($packChar . "*", @$dat));
         }
     }
-
+        
     elsif ($format == 6) {
         die "unsupported" if $valueSize != 2;
         my $dat = pack("n*", map { $_, $lookup->{$_} } sort { $a <=> $b } grep { $lookup->{$_} ne $default } keys %$lookup);
@@ -667,21 +667,21 @@ sub AAT_write_lookup
         $fh->print(pack("nnnnn", $unitSize, TTF_bininfo(length($dat) / $unitSize, $unitSize)));
         $fh->print($dat);
     }
-
+        
     elsif ($format == 8) {
         $fh->print(pack("nn", $firstGlyph, $lastGlyph - $firstGlyph + 1));
         $fh->print(pack($packChar . "*", map { defined $lookup->{$_} ? $lookup->{$_} : defined $default ? $default : $_ } ($firstGlyph .. $lastGlyph)));
     }
-
+    
     else {
         die "unknown lookup format";
     }
-
+    
     my $length = $fh->tell() - $lookupStart;
     my $padBytes = (4 - ($length & 3)) & 3;
     $fh->print(pack("C*", (0) x $padBytes));
     $length += $padBytes;
-
+    
     $length;
 }
 

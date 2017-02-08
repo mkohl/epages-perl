@@ -27,7 +27,7 @@ sub start_document {
     my $properties = ($#_ == 0) ? shift : { @_ };
 
     if ($properties->{Locator}) {
-        $self->{DocumentHandler}->setDocumentLocator($properties->{Locator});
+	$self->{DocumentHandler}->setDocumentLocator($properties->{Locator});
     }
 
     $self->{DocumentHandler}->startDocument;
@@ -45,7 +45,7 @@ sub start_element {
 
     # FIXME depends on how Perl SAX treats attributes
     $self->{DocumentHandler}->startElement($properties->{Name},
-                                           $properties->{Attributes});
+					   $properties->{Attributes});
 }
 
 sub end_element {
@@ -60,8 +60,8 @@ sub characters {
     my $properties = shift;
 
     $self->{DocumentHandler}->characters($properties->{Data},
-                                         0,
-                                         length($properties->{Data}));
+					 0,
+					 length($properties->{Data}));
 }
 
 sub ignorable_whitespace {
@@ -69,8 +69,8 @@ sub ignorable_whitespace {
     my $properties = shift;
 
     $self->{DocumentHandler}->ignorableWhitespace($properties->{Data},
-                                                  0,
-                                                  length($properties->{Data}));
+						  0,
+						  length($properties->{Data}));
 }
 
 sub processing_instruction {
@@ -78,7 +78,7 @@ sub processing_instruction {
     my $properties = shift;
 
     $self->{DocumentHandler}->processingInstruction($properties->{Target},
-                                                    $properties->{Data});
+						    $properties->{Data});
 }
 
 1;

@@ -49,15 +49,15 @@ sub create_accessors_for {
     my $callpkg = shift;
 
     warn( 'creating ' . $class->style . ' accessors( ',
-          join(' ',@_)," ) in pkg '$callpkg'" ) if $class->Debug;
+	  join(' ',@_)," ) in pkg '$callpkg'" ) if $class->Debug;
 
     foreach my $property (@_) {
-        my $accessor = "$callpkg\::$property";
-        die( "can't create $accessor - '$property' is not a valid name!" )
-          unless $class->isa_valid_name( $property );
-        warn( "creating " . $class->style . " accessor: $accessor\n" ) if
-          $class->Debug > 1;
-        $class->create_accessor( $accessor, $property );
+	my $accessor = "$callpkg\::$property";
+	die( "can't create $accessor - '$property' is not a valid name!" )
+	  unless $class->isa_valid_name( $property );
+	warn( "creating " . $class->style . " accessor: $accessor\n" ) if
+	  $class->Debug > 1;
+	$class->create_accessor( $accessor, $property );
     }
 
     return $class;
@@ -70,9 +70,9 @@ sub create_accessor {
     # sub, but the difference is marginal (~5%), and this uses less memory...
     no strict 'refs';
     *{$accessor} = sub {
-        (@_ > 1)
-          ? ($_[0]->{$property} = $_[1], return $_[0])
-          : $_[0]->{$property};
+	(@_ > 1)
+	  ? ($_[0]->{$property} = $_[1], return $_[0])
+	  : $_[0]->{$property};
     };
 }
 

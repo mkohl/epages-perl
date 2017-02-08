@@ -5,7 +5,7 @@
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
-
+ 
 package Filter::Util::Call ;
 
 require 5.005 ;
@@ -27,7 +27,7 @@ sub filter_read_exact($)
     my ($status) ;
 
     croak ("filter_read_exact: size parameter must be > 0")
-        unless $size > 0 ;
+	unless $size > 0 ;
 
     # try to read a block which is exactly $size bytes long
     while ($left and ($status = filter_read($left)) > 0) {
@@ -72,7 +72,7 @@ Filter::Util::Call - Perl Source Filter Utility Module
 =head1 DESCRIPTION
 
 This module provides you with the framework to write I<Source Filters>
-in Perl.
+in Perl. 
 
 An alternate interface to Filter::Util::Call is now available. See
 L<Filter::Simple> for more details.
@@ -116,7 +116,7 @@ and this is the equivalent skeleton for the I<closure filter>:
         my($type, @arguments) = @_ ;
 
         filter_add(
-            sub
+            sub 
             {
                 my($status) ;
                 $status = filter_read() ;
@@ -129,7 +129,7 @@ and this is the equivalent skeleton for the I<closure filter>:
 To make use of either of the two filter modules above, place the line
 below in a Perl source file.
 
-    use MyFilter;
+    use MyFilter; 
 
 In fact, the skeleton modules shown above are fully functional I<Source
 Filters>, albeit fairly useless ones. All they does is filter the
@@ -354,7 +354,7 @@ C<Subst>.
             unless @_ == 3 ;
         my ($self, $from, $to) = @_ ;
         filter_add(
-            sub
+            sub 
             {
                 my ($status) ;
                 s/$from/$to/
@@ -392,12 +392,12 @@ Note that C<$status> is set to C<1> in this case.
 
         if (($status = filter_read()) > 0 ) {
             s/Joe/Jim/g ;
-            ++ $$self ;
+	    ++ $$self ;
         }
-        elsif ($$self >= 0) { # EOF
+	elsif ($$self >= 0) { # EOF
             $_ = "print q[Made ${$self} substitutions\n]" ;
             $status = 1 ;
-            $$self = -1 ;
+	    $$self = -1 ;
         }
 
         $status ;
@@ -451,8 +451,8 @@ Here is the module.
         croak("usage: use Subst qw(start stop from to)")
             unless @_ == 5 ;
 
-        filter_add(
-            sub
+        filter_add( 
+            sub 
             {
                 my ($status) ;
 
@@ -488,7 +488,7 @@ applications. It's available at
 
 =head1 AUTHOR
 
-Paul Marquess
+Paul Marquess 
 
 =head1 DATE
 

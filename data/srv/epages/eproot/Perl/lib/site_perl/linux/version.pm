@@ -86,8 +86,8 @@ $STRICT =
 
 my $LAX_DECIMAL_VERSION =
     qr/ $LAX_INTEGER_PART (?: \. | $FRACTION_PART $LAX_ALPHA_PART? )?
-        |
-        $FRACTION_PART $LAX_ALPHA_PART?
+	|
+	$FRACTION_PART $LAX_ALPHA_PART?
     /x;
 
 # Lax dotted-decimal version number.  Distinguished by having either
@@ -98,9 +98,9 @@ my $LAX_DECIMAL_VERSION =
 
 my $LAX_DOTTED_DECIMAL_VERSION =
     qr/
-        v $LAX_INTEGER_PART (?: $LAX_DOTTED_DECIMAL_PART+ $LAX_ALPHA_PART? )?
-        |
-        $LAX_INTEGER_PART? $LAX_DOTTED_DECIMAL_PART{2,} $LAX_ALPHA_PART?
+	v $LAX_INTEGER_PART (?: $LAX_DOTTED_DECIMAL_PART+ $LAX_ALPHA_PART? )?
+	|
+	$LAX_INTEGER_PART? $LAX_DOTTED_DECIMAL_PART{2,} $LAX_ALPHA_PART?
     /x;
 
 # Complete lax version number syntax -- should generally be used
@@ -118,38 +118,38 @@ $LAX =
     local $SIG{'__DIE__'};
     eval "use version::vxs $VERSION";
     if ( $@ ) { # don't have the XS version installed
-        eval "use version::vpp $VERSION"; # don't tempt fate
-        die "$@" if ( $@ );
-        push @ISA, "version::vpp";
-        local $^W;
-        *version::qv = \&version::vpp::qv;
-        *version::declare = \&version::vpp::declare;
-        *version::_VERSION = \&version::vpp::_VERSION;
-        *version::vcmp = \&version::vpp::vcmp;
-        *version::new = \&version::vpp::new;
-        if ($] >= 5.009000) {
-            no strict 'refs';
-            *version::stringify = \&version::vpp::stringify;
-            *{'version::(""'} = \&version::vpp::stringify;
-            *{'version::(<=>'} = \&version::vpp::vcmp;
-            *version::parse = \&version::vpp::parse;
-        }
+	eval "use version::vpp $VERSION"; # don't tempt fate
+	die "$@" if ( $@ );
+	push @ISA, "version::vpp";
+	local $^W;
+	*version::qv = \&version::vpp::qv;
+	*version::declare = \&version::vpp::declare;
+	*version::_VERSION = \&version::vpp::_VERSION;
+	*version::vcmp = \&version::vpp::vcmp;
+	*version::new = \&version::vpp::new;
+	if ($] >= 5.009000) {
+	    no strict 'refs';
+	    *version::stringify = \&version::vpp::stringify;
+	    *{'version::(""'} = \&version::vpp::stringify;
+	    *{'version::(<=>'} = \&version::vpp::vcmp;
+	    *version::parse = \&version::vpp::parse;
+	}
     }
     else { # use XS module
-        push @ISA, "version::vxs";
-        local $^W;
-        *version::declare = \&version::vxs::declare;
-        *version::qv = \&version::vxs::qv;
-        *version::_VERSION = \&version::vxs::_VERSION;
-        *version::vcmp = \&version::vxs::VCMP;
-        *version::new = \&version::vxs::new;
-        if ($] >= 5.009000) {
-            no strict 'refs';
-            *version::stringify = \&version::vxs::stringify;
-            *{'version::(""'} = \&version::vxs::stringify;
-            *{'version::(<=>'} = \&version::vxs::VCMP;
-            *version::parse = \&version::vxs::parse;
-        }
+	push @ISA, "version::vxs";
+	local $^W;
+	*version::declare = \&version::vxs::declare;
+	*version::qv = \&version::vxs::qv;
+	*version::_VERSION = \&version::vxs::_VERSION;
+	*version::vcmp = \&version::vxs::VCMP;
+	*version::new = \&version::vxs::new;
+	if ($] >= 5.009000) {
+	    no strict 'refs';
+	    *version::stringify = \&version::vxs::stringify;
+	    *{'version::(""'} = \&version::vxs::stringify;
+	    *{'version::(<=>'} = \&version::vxs::VCMP;
+	    *version::parse = \&version::vxs::parse;
+	}
 
     }
 }
@@ -161,59 +161,59 @@ sub import {
 
     # Set up any derived class
     unless ($class eq 'version') {
-        local $^W;
-        *{$class.'::declare'} =  \&version::declare;
-        *{$class.'::qv'} = \&version::qv;
+	local $^W;
+	*{$class.'::declare'} =  \&version::declare;
+	*{$class.'::qv'} = \&version::qv;
     }
 
     my %args;
     if (@_) { # any remaining terms are arguments
-        map { $args{$_} = 1 } @_
+	map { $args{$_} = 1 } @_
     }
     else { # no parameters at all on use line
-        %args =
-        (
-            qv => 1,
-            'UNIVERSAL::VERSION' => 1,
-        );
+	%args =
+	(
+	    qv => 1,
+	    'UNIVERSAL::VERSION' => 1,
+	);
     }
 
     my $callpkg = caller();
 
     if (exists($args{declare})) {
-        *{$callpkg.'::declare'} =
-            sub {return $class->declare(shift) }
-          unless defined(&{$callpkg.'::declare'});
+	*{$callpkg.'::declare'} =
+	    sub {return $class->declare(shift) }
+	  unless defined(&{$callpkg.'::declare'});
     }
 
     if (exists($args{qv})) {
-        *{$callpkg.'::qv'} =
-            sub {return $class->qv(shift) }
-          unless defined(&{$callpkg.'::qv'});
+	*{$callpkg.'::qv'} =
+	    sub {return $class->qv(shift) }
+	  unless defined(&{$callpkg.'::qv'});
     }
 
     if (exists($args{'UNIVERSAL::VERSION'})) {
-        local $^W;
-        *UNIVERSAL::VERSION
-                = \&version::_VERSION;
+	local $^W;
+	*UNIVERSAL::VERSION
+		= \&version::_VERSION;
     }
 
     if (exists($args{'VERSION'})) {
-        *{$callpkg.'::VERSION'} = \&version::_VERSION;
+	*{$callpkg.'::VERSION'} = \&version::_VERSION;
     }
 
     if (exists($args{'is_strict'})) {
-        *{$callpkg.'::is_strict'} = \&version::is_strict
-          unless defined(&{$callpkg.'::is_strict'});
+	*{$callpkg.'::is_strict'} = \&version::is_strict
+	  unless defined(&{$callpkg.'::is_strict'});
     }
 
     if (exists($args{'is_lax'})) {
-        *{$callpkg.'::is_lax'} = \&version::is_lax
-          unless defined(&{$callpkg.'::is_lax'});
+	*{$callpkg.'::is_lax'} = \&version::is_lax
+	  unless defined(&{$callpkg.'::is_lax'});
     }
 }
 
-sub is_strict   { defined $_[0] && $_[0] =~ qr/ \A $STRICT \z /x }
-sub is_lax      { defined $_[0] && $_[0] =~ qr/ \A $LAX \z /x }
+sub is_strict	{ defined $_[0] && $_[0] =~ qr/ \A $STRICT \z /x }
+sub is_lax	{ defined $_[0] && $_[0] =~ qr/ \A $LAX \z /x }
 
 1;

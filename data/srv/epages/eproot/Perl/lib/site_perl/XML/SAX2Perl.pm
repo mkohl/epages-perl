@@ -32,7 +32,7 @@ sub startDocument {
 
     my @properties;
     if (defined $self->{Locator}) {
-        push @properties, locator => $self->{Locator};
+	push @properties, locator => $self->{Locator};
     }
 
     $self->{DocumentHandler}->start_document(@properties);
@@ -199,20 +199,20 @@ C<XML::SAX2Perl>:
 
 =item start_document
 
-Receive notification of the beginning of a document.
+Receive notification of the beginning of a document. 
 
  Locator          An object that can return the location of any SAX
                   document event.
 
 =item end_document
 
-Receive notification of the end of a document.
+Receive notification of the end of a document. 
 
 No properties defined.
 
 =item start_element
 
-Receive notification of the beginning of an element.
+Receive notification of the beginning of an element. 
 
  Name             The element type name.
  Attributes       Attributes attached to the element, if any.
@@ -222,27 +222,27 @@ SAX 1.0 value, so it will contain an AttributeList object.
 
 =item end_element
 
-Receive notification of the end of an element.
+Receive notification of the end of an element. 
 
  Name             The element type name.
 
 =item characters
 
-Receive notification of character data.
+Receive notification of character data. 
 
  Data             The characters from the XML document.
 
 =item ignorable_whitespace
 
-Receive notification of ignorable whitespace in element content.
+Receive notification of ignorable whitespace in element content. 
 
  Data             The characters from the XML document.
 
 =item processing_instruction
 
-Receive notification of a processing instruction.
+Receive notification of a processing instruction. 
 
- Target           The processing instruction target.
+ Target           The processing instruction target. 
  Data             The processing instruction data, if any.
 
 =back

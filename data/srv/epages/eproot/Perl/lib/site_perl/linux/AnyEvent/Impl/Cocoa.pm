@@ -6,7 +6,7 @@ AnyEvent::Impl::Cocoa - AnyEvent adaptor for Cocoa::EventLoop
 
     use AnyEvent;
     use Cocoa::EventLoop;
-
+    
     # do something
 
 =head1 DESCRIPTION

@@ -6,9 +6,9 @@ AnyEvent::Impl::Qt - AnyEvent adaptor for Qt
 
    use AnyEvent;
    use Qt;
-
+  
    my $app = Qt::Application \@ARGV; # REQUIRED!
-
+  
    # this module gets loaded automatically as required
 
 =head1 DESCRIPTION
@@ -96,7 +96,7 @@ sub io {
 
 sub timer {
    my ($class, %arg) = @_;
-
+   
    # old Qt treats 0 timeout as "idle"
    AnyEvent::Impl::Qt::Timer
       $arg{after} * 1000 || 1,
@@ -107,7 +107,7 @@ sub timer {
 # newer Qt have no idle mode for timers anymore...
 #sub idle {
 #   my ($class, %arg) = @_;
-#
+#   
 #   AnyEvent::Impl::Qt::Timer 0, 0, $arg{cb}
 #}
 

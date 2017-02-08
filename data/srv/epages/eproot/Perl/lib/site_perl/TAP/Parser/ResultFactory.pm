@@ -95,14 +95,14 @@ Your custom type should then be picked up automatically by the L<TAP::Parser>.
 =cut
 
 our %CLASS_FOR = (
-        plan    => 'TAP::Parser::Result::Plan',
-        pragma  => 'TAP::Parser::Result::Pragma',
-        test    => 'TAP::Parser::Result::Test',
-        comment => 'TAP::Parser::Result::Comment',
-        bailout => 'TAP::Parser::Result::Bailout',
-        version => 'TAP::Parser::Result::Version',
-        unknown => 'TAP::Parser::Result::Unknown',
-        yaml    => 'TAP::Parser::Result::YAML',
+	plan    => 'TAP::Parser::Result::Plan',
+	pragma  => 'TAP::Parser::Result::Pragma',
+	test    => 'TAP::Parser::Result::Test',
+	comment => 'TAP::Parser::Result::Comment',
+	bailout => 'TAP::Parser::Result::Bailout',
+	version => 'TAP::Parser::Result::Version',
+	unknown => 'TAP::Parser::Result::Unknown',
+	yaml    => 'TAP::Parser::Result::YAML',
 );
 
 sub class_for {

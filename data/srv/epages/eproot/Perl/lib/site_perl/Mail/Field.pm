@@ -82,16 +82,16 @@ sub register
 
     $method    =~ tr/-/_/;
     $class     = _header_pkg_name $method
-        if $class eq "Mail::Field";
+	if $class eq "Mail::Field";
 
     croak "Re-register of $method"
-        if Mail::Field->can($method);
+	if Mail::Field->can($method);
 
     no strict 'refs';
     *{$method} = sub {
-        shift;
-        $class->can('stringify') or eval "require $class" or die $@;
-        $class->_build(@_);
+	shift;
+	$class->can('stringify') or eval "require $class" or die $@;
+	$class->_build(@_);
     };
 }
 
@@ -187,7 +187,7 @@ sub parse
 }
 
 
-sub stringify { confess "stringify() not implemented" }
+sub stringify { confess "stringify() not implemented" } 
 
 
 sub tag

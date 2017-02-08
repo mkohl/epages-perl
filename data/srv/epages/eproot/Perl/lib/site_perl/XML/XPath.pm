@@ -62,7 +62,7 @@ sub find {
     my $path = shift;
     my $context = shift;
     die "No path to find" unless $path;
-
+    
     if (!defined $context) {
         $context = $self->get_context;
     }
@@ -78,10 +78,10 @@ sub find {
         $self->set_context($context);
 #        warn "CONTEXT:\n", Data::Dumper->Dumpxs([$context], ['context']);
     }
-
+    
     my $parsed_path = $self->{path_parser}->parse($path);
 #    warn "\n\nPATH: ", $parsed_path->as_string, "\n\n";
-
+    
 #    warn "evaluating path\n";
     return $parsed_path->evaluate($context);
 }
@@ -94,18 +94,18 @@ sub find {
 #     }
 #     close FH;
 # }
-#
+# 
 sub findnodes {
     my $self = shift;
     my ($path, $context) = @_;
-
+    
     my $results = $self->find($path, $context);
-
+    
     if ($results->isa('XML::XPath::NodeSet')) {
         return wantarray ? $results->get_nodelist : $results;
 #        return $results->get_nodelist;
     }
-
+    
 #    warn("findnodes returned a ", ref($results), " object\n") if $XML::XPath::Debug;
     return wantarray ? () : XML::XPath::NodeSet->new();
 }
@@ -125,9 +125,9 @@ sub matches {
 sub findnodes_as_string {
     my $self = shift;
     my ($path, $context) = @_;
-
+    
     my $results = $self->find($path, $context);
-
+    
     if ($results->isa('XML::XPath::NodeSet')) {
         return join('', map { $_->toString } $results->get_nodelist);
     }
@@ -142,13 +142,13 @@ sub findnodes_as_string {
 sub findvalue {
     my $self = shift;
     my ($path, $context) = @_;
-
+    
     my $results = $self->find($path, $context);
-
+    
     if ($results->isa('XML::XPath::NodeSet')) {
         return $results->to_literal;
     }
-
+    
     return $results;
 }
 
@@ -360,13 +360,13 @@ this as they support functionality beyond XPath.
 
     use XML::XPath;
     use XML::XPath::XMLParser;
-
+    
     my $xp = XML::XPath->new(filename => 'test.xhtml');
-
+    
     my $nodeset = $xp->find('/html/body/p'); # find all paragraphs
-
+    
     foreach my $node ($nodeset->get_nodelist) {
-        print "FOUND\n\n",
+        print "FOUND\n\n", 
             XML::XPath::XMLParser::as_string($node),
             "\n\n";
     }
@@ -392,19 +392,19 @@ This constructor follows the often seen named parameter method call.
 Parameters you can use are: filename, parser, xml, ioref and context.
 The filename parameter specifies an XML file to parse. The xml
 parameter specifies a string to parse, and the ioref parameter
-specifies an ioref to parse. The context option allows you to
-specify a context node. The context node has to be in the format
+specifies an ioref to parse. The context option allows you to 
+specify a context node. The context node has to be in the format 
 of a node as specified in L<XML::XPath::XMLParser>. The 4 parameters
 filename, xml, ioref and context are mutually exclusive - you should
 only specify one (if you specify anything other than context, the
 context node is the root of your document).
-The parser option allows you to pass in an already prepared
+The parser option allows you to pass in an already prepared 
 XML::Parser object, to save you having to create more than one
 in your application (if, for example, you're doing more than just XPath).
 
     my $xp = XML::XPath->new( context => $node );
 
-It is very much recommended that you use only 1 XPath object throughout
+It is very much recommended that you use only 1 XPath object throughout 
 the life of your application. This is because the object (and it's sub-objects)
 maintain certain bits of state information that will be useful (such
 as XPath variables) to later calls to find(). It's also a good idea because
@@ -415,7 +415,7 @@ you'll use less memory this way.
 The find function takes an XPath expression (a string) and returns either an
 XML::XPath::NodeSet object containing the nodes it found (or empty if
 no nodes matched the path), or one of XML::XPath::Literal (a string),
-XML::XPath::Number, or XML::XPath::Boolean. It should always return
+XML::XPath::Number, or XML::XPath::Boolean. It should always return 
 something - and you can use ->isa() to find out what it returned. If you
 need to check how many nodes it found you should check $nodeset->size.
 See L<XML::XPath::NodeSet>. An optional second parameter of a context
@@ -424,7 +424,7 @@ to do this.
 
 =head2 findnodes($path, [$context])
 
-Returns a list of nodes found by $path, optionally in context $context.
+Returns a list of nodes found by $path, optionally in context $context. 
 In scalar context returns an XML::XPath::NodeSet object.
 
 =head2 findnodes_as_string($path, [$context])
@@ -491,14 +491,14 @@ probably.
 
 =head1 Node Object Model
 
-See L<XML::XPath::Node>, L<XML::XPath::Node::Element>,
+See L<XML::XPath::Node>, L<XML::XPath::Node::Element>, 
 L<XML::XPath::Node::Text>, L<XML::XPath::Node::Comment>,
 L<XML::XPath::Node::Attribute>, L<XML::XPath::Node::Namespace>,
 and L<XML::XPath::Node::PI>.
 
 =head1 On Garbage Collection
 
-XPath nodes work in a special way that allows circular references, and
+XPath nodes work in a special way that allows circular references, and 
 yet still lets Perl's reference counting garbage collector to clean up
 the nodes after use. This should be totally transparent to the user,
 with one caveat: B<If you free your tree before letting go of a sub-tree,
@@ -539,7 +539,7 @@ software, and as such comes with NO WARRANTY. No dates are used in this
 module. You may distribute this module under the terms of either the
 Gnu GPL,  or the Artistic License (the same terms as Perl itself).
 
-For support, please subscribe to the Perl-XML mailing list at the URL
+For support, please subscribe to the Perl-XML mailing list at the URL 
 http://listserv.activestate.com/mailman/listinfo/perl-xml
 
 Matt Sergeant, matt@sergeant.org

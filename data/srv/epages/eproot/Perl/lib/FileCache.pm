@@ -118,15 +118,15 @@ sub import {
     # Why is it using $param both as a filename and filehandle?
     foreach my $param ( '/usr/include/sys/param.h' ){
       if (open($param, '<', $param)) {
-        local ($_, $.);
-        while (<$param>) {
-          if( /^\s*#\s*define\s+NOFILE\s+(\d+)/ ){
-            $cacheout_maxopen = $1 - 4;
-            close($param);
-            last;
-          }
-        }
-        close $param;
+	local ($_, $.);
+	while (<$param>) {
+	  if( /^\s*#\s*define\s+NOFILE\s+(\d+)/ ){
+	    $cacheout_maxopen = $1 - 4;
+	    close($param);
+	    last;
+	  }
+	}
+	close $param;
       }
     }
     $cacheout_maxopen ||= 16;
@@ -168,15 +168,15 @@ sub cacheout {
     }
     else{
       if( scalar keys(%isopen) > $cacheout_maxopen -1 ) {
-        my @lru = sort{ $isopen{$a}->[0] <=> $isopen{$b}->[0] } keys(%isopen);
-        $cacheout_seq = 0;
-        $isopen{$_}->[0] = $cacheout_seq++ for
-          splice(@lru, int($cacheout_maxopen / 3)||$cacheout_maxopen);
-        &cacheout_close($_, 1) for @lru;
+	my @lru = sort{ $isopen{$a}->[0] <=> $isopen{$b}->[0] } keys(%isopen);
+	$cacheout_seq = 0;
+	$isopen{$_}->[0] = $cacheout_seq++ for
+	  splice(@lru, int($cacheout_maxopen / 3)||$cacheout_maxopen);
+	&cacheout_close($_, 1) for @lru;
       }
 
       unless( $ref ){
-        $mode ||= $saw{$file} ? '>>' : ($saw{$file}=1, '>');
+	$mode ||= $saw{$file} ? '>>' : ($saw{$file}=1, '>');
       }
       #XXX should we just return the value from cacheout_open, no croak?
       $ret = cacheout_open($mode, $file) or croak("Can't create $file: $!");

@@ -20,7 +20,7 @@ sub rearrange {
     if (ref($param[0]) eq 'HASH') {
         @param = %{$param[0]};
     } else {
-        # If the user has specified that they will be explicitly
+        # If the user has specified that they will be explicitly 
         # using named_parameters (by setting &use_named_parameters(1))
         # or the first parameter starts with a -, then continue.
         # Otherwise just return the parameters as they were given to us.
@@ -99,8 +99,8 @@ sub bad_node {
 }
 
 ###########################################################################
-# This method searches for any text-based data in the children of
-# the node supplied. It will croak if the node has anything other
+# This method searches for any text-based data in the children of 
+# the node supplied. It will croak if the node has anything other 
 # than text values (such as Elements or Comments).
 sub get_only_cdata {
    my($node) = @_;
@@ -108,7 +108,7 @@ sub get_only_cdata {
    my $nodes = $node->getChildNodes();
    my $n = $nodes->getLength;
    for (my $i = 0; $i < $n; $i++) {
-      my $node = $nodes->item($i);
+      my $node = $nodes->item($i);   
       if ( $node->getNodeTypeName eq "TEXT_NODE" ) {
          $return_cdata .= $node->getNodeValue;
       } else {
@@ -121,10 +121,10 @@ sub get_only_cdata {
 
 
 # This is a sibling to the XML::DOM's getElementsByTagName().
-# The main difference here is that it ignores the namespace
-# component of the element. This was done because it
+# The main difference here is that it ignores the namespace 
+# component of the element. This was done because it 
 # Takes a node and returns a list of nodes.
-# Note that the real getElementsByTagName allows you to
+# Note that the real getElementsByTagName allows you to 
 # specify recurse or not. This routine doesn't allow recurse.
 sub get_elements_by_tag_name {
    my ($node, $elemname ) = @_;
@@ -133,7 +133,7 @@ sub get_elements_by_tag_name {
 
    my @return_nodes;
 
-   # This is gruesome. Because we don't yet support namespaces, it
+   # This is gruesome. Because we don't yet support namespaces, it 
    # just lops off the first half of the Element name
    $elemname =~ s/.*?:(.*)$/$1/g;
 
@@ -158,7 +158,7 @@ sub get_only_element {
    # Find the one child element of a specific name
    if ( $elemname ) {
 
-      # This is gruesome. Because we don't yet support namespaces, it
+      # This is gruesome. Because we don't yet support namespaces, it 
       # just lops off the first half of the Element name.
       $elemname =~ s/.*?:(.*)$/$1/g;
 
@@ -171,14 +171,14 @@ sub get_only_element {
       }
 
 #      if ( $nodes->getLength > 1 ) {
-#         bad_node($node, "Too many \"$elemname\" in node");
+#         bad_node($node, "Too many \"$elemname\" in node"); 
 #      } elsif ( $nodes->getLength < 1 ) {
 #         return;
 #         #bad_node($node, "No node found matching \"$elemname\" in node");
 #      }
 #      return $nodes->item(0);
 
-   # Just get the first child element.
+   # Just get the first child element. 
    } else {
       my $nodelist = $node->getChildNodes();
       my $length = $nodelist->getLength();
@@ -203,7 +203,7 @@ sub XML_remove_namespace {
 ###########################################################################
 sub make_uri {
     my $uri = shift;
-    if (ref($uri) =~ /URI/) {
+    if (ref($uri) =~ /URI/) { 
         $uri = $uri->as_string;
     }
     # Remove double slashes from the url
@@ -230,12 +230,12 @@ sub compare_uris {
         $_ = make_uri($_);
         s{/$}{};
         s{(%[0-9a-fA-F][0-9a-fA-F])}{lc $1}eg;
-        }
+	}
 
     return $uri1 eq $uri2;
 }
 
-# This subroutine takes a URI and gets the last portion
+# This subroutine takes a URI and gets the last portion 
 # of it: the filename.
 # e.g. /dir1/dir2/file.txt => file.txt
 #      /dir1/dir2/         => dir2
@@ -272,9 +272,9 @@ sub split_leaf {
 
 # Turns a file-oriented glob
 # into a regular expression.
-# BTW, I recommend you eval any regex command you use on
+# BTW, I recommend you eval any regex command you use on 
 # this outputted  regex value.
-# If somebody types uses an incorrect glob and you try to /$regex/ it
+# If somebody types uses an incorrect glob and you try to /$regex/ it 
 # then perl will bomb with a fatal regex error.
 # For instance, /file[ab.txt/ would bomb.
 sub glob2regex {

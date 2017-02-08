@@ -123,7 +123,7 @@ In a CPAN or other module:
 In your application:
 
     use Log::Any::Adapter;
-
+    
     # Send all logs to Log::Log4perl
     Log::Any::Adapter->set('Log4perl');
 

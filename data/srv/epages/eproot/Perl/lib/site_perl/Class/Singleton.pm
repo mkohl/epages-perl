@@ -3,7 +3,7 @@
 # Class::Singleton.pm
 #
 # Implementation of a "singleton" module which ensures that a class has
-# only one instance and provides global access to it.  For a description
+# only one instance and provides global access to it.  For a description 
 # of the Singleton class, see "Design Patterns", Gamma et al, Addison-
 # Wesley, 1995, ISBN 0-201-63361-2
 #
@@ -26,18 +26,18 @@ our $VERSION = 1.4;
 #
 # instance()
 #
-# Module constructor.  Creates an Class::Singleton (or derived) instance
+# Module constructor.  Creates an Class::Singleton (or derived) instance 
 # if one doesn't already exist.  The instance reference is stored in the
-# _instance variable of the $class package.  This means that classes
+# _instance variable of the $class package.  This means that classes 
 # derived from Class::Singleton will have the variables defined in *THEIR*
 # package, rather than the Class::Singleton package.  The impact of this is
 # that you can create any number of classes derived from Class::Singleton
 # and create a single instance of each one.  If the _instance variable
-# was stored in the Class::Singleton package, you could only instantiate
+# was stored in the Class::Singleton package, you could only instantiate 
 # *ONE* object of *ANY* class derived from Class::Singleton.  The first
-# time the instance is created, the _new_instance() constructor is called
-# which simply returns a reference to a blessed hash.  This can be
-# overloaded for custom constructors.  Any addtional parameters passed to
+# time the instance is created, the _new_instance() constructor is called 
+# which simply returns a reference to a blessed hash.  This can be 
+# overloaded for custom constructors.  Any addtional parameters passed to 
 # instance() are forwarded to _new_instance().
 #
 # Returns a reference to the existing, or a newly created Class::Singleton
@@ -48,7 +48,7 @@ our $VERSION = 1.4;
 
 sub instance {
     my $class = shift;
-
+    
     # already got an object
     return $class if ref $class;
 
@@ -78,8 +78,8 @@ sub has_instance {
 #========================================================================
 # _new_instance(...)
 #
-# Simple constructor which returns a hash reference blessed into the
-# current class.  May be overloaded to create non-hash objects or
+# Simple constructor which returns a hash reference blessed into the 
+# current class.  May be overloaded to create non-hash objects or 
 # handle any specific initialisation required.
 #========================================================================
 
@@ -97,12 +97,12 @@ __END__
 
 =head1 NAME
 
-Class::Singleton - Implementation of a "Singleton" class
+Class::Singleton - Implementation of a "Singleton" class 
 
 =head1 SYNOPSIS
 
     use Class::Singleton;
-
+    
     my $one = Class::Singleton->instance();   # returns a new instance
     my $two = Class::Singleton->instance();   # returns same instance
 
@@ -113,11 +113,11 @@ that can have only one instance in any system.  An example of a Singleton
 might be a print spooler or system registry.  This module implements a
 Singleton class from which other classes can be derived.  By itself, the
 C<Class::Singleton> module does very little other than manage the instantiation
-of a single object.  In deriving a class from C<Class::Singleton>, your module
+of a single object.  In deriving a class from C<Class::Singleton>, your module 
 will inherit the Singleton instantiation method and can implement whatever
 specific functionality is required.
 
-For a description and discussion of the Singleton class, see
+For a description and discussion of the Singleton class, see 
 "Design Patterns", Gamma et al, Addison-Wesley, 1995, ISBN 0-201-63361-2.
 
 =head1 PREREQUISITES
@@ -134,9 +134,9 @@ page explains:
     CPAN stands for the Comprehensive Perl Archive Network.
     This is a globally replicated collection of all known Perl
     materials, including hundreds of unbunded modules.
-
+    
     [...]
-
+    
     For an up-to-date listing of CPAN sites, see
     http://www.perl.com/perl/ or ftp://ftp.perl.com/perl/ .
 
@@ -149,8 +149,8 @@ C<Class::Singleton> is distributed as a single gzipped tar archive file:
 
     Class-Singleton-<version>.tar.gz
 
-Note that "<version>" represents the current version number, of the
-form "C<1.23>".  See L<VERSION> below to determine the current version
+Note that "<version>" represents the current version number, of the 
+form "C<1.23>".  See L<VERSION> below to determine the current version 
 number for C<Class::Singleton>.
 
 Unpack the archive to create an installation directory:
@@ -166,18 +166,18 @@ Unpack the archive to create an installation directory:
     make test
     make install
 
-The 'C<make install>' will install the module on your system.  You may need
-root access to perform this task.  If you install the module in a local
-directory (for example, by executing "C<perl Makefile.PL LIB=~/lib>" in the
-above - see C<perldoc MakeMaker> for full details), you will need to ensure
-that the C<PERL5LIB> environment variable is set to include the location, or
+The 'C<make install>' will install the module on your system.  You may need 
+root access to perform this task.  If you install the module in a local 
+directory (for example, by executing "C<perl Makefile.PL LIB=~/lib>" in the 
+above - see C<perldoc MakeMaker> for full details), you will need to ensure 
+that the C<PERL5LIB> environment variable is set to include the location, or 
 add a line to your scripts explicitly naming the library location:
 
     use lib '/local/path/to/lib';
 
 =head1 USING THE CLASS::SINGLETON MODULE
 
-To import and use the C<Class::Singleton> module the following line should
+To import and use the C<Class::Singleton> module the following line should 
 appear in your Perl program:
 
     use Class::Singleton;
@@ -199,17 +199,17 @@ reference to a C<Class::Singleton> instance.  There can be only one.
 
 =head1 DERIVING SINGLETON CLASSES
 
-A module class may be derived from C<Class::Singleton> and will inherit the
+A module class may be derived from C<Class::Singleton> and will inherit the 
 L<instance()> method that correctly instantiates only one object.
 
     package PrintSpooler;
     use base 'Class::Singleton';
-
+    
     # derived class specific code
     sub submit_job {
         ...
     }
-
+    
     sub cancel_job {
         ...
     }
@@ -217,37 +217,37 @@ L<instance()> method that correctly instantiates only one object.
 The C<PrintSpooler> class defined above could be used as follows:
 
     use PrintSpooler;
-
+    
     my $spooler = PrintSpooler->instance();
-
+    
     $spooler->submit_job(...);
 
 The L<instance()> method calls the L<_new_instance()> constructor method the
 first and only time a new instance is created. All parameters passed to the
 L<instance()> method are forwarded to L<_new_instance()>. In the base class
 the L<_new_instance()> method returns a blessed reference to a hash array
-containing any arguments passed as either a hash reference or list of named
-parameters.
+containing any arguments passed as either a hash reference or list of named 
+parameters. 
 
     package MyConfig;
     use base 'Class::Singleton';
-
+    
     sub foo {
         shift->{ foo };
     }
-
+    
     sub bar {
         shift->{ bar };
     }
-
+    
     package main;
-
+    
     # either: hash reference of named parameters
     my $config = MyConfig->instance({ foo => 10, bar => 20 });
-
+    
     # or: list of named parameters
     my $config = MyConfig->instance( foo => 10, bar => 20 );
-
+    
     print $config->foo();   # 10
     print $config->bar();   # 20
 
@@ -258,26 +258,26 @@ reference, for example).
     package MyApp::Database;
     use base 'Class::Singleton';
     use DBI;
-
+    
     # this only gets called the first time instance() is called
     sub _new_instance {
         my $class = shift;
         my $self  = bless { }, $class;
-        my $db    = shift || "myappdb";
+        my $db    = shift || "myappdb";    
         my $host  = shift || "localhost";
-
+        
         $self->{ DB } = DBI->connect("DBI:mSQL:$db:$host")
             || die "Cannot connect to database: $DBI::errstr";
-
+        
         # any other initialisation...
-
+        
         return $self;
     }
 
 The above example might be used as follows:
 
     use MyApp::Database;
-
+    
     # first use - database gets initialised
     my $database = MyApp::Database->instance();
 
@@ -285,10 +285,10 @@ Some time later on in a module far, far away...
 
     package MyApp::FooBar
     use MyApp::Database;
-
+    
     # this FooBar object needs access to the database; the Singleton
     # approach gives a nice wrapper around global variables.
-
+    
     sub new {
         my $class = shift;
         bless {
@@ -313,7 +313,7 @@ class to exists. For example, it would be possible to derive both
 single instance of I<each> in a system, rather than a single instance of
 I<either>.
 
-You can use the L<has_instance()> method to find out if a particular class
+You can use the L<has_instance()> method to find out if a particular class 
 already has an instance defined.  A reference to the instance is returned or
 C<undef> if none is currently defined.
 

@@ -236,7 +236,7 @@ sub flush_to_disk {
     if (($self->{_wrote_header}||'') eq $filename) {
         # append more data to the file
         # XXX assumes that Path hasn't changed
-        open($fh, ">>", $filename)
+        open($fh, ">>", $filename) 
           or croak("Unable to open '$filename' for $class output: $!");
     } else {
         # create new file (or overwrite existing)
@@ -246,7 +246,7 @@ sub flush_to_disk {
             rename($filename, $bak)
                 or warn "Error renaming $filename to $bak: $!\n";
         }
-        open($fh, ">", $filename)
+        open($fh, ">", $filename) 
           or croak("Unable to open '$filename' for $class output: $!");
     }
     # lock the file (before checking size and writing the header)
@@ -310,7 +310,7 @@ sub write_data {
     # XXX it's valid for $data to be an ARRAY ref, i.e., Path is empty.
     # produce an empty profile for invalid $data
     return 0 unless $data and UNIVERSAL::isa($data,'HASH');
-
+    
     # isolate us against globals which affect print
     local ($\, $,);
 

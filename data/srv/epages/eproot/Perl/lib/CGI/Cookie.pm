@@ -12,7 +12,7 @@ use warnings;
 
 # Copyright 1995-1999, Lincoln D. Stein.  All rights reserved.
 # It may be used and modified freely, but I do request that this copyright
-# notice remain attached to the file.  You may modify this module as you
+# notice remain attached to the file.  You may modify this module as you 
 # wish, but if you redistribute a modified version, please attach a note
 # listing the modifications you have made.
 
@@ -58,7 +58,7 @@ sub fetch {
    my $raw_cookie = get_raw_cookie(@_) or return;
    my %results;
    my($key,$value);
-
+   
    my @pairs = split("[;,] ?",$raw_cookie);
    foreach (@pairs) {
      s/\s*(.*?)\s*/$1/;
@@ -78,15 +78,15 @@ sub fetch {
 
 sub get_raw_cookie {
   my $r = shift;
-  $r ||= eval { $MOD_PERL == 2                    ?
+  $r ||= eval { $MOD_PERL == 2                    ? 
                   Apache2::RequestUtil->request() :
                   Apache->request } if $MOD_PERL;
 
   return $r->headers_in->{'Cookie'} if $r;
 
-  die "Run $r->subprocess_env; before calling fetch()"
+  die "Run $r->subprocess_env; before calling fetch()" 
     if $MOD_PERL and !exists $ENV{REQUEST_METHOD};
-
+    
   return $ENV{HTTP_COOKIE} || $ENV{COOKIE};
 }
 
@@ -126,7 +126,7 @@ sub new {
   my($name,$value,$path,$domain,$secure,$expires,$httponly) =
     rearrange([ 'NAME', ['VALUE','VALUES'], qw/ PATH DOMAIN SECURE EXPIRES
         HTTPONLY / ], @_);
-
+  
   # Pull out our parameters.
   my @values;
   if (ref($value)) {
@@ -138,11 +138,11 @@ sub new {
   } else {
     @values = ($value);
   }
-
+  
   bless my $self = {
-                    'name'=>$name,
-                    'value'=>[@values],
-                   },$class;
+		    'name'=>$name,
+		    'value'=>[@values],
+		   },$class;
 
   # IE requires the path and domain to be present for some reason.
   $path   ||= "/";
@@ -284,7 +284,7 @@ CGI::Cookie - Interface to Netscape Cookies
     $cookie1 = new CGI::Cookie(-name=>'ID',-value=>123456);
     $cookie2 = new CGI::Cookie(-name=>'preferences',
                                -value=>{ font => Helvetica,
-                                         size => 12 }
+                                         size => 12 } 
                                );
     print header(-cookie=>[$cookie1,$cookie2]);
 
@@ -303,9 +303,9 @@ the browser's side of the connection.  Although CGI::Cookie is
 intended to be used in conjunction with CGI.pm (and is in fact used by
 it internally), you can use this module independently.
 
-For full information on cookies see
+For full information on cookies see 
 
-        http://www.ics.uci.edu/pub/ietf/http/rfc2109.txt
+	http://www.ics.uci.edu/pub/ietf/http/rfc2109.txt
 
 =head1 USING CGI::Cookie
 
@@ -329,11 +329,11 @@ the user quits the browser.
 
 =item B<2. domain>
 
-This is a partial or complete domain name for which the cookie is
+This is a partial or complete domain name for which the cookie is 
 valid.  The browser will return the cookie to any host that matches
 the partial domain name.  For example, if you specify a domain name
 of ".capricorn.com", then Netscape will return the cookie to
-Web servers running on any of the machines "www.capricorn.com",
+Web servers running on any of the machines "www.capricorn.com", 
 "ftp.capricorn.com", "feckless.capricorn.com", etc.  Domain names
 must contain at least two periods to prevent attempts to match
 on top level domains like ".edu".  If no domain is specified, then
@@ -361,7 +361,7 @@ If the "httponly" attribute is set, the cookie will only be accessible
 through HTTP Requests. This cookie will be inaccessible via JavaScript
 (to prevent XSS attacks).
 
-But, currently this feature only used and recognised by
+But, currently this feature only used and recognised by 
 MS Internet Explorer 6 Service Pack 1 and later.
 
 See this URL for more information:
@@ -372,13 +372,13 @@ L<http://msdn.microsoft.com/en-us/library/ms533046%28VS.85%29.aspx>
 
 =head2 Creating New Cookies
 
-        my $c = new CGI::Cookie(-name    =>  'foo',
+	my $c = new CGI::Cookie(-name    =>  'foo',
                              -value   =>  'bar',
                              -expires =>  '+3M',
                              -domain  =>  '.capricorn.com',
                              -path    =>  '/cgi-bin/database',
                              -secure  =>  1
-                            );
+	                    );
 
 Create cookies from scratch with the B<new> method.  The B<-name> and
 B<-value> parameters are required.  The name must be a scalar value.
@@ -456,15 +456,15 @@ representation.  You may call as_string() yourself if you prefer:
 
 =head2 Recovering Previous Cookies
 
-        %cookies = fetch CGI::Cookie;
+	%cookies = fetch CGI::Cookie;
 
 B<fetch> returns an associative array consisting of all cookies
 returned by the browser.  The keys of the array are the cookie names.  You
 can iterate through the cookies this way:
 
-        %cookies = fetch CGI::Cookie;
-        foreach (keys %cookies) {
-           do_something($cookies{$_});
+	%cookies = fetch CGI::Cookie;
+	foreach (keys %cookies) {
+	   do_something($cookies{$_});
         }
 
 In a scalar context, fetch() returns a hash reference, which may be more
@@ -500,15 +500,15 @@ returns its new value.
 
 Get or set the cookie's name.  Example:
 
-        $name = $c->name;
-        $new_name = $c->name('fred');
+	$name = $c->name;
+	$new_name = $c->name('fred');
 
 =item B<value()>
 
 Get or set the cookie's value.  Example:
 
-        $value = $c->value;
-        @new_value = $c->value(['a','b','c','d']);
+	$value = $c->value;
+	@new_value = $c->value(['a','b','c','d']);
 
 B<value()> is context sensitive.  In a list context it will return
 the current value of the cookie as an array.  In a scalar context it
@@ -531,7 +531,7 @@ Get or set the cookie's expiration time.
 
 =head1 AUTHOR INFORMATION
 
-Copyright 1997-1998, Lincoln D. Stein.  All rights reserved.
+Copyright 1997-1998, Lincoln D. Stein.  All rights reserved.  
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

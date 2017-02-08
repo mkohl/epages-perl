@@ -107,9 +107,9 @@ sub punycode_decode($) {
          (my $digit = index pyc_digits, substr $input, 0, 1, "")
             >= 0
             or Carp::croak "punycode_decode: malformed punycode";
-
+      
          $i += $digit * $w;
-
+         
          my $t = List::Util::max pyc_tmin, List::Util::min pyc_tmax, $k - $bias;
          last if $digit < $t;
 

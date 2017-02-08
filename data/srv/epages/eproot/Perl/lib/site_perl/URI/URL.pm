@@ -36,9 +36,9 @@ sub newlocal
 {package URI::_foreign;
     sub _init  # hope it is not defined
     {
-        my $class = shift;
-        die "Unknown URI::URL scheme $_[1]:" if $URI::URL::STRICT;
-        $class->SUPER::_init(@_);
+	my $class = shift;
+	die "Unknown URI::URL scheme $_[1]:" if $URI::URL::STRICT;
+	$class->SUPER::_init(@_);
     }
 }
 
@@ -117,7 +117,7 @@ sub path {
     return unless defined wantarray;
     return '/' if !defined($old) || !length($old);
     Carp::croak("Path components contain '/' (you must call epath)")
-        if $old =~ /%2[fF]/ and !@_;
+	if $old =~ /%2[fF]/ and !@_;
     $old = "/$old" if $old !~ m|^/| && defined $self->netloc;
     return uri_unescape($old);
 }
@@ -130,21 +130,21 @@ sub query {
     my $self = shift;
     my $old = $self->equery(@_);
     if (defined(wantarray) && defined($old)) {
-        if ($old =~ /%(?:26|2[bB]|3[dD])/) {  # contains escaped '=' '&' or '+'
-            my $mess;
-            for ($old) {
-                $mess = "Query contains both '+' and '%2B'"
-                  if /\+/ && /%2[bB]/;
-                $mess = "Form query contains escaped '=' or '&'"
-                  if /=/  && /%(?:3[dD]|26)/;
-            }
-            if ($mess) {
-                Carp::croak("$mess (you must call equery)");
-            }
-        }
-        # Now it should be safe to unescape the string without losing
-        # information
-        return uri_unescape($old);
+	if ($old =~ /%(?:26|2[bB]|3[dD])/) {  # contains escaped '=' '&' or '+'
+	    my $mess;
+	    for ($old) {
+		$mess = "Query contains both '+' and '%2B'"
+		  if /\+/ && /%2[bB]/;
+		$mess = "Form query contains escaped '=' or '&'"
+		  if /=/  && /%(?:3[dD]|26)/;
+	    }
+	    if ($mess) {
+		Carp::croak("$mess (you must call equery)");
+	    }
+	}
+	# Now it should be safe to unescape the string without losing
+	# information
+	return uri_unescape($old);
     }
     undef;
 
@@ -156,7 +156,7 @@ sub abs
     my $base = shift;
     my $allow_scheme = shift;
     $allow_scheme = $URI::URL::ABS_ALLOW_RELATIVE_SCHEME
-        unless defined $allow_scheme;
+	unless defined $allow_scheme;
     local $URI::ABS_ALLOW_RELATIVE_SCHEME = $allow_scheme;
     local $URI::ABS_REMOTE_LEADING_DOTS = $URI::URL::ABS_REMOTE_LEADING_DOTS;
     $self->SUPER::abs($base);

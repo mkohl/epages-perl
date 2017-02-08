@@ -173,7 +173,7 @@ success blocks may sometimes help organize complex testing.
 =head2 lives_ok
 
 Exported only by request, these two functions run a given block of code, and
-provide TAP output indicating if it did, or did not throw an exception.
+provide TAP output indicating if it did, or did not throw an exception. 
 These provide an easy upgrade path for replacing existing unit tests based on
 C<Test::Exception>.
 

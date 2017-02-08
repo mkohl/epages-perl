@@ -9,9 +9,9 @@ PPI::Statement::Null - A useless null statement
 =head1 SYNOPSIS
 
   my $foo = 1;
-
+  
   ; # <-- Null statement
-
+  
   my $bar = 1;
 
 =head1 INHERITANCE
@@ -45,8 +45,8 @@ use PPI::Statement ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Statement';
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Statement';
 }
 
 # A null statement is not significant

@@ -678,7 +678,7 @@ sub element($)
 
     my $do4 = $do3;
     if($comptype && $self->{xsi_type}{$comptype})
-    {
+    { 
         # Ugly xsi:type switch needed
         my %alt = ($comptype => $do3);
         foreach my $alttype (@{$self->{xsi_type}{$comptype}})
@@ -735,7 +735,7 @@ sub particle($)
 
     # default attribute in writer means optional, but we want to see
     # them in the reader, to see the value.
-
+ 
     defined $max or $max = 1;
     $max = 'unbounded'
         if $max ne 'unbounded' && $max > 1 && !$self->{check_occurs};
@@ -879,7 +879,7 @@ sub particleElementRef($)
          my $subst_elem = $tree->descend($subst->{node});
          my ($l, $d) = $self->particleElement($subst_elem);
          push @elems, $l => [$self->keyRewrite($l), $d] if defined $d;
-    }
+    } 
 
     my $where = $tree->path . '#subst';
     ($type => $self->makeSubstgroup($where, $type, @elems));
@@ -894,7 +894,7 @@ sub particleElement($)
     {   my $where   = $tree->path . "/$ref";
         my $refname = $self->rel2abs($tree, $node, $ref);
         return () if $self->blocked($where, ref => $refname);
-
+ 
         my $def     = $self->namespaces->find(element => $refname)
             or error __x"cannot find ref element '{name}' at {where}"
                    , name => $refname, where => $where, _class => 'schema';
@@ -1335,7 +1335,7 @@ sub simpleContentExtension($)
     defined $basetype->{st}
         or error __x"base of simpleContent not simple at {where}"
              , where => $where, _class => 'schema';
-
+ 
     $self->extendAttrs($basetype, {$self->attributeList($tree)});
 
     $tree->currentChild
@@ -1521,7 +1521,7 @@ sub findHooks($$$)
         if($id)
         {   my $i = $hook->{id};
             $match++
-                if first {ref $_ eq 'Regexp' ? $id =~ $_ : $id eq $_}
+                if first {ref $_ eq 'Regexp' ? $id =~ $_ : $id eq $_} 
                     ref $i eq 'ARRAY' ? @$i : $i;
         }
 

@@ -75,7 +75,7 @@ sub open
         binmode $fh;
     } else
     { $fh = $fname; }
-
+    
     bless $self, $class;
     $self->{' INFILE'} = $fh;
     $self->{' fname'} = $fname;
@@ -103,7 +103,7 @@ sub read
     $fh->read($dat, $num << 2);
     for ($i = 0; $i < $num; $i++)
     {
-        $loc = unpack("N", substr($dat, $i << 2, 4));
+        $loc = unpack("N", substr($dat, $i << 2, 4));       
         $self->{'directs'}[$i] = Font::TTF::Font->new('INFILE' => $fh,
                                                 'PARENT' => $self,
                                                 'OFFSET' => $loc) || return undef;

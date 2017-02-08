@@ -24,7 +24,7 @@ Cpanel::JSON::XS - JSON::XS for Cpanel, fast and correct serialising, also for 5
  # Note that L<JSON::MaybeXS> will automatically use Cpanel::JSON::XS
  # if available, at virtually no speed overhead either, so you should
  # be able to just:
-
+ 
  use JSON::MaybeXS;
 
  # and do the same things, except that you have a pure-perl fallback now.
@@ -804,7 +804,7 @@ See SECURITY CONSIDERATIONS, below, for more info on why this is useful.
 =item $infnan_mode = $json->get_stringify_infnan
 
 Get or set how Cpanel::JSON::XS encodes C<inf> or C<nan> for numeric
-values.
+values. 
 
 C<null>:     infnan_mode = 0. Similar to most JSON modules in other languages.
 
@@ -916,7 +916,7 @@ them.
 This method returns the currently stored JSON fragment as an lvalue, that
 is, you can manipulate it. This I<only> works when a preceding call to
 C<incr_parse> in I<scalar context> successfully returned an object, and
-2. only with Perl >= 5.8
+2. only with Perl >= 5.8 
 
 Under all other circumstances you must not call this function (I mean
 it.  although in simple tests it might actually work, it I<will> fail

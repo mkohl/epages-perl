@@ -10,16 +10,16 @@ IO::Lines - IO:: interface for reading/writing an array of lines
 
     use IO::Lines;
 
-    ### See IO::ScalarArray for details
+    ### See IO::ScalarArray for details 
 
 
 =head1 DESCRIPTION
 
 This class implements objects which behave just like FileHandle
 (or IO::Handle) objects, except that you may use them to write to
-(or read from) an array of lines.  They can be tiehandle'd as well.
+(or read from) an array of lines.  They can be tiehandle'd as well.  
 
-This is a subclass of L<IO::ScalarArray|IO::ScalarArray>
+This is a subclass of L<IO::ScalarArray|IO::ScalarArray> 
 in which the underlying
 array has its data stored in a line-oriented-format: that is,
 every element ends in a C<"\n">, with the possible exception of the
@@ -59,20 +59,20 @@ sub getline {
     my $self = shift;
 
     if (!defined $/) {
-        return join( '', $self->_getlines_for_newlines );
+	return join( '', $self->_getlines_for_newlines );
     }
     elsif ($/ eq "\n") {
-        if (!*$self->{Pos}) {      ### full line...
-            return *$self->{AR}[*$self->{Str}++];
-        }
-        else {                     ### partial line...
-            my $partial = substr(*$self->{AR}[*$self->{Str}++], *$self->{Pos});
-            *$self->{Pos} = 0;
-            return $partial;
-        }
+	if (!*$self->{Pos}) {      ### full line...
+	    return *$self->{AR}[*$self->{Str}++];
+	}
+	else {                     ### partial line...
+	    my $partial = substr(*$self->{AR}[*$self->{Str}++], *$self->{Pos});
+	    *$self->{Pos} = 0;
+	    return $partial;
+	}
     }
     else {
-        croak 'unsupported $/: must be "\n" or undef';
+	croak 'unsupported $/: must be "\n" or undef';
     }
 }
 
@@ -90,10 +90,10 @@ sub getlines {
     wantarray or croak("can't call getlines in scalar context!");
 
     if ((defined $/) and ($/ eq "\n")) {
-        return $self->_getlines_for_newlines(@_);
+	return $self->_getlines_for_newlines(@_);
     }
     else {         ### slow but steady
-        return $self->SUPER::getlines(@_);
+	return $self->SUPER::getlines(@_);
     }
 }
 
@@ -110,13 +110,13 @@ sub _getlines_for_newlines {
     my ($rArray, $Str, $Pos) = @{*$self}{ qw( AR Str Pos ) };
     my @partial = ();
 
-    if ($Pos) {                         ### partial line...
-        @partial = (substr( $rArray->[ $Str++ ], $Pos ));
-        *$self->{Pos} = 0;
+    if ($Pos) {				### partial line...
+	@partial = (substr( $rArray->[ $Str++ ], $Pos ));
+	*$self->{Pos} = 0;
     }
-    *$self->{Str} = scalar @$rArray;    ### about to exhaust @$rArray
+    *$self->{Str} = scalar @$rArray;	### about to exhaust @$rArray
     return (@partial,
-            @$rArray[ $Str .. $#$rArray ]);     ### remaining full lines...
+	    @$rArray[ $Str .. $#$rArray ]);	### remaining full lines...
 }
 
 #------------------------------
@@ -124,21 +124,21 @@ sub _getlines_for_newlines {
 # print ARGS...
 #
 # Instance method, override.
-# Print ARGS to the underlying line array.
+# Print ARGS to the underlying line array.  
 #
 sub print {
     if (defined $\ && $\ ne "\n") {
-        croak 'unsupported $\: must be "\n" or undef';
+	croak 'unsupported $\: must be "\n" or undef';
     }
 
     my $self = shift;
     ### print STDERR "\n[[ARRAY WAS...\n", @{*$self->{AR}}, "<<EOF>>\n";
     my @lines = split /^/, join('', @_); @lines or return 1;
 
-    ### Did the previous print not end with a newline?
+    ### Did the previous print not end with a newline?  
     ### If so, append first line:
     if (@{*$self->{AR}} and (*$self->{AR}[-1] !~ /\n\Z/)) {
-        *$self->{AR}[-1] .= shift @lines;
+	*$self->{AR}[-1] .= shift @lines;
     }
     push @{*$self->{AR}}, @lines;       ### add the remainder
     ### print STDERR "\n[[ARRAY IS NOW...\n", @{*$self->{AR}}, "<<EOF>>\n";
@@ -169,7 +169,7 @@ Eryq (F<eryq@zeegee.com>).
 President, ZeeGee Software Inc (F<http://www.zeegee.com>).
 
 
-=head2 Other contributors
+=head2 Other contributors 
 
 Thanks to the following individuals for their invaluable contributions
 (if I've forgotten or misspelled your name, please email me!):

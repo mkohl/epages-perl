@@ -24,7 +24,7 @@ sub encode {
     my @last_empty;
     push(@last_empty, pop @labels) if @labels > 1 && $labels[-1] eq "";
     for (@labels) {
-        $_ = ToASCII($_);
+	$_ = ToASCII($_);
     }
 
     return eval 'join(".", @labels, @last_empty)' if URI::_idna::_ENV_::JOIN_LEAKS_UTF8_FLAGS;
@@ -81,7 +81,7 @@ sub ToUnicode {
     my $result = decode_punycode(substr($label, 4));
     my $label2 = ToASCII($result);
     if (lc($label) ne $label2) {
-        croak "IDNA does not round-trip: '\L$label\E' vs '$label2'";
+	croak "IDNA does not round-trip: '\L$label\E' vs '$label2'";
     }
     return $result;
 }

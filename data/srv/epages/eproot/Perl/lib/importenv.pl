@@ -5,9 +5,9 @@
 
 ;# This file, when interpreted, pulls the environment into normal variables.
 ;# Usage:
-;#      require 'importenv.pl';
+;#	require 'importenv.pl';
 ;# or
-;#      #include <importenv.pl>
+;#	#include <importenv.pl>
 
 local($tmp,$key) = '';
 

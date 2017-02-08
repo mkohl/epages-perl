@@ -16,7 +16,7 @@ MP3::Tag::Cue - Module for parsing F<.cue> files.
 
 =head1 SYNOPSIS
 
-  my $db = MP3::Tag::Cue->new($filename, $track);       # Name of audio file
+  my $db = MP3::Tag::Cue->new($filename, $track);	# Name of audio file
   my $db = MP3::Tag::Cue->new_from($record, $track); # Contents of .cue file
 
   ($title, $artist, $album, $year, $comment, $track) = $db->parse();
@@ -83,9 +83,9 @@ sub matches($$$) {
 
 sub find_cue ($$) {
   my ($f, $d, %seen) = (shift, shift);
-  require File::Glob;                   # "usual" glob() fails on spaces...
+  require File::Glob;			# "usual" glob() fails on spaces...
   my @cue = (File::Glob::bsd_glob("$d/*.cue"), File::Glob::bsd_glob('$d/*.CUE'));
-  @seen{@cue} = (1) x @cue;                 # remove duplicates:
+  @seen{@cue} = (1) x @cue;		    # remove duplicates:
   @cue = keys %seen;
   my $c = @cue;
   @cue = grep matches($_, $f, 0), @cue if @cue > 1;
@@ -103,7 +103,7 @@ sub new_with_parent {
       my $d = dirname($f);
       (my $c, @cue) = find_cue($f, $d);
       unless ($c) {
-        my $d1 = dirname($d);
+	my $d1 = dirname($d);
         (my $c, @cue) = find_cue($d, $d1);
       }
     }
@@ -116,7 +116,7 @@ sub new_with_parent {
     my @data = <F>;
     close F or die "Error closing `$cue[0]': $!";
     bless {filename => $cue[0], data => \@data, track => shift,
-           parent => $p}, $class;
+	   parent => $p}, $class;
 }
 
 sub new {
@@ -148,17 +148,17 @@ artist in the whole-disk-info field C<PERFORMER>, C<songwriter>.
 sub return_parsed {
     my ($self,$what) = @_;
     if (defined $what) {
-        return $self->{parsed}{collection_performer}  if $what =~/^artist_collection/i;
-        return $self->{parsed}{album}  if $what =~/^al/i;
-        return $self->{parsed}{performer} if $what =~/^a/i;
-        return $self->{parsed}{songwriter} if $what =~/^songwriter/i;
-        return $self->{parsed}{track}  if $what =~/^tr/i;
-        return $self->{parsed}{date}   if $what =~/^y/i;
-        return $self->{parsed}{comment}if $what =~/^c/i;
-        return $self->{parsed}{genre}  if $what =~/^g/i;
-        return $self->{parsed}{title};
+	return $self->{parsed}{collection_performer}  if $what =~/^artist_collection/i;
+	return $self->{parsed}{album}  if $what =~/^al/i;
+	return $self->{parsed}{performer} if $what =~/^a/i;
+	return $self->{parsed}{songwriter} if $what =~/^songwriter/i;
+	return $self->{parsed}{track}  if $what =~/^tr/i;
+	return $self->{parsed}{date}   if $what =~/^y/i;
+	return $self->{parsed}{comment}if $what =~/^c/i;
+	return $self->{parsed}{genre}  if $what =~/^g/i;
+	return $self->{parsed}{title};
     }
-
+    
     return $self->{parsed} unless wantarray;
     return map $self->{parsed}{$_} , qw(title artist album year comment track);
 }
@@ -172,32 +172,32 @@ sub parse_lines {
     my $track = $self->track;
     $track = -1e100 unless $track or length $track;
     for my $l (@{$self->{data}}) {
-        # http://digitalx.org/cuesheetsyntax.php
-        # http://wiki.hydrogenaudio.org/index.php?title=Cuesheet
-        # What about http://cue2toc.sourceforge.net/ ?  Can it deal with .toc of cdrecord?
-        # http://www.willwap.co.uk/Programs/vbrfix.php - may inspect gap info???
-        next unless $l =~ /^\s*(REM\s+)?
-                            (GENRE|DATE|DISCID|COMMENT|PERFORMER|TITLE
-                             |ISRC|POSTGAP|PREGAP|SONGWRITER
-                             |FILE|INDEX|TRACK|CATALOG|CDTEXTFILE|FLAGS)\s+(.*)/x;
-        my $field = lc $2;
-        my $val = $3;
-        $val =~ s/^\"(.*)\"/$1/;        # Ignore trailing fields after TRACK, FILE
-        $track_seen = $1 if $field eq 'track' and $val =~ /^0?(\d+)/;
-        next if length $track_seen and $track_seen != $track;
+	# http://digitalx.org/cuesheetsyntax.php
+	# http://wiki.hydrogenaudio.org/index.php?title=Cuesheet
+	# What about http://cue2toc.sourceforge.net/ ?  Can it deal with .toc of cdrecord?
+	# http://www.willwap.co.uk/Programs/vbrfix.php - may inspect gap info???
+	next unless $l =~ /^\s*(REM\s+)?
+			    (GENRE|DATE|DISCID|COMMENT|PERFORMER|TITLE
+			     |ISRC|POSTGAP|PREGAP|SONGWRITER
+			     |FILE|INDEX|TRACK|CATALOG|CDTEXTFILE|FLAGS)\s+(.*)/x;
+	my $field = lc $2;
+	my $val = $3;
+	$val =~ s/^\"(.*)\"/$1/;	# Ignore trailing fields after TRACK, FILE
+	$track_seen = $1 if $field eq 'track' and $val =~ /^0?(\d+)/;
+	next if length $track_seen and $track_seen != $track;
 
-        $self->{fields}{$field} = $val; # unless exists $self->{fields}{$field};
-        next if length $track_seen;
-        $self->{fields}{album} = $val if $field eq 'title';
-        $self->{fields}{collection_performer} = $val if $field eq 'performer';
-    }
+	$self->{fields}{$field} = $val;	# unless exists $self->{fields}{$field};
+	next if length $track_seen;
+	$self->{fields}{album} = $val if $field eq 'title';
+	$self->{fields}{collection_performer} = $val if $field eq 'performer';
+    }    
 }
 
 sub parse {
     my ($self,$what) = @_;
-    return $self->return_parsed($what)  if exists $self->{parsed};
+    return $self->return_parsed($what)	if exists $self->{parsed};
     $self->parse_lines;
-    $self->{parsed} = { %{$self->{fields}} };   # Make a copy
+    $self->{parsed} = { %{$self->{fields}} };	# Make a copy
     $self->return_parsed($what);
 }
 

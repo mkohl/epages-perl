@@ -54,10 +54,10 @@ sub new {
     my ($class) = @_;
     my $eos;
     return bless {
-        Bounds => [],
-        BH     => {},
-        TH     => {},
-        EOS    => \$eos,
+	Bounds => [],
+	BH     => {},
+	TH     => {},
+	EOS    => \$eos,
     }, $class;
 }
 
@@ -104,7 +104,7 @@ sub add_boundary {
 sub add_terminator {
     my ($self, $line) = @_;
     foreach (@EOLs) {
-        $self->{TH}{"$line$_"} = "DONE $line";
+	$self->{TH}{"$line$_"} = "DONE $line";
     }
     $self;
 }
@@ -163,13 +163,13 @@ sub eos_type {
     $eos = $self->eos if (@_ == 1);
 
     if    ($eos =~ /^(DONE|EOF)/) {
-        return $1;
+	return $1;
     }
     elsif ($eos =~ /^(DELIM|CLOSE) (.*)$/) {
-        return (($2 eq $self->{Bounds}[0]) ? $1 : 'EXT');
+	return (($2 eq $self->{Bounds}[0]) ? $1 : 'EXT');
     }
     else {
-        die("internal error: unable to classify boundary token ($eos)");
+	die("internal error: unable to classify boundary token ($eos)");
     }
 }
 
@@ -238,56 +238,56 @@ sub read_chunk {
 
     ### Handle efficiently by type:
     if ($n_in) {
-        if ($n_out) {            ### native input, native output [fastest]
-            while (<$n_in>) {
-                # Normalize line ending
-                $_ =~ s/(:?\n\r|\r\n|\r)$/\n/ if $normalize_newlines;
-                if (substr($_, 0, 2) eq '--') {
-                    ($maybe = $_) =~ s/[ \t\r\n]+\Z//;
-                    $bh{$maybe} and do { $eos = $bh{$maybe}; last };
-                }
-                $thx and $th{$_} and do { $eos = $th{$_}; last };
-                print $n_out $last; $last = $_;
-            }
-        }
-        else {                   ### native input, OO output [slower]
-            while (<$n_in>) {
-                # Normalize line ending
-                $_ =~ s/(:?\n\r|\r\n|\r)$/\n/ if $normalize_newlines;
-                if (substr($_, 0, 2) eq '--') {
-                    ($maybe = $_) =~ s/[ \t\r\n]+\Z//;
-                    $bh{$maybe} and do { $eos = $bh{$maybe}; last };
-                }
-                $thx and $th{$_} and do { $eos = $th{$_}; last };
-                $out->print($last); $last = $_;
-            }
-        }
+	if ($n_out) {            ### native input, native output [fastest]
+	    while (<$n_in>) {
+		# Normalize line ending
+		$_ =~ s/(:?\n\r|\r\n|\r)$/\n/ if $normalize_newlines;
+		if (substr($_, 0, 2) eq '--') {
+		    ($maybe = $_) =~ s/[ \t\r\n]+\Z//;
+		    $bh{$maybe} and do { $eos = $bh{$maybe}; last };
+		}
+		$thx and $th{$_} and do { $eos = $th{$_}; last };
+		print $n_out $last; $last = $_;
+	    }
+	}
+	else {                   ### native input, OO output [slower]
+	    while (<$n_in>) {
+		# Normalize line ending
+		$_ =~ s/(:?\n\r|\r\n|\r)$/\n/ if $normalize_newlines;
+		if (substr($_, 0, 2) eq '--') {
+		    ($maybe = $_) =~ s/[ \t\r\n]+\Z//;
+		    $bh{$maybe} and do { $eos = $bh{$maybe}; last };
+		}
+		$thx and $th{$_} and do { $eos = $th{$_}; last };
+		$out->print($last); $last = $_;
+	    }
+	}
     }
     else {
-        if ($n_out) {            ### OO input, native output [even slower]
-            while (defined($_ = $in->getline)) {
-                # Normalize line ending
-                $_ =~ s/(:?\n\r|\r\n|\r)$/\n/ if $normalize_newlines;
-                if (substr($_, 0, 2) eq '--') {
-                    ($maybe = $_) =~ s/[ \t\r\n]+\Z//;
-                    $bh{$maybe} and do { $eos = $bh{$maybe}; last };
-                }
-                $thx and $th{$_} and do { $eos = $th{$_}; last };
-                print $n_out $last; $last = $_;
-            }
-        }
-        else {                   ### OO input, OO output [slowest]
-            while (defined($_ = $in->getline)) {
-                # Normalize line ending
-                $_ =~ s/(:?\n\r|\r\n|\r)$/\n/ if $normalize_newlines;
-                if (substr($_, 0, 2) eq '--') {
-                    ($maybe = $_) =~ s/[ \t\r\n]+\Z//;
-                    $bh{$maybe} and do { $eos = $bh{$maybe}; last };
-                }
-                $thx and $th{$_} and do { $eos = $th{$_}; last };
-                $out->print($last); $last = $_;
-            }
-        }
+	if ($n_out) {            ### OO input, native output [even slower]
+	    while (defined($_ = $in->getline)) {
+		# Normalize line ending
+		$_ =~ s/(:?\n\r|\r\n|\r)$/\n/ if $normalize_newlines;
+		if (substr($_, 0, 2) eq '--') {
+		    ($maybe = $_) =~ s/[ \t\r\n]+\Z//;
+		    $bh{$maybe} and do { $eos = $bh{$maybe}; last };
+		}
+		$thx and $th{$_} and do { $eos = $th{$_}; last };
+		print $n_out $last; $last = $_;
+	    }
+	}
+	else {                   ### OO input, OO output [slowest]
+	    while (defined($_ = $in->getline)) {
+		# Normalize line ending
+		$_ =~ s/(:?\n\r|\r\n|\r)$/\n/ if $normalize_newlines;
+		if (substr($_, 0, 2) eq '--') {
+		    ($maybe = $_) =~ s/[ \t\r\n]+\Z//;
+		    $bh{$maybe} and do { $eos = $bh{$maybe}; last };
+		}
+		$thx and $th{$_} and do { $eos = $th{$_}; last };
+		$out->print($last); $last = $_;
+	    }
+	}
     }
 
     # Write out last held line, removing terminating CRLF if ended on bound,

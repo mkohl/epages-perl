@@ -29,7 +29,7 @@ OAuth::Lite2::ParamMethod - base class of builder/parser for OAuth 2.0 parameter
 =head1 SYNOPSIS
 
     my $meth = OAuth::Lite2::ParamMethod::Foo->new;
-
+    
     # server side
     if ($meth->match( $plack_request )) {
         my ($token, $params) = $meth->parse( $plack_request );

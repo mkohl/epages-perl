@@ -134,7 +134,7 @@ sub connect ($$;$$$)
         # must be done first, because setting flags implicitly calls $dbdname::db->STORE
         $dbh->func( 0, "init_default_attributes" );
         my $two_phased_init;
-        defined $dbh->{sql_init_phase} and $two_phased_init = ++$dbh->{sql_init_phase};
+	defined $dbh->{sql_init_phase} and $two_phased_init = ++$dbh->{sql_init_phase};
         my %second_phase_attrs;
 
         my ( $var, $val );
@@ -193,7 +193,7 @@ sub connect ($$;$$$)
             %$attr = %second_phase_attrs;
         }
 
-        $dbh->func("init_done");
+	$dbh->func("init_done");
 
         $dbh->STORE( Active => 1 );
     }
@@ -323,7 +323,7 @@ sub init_valid_attributes
                                sql_sponge_driver          => 1,    # Sponge driver for table_info ()
                                sql_valid_attrs            => 1,    # SQL valid attributes
                                sql_readonly_attrs         => 1,    # SQL readonly attributes
-                               sql_init_phase             => 1,    # Only during initialization
+			       sql_init_phase             => 1,    # Only during initialization
                               };
     $dbh->{sql_readonly_attrs} = {
                                sql_engine_version         => 1,    # DBI::DBD::SqlEngine version
@@ -349,7 +349,7 @@ sub init_default_attributes
     {
         # we have an "old" driver here
         $phase = defined $dbh->{sql_init_phase};
-        $phase and $phase = $dbh->{sql_init_phase};
+	$phase and $phase = $dbh->{sql_init_phase};
     }
 
     if ( 0 == $phase )
@@ -362,7 +362,7 @@ sub init_default_attributes
         $dbh->{sql_identifier_case}        = 2;    # SQL_IC_LOWER
         $dbh->{sql_quoted_identifier_case} = 3;    # SQL_IC_SENSITIVE
 
-        $dbh->{sql_dialect} = "CSV";
+	$dbh->{sql_dialect} = "CSV";
 
         $dbh->{sql_init_phase} = $given_phase;
 
@@ -448,8 +448,8 @@ sub FETCH ($$)
     # Driver private attributes are lower cased
     if ( $attrib eq ( lc $attrib ) )
     {
-        # first let the implementation deliver an alias for the attribute to fetch
-        # after it validates the legitimation of the fetch request
+	# first let the implementation deliver an alias for the attribute to fetch
+	# after it validates the legitimation of the fetch request
         $attrib = $dbh->func( $attrib, "validate_FETCH_attr" ) or return;
 
         my $attr_prefix;
@@ -949,11 +949,11 @@ DBI::DBD::SqlEngine - Base class for DBI drivers without their own SQL engine
 
     sub driver
     {
-        ...
-        my $drh = $proto->SUPER::driver($attr);
-        ...
-        return $drh->{class};
-        }
+	...
+	my $drh = $proto->SUPER::driver($attr);
+	...
+	return $drh->{class};
+	}
 
     package DBD::myDriver::dr;
 

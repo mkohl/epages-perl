@@ -44,8 +44,8 @@ To do this in a script, here's a way that allows it to be overridden:
 
    BEGIN {
       unless ( defined $ENV{IPCRUNDEBUG} ) {
-         eval 'local $ENV{IPCRUNDEBUG} = "none"; require IPC::Run::Debug"'
-            or die $@;
+	 eval 'local $ENV{IPCRUNDEBUG} = "none"; require IPC::Run::Debug"'
+	    or die $@;
       }
    }
 
@@ -54,8 +54,8 @@ the IPCRUNDEBUG flag; modify this formula to grep @ARGV if need be:
 
    BEGIN {
       unless ( grep /^--debug/, @ARGV ) {
-         eval 'local $ENV{IPCRUNDEBUG} = "none"; require IPC::Run::Debug"'
-         or die $@;
+	 eval 'local $ENV{IPCRUNDEBUG} = "none"; require IPC::Run::Debug"'
+	 or die $@;
    }
 
 Both of those are untested.
@@ -70,28 +70,28 @@ use strict;
 use Exporter;
 use vars qw{$VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-        $VERSION = '0.89';
-        @ISA     = qw( Exporter );
-        @EXPORT  = qw(
-                _debug
-                _debug_desc_fd
-                _debugging
-                _debugging_data
-                _debugging_details
-                _debugging_gory_details
-                _debugging_not_optimized
-                _set_child_debug_name
-        );
-
-        @EXPORT_OK = qw(
-                _debug_init
-                _debugging_level
-                _map_fds
-        );
-        %EXPORT_TAGS = (
-                default => \@EXPORT,
-                all     => [ @EXPORT, @EXPORT_OK ],
-        );
+	$VERSION = '0.89';
+	@ISA     = qw( Exporter );
+	@EXPORT  = qw(
+		_debug
+		_debug_desc_fd
+		_debugging
+		_debugging_data
+		_debugging_details
+		_debugging_gory_details
+		_debugging_not_optimized
+		_set_child_debug_name
+	);
+	
+	@EXPORT_OK = qw(
+		_debug_init
+		_debugging_level
+		_map_fds
+	);
+	%EXPORT_TAGS = (
+		default => \@EXPORT,
+		all     => [ @EXPORT, @EXPORT_OK ],
+	);
 }
 
 my $disable_debugging =
@@ -190,8 +190,8 @@ sub _debugging_level() {
       my $v = $ENV{IPCRUNDEBUG};
       $v = $debug_levels{lc $v} if $v =~ /[a-zA-Z]/;
       unless ( defined $v ) {
-         $warned ||= warn "Unknown debug level $ENV{IPCRUNDEBUG}, assuming 'basic' (1)\n";
-         $v = 1;
+	 $warned ||= warn "Unknown debug level $ENV{IPCRUNDEBUG}, assuming 'basic' (1)\n";
+	 $v = 1;
       }
       $level = $v if $v > $level;
    }
@@ -202,7 +202,7 @@ sub _debugging_atleast($) {
    my $min_level = shift || 1;
 
    my $level = _debugging_level;
-
+   
    return $level >= $min_level ? $level : 0;
 }
 
@@ -217,10 +217,10 @@ sub _debug_init {
    ## debug routines so they'll emit debugging info.
    $IPC::Run::cur_self = {};
    (  $parent_pid,
-      $^T,
-      $IPC::Run::cur_self->{debug},
-      $IPC::Run::cur_self->{DEBUG_FD},
-      $debug_name
+      $^T, 
+      $IPC::Run::cur_self->{debug}, 
+      $IPC::Run::cur_self->{DEBUG_FD}, 
+      $debug_name 
    ) = @_;
 }
 
@@ -234,7 +234,7 @@ sub _debug {
 
    my $s;
    my $debug_id;
-   $debug_id = join(
+   $debug_id = join( 
       " ",
       join(
          "",

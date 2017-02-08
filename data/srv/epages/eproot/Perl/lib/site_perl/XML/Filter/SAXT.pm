@@ -8,45 +8,45 @@ use strict;
 use vars qw( $VERSION %SAX_HANDLERS );
 $VERSION = 0.01;
 
-%SAX_HANDLERS = ( DocumentHandler =>
-                  [ "start_document",
-                    "end_document",
-                    "start_element",
-                    "end_element",
-                    "characters",
-                    "processing_instruction",
-                    "comment",
-                    "start_cdata",
-                    "end_cdata",
-                    "entity_reference",
-                    "set_document_locator"      # !! passes {Locator=>$perlsax}
-                    ],
+%SAX_HANDLERS = ( DocumentHandler => 
+		  [ "start_document",
+		    "end_document",
+		    "start_element",
+		    "end_element",
+		    "characters",
+		    "processing_instruction",
+		    "comment",
+		    "start_cdata",
+		    "end_cdata",
+		    "entity_reference",
+		    "set_document_locator"	# !! passes {Locator=>$perlsax}
+		    ],
 
-                  DTDHandler =>
-                  [ "notation_decl",
-                    "unparsed_entity_decl",
-                    "entity_decl",
-                    "element_decl",
-                    "attlist_decl",
-                    "doctype_decl",
-                    "xml_decl"
-                    ],
+		  DTDHandler => 
+		  [ "notation_decl",
+		    "unparsed_entity_decl",
+		    "entity_decl",
+		    "element_decl",
+		    "attlist_decl",
+		    "doctype_decl",
+		    "xml_decl"
+		    ],
 
-                  EntityResolver =>
-                  [ "resolve_entity" ]);
+		  EntityResolver =>
+		  [ "resolve_entity" ]);
 
 #
 # Usage:
 #
-#       $saxt = new XML::Filter::SAXT ( { Handler => $out0 },
-#                                       { DocumentHandler => $out1 },
-#                                       { DTDHandler => $out3,
-#                                         Handler => $out4
-#                                       }
-#                                     );
+#	$saxt = new XML::Filter::SAXT ( { Handler => $out0 },
+#					{ DocumentHandler => $out1 },
+#					{ DTDHandler => $out3,
+#					  Handler => $out4 
+#					}
+#				      );
 #
-#       $perlsax = new XML::Parser::PerlSAX ( Handler => $saxt );
-#       $perlsax->parse ( [OPTIONS] );
+#	$perlsax = new XML::Parser::PerlSAX ( Handler => $saxt );
+#	$perlsax->parse ( [OPTIONS] );
 #
 sub new
 {
@@ -56,42 +56,42 @@ sub new
 
     for (my $i = 0; $i < @out; $i++)
     {
-        for my $handler (keys %SAX_HANDLERS)
-        {
-            my $callbacks = $SAX_HANDLERS{$handler};
-            my $h = ($self->{Out}->[$i]->{$handler} ||= $self->{Out}->[$i]->{Handler});
-            next unless defined $h;
+	for my $handler (keys %SAX_HANDLERS)
+	{
+	    my $callbacks = $SAX_HANDLERS{$handler};
+	    my $h = ($self->{Out}->[$i]->{$handler} ||= $self->{Out}->[$i]->{Handler});
+	    next unless defined $h;
 
-            for my $cb (@$callbacks)
-            {
-                if (UNIVERSAL::can ($h, $cb))
-                {
-                    $self->{$cb} .= "\$out->[$i]->{$handler}->$cb (\@_);\n";
-                }
-            }
-        }
+	    for my $cb (@$callbacks)
+	    {
+		if (UNIVERSAL::can ($h, $cb))
+		{
+		    $self->{$cb} .= "\$out->[$i]->{$handler}->$cb (\@_);\n";
+		}
+	    }
+	}
     }
 
     for my $handler (keys %SAX_HANDLERS)
     {
-        my $callbacks = $SAX_HANDLERS{$handler};
-        for my $cb (@$callbacks)
-        {
-            my $code = $self->{$cb};
-            if (defined $code)
-            {
-                $self->{$cb} =
-                    eval "sub { my \$out = shift->{Out}; $code }";
-            }
-            else
-            {
-                $self->{$cb} = \&noop;
-            }
-        }
+	my $callbacks = $SAX_HANDLERS{$handler};
+	for my $cb (@$callbacks)
+	{
+	    my $code = $self->{$cb};
+	    if (defined $code)
+	    {
+		$self->{$cb} = 
+		    eval "sub { my \$out = shift->{Out}; $code }";
+	    }
+	    else
+	    {
+		$self->{$cb} = \&noop;
+	    }
+	}
     }
     return $self;
 }
-
+				       
 sub noop
 {
     # does nothing
@@ -113,11 +113,11 @@ XML::Filter::SAXT - Replicates SAX events to several SAX event handlers
 =head1 SYNOPSIS
 
  $saxt = new XML::Filter::SAXT ( { Handler => $out1 },
-                                 { DocumentHandler => $out2 },
-                                 { DTDHandler => $out3,
-                                   Handler => $out4
-                                 }
-                               );
+				 { DocumentHandler => $out2 },
+				 { DTDHandler => $out3,
+				   Handler => $out4 
+				 }
+			       );
 
  $perlsax = new XML::Parser::PerlSAX ( Handler => $saxt );
  $perlsax->parse ( [OPTIONS] );
@@ -126,11 +126,11 @@ XML::Filter::SAXT - Replicates SAX events to several SAX event handlers
 
 SAXT is like the Unix 'tee' command in that it multiplexes the input stream
 to several output streams. In this case, the input stream is a PerlSAX event
-producer (like XML::Parser::PerlSAX) and the output streams are PerlSAX
+producer (like XML::Parser::PerlSAX) and the output streams are PerlSAX 
 handlers or filters.
 
 The SAXT constructor takes a list of hash references. Each hash specifies
-an output handler. The hash keys can be: DocumentHandler, DTDHandler,
+an output handler. The hash keys can be: DocumentHandler, DTDHandler, 
 EntityResolver or Handler, where Handler is a combination of the previous three
 and acts as the default handler.
 E.g. if DocumentHandler is not specified, it will try to use Handler.
@@ -151,7 +151,7 @@ L<XML::DOM::Document>.
  my $checker = new XML::Checker;
  my $builder = new XML::Handler::BuildDOM (KeepCDATA => 1);
  my $tee = new XML::Filter::SAXT ( { Handler => $checker },
-                                   { Handler => $builder } );
+				   { Handler => $builder } );
 
  my $parser = new XML::Parser::PerlSAX (Handler => $tee);
  eval
@@ -174,12 +174,12 @@ L<XML::DOM::Document>.
  {
    my $code = shift;
    die XML::Checker::error_string ($code, @_)
-        if $code < 200;   # warnings and info messages are >= 200
+	if $code < 200;	  # warnings and info messages are >= 200
  }
 
 =head1 CAVEATS
 
-This is still alpha software.
+This is still alpha software. 
 Package names and interfaces are subject to change.
 
 =head1 AUTHOR
@@ -187,4 +187,4 @@ Package names and interfaces are subject to change.
 Enno Dersken is the original author.
 
 Send bug reports, hints, tips, suggestions to T.J. Mather at
-<F<tjmather@tjmather.com>>.
+<F<tjmather@tjmather.com>>. 

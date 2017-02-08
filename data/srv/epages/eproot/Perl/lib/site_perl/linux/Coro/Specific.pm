@@ -25,8 +25,8 @@ loading the L<Coro> module - when Coro is loaded, the keys stored in
 C<%$Coro::current> are automatically attached to the coro thread executing
 the main program.
 
-You don't have to load C<Coro::Specific> manually, it will be loaded
-automatically when you C<use Coro> and call the C<new> constructor.
+You don't have to load C<Coro::Specific> manually, it will be loaded 
+automatically when you C<use Coro> and call the C<new> constructor. 
 
 =over 4
 

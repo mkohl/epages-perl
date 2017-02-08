@@ -23,9 +23,9 @@ $VERSION = '1.12';
 
 # Version undef: Thu Dec 14 20:02:42 CST 1995 by sanders@bsdi.com
 # Version 1.00:  Thu Nov 30 23:34:29 EST 2000 by schwern@pobox.com
-#       [PATCH] $VERSION crusade, strict, tests, etc... all over lib/
+#	[PATCH] $VERSION crusade, strict, tests, etc... all over lib/
 # Version 1.01:  Wed May 23 00:00:00 CST 2001 by d-lewart@uiuc.edu
-#       Avoid warnings in Tgetent and Tputs
+#	Avoid warnings in Tgetent and Tputs
 # Version 1.02:  Sat Nov 17 13:50:39 GMT 2001 by jns@gellyfish.com
 #       Altered layout of the POD
 #       Added Test::More to PREREQ_PM in Makefile.PL
@@ -340,21 +340,21 @@ sub Tgetent
 
     # This is eval'ed inside the while loop for each file
     $search = q{
-        while (<TERMCAP>) {
-            next if /^\\t/ || /^#/;
-            if ($_ =~ m/(^|\\|)${termpat}[:|]/o) {
-                chomp;
-                s/^[^:]*:// if $first++;
-                $state = 0;
-                while ($_ =~ s/\\\\$//) {
-                    defined(my $x = <TERMCAP>) or last;
-                    $_ .= $x; chomp;
-                }
-                last;
-            }
-        }
-        defined $entry or $entry = '';
-        $entry .= $_ if $_;
+	while (<TERMCAP>) {
+	    next if /^\\t/ || /^#/;
+	    if ($_ =~ m/(^|\\|)${termpat}[:|]/o) {
+		chomp;
+		s/^[^:]*:// if $first++;
+		$state = 0;
+		while ($_ =~ s/\\\\$//) {
+		    defined(my $x = <TERMCAP>) or last;
+		    $_ .= $x; chomp;
+		}
+		last;
+	    }
+	}
+	defined $entry or $entry = '';
+	$entry .= $_ if $_;
     };
 
     while ( $state != 0 )

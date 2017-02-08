@@ -57,8 +57,8 @@ use Algorithm::Dependency::Source ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.110';
-        @ISA     = 'Algorithm::Dependency::Source';
+	$VERSION = '1.110';
+	@ISA     = 'Algorithm::Dependency::Source';
 }
 
 
@@ -80,17 +80,17 @@ otherwise.
 =cut
 
 sub new {
-        my $class    = shift;
-        my $filename = shift or return undef;
-        return undef unless -r $filename;
+	my $class    = shift;
+	my $filename = shift or return undef;
+	return undef unless -r $filename;
 
-        # Get the basic source object
-        my $self = $class->SUPER::new() or return undef;
+	# Get the basic source object
+	my $self = $class->SUPER::new() or return undef;
 
-        # Add our arguments
-        $self->{filename} = $filename;
+	# Add our arguments
+	$self->{filename} = $filename;
 
-        $self;
+	$self;
 }
 
 
@@ -101,31 +101,31 @@ sub new {
 # Private Methods
 
 sub _load_item_list {
-        my $self = shift;
+	my $self = shift;
 
-        # Load the contents of the file
-        local $/ = undef;
-        open( FILE, $self->{filename} ) or return undef;
-        defined(my $source = <FILE>)    or return undef;
-        close( FILE )                   or return undef;
+	# Load the contents of the file
+	local $/ = undef;
+	open( FILE, $self->{filename} ) or return undef;
+	defined(my $source = <FILE>)    or return undef;
+	close( FILE )                   or return undef;
 
-        # Split, trim, clean and remove comments
-        my @content = grep { ! /^\s*(?:\#|$)/ }
-                split /\s*[\015\012][\s\015\012]*/, $source;
+	# Split, trim, clean and remove comments
+	my @content = grep { ! /^\s*(?:\#|$)/ } 
+		split /\s*[\015\012][\s\015\012]*/, $source;
 
-        # Parse and build the item list
-        my @Items = ();
-        foreach my $line ( @content ) {
-                # Split the line by non-word characters
-                my @sections = grep { length $_ } split /\W+/, $line;
-                return undef unless scalar @sections;
+	# Parse and build the item list
+	my @Items = ();
+	foreach my $line ( @content ) {
+		# Split the line by non-word characters
+		my @sections = grep { length $_ } split /\W+/, $line;
+		return undef unless scalar @sections;
 
-                # Create the new item
-                my $Item = Algorithm::Dependency::Item->new( @sections ) or return undef;
-                push @Items, $Item;
-        }
+		# Create the new item
+		my $Item = Algorithm::Dependency::Item->new( @sections ) or return undef;
+		push @Items, $Item;
+	}
 
-        \@Items;
+	\@Items;
 }
 
 1;

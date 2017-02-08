@@ -213,7 +213,7 @@ sub _connect {
     $dbh->{ShowErrorStatement} = 1 if $local_log;
 
     # XXX should probably just be a Callbacks => arg to connect_cached
-    # with a cache of pre-built callback hooks (memoized, without $self)
+    # with a cache of pre-built callback hooks (memoized, without $self) 
     if (my $random = $self->{forced_gofer_random} || $ENV{DBI_GOFER_RANDOM}) {
         $self->_install_rand_callbacks($dbh, $random);
     }
@@ -373,10 +373,10 @@ sub gather_dbh_attributes {
 
     # XXX piggyback installed_methods onto dbh_attributes for now
     $dbh_attr_values{dbi_installed_methods} = { DBI->installed_methods };
-
+    
     # XXX piggyback default_methods onto dbh_attributes for now
     $dbh_attr_values{dbi_default_methods} = _get_default_methods($dbh);
-
+    
     return \%dbh_attr_values;
 }
 

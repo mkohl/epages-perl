@@ -945,7 +945,7 @@ method.
 =head2 rootdir
 
     $path = Path::Tiny->rootdir; # /
-    $path = rootdir;             # optional export
+    $path = rootdir;             # optional export 
 
 Gives you C<< File::Spec->rootdir >> as a C<Path::Tiny> object if you're too
 picky for C<path("/")>.

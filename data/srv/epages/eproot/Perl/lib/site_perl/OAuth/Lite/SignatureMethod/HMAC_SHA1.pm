@@ -72,7 +72,7 @@ sub build_body_hash {
 =back
 
     my $method = OAuth::Lite::SignatureMethod::HMAC_SHA1->new(
-        consumer_secret => $consumer_secret,
+        consumer_secret => $consumer_secret, 
         token_secret    => $bar,
     );
 

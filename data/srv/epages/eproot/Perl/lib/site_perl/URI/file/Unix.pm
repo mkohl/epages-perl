@@ -32,12 +32,12 @@ sub file
 
     my $auth = $uri->authority;
     if (defined($auth)) {
-        if (lc($auth) ne "localhost" && $auth ne "") {
-            $auth = uri_unescape($auth);
-            unless ($class->_file_is_localhost($auth)) {
-                push(@path, "", "", $auth);
-            }
-        }
+	if (lc($auth) ne "localhost" && $auth ne "") {
+	    $auth = uri_unescape($auth);
+	    unless ($class->_file_is_localhost($auth)) {
+		push(@path, "", "", $auth);
+	    }
+	}
     }
 
     my @ps = $uri->path_segments;
@@ -45,9 +45,9 @@ sub file
     push(@path, @ps);
 
     for (@path) {
-        # Unix file/directory names are not allowed to contain '\0' or '/'
-        return undef if /\0/;
-        return undef if /\//;  # should we really?
+	# Unix file/directory names are not allowed to contain '\0' or '/'
+	return undef if /\0/;
+	return undef if /\//;  # should we really?
     }
 
     return join("/", @path);

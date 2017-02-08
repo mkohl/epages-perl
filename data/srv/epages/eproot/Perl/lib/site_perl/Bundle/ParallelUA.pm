@@ -3,7 +3,7 @@
 
 package Bundle::ParallelUA;
 
-$VERSION = '2.54_19';
+$VERSION = '2.54_19'; 
 
 1;
 

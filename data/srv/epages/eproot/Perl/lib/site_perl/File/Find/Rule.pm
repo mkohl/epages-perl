@@ -294,7 +294,7 @@ sub any {
         code => '(' . join( ' || ', map '( ' . $_->_compile . ' )', @_ ). ')',
         args => \@_,
     };
-
+    
     # merge all the subs hashes of the kids into ourself
     %{ $self->{subs} } = map { %{ $_->{subs} } } $self, @_;
     $self;
@@ -323,7 +323,7 @@ sub not {
         args => \@_,
         code => '(' . join ( ' && ', map { "!(". $_->_compile . ")" } @_ ) . ")",
     };
-
+    
     # merge all the subs hashes into us
     %{ $self->{subs} } = map { %{ $_->{subs} } } $self, @_;
     $self;
@@ -724,7 +724,7 @@ system will flag as insecure but you can use the L</extras> feature to ask
 L<File::Find> to internally C<untaint> file paths with a regex like so:
 
     my $rule = File::Find::Rule->extras({ untaint => 1 });
-
+    
 Please consult L<File::Find>'s documentation for C<untaint>,
 C<untaint_pattern>, and C<untaint_skip> for more information.
 

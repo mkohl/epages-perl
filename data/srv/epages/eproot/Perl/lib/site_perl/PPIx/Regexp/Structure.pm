@@ -57,50 +57,50 @@ sub _new {
     my ( $class, @args ) = @_;
     my %brkt;
     if ( ref $args[0] eq 'HASH' ) {
-        %brkt = %{ shift @args };
-        foreach my $key ( qw{ start type finish } ) {
-            ref $brkt{$key} eq 'ARRAY' or $brkt{$key} = [ $brkt{$key} ];
-        }
+	%brkt = %{ shift @args };
+	foreach my $key ( qw{ start type finish } ) {
+	    ref $brkt{$key} eq 'ARRAY' or $brkt{$key} = [ $brkt{$key} ];
+	}
     } else {
-        $brkt{finish} = [ @args ? pop @args : () ];
-        $brkt{start} = [ @args ? shift @args : () ];
-        while ( @args && ! $args[0]->significant() ) {
-            push @{ $brkt{start} }, shift @args;
-        }
-        $brkt{type} = [];
-        if ( __instance( $args[0], 'PPIx::Regexp::Token::GroupType' ) ) {
-            push @{ $brkt{type} }, shift @args;
-            while ( @args && ! $args[0]->significant() ) {
-                push @{ $brkt{type} }, shift @args;
-            }
-        }
+	$brkt{finish} = [ @args ? pop @args : () ];
+	$brkt{start} = [ @args ? shift @args : () ];
+	while ( @args && ! $args[0]->significant() ) {
+	    push @{ $brkt{start} }, shift @args;
+	}
+	$brkt{type} = [];
+	if ( __instance( $args[0], 'PPIx::Regexp::Token::GroupType' ) ) {
+	    push @{ $brkt{type} }, shift @args;
+	    while ( @args && ! $args[0]->significant() ) {
+		push @{ $brkt{type} }, shift @args;
+	    }
+	}
     }
 
     $class->_check_for_interpolated_match( \%brkt, \@args );
 
     my $self = $class->SUPER::_new( @args )
-        or return;
+	or return;
 
     if ( __instance( $brkt{type}[0], 'PPIx::Regexp::Token::GroupType' ) ) {
-        ( my $reclass = ref $brkt{type}[0] ) =~
-            s/ Token::GroupType /Structure/smx;
-        $reclass->can( 'start' )
-            or confess "Programming error - $reclass not loaded";
-        bless $self, $reclass;
+	( my $reclass = ref $brkt{type}[0] ) =~
+	    s/ Token::GroupType /Structure/smx;
+	$reclass->can( 'start' )
+	    or confess "Programming error - $reclass not loaded";
+	bless $self, $reclass;
     }
 
     foreach my $key ( qw{ start type finish } ) {
-        $self->{$key} = [];
-        ref $brkt{$key} eq 'ARRAY'
-            or confess "Programming error - '$brkt{$key}' not an ARRAY";
-        foreach my $val ( @{ $brkt{$key} } ) {
-            defined $val or next;
-            __instance( $val, 'PPIx::Regexp::Element' )
-                or confess "Programming error - '$val' not a ",
-                    "PPIx::Regexp::Element";
-            push @{ $self->{$key} }, $val;
-            $val->_parent( $self );
-        }
+	$self->{$key} = [];
+	ref $brkt{$key} eq 'ARRAY'
+	    or confess "Programming error - '$brkt{$key}' not an ARRAY";
+	foreach my $val ( @{ $brkt{$key} } ) {
+	    defined $val or next;
+	    __instance( $val, 'PPIx::Regexp::Element' )
+		or confess "Programming error - '$val' not a ",
+		    "PPIx::Regexp::Element";
+	    push @{ $self->{$key} }, $val;
+	    $val->_parent( $self );
+	}
     }
     return $self;
 }
@@ -109,20 +109,20 @@ sub elements {
     my ( $self ) = @_;
 
     if ( wantarray ) {
-        return (
-            @{ $self->{start} },
-            @{ $self->{type} },
-            @{ $self->{children} },
-            @{ $self->{finish} },
-        );
+	return (
+	    @{ $self->{start} },
+	    @{ $self->{type} },
+	    @{ $self->{children} },
+	    @{ $self->{finish} },
+	);
     } elsif ( defined wantarray ) {
-        my $size = scalar @{ $self->{start} };
-        $size += scalar @{ $self->{type} };
-        $size += scalar @{ $self->{children} };
-        $size += scalar @{ $self->{finish} };
-        return $size;
+	my $size = scalar @{ $self->{start} };
+	$size += scalar @{ $self->{type} };
+	$size += scalar @{ $self->{children} };
+	$size += scalar @{ $self->{finish} };
+	return $size;
     } else {
-        return;
+	return;
     }
 }
 
@@ -156,7 +156,7 @@ sub first_element {
     $self->{type}[0] and return $self->{type}[0];
 
     if ( my $elem = $self->SUPER::first_element() ) {
-        return $elem;
+	return $elem;
     }
 
     $self->{finish}[0] and return $self->{finish}[0];
@@ -170,7 +170,7 @@ sub last_element {
     $self->{finish}[-1] and return $self->{finish}[-1];
 
     if ( my $elem = $self->SUPER::last_element() ) {
-        return $elem;
+	return $elem;
     }
 
     $self->{type}[-1] and return $self->{type}[-1];
@@ -240,81 +240,81 @@ sub _check_for_interpolated_match {
     # Everything we are interested in begins with a literal '?' followed
     # by an interpolation.
     __instance( $args->[0], 'PPIx::Regexp::Token::Unknown' )
-        and $args->[0]->content() eq '?'
-        and __instance( $args->[1], 'PPIx::Regexp::Token::Interpolation' )
-        or return;
+	and $args->[0]->content() eq '?'
+	and __instance( $args->[1], 'PPIx::Regexp::Token::Interpolation' )
+	or return;
 
-    my $hiwater = 2;    # Record how far we got into the arguments for
-                        # subsequent use detecting things like
-                        # (?$foo).
+    my $hiwater = 2;	# Record how far we got into the arguments for
+    			# subsequent use detecting things like
+			# (?$foo).
 
     # If we have a literal ':' as the third argument:
     # GroupType::Modifier, rebless the ':' so we know not to match
     # against it, and splice all three tokens into the type.
     if ( __instance( $args->[2], 'PPIx::Regexp::Token::Literal' )
-        && $args->[2]->content() eq ':' ) {
+	&& $args->[2]->content() eq ':' ) {
 
-        # Rebless the '?' as a GroupType::Modifier.
-        bless $args->[0], 'PPIx::Regexp::Token::GroupType::Modifier';
-        # Note that we do _not_ want __PPIX_TOKEN__post_make here.
+	# Rebless the '?' as a GroupType::Modifier.
+	bless $args->[0], 'PPIx::Regexp::Token::GroupType::Modifier';
+	# Note that we do _not_ want __PPIX_TOKEN__post_make here.
 
-        # Rebless the ':' as a GroupType, just so it does not look like
-        # something to match against.
-        bless $args->[2], 'PPIx::Regexp::Token::GroupType';
+	# Rebless the ':' as a GroupType, just so it does not look like
+	# something to match against.
+	bless $args->[2], 'PPIx::Regexp::Token::GroupType';
 
-        # Shove our three significant tokens into the type.
-        push @{ $brkt->{type} }, splice @{ $args }, 0, 3;
+	# Shove our three significant tokens into the type.
+	push @{ $brkt->{type} }, splice @{ $args }, 0, 3;
 
-        # Stuff all the immediately-following insignificant tokens into
-        # the type as well.
-        while ( @{ $args } && ! $args->[0]->significant() ) {
-            push @{ $brkt->{type} }, shift @{ $args };
-        }
+	# Stuff all the immediately-following insignificant tokens into
+	# the type as well.
+	while ( @{ $args } && ! $args->[0]->significant() ) {
+	    push @{ $brkt->{type} }, shift @{ $args };
+	}
 
-        # Return to the caller, since we have done all the damage we
-        # can.
-        return;
+	# Return to the caller, since we have done all the damage we
+	# can.
+	return;
     }
 
     # If we have a literal '-' as the third argument, we might have
     # something like (?$on-$off:$foo).
     if ( __instance( $args->[2], 'PPIx::Regexp::Token::Literal' )
-        && $args->[2]->content() eq '-'
-        && __instance( $args->[3], 'PPIx::Regexp::Token::Interpolation' )
+	&& $args->[2]->content() eq '-'
+	&& __instance( $args->[3], 'PPIx::Regexp::Token::Interpolation' )
     ) {
-        $hiwater = 4;
+	$hiwater = 4;
 
-        if ( __instance( $args->[4], 'PPIx::Regexp::Token::Literal' )
-            && $args->[4]->content() eq ':' ) {
+	if ( __instance( $args->[4], 'PPIx::Regexp::Token::Literal' )
+	    && $args->[4]->content() eq ':' ) {
 
-            # Rebless the '?' as a GroupType::Modifier.
-            bless $args->[0], 'PPIx::Regexp::Token::GroupType::Modifier';
-            # Note that we do _not_ want __PPIX_TOKEN__post_make here.
+	    # Rebless the '?' as a GroupType::Modifier.
+	    bless $args->[0], 'PPIx::Regexp::Token::GroupType::Modifier';
+	    # Note that we do _not_ want __PPIX_TOKEN__post_make here.
 
-            # Rebless the '-' and ':' as GroupType, just so they do not
-            # look like something to match against.
-            bless $args->[2], 'PPIx::Regexp::Token::GroupType';
-            bless $args->[4], 'PPIx::Regexp::Token::GroupType';
+	    # Rebless the '-' and ':' as GroupType, just so they do not
+	    # look like something to match against.
+	    bless $args->[2], 'PPIx::Regexp::Token::GroupType';
+	    bless $args->[4], 'PPIx::Regexp::Token::GroupType';
 
-            # Shove our five significant tokens into the type.
-            push @{ $brkt->{type} }, splice @{ $args }, 0, 5;
+	    # Shove our five significant tokens into the type.
+	    push @{ $brkt->{type} }, splice @{ $args }, 0, 5;
 
-            # Stuff all the immediately-following insignificant tokens
-            # into the type as well.
-            while ( @{ $args } && ! $args->[0]->significant() ) {
-                push @{ $brkt->{type} }, shift @{ $args };
-            }
+	    # Stuff all the immediately-following insignificant tokens
+	    # into the type as well.
+	    while ( @{ $args } && ! $args->[0]->significant() ) {
+		push @{ $brkt->{type} }, shift @{ $args };
+	    }
 
-            # Return to the caller, since we have done all the damage we
-            # can.
-            return;
-        }
+	    # Return to the caller, since we have done all the damage we
+	    # can.
+	    return;
+	}
     }
 
     # If the group contains _any_ significant tokens at this point, we
     # do _not_ have something like (?$foo).
     foreach my $inx ( $hiwater .. $#$args ) {
-        $args->[$inx]->significant() and return;
+	$args->[$inx]->significant() and return;
     }
 
     # Rebless the '?' as a GroupType::Modifier.

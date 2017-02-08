@@ -10,16 +10,16 @@ use Digest::MD5 qw/md5_hex/;
 sub call {
     my $self = shift;
     my $res  = $self->app->(@_);
-
+    
     $self->response_cb($res, sub {
         my $res = shift;
 
         return unless defined $res->[2];
         return if (Plack::Util::status_with_no_entity_body($res->[0]));
-
+        
         my $h = Plack::Util::headers($res->[1]);
         return if ( $h->exists('Content-MD5') );
-
+        
         my $body = $res->[2];
         if (ref $body eq 'ARRAY') {
             $h->set('Content-MD5', md5_hex(@$body));

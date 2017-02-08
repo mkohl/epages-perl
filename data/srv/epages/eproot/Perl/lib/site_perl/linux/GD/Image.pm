@@ -52,7 +52,7 @@ sub _make_filehandle {
 
   # otherwise try qualifying it into caller's package
   my $fh;
-  {
+  {   
     local $^W = 0;  # to avoid uninitialized variable warning from Symbol.pm
     $fh = qualify_to_ref($thing,caller(2));
   }
@@ -128,7 +128,7 @@ sub polygon {
     my($p,$c) = @_;
     $self->openPolygon($p, $c);
     $self->line( @{$p->{'points'}->[0]},
-            @{$p->{'points'}->[$p->{'length'}-1]}, $c);
+	    @{$p->{'points'}->[$p->{'length'}-1]}, $c);
 }
 
 sub width {

@@ -36,7 +36,7 @@ This module can also be used to roll your own profile analysis:
   $prof->match(key1 => qr/^SELECT/i);
 
   # produce a formatted report with the given number of items
-  $report = $prof->report(number => 10);
+  $report = $prof->report(number => 10); 
 
   # clone the profile data set
   $clone = $prof->clone();
@@ -56,7 +56,7 @@ This module can also be used to roll your own profile analysis:
 =head1 DESCRIPTION
 
 This module offers the ability to read, manipulate and format
-DBI::ProfileDumper profile data.
+DBI::ProfileDumper profile data.  
 
 Conceptually, a profile consists of a series of records, or nodes,
 each of each has a set of statistics and set of keys.  Each record
@@ -163,9 +163,9 @@ data for many different SQL statement. See L<DBI::Profile>.
 
 sub new {
     my $pkg = shift;
-    my $self = {
+    my $self = {                
                 Files        => [ "dbi.prof" ],
-                Filter       => undef,
+		Filter       => undef,
                 DeleteFiles  => 0,
                 LockFile     => $HAS_FLOCK,
                 _header      => {},
@@ -175,7 +175,7 @@ sub new {
                 @_
                };
     bless $self, $pkg;
-
+    
     # File (singular) overrides Files (plural)
     $self->{Files} = [ $self->{File} ] if exists $self->{File};
 
@@ -189,22 +189,22 @@ sub _read_files {
     my $files  = $self->{Files};
     my $read_header = 0;
     my @files_to_delete;
-
+  
     my $fh = gensym;
     foreach (@$files) {
         my $filename = $_;
 
         if ($self->{DeleteFiles}) {
             my $newfilename = $filename . ".deleteme";
-            if ($^O eq 'VMS') {
-                # VMS default filesystem can only have one period
-                $newfilename = $filename . 'deleteme';
-            }
+	    if ($^O eq 'VMS') {
+		# VMS default filesystem can only have one period
+		$newfilename = $filename . 'deleteme';
+	    }
             # will clobber an existing $newfilename
             rename($filename, $newfilename)
                 or croak "Can't rename($filename, $newfilename): $!";
-            # On a versioned filesystem we want old versions to be removed
-            1 while (unlink $filename);
+	    # On a versioned filesystem we want old versions to be removed
+	    1 while (unlink $filename);
             $filename = $newfilename;
         }
 
@@ -221,18 +221,18 @@ sub _read_files {
             $self->_read_body($fh, $filename);
         }
         close($fh); # and release lock
-
+        
         push @files_to_delete, $filename
             if $self->{DeleteFiles};
     }
     for (@files_to_delete){
-        # for versioned file systems
-        1 while (unlink $_);
-        if(-e $_){
-            warn "Can't delete '$_': $!";
-        }
+	# for versioned file systems
+	1 while (unlink $_);
+	if(-e $_){
+	    warn "Can't delete '$_': $!";
+	}
     }
-
+    
     # discard node_lookup now that all files are read
     delete $self->{_node_lookup};
 }
@@ -291,11 +291,11 @@ sub _read_body {
             $path[$index] = unescape_key($key); # place new key at end
 
         }
-        elsif (s/^=\s+//) {
+	elsif (s/^=\s+//) {
             # it's data - file in the node array with the path in index 0
-            # (the optional minus is to make it more robust against systems
-            # with unstable high-res clocks - typically due to poor NTP config
-            # of kernel SMP behaviour, i.e. min time may be -0.000008))
+	    # (the optional minus is to make it more robust against systems
+	    # with unstable high-res clocks - typically due to poor NTP config
+	    # of kernel SMP behaviour, i.e. min time may be -0.000008))
 
             @data = split / /, $_;
 
@@ -305,10 +305,10 @@ sub _read_body {
             croak("Invalid leaf node characters $filename line $.: $_")
                 unless m/^[-+ 0-9eE\.]+$/;
 
-            # hook to enable pre-processing of the data - such as mangling SQL
-            # so that slightly different statements get treated as the same
-            # and so merged in the results
-            $filter->(\@path, \@data) if $filter;
+	    # hook to enable pre-processing of the data - such as mangling SQL
+	    # so that slightly different statements get treated as the same
+	    # and so merged in the results
+	    $filter->(\@path, \@data) if $filter;
 
             # elements of @path can't have NULLs in them, so this
             # forms a unique string per @path.  If there's some way I
@@ -319,7 +319,7 @@ sub _read_body {
             # look for previous entry
             if (exists $lookup->{$path_key}) {
                 # merge in the new data
-                dbi_profile_merge($nodes->[$lookup->{$path_key}], \@data);
+		dbi_profile_merge($nodes->[$lookup->{$path_key}], \@data);
             } else {
                 # insert a new node - nodes are arrays with data in 0-6
                 # and path data after that
@@ -329,9 +329,9 @@ sub _read_body {
                 $lookup->{$path_key} = $#$nodes;
             }
         }
-        else {
+	else {
             croak("Invalid line type syntax error in $filename line $.: $_");
-        }
+	}
     }
 }
 
@@ -450,22 +450,22 @@ the dbiprof frontend.
         my $self = shift;
         my $nodes = $self->{_nodes};
         my %opt = @_;
-
+        
         croak("Missing required field option.") unless $opt{field};
 
         my $index = $FIELDS{$opt{field}};
-
+        
         croak("Unrecognized sort field '$opt{field}'.")
           unless defined $index;
 
         # sort over index
         if ($opt{reverse}) {
-            @$nodes = sort {
-                $a->[$index] <=> $b->[$index]
+            @$nodes = sort { 
+                $a->[$index] <=> $b->[$index] 
             } @$nodes;
         } else {
-            @$nodes = sort {
-                $b->[$index] <=> $a->[$index]
+            @$nodes = sort { 
+                $b->[$index] <=> $a->[$index] 
             } @$nodes;
         }
 
@@ -509,16 +509,16 @@ sub exclude {
     if (UNIVERSAL::isa($val,"Regexp")) {
         # regex match
         @$nodes = grep {
-            $#$_ < $index or $_->[$index] !~ /$val/
+            $#$_ < $index or $_->[$index] !~ /$val/ 
         } @$nodes;
     } else {
         if ($opt{case_sensitive}) {
-            @$nodes = grep {
+            @$nodes = grep { 
                 $#$_ < $index or $_->[$index] ne $val;
             } @$nodes;
         } else {
             $val = lc $val;
-            @$nodes = grep {
+            @$nodes = grep { 
                 $#$_ < $index or lc($_->[$index]) ne $val;
             } @$nodes;
         }
@@ -560,16 +560,16 @@ sub match {
     if (UNIVERSAL::isa($val,"Regexp")) {
         # regex match
         @$nodes = grep {
-            $#$_ >= $index and $_->[$index] =~ /$val/
+            $#$_ >= $index and $_->[$index] =~ /$val/ 
         } @$nodes;
     } else {
         if ($opt{case_sensitive}) {
-            @$nodes = grep {
+            @$nodes = grep { 
                 $#$_ >= $index and $_->[$index] eq $val;
             } @$nodes;
         } else {
             $val = lc $val;
-            @$nodes = grep {
+            @$nodes = grep { 
                 $#$_ >= $index and lc($_->[$index]) eq $val;
             } @$nodes;
         }
@@ -616,12 +616,12 @@ Formats a single node into a human-readable block of text.
 sub format {
     my ($self, $node) = @_;
     my $format;
-
+    
     # setup keys
     my $keys = "";
     for (my $i = PATH; $i <= $#$node; $i++) {
         my $key = $node->[$i];
-
+        
         # remove leading and trailing space
         $key =~ s/^\s+//;
         $key =~ s/\s+$//;
@@ -644,7 +644,7 @@ sub format {
   Shortest Time : %3.6f seconds
   Average Time  : %3.6f seconds
 END
-        return sprintf($format, @{$node}[COUNT,TOTAL,LONGEST,SHORTEST],
+        return sprintf($format, @{$node}[COUNT,TOTAL,LONGEST,SHORTEST], 
                        $node->[TOTAL] / $node->[COUNT]) . $keys;
     } else {
         $format = <<END;
@@ -675,7 +675,7 @@ sub report {
 
     my $report = $self->_report_header($opt{number});
     for (0 .. $opt{number} - 1) {
-        $report .= sprintf("#" x 5  . "[ %d ]". "#" x 59 . "\n",
+        $report .= sprintf("#" x 5  . "[ %d ]". "#" x 59 . "\n", 
                            $_ + 1);
         $report .= $self->format($nodes->[$_]);
         $report .= "\n";
@@ -711,7 +711,7 @@ END
     $header .= sprintf(<<END, $node_count, $number, $self->{_sort}, $count, $time);
   Total Records : %d (showing %d, sorted by %s)
   Total Count   : %d
-  Total Runtime : %3.6f seconds
+  Total Runtime : %3.6f seconds  
 
 END
 

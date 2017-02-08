@@ -7,8 +7,8 @@ use Opcode qw(opmask_add opset invert_opset);
 sub import {
     shift;
     # Not that unimport is the preferred form since import's don't
-        # accumulate well owing to the 'only ever add opmask' rule.
-        # E.g., perl -Mops=:set1 -Mops=:setb is unlikely to do as expected.
+	# accumulate well owing to the 'only ever add opmask' rule.
+	# E.g., perl -Mops=:set1 -Mops=:setb is unlikely to do as expected.
     opmask_add(invert_opset opset(@_)) if @_;
 }
 
@@ -25,7 +25,7 @@ __END__
 
 ops - Perl pragma to restrict unsafe operations when compiling
 
-=head1 SYNOPSIS
+=head1 SYNOPSIS  
 
   perl -Mops=:default ...    # only allow reasonably safe operations
 

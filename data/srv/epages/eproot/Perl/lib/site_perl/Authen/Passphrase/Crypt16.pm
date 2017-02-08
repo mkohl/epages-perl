@@ -4,25 +4,25 @@ Authen::Passphrase::Crypt16 - passphrases using Ultrix crypt16 algorithm
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::Crypt16;
+	use Authen::Passphrase::Crypt16;
 
-        $ppr = Authen::Passphrase::Crypt16->new(
-                salt_base64 => "qi",
-                hash_base64 => "8H8R7OM4xMUNMPuRAZxlY.");
+	$ppr = Authen::Passphrase::Crypt16->new(
+		salt_base64 => "qi",
+		hash_base64 => "8H8R7OM4xMUNMPuRAZxlY.");
 
-        $ppr = Authen::Passphrase::Crypt16->new(
-                salt_random => 12,
-                passphrase => "passphrase");
+	$ppr = Authen::Passphrase::Crypt16->new(
+		salt_random => 12,
+		passphrase => "passphrase");
 
-        $salt = $ppr->salt;
-        $salt_base64 = $ppr->salt_base64_2;
-        $hash = $ppr->hash;
-        $hash_base64 = $ppr->hash_base64;
+	$salt = $ppr->salt;
+	$salt_base64 = $ppr->salt_base64_2;
+	$hash = $ppr->hash;
+	$hash_base64 = $ppr->hash_base64;
 
-        $ppr0 = $ppr->first_half;
-        $ppr1 = $ppr->second_half;
+	$ppr0 = $ppr->first_half;
+	$ppr1 = $ppr->second_half;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
 =head1 DESCRIPTION
 
@@ -121,79 +121,79 @@ The salt must be given, and either the hash or the passphrase.
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $salt;
-        my $hash;
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "salt") {
-                        croak "salt specified redundantly"
-                                if defined $salt;
-                        croak "\"$value\" is not a valid salt"
-                                unless $value == int($value) &&
-                                        $value >= 0 && $value < 4096;
-                        $salt = $value;
-                } elsif($attr eq "salt_base64") {
-                        croak "salt specified redundantly"
-                                if defined $salt;
-                        $value =~ m#\A[./0-9A-Za-z]{2}\z#
-                                or croak "\"$value\" is not a valid salt";
-                        $salt = base64_to_int12($value);
-                } elsif($attr eq "salt_random") {
-                        croak "salt specified redundantly"
-                                if defined $salt;
-                        croak "\"$value\" is not a valid salt size"
-                                unless $value == 12;
-                        $salt = rand_int(1 << $value);
-                } elsif($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if defined($hash) || defined($passphrase);
-                        $value =~ m#\A[\x00-\xff]{16}\z#
-                                or croak "not a valid crypt16 hash";
-                        $hash = $value;
-                } elsif($attr eq "hash_base64") {
-                        croak "hash specified redundantly"
-                                if defined($hash) || defined($passphrase);
-                        $value =~ m#\A(?:[./0-9A-Za-z]{10}[.26AEIMQUYcgkosw])
-                                        {2}\z#x
-                                or croak "\"$value\" is not a valid ".
-                                                "encoded hash";
-                        $hash = base64_to_block(substr($value, 0, 11)).
-                                base64_to_block(substr($value, 11));
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if defined($hash) || defined($passphrase);
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        croak "salt not specified" unless defined $salt;
-        if(defined $passphrase) {
-                $self->{first_half} =
-                        Authen::Passphrase::DESCrypt
-                                ->new(nrounds => 20, salt => $salt,
-                                      passphrase => substr($passphrase, 0, 8));
-                $self->{second_half} =
-                        Authen::Passphrase::DESCrypt
-                                ->new(nrounds => 5, salt => $salt,
-                                      passphrase =>
-                                        length($passphrase) > 8 ?
-                                                substr($passphrase, 8) : "");
-        } elsif(defined $hash) {
-                $self->{first_half} = Authen::Passphrase::DESCrypt
-                                        ->new(nrounds => 20, salt => $salt,
-                                              hash => substr($hash, 0, 8));
-                $self->{second_half} = Authen::Passphrase::DESCrypt
-                                        ->new(nrounds => 5, salt => $salt,
-                                              hash => substr($hash, 8, 8));
-        } else {
-                croak "hash not specified";
-        }
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $salt;
+	my $hash;
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "salt") {
+			croak "salt specified redundantly"
+				if defined $salt;
+			croak "\"$value\" is not a valid salt"
+				unless $value == int($value) &&
+					$value >= 0 && $value < 4096;
+			$salt = $value;
+		} elsif($attr eq "salt_base64") {
+			croak "salt specified redundantly"
+				if defined $salt;
+			$value =~ m#\A[./0-9A-Za-z]{2}\z#
+				or croak "\"$value\" is not a valid salt";
+			$salt = base64_to_int12($value);
+		} elsif($attr eq "salt_random") {
+			croak "salt specified redundantly"
+				if defined $salt;
+			croak "\"$value\" is not a valid salt size"
+				unless $value == 12;
+			$salt = rand_int(1 << $value);
+		} elsif($attr eq "hash") {
+			croak "hash specified redundantly"
+				if defined($hash) || defined($passphrase);
+			$value =~ m#\A[\x00-\xff]{16}\z#
+				or croak "not a valid crypt16 hash";
+			$hash = $value;
+		} elsif($attr eq "hash_base64") {
+			croak "hash specified redundantly"
+				if defined($hash) || defined($passphrase);
+			$value =~ m#\A(?:[./0-9A-Za-z]{10}[.26AEIMQUYcgkosw])
+					{2}\z#x
+				or croak "\"$value\" is not a valid ".
+						"encoded hash";
+			$hash = base64_to_block(substr($value, 0, 11)).
+				base64_to_block(substr($value, 11));
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if defined($hash) || defined($passphrase);
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	croak "salt not specified" unless defined $salt;
+	if(defined $passphrase) {
+		$self->{first_half} =
+			Authen::Passphrase::DESCrypt
+				->new(nrounds => 20, salt => $salt,
+				      passphrase => substr($passphrase, 0, 8));
+		$self->{second_half} =
+			Authen::Passphrase::DESCrypt
+				->new(nrounds => 5, salt => $salt,
+				      passphrase =>
+					length($passphrase) > 8 ?
+						substr($passphrase, 8) : "");
+	} elsif(defined $hash) {
+		$self->{first_half} = Authen::Passphrase::DESCrypt
+					->new(nrounds => 20, salt => $salt,
+					      hash => substr($hash, 0, 8));
+		$self->{second_half} = Authen::Passphrase::DESCrypt
+					->new(nrounds => 5, salt => $salt,
+					      hash => substr($hash, 8, 8));
+	} else {
+		croak "hash not specified";
+	}
+	return $self;
 }
 
 =back
@@ -209,8 +209,8 @@ Returns the salt, as a Perl integer.
 =cut
 
 sub salt {
-        my($self) = @_;
-        return $self->{first_half}->salt;
+	my($self) = @_;
+	return $self->{first_half}->salt;
 }
 
 =item $ppr->salt_base64_2
@@ -220,8 +220,8 @@ Returns the salt, as a string of two base 64 digits.
 =cut
 
 sub salt_base64_2 {
-        my($self) = @_;
-        return $self->{first_half}->salt_base64_2;
+	my($self) = @_;
+	return $self->{first_half}->salt_base64_2;
 }
 
 =item $ppr->hash
@@ -231,8 +231,8 @@ Returns the hash value, as a string of 16 bytes.
 =cut
 
 sub hash {
-        my($self) = @_;
-        return $self->{first_half}->hash.$self->{second_half}->hash;
+	my($self) = @_;
+	return $self->{first_half}->hash.$self->{second_half}->hash;
 }
 
 =item $ppr->hash_base64
@@ -244,9 +244,9 @@ a base64 encoding of the combined hash.
 =cut
 
 sub hash_base64 {
-        my($self) = @_;
-        return $self->{first_half}->hash_base64.
-                $self->{second_half}->hash_base64;
+	my($self) = @_;
+	return $self->{first_half}->hash_base64.
+		$self->{second_half}->hash_base64;
 }
 
 =item $ppr->first_half
@@ -257,8 +257,8 @@ L<Authen::Passphrase::DESCrypt> passphrase recogniser.
 =cut
 
 sub first_half {
-        my($self) = @_;
-        return $self->{first_half};
+	my($self) = @_;
+	return $self->{first_half};
 }
 
 =item $ppr->second_half
@@ -269,8 +269,8 @@ L<Authen::Passphrase::DESCrypt> passphrase recogniser.
 =cut
 
 sub second_half {
-        my($self) = @_;
-        return $self->{second_half};
+	my($self) = @_;
+	return $self->{second_half};
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -280,10 +280,10 @@ This method is part of the standard L<Authen::Passphrase> interface.
 =cut
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $self->{first_half}->match(substr($passphrase, 0, 8)) &&
-                $self->{second_half}->match(
-                        length($passphrase) > 8 ? substr($passphrase, 8) : "");
+	my($self, $passphrase) = @_;
+	return $self->{first_half}->match(substr($passphrase, 0, 8)) &&
+		$self->{second_half}->match(
+			length($passphrase) > 8 ? substr($passphrase, 8) : "");
 }
 
 =back

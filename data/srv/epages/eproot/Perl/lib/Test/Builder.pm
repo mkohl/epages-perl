@@ -184,7 +184,7 @@ sub child {
 
     # Add to our indentation
     $child->_indent( $self->_indent . '    ' );
-
+    
     $child->{$_} = $self->{$_} foreach qw{Out_FH Todo_FH Fail_FH};
     if ($parent_in_todo) {
         $child->{Fail_FH} = $self->{Todo_FH};
@@ -2073,7 +2073,7 @@ sub summary {
 
 Like C<summary()>, but with a lot more detail.
 
-    $tests[$test_num - 1] =
+    $tests[$test_num - 1] = 
             { 'ok'       => is the test considered a pass?
               actual_ok  => did it literally say 'ok'?
               name       => name of the test (if any)

@@ -5,25 +5,25 @@ use XML::XPath::Boolean;
 use XML::XPath::Number;
 use strict;
 
-use overload
-                '""' => \&value,
-                'cmp' => \&cmp;
+use overload 
+		'""' => \&value,
+		'cmp' => \&cmp;
 
 sub new {
-        my $class = shift;
-        my ($string) = @_;
-
-#       $string =~ s/&quot;/"/g;
-#       $string =~ s/&apos;/'/g;
-
-        bless \$string, $class;
+	my $class = shift;
+	my ($string) = @_;
+	
+#	$string =~ s/&quot;/"/g;
+#	$string =~ s/&apos;/'/g;
+	
+	bless \$string, $class;
 }
 
 sub as_string {
-        my $self = shift;
-        my $string = $$self;
-        $string =~ s/'/&apos;/g;
-        return "'$string'";
+	my $self = shift;
+	my $string = $$self;
+	$string =~ s/'/&apos;/g;
+	return "'$string'";
 }
 
 sub as_xml {
@@ -33,27 +33,27 @@ sub as_xml {
 }
 
 sub value {
-        my $self = shift;
-        $$self;
+	my $self = shift;
+	$$self;
 }
 
 sub cmp {
-        my $self = shift;
-        my ($cmp, $swap) = @_;
-        if ($swap) {
-                return $cmp cmp $$self;
-        }
-        return $$self cmp $cmp;
+	my $self = shift;
+	my ($cmp, $swap) = @_;
+	if ($swap) {
+		return $cmp cmp $$self;
+	}
+	return $$self cmp $cmp;
 }
 
 sub evaluate {
-        my $self = shift;
-        $self;
+	my $self = shift;
+	$self;
 }
 
 sub to_boolean {
-        my $self = shift;
-        return (length($$self) > 0) ? XML::XPath::Boolean->True : XML::XPath::Boolean->False;
+	my $self = shift;
+	return (length($$self) > 0) ? XML::XPath::Boolean->True : XML::XPath::Boolean->False;
 }
 
 sub to_number { return XML::XPath::Number->new($_[0]->value); }
@@ -82,11 +82,11 @@ specification, but I consider it useful. Note though that you have to go
 to extraordinary lengths in an XML template file (be it XSLT or whatever) to
 make use of this:
 
-        <xsl:value-of select="&quot;I'm feeling &amp;quot;sad&amp;quot;&quot;"/>
+	<xsl:value-of select="&quot;I'm feeling &amp;quot;sad&amp;quot;&quot;"/>
 
 Which produces a Literal of:
 
-        I'm feeling "sad"
+	I'm feeling "sad"
 
 =head2 value()
 

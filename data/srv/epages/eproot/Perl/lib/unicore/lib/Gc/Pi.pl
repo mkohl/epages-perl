@@ -9,45 +9,45 @@
 
 # This file returns the 12 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{General_Category=Initial_Punctuation}
 #         \p{Gc=Pi}
 #         \p{Category=Initial_Punctuation}
 #         \p{Is_General_Category=Pi}
 #         \p{Is_Gc=Initial_Punctuation}
 #         \p{Is_Category=Pi}
-#
+# 
 #         \p{Initial_Punctuation}
 #         \p{Is_Initial_Punctuation}
 #         \p{Pi}
 #         \p{Is_Pi}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Category: Initial_Punctuation}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-00AB
-2018
-201B    201C     # [2]
-201F
-2039
-2E02
-2E04
-2E09
-2E0C
-2E1C
-2E20
+00AB		
+2018		
+201B	201C	 # [2]
+201F		
+2039		
+2E02		
+2E04		
+2E09		
+2E0C		
+2E1C		
+2E20		
 END

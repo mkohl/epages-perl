@@ -8,13 +8,13 @@ Term::ReadKey - A perl module for simple terminal control
 
 =head1 SYNOPSIS
 
-        use Term::ReadKey;
-        ReadMode 4; # Turn off controls keys
-        while (not defined ($key = ReadKey(-1))) {
-                # No key yet
-        }
-        print "Get key $key\n";
-        ReadMode 0; # Reset tty mode before exiting
+	use Term::ReadKey;
+	ReadMode 4; # Turn off controls keys
+	while (not defined ($key = ReadKey(-1))) {
+		# No key yet
+	}
+	print "Get key $key\n";
+	ReadMode 0; # Reset tty mode before exiting
 
 =head1 DESCRIPTION
 
@@ -29,20 +29,20 @@ Term::ReadKey" on any architecture and have a good likelyhood of it working.
 
 =item ReadMode MODE [, Filehandle]
 
-Takes an integer argument, which can currently be one of the following
+Takes an integer argument, which can currently be one of the following 
 values:
 
     0    Restore original settings.
     1    Change to cooked mode.
-    2    Change to cooked mode with echo off.
+    2	 Change to cooked mode with echo off. 
           (Good for passwords)
     3    Change to cbreak mode.
     4    Change to raw mode.
-    5    Change to ultra-raw mode.
-          (LF to CR/LF translation turned off)
-
+    5    Change to ultra-raw mode. 
+          (LF to CR/LF translation turned off) 
+          
     Or, you may use the synonyms:
-
+    
     restore
     normal
     noecho
@@ -64,25 +64,25 @@ you will either want to say
     ReadMode 1
     system('someprogram');
     ReadMode 1;
-
+    
 which resets the settings after the program has run, or:
 
     $somemode=1;
     ReadMode 0;
     system('someprogram');
     ReadMode 1;
-
+    
 which records any changes the program may have made, before resetting the
 mode.
 
 =item ReadKey MODE [, Filehandle]
 
-Takes an integer argument, which can currently be one of the following
+Takes an integer argument, which can currently be one of the following 
 values:
 
     0    Perform a normal read using getc
     -1   Perform a non-blocked read
-    >0   Perform a timed read
+    >0	 Perform a timed read
 
 (If the filehandle is not supplied, it will default to STDIN.) If there is
 nothing waiting in the buffer during a non-blocked read, then undef will be
@@ -103,12 +103,12 @@ more then one console.
 
 =item ReadLine MODE [, Filehandle]
 
-Takes an integer argument, which can currently be one of the following
+Takes an integer argument, which can currently be one of the following 
 values:
 
     0    Perform a normal read using scalar(<FileHandle>)
     -1   Perform a non-blocked read
-    >0   Perform a timed read
+    >0	 Perform a timed read
 
 If there is nothing waiting in the buffer during a non-blocked read, then
 undef will be returned. Note that if the OS does not provide any known
@@ -158,31 +158,31 @@ of that character, as a single character. This call does nothing under Windows.
 
 Each key will be an entry from the following list:
 
-        DISCARD
-        DSUSPEND
-        EOF
-        EOL
-        EOL2
-        ERASE
-        ERASEWORD
-        INTERRUPT
-        KILL
-        MIN
-        QUIT
-        QUOTENEXT
-        REPRINT
-        START
-        STATUS
-        STOP
-        SUSPEND
-        SWITCH
-        TIME
+	DISCARD
+	DSUSPEND
+	EOF
+	EOL
+	EOL2
+	ERASE
+	ERASEWORD
+	INTERRUPT
+	KILL
+	MIN
+	QUIT
+	QUOTENEXT
+	REPRINT
+	START
+	STATUS
+	STOP
+	SUSPEND
+	SWITCH
+	TIME
 
 Thus, the following will always return the current interrupt character,
 regardless of platform.
 
-        %keys = GetControlChars;
-        $int = $keys{INTERRUPT};
+	%keys = GetControlChars;
+	$int = $keys{INTERRUPT};
 
 =item SetControlChars [, Filehandle]
 
@@ -193,8 +193,8 @@ number in the range 0-255. SetControlChars will die with a runtime error if
 an invalid character name is passed or there is an error changing the
 settings. The list of valid names is easily available via
 
-        %cchars = GetControlChars();
-        @cnames = keys %cchars;
+	%cchars = GetControlChars();
+	@cnames = keys %cchars;
 
 This call does nothing under Windows.
 
@@ -270,13 +270,13 @@ sub normalizehandle
 {
     my ($file) = @_;
 
-    #   print "Handle = $file\n";
+    #	print "Handle = $file\n";
     if ( ref($file) ) { return $file; }    # Reference is fine
 
-    #   if($file =~ /^\*/) { return $file; } # Type glob is good
+    #	if($file =~ /^\*/) { return $file; } # Type glob is good
     if ( ref( \$file ) eq 'GLOB' ) { return $file; }    # Glob is good
 
-    #   print "Caller = ",(caller(1))[0],"\n";
+    #	print "Caller = ",(caller(1))[0],"\n";
     return \*{ ( ( caller(1) )[0] ) . "::$file" };
 }
 
@@ -371,13 +371,13 @@ if ( &blockoptions() & 1 )    # Use nodelay
     if ( &blockoptions() & 2 )    #poll
     {
         eval <<'DONE';
-                sub ReadKey {
-                  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		sub ReadKey {
+		  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
                   if (defined $_[0] && $_[0] > 0) {
                     if ($_[0]) {
                       return undef if &pollfile($File,$_[0]) == 0;
                     }
-                  }
+		  }
                   if (defined $_[0] && $_[0] < 0) {
                      &setnodelay($File,1);
                   }
@@ -386,15 +386,15 @@ if ( &blockoptions() & 1 )    # Use nodelay
                      &setnodelay($File,0);
                   }
                   $value;
-                }
-                sub ReadLine {
-                  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		}
+		sub ReadLine {
+		  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
 
                   if (defined $_[0] && $_[0] > 0) {
                      if ($_[0]) {
                        return undef if &pollfile($File,$_[0]) == 0;
                      }
-                  }
+		  }
                   if (defined $_[0] && $_[0] < 0) {
                      &setnodelay($File,1)
                   };
@@ -403,158 +403,158 @@ if ( &blockoptions() & 1 )    # Use nodelay
                     &setnodelay($File,0)
                   };
                   $value;
-                }
+		}
 DONE
     }
     elsif ( &blockoptions() & 4 )    #select
     {
         eval <<'DONE';
-                sub ReadKey {
-                  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		sub ReadKey {
+		  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
                   if(defined $_[0] && $_[0]>0) {
-                                if($_[0]) {return undef if &selectfile($File,$_[0])==0}
-                    }
-                        if(defined $_[0] && $_[0]<0) {&setnodelay($File,1);}
-                        my($value) = getc $File;
-                        if(defined $_[0] && $_[0]<0) {&setnodelay($File,0);}
-                        $value;
-                }
-                sub ReadLine {
-                  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                    if(defined $_[0] && $_[0]>0) {
-                                if($_[0]) {return undef if &selectfile($File,$_[0])==0}
-                    }
-                        if(defined $_[0] && $_[0]<0) {&setnodelay($File,1)};
-                        my($value)=scalar(<$File>);
-                        if(defined $_[0] && $_[0]<0) {&setnodelay($File,0)};
-                        $value;
-                }
+				if($_[0]) {return undef if &selectfile($File,$_[0])==0}
+		    }
+			if(defined $_[0] && $_[0]<0) {&setnodelay($File,1);}
+			my($value) = getc $File;
+			if(defined $_[0] && $_[0]<0) {&setnodelay($File,0);}
+			$value;
+		}
+		sub ReadLine {
+		  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		    if(defined $_[0] && $_[0]>0) {
+				if($_[0]) {return undef if &selectfile($File,$_[0])==0}
+		    }
+			if(defined $_[0] && $_[0]<0) {&setnodelay($File,1)};
+			my($value)=scalar(<$File>);
+			if(defined $_[0] && $_[0]<0) {&setnodelay($File,0)};
+			$value;
+		}
 DONE
     }
     else
     {    #nothing
         eval <<'DONE';
-                sub ReadKey {
-                  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                    if(defined $_[0] && $_[0]>0) {
-                        # Nothing better seems to exist, so I just use time-of-day
-                        # to timeout the read. This isn't very exact, though.
-                        $starttime=time;
-                        $endtime=$starttime+$_[0];
-                                &setnodelay($File,1);
-                                my($value)=undef;
-                        while(time<$endtime) { # This won't catch wraparound!
-                                $value = getc $File;
-                                last if defined($value);
-                        }
-                                &setnodelay($File,0);
-                                return $value;
-                    }
-                        if(defined $_[0] && $_[0]<0) {&setnodelay($File,1);}
-                        my($value) = getc $File;
-                        if(defined $_[0] && $_[0]<0) {&setnodelay($File,0);}
-                        $value;
-                }
-                sub ReadLine {
-                  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                    if(defined $_[0] && $_[0]>0) {
-                        # Nothing better seems to exist, so I just use time-of-day
-                        # to timeout the read. This isn't very exact, though.
-                        $starttime=time;
-                        $endtime=$starttime+$_[0];
-                                &setnodelay($File,1);
-                                my($value)=undef;
-                        while(time<$endtime) { # This won't catch wraparound!
-                                $value = scalar(<$File>);
-                                last if defined($value);
-                        }
-                                &setnodelay($File,0);
-                                return $value;
-                    }
-                        if(defined $_[0] && $_[0]<0) {&setnodelay($File,1)};
-                        my($value)=scalar(<$File>);
-                        if(defined $_[0] && $_[0]<0) {&setnodelay($File,0)};
-                        $value;
-                }
+		sub ReadKey {
+		  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		    if(defined $_[0] && $_[0]>0) {
+		    	# Nothing better seems to exist, so I just use time-of-day
+		    	# to timeout the read. This isn't very exact, though.
+		    	$starttime=time;
+		    	$endtime=$starttime+$_[0];
+				&setnodelay($File,1);
+				my($value)=undef;
+		    	while(time<$endtime) { # This won't catch wraparound!
+		    		$value = getc $File;
+		    		last if defined($value);
+		    	}
+				&setnodelay($File,0);
+				return $value;
+		    }
+			if(defined $_[0] && $_[0]<0) {&setnodelay($File,1);}
+			my($value) = getc $File;
+			if(defined $_[0] && $_[0]<0) {&setnodelay($File,0);}
+			$value;
+		}
+		sub ReadLine {
+		  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		    if(defined $_[0] && $_[0]>0) {
+		    	# Nothing better seems to exist, so I just use time-of-day
+		    	# to timeout the read. This isn't very exact, though.
+		    	$starttime=time;
+		    	$endtime=$starttime+$_[0];
+				&setnodelay($File,1);
+				my($value)=undef;
+		    	while(time<$endtime) { # This won't catch wraparound!
+		    		$value = scalar(<$File>);
+		    		last if defined($value);
+		    	}
+				&setnodelay($File,0);
+				return $value;
+		    }
+			if(defined $_[0] && $_[0]<0) {&setnodelay($File,1)};
+			my($value)=scalar(<$File>);
+			if(defined $_[0] && $_[0]<0) {&setnodelay($File,0)};
+			$value;
+		}
 DONE
     }
 }
 elsif ( &blockoptions() & 2 )    # Use poll
 {
     eval <<'DONE';
-        sub ReadKey {
-          my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                if(defined $_[0] && $_[0] != 0) {
+	sub ReadKey {
+	  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		if(defined $_[0] && $_[0] != 0) {
                      return undef if &pollfile($File,$_[0]) == 0
                 }
-                getc $File;
-        }
-        sub ReadLine {
-          my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                if(defined $_[0] && $_[0]!=0) {
+		getc $File;
+	}
+	sub ReadLine {
+	  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		if(defined $_[0] && $_[0]!=0) {
                      return undef if &pollfile($File,$_[0]) == 0;
                 }
-                scalar(<$File>);
-        }
+		scalar(<$File>);
+	}
 DONE
 }
 elsif ( &blockoptions() & 4 )    # Use select
 {
     eval <<'DONE';
-        sub ReadKey {
-          my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                if(defined $_[0] && $_[0] !=0 ) {
+	sub ReadKey {
+	  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		if(defined $_[0] && $_[0] !=0 ) {
                      return undef if &selectfile($File,$_[0])==0
                 }
-                getc $File;
-        }
-        sub ReadLine {
-          my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                if(defined $_[0] && $_[0] != 0) {
+		getc $File;
+	}
+	sub ReadLine {
+	  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		if(defined $_[0] && $_[0] != 0) {
                      return undef if &selectfile($File,$_[0]) == 0;
                 }
-                scalar(<$File>);
-        }
+		scalar(<$File>);
+	}
 DONE
 }
 elsif ( &blockoptions() & 8 )    # Use Win32
 {
     eval <<'DONE';
-        sub ReadKey {
-          my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                if ($_[0]) {
-                        Win32PeekChar($File, $_[0]);
-                } else {
-                        getc $File;
-                }
-                #if ($_[0]!=0) {return undef if !Win32PeekChar($File, $_[0])};
-                #getc $File;
-        }
-        sub ReadLine {
-          my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                #if ($_[0]!=0) {return undef if !Win32PeekChar($File, $_[0])};
-                #scalar(<$File>);
-                if($_[0])
-                        {croak("Non-blocking ReadLine is not supported on this architecture")}
-                scalar(<$File>);
-        }
+	sub ReadKey {
+	  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		if ($_[0]) {
+			Win32PeekChar($File, $_[0]);
+		} else {
+			getc $File;
+		}
+		#if ($_[0]!=0) {return undef if !Win32PeekChar($File, $_[0])};
+		#getc $File;
+	}
+	sub ReadLine {
+	  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		#if ($_[0]!=0) {return undef if !Win32PeekChar($File, $_[0])};
+		#scalar(<$File>);
+		if($_[0]) 
+			{croak("Non-blocking ReadLine is not supported on this architecture")}
+		scalar(<$File>);
+	}
 DONE
 }
 else
 {
     eval <<'DONE';
-        sub ReadKey {
-          my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                if($_[0])
-                        {croak("Non-blocking ReadKey is not supported on this architecture")}
-                getc $File;
-        }
-        sub ReadLine {
-          my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
-                if($_[0])
-                        {croak("Non-blocking ReadLine is not supported on this architecture")}
-                scalar(<$File>);
-        }
+	sub ReadKey {
+	  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		if($_[0]) 
+			{croak("Non-blocking ReadKey is not supported on this architecture")}
+		getc $File;
+	}
+	sub ReadLine {
+	  my($File) = normalizehandle((@_>1?$_[1]:\*STDIN));
+		if($_[0]) 
+			{croak("Non-blocking ReadLine is not supported on this architecture")}
+		scalar(<$File>);
+	}
 DONE
 }
 

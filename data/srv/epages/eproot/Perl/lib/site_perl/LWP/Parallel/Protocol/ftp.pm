@@ -31,52 +31,52 @@ eval {
     @ISA=qw(Net::FTP);
 
     sub new {
-        my $class = shift;
-        LWP::Debug::trace('()');
+	my $class = shift;
+	LWP::Debug::trace('()');
 
-        my $self = $class->SUPER::new(@_) || return undef;
+	my $self = $class->SUPER::new(@_) || return undef;
 
-        my $mess = $self->message;  # welcome message
-        LWP::Debug::debug($mess);
-        $mess =~ s|\n.*||s; # only first line left
-        $mess =~ s|\s*ready\.?$||;
-        # Make the version number more HTTP like
-        $mess =~ s|\s*\(Version\s*|/| and $mess =~ s|\)$||;
-        ${*$self}{myftp_server} = $mess;
-        #$response->header("Server", $mess);
+	my $mess = $self->message;  # welcome message
+	LWP::Debug::debug($mess);
+	$mess =~ s|\n.*||s; # only first line left
+	$mess =~ s|\s*ready\.?$||;
+	# Make the version number more HTTP like
+	$mess =~ s|\s*\(Version\s*|/| and $mess =~ s|\)$||;
+	${*$self}{myftp_server} = $mess;
+	#$response->header("Server", $mess);
 
-        $self;
+	$self;
     }
 
     sub http_server {
-        my $self = shift;
-        ${*$self}{myftp_server};
+	my $self = shift;
+	${*$self}{myftp_server};
     }
 
     sub home {
-        my $self = shift;
-        my $old = ${*$self}{myftp_home};
-        if (@_) {
-            ${*$self}{myftp_home} = shift;
-        }
-        $old;
+	my $self = shift;
+	my $old = ${*$self}{myftp_home};
+	if (@_) {
+	    ${*$self}{myftp_home} = shift;
+	}
+	$old;
     }
 
     sub go_home {
-        LWP::Debug::trace('');
-        my $self = shift;
-        $self->cwd(${*$self}{myftp_home});
+	LWP::Debug::trace('');
+	my $self = shift;
+	$self->cwd(${*$self}{myftp_home});
     }
 
     sub request_count {
-        my $self = shift;
-        ++${*$self}{myftp_reqcount};
+	my $self = shift;
+	++${*$self}{myftp_reqcount};
     }
 
     sub ping {
-        LWP::Debug::trace('');
-        my $self = shift;
-        return $self->go_home;
+	LWP::Debug::trace('');
+	my $self = shift;
+	return $self->go_home;
     }
 
 };
@@ -102,7 +102,7 @@ methods to find out what went wrong)
 
 sub handle_connect {
   my ($self, $request, $proxy, $timeout) = @_;
-
+  
   # mostly directly copied from the original Protocol::ftp, changes
   # are marked with "# ML" comment (mostly return values)
 
@@ -110,35 +110,35 @@ sub handle_connect {
   if (defined $proxy)
     {
       return (undef, new HTTP::Response &HTTP::Status::RC_BAD_REQUEST,
-              'You can not proxy through the ftp'); # ML
+	      'You can not proxy through the ftp'); # ML
     }
-
+  
   my $url = $request->url;
   if ($url->scheme ne 'ftp') {
     my $scheme = $url->scheme;
     return (undef, new HTTP::Response &HTTP::Status::RC_INTERNAL_SERVER_ERROR,
-            "LWP::Protocol::ftp::request called for '$scheme'"); # ML
+	    "LWP::Protocol::ftp::request called for '$scheme'"); # ML
   }
-
+  
   # check method
   my $method = $request->method;
-
+  
   unless ($method eq 'GET' || $method eq 'HEAD' || $method eq 'PUT') {
     return (undef, new HTTP::Response &HTTP::Status::RC_BAD_REQUEST,
-            'Library does not allow method ' .
-            "$method for 'ftp:' URLs"); # ML
+	    'Library does not allow method ' .
+	    "$method for 'ftp:' URLs"); # ML
   }
-
+  
   if ($init_failed) {
     return (undef, new HTTP::Response &HTTP::Status::RC_INTERNAL_SERVER_ERROR,
-            $init_failed); # ML
+	    $init_failed); # ML
   }
-
+  
   my $host     = $url->host;
   my $port     = $url->port;
   my $user     = $url->user;
   # taken out some additional variable declarations here, that are now
-  # only needed in 'write_request' method.
+  # only needed in 'write_request' method.  
 
   #################
   # new in LWP 5.60
@@ -147,26 +147,26 @@ sub handle_connect {
   my $key;
   my $conn_cache = $self->{ua}{conn_cache};
   if ($conn_cache) {
-        $key = "$host:$port:$user";
-        $key .= ":$account" if defined($account);
-        if (my $ftp = $conn_cache->withdraw("ftp", $key)) {
-            if ($ftp->ping) {
-                LWP::Debug::debug('Reusing old connection');
-                # save it again
-                $conn_cache->deposit("ftp", $key, $ftp);
+	$key = "$host:$port:$user";
+	$key .= ":$account" if defined($account);
+	if (my $ftp = $conn_cache->withdraw("ftp", $key)) {
+	    if ($ftp->ping) {
+		LWP::Debug::debug('Reusing old connection');
+		# save it again
+		$conn_cache->deposit("ftp", $key, $ftp);
                 # added $response object # ML
-                my $response =
+                my $response = 
                   HTTP::Response->new(&HTTP::Status::RC_OK, "Document follows");
-                return ($ftp, $response);
-            }
-        }
+		return ($ftp, $response);
+	    }
+	}
   }
 
   # try to make a connection
   my $ftp = LWP::Parallel::Protocol::MyFTP->new($host,
-                                        Port => $port,
-                                        Timeout => $timeout,
-                                       );
+					Port => $port,
+					Timeout => $timeout,
+				       );
   # XXX Should be some what to pass on 'Passive' (header??)
   #################
 
@@ -183,7 +183,7 @@ sub handle_connect {
     $response->header('Client-Request-Num' => $ftp->request_count);
     #################
     $response->request($request);
-  }
+  } 
 
   return ($ftp, $response); # ML
 }
@@ -198,13 +198,13 @@ sub write_request {
   # methods, but we need some of the values in both routines.  We
   # allow the account to be specified in the "Account" header
   my $account  = $request->header('Account');
-
+  
   my $url      = $request->url;
   my $host     = $url->host;
   my $port     = $url->port;
   my $user     = $url->user;
   my $password = $url->password;
-
+  
   # If a basic autorization header is present than we prefer these over
   # the username/password specified in the URL.
   {
@@ -214,15 +214,15 @@ sub write_request {
       $password = $p;
     }
   }
-
+  
   my $method = $request->method;
 
   # from here on mostly directly clipped from the original
   # Protocol::ftp. Changes are marked with "# ML" comment
-
+ 
   # from here on it seems FTP will handle timeouts, right? # ML
   $ftp->timeout($timeout) if $timeout;
-
+  
   LWP::Debug::debug("Logging in as $user (password $password)...");
   unless ($ftp->login($user, $password, $account)) {
     # Unauthorized.  Let's fake a RC_UNAUTHORIZED response
@@ -246,7 +246,7 @@ sub write_request {
   my $key;
   $key = "$host:$port:$user";
   $key .= ":$account" if defined($account);
-  #
+  # 
 
   my $conn_cache = $self->{ua}{conn_cache};
   $conn_cache->deposit("ftp", $key, $ftp) if $conn_cache;
@@ -260,7 +260,7 @@ sub write_request {
 
   my $remote_file = pop(@path);
   $remote_file = '' unless defined $remote_file;
-
+  
   my $type;
    if (ref $remote_file) {
        my @params;
@@ -280,21 +280,21 @@ sub write_request {
     LWP::Debug::debug("CWD $_");
     unless ($ftp->cwd($_)) {
       return (undef, new HTTP::Response &HTTP::Status::RC_NOT_FOUND,
-              "Can't chdir to $_");
+	      "Can't chdir to $_");
     }
   }
-
+  
   if ($method eq 'GET' || $method eq 'HEAD') {
     # new in ftp.pm,v 1.23 (fixed in ftp.pm,v 1.24)
     LWP::Debug::debug("MDTM");
     if (my $mod_time = $ftp->mdtm($remote_file)) {
       $response->last_modified($mod_time);
       if (my $ims = $request->if_modified_since) {
-        if ($mod_time <= $ims) {
-          $response->code(&HTTP::Status::RC_NOT_MODIFIED);
-          $response->message("Not modified");
-          return (undef, $response);
-        }
+	if ($mod_time <= $ims) {
+	  $response->code(&HTTP::Status::RC_NOT_MODIFIED);
+	  $response->message("Not modified");
+	  return (undef, $response);
+	}
       }
     }
     # end_of_new_stuff
@@ -302,7 +302,7 @@ sub write_request {
     #################
     # new in LWP 5.60
 
-    # We'll use this later to abort the transfer if necessary.
+    # We'll use this later to abort the transfer if necessary. 
     # if $max_size is defined, we need to abort early. Otherwise, it's
     # a normal transfer
     my $max_size = undef;
@@ -310,52 +310,52 @@ sub write_request {
     # Set resume location, if the client requested it
     if ($request->header('Range') && $ftp->supported('REST'))
     {
-        my $range_info = $request->header('Range');
+	my $range_info = $request->header('Range');
 
-        # Change bytes=2772992-6781209 to just 2772992
-        my ($start_byte,$end_byte) = $range_info =~ /.*=\s*(\d+)-(\d+)/;
+	# Change bytes=2772992-6781209 to just 2772992
+	my ($start_byte,$end_byte) = $range_info =~ /.*=\s*(\d+)-(\d+)/;
 
-        if (!defined $start_byte || !defined $end_byte ||
-          ($start_byte < 0) || ($start_byte > $end_byte) || ($end_byte < 0))
-        {
-          return (undef, HTTP::Response->new(&HTTP::Status::RC_BAD_REQUEST,
-             'Incorrect syntax for Range request'));
-        }
+	if (!defined $start_byte || !defined $end_byte ||
+	  ($start_byte < 0) || ($start_byte > $end_byte) || ($end_byte < 0))
+	{
+	  return (undef, HTTP::Response->new(&HTTP::Status::RC_BAD_REQUEST,
+	     'Incorrect syntax for Range request'));
+	}
 
-        $max_size = $end_byte-$start_byte;
+	$max_size = $end_byte-$start_byte;
 
-        $ftp->restart($start_byte);
+	$ftp->restart($start_byte);
     } elsif ($request->header('Range') && !$ftp->supported('REST')) {
-        return (undef,HTTP::Response->new(&HTTP::Status::RC_NOT_IMPLEMENTED,
+	return (undef,HTTP::Response->new(&HTTP::Status::RC_NOT_IMPLEMENTED,
          "Server does not support resume."));
     }
     ################
 
 
-    my $data;                   # the data handle
+    my $data;			# the data handle
     LWP::Debug::debug("retrieve file?");
     if (length($remote_file) and $data = $ftp->retr($remote_file)) {
-      # remove reading from socket into 'read_chunk' method.
-      # just return our new $listen_socket here.
+      # remove reading from socket into 'read_chunk' method. 
+      # just return our new $listen_socket here. 
       my($type, @enc) = LWP::MediaTypes::guess_media_type($remote_file);
       $response->header('Content-Type',   $type) if $type;
       for (@enc) {
-        $response->push_header('Content-Encoding', $_);
+	$response->push_header('Content-Encoding', $_);
       }
       my $mess = $ftp->message;
       LWP::Debug::debug($mess);
       if ($mess =~ /\((\d+)\s+bytes\)/) {
-        $response->header('Content-Length', "$1");
+	$response->header('Content-Length', "$1");
       }
-      return ($data, $response);        # ML
+      return ($data, $response);	# ML
     } elsif (!length($remote_file) || $ftp->code == 550) {
       # no file, the remote file is actually a directory, so cdw into directory
       if (length($remote_file) && !$ftp->cwd($remote_file)) {
-        LWP::Debug::debug("chdir before listing failed");
-        return (undef, new HTTP::Response &HTTP::Status::RC_NOT_FOUND,
-                "File '$remote_file' not found"); # ML
+	LWP::Debug::debug("chdir before listing failed");
+	return (undef, new HTTP::Response &HTTP::Status::RC_NOT_FOUND,
+		"File '$remote_file' not found"); # ML
       }
-
+      
       # It should now be safe to try to list the directory
       LWP::Debug::debug("dir");
       my @lsl = $ftp->dir;
@@ -363,45 +363,45 @@ sub write_request {
       # Try to figure out if the user want us to convert the
       # directory listing to HTML.
       my @variants =
-        (
-         ['html',  0.60, 'text/html'            ],
-         ['dir',   1.00, 'text/ftp-dir-listing' ]
-        );
+	(
+	 ['html',  0.60, 'text/html'            ],
+	 ['dir',   1.00, 'text/ftp-dir-listing' ]
+	);
       #$HTTP::Negotiate::DEBUG=1;
       my $prefer = HTTP::Negotiate::choose(\@variants, $request);
-
+      
       my $content = '';
-
+      
       if (!defined($prefer)) {
-        return (undef, new HTTP::Response &HTTP::Status::RC_NOT_ACCEPTABLE,
-                "Neither HTML nor directory listing wanted"); # ML
+	return (undef, new HTTP::Response &HTTP::Status::RC_NOT_ACCEPTABLE,
+		"Neither HTML nor directory listing wanted"); # ML
       } elsif ($prefer eq 'html') {
-        $response->header('Content-Type' => 'text/html');
-        $content = "<HEAD><TITLE>File Listing</TITLE>\n";
-        my $base = $request->url->clone;
-        my $path = $base->path;
-        $base->path("$path/") unless $path =~ m|/$|;
-        $content .= qq(<BASE HREF="$base">\n</HEAD>\n);
-        $content .= "<BODY>\n<UL>\n";
-        for (File::Listing::parse_dir(\@lsl, 'GMT')) {
-          my($name, $type, $size, $mtime, $mode) = @$_;
-          $content .= qq(  <LI> <a href="$name">$name</a>);
-          $content .= " $size bytes" if $type eq 'f';
-          $content .= "\n";
-        }
-        $content .= "</UL></body>\n";
+	$response->header('Content-Type' => 'text/html');
+	$content = "<HEAD><TITLE>File Listing</TITLE>\n";
+	my $base = $request->url->clone;
+	my $path = $base->path;
+	$base->path("$path/") unless $path =~ m|/$|;
+	$content .= qq(<BASE HREF="$base">\n</HEAD>\n);
+	$content .= "<BODY>\n<UL>\n";
+	for (File::Listing::parse_dir(\@lsl, 'GMT')) {
+	  my($name, $type, $size, $mtime, $mode) = @$_;
+	  $content .= qq(  <LI> <a href="$name">$name</a>);
+	  $content .= " $size bytes" if $type eq 'f';
+	  $content .= "\n";
+	}
+	$content .= "</UL></body>\n";
       } else {
-        $response->header('Content-Type', 'text/ftp-dir-listing');
-        $content = join("\n", @lsl, '');
+	$response->header('Content-Type', 'text/ftp-dir-listing');
+	$content = join("\n", @lsl, '');
       }
-
+      
       $response->header('Content-Length', length($content));
 
       if ($method ne 'HEAD') {
-        # $self->receive_once($arg, $response, $content);
+	# $self->receive_once($arg, $response, $content);
         # calling receive_once is now done in UserAgent.pm #ML 7/99
-        # here we just add the content to the response:
-        $response->content($content);
+	# here we just add the content to the response:
+	$response->content($content);
       }
     } else {
       my $res = new HTTP::Response &HTTP::Status::RC_BAD_REQUEST,
@@ -414,7 +414,7 @@ sub write_request {
     # method must be PUT
     unless (length($remote_file)) {
       return (undef, new HTTP::Response &HTTP::Status::RC_BAD_REQUEST,
-              "Must have a file name to PUT to"); # ML
+	      "Must have a file name to PUT to"); # ML
     }
     my $data;
     if ($data = $ftp->stor($remote_file)) {
@@ -423,26 +423,26 @@ sub write_request {
       my $content = $request->content;
       my $bytes = 0;
       if (defined $content) {
-        if (ref($content) eq 'SCALAR') {
-          $bytes = $data->write($$content, length($$content));
-        } elsif (ref($content) eq 'CODE') {
-          my($buf, $n);
-          while (length($buf = &$content)) {
-            $n = $data->write($buf, length($buf));
-            last unless $n;
-            $bytes += $n;
-          }
-        } elsif (!ref($content)) {
-          if (defined $content && length($content)) {
-            $bytes = $data->write($content, length($content));
-          }
-        } else {
-          die "Bad content";
-        }
+	if (ref($content) eq 'SCALAR') {
+	  $bytes = $data->write($$content, length($$content));
+	} elsif (ref($content) eq 'CODE') {
+	  my($buf, $n);
+	  while (length($buf = &$content)) {
+	    $n = $data->write($buf, length($buf));
+	    last unless $n;
+	    $bytes += $n;
+	  }
+	} elsif (!ref($content)) {
+	  if (defined $content && length($content)) {
+	    $bytes = $data->write($content, length($content));
+	  }
+	} else {
+	  die "Bad content";
+	}
       }
       $data->close;
       LWP::Debug::debug($ftp->message);
-
+      
       $response->code(&HTTP::Status::RC_CREATED);
       $response->header('Content-Type', 'text/plain');
       $response->content("$bytes bytes stored as $remote_file on $host\n")
@@ -451,18 +451,18 @@ sub write_request {
       "FTP return code " . $ftp->code;
       $res->content_type("text/plain");
       $res->content($ftp->message);
-      return (undef, $res);     # ML
-    }
+      return (undef, $res);	# ML
+    }  
   } else {
     return (undef, new HTTP::Response &HTTP::Status::RC_BAD_REQUEST,
-            "Illegal method $method"); # ML
+	    "Illegal method $method"); # ML
   }
   return (undef, $response);
 }
 
 sub read_chunk {
   my ($self, $response, $data, $request, $arg, $size, $timeout, $entry) = @_;
-
+  
   my $method = $request->method;
   if ($method ne 'HEAD') {
     LWP::Debug::debug('reading response');
@@ -471,23 +471,23 @@ sub read_chunk {
     # read one chunk at a time from $socket
     my $bytes_read;
     # decide whether to use 'read' or 'sysread'
-    $bytes_read = $data->sysread( $buf, $size );        # IO::Socket
-
+    $bytes_read = $data->sysread( $buf, $size );	# IO::Socket
+    
     ## XXX find a way here to check maxsize (line 298 in LWP::Protocol::ftp)
-    ## problem: get current size of response from entry object.
+    ## problem: get current size of response from entry object.   
     ## trim buf-content if necessary
     ## return undef at the end when we're done, no?
 
     # parse data from server
     my $retval = $self->receive($arg, $response, \$buf, $entry);
-    # A return value lower than zero means a command from our
+    # A return value lower than zero means a command from our 
     # callback function. Make sure it reaches ParallelUA:
-    #   return (defined($retval) and (0 > $retval) ?
-    #           $retval : $bytes_read);
+    #	return (defined($retval) and (0 > $retval) ? 
+    #		$retval : $bytes_read);
     return (defined $retval? $retval : $bytes_read);
   }
 }
-
+ 
 sub close_connection {
   my ($self, $response, $data, $request, $ftp) = @_;
 
@@ -497,7 +497,7 @@ sub close_connection {
       # Something did not work too well
       $response->code(&HTTP::Status::RC_INTERNAL_SERVER_ERROR);
       $response->message("FTP close response: " . $ftp->code .
-                         " " . $ftp->message);
+			 " " . $ftp->message);
     }
   }
 }
@@ -505,9 +505,9 @@ sub close_connection {
 sub request
 {
   my($self, $request, $proxy, $arg, $size, $timeout) = @_;
-
+  
   $size = 4096 unless $size;
-
+  
   LWP::Debug::trace('()');
 
   # handle connect already gives us our response object
@@ -517,33 +517,33 @@ sub request
   # $socket object returned by http.pm's "handle_connect" method, and
   # the $ftp object returned by ftp.pm's "handle_connect" method :)
   # As for the $fullpath parameter -- ParallelUA doesn't do anything
-  # with this value other than passing it as a second argument to
+  # with this value other than passing it as a second argument to 
   # the "write_request" method (well, and storing it in its entry list,
   # in the meantime. But so who cares -- perl certainly doesn't -- if
-  # we store a string or a pointer to an object in there!).
+  # we store a string or a pointer to an object in there!). 
   my ($ftp, $response) = $self->handle_connect ($request, $proxy, $timeout);
-
+  
   # if its status is not "OK", then something went wrong during our
   # call to handle_connect, and we should stop here and return the
   # response object containing the reason for this error:
   return $response unless $response->is_success;
-
+  
   # issue request (in case of error creates Error-Response)
-  my ($listen_socket, $error_response) =
-        $self->write_request ($request, $ftp, $response, $arg, $timeout);
-
+  my ($listen_socket, $error_response) = 
+	$self->write_request ($request, $ftp, $response, $arg, $timeout);
+  
   unless ($error_response) {
     # now we can start reading from our $listen_socket
     while (1) {
-      last unless $self->read_chunk ($response, $listen_socket,
-                                     $request, $arg, $size, $timeout, $ftp);
+      last unless $self->read_chunk ($response, $listen_socket, 
+				     $request, $arg, $size, $timeout, $ftp);
     }
     $self->close_connection ($response, $listen_socket, $request, $ftp);
-    $listen_socket = undef;
+    $listen_socket = undef;  
   } else {
     $response = $error_response;
   }
-
+    
   $ftp = undef;  # close it (ditto)
   $response;
 }

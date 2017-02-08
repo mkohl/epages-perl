@@ -351,7 +351,7 @@ Please see L<TAP::Parser/SUBCLASSING> for a subclassing overview.
       my $self = shift;
       if (my $shebang = $self->shebang( $self->{file} )) {
           $shebang =~ /^#!(.*\bperl.*?)(?:(?:\s)|(?:$))/;
-          return $1 if $1;
+	  return $1 if $1;
       }
       return $self->SUPER::get_perl(@_);
   }

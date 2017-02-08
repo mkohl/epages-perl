@@ -1,4 +1,4 @@
-#       $Header: /home/timbo/dbi/lib/DBI/RCS/ProxyServer.pm,v 11.9 2003/05/14 11:08:17 timbo Exp $
+#	$Header: /home/timbo/dbi/lib/DBI/RCS/ProxyServer.pm,v 11.9 2003/05/14 11:08:17 timbo Exp $
 # -*- perl -*-
 #
 #   DBI::ProxyServer - a proxy server for DBI drivers
@@ -51,59 +51,59 @@ $VERSION = "0.3005";
 my %DEFAULT_SERVER_OPTIONS;
 {
     my $o = \%DEFAULT_SERVER_OPTIONS;
-    $o->{'chroot'}     = undef,         # To be used in the initfile,
-                                        # after loading the required
-                                        # DBI drivers.
+    $o->{'chroot'}     = undef,		# To be used in the initfile,
+    					# after loading the required
+    					# DBI drivers.
     $o->{'clients'} =
-        [ { 'mask' => '.*',
-            'accept' => 1,
-            'cipher' => undef
-            }
-          ];
+	[ { 'mask' => '.*',
+	    'accept' => 1,
+	    'cipher' => undef
+	    }
+	  ];
     $o->{'configfile'} = '/etc/dbiproxy.conf' if -f '/etc/dbiproxy.conf';
     $o->{'debug'}      = 0;
     $o->{'facility'}   = 'daemon';
     $o->{'group'}      = undef;
-    $o->{'localaddr'}  = undef;         # Bind to any local IP number
+    $o->{'localaddr'}  = undef;		# Bind to any local IP number
     $o->{'localport'}  = undef;         # Must set port number on the
-                                        # command line.
+					# command line.
     $o->{'logfile'}    = undef;         # Use syslog or EventLog.
 
     # XXX don't restrict methods that can be called (trust users once connected)
     $o->{'XXX_methods'}    = {
-        'DBI::ProxyServer' => {
-            'Version' => 1,
-            'NewHandle' => 1,
-            'CallMethod' => 1,
-            'DestroyHandle' => 1
-            },
-        'DBI::ProxyServer::db' => {
-            'prepare' => 1,
-            'commit' => 1,
-            'rollback' => 1,
-            'STORE' => 1,
-            'FETCH' => 1,
-            'func' => 1,
-            'quote' => 1,
-            'type_info_all' => 1,
-            'table_info' => 1,
-            'disconnect' => 1,
-            },
-        'DBI::ProxyServer::st' => {
-            'execute' => 1,
-            'STORE' => 1,
-            'FETCH' => 1,
-            'func' => 1,
-            'fetch' => 1,
-            'finish' => 1
-            }
+	'DBI::ProxyServer' => {
+	    'Version' => 1,
+	    'NewHandle' => 1,
+	    'CallMethod' => 1,
+	    'DestroyHandle' => 1
+	    },
+	'DBI::ProxyServer::db' => {
+	    'prepare' => 1,
+	    'commit' => 1,
+	    'rollback' => 1,
+	    'STORE' => 1,
+	    'FETCH' => 1,
+	    'func' => 1,
+	    'quote' => 1,
+	    'type_info_all' => 1,
+	    'table_info' => 1,
+	    'disconnect' => 1,
+	    },
+	'DBI::ProxyServer::st' => {
+	    'execute' => 1,
+	    'STORE' => 1,
+	    'FETCH' => 1,
+	    'func' => 1,
+	    'fetch' => 1,
+	    'finish' => 1
+	    }
     };
     if ($Config::Config{'usethreads'} eq 'define') {
-        $o->{'mode'} = 'threads';
+	$o->{'mode'} = 'threads';
     } elsif ($Config::Config{'d_fork'} eq 'define') {
-        $o->{'mode'} = 'fork';
+	$o->{'mode'} = 'fork';
     } else {
-        $o->{'mode'} = 'single';
+	$o->{'mode'} = 'single';
     }
     # No pidfile by default, configuration must provide one if needed
     $o->{'pidfile'}    = 'none';
@@ -190,19 +190,19 @@ sub AcceptUser {
     local $ENV{DBI_AUTOPROXY} = ''; # :-)
     $self->{'dbh'} = eval {
         DBI::ProxyServer->connect($dsn, $user, $password,
-                                  { 'PrintError' => 0,
-                                    'Warn' => 0,
-                                    'RaiseError' => 1,
-                                    'HandleError' => sub {
-                                        my $err = $_[1]->err;
-                                        my $state = $_[1]->state || '';
-                                        $_[0] .= " [err=$err,state=$state]";
-                                        return 0;
-                                    } })
+				  { 'PrintError' => 0, 
+				    'Warn' => 0,
+				    'RaiseError' => 1,
+				    'HandleError' => sub {
+				        my $err = $_[1]->err;
+					my $state = $_[1]->state || '';
+					$_[0] .= " [err=$err,state=$state]";
+					return 0;
+				    } })
     };
     if ($@) {
-        $self->Error("Error while connecting to $dsn as $user: $@");
-        return 0;
+	$self->Error("Error while connecting to $dsn as $user: $@");
+	return 0;
     }
     [1, $self->StoreHandle($self->{'dbh'}) ];
 }
@@ -220,10 +220,10 @@ sub CallMethod {
     my $msg = $@;
     undef $dbh->{'private_server'};
     if ($msg) {
-        $server->Debug("CallMethod died with: $@");
-        die $msg;
+	$server->Debug("CallMethod died with: $@");
+	die $msg;
     } else {
-        $server->Debug("CallMethod: <= " . do { local $^W; join(",", @result) });
+	$server->Debug("CallMethod: <= " . do { local $^W; join(",", @result) });
     }
     @result;
 }
@@ -256,16 +256,16 @@ sub prepare {
     my($dbh, $statement, $attr, $params, $proto_ver) = @_;
     my $server = $dbh->{'private_server'};
     if (my $client = $server->{'client'}) {
-        if ($client->{'sql'}) {
-            if ($statement =~ /^\s*(\S+)/) {
-                my $st = $1;
-                if (!($statement = $client->{'sql'}->{$st})) {
-                    die "Unknown SQL query: $st";
-                }
-            } else {
-                die "Cannot parse restricted SQL statement: $statement";
-            }
-        }
+	if ($client->{'sql'}) {
+	    if ($statement =~ /^\s*(\S+)/) {
+		my $st = $1;
+		if (!($statement = $client->{'sql'}->{$st})) {
+		    die "Unknown SQL query: $st";
+		}
+	    } else {
+		die "Cannot parse restricted SQL statement: $statement";
+	    }
+	}
     }
     my $sth = $dbh->SUPER::prepare($statement, $attr);
     my $handle = $server->StoreHandle($sth);
@@ -282,9 +282,9 @@ sub prepare {
       my @result = $sth->execute($params);
       my ($NAME, $TYPE);
       my $NUM_OF_FIELDS = $sth->{NUM_OF_FIELDS};
-      if ($NUM_OF_FIELDS) {     # is a SELECT
-        $NAME = $sth->{NAME};
-        $TYPE = $sth->{TYPE};
+      if ($NUM_OF_FIELDS) {	# is a SELECT
+	$NAME = $sth->{NAME};
+	$TYPE = $sth->{TYPE};
       }
       ($handle, $NUM_OF_FIELDS, $sth->{'NUM_OF_PARAMS'},
        $NAME, $TYPE, @result);
@@ -307,7 +307,7 @@ sub table_info {
     my @rows;
     while (my ($row) = $sth->fetch()) {
         last unless defined $row;
-        push(@rows, [@$row]);
+	push(@rows, [@$row]);
     }
     ($numFields, $names, $types, @rows);
 }
@@ -321,30 +321,30 @@ sub execute {
     my $sth = shift; my $params = shift; my $proto_ver = shift;
     my @outParams;
     if ($params) {
-        for (my $i = 0;  $i < @$params;) {
-            my $param = $params->[$i++];
-            if (!ref($param)) {
-                $sth->bind_param($i, $param);
-            }
-            else {
-                if (!ref(@$param[0])) {#It's not a reference
-                    $sth->bind_param($i, @$param);
-                }
-                else {
-                    $sth->bind_param_inout($i, @$param);
-                    my $ref = shift @$param;
-                    push(@outParams, $ref);
-                }
-            }
-        }
+	for (my $i = 0;  $i < @$params;) {
+	    my $param = $params->[$i++];
+	    if (!ref($param)) {
+		$sth->bind_param($i, $param);
+	    }
+	    else {	
+		if (!ref(@$param[0])) {#It's not a reference
+		    $sth->bind_param($i, @$param);
+		}
+		else {
+		    $sth->bind_param_inout($i, @$param);
+		    my $ref = shift @$param;
+		    push(@outParams, $ref);
+		}
+	    }
+	}
     }
     my $rows = $sth->SUPER::execute();
     if ( $proto_ver and $proto_ver > 1 and not $sth->{private_proxyserver_described} ) {
       my ($NAME, $TYPE);
       my $NUM_OF_FIELDS = $sth->{NUM_OF_FIELDS};
-      if ($NUM_OF_FIELDS) {     # is a SELECT
-        $NAME = $sth->{NAME};
-        $TYPE = $sth->{TYPE};
+      if ($NUM_OF_FIELDS) {	# is a SELECT
+	$NAME = $sth->{NAME};
+	$TYPE = $sth->{TYPE};
       }
       $sth->{private_proxyserver_described} = 1;
       # First execution, we ship back description.
@@ -357,7 +357,7 @@ sub fetch {
     my $sth = shift; my $numRows = shift || 1;
     my($ref, @rows);
     while ($numRows--  &&  ($ref = $sth->SUPER::fetch())) {
-        push(@rows, [@$ref]);
+	push(@rows, [@$ref]);
     }
     @rows;
 }
@@ -424,15 +424,15 @@ config file might contain the following lines:
     my $unixsockdir = '/tmp';
     my $unixsockfile = 'mysql.sock';
     foreach $dir ($rootdir, "$rootdir$unixsockdir") {
-        mkdir 0755, $dir;
+	mkdir 0755, $dir;
     }
     link("$unixsockdir/$unixsockfile",
-         "$rootdir$unixsockdir/$unixsockfile");
+	 "$rootdir$unixsockdir/$unixsockfile");
     require DBD::mysql;
 
     {
-        'chroot' => $rootdir,
-        ...
+	'chroot' => $rootdir,
+	...
     }
 
 If you don't know chroot(), think of an FTP server where you can see a
@@ -569,12 +569,12 @@ Additionally the server offers you query restrictions. Suggest the
 following client list:
 
     'clients' => [
-        { 'mask' => '^admin\.company\.com$',
+	{ 'mask' => '^admin\.company\.com$',
           'accept' => 1,
           'users' => [ 'root', 'wwwrun' ],
         },
         {
-          'mask' => '^admin\.company\.com$',
+	  'mask' => '^admin\.company\.com$',
           'accept' => 1,
           'users' => [ 'root', 'wwwrun' ],
           'sql' => {
@@ -603,199 +603,199 @@ every workstation shall be able to execute every query.
 
 There is a perl program "dbiproxy" which runs on a machine which is able
 to connect to all the databases we wish to reach. All Perl-DBD-drivers must
-be installed on this machine. You can also reach databases for which drivers
-are not available on the machine where you run the program querying the
+be installed on this machine. You can also reach databases for which drivers 
+are not available on the machine where you run the program querying the 
 database, e.g. ask MS-Access-database from Linux.
 
 Create a configuration file "proxy_oracle.cfg" at the dbproxy-server:
 
     {
-        # This shall run in a shell or a DOS-window
-        # facility => 'daemon',
-        pidfile => 'your_dbiproxy.pid',
-        logfile => 1,
-        debug => 0,
-        mode => 'single',
-        localport => '12400',
+	# This shall run in a shell or a DOS-window 
+	# facility => 'daemon',
+	pidfile => 'your_dbiproxy.pid',
+	logfile => 1,
+	debug => 0,
+	mode => 'single',
+	localport => '12400',
 
-        # Access control, the first match in this list wins!
-        # So the order is important
-        clients => [
-                # hint to organize:
-                # the most specialized rules for single machines/users are 1st
-                # then the denying rules
-                # the the rules about whole networks
+	# Access control, the first match in this list wins!
+	# So the order is important
+	clients => [
+		# hint to organize:
+		# the most specialized rules for single machines/users are 1st
+		# then the denying rules
+		# the the rules about whole networks
 
-                # rule: internal_webserver
-                # desc: to get statistical information
-                {
-                        # this IP-address only is meant
-                        mask => '^10\.95\.81\.243$',
-                        # accept (not defer) connections like this
-                        accept => 1,
-                        # only users from this list
-                        # are allowed to log on
-                        users => [ 'informationdesk' ],
-                        # only this statistical query is allowed
-                        # to get results for a web-query
-                        sql => {
-                                alive => 'select count(*) from dual',
-                                statistic_area => 'select count(*) from e01admin.e01e203 where geb_bezei like ?',
-                        }
-                },
+		# rule: internal_webserver
+		# desc: to get statistical information
+		{
+			# this IP-address only is meant
+			mask => '^10\.95\.81\.243$',
+			# accept (not defer) connections like this
+			accept => 1,
+			# only users from this list 
+			# are allowed to log on
+			users => [ 'informationdesk' ],
+			# only this statistical query is allowed
+			# to get results for a web-query
+			sql => {
+				alive => 'select count(*) from dual',
+				statistic_area => 'select count(*) from e01admin.e01e203 where geb_bezei like ?',
+			}
+		},
 
-                # rule: internal_bad_guy_1
-                {
-                        mask => '^10\.95\.81\.1$',
-                        accept => 0,
-                },
+		# rule: internal_bad_guy_1
+		{
+			mask => '^10\.95\.81\.1$',
+			accept => 0,
+		},
 
-                # rule: employee_workplace
-                # desc: get detailled information
-                {
-                        # any IP-address is meant here
-                        mask => '^10\.95\.81\.(\d+)$',
-                        # accept (not defer) connections like this
-                        accept => 1,
-                        # only users from this list
-                        # are allowed to log on
-                        users => [ 'informationdesk', 'lippmann' ],
-                        # all these queries are allowed:
-                        sql => {
-                                search_city => 'select ort_nr, plz, ort from e01admin.e01e200 where plz like ?',
-                                search_area => 'select gebiettyp, geb_bezei from e01admin.e01e203 where geb_bezei like ? or geb_bezei like ?',
-                        }
-                },
+		# rule: employee_workplace
+		# desc: get detailled information
+		{
+			# any IP-address is meant here
+			mask => '^10\.95\.81\.(\d+)$',
+			# accept (not defer) connections like this
+			accept => 1,
+			# only users from this list 
+			# are allowed to log on
+			users => [ 'informationdesk', 'lippmann' ],
+			# all these queries are allowed:
+			sql => {
+				search_city => 'select ort_nr, plz, ort from e01admin.e01e200 where plz like ?',
+				search_area => 'select gebiettyp, geb_bezei from e01admin.e01e203 where geb_bezei like ? or geb_bezei like ?',
+			}
+		},
 
-                # rule: internal_bad_guy_2
-                # This does NOT work, because rule "employee_workplace" hits
-                # with its ip-address-mask of the whole network
-                {
-                        # don't accept connection from this ip-address
-                        mask => '^10\.95\.81\.5$',
-                        accept => 0,
-                }
-        ]
+		# rule: internal_bad_guy_2 
+		# This does NOT work, because rule "employee_workplace" hits
+		# with its ip-address-mask of the whole network
+		{
+			# don't accept connection from this ip-address
+			mask => '^10\.95\.81\.5$',
+			accept => 0,
+		}
+	]
     }
 
 Start the proxyserver like this:
 
-        rem well-set Oracle_home needed for Oracle
-        set ORACLE_HOME=d:\oracle\ora81
-        dbiproxy --configfile proxy_oracle.cfg
+	rem well-set Oracle_home needed for Oracle
+	set ORACLE_HOME=d:\oracle\ora81
+	dbiproxy --configfile proxy_oracle.cfg
 
 
 =head2 Testing the connection from a remote machine
 
 Call a program "dbish" from your commandline. I take the machine from rule "internal_webserver"
 
-        dbish "dbi:Proxy:hostname=oracle.zdf;port=12400;dsn=dbi:Oracle:e01" informationdesk xxx
+	dbish "dbi:Proxy:hostname=oracle.zdf;port=12400;dsn=dbi:Oracle:e01" informationdesk xxx
 
 There will be a shell-prompt:
 
-        informationdesk@dbi...> alive
+	informationdesk@dbi...> alive
 
-        Current statement buffer (enter '/'...):
-        alive
+	Current statement buffer (enter '/'...):
+	alive
 
-        informationdesk@dbi...> /
-        COUNT(*)
-        '1'
-        [1 rows of 1 fields returned]
+	informationdesk@dbi...> /
+	COUNT(*)
+	'1'
+	[1 rows of 1 fields returned]
 
 
 =head2 Testing the connection with a perl-script
 
 Create a perl-script like this:
 
-        # file: oratest.pl
-        # call me like this: perl oratest.pl user password
+	# file: oratest.pl
+	# call me like this: perl oratest.pl user password
 
-        use strict;
-        use DBI;
+	use strict;
+	use DBI;
 
-        my $user = shift || die "Usage: $0 user password";
-        my $pass = shift || die "Usage: $0 user password";
-        my $config = {
-                dsn_at_proxy => "dbi:Oracle:e01",
-                proxy => "hostname=oechsle.zdf;port=12400",
-        };
-        my $dsn = sprintf "dbi:Proxy:%s;dsn=%s",
-                $config->{proxy},
-                $config->{dsn_at_proxy};
+	my $user = shift || die "Usage: $0 user password";
+	my $pass = shift || die "Usage: $0 user password";
+	my $config = {
+		dsn_at_proxy => "dbi:Oracle:e01",
+		proxy => "hostname=oechsle.zdf;port=12400",
+	};
+	my $dsn = sprintf "dbi:Proxy:%s;dsn=%s",
+		$config->{proxy},
+		$config->{dsn_at_proxy};
 
-        my $dbh = DBI->connect( $dsn, $user, $pass )
-                || die "connect did not work: $DBI::errstr";
+	my $dbh = DBI->connect( $dsn, $user, $pass )
+		|| die "connect did not work: $DBI::errstr";
 
-        my $sql = "search_city";
-        printf "%s\n%s\n%s\n", "="x40, $sql, "="x40;
-        my $cur = $dbh->prepare($sql);
-        $cur->bind_param(1,'905%');
-        &show_result ($cur);
+	my $sql = "search_city";
+	printf "%s\n%s\n%s\n", "="x40, $sql, "="x40;
+	my $cur = $dbh->prepare($sql);
+	$cur->bind_param(1,'905%');
+	&show_result ($cur);
 
-        my $sql = "search_area";
-        printf "%s\n%s\n%s\n", "="x40, $sql, "="x40;
-        my $cur = $dbh->prepare($sql);
-        $cur->bind_param(1,'Pfarr%');
-        $cur->bind_param(2,'Bronnamberg%');
-        &show_result ($cur);
+	my $sql = "search_area";
+	printf "%s\n%s\n%s\n", "="x40, $sql, "="x40;
+	my $cur = $dbh->prepare($sql);
+	$cur->bind_param(1,'Pfarr%');
+	$cur->bind_param(2,'Bronnamberg%');
+	&show_result ($cur);
 
-        my $sql = "statistic_area";
-        printf "%s\n%s\n%s\n", "="x40, $sql, "="x40;
-        my $cur = $dbh->prepare($sql);
-        $cur->bind_param(1,'Pfarr%');
-        &show_result ($cur);
+	my $sql = "statistic_area";
+	printf "%s\n%s\n%s\n", "="x40, $sql, "="x40;
+	my $cur = $dbh->prepare($sql);
+	$cur->bind_param(1,'Pfarr%');
+	&show_result ($cur);
 
-        $dbh->disconnect;
-        exit;
+	$dbh->disconnect;
+	exit;
 
 
-        sub show_result {
-                my $cur = shift;
-                unless ($cur->execute()) {
-                        print "Could not execute\n";
-                        return;
-                }
+	sub show_result {
+		my $cur = shift;
+		unless ($cur->execute()) {
+			print "Could not execute\n"; 
+			return; 
+		}
 
-                my $rownum = 0;
-                while (my @row = $cur->fetchrow_array()) {
-                        printf "Row is: %s\n", join(", ",@row);
-                        if ($rownum++ > 5) {
-                                print "... and so on\n";
-                                last;
-                        }
-                }
-                $cur->finish;
-        }
+		my $rownum = 0;
+		while (my @row = $cur->fetchrow_array()) {
+			printf "Row is: %s\n", join(", ",@row);
+			if ($rownum++ > 5) {
+				print "... and so on\n";
+				last;
+			}	
+		}
+		$cur->finish;
+	}
 
 The result
 
-        C:\>perl oratest.pl informationdesk xxx
-        ========================================
-        search_city
-        ========================================
-        Row is: 3322, 9050, Chemnitz
-        Row is: 3678, 9051, Chemnitz
-        Row is: 10447, 9051, Chemnitz
-        Row is: 12128, 9051, Chemnitz
-        Row is: 10954, 90513, Zirndorf
-        Row is: 5808, 90513, Zirndorf
-        Row is: 5715, 90513, Zirndorf
-        ... and so on
-        ========================================
-        search_area
-        ========================================
-        Row is: 101, Bronnamberg
-        Row is: 400, Pfarramt Zirndorf
-        Row is: 400, Pfarramt Rosstal
-        Row is: 400, Pfarramt Oberasbach
-        Row is: 401, Pfarramt Zirndorf
-        Row is: 401, Pfarramt Rosstal
-        ========================================
-        statistic_area
-        ========================================
-        DBD::Proxy::st execute failed: Server returned error: Failed to execute method CallMethod: Unknown SQL query: statistic_area at E:/Perl/site/lib/DBI/ProxyServer.pm line 258.
-        Could not execute
+	C:\>perl oratest.pl informationdesk xxx
+	========================================
+	search_city
+	========================================
+	Row is: 3322, 9050, Chemnitz
+	Row is: 3678, 9051, Chemnitz
+	Row is: 10447, 9051, Chemnitz
+	Row is: 12128, 9051, Chemnitz
+	Row is: 10954, 90513, Zirndorf
+	Row is: 5808, 90513, Zirndorf
+	Row is: 5715, 90513, Zirndorf
+	... and so on
+	========================================
+	search_area
+	========================================
+	Row is: 101, Bronnamberg
+	Row is: 400, Pfarramt Zirndorf
+	Row is: 400, Pfarramt Rosstal
+	Row is: 400, Pfarramt Oberasbach
+	Row is: 401, Pfarramt Zirndorf
+	Row is: 401, Pfarramt Rosstal
+	========================================
+	statistic_area
+	========================================
+	DBD::Proxy::st execute failed: Server returned error: Failed to execute method CallMethod: Unknown SQL query: statistic_area at E:/Perl/site/lib/DBI/ProxyServer.pm line 258.
+	Could not execute
 
 
 =head2 How the configuration works
@@ -821,39 +821,39 @@ You can put every SQL-statement you like in simply ommiting "sql => ...", but th
 
 If you include an sql-section in your config-file like this:
 
-        sql => {
-                alive => 'select count(*) from dual',
-                statistic_area => 'select count(*) from e01admin.e01e203 where geb_bezei like ?',
-        }
+	sql => {
+		alive => 'select count(*) from dual',
+		statistic_area => 'select count(*) from e01admin.e01e203 where geb_bezei like ?',
+	}
 
 The user is allowed to put two queries against the dbi-proxy. The queries are _not_ "select count(*)...", the queries are "alive" and "statistic_area"! These keywords are replaced by the real query. So you can run a query for "alive":
 
-        my $sql = "alive";
-        my $cur = $dbh->prepare($sql);
-        ...
+	my $sql = "alive";
+	my $cur = $dbh->prepare($sql);
+	...
 
-The flexibility is that you can put parameters in the where-part of the query so the query are not static. Simply replace a value in the where-part of the query through a question mark and bind it as a parameter to the query.
+The flexibility is that you can put parameters in the where-part of the query so the query are not static. Simply replace a value in the where-part of the query through a question mark and bind it as a parameter to the query. 
 
-        my $sql = "statistic_area";
-        my $cur = $dbh->prepare($sql);
-        $cur->bind_param(1,'905%');
-        # A second parameter would be called like this:
-        # $cur->bind_param(2,'98%');
+	my $sql = "statistic_area";
+	my $cur = $dbh->prepare($sql);
+	$cur->bind_param(1,'905%');
+	# A second parameter would be called like this:
+	# $cur->bind_param(2,'98%');
 
 The result is this query:
 
-        select count(*) from e01admin.e01e203
-        where geb_bezei like '905%'
+	select count(*) from e01admin.e01e203 
+	where geb_bezei like '905%'
 
 Don't try to put parameters into the sql-query like this:
 
-        # Does not work like you think.
-        # Only the first word of the query is parsed,
-        # so it's changed to "statistic_area", the rest is omitted.
-        # You _have_ to work with $cur->bind_param.
-        my $sql = "statistic_area 905%";
-        my $cur = $dbh->prepare($sql);
-        ...
+	# Does not work like you think.
+	# Only the first word of the query is parsed,
+	# so it's changed to "statistic_area", the rest is omitted.
+	# You _have_ to work with $cur->bind_param.
+	my $sql = "statistic_area 905%";
+	my $cur = $dbh->prepare($sql);
+	...
 
 
 =head2 Problems

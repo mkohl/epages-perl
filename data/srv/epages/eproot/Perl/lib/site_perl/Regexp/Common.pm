@@ -281,7 +281,7 @@ Regexp::Common - Provide commonly requested regular expressions
 
 =head1 SYNOPSIS
 
- # STANDARD USAGE
+ # STANDARD USAGE 
 
  use Regexp::Common;
 
@@ -365,12 +365,12 @@ L<"Subroutine-based interface">.
 
 To access a particular pattern, C<%RE> is treated as a hierarchical hash of
 hashes (of hashes...), with each successive key being an identifier. For
-example, to access the pattern that matches real numbers, you
+example, to access the pattern that matches real numbers, you 
 specify:
 
         $RE{num}{real}
-
-and to access the pattern that matches integers:
+        
+and to access the pattern that matches integers: 
 
         $RE{num}{int}
 
@@ -448,7 +448,7 @@ new patterns with "optional" capturing brackets that respond to C<-keep>.
 Some patterns or subpatterns only match lowercase or uppercase letters.
 If one wants the do case insensitive matching, one option is to use
 the C</i> regexp modifier, or the special sequence C<(?i)>. But if the
-functional interface is used, one does not have this option. The
+functional interface is used, one does not have this option. The 
 C<-i> switch solves this problem; by using it, the pattern will do
 case insensitive matching.
 
@@ -483,7 +483,7 @@ Regexp::Common allows you do write this:
         $changed = $RE{some}{pattern}->subs($original=>$replacement);
 
 Apart from reducing precedence-angst, this approach has the added
-advantages that the substitution behaviour can be optimized from the
+advantages that the substitution behaviour can be optimized from the 
 regular expression, and the replacement string can be provided by
 default (see L<"Adding new regular expressions">).
 
@@ -556,7 +556,7 @@ whose pattern names have first keys I<key1> ... I<keyn>.
 =head2 Adding new regular expressions
 
 You can add your own regular expressions to the C<%RE> hash at run-time,
-using the exportable C<pattern> subroutine. It expects a hash-like list of
+using the exportable C<pattern> subroutine. It expects a hash-like list of 
 key/value pairs that specify the behaviour of the pattern. The various
 possible argument pairs are:
 
@@ -602,10 +602,10 @@ or a reference to a subroutine that will be called to create the pattern:
                             },
                 ;
 
-If the subroutine version is used, the subroutine will be called with
+If the subroutine version is used, the subroutine will be called with 
 three arguments: a reference to the pattern object itself, a reference
 to a hash containing the flags and their values,
-and a reference to an array containing the non-flag keys.
+and a reference to an array containing the non-flag keys. 
 
 Whatever the subroutine returns is stringified as the pattern.
 
@@ -757,7 +757,7 @@ Provides regexes for zip codes.
 
 Future releases of the module will also provide patterns for the following:
 
-        * email addresses
+        * email addresses 
         * HTML/XML tags
         * more numerical matchers,
         * mail headers (including multiline ones),
@@ -782,7 +782,7 @@ tests will be especially welcome.
 The subroutine-based interface didn't recognize the requested subroutine.
 Often caused by a spelling mistake or an incompletely specified name.
 
-
+        
 =item C<Can't create unknown regex: $RE{...}>
 
 Regexp::Common doesn't have a generator for the requested pattern.

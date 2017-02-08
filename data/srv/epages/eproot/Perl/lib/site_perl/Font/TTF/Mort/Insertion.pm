@@ -39,12 +39,12 @@ sub read
 {
     my ($self, $fh) = @_;
     my ($dat);
-
+    
     my $subtableStart = $fh->tell();
 
     my $stateTableStart = $fh->tell();
     my ($classes, $states, $entries) = AAT_read_state_table($fh, 2);
-
+    
     my %insertListHash;
     my $insertLists;
     foreach (@$entries) {
@@ -70,7 +70,7 @@ sub read
     $self->{'classes'} = $classes;
     $self->{'states'} = $states;
     $self->{'insertLists'} = $insertLists;
-
+            
     $self;
 }
 
@@ -81,16 +81,16 @@ sub read
 sub pack_sub
 {
     my ($self) = @_;
-
+    
     my ($dat) = pack("nnnn", (0) x 4);
-
+    
     my $classTable = length($dat);
     my $classes = $self->{'classes'};
     $dat .= AAT_pack_classes($classes);
-
+    
     my $stateArray = length($dat);
     my $states = $self->{'states'};
-    my ($dat1, $stateSize, $entries) = AAT_pack_states($classes, $stateArray, $states,
+    my ($dat1, $stateSize, $entries) = AAT_pack_states($classes, $stateArray, $states, 
             sub {
                 my $actions = $_->{'actions'};
                 ( $_->{'flags'}, @$actions )
@@ -114,7 +114,7 @@ sub pack_sub
         $dat .= pack("nnnn", $nextState, $flags,
                     map { $_ eq '' ? 0 : $insListOffsets[$_] } @lists);
     }
-
+    
     foreach (@$insertLists) {
         $dat .= pack("n*", @$_);
     }
@@ -134,13 +134,13 @@ Prints a human-readable representation of the table
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     my $post = $self->post();
-
+    
     $fh = 'STDOUT' unless defined $fh;
 
     $self->print_classes($fh);
-
+    
     $fh->print("\n");
     my $states = $self->{'states'};
     foreach (0 .. $#$states) {

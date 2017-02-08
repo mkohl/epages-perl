@@ -195,7 +195,7 @@ sub TTF_Out_Fields
     my ($obj, $fields, $len) = @_;
     my ($dat) = "\000" x $len;
     my ($f, $pos, $type, $res, $arr, $arrlen, $frac);
-
+    
     foreach $f (keys %{$fields})
     {
         ($pos, $type, $arrlen) = split(':', $fields->{$f});
@@ -228,7 +228,7 @@ sub TTF_Pack
         $arrlen = $2 || "";
         $arrlen = $#obj + 1 if $arrlen eq "*";
         $arrlen = 1 if $arrlen eq "";
-
+    
         for ($i = 0; $i < $arrlen; $i++)
         {
             $res = shift(@obj) || 0;
@@ -608,7 +608,7 @@ sub make_circle
     delete $font->{'hdmx'};
     delete $font->{'VDMX'};
     delete $font->{'LTSH'};
-
+    
     $font->tables_do(sub {$_[0]->dirty;});
     $font->update;
     return ($numg - 1);

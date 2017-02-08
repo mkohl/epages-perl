@@ -15,7 +15,7 @@ use Config;
 use Carp;
 use Fcntl;
 use strict;
-use English;
+use English; 
 use File::Path;
 use File::Spec ();
 use Date::Parse;
@@ -28,58 +28,58 @@ File::Temp->safe_level( File::Temp::STANDARD );
 
 sub new {
   bless { GPGBIN         =>   '/usr/local/bin/gpg',
-          FORCEDOPTS     =>   '--no-secmem-warning',
-          GPGOPTS        =>   '--lock-multiple --compress-algo 1 ' .
-                              '--cipher-algo cast5 --force-v3-sigs',
-          VERSION        =>   $VERSION,
-          DELAY          =>   0,
-          PASSPHRASE     =>   '',
-          COMMENT        =>   "Crypt::GPG v$VERSION",
-          ARMOR          =>   1,
-          MARGINALS      =>   3,
-          DETACH         =>   1,
-          ENCRYPTSAFE    =>   1,
-          TEXT           =>   1,
-          SECRETKEY      =>   '',
-          DEBUG          =>   0,
-          TMPFILES       =>   'fileXXXXXX',
-          TMPDIRS        =>   'dirXXXXXX',
-          TMPDIR         =>   File::Spec->tmpdir(),
-          TMPSUFFIX      =>   '.dat',
-          VKEYID         =>   '^.+$',
-          VRCPT          =>   '^.*$',
-          VPASSPHRASE    =>   '^.*$',
-          VCOMMENT       =>   '^.*$',
-          VNAME          =>   '^[a-zA-Z][\w\.\s\-\_]+$',
-          VEXPIRE        =>   '^\d+$',
-          VKEYSZ         =>   '^\d+$',
-          VKEYTYPE       =>   '^ELG-E$',
-          VTRUSTLEVEL    =>   '^[1-5]$',
-          VEMAIL         =>   '^[\w\.\-]+\@[\w\.\-]+\.[A-Za-z]{2,3}$'
-        }, shift;
+	  FORCEDOPTS     =>   '--no-secmem-warning',
+	  GPGOPTS        =>   '--lock-multiple --compress-algo 1 ' .
+	                      '--cipher-algo cast5 --force-v3-sigs',
+	  VERSION        =>   $VERSION,
+	  DELAY          =>   0,
+	  PASSPHRASE     =>   '',
+	  COMMENT        =>   "Crypt::GPG v$VERSION",
+	  ARMOR          =>   1,
+	  MARGINALS      =>   3,
+	  DETACH         =>   1,
+	  ENCRYPTSAFE    =>   1,
+	  TEXT           =>   1,
+	  SECRETKEY      =>   '',
+	  DEBUG          =>   0,
+	  TMPFILES       =>   'fileXXXXXX',
+	  TMPDIRS        =>   'dirXXXXXX',
+	  TMPDIR         =>   File::Spec->tmpdir(),
+	  TMPSUFFIX      =>   '.dat',
+	  VKEYID         =>   '^.+$',
+	  VRCPT          =>   '^.*$',
+	  VPASSPHRASE    =>   '^.*$',
+	  VCOMMENT       =>   '^.*$',
+	  VNAME          =>   '^[a-zA-Z][\w\.\s\-\_]+$',
+	  VEXPIRE        =>   '^\d+$',
+	  VKEYSZ         =>   '^\d+$',
+	  VKEYTYPE       =>   '^ELG-E$',
+	  VTRUSTLEVEL    =>   '^[1-5]$',
+	  VEMAIL         =>   '^[\w\.\-]+\@[\w\.\-]+\.[A-Za-z]{2,3}$'
+	}, shift;
 }
 
 sub sign {
-  my $self = shift;
+  my $self = shift; 
 
   return unless (!$self->secretkey or $self->secretkey =~ /$self->{VKEYID}/)
     and $self->passphrase =~ /$self->{VPASSPHRASE}/;
 
-  my $detach    = '-b' if $self->detach;
-  my $armor     = '-a' if $self->armor;
+  my $detach    = '-b' if $self->detach; 
+  my $armor     = '-a' if $self->armor; 
   my @extras    = grep { $_ } ($detach, $armor);
 
   my @secretkey = ('--default-key', ref($self->secretkey)?$self->secretkey->{ID}:$self->secretkey)
     if $self->secretkey;;
 
-  my ($tmpfh, $tmpnam) =
-    tempfile( $self->tmpfiles, DIR => $self->tmpdir,
-              SUFFIX => $self->tmpsuffix, UNLINK => 1);
+  my ($tmpfh, $tmpnam) = 
+    tempfile( $self->tmpfiles, DIR => $self->tmpdir, 
+	      SUFFIX => $self->tmpsuffix, UNLINK => 1);
 
-  my $message = join ('', @_);
+  my $message = join ('', @_); 
 #  $message .= "\n" unless $message =~ /\n$/s;
 #  $message =~ s/(?<!\r)\n/\r\n/sg;
-  print $tmpfh $message; close $tmpfh;
+  print $tmpfh $message; close $tmpfh; 
 
   my @opts = (split (/\s+/, "$self->{FORCEDOPTS} $self->{GPGOPTS}"));
   push (@opts, ('--comment', $self->comment)) if $self->comment;
@@ -87,22 +87,22 @@ sub sign {
   local $SIG{CHLD} = 'IGNORE';
 
   my ($in, $out, $err, $in_q, $out_q, $err_q);
-  my $h = start ([$self->gpgbin, @opts, @secretkey,'--no-tty', '--status-fd', '2', '--command-fd',
-                  0, '-o-', $signhow, @extras, $tmpnam], \$in, \$out, \$err, timeout( 30 ));
+  my $h = start ([$self->gpgbin, @opts, @secretkey,'--no-tty', '--status-fd', '2', '--command-fd', 
+		  0, '-o-', $signhow, @extras, $tmpnam], \$in, \$out, \$err, timeout( 30 ));
   my $skip = 1; my $i = 0;
   local $SIG{CHLD} = 'IGNORE';
   local $SIG{PIPE} = 'IGNORE';
   while ($skip) {
     pump $h until ($err =~ /NEED_PASSPHRASE (.{16}) (.{16}).*\n/g or
-                   $err =~ /GOOD_PASSPHRASE/g);
+		   $err =~ /GOOD_PASSPHRASE/g);
     if ($2) {
       $in .= $self->passphrase . "\n";
       pump $h until $err =~ /(GOOD|BAD)_PASSPHRASE/g;
       if ($1 eq 'GOOD') {
-        $skip = 0;
+	$skip = 0;
       }
       else {
-        $skip = 0 if $i++ == 2;
+	$skip = 0 if $i++ == 2;
       }
     }
     else {
@@ -111,7 +111,7 @@ sub sign {
     }
   }
   finish $h;
-
+ 
   my $info;
   if ($self->clearsign) {
     $out =~ /(-----BEGIN PGP SIGNED MESSAGE-----.*-----END PGP SIGNATURE-----)/s;
@@ -132,7 +132,7 @@ sub sign {
 sub decrypt { shift->verify(@_); }
 
 sub verify {
-  my $self = shift;
+  my $self = shift; 
   my ($tmpfh3, $tmpnam3);
 
   return unless $self->secretkey || $_[1];
@@ -167,57 +167,57 @@ sub verify {
   else {
     my ($in, $out, $err, $in_q, $out_q, $err_q);
     my $h = start ([$self->gpgbin, @opts, '--marginals-needed', $self->marginals,
-                    '--status-fd', '1', '--command-fd', 0, '--yes', '--no-tty',
-                    '--decrypt', '-o', $tmpnam2, $tmpnam],
-                   \$in, \$out, \$err, timeout( 30 ));
+                    '--status-fd', '1', '--command-fd', 0, '--yes', '--no-tty', 
+		    '--decrypt', '-o', $tmpnam2, $tmpnam], 
+		   \$in, \$out, \$err, timeout( 30 ));
 
     my $success = 0;
     my $seckey = (ref($self->secretkey)?$self->secretkey->{ID}:$self->secretkey);
 
     while (1) {
       pump $h until ($out =~ /NEED_PASSPHRASE (.{16}) (.{16}).*\n/g
-                     or $out =~ /(GOOD_PASSPHRASE)/g
-                     or $out =~ /(D)(E)(C)RYPTION_FAILED/g or $out =~ /(N)(O)(D)ATA/g
-                     or $out =~ /(SIG_ID)/g
-                     or $out =~ /detached_signature.filename/g
-                    );
+		     or $out =~ /(GOOD_PASSPHRASE)/g
+		     or $out =~ /(D)(E)(C)RYPTION_FAILED/g or $out =~ /(N)(O)(D)ATA/g
+		     or $out =~ /(SIG_ID)/g
+		     or $out =~ /detached_signature.filename/g
+		    );
       if ($3) {
-        finish $h;
-        last;
+	finish $h;
+	last;
       }
       elsif ($2) {
-        if (substr($2,-1,8) eq substr($seckey,-1,8)) {
-          $in .= $self->passphrase . "\n";
-          pump $h until $out =~ /(GOOD|BAD)_PASSPHRASE/g;
-          if ($1 eq 'GOOD') {
-            $success = 1;
-            pump $h;
-            finish $h; $x = $out; last;
-          }
-          next;
-        }
-        else {
-          $out = ''; $in .= "\n";
-        }
+	if (substr($2,-1,8) eq substr($seckey,-1,8)) {
+	  $in .= $self->passphrase . "\n";
+	  pump $h until $out =~ /(GOOD|BAD)_PASSPHRASE/g;
+	  if ($1 eq 'GOOD') {
+	    $success = 1;
+	    pump $h;
+	    finish $h; $x = $out; last;
+	  }
+	  next;
+	}
+	else {
+	  $out = ''; $in .= "\n";
+	}
       }
       elsif ($1) {
-        $success = 1;
-        pump $h;
-        finish $h; $x = $out; last;
+	$success = 1;
+	pump $h;
+	finish $h; $x = $out; last;
       }
     }
-
-
+    
+    
     unless ($success || $_[1]) {
       close $tmpfh2; unlink ($tmpnam2);
       return undef;
     }
   }
 
-  my $plaintext = join ('',<$tmpfh2>) || '';
+  my $plaintext = join ('',<$tmpfh2>) || ''; 
   close $tmpfh2; unlink ($tmpnam2);
 
-  return ($plaintext)
+  return ($plaintext) 
     unless $x =~ /(GOOD|BAD)SIG/s;
 
   my @signatures;
@@ -243,24 +243,24 @@ sub verify {
 }
 
 sub msginfo {
-  my $self = shift;
+  my $self = shift; 
   my @return;
-
-  my ($tmpfh, $tmpnam) =
-    tempfile( $self->tmpfiles, DIR => $self->tmpdir,
-              SUFFIX => $self->tmpsuffix, UNLINK => 1);
+  
+  my ($tmpfh, $tmpnam) = 
+    tempfile( $self->tmpfiles, DIR => $self->tmpdir, 
+ 	      SUFFIX => $self->tmpsuffix, UNLINK => 1);
   warn join '',@{$_[0]};
   print $tmpfh join '',@{$_[0]}; close $tmpfh;
-
+  
   my @opts = (split (/\s+/, "$self->{FORCEDOPTS} $self->{GPGOPTS}"));
-  my ($info) = backtick ($self->gpgbin, @opts, '--status-fd', 1, '--no-tty', '--batch', $tmpnam);
-  $info =~ s/ENC_TO (.{16})/{push @return, $1}/sge;
+  my ($info) = backtick ($self->gpgbin, @opts, '--status-fd', 1, '--no-tty', '--batch', $tmpnam); 
+  $info =~ s/ENC_TO (.{16})/{push @return, $1}/sge; 
   unlink $tmpnam;
   return @return;
 }
 
 sub encrypt {
-  my $self = shift;
+  my $self = shift; 
   my ($message, $rcpts) = @_;
   my $info;
 
@@ -274,8 +274,8 @@ sub encrypt {
 
   my @rcpts;
   if (ref($rcpts) eq 'ARRAY') {
-    @rcpts = map {
-      return unless /$self->{VRCPT}/;
+    @rcpts = map { 
+      return unless /$self->{VRCPT}/; 
       ('-r', $_) } @$rcpts;
   }
   else {
@@ -283,14 +283,14 @@ sub encrypt {
     @rcpts = ('-r', $rcpts);
   }
 
-  my ($tmpfh, $tmpnam) =
-    tempfile( $self->tmpfiles, DIR => $self->tmpdir,
-              SUFFIX => $self->tmpsuffix, UNLINK => 1);
-  my ($tmpfh2, $tmpnam2) =
-    tempfile( $self->tmpfiles, DIR => $self->tmpdir,
-              SUFFIX => $self->tmpsuffix, UNLINK => 1);
+  my ($tmpfh, $tmpnam) = 
+    tempfile( $self->tmpfiles, DIR => $self->tmpdir, 
+	      SUFFIX => $self->tmpsuffix, UNLINK => 1);
+  my ($tmpfh2, $tmpnam2) = 
+    tempfile( $self->tmpfiles, DIR => $self->tmpdir, 
+	      SUFFIX => $self->tmpsuffix, UNLINK => 1);
 
-  $message = join ('', @$message) if ref($message) eq 'ARRAY';
+  $message = join ('', @$message) if ref($message) eq 'ARRAY'; 
   print $tmpfh $message; close $tmpfh;
 
   my @opts = (split (/\s+/, "$self->{FORCEDOPTS} $self->{GPGOPTS}"));
@@ -305,9 +305,9 @@ sub encrypt {
   my $pos;
   eval {
     pump $h until ($out =~ /(o)penfile.overwrite.okay/g
-                   or $out =~ /(u)(n)trusted_key.override/g    #! Test
-                   or $out =~ /(k)(e)(y) not found/g           #! Test
-                   or $out =~ /(p)(a)(s)(s)phrase.enter/g);
+		   or $out =~ /(u)(n)trusted_key.override/g    #! Test
+		   or $out =~ /(k)(e)(y) not found/g           #! Test
+		   or $out =~ /(p)(a)(s)(s)phrase.enter/g);
     $pos = 1 if $1; $pos = 2 if $2; $pos = 3 if $3; $pos = 4 if $4;
   };
   return if $@;
@@ -315,9 +315,9 @@ sub encrypt {
     undef $pos; $out = '';
     $in .= $self->passphrase . "\n";
     pump $h until ($out =~ /(o)penfile.overwrite.okay/g
-                   or $out =~ /(u)(n)trusted_key.override/g  #! Test
-                    or $out =~ /(I)(N)(V)_RECP/g              #! Test
-                   or $out =~ /(p)(a)(s)(s)phrase.enter/g);  #! Test
+		   or $out =~ /(u)(n)trusted_key.override/g  #! Test
+		    or $out =~ /(I)(N)(V)_RECP/g              #! Test
+		   or $out =~ /(p)(a)(s)(s)phrase.enter/g);  #! Test
     $pos = 1 if $1; $pos = 2 if $2; $pos = 3 if $3; $pos = 4 if $4;
     finish $h, return undef if $pos == 4;                    #! Test
   }
@@ -331,30 +331,30 @@ sub encrypt {
     }
     else {
       $in .= "Y\n";
-      # finish $h;
+      #	finish $h;
       pump $h until ($out =~ /(o)penfile.overwrite.okay/g
-                     or $out =~ /(o)(p)enfile.askoutname/g);  #! Test
-      #                or $out =~ /(I)(N)(V)_RECP/g              #! Test
-      #                or $out =~ /(p)(a)(s)(s)phrase.enter/g);  #! Test
+		     or $out =~ /(o)(p)enfile.askoutname/g);  #! Test
+      #		       or $out =~ /(I)(N)(V)_RECP/g              #! Test
+      #		       or $out =~ /(p)(a)(s)(s)phrase.enter/g);  #! Test
       $pos = 1 if $1; $pos = 2 if $2;
-    }
+    }	
   }
   elsif ($pos == 3) {
     finish $h;
     unlink $tmpnam;
     return;
   }
-
+  
   if ($pos == 1) {
     $in .= "Y\n";
     finish $h;
   }
-
-  my @info = <$tmpfh2>;
+  
+  my @info = <$tmpfh2>; 
   close $tmpfh2;
   unlink $tmpnam2;
   $info = join '', @info;
-
+  
   -f $tmpnam && unlink $tmpnam;
   -f $tmpnam2 && unlink $tmpnam2;
   return $info;
@@ -364,31 +364,31 @@ sub addkey {
   my $self = shift;
   my ($key, $pretend, @keyids) = @_;
 
-  $key = join ('', @$key) if ref($key) eq 'ARRAY';
+  $key = join ('', @$key) if ref($key) eq 'ARRAY'; 
   return if grep { $_ !~ /^[a-f0-9]+$/i } @keyids;
 
-  my $tmpdir = tempdir( $self->tmpdirs,
-                     DIR => $self->tmpdir, CLEANUP => 1);
-  my ($tmpfh, $tmpnam) =
-    tempfile( $self->tmpfiles, DIR => $self->tmpdir,
-              SUFFIX => $self->tmpsuffix, UNLINK => 1);
+  my $tmpdir = tempdir( $self->tmpdirs, 
+		     DIR => $self->tmpdir, CLEANUP => 1);
+  my ($tmpfh, $tmpnam) = 
+    tempfile( $self->tmpfiles, DIR => $self->tmpdir, 
+	      SUFFIX => $self->tmpsuffix, UNLINK => 1);
   print $tmpfh $key;
 
   my @pret1 = ('--options', '/dev/null', '--homedir', $tmpdir);
-  my @pret2 = ('--keyring', "$tmpdir/pubring.gpg",
-               '--secret-keyring', "$tmpdir/secring.gpg");
+  my @pret2 = ('--keyring', "$tmpdir/pubring.gpg", 
+	       '--secret-keyring', "$tmpdir/secring.gpg");
   my @opts = (split (/\s+/, "$self->{FORCEDOPTS} $self->{GPGOPTS}"));
   my @listopts = qw(--fingerprint --fingerprint --with-colons);
 
   backtick($self->gpgbin, @opts, @pret1, '-v', '--import', $tmpnam);
   backtick ($self->gpgbin, @opts, '--marginals-needed', $self->marginals, '--check-trustdb');
   my ($keylist) = backtick($self->gpgbin, @opts, @pret1, '--marginals-needed',
-                           $self->marginals, '--check-sigs', @listopts, @keyids);
+			   $self->marginals, '--check-sigs', @listopts, @keyids); 
   my ($seclist) = backtick($self->gpgbin, @opts, @pret1,
-                           '--list-secret-keys', @listopts);
+			   '--list-secret-keys', @listopts);
 
-  my @seckeys = grep { my $id = $_->{ID};
-                       (grep { $id eq $_ } @keyids) ? $_ : '' }
+  my @seckeys = grep { my $id = $_->{ID}; 
+		       (grep { $id eq $_ } @keyids) ? $_ : '' } 
     $self->parsekeys(split /\n/,$seclist);
   my @ret = ($self->parsekeys(split /\n/,$keylist), @seckeys);
 
@@ -396,13 +396,13 @@ sub addkey {
 #! This hack needed to get real calc trusts for to-import keys. Test!
     backtick ($self->gpgbin, @opts, '--marginals-needed', $self->marginals, '--check-trustdb');
     ($keylist) = backtick($self->gpgbin, @opts, @pret2, '--marginals-needed',
-                          $self->marginals, '--check-sigs', @listopts);
+			  $self->marginals, '--check-sigs', @listopts); 
 
-    my @realkeylist = grep { my $id = $_->{ID} if $_;
-                             $id and grep { $id eq $_->{ID} } @ret }
-#      map { ($_->{Keyring} eq "$tmpdir/secring.gpg"
-#            or $_->{Keyring} eq "$tmpdir/pubring.gpg") ? $_ : 0 }
-        $self->parsekeys(split /\n/,$keylist);
+    my @realkeylist = grep { my $id = $_->{ID} if $_; 
+			     $id and grep { $id eq $_->{ID} } @ret } 
+#      map { ($_->{Keyring} eq "$tmpdir/secring.gpg" 
+#	     or $_->{Keyring} eq "$tmpdir/pubring.gpg") ? $_ : 0 } 
+	$self->parsekeys(split /\n/,$keylist);
     @ret = (@realkeylist, @seckeys);
   }
   else {
@@ -420,8 +420,8 @@ sub addkey {
 }
 
 sub export {
-  my $self = shift;
-  my $key = shift;
+  my $self = shift; 
+  my $key = shift; 
   my $id = $key->{ID};
   return unless $id =~ /$self->{VKEYID}/;
 
@@ -436,24 +436,24 @@ sub export {
 }
 
 sub keygen {
-  my $self = shift;
+  my $self = shift; 
   my ($name, $email, $keytype, $keysize, $expire, $pass, $comment) = @_;
 
-  return unless $keysize =~ /$self->{VKEYSZ}/
+  return unless $keysize =~ /$self->{VKEYSZ}/ 
     and $keysize > 767 and $keysize < 4097
       and $pass =~ /$self->{VPASSPHRASE}/
-        and $keytype =~ /$self->{VKEYTYPE}/
-          and $expire =~ /$self->{VEXPIRE}/
-            and $email =~ /$self->{VEMAIL}/
-              and $name =~ /$self->{VNAME}/
-                and length ($name) > 4;
+	and $keytype =~ /$self->{VKEYTYPE}/ 
+	  and $expire =~ /$self->{VEXPIRE}/ 
+	    and $email =~ /$self->{VEMAIL}/
+	      and $name =~ /$self->{VNAME}/ 
+		and length ($name) > 4;
 
   unless (defined ($comment) && $comment =~ /$self->{VCOMMENT}/) { $comment = ''; }
 
-  my $bigkey = ($keysize > 1536);
+  my $bigkey = ($keysize > 1536);   
   my @opts = (split (/\s+/, "$self->{FORCEDOPTS} $self->{GPGOPTS}"));
-  for (0..1) {
-    backtick ($self->{GPGBIN}, @opts, '--status-fd', '1', '--no-tty', '--gen-random', 0, 1);
+  for (0..1) { 
+    backtick ($self->{GPGBIN}, @opts, '--status-fd', '1', '--no-tty', '--gen-random', 0, 1); 
   }
 
   if ($self->nofork) {
@@ -462,7 +462,7 @@ sub keygen {
   else {
     my $pid = open(GPG, "-|");
     return undef unless (defined $pid);
-
+  
     if ($pid) {
       $SIG{CHLD} = 'IGNORE';
       return \*GPG;
@@ -492,30 +492,30 @@ sub _exec_gen_key {
   pump $h until $out =~ /keygen\.name/g; $in .= "$name\n";
   pump $h until $out =~ /keygen\.email/g; $in .= "$email\n";
   pump $h until $out =~ /keygen\.comment/g; $in .= "$comment\n";
-  pump $h until $out =~ /passphrase\.enter/g; $out = ''; $in .= "$pass\n";
+  pump $h until $out =~ /passphrase\.enter/g; $out = ''; $in .= "$pass\n"; 
   pump $h until $out =~ /(PROGRESS primegen [\+\.\>\<\^]|KEY_CREATED)/g;
   $out = ''; my $x = ''; my $y = $1;
   while ($y !~ /KEY_CREATED/g) {
-    print "$x\n" if $forked;
+    print "$x\n" if $forked; 
     pump $h until $out =~ /(PROGRESS primegen [\+\.\>\<\^]|KEY_CREATED)/g;
     my $o = $out; $out = ''; $y .= $o;
     my @progress = ($o =~ /[\+\.\>\<\^]/g);
     $x = join "\n",@progress;
-  }
+  }	
   print "|\n" if $forked;
   finish $h;
 }
 
 sub keydb {
-  my $self = shift;
+  my $self = shift; 
   my @ids = map { return unless /$self->{VKEYID}/; $_ } @_;
   my @moreopts = qw(--fingerprint --fingerprint --with-colons);
   my @opts = (split (/\s+/, "$self->{FORCEDOPTS} $self->{GPGOPTS}"));
   backtick ($self->gpgbin, @opts, '--marginals-needed', $self->marginals, '--check-trustdb');
   my ($keylist) = backtick($self->gpgbin, @opts, '--marginals-needed', $self->marginals,
-                           '--no-tty', '--check-sigs', @moreopts, @ids);
+			   '--no-tty', '--check-sigs', @moreopts, @ids); 
   my ($seclist) = backtick($self->gpgbin, @opts,
-                           '--no-tty', '--list-secret-keys', @moreopts, @ids);
+			   '--no-tty', '--list-secret-keys', @moreopts, @ids); 
   my @keylist = split /\n(\s*\n)?/, $keylist;
   my @seclist = split /\n(\s*\n)?/, $seclist;
   $self->parsekeys (@keylist, @seclist);
@@ -539,67 +539,67 @@ sub parsekeys {
     }
     if (/^(pub|sec)/) {
       $uidnum=-1; $subnum=-1; $subkey=0;
-      my ($type, $trust, $size, $algorithm, $id, $created,
-          $expires, $u2, $ownertrust, $uid) = split (':');
-      $keys[++$i] = {
-                     Keyring    =>    $keyring,
-                     Type       =>    $type,
-                     Ownertrust =>    $ownertrust,
-                     Bits       =>    $size,
-                     ID         =>    $id,
-                     Created    =>    $created,
-                     Expires    =>    $expires,
-                     Algorithm  =>    $algorithm,
-                     Use        =>    ''
-                    };
-      push (@{$keys[$i]->{UIDs}}, { 'UID' => $uid, 'Calctrust' => $trust }),
-        $uidnum++ if $uid;
+      my ($type, $trust, $size, $algorithm, $id, $created, 
+	  $expires, $u2, $ownertrust, $uid) = split (':');
+      $keys[++$i] = { 
+		     Keyring    =>    $keyring,
+		     Type       =>    $type,
+		     Ownertrust =>    $ownertrust,
+		     Bits       =>    $size,
+		     ID         =>    $id,
+		     Created    =>    $created,
+		     Expires    =>    $expires,
+		     Algorithm  =>    $algorithm,
+		     Use        =>    ''
+		    };
+      push (@{$keys[$i]->{UIDs}}, { 'UID' => $uid, 'Calctrust' => $trust }), 
+	$uidnum++ if $uid;
     }
     else {
       if (/^fpr:::::::::([^:]+):/) {
-        my $fingerprint = $1; my $l = length $fingerprint;
-        if ($l == 32) {
-          my @f = $fingerprint =~ /(..)/g;
-          $fingerprint = (join ' ', @f[0..7]) . '  ' .
-            (join ' ', @f[8..15]);
-        }
-        elsif ($l == 40) {
-          my @f = $fingerprint =~ /(....)/g;
-          $fingerprint = (join ' ', @f[0..4]) . '  ' .
-            (join ' ', @f[5..9]);
-        }
-        $subkey ?
-          $keys[$i]->{Subkeys}->[$subnum]->{Fingerprint} :
-          $keys[$i]->{Fingerprint} =  $fingerprint;
+	my $fingerprint = $1; my $l = length $fingerprint;
+	if ($l == 32) {
+	  my @f = $fingerprint =~ /(..)/g;
+	  $fingerprint = (join ' ', @f[0..7]) . '  ' . 
+	    (join ' ', @f[8..15]);
+	}
+	elsif ($l == 40) {
+	  my @f = $fingerprint =~ /(....)/g;
+	  $fingerprint = (join ' ', @f[0..4]) . '  ' . 
+	    (join ' ', @f[5..9]);
+	}
+	$subkey ?
+	  $keys[$i]->{Subkeys}->[$subnum]->{Fingerprint} :
+	  $keys[$i]->{Fingerprint} =  $fingerprint;
       }
       elsif (/^sub/) {
-        $subnum++; $subkey      =     1;
-        my ($type, $u1, $size, $algorithm, $id,
-            $created, $expires) = split (':');
-        $keys[$i]->{Subkeys}->[$subnum] =
-          {
-           Bits                 =>    $size,
-           ID                   =>    $id,
-           Created              =>    $created,
-           Expires              =>    $expires,
-           Algorithm            =>    $algorithm
-          };
+	$subnum++; $subkey      =     1;
+	my ($type, $u1, $size, $algorithm, $id, 
+	    $created, $expires) = split (':');
+	$keys[$i]->{Subkeys}->[$subnum] = 
+	  {
+	   Bits                 =>    $size,
+	   ID                   =>    $id,
+	   Created              =>    $created,
+	   Expires              =>    $expires,
+	   Algorithm            =>    $algorithm
+	  };
       }
       elsif (/^sig/) {
-        my ($sig, $valid, $u2, $u3, $id, $date,
-            $u4, $u5, $u6, $uid) = split (':');
-        my ($pushto, $pushnum) = $subkey ?
-          ('Subkeys',$subnum) : ('UIDs',$uidnum);
-        push (@{$keys[$i]->{$pushto}->[$pushnum]->{Signatures}},
-              { ID              =>    $id,
-                Date            =>    $date,
-                UID             =>    $uid,
-                Valid           =>    $valid
-              } );
+	my ($sig, $valid, $u2, $u3, $id, $date, 
+	    $u4, $u5, $u6, $uid) = split (':');
+	my ($pushto, $pushnum) = $subkey ? 
+	  ('Subkeys',$subnum) : ('UIDs',$uidnum);
+	push (@{$keys[$i]->{$pushto}->[$pushnum]->{Signatures}},
+	      {	ID              =>    $id,
+		Date            =>    $date,
+		UID             =>    $uid,
+		Valid           =>    $valid
+	      } );
       }
       elsif (/^uid:(.?):.*:([^:]+):$/) {
-        $subkey = 0; $uidnum++;
-        push (@{$keys[$i]->{UIDs}}, { UID => $2, Calctrust => $1 });
+	$subkey = 0; $uidnum++;
+	push (@{$keys[$i]->{UIDs}}, { UID => $2, Calctrust => $1 });
       }
     }
   }
@@ -608,10 +608,10 @@ sub parsekeys {
 }
 
 sub keypass {
-  my $self = shift;
+  my $self = shift; 
 
   my ($key, $oldpass, $newpass) = @_;
-  return unless $oldpass =~ /$self->{VPASSPHRASE}/
+  return unless $oldpass =~ /$self->{VPASSPHRASE}/ 
     and $newpass =~ /$self->{VPASSPHRASE}/
       and $key->{Type} eq 'sec';
 
@@ -624,8 +624,8 @@ sub keypass {
 
   pump $h until $out =~ /keyedit\.prompt/g; $in .= "passwd\n";
   pump $h until ($out =~ /GOOD_PASSPHRASE/g
-                 or $out =~ /(passphrase\.enter)/g);
-
+		 or $out =~ /(passphrase\.enter)/g);
+  
   unless ($1) {
     finish $h, return if $oldpass;
   }
@@ -633,7 +633,7 @@ sub keypass {
     $^W = 0; /()/; $^W = 1; $out = '';
     $in .= "$oldpass\n";
     pump $h until ($out =~ /BAD_PASSPHRASE/g                #! Test
-                   or $out =~ /(passphrase\.enter)/g);
+		   or $out =~ /(passphrase\.enter)/g);
     unless ($1) {
       finish $h;
       return;
@@ -642,7 +642,7 @@ sub keypass {
   $^W = 0; /()/; $^W = 1; $out = '';
   $in .= "$newpass\n";
   pump $h until ($out =~ /change_passwd\.empty\.okay/g
-                 or $out =~ /(keyedit\.prompt)/g);
+		 or $out =~ /(keyedit\.prompt)/g);
   unless ($1) {
     $in .= "Y\n";
     pump $h until $out =~ /keyedit\.prompt/g;
@@ -655,7 +655,7 @@ sub keypass {
 }
 
 sub keytrust {
-  my $self = shift;
+  my $self = shift; 
   my ($key, $trustlevel) = @_;
   return unless $trustlevel =~ /$self->{VTRUSTLEVEL}/;
 
@@ -664,7 +664,7 @@ sub keytrust {
   my ($in, $out, $err, $in_q, $out_q, $err_q);
   my $h = start ([$self->gpgbin, @opts, '--no-tty',
                  '--status-fd', '1', '--command-fd', 0,
-                 '--edit-key', $key->{ID}],
+                 '--edit-key', $key->{ID}], 
                  \$in, \$out, \$err, timeout( 30 ));
   local $SIG{CHLD} = 'IGNORE'; local $SIG{PIPE} = 'IGNORE';
   pump $h until $out =~ /keyedit\.prompt/g; $in .= "trust\n";
@@ -674,28 +674,28 @@ sub keytrust {
   }
   pump $h until $out =~ /keyedit\.prompt/g; $in .= "quit\n";
   finish $h;
-  return 1;
+  return 1;  
 }
 
 sub keyprimary {
 }
 
 sub certify {
-  my $self = shift;
-  my ($key, $local, $class, @uids) = @_;
+  my $self = shift; 
+  my ($key, $local, $class, @uids) = @_; 
 
   return unless (!$self->secretkey or $self->secretkey =~ /$self->{VKEYID}/)
     and $self->passphrase =~ /$self->{VPASSPHRASE}/;
 
-  return unless @uids and !grep { $_ =~ /\D/; } @uids;
+  return unless @uids and !grep { $_ =~ /\D/; } @uids; 
   my $i = 0; my $ret = 0;
 
   ($key) = $self->keydb($key);
   my $signingkey = ($self->keydb($self->secretkey))[0]->{ID};
 
   # Check if already signed.
-  return 1 unless grep { !grep { $signingkey eq $_->{ID} }
-                           @{$_->{Signatures}} }
+  return 1 unless grep { !grep { $signingkey eq $_->{ID} } 
+			   @{$_->{Signatures}} } 
     (@{$key->{UIDs}})[@uids];
 
   my @opts = (split (/\s+/, "$self->{FORCEDOPTS} $self->{GPGOPTS}"));
@@ -709,37 +709,37 @@ sub certify {
 
   for (@uids) {
     my $uid = $_+1;
-    pump $h until ($out =~ /keyedit\.prompt/g);
-    $in .= "uid $uid\n";
+    pump $h until ($out =~ /keyedit\.prompt/g); 
+    $in .= "uid $uid\n"; 
   }
-  pump $h until ($out =~ /keyedit\.prompt/g);
+  pump $h until ($out =~ /keyedit\.prompt/g); 
   $out = '';
-  $in .= $local ? "lsign\n" : "sign\n";
+  $in .= $local ? "lsign\n" : "sign\n"; 
 
   pump $h until ($out =~ /sign_uid\.okay/g
-                 or $out =~ /(s)ign_uid\.class/g
-                 or $out =~ /(s)(i)gn_uid\.expire/g);
+		 or $out =~ /(s)ign_uid\.class/g
+		 or $out =~ /(s)(i)gn_uid\.expire/g);
 
   if ($2) {
     $out = ''; $in .= "0\n";
     pump $h until ($out =~ /sign_uid\.okay/g
-                   or $out =~ /(s)ign_uid\.class/g
-                   or $out =~ /passphrase\.enter/g);
+		   or $out =~ /(s)ign_uid\.class/g
+		   or $out =~ /passphrase\.enter/g);
   }
 
   if ($1) {
     $out = ''; $in .= "$class\n";
-    pump $h until ($out =~ /sign_uid\.okay/g);
+    pump $h until ($out =~ /sign_uid\.okay/g); 
   }
 
-  $^W = 0; /()/; $^W = 1; $out = ''; $in .= "Y\n";
+  $^W = 0; /()/; $^W = 1; $out = ''; $in .= "Y\n"; 
   pump $h until ($out =~ /passphrase\.enter/g
-                 or $out =~ /(keyedit.prompt)/g);
+		 or $out =~ /(keyedit.prompt)/g);
   $ret=1;
   unless ($1) {
-    $out = ''; $^W = 0; /()/; $^W = 1; $in .= $self->passphrase . "\n";
+    $out = ''; $^W = 0; /()/; $^W = 1; $in .= $self->passphrase . "\n"; 
     pump $h until ($out =~ /keyedit\.prompt/g
-                   or $out =~ /(BAD_PASSPHRASE)/g);
+		   or $out =~ /(BAD_PASSPHRASE)/g);
     $ret=0 if $1;
   }
 
@@ -749,12 +749,12 @@ sub certify {
     $in .= "Y\n";
   }
   finish $h;
-  $ret;
+  $ret;  
 }
 
 sub delkey {
-  my $self = shift;
-  my $key = shift;
+  my $self = shift; 
+  my $key = shift; 
   return unless $key->{ID} =~ /$self->{VKEYID}/;
 
   my $del = $key->{Type} eq 'sec' ?
@@ -765,9 +765,9 @@ sub delkey {
   my $h = start ([$self->gpgbin, @opts, '--no-tty', '--status-fd', '1', '--command-fd', 0,
                  $del, $key->{ID}], \$in, \$out, \$err, timeout( 30 ));
   local $SIG{CHLD} = 'IGNORE'; local $SIG{PIPE} = 'IGNORE';
-  pump $h until ($out =~ /delete it first\./g or $out =~ /(delete_key)(.secret)?.okay/g);
+  pump $h until ($out =~ /delete it first\./g or $out =~ /(delete_key)(.secret)?.okay/g); 
                        #! ^^^^^^^^^^^^^^^^^ to-fix.
-  finish $h, return undef unless $1;
+  finish $h, return undef unless $1; 
   $in .= "Y\n";
   if ($key->{Type} eq 'sec') {
     pump $h until $out =~ /delete_key.okay/g; $in .= "Y\n";
@@ -777,7 +777,7 @@ sub delkey {
 }
 
 sub disablekey {
-  my $self = shift;
+  my $self = shift; 
   my $key = shift;
   return unless $key->{ID} =~ /$self->{VKEYID}/;
 
@@ -787,9 +787,9 @@ sub disablekey {
   my $h = start ([$self->gpgbin, @opts, '--no-tty', '--status-fd', '1', '--command-fd', 0,
                  '--edit-key', $key->{ID}], \$in, \$out, \$err, timeout( 30 ));
   local $SIG{CHLD} = 'IGNORE'; local $SIG{PIPE} = 'IGNORE';
-  pump $h until ($out =~ /been disabled/g or $out =~ /(keyedit\.prompt)/g);
+  pump $h until ($out =~ /been disabled/g or $out =~ /(keyedit\.prompt)/g); 
                        #! ^^^^^^^^^^^^^ to-fix.
-  finish $h, return undef unless $1;
+  finish $h, return undef unless $1; 
   $in .= "disable\n";
   pump $h until $out =~ /keyedit\.prompt/g; $in .= "quit\n";
   finish $h;
@@ -797,7 +797,7 @@ sub disablekey {
 }
 
 sub enablekey {
-  my $self = shift;
+  my $self = shift; 
   my $key = shift;
   return unless $key->{ID} =~ /$self->{VKEYID}/;
 
@@ -807,9 +807,9 @@ sub enablekey {
   my $h = start ([$self->gpgbin, @opts, '--no-tty', '--status-fd', '1', '--command-fd', 0,
                  '--edit-key', $key->{ID}], \$in, \$out, \$err, timeout( 30 ));
   local $SIG{CHLD} = 'IGNORE'; local $SIG{PIPE} = 'IGNORE';
-  pump $h until ($out =~ /been disabled/g or $out =~ /(keyedit\.prompt)/g);
+  pump $h until ($out =~ /been disabled/g or $out =~ /(keyedit\.prompt)/g); 
                        #! ^^^^^^^^^^^^^ to-fix.
-  finish $h, return undef unless $1;
+  finish $h, return undef unless $1; 
   $in .= "enable\n";
   pump $h until $out =~ /keyedit\.prompt/g; $in .= "quit\n";
   finish $h;
@@ -867,7 +867,7 @@ sub AUTOLOAD {
 'True Value';
 __END__
 
-=head1 NAME
+=head1 NAME 
 
 Crypt::GPG - An Object Oriented Interface to GnuPG.
 
@@ -903,7 +903,7 @@ Crypt::GPG - An Object Oriented Interface to GnuPG.
 
   # Key generation:
 
-  $status = $gpg->keygen
+  $status = $gpg->keygen 
     ('Test', 'test@foo.com', 'ELG-E', 2048, 0, 'test passphrase');
   print while (<$status>); close $status;
 
@@ -915,7 +915,7 @@ Crypt::GPG - An Object Oriented Interface to GnuPG.
   # Key manipulation:
 
   $key = $keys[0];
-
+ 
   $gpg->delkey($key);
   $gpg->disablekey($key);
   $gpg->enablekey($key);
@@ -926,7 +926,7 @@ Crypt::GPG - An Object Oriented Interface to GnuPG.
 
 The Crypt::GPG module provides access to the functionality of the
 GnuPG (www.gnupg.org) encryption tool through an object oriented
-interface.
+interface. 
 
 It provides methods for encryption, decryption, signing, signature
 verification, key generation, key certification, export and
@@ -1071,10 +1071,10 @@ there was an error while processing. Returns undef if any of the keys
 are not found.
 
 Either $plaintext or $keylist may be specified as either an arrayref
-or a simple scalar.
+or a simple scalar.  
 
 If $plaintext is a an arrayref, it will be join()ed without
-newlines.
+newlines. 
 
 If you want to encrypt to multiple recipients, you must use the
 arrayref version of $keylist. A scalar $keylist works for only a
@@ -1088,7 +1088,7 @@ work. They can be set with the secretkey() and passphrase() methods.
 
 Adds the keys given in B<$key> to the user's key ring and returns a
 list of Crypt::GPG::Key objects corresponding to the keys that were
-added. $key may be a string or an array reference.
+added. $key may be a string or an array reference. 
 
 If B<$pretend> is true, it pretends to add the key and creates the key
 object, but doesn't actually perform the key addition.
@@ -1170,7 +1170,7 @@ Enables the key specified by the Crypt::GPG::Key object B<$key>.
 
 =over 2
 
-=item *
+=item * 
 
 Key server access.
 
@@ -1178,7 +1178,7 @@ Key server access.
 
 More complete key manipulation interface.
 
-=item *
+=item * 
 
 Filehandle interface to handle large messages.
 
@@ -1188,26 +1188,26 @@ Filehandle interface to handle large messages.
 
 =over 2
 
-=item *
+=item * 
 
-Error checking needs work.
+Error checking needs work. 
 
-=item *
+=item * 
 
-Some key manipulation functions are missing.
+Some key manipulation functions are missing. 
 
-=item *
+=item * 
 
 The method call interface is subject to change in future versions.
 
-=item *
+=item * 
 
 The current implementation will probably eat up all your RAM if you
 try to operate on huge messages. In future versions, this will be
 addressed by reading from and returning filehandles, rather than using
 in-core data.
 
-=item *
+=item * 
 
 Methods may break if you don't use ASCII armoring.
 
@@ -1311,7 +1311,7 @@ Revision 1.30  2002/09/20 15:25:47  cvs
 
  - Fixed up tempfile handling and eliminated calls to the shell in
    encrypt(), sign() and msginfo(). Passing all currently defined
-   tests.
+   tests. 
 
  - Hopefully also fixed signing during encryption and verification of
    detached signatures. Not tested this yet.
@@ -1355,7 +1355,7 @@ under the same terms as Perl itself.
 
 =head1 BUGS REPORTS, PATCHES, FEATURE REQUESTS
 
-Are very welcome. Email crypt-gpg at neomailbox.com.
+Are very welcome. Email crypt-gpg at neomailbox.com.    
 
 =cut
 

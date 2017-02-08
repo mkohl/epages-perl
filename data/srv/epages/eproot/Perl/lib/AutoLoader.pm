@@ -23,29 +23,29 @@ AUTOLOAD {
     my $filename = AutoLoader::find_filename( $sub );
 
     my $save = $@;
-    local $!; # Do not munge the value.
+    local $!; # Do not munge the value. 
     eval { local $SIG{__DIE__}; require $filename };
     if ($@) {
-        if (substr($sub,-9) eq '::DESTROY') {
-            no strict 'refs';
-            *$sub = sub {};
-            $@ = undef;
-        } elsif ($@ =~ /^Can't locate/) {
-            # The load might just have failed because the filename was too
-            # long for some old SVR3 systems which treat long names as errors.
-            # If we can successfully truncate a long name then it's worth a go.
-            # There is a slight risk that we could pick up the wrong file here
-            # but autosplit should have warned about that when splitting.
-            if ($filename =~ s/(\w{12,})\.al$/substr($1,0,11).".al"/e){
-                eval { local $SIG{__DIE__}; require $filename };
-            }
-        }
-        if ($@){
-            $@ =~ s/ at .*\n//;
-            my $error = $@;
-            require Carp;
-            Carp::croak($error);
-        }
+	if (substr($sub,-9) eq '::DESTROY') {
+	    no strict 'refs';
+	    *$sub = sub {};
+	    $@ = undef;
+	} elsif ($@ =~ /^Can't locate/) {
+	    # The load might just have failed because the filename was too
+	    # long for some old SVR3 systems which treat long names as errors.
+	    # If we can successfully truncate a long name then it's worth a go.
+	    # There is a slight risk that we could pick up the wrong file here
+	    # but autosplit should have warned about that when splitting.
+	    if ($filename =~ s/(\w{12,})\.al$/substr($1,0,11).".al"/e){
+		eval { local $SIG{__DIE__}; require $filename };
+	    }
+	}
+	if ($@){
+	    $@ =~ s/ at .*\n//;
+	    my $error = $@;
+	    require Carp;
+	    Carp::croak($error);
+	}
     }
     $@ = $save;
     goto &$sub;
@@ -56,71 +56,71 @@ sub find_filename {
     my $filename;
     # Braces used to preserve $1 et al.
     {
-        # Try to find the autoloaded file from the package-qualified
-        # name of the sub. e.g., if the sub needed is
-        # Getopt::Long::GetOptions(), then $INC{Getopt/Long.pm} is
-        # something like '/usr/lib/perl5/Getopt/Long.pm', and the
-        # autoload file is '/usr/lib/perl5/auto/Getopt/Long/GetOptions.al'.
-        #
-        # However, if @INC is a relative path, this might not work.  If,
-        # for example, @INC = ('lib'), then $INC{Getopt/Long.pm} is
-        # 'lib/Getopt/Long.pm', and we want to require
-        # 'auto/Getopt/Long/GetOptions.al' (without the leading 'lib').
-        # In this case, we simple prepend the 'auto/' and let the
-        # C<require> take care of the searching for us.
+	# Try to find the autoloaded file from the package-qualified
+	# name of the sub. e.g., if the sub needed is
+	# Getopt::Long::GetOptions(), then $INC{Getopt/Long.pm} is
+	# something like '/usr/lib/perl5/Getopt/Long.pm', and the
+	# autoload file is '/usr/lib/perl5/auto/Getopt/Long/GetOptions.al'.
+	#
+	# However, if @INC is a relative path, this might not work.  If,
+	# for example, @INC = ('lib'), then $INC{Getopt/Long.pm} is
+	# 'lib/Getopt/Long.pm', and we want to require
+	# 'auto/Getopt/Long/GetOptions.al' (without the leading 'lib').
+	# In this case, we simple prepend the 'auto/' and let the
+	# C<require> take care of the searching for us.
 
-        my ($pkg,$func) = ($sub =~ /(.*)::([^:]+)$/);
-        $pkg =~ s#::#/#g;
-        if (defined($filename = $INC{"$pkg.pm"})) {
-            if ($is_macos) {
-                $pkg =~ tr#/#:#;
-                $filename = undef
-                  unless $filename =~ s#^(.*)$pkg\.pm\z#$1auto:$pkg:$func.al#s;
-            } else {
-                $filename = undef
-                  unless $filename =~ s#^(.*)$pkg\.pm\z#$1auto/$pkg/$func.al#s;
-            }
+	my ($pkg,$func) = ($sub =~ /(.*)::([^:]+)$/);
+	$pkg =~ s#::#/#g;
+	if (defined($filename = $INC{"$pkg.pm"})) {
+	    if ($is_macos) {
+		$pkg =~ tr#/#:#;
+		$filename = undef
+		  unless $filename =~ s#^(.*)$pkg\.pm\z#$1auto:$pkg:$func.al#s;
+	    } else {
+		$filename = undef
+		  unless $filename =~ s#^(.*)$pkg\.pm\z#$1auto/$pkg/$func.al#s;
+	    }
 
-            # if the file exists, then make sure that it is a
-            # a fully anchored path (i.e either '/usr/lib/auto/foo/bar.al',
-            # or './lib/auto/foo/bar.al'.  This avoids C<require> searching
-            # (and failing) to find the 'lib/auto/foo/bar.al' because it
-            # looked for 'lib/lib/auto/foo/bar.al', given @INC = ('lib').
+	    # if the file exists, then make sure that it is a
+	    # a fully anchored path (i.e either '/usr/lib/auto/foo/bar.al',
+	    # or './lib/auto/foo/bar.al'.  This avoids C<require> searching
+	    # (and failing) to find the 'lib/auto/foo/bar.al' because it
+	    # looked for 'lib/lib/auto/foo/bar.al', given @INC = ('lib').
 
-            if (defined $filename and -r $filename) {
-                unless ($filename =~ m|^/|s) {
-                    if ($is_dosish) {
-                        unless ($filename =~ m{^([a-z]:)?[\\/]}is) {
-                            if ($^O ne 'NetWare') {
-                                $filename = "./$filename";
-                            } else {
-                                $filename = "$filename";
-                            }
-                        }
-                    }
-                    elsif ($is_epoc) {
-                        unless ($filename =~ m{^([a-z?]:)?[\\/]}is) {
-                             $filename = "./$filename";
-                        }
-                    }
-                    elsif ($is_vms) {
-                        # XXX todo by VMSmiths
-                        $filename = "./$filename";
-                    }
-                    elsif (!$is_macos) {
-                        $filename = "./$filename";
-                    }
-                }
-            }
-            else {
-                $filename = undef;
-            }
-        }
-        unless (defined $filename) {
-            # let C<require> do the searching
-            $filename = "auto/$sub.al";
-            $filename =~ s#::#/#g;
-        }
+	    if (defined $filename and -r $filename) {
+		unless ($filename =~ m|^/|s) {
+		    if ($is_dosish) {
+			unless ($filename =~ m{^([a-z]:)?[\\/]}is) {
+			    if ($^O ne 'NetWare') {
+				$filename = "./$filename";
+			    } else {
+				$filename = "$filename";
+			    }
+			}
+		    }
+		    elsif ($is_epoc) {
+			unless ($filename =~ m{^([a-z?]:)?[\\/]}is) {
+			     $filename = "./$filename";
+			}
+		    }
+		    elsif ($is_vms) {
+			# XXX todo by VMSmiths
+			$filename = "./$filename";
+		    }
+		    elsif (!$is_macos) {
+			$filename = "./$filename";
+		    }
+		}
+	    }
+	    else {
+		$filename = undef;
+	    }
+	}
+	unless (defined $filename) {
+	    # let C<require> do the searching
+	    $filename = "auto/$sub.al";
+	    $filename =~ s#::#/#g;
+	}
     }
     return $filename;
 }
@@ -134,10 +134,10 @@ sub import {
     #
 
     if ($pkg eq 'AutoLoader') {
-        if ( @_ and $_[0] =~ /^&?AUTOLOAD$/ ) {
-            no strict 'refs';
-            *{ $callpkg . '::AUTOLOAD' } = \&AUTOLOAD;
-        }
+	if ( @_ and $_[0] =~ /^&?AUTOLOAD$/ ) {
+	    no strict 'refs';
+	    *{ $callpkg . '::AUTOLOAD' } = \&AUTOLOAD;
+	}
     }
 
     #
@@ -155,29 +155,29 @@ sub import {
     (my $calldir = $callpkg) =~ s#::#/#g;
     my $path = $INC{$calldir . '.pm'};
     if (defined($path)) {
-        # Try absolute path name, but only eval it if the
+	# Try absolute path name, but only eval it if the
         # transformation from module path to autosplit.ix path
         # succeeded!
-        my $replaced_okay;
-        if ($is_macos) {
-            (my $malldir = $calldir) =~ tr#/#:#;
-            $replaced_okay = ($path =~ s#^(.*)$malldir\.pm\z#$1auto:$malldir:autosplit.ix#s);
-        } else {
-            $replaced_okay = ($path =~ s#^(.*)$calldir\.pm\z#$1auto/$calldir/autosplit.ix#);
-        }
+	my $replaced_okay;
+	if ($is_macos) {
+	    (my $malldir = $calldir) =~ tr#/#:#;
+	    $replaced_okay = ($path =~ s#^(.*)$malldir\.pm\z#$1auto:$malldir:autosplit.ix#s);
+	} else {
+	    $replaced_okay = ($path =~ s#^(.*)$calldir\.pm\z#$1auto/$calldir/autosplit.ix#);
+	}
 
-        eval { require $path; } if $replaced_okay;
-        # If that failed, try relative path with normal @INC searching.
-        if (!$replaced_okay or $@) {
-            $path ="auto/$calldir/autosplit.ix";
-            eval { require $path; };
-        }
-        if ($@) {
-            my $error = $@;
-            require Carp;
-            Carp::carp($error);
-        }
-    }
+	eval { require $path; } if $replaced_okay;
+	# If that failed, try relative path with normal @INC searching.
+	if (!$replaced_okay or $@) {
+	    $path ="auto/$calldir/autosplit.ix";
+	    eval { require $path; };
+	}
+	if ($@) {
+	    my $error = $@;
+	    require Carp;
+	    Carp::carp($error);
+	}
+    } 
 }
 
 sub unimport {
@@ -186,9 +186,9 @@ sub unimport {
     no strict 'refs';
 
     for my $exported (qw( AUTOLOAD )) {
-        my $symname = $callpkg . '::' . $exported;
-        undef *{ $symname } if \&{ $symname } == \&{ $exported };
-        *{ $symname } = \&{ $symname };
+	my $symname = $callpkg . '::' . $exported;
+	undef *{ $symname } if \&{ $symname } == \&{ $exported };
+	*{ $symname } = \&{ $symname };
     }
 }
 
@@ -315,7 +315,7 @@ the package, unfortunately).
 
 You can stop using AutoLoader by simply
 
-        no AutoLoader;
+	no AutoLoader;
 
 =head2 B<AutoLoader> vs. B<SelfLoader>
 
@@ -378,32 +378,32 @@ This package has the same copyright and license as the perl core:
              Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999,
         2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
         by Larry Wall and others
-
-                            All rights reserved.
-
+    
+			    All rights reserved.
+    
     This program is free software; you can redistribute it and/or modify
     it under the terms of either:
-
-        a) the GNU General Public License as published by the Free
-        Software Foundation; either version 1, or (at your option) any
-        later version, or
-
-        b) the "Artistic License" which comes with this Kit.
-
+    
+	a) the GNU General Public License as published by the Free
+	Software Foundation; either version 1, or (at your option) any
+	later version, or
+    
+	b) the "Artistic License" which comes with this Kit.
+    
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See either
     the GNU General Public License or the Artistic License for more details.
-
+    
     You should have received a copy of the Artistic License with this
     Kit, in the file named "Artistic".  If not, I'll be glad to provide one.
-
+    
     You should also have received a copy of the GNU General Public License
-    along with this program in the file named "Copying". If not, write to the
-    Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+    along with this program in the file named "Copying". If not, write to the 
+    Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 
     02111-1307, USA or visit their web page on the internet at
     http://www.gnu.org/copyleft/gpl.html.
-
+    
     For those of you that choose to use the GNU General Public License,
     my interpretation of the GNU General Public License is that no Perl
     script falls under the terms of the GPL unless you explicitly put

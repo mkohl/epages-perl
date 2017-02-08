@@ -14,17 +14,17 @@ use vars qw/@ISA/;
 use XML::XPath::Node ':node_keys';
 
 sub new {
-        my $class = shift;
-        my ($prefix, $expanded) = @_;
-
+	my $class = shift;
+	my ($prefix, $expanded) = @_;
+	
         my $pos = XML::XPath::Node->nextPos;
-
+        
         my @vals;
         @vals[node_global_pos, node_prefix, node_expanded] =
                 ($pos, $prefix, $expanded);
-        my $self = \@vals;
-
-        bless $self, $class;
+	my $self = \@vals;
+        
+	bless $self, $class;
 }
 
 sub getNodeType { NAMESPACE_NODE }
@@ -32,42 +32,42 @@ sub getNodeType { NAMESPACE_NODE }
 sub isNamespaceNode { 1; }
 
 sub getPrefix {
-        my $self = shift;
-        $self->[node_prefix];
+	my $self = shift;
+	$self->[node_prefix];
 }
 
 sub getExpanded {
-        my $self = shift;
-        $self->[node_expanded];
+	my $self = shift;
+	$self->[node_expanded];
 }
 
 sub getValue {
-        my $self = shift;
-        $self->[node_expanded];
+	my $self = shift;
+	$self->[node_expanded];
 }
 
 sub getData {
-        my $self = shift;
-        $self->[node_expanded];
+	my $self = shift;
+	$self->[node_expanded];
 }
 
 sub string_value {
-        my $self = shift;
-        $self->[node_expanded];
+	my $self = shift;
+	$self->[node_expanded];
 }
 
 sub toString {
-        my $self = shift;
-        my $string = '';
-        return '' unless defined $self->[node_expanded];
-        if ($self->[node_prefix] eq '#default') {
-                $string .= ' xmlns="';
-        }
-        else {
-                $string .= ' xmlns:' . $self->[node_prefix] . '="';
-        }
-        $string .= XML::XPath::Node::XMLescape($self->[node_expanded], '"&<');
-        $string .= '"';
+	my $self = shift;
+	my $string = '';
+	return '' unless defined $self->[node_expanded];
+	if ($self->[node_prefix] eq '#default') {
+		$string .= ' xmlns="';
+	}
+	else {
+		$string .= ' xmlns:' . $self->[node_prefix] . '="';
+	}
+	$string .= XML::XPath::Node::XMLescape($self->[node_expanded], '"&<');
+	$string .= '"';
 }
 
 1;

@@ -80,7 +80,7 @@ sub initParser(@)
       ( line_numbers    => 1
       , no_network      => 1
       , expand_xinclude => 0
-      , expand_entities => 1
+      , expand_entities => 1                                                  
       , load_ext_dtd    => 0
       , ext_ent_handler =>
            sub { alert __x"parsing external entities disabled"; '' }

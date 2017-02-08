@@ -571,7 +571,7 @@ sub ConvertStruct($$$$;$)
         return \%struct;
     } elsif (ref $value eq 'ARRAY') {
         my (@list, $val);
-        foreach $val (@$value) {
+        foreach $val (@$value) {    
             my $v = ConvertStruct($exifTool, $tagInfo, $val, $type, $parentID);
             push @list, $v if defined $v;
         }

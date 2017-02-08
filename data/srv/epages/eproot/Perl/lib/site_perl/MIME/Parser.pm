@@ -73,8 +73,8 @@ Ready?  Ok...
     ### Normal mechanism:
     eval { $entity = $parser->parse(\*STDIN) };
     if ($@) {
-        $results  = $parser->results;
-        $decapitated = $parser->last_head;  ### get last top-level head
+	$results  = $parser->results;
+	$decapitated = $parser->last_head;  ### get last top-level head
     }
 
     ### Ultra-tolerant mechanism:
@@ -309,12 +309,12 @@ If YESNO is true, decoding is done.  However, you will get a warning
 unless you use one of the special "true" values:
 
    "I_NEED_TO_FIX_THIS"
-          Just shut up and do it.  Not recommended.
-          Provided only for those who need to keep old scripts functioning.
+	  Just shut up and do it.  Not recommended.
+	  Provided only for those who need to keep old scripts functioning.
 
    "I_KNOW_WHAT_I_AM_DOING"
-          Just shut up and do it.  Not recommended.
-          Provided for those who REALLY know what they are doing.
+	  Just shut up and do it.  Not recommended.
+	  Provided for those who REALLY know what they are doing.
 
 If YESNO is false (the default), no attempt at decoding will be done.
 With no argument, just returns the current setting.
@@ -327,20 +327,20 @@ decode the words on demand (see L<MIME::Words>).
 sub decode_headers {
     my ($self, $yesno) = @_;
     if (@_ > 1) {
-        $self->{MP5_DecodeHeaders} = $yesno;
-        if ($yesno) {
-            if (($yesno eq "I_KNOW_WHAT_I_AM_DOING") ||
-                ($yesno eq "I_NEED_TO_FIX_THIS")) {
-                ### ok
-            }
-            else {
-                $self->whine("as of 5.4xx, decode_headers() should NOT be ".
-                             "set true... if you are doing this to make sure ".
-                             "that non-ASCII filenames are translated, ".
-                             "that's now done automatically; for all else, ".
-                             "use MIME::Words.");
-            }
-        }
+	$self->{MP5_DecodeHeaders} = $yesno;
+	if ($yesno) {
+	    if (($yesno eq "I_KNOW_WHAT_I_AM_DOING") ||
+		($yesno eq "I_NEED_TO_FIX_THIS")) {
+		### ok
+	    }
+	    else {
+		$self->whine("as of 5.4xx, decode_headers() should NOT be ".
+			     "set true... if you are doing this to make sure ".
+			     "that non-ASCII filenames are translated, ".
+			     "that's now done automatically; for all else, ".
+			     "use MIME::Words.");
+	    }
+	}
     }
     $self->{MP5_DecodeHeaders};
 }
@@ -488,11 +488,11 @@ sub decode_bodies {
 sub debug {
     my $self = shift;
     if (MIME::Tools->debugging()) {
-            if (my $r = $self->{MP5_Results}) {
-                    unshift @_, $r->indent;
-                    $r->msg($M_DEBUG, @_);
-            }
-            MIME::Tools::debug(@_);
+	    if (my $r = $self->{MP5_Results}) {
+		    unshift @_, $r->indent;
+		    $r->msg($M_DEBUG, @_);
+	    }
+	    MIME::Tools::debug(@_);
     }
 }
 
@@ -503,8 +503,8 @@ sub debug {
 sub whine {
     my $self = shift;
     if (my $r = $self->{MP5_Results}) {
-        unshift @_, $r->indent;
-        $r->msg($M_WARNING, @_);
+	unshift @_, $r->indent;
+	$r->msg($M_WARNING, @_);
     }
     &MIME::Tools::whine(@_);
 }
@@ -519,8 +519,8 @@ sub whine {
 sub error {
     my $self = shift;
     if (my $r = $self->{MP5_Results}) {
-        unshift @_, $r->indent;
-        $r->msg($M_ERROR, @_);
+	unshift @_, $r->indent;
+	$r->msg($M_ERROR, @_);
     }
     &MIME::Tools::error(@_);
     $self->{MP5_IgnoreErrors} ? return undef : die @_;
@@ -557,9 +557,9 @@ sub process_preamble {
     # Ugh.  Horrible.  If the preamble consists only of CRLF, squash it down
     # to the empty string.  Else, remove the trailing CRLF.
     if( $data =~ m/^[\r\n]\z/ ) {
-        @saved = ('');
+	@saved = ('');
     } else {
-        $data =~ s/[\r\n]\z//;
+	$data =~ s/[\r\n]\z//;
         @saved = split(/^/, $data);
     }
     $ent->preamble(\@saved);
@@ -634,16 +634,16 @@ sub process_header {
        return undef;
     }
     ($hdr_rdr->eos_type eq 'DONE') or
-        $self->error("unexpected end of header\n");
+	$self->error("unexpected end of header\n");
 
     ### Extract the header (note that zero-size headers are admissible!):
     open(my $readfh, '<:scalar', \$headstr) or die $!;
     $head->read( $readfh );
 
     unless( $readfh->eof() ) {
-        # Not entirely correct, since ->read consumes the line it gives up on.
-        # it's actually the line /before/ the one we get with ->getline
-        $self->error("couldn't parse head; error near:\n", $readfh->getline());
+	# Not entirely correct, since ->read consumes the line it gives up on.
+	# it's actually the line /before/ the one we get with ->getline
+	$self->error("couldn't parse head; error near:\n", $readfh->getline());
     }
 
 
@@ -685,9 +685,9 @@ sub process_multipart {
     ### Get the boundaries for the parts:
     my $bound = $head->multipart_boundary;
     if (!defined($bound) || ($bound =~ /[\r\n]/)) {
-        $self->error("multipart boundary is missing, or contains CR or LF\n");
-        $ent->effective_type("application/x-unparseable-multipart");
-        return $self->process_singlepart($in, $rdr, $ent);
+	$self->error("multipart boundary is missing, or contains CR or LF\n");
+	$ent->effective_type("application/x-unparseable-multipart");
+	return $self->process_singlepart($in, $rdr, $ent);
     }
     my $part_rdr = $rdr->spawn->add_boundary($bound);
 
@@ -702,30 +702,30 @@ sub process_multipart {
     $eos_type = $part_rdr->eos_type;
     if    ($eos_type eq 'DELIM'){ $more_parts = 1 }
     elsif ($eos_type eq 'CLOSE'){ $self->whine("empty multipart message\n");
-                                  $more_parts = 0; }
+				  $more_parts = 0; }
     else                        { $self->error("unexpected end of preamble\n");
-                                  return 1; }
+				  return 1; }
 
     ### Parse parts:
     my $partno = 0;
     my $part;
     while ($more_parts) {
-        ++$partno;
-        $self->debug("parsing part $partno...");
+	++$partno;
+	$self->debug("parsing part $partno...");
 
-        ### Parse the next part, and add it to the entity...
-        my $part = $self->process_part($in, $part_rdr, Retype=>$retype);
-        return undef unless defined($part);
+	### Parse the next part, and add it to the entity...
+	my $part = $self->process_part($in, $part_rdr, Retype=>$retype);
+	return undef unless defined($part);
 
-        $ent->add_part($part);
+	$ent->add_part($part);
 
-        ### ...and look at how we finished up:
-        $eos_type = $part_rdr->eos_type;
-        if    ($eos_type eq 'DELIM') { $more_parts = 1 }
-        elsif ($eos_type eq 'CLOSE') { $more_parts = 0; }
-        else                         { $self->error("unexpected end of parts ".
-                                                    "before epilogue\n");
-                                       return 1; }
+	### ...and look at how we finished up:
+	$eos_type = $part_rdr->eos_type;
+	if    ($eos_type eq 'DELIM') { $more_parts = 1 }
+	elsif ($eos_type eq 'CLOSE') { $more_parts = 0; }
+	else                         { $self->error("unexpected end of parts ".
+						    "before epilogue\n");
+				       return 1; }
     }
 
     ### Parse epilogue...
@@ -758,48 +758,48 @@ sub process_singlepart {
     my $ENCODED;             ### handle
     my $can_shortcut = (!$rdr->has_bounds and !$self->{MP5_UUDecode});
     if ($can_shortcut) {
-        $self->debug("taking shortcut");
+	$self->debug("taking shortcut");
 
-        $ENCODED = $in;
-        $rdr->eos('EOF');   ### be sure to bogus-up the reader state to EOF:
+	$ENCODED = $in;
+	$rdr->eos('EOF');   ### be sure to bogus-up the reader state to EOF:
     }
     else {
 
-        $self->debug("using temp file");
-        $ENCODED = $self->new_tmpfile();
+	$self->debug("using temp file");
+	$ENCODED = $self->new_tmpfile();
 
-        ### Read encoded body until boundary (or EOF)...
-        $self->process_to_bound($in, $rdr, $ENCODED);
+	### Read encoded body until boundary (or EOF)...
+	$self->process_to_bound($in, $rdr, $ENCODED);
 
-        ### ...and look at how we finished up.
-        ###     If we have bounds, we want DELIM or CLOSE.
-        ###     Otherwise, we want EOF (and that's all we'd get, anyway!).
-        if ($rdr->has_bounds) {
-            ($rdr->eos_type =~ /^(DELIM|CLOSE)$/) or
-                $self->error("part did not end with expected boundary\n");
-        }
+	### ...and look at how we finished up.
+	###     If we have bounds, we want DELIM or CLOSE.
+	###     Otherwise, we want EOF (and that's all we'd get, anyway!).
+	if ($rdr->has_bounds) {
+	    ($rdr->eos_type =~ /^(DELIM|CLOSE)$/) or
+		$self->error("part did not end with expected boundary\n");
+	}
 
-        ### Flush and rewind encoded buffer, so we can read it:
-        $ENCODED->flush or die "$ME: can't flush: $!";
-        $ENCODED->seek(0, 0) or die "$ME: can't seek: $!";
+	### Flush and rewind encoded buffer, so we can read it:
+	$ENCODED->flush or die "$ME: can't flush: $!";
+	$ENCODED->seek(0, 0) or die "$ME: can't seek: $!";
     }
 
     ### Get a content-decoder to decode this part's encoding:
     my $encoding = $head->mime_encoding;
     my $decoder = new MIME::Decoder $encoding;
     if (!$decoder) {
-        $self->whine("Unsupported encoding '$encoding': using 'binary'... \n".
-                     "The entity will have an effective MIME type of \n".
-                     "application/octet-stream.");  ### as per RFC-2045
-        $ent->effective_type('application/octet-stream');
-        $decoder = new MIME::Decoder 'binary';
-        $encoding = 'binary';
+	$self->whine("Unsupported encoding '$encoding': using 'binary'... \n".
+		     "The entity will have an effective MIME type of \n".
+		     "application/octet-stream.");  ### as per RFC-2045
+	$ent->effective_type('application/octet-stream');
+	$decoder = new MIME::Decoder 'binary';
+	$encoding = 'binary';
     }
 
     ### Data should be stored encoded / as-is?
     if ( !$self->decode_bodies ) {
-        $decoder = new MIME::Decoder 'binary';
-        $encoding = 'binary';
+	$decoder = new MIME::Decoder 'binary';
+	$encoding = 'binary';
     }
 
     ### If desired, sidetrack to troll for UUENCODE:
@@ -808,19 +808,19 @@ sub process_singlepart {
     $self->debug("effective type?   ", $ent->effective_type);
 
     if ($self->extract_uuencode and
-        ($encoding =~ /^(7bit|8bit|binary)\Z/) and
-        ($ent->effective_type =~
-                m{^(?:text/plain|application/mac-binhex40|application/mac-binhex)\Z})) {
-        ### Hunt for it:
-        my $uu_ent = eval { $self->hunt_for_uuencode($ENCODED, $ent) };
-        if ($uu_ent) {   ### snark
-            %$ent = %$uu_ent;
-            return 1;
-        }
-        else {           ### boojum
-            $self->whine("while hunting for uuencode: $@");
-            $ENCODED->seek(0,0) or die "$ME: can't seek: $!";
-        }
+	($encoding =~ /^(7bit|8bit|binary)\Z/) and
+	($ent->effective_type =~
+		m{^(?:text/plain|application/mac-binhex40|application/mac-binhex)\Z})) {
+	### Hunt for it:
+	my $uu_ent = eval { $self->hunt_for_uuencode($ENCODED, $ent) };
+	if ($uu_ent) {   ### snark
+	    %$ent = %$uu_ent;
+	    return 1;
+	}
+	else {           ### boojum
+	    $self->whine("while hunting for uuencode: $@");
+	    $ENCODED->seek(0,0) or die "$ME: can't seek: $!";
+	}
     }
 
     ### Open a new bodyhandle for outputting the data:
@@ -859,23 +859,23 @@ sub hunt_for_uuencode {
     ### Heuristic:
     $ENCODED->seek(0,0) or die "$ME: can't seek: $!";
     while (defined($_ = $ENCODED->getline)) {
-        if ($good = /^begin [0-7]{3}/) {
-          $how_encoded = 'uu';
-          last;
-        }
-        if ($good = /^\(This file must be converted with/i) {
-          $how_encoded = 'binhex';
-          last;
-        }
+	if ($good = /^begin [0-7]{3}/) {
+	  $how_encoded = 'uu';
+	  last;
+	}
+	if ($good = /^\(This file must be converted with/i) {
+	  $how_encoded = 'binhex';
+	  last;
+	}
     }
     $good or do { $self->debug("no one made the cut"); return 0 };
 
     # If a decoder doesn't exist for this type, forget it!
     my $decoder = MIME::Decoder->new(($how_encoded eq 'uu')?'x-uuencode'
-                                                     :'binhex');
+						     :'binhex');
     unless (defined($decoder)) {
-        $self->debug("No decoder for $how_encoded attachments");
-        return 0;
+	$self->debug("No decoder for $how_encoded attachments");
+	return 0;
     }
 
     ### New entity:
@@ -888,49 +888,49 @@ sub hunt_for_uuencode {
     $self->whine("Found a $how_encoded attachment");
     my $pre;
     while (1) {
-        my $bin_data = '';
+	my $bin_data = '';
 
-        ### Try next part:
-        my $out = IO::File->new(\$bin_data, '>:');
-        eval { $decoder->decode($ENCODED, $out) }; last if $@;
-        my $preamble = $decoder->last_preamble;
-        my $filename = $decoder->last_filename;
-        my $mode     = $decoder->last_mode;
+	### Try next part:
+	my $out = IO::File->new(\$bin_data, '>:');
+	eval { $decoder->decode($ENCODED, $out) }; last if $@;
+	my $preamble = $decoder->last_preamble;
+	my $filename = $decoder->last_filename;
+	my $mode     = $decoder->last_mode;
 
-        ### Get probable type:
-        my $type = 'application/octet-stream';
-        my ($ext) = $filename =~ /\.(\w+)\Z/; $ext = lc($ext || '');
-        if ($ext =~ /^(gif|jpe?g|xbm|xpm|png)\Z/) { $type = "image/$1" }
+	### Get probable type:
+	my $type = 'application/octet-stream';
+	my ($ext) = $filename =~ /\.(\w+)\Z/; $ext = lc($ext || '');
+	if ($ext =~ /^(gif|jpe?g|xbm|xpm|png)\Z/) { $type = "image/$1" }
 
-        ### If we got our first preamble, create the text portion:
-        if (@$preamble and
-            (grep /\S/, @$preamble) and
-            !@parts) {
-            my $txt_ent = $self->interface('ENTITY_CLASS')->new;
+	### If we got our first preamble, create the text portion:
+	if (@$preamble and
+	    (grep /\S/, @$preamble) and
+	    !@parts) {
+	    my $txt_ent = $self->interface('ENTITY_CLASS')->new;
 
-            MIME::Entity->build(Type => "text/plain",
-                                Data => "");
-            $txt_ent->bodyhandle($self->new_body_for($txt_ent->head));
-            my $io = $txt_ent->bodyhandle->open("w") or die "$ME: can't create: $!";
-            $io->print(@$preamble) or die "$ME: can't print: $!";
-            $io->close or die "$ME: can't close: $!";
-            push @parts, $txt_ent;
-        }
+	    MIME::Entity->build(Type => "text/plain",
+				Data => "");
+	    $txt_ent->bodyhandle($self->new_body_for($txt_ent->head));
+	    my $io = $txt_ent->bodyhandle->open("w") or die "$ME: can't create: $!";
+	    $io->print(@$preamble) or die "$ME: can't print: $!";
+	    $io->close or die "$ME: can't close: $!";
+	    push @parts, $txt_ent;
+	}
 
-        ### Create the attachment:
-        ### We use the x-unix-mode convention from "dtmail 1.2.1 SunOS 5.6".
-        if (1) {
-            my $bin_ent = MIME::Entity->build(Type=>$type,
-                                              Filename=>$filename,
-                                              Data=>"");
-            $bin_ent->head->mime_attr('Content-type.x-unix-mode' => "0$mode");
-            $bin_ent->bodyhandle($self->new_body_for($bin_ent->head));
-            $bin_ent->bodyhandle->binmode(1) or die "$ME: can't set to binmode: $!";
-            my $io = $bin_ent->bodyhandle->open("w") or die "$ME: can't create: $!";
-            $io->print($bin_data) or die "$ME: can't print: $!";
-            $io->close or die "$ME: can't close: $!";
-            push @parts, $bin_ent;
-        }
+	### Create the attachment:
+	### We use the x-unix-mode convention from "dtmail 1.2.1 SunOS 5.6".
+	if (1) {
+	    my $bin_ent = MIME::Entity->build(Type=>$type,
+					      Filename=>$filename,
+					      Data=>"");
+	    $bin_ent->head->mime_attr('Content-type.x-unix-mode' => "0$mode");
+	    $bin_ent->bodyhandle($self->new_body_for($bin_ent->head));
+	    $bin_ent->bodyhandle->binmode(1) or die "$ME: can't set to binmode: $!";
+	    my $io = $bin_ent->bodyhandle->open("w") or die "$ME: can't create: $!";
+	    $io->print($bin_data) or die "$ME: can't print: $!";
+	    $io->close or die "$ME: can't close: $!";
+	    push @parts, $bin_ent;
+	}
     }
 
     ### Did we get anything?
@@ -938,8 +938,8 @@ sub hunt_for_uuencode {
     ### Set the parts and a nice preamble:
     $top_ent->parts(\@parts);
     $top_ent->preamble
-        (["The following is a multipart MIME message which was extracted\n",
-          "from a $how_encoded-encoded message.\n"]);
+	(["The following is a multipart MIME message which was extracted\n",
+	  "from a $how_encoded-encoded message.\n"]);
     $top_ent;
 }
 
@@ -961,9 +961,9 @@ sub process_message {
     ### Verify the encoding restrictions:
     my $encoding = $head->mime_encoding;
     if ($encoding !~ /^(7bit|8bit|binary)$/) {
-        $self->error("illegal encoding [$encoding] for MIME type ".
-                     $head->mime_type."\n");
-        $encoding = 'binary';
+	$self->error("illegal encoding [$encoding] for MIME type ".
+		     $head->mime_type."\n");
+	$encoding = 'binary';
     }
 
     ### Parse the message:
@@ -972,12 +972,12 @@ sub process_message {
 
     ### How to handle nested messages?
     if ($self->extract_nested_messages eq 'REPLACE') {
-        %$ent = %$msg;          ### shallow replace
-        %$msg = ();
+	%$ent = %$msg;          ### shallow replace
+	%$msg = ();
     }
     else {                      ### "NEST" or generic 1:
-        $ent->bodyhandle(undef);
-        $ent->add_part($msg);
+	$ent->bodyhandle(undef);
+	$ent->add_part($msg);
     }
     1;
 }
@@ -1000,11 +1000,11 @@ sub process_part {
     my ($self, $in, $rdr, %p) = @_;
 
     if ($self->{MP5_MaxParts} > 0) {
-        $self->{MP5_NumParts}++;
-        if ($self->{MP5_NumParts} > $self->{MP5_MaxParts}) {
-            # Return UNDEF if msg too complex
-            return undef;
-        }
+	$self->{MP5_NumParts}++;
+	if ($self->{MP5_NumParts} > $self->{MP5_MaxParts}) {
+	    # Return UNDEF if msg too complex
+	    return undef;
+	}
     }
 
     $rdr ||= MIME::Parser::Reader->new;
@@ -1038,17 +1038,17 @@ sub process_part {
 
     ### Handle, according to the MIME type:
     if ($type eq 'multipart') {
-        return undef unless defined($self->process_multipart($in, $rdr, $ent));
+	return undef unless defined($self->process_multipart($in, $rdr, $ent));
     }
     elsif (("$type/$subtype" eq "message/rfc822" ||
-            "$type/$subtype" eq "message/external-body" ||
-            ("$type/$subtype" eq "message/partial" && $head->mime_attr("content-type.number") == 1)) &&
-            $self->extract_nested_messages) {
-        $self->debug("attempting to process a nested message");
-        return undef unless defined($self->process_message($in, $rdr, $ent));
+	    "$type/$subtype" eq "message/external-body" ||
+	    ("$type/$subtype" eq "message/partial" && $head->mime_attr("content-type.number") == 1)) &&
+	    $self->extract_nested_messages) {
+	$self->debug("attempting to process a nested message");
+	return undef unless defined($self->process_message($in, $rdr, $ent));
     }
     else {
-        $self->process_singlepart($in, $rdr, $ent);
+	$self->process_singlepart($in, $rdr, $ent);
     }
 
     ### Done (we hope!):
@@ -1117,11 +1117,11 @@ sub parse_data {
     } elsif( ref $data eq 'SCALAR' ) {
         $io = IO::File->new($data, '<:');
     } elsif( ref $data eq 'ARRAY' ) {
-        # Passing arrays is deprecated now that we've nuked IO::ScalarArray
-        # but for backwards compatability we still support it by joining the
-        # array lines to a scalar and doing scalar IO on it.
-        my $tmp_data = join('', @$data);
-        $io = IO::File->new(\$tmp_data, '<:');
+	# Passing arrays is deprecated now that we've nuked IO::ScalarArray
+	# but for backwards compatability we still support it by joining the
+	# array lines to a scalar and doing scalar IO on it.
+	my $tmp_data = join('', @$data);
+	$io = IO::File->new(\$tmp_data, '<:');
     } else {
         croak "parse_data: wrong argument ref type: ", ref($data);
     }
@@ -1223,9 +1223,9 @@ sub parse_two {
     my ($self, $headfile, $bodyfile) = @_;
     my $data;
     foreach ($headfile, $bodyfile) {
-        open IN, "<$_" or die "$ME: open $_: $!";
-        $data .= do { local $/; <IN> };
-        close IN or die "$ME: can't close: $!";
+	open IN, "<$_" or die "$ME: open $_: $!";
+	$data .= do { local $/; <IN> };
+	close IN or die "$ME: can't close: $!";
     }
     return $self->parse_data($data);
 }
@@ -1274,8 +1274,8 @@ This will be some subclass of L<MIME::Parser::Filer|MIME::Parser::Filer>.
 sub filer {
     my ($self, $filer) = @_;
     if (@_ > 1) {
-        $self->{MP5_Filer} = $filer;
-        $filer->results($self->results);  ### but we still need in init_parse
+	$self->{MP5_Filer} = $filer;
+	$filer->results($self->results);  ### but we still need in init_parse
     }
     $self->{MP5_Filer};
 }
@@ -1300,11 +1300,11 @@ will be lost.
 sub output_dir {
     my ($self, @init) = @_;
     if (@_ > 1) {
-        $self->filer(MIME::Parser::FileInto->new(@init));
+	$self->filer(MIME::Parser::FileInto->new(@init));
     }
     else {
-        &MIME::Tools::whine("0-arg form of output_dir is deprecated.");
-        return $self->filer->output_dir;
+	&MIME::Tools::whine("0-arg form of output_dir is deprecated.");
+	return $self->filer->output_dir;
     }
 }
 
@@ -1328,11 +1328,11 @@ will be lost.
 sub output_under {
     my ($self, @init) = @_;
     if (@_ > 1) {
-        $self->filer(MIME::Parser::FileUnder->new(@init));
+	$self->filer(MIME::Parser::FileUnder->new(@init));
     }
     else {
-        &MIME::Tools::whine("0-arg form of output_under is deprecated.");
-        return $self->filer->output_dir;
+	&MIME::Tools::whine("0-arg form of output_under is deprecated.");
+	return $self->filer->output_dir;
     }
 }
 
@@ -1419,7 +1419,7 @@ With no argument, returns the current setting as an integer
 sub max_parts {
     my($self, $num) = @_;
     if (@_ > 1) {
-        $self->{MP5_MaxParts} = $num;
+	$self->{MP5_MaxParts} = $num;
     }
     return $self->{MP5_MaxParts};
 }
@@ -1450,8 +1450,8 @@ With no argument, returns the current setting as a boolean.
 sub output_to_core {
     my ($self, $yesno) = @_;
     if (@_ > 1) {
-        $yesno = 0 if ($yesno and $yesno eq 'NONE');
-        $self->{MP5_FilerToCore} = $yesno;
+	$yesno = 0 if ($yesno and $yesno eq 'NONE');
+	$self->{MP5_FilerToCore} = $yesno;
     }
     $self->{MP5_FilerToCore};
 }
@@ -1468,9 +1468,9 @@ worked.  Please update your code to stop using it.
 
 =cut
 
-sub tmp_recycling
+sub tmp_recycling 
 {
-        return;
+	return;
 }
 
 
@@ -1526,7 +1526,7 @@ it would be the line from the "outer" file, for example) it's been removed.
 =cut
 
 sub use_inner_files {
-        return 0;
+	return 0;
 }
 
 =back
@@ -1559,11 +1559,11 @@ init.  Use it like this:
     @ISA = qw(MIME::Parser);
     ...
     sub init {
-        my $self = shift;
-        $self->SUPER::init(@_);        ### do my parent's init
-        $self->interface(ENTITY_CLASS => 'MIME::MyEntity');
-        $self->interface(HEAD_CLASS   => 'MIME::MyHead');
-        $self;                         ### return
+	my $self = shift;
+	$self->SUPER::init(@_);        ### do my parent's init
+	$self->interface(ENTITY_CLASS => 'MIME::MyEntity');
+	$self->interface(HEAD_CLASS   => 'MIME::MyHead');
+	$self;                         ### return
     }
 
 With no VALUE, returns the VALUE currently associated with that ROLE.
@@ -1601,14 +1601,14 @@ sub new_body_for {
     my ($self, $head) = @_;
 
     if ($self->output_to_core) {
-        $self->debug("outputting body to core");
-        return (new MIME::Body::InCore);
+	$self->debug("outputting body to core");
+	return (new MIME::Body::InCore);
     }
     else {
-        my $outpath = $self->output_path($head);
-        $self->debug("outputting body to disk file: $outpath");
-        $self->filer->purgeable($outpath);        ### we plan to use it
-        return (new MIME::Body::File $outpath);
+	my $outpath = $self->output_path($head);
+	$self->debug("outputting body to disk file: $outpath");
+	$self->filer->purgeable($outpath);        ### we plan to use it
+	return (new MIME::Body::File $outpath);
     }
 }
 
@@ -1639,7 +1639,7 @@ sub tmp_dir
 {
     my ($self, $dirname) = @_;
     if ( $dirname ) {
-        $self->{MP5_TmpDir} = $dirname;
+	$self->{MP5_TmpDir} = $dirname;
     }
 
     return $self->{MP5_TmpDir};
@@ -1676,15 +1676,15 @@ sub new_tmpfile {
 
     my $io;
     if ($self->{MP5_TmpToCore}) {
-        my $var;
-        $io = IO::File->new(\$var, '+>:') or die "$ME: Can't open in-core tmpfile: $!";
+	my $var;
+	$io = IO::File->new(\$var, '+>:') or die "$ME: Can't open in-core tmpfile: $!";
     } else {
-        my $args = {};
-        if( $self->tmp_dir ) {
-                $args->{DIR} = $self->tmp_dir;
-        }
-        $io = tmpopen( $args ) or die "$ME: can't open tmpfile: $!\n";
-        binmode($io) or die "$ME: can't set to binmode: $!";
+	my $args = {};
+	if( $self->tmp_dir ) {
+		$args->{DIR} = $self->tmp_dir;
+	}
+	$io = tmpopen( $args ) or die "$ME: can't open tmpfile: $!\n";
+	binmode($io) or die "$ME: can't set to binmode: $!";
     }
     return $io;
 }
@@ -1731,8 +1731,8 @@ This is useful for replying to people who sent us bad MIME messages.
     ### Parse an input stream:
     eval { $entity = $parser->parse(\*STDIN) };
     if (!$entity) {    ### parse failed!
-        my $decapitated = $parser->last_head;
-        ...
+	my $decapitated = $parser->last_head;
+	...
     }
 
 =cut
@@ -1775,7 +1775,7 @@ __END__
 Optimum input mechanisms:
 
     parse()                    YES (if you give it a globref or a
-                                    subclass of IO::File)
+				    subclass of IO::File)
     parse_open()               YES
     parse_data()               NO  (see below)
     parse_two()                NO  (see below)
@@ -1784,7 +1784,7 @@ Optimum settings:
 
     decode_headers()           *** (no real difference; 0 is slightly faster)
     extract_nested_messages()  0   (may be slightly faster, but in
-                                    general you want it set to 1)
+				    general you want it set to 1)
     output_to_core()           0   (will be MUCH faster)
     tmp_to_core()              0   (will be MUCH faster)
 
@@ -1818,7 +1818,7 @@ Optimum settings:
     decode_headers()           *** (no real difference)
     extract_nested_messages()  *** (no real difference)
     output_to_core()           0   (will use MUCH less memory)
-                                    tmp_to_core is 1)
+				    tmp_to_core is 1)
     tmp_to_core()              0   (will use MUCH less memory)
 
 =head2 Maximizing tolerance of bad MIME
@@ -1834,7 +1834,7 @@ Optimum settings:
 
     decode_headers()           0   (sidesteps problem of bad hdr encodings)
     extract_nested_messages()  0   (sidesteps problems of bad nested messages,
-                                    but often you want it set to 1 anyway).
+				    but often you want it set to 1 anyway).
     output_to_core()           *** (doesn't matter)
     tmp_to_core()              *** (doesn't matter)
 
@@ -1951,7 +1951,7 @@ given quite clearly:
       bchars := bcharsnospace / " "
 
       bcharsnospace :=    DIGIT / ALPHA / "'" / "(" / ")" / "+" /"_"
-                   / "," / "-" / "." / "/" / ":" / "=" / "?"
+		   / "," / "-" / "." / "/" / ":" / "=" / "?"
 
 All of which means that a valid boundary string I<cannot> have
 newlines in it, and any newlines in such a string in the message header

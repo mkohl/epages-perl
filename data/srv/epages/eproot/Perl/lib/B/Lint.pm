@@ -155,7 +155,7 @@ the current filename and line number.
   package Sample;
   use B::Lint;
   B::Lint->register_plugin( Sample => [ 'good_taste' ] );
-
+  
   sub match {
       my ( $op, $checks_href ) = shift @_;
       if ( $checks_href->{good_taste} ) {
@@ -659,7 +659,7 @@ sub B::CV::lintcv {
     $curcv = shift @_;
 
     #warn sprintf("lintcv: %s::%s (done=%d)\n",
-    #            $gv->STASH->NAME, $gv->NAME, $done_cv{$$curcv});#debug
+    #		 $gv->STASH->NAME, $gv->NAME, $done_cv{$$curcv});#debug
     return unless ref($curcv) and $$curcv and not $done_cv{$$curcv}++;
     my $root = $curcv->ROOT;
 

@@ -27,7 +27,7 @@ sub install_share
 {
     my $dir  = @_ ? pop : 'share';
     my $type = @_ ? shift : 'dist';
-    unless ( defined $type and
+    unless ( defined $type and 
             ( $type =~ /^(module|dist)$/ ) ) {
         confess "Illegal or invalid share dir type '$type'";
     }
@@ -48,7 +48,7 @@ sub delete_share
 {
     my $dir  = @_ ? pop : '';
     my $type = @_ ? shift : 'dist';
-    unless ( defined $type and
+    unless ( defined $type and 
             ( $type =~ /^(module|dist)$/ ) ) {
         confess "Illegal or invalid share dir type '$type'";
     }
@@ -60,7 +60,7 @@ sub delete_share
     my $def = _mk_def( "delete-$type" );
     _add_module( $def, $_[0] );
     _add_dir( $def, $dir );
-}
+}   
 
 
 
@@ -69,8 +69,8 @@ sub delete_share
 sub _mk_def
 {
     my( $type ) = @_;
-    return { type=>$type,
-             dotfiles => $INCLUDE_DOTFILES,
+    return { type=>$type, 
+             dotfiles => $INCLUDE_DOTFILES, 
              dotdirs => $INCLUDE_DOTDIRS
            };
 }
@@ -111,12 +111,12 @@ sub _add_dir
         push @DIRS, { %$def };
         $DIRS[-1]{dir} = $d;
     }
-}
+}   
 
 
 #####################################################################
 # Build the postamble section
-sub postamble
+sub postamble 
 {
     my $self = shift;
 
@@ -138,13 +138,13 @@ sub __postamble_share_dir
 
     if( $def->{type} eq 'delete-dist' ) {
         $idir = File::Spec->catdir( _dist_dir(), $dir );
-    }
+    } 
     elsif( $def->{type} eq 'delete-module' ) {
         $idir = File::Spec->catdir( _module_dir( $def ), $dir );
     }
-    elsif ( $def->{type} eq 'dist' ) {
+    elsif ( $def->{type} eq 'dist' ) {    
         $idir = _dist_dir();
-    }
+    } 
     else {                                  # delete-share and share
         $idir = _module_dir( $def );
     }
@@ -176,8 +176,8 @@ CODE
 # We depend on the Makefile for most of the info
 sub _dist_dir
 {
-    return File::Spec->catdir( '$(INST_LIB)',
-                                    qw( auto share dist ),
+    return File::Spec->catdir( '$(INST_LIB)', 
+                                    qw( auto share dist ), 
                                     '$(DISTNAME)'
                                   );
 }
@@ -189,8 +189,8 @@ sub _module_dir
     my( $def ) = @_;
     my $module = $def->{module};
     $module =~ s/::/-/g;
-    return  File::Spec->catdir( '$(INST_LIB)',
-                                    qw( auto share module ),
+    return  File::Spec->catdir( '$(INST_LIB)', 
+                                    qw( auto share module ), 
                                     $module
                                   );
 }
@@ -209,7 +209,7 @@ sub _scan_share_dir
         }
         elsif( -d $full ) {
             if( $def->{dotdirs} ) {
-                next if $entry eq '.' or $entry eq '..' or
+                next if $entry eq '.' or $entry eq '..' or 
                         $entry =~ /^\.(svn|git|cvs)$/;
             }
             else {
@@ -283,7 +283,7 @@ The first 2 forms are equivalent; the files are installed in a per-distribution
 directory.  For example C</usr/lib/perl5/site_perl/auto/share/dist/My-Dist>.  The
 name of that directory can be recovered with L<File::ShareDir/dist_dir>.
 
-The last form installs files in a per-module directory.  For example
+The last form installs files in a per-module directory.  For example 
 C</usr/lib/perl5/site_perl/auto/share/module/My-Dist-Package>.  The name of that
 directory can be recovered with L<File::ShareDir/module_dir>.
 
@@ -307,8 +307,8 @@ C<share2/info.txt> will be installed into your C<dist_dir()>.
     delete_share $list;
     delete_share dist => $list;
     delete_share module => $module, $list;
-
-Remove previously installed files or directories.
+    
+Remove previously installed files or directories.  
 
 Unlike L</install_share>, the last parameter is a list of files or
 directories that were previously installed.  These files and directories will
@@ -360,17 +360,17 @@ of dot-files.
 
 =head2 $INCLUDE_DOTFILES
 
-If set to a true value, dot-files will be copied.  Default is false.
+If set to a true value, dot-files will be copied.  Default is false.  
 
 =head2 $INCLUDE_DOTDIRS
 
-If set to a true value, the files inside dot-directories will be copied.
+If set to a true value, the files inside dot-directories will be copied. 
 Known version control directories are still ignored.  Default is false.
 
 =head2 Note
 
 These variables only influence subsequent calls to C<install_share()>.  This allows
-you to control the behaviour for each directory.
+you to control the behaviour for each directory.  
 
 For example:
 

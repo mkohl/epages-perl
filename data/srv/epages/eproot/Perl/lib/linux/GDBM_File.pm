@@ -35,7 +35,7 @@ The GDBM error number and error message interface needs to be added.
 
 =head1 SEE ALSO
 
-L<perl(1)>, L<DB_File(3)>, L<perldbmfilter>.
+L<perl(1)>, L<DB_File(3)>, L<perldbmfilter>. 
 
 =cut
 
@@ -51,21 +51,21 @@ require Exporter;
 use XSLoader ();
 @ISA = qw(Tie::Hash Exporter);
 @EXPORT = qw(
-        GDBM_CACHESIZE
-        GDBM_CENTFREE
-        GDBM_COALESCEBLKS
-        GDBM_FAST
-        GDBM_FASTMODE
-        GDBM_INSERT
-        GDBM_NEWDB
-        GDBM_NOLOCK
-        GDBM_OPENMASK
-        GDBM_READER
-        GDBM_REPLACE
-        GDBM_SYNC
-        GDBM_SYNCMODE
-        GDBM_WRCREAT
-        GDBM_WRITER
+	GDBM_CACHESIZE
+	GDBM_CENTFREE
+	GDBM_COALESCEBLKS
+	GDBM_FAST
+	GDBM_FASTMODE
+	GDBM_INSERT
+	GDBM_NEWDB
+	GDBM_NOLOCK
+	GDBM_OPENMASK
+	GDBM_READER
+	GDBM_REPLACE
+	GDBM_SYNC
+	GDBM_SYNCMODE
+	GDBM_WRCREAT
+	GDBM_WRITER
 );
 
 # This module isn't dual life, so no need for dev version numbers.

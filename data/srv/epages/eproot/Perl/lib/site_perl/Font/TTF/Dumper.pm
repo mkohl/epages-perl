@@ -7,13 +7,13 @@ Font::TTF::Dumper - Debug dump of a font datastructure, avoiding recursion on ' 
 =head1 SYNOPSIS
 
     Font::TTF::Dumper;
-
+    
     # Print a table from the font structure:
     print ttfdump($font->{$tag});
-
+    
     # Print font table with name
     print ttfdump($font->{'head'}, 'head');
-
+    
     # Print one glyph's data:
     print ttfdump($font->{'loca'}->read->{'glyphs'}[$gid], "glyph_$gid");
 
@@ -27,8 +27,8 @@ which means that Data::Dumper ends up dumping the whole font no matter what.
 The purpose of this module is to do just one thing: invoke Data::Dumper with a
 filter that skips over the ' PARENT' element of any hash.
 
-To reduce output further, this module also skips over ' CACHE' elements and any
-hash element whose value is a Font::TTF::Glyph or Font::TTF::Font object.
+To reduce output further, this module also skips over ' CACHE' elements and any 
+hash element whose value is a Font::TTF::Glyph or Font::TTF::Font object. 
 (Really should make this configurable.)
 
 =cut
@@ -47,7 +47,7 @@ sub ttfdump
 {
     my ($var, $name) = @_;
     my $res;
-
+    
     my $d = Data::Dumper->new([$var]);
     $d->Names([$name]) if defined $name;
     $d->Sortkeys(\&myfilter);   # This is the trick to keep from dumping the whole font

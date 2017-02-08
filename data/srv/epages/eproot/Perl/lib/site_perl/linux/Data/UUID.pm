@@ -28,13 +28,13 @@ __END__
 
 =head1 NAME
 
-Data::UUID - Perl extension for generating Globally/Universally
+Data::UUID - Perl extension for generating Globally/Universally 
 Unique Identifiers (GUIDs/UUIDs).
 
 =head1 SYNOPSIS
 
   use Data::UUID;
-
+  
   $ug    = new Data::UUID;
   $uuid1 = $ug->create();
   $uuid2 = $ug->create_from_name(<namespace>, <name>);
@@ -66,7 +66,7 @@ machine -- and therefore is suitable for identifying both extremely short-lived
 and very persistent objects on a given system as well as across the network.
 
 This modules provides several methods to create a UUID:
-
+ 
    # creates binary (16 byte long binary value) UUID.
    $ug->create();
    $ug->create_bin();
@@ -141,7 +141,7 @@ The module allows exporting of several standard namespace UUIDs:
 =item NameSpace_X500
 
 =back
-
+ 
 =head1 AUTHOR
 
 Alexander Golomshtok <agolomsh@cpan.org>

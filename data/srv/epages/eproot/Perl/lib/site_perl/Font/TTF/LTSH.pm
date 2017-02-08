@@ -71,7 +71,7 @@ sub out
     $fh->print(pack("C$numg", @{$self->{'glyphs'}}));
     $self;
 }
-
+    
 
 1;
 

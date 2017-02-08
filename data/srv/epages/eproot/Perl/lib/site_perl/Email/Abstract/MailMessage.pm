@@ -12,29 +12,29 @@ sub construct {
     Mail::Message->read($rfc822);
 }
 
-sub get_header {
-    my ($class, $obj, $header) = @_;
+sub get_header { 
+    my ($class, $obj, $header) = @_; 
     $obj->head->get($header);
 }
 
-sub get_body   {
-    my ($class, $obj) = @_;
+sub get_body   { 
+    my ($class, $obj) = @_; 
     $obj->decoded->string;
 }
 
-sub set_header {
-    my ($class, $obj, $header, @data) = @_;
+sub set_header { 
+    my ($class, $obj, $header, @data) = @_; 
     $obj->head->delete($header);
     $obj->head->add($header, $_) for @data;
 }
 
 sub set_body   {
-    my ($class, $obj, $body) = @_;
+    my ($class, $obj, $body) = @_; 
     $obj->body(Mail::Message::Body->new(data => $body));
 }
 
-sub as_string {
-    my ($class, $obj) = @_;
+sub as_string { 
+    my ($class, $obj) = @_; 
     $obj->string;
 }
 

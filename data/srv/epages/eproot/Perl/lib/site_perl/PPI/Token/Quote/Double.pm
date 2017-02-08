@@ -38,11 +38,11 @@ use PPI::Token::_QuoteEngine::Simple ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = qw{
-                PPI::Token::_QuoteEngine::Simple
-                PPI::Token::Quote
-        };
+	$VERSION = '1.215';
+	@ISA     = qw{
+		PPI::Token::_QuoteEngine::Simple
+		PPI::Token::Quote
+	};
 }
 
 
@@ -89,8 +89,8 @@ is( $strings->[5]->interpolations, '', 'String 6: No interpolations'  );
 # Upgrade: Return the interpolated substrings.
 # Upgrade: Returns parsed expressions.
 sub interpolations {
-        # Are there any unescaped $things in the string
-        !! ($_[0]->content =~ /(?<!\\)(?:\\\\)*[\$\@]/);
+	# Are there any unescaped $things in the string
+	!! ($_[0]->content =~ /(?<!\\)(?:\\\\)*[\$\@]/);
 }
 
 =pod
@@ -132,17 +132,17 @@ is( $strings->[5]->simplify, q<''>,                      'String 6: Empty string
 =cut
 
 sub simplify {
-        # This only works on EXACTLY this class
-        my $self = _INSTANCE(shift, 'PPI::Token::Quote::Double') or return undef;
+	# This only works on EXACTLY this class
+	my $self = _INSTANCE(shift, 'PPI::Token::Quote::Double') or return undef;
 
-        # Don't bother if there are characters that could complicate things
-        my $content = $self->content;
-        my $value   = substr($content, 1, length($content) - 2);
-        return $self if $value =~ /[\\\$@\'\"]/;
+	# Don't bother if there are characters that could complicate things
+	my $content = $self->content;
+	my $value   = substr($content, 1, length($content) - 2);
+	return $self if $value =~ /[\\\$@\'\"]/;
 
-        # Change the token to a single string
-        $self->{content} = "'$value'";
-        bless $self, 'PPI::Token::Quote::Single';
+	# Change the token to a single string
+	$self->{content} = "'$value'";
+	bless $self, 'PPI::Token::Quote::Single';
 }
 
 
@@ -169,8 +169,8 @@ is( $Double->string, 'foo', '->string returns as expected' );
 =cut
 
 sub string {
-        my $str = $_[0]->{content};
-        substr( $str, 1, length($str) - 2 );
+	my $str = $_[0]->{content};
+	substr( $str, 1, length($str) - 2 );
 }
 
 1;

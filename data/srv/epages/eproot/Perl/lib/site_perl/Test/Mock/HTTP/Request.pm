@@ -28,9 +28,9 @@ our $VERSION = '0.01';
 
 BEGIN {
     $Mock_request = $Mock_req = Test::MockObject->new;
-    $Mock_req->fake_module('HTTP::Request',
-        new => sub { $Mock_req->{new_args} = [@_]; $Mock_req });
-}
+    $Mock_req->fake_module('HTTP::Request', 
+        new => sub { $Mock_req->{new_args} = [@_]; $Mock_req });                       
+}                                                                          
 $Mock_req->set_always('authorization_basic', '');
 $Mock_req->set_always('header', '');
 $Mock_req->set_always('content', '');

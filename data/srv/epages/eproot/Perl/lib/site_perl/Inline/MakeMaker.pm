@@ -59,7 +59,7 @@ END
 # --- MakeMaker inline section:
 
 $object.inl : \$(TO_INST_PM)
-        \$(PERL) -Mblib -MInline=NOISY,_INSTALL_ -M$name -e1 $version \$(INST_ARCHLIB)
+	\$(PERL) -Mblib -MInline=NOISY,_INSTALL_ -M$name -e1 $version \$(INST_ARCHLIB)
 
 pure_all :: $object.inl
 

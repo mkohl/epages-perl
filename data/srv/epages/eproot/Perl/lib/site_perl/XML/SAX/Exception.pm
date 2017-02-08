@@ -30,7 +30,7 @@ sub new {
     my $class = shift;
     my %opts = @_;
     confess "Invalid options: " . join(', ', keys %opts) unless exists $opts{Message};
-
+    
     bless { ($StackTrace ? (StackTrace => stacktrace()) : ()), %opts },
         $class;
 }
@@ -40,7 +40,7 @@ sub stringify {
     local $^W;
     my $error;
     if (exists $self->{LineNumber}) {
-        $error = $self->{Message} . " [Ln: " . $self->{LineNumber} .
+        $error = $self->{Message} . " [Ln: " . $self->{LineNumber} . 
                 ", Col: " . $self->{ColumnNumber} . "]";
     }
     else {
@@ -100,7 +100,7 @@ spec:
   XML::SAX::Exception::Parse
 
 Use them wherever you want, and as much as possible when you encounter
-such errors. SAX is meant to use exceptions as much as possible to
+such errors. SAX is meant to use exceptions as much as possible to 
 flag problems.
 
 =head1 CREATING NEW EXCEPTION CLASSES
@@ -109,13 +109,13 @@ All you need to do to create a new exception class is:
 
   @XML::SAX::Exception::MyException::ISA = ('XML::SAX::Exception')
 
-The given package doesn't need to exist, it'll behave correctly this
+The given package doesn't need to exist, it'll behave correctly this 
 way. If your exception refines an existing exception class, then you
 may also inherit from that instead of from the base class.
 
 =head1 THROWING EXCEPTIONS
 
-This is as simple as exemplified in the SYNOPSIS. In fact, there's
+This is as simple as exemplified in the SYNOPSIS. In fact, there's 
 nothing more to know. All you have to do is:
 
   throw XML::SAX::Exception::MyException( Message => 'Something went wrong' );

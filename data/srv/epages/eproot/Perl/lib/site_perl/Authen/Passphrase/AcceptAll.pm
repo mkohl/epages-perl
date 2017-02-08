@@ -4,22 +4,22 @@ Authen::Passphrase::AcceptAll - accept any passphrase
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::AcceptAll;
+	use Authen::Passphrase::AcceptAll;
 
-        $ppr = Authen::Passphrase::AcceptAll->new;
+	$ppr = Authen::Passphrase::AcceptAll->new;
 
-        $ppr = Authen::Passphrase::AcceptAll
-                ->from_crypt("");
+	$ppr = Authen::Passphrase::AcceptAll
+		->from_crypt("");
 
-        $ppr = Authen::Passphrase::AcceptAll
-                ->from_rfc2307("{CRYPT}");
+	$ppr = Authen::Passphrase::AcceptAll
+		->from_rfc2307("{CRYPT}");
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $passphrase = $ppr->passphrase;
+	$passphrase = $ppr->passphrase;
 
-        $passwd = $ppr->as_crypt;
-        $userPassword = $ppr->as_rfc2307;
+	$passwd = $ppr->as_crypt;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -62,8 +62,8 @@ returned from each call.
 =cut
 
 {
-        my $singleton = bless({});
-        sub new { $singleton }
+	my $singleton = bless({});
+	sub new { $singleton }
 }
 
 =item Authen::Passphrase::AcceptAll->from_crypt("")
@@ -74,9 +74,9 @@ returned from each call.  The argument must be the empty string.
 =cut
 
 sub from_crypt {
-        my($class, $passwd) = @_;
-        return $class->new if $passwd eq "";
-        return $class->SUPER::from_crypt($passwd);
+	my($class, $passwd) = @_;
+	return $class->new if $passwd eq "";
+	return $class->SUPER::from_crypt($passwd);
 }
 
 =item Authen::Passphrase::AcceptAll->from_rfc2307(USERPASSWORD)

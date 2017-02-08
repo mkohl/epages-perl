@@ -22,7 +22,7 @@ DBI::Const::GetInfo::ODBC - ODBC Constants for GetInfo
 
 Information requested by GetInfo().
 
-The API for this module is private and subject to change.
+The API for this module is private and subject to change.   
 
 =head1 REFERENCES
 
@@ -100,7 +100,7 @@ $VERSION = sprintf("2.%06d", q$Revision: 11373 $ =~ /(\d+)/o);
 , SQL_CURSOR_SENSITIVITY              => 10001
 , SQL_DATA_SOURCE_NAME                =>     2
 , SQL_DATA_SOURCE_READ_ONLY           =>    25
-, SQL_DATABASE_NAME                   =>    16
+, SQL_DATABASE_NAME                   =>    16 
 , SQL_DATETIME_LITERALS               =>   119
 , SQL_DBMS_NAME                       =>    17
 , SQL_DBMS_VER                        =>    18
@@ -329,7 +329,7 @@ See: mk:@MSITStore:X:\dm\cli\mdac\sdk26\Docs\odbc.chm::/htm/odbcsqlgetinfo.htm
 , SQL_CURSOR_SENSITIVITY              => 'SQLUINTEGER'         # 10001
 , SQL_DATA_SOURCE_NAME                => 'SQLCHAR'             #     2
 , SQL_DATA_SOURCE_READ_ONLY           => 'SQLCHAR'             #    25
-, SQL_DATABASE_NAME                   => 'SQLCHAR'             #    16
+, SQL_DATABASE_NAME                   => 'SQLCHAR'             #    16 
 , SQL_DATETIME_LITERALS               => 'SQLUINTEGER bitmask' #   119
 , SQL_DBMS_NAME                       => 'SQLCHAR'             #    17
 , SQL_DBMS_VER                        => 'SQLCHAR'             #    18

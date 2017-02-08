@@ -15,7 +15,7 @@ sub _etags
     my $header = shift;
     my @old = _split_etag_list($self->_header($header));
     if (@_) {
-        $self->_header($header => join(", ", _split_etag_list(@_)));
+	$self->_header($header => join(", ", _split_etag_list(@_)));
     }
     wantarray ? @old : join(", ", @old);
 }
@@ -29,21 +29,21 @@ sub if_range {
     my $self = shift;
     my @old = $self->_header("If-Range");
     if (@_) {
-        my $new = shift;
-        if (!defined $new) {
-            $self->remove_header("If-Range");
-        }
-        elsif ($new =~ /^\d+$/) {
-            $self->_date_header("If-Range", $new);
-        }
-        else {
-            $self->_etags("If-Range", $new);
-        }
+	my $new = shift;
+	if (!defined $new) {
+	    $self->remove_header("If-Range");
+	}
+	elsif ($new =~ /^\d+$/) {
+	    $self->_date_header("If-Range", $new);
+	}
+	else {
+	    $self->_etags("If-Range", $new);
+	}
     }
     return unless defined(wantarray);
     for (@old) {
-        my $t = HTTP::Date::str2time($_);
-        $_ = $t if $t;
+	my $t = HTTP::Date::str2time($_);
+	$_ = $t if $t;
     }
     wantarray ? @old : join(", ", @old);
 }
@@ -55,9 +55,9 @@ sub if_range {
 # use it on C<ETag> and C<If-Range> entity tag values, because it will
 # normalize them to the common form.
 #
-#  entity-tag     = [ weak ] opaque-tag
-#  weak           = "W/"
-#  opaque-tag     = quoted-string
+#  entity-tag	  = [ weak ] opaque-tag
+#  weak		  = "W/"
+#  opaque-tag	  = quoted-string
 
 
 sub _split_etag_list
@@ -67,24 +67,24 @@ sub _split_etag_list
     for (@val) {
         while (length) {
             my $weak = "";
-            $weak = "W/" if s,^\s*[wW]/,,;
+	    $weak = "W/" if s,^\s*[wW]/,,;
             my $etag = "";
-            if (s/^\s*(\"[^\"\\]*(?:\\.[^\"\\]*)*\")//) {
-                push(@res, "$weak$1");
+	    if (s/^\s*(\"[^\"\\]*(?:\\.[^\"\\]*)*\")//) {
+		push(@res, "$weak$1");
             }
             elsif (s/^\s*,//) {
                 push(@res, qq(W/"")) if $weak;
             }
             elsif (s/^\s*([^,\s]+)//) {
                 $etag = $1;
-                $etag =~ s/([\"\\])/\\$1/g;
-                push(@res, qq($weak"$etag"));
+		$etag =~ s/([\"\\])/\\$1/g;
+	        push(@res, qq($weak"$etag"));
             }
             elsif (s/^\s+// || !length) {
                 push(@res, qq(W/"")) if $weak;
             }
             else {
-                die "This should not happen: '$_'";
+	 	die "This should not happen: '$_'";
             }
         }
    }

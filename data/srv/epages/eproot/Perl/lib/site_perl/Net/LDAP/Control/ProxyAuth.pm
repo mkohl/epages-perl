@@ -23,14 +23,14 @@ sub init {
 
   if (defined($self->{proxyDN})) {
     $self->{type} = LDAP_CONTROL_PROXYAUTHENTICATION_OLD;
-
+  
     unless (exists $self->{value}) {
       $self->{asn} = { proxyDN => $self->{proxyDN} || '' };
     }
   }
   else {
     $self->{value} = $self->{authzID} || '';
-  }
+  }  
 
   # criticality must be set !
   $self->{critical} = 1;
@@ -44,7 +44,7 @@ sub proxyDN {
 
   if (@_) {
     delete $self->{value};
-
+    
     $self->{type} = LDAP_CONTROL_PROXYAUTHENTICATION_OLD;
     return $self->{asn}{proxyDN} = shift || '';
   }
@@ -55,7 +55,7 @@ sub proxyDN {
   else {
     $self->{asn} ||= $proxyAuthValue->decode($self->{value});
   }
-
+  
   $self->{asn}{proxyDN};
 }
 
@@ -65,7 +65,7 @@ sub authzID {
 
   if (@_) {
     delete $self->{value};
-
+    
     $self->{type} = LDAP_CONTROL_PROXYAUTHENTICATION;
     return $self->{authzID} = shift || '';
   }
@@ -86,11 +86,11 @@ sub value {
 
   unless (exists $self->{value}) {
     $self->{value} = ($self->{type} eq LDAP_CONTROL_PROXYAUTHENTICATION_OLD)
-                     ? $proxyAuthValue->encode($self->{asn})
+		     ? $proxyAuthValue->encode($self->{asn})
                      : $self->{authzID} || '';
   }
-
-  return $self->{value};
+    
+  return $self->{value};  
 }
 
 1;
@@ -111,10 +111,10 @@ Net::LDAP::Control::ProxyAuth - LDAPv3 Proxy Authentication control object
  $auth = Net::LDAP::Control::ProxyAuth->new( authzID => 'dn:cn=me,ou=people,o=myorg.com' );
 
  @args = ( base     => "cn=subnets,cn=sites,cn=configuration,$BASE_DN",
-           scope    => "subtree",
-           filter   => "(objectClass=subnet)",
-           callback => \&process_entry, # Call this sub for each entry
-           control  => [ $auth ],
+	   scope    => "subtree",
+	   filter   => "(objectClass=subnet)",
+	   callback => \&process_entry, # Call this sub for each entry
+	   control  => [ $auth ],
  );
 
  while(1) {
@@ -176,7 +176,7 @@ L<Net::LDAP::Control>,
 =head1 AUTHOR
 
 Olivier Dubois, Swift sa/nv based on Net::LDAP::Control::Page from
-Graham Barr E<lt>gbarr@pobox.comE<gt>.
+Graham Barr E<lt>gbarr@pobox.comE<gt>. 
 Peter Marschall E<lt>peter@adpm.deE<gt> added authzID extensions
 based on ideas from Graham Barr E<lt>gbarr@pobox.comE<gt>.
 

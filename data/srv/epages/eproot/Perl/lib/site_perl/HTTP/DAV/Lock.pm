@@ -52,21 +52,21 @@ sub set_type      { $_[0]->{_type}      = $_[1]; }
 sub set_owner     { $_[0]->{_owner}     = $_[1]; }
 sub set_depth     { $_[0]->{_depth}     = $_[1]; }
 sub set_timeout   { $_[0]->{_timeout}   = $_[1]; }
-sub set_locktoken {
+sub set_locktoken { 
    my ($self,$href) = @_;
    # Remove leading and trailing space from "  http://.../..."
-   $href =~ s/^\s*//g; $href =~ s/\s*$//g;
+   $href =~ s/^\s*//g; $href =~ s/\s*$//g; 
    # Remove < > from around it available
    $href =~ s/^<(.*)>$/$1/g;
 
-   push (@{$self->{_locktokens}}, $href);
+   push (@{$self->{_locktokens}}, $href); 
 }
 
 # IS
 sub is_owned { $_[0]->{_owned}; }
 
 ###########################################################################
-# Synopsis:
+# Synopsis: 
 # Full parameters
 # make_lock_xml (
 #    -owner => (owner|http://mysite/~mypage/)
@@ -76,8 +76,8 @@ sub is_owned { $_[0]->{_owned}; }
 # )
 sub make_lock_xml {
    my ($self,@p) = @_;
-   my($owner,$timeout,$scope,$type,@other) =
-      HTTP::DAV::Utils::rearrange(['OWNER','TIMEOUT','SCOPE','TYPE'],@p);
+   my($owner,$timeout,$scope,$type,@other) = 
+      HTTP::DAV::Utils::rearrange(['OWNER','TIMEOUT','SCOPE','TYPE'],@p);  
 
    ####
    # Create a new XML document
@@ -104,7 +104,7 @@ sub make_lock_xml {
 #END
 
 
-   # If the owner is an HREF then set it into an <D:href> tag
+   # If the owner is an HREF then set it into an <D:href> tag 
    # else just enter it as text.
    my $o = URI->new($owner);
    if ($o->scheme) {
@@ -117,7 +117,7 @@ sub make_lock_xml {
 
    $xml_request .= "</D:lockinfo>\n";
    #$xml_request .= "</lockinfo>\n";
-
+ 
    return ($xml_request);
 }
 
@@ -137,7 +137,7 @@ sub make_lock_xml {
 #      </D:locktoken>
 #   </D:activelock>
 #</D:lockdiscovery>
-#
+# 
 # returns an array of locks (will be more than one in shared locks scenarios)
 
 sub XML_lockdiscovery_parse {
@@ -152,13 +152,13 @@ sub XML_lockdiscovery_parse {
 
       my $lock = HTTP::DAV::Lock->new();
       push(@found_locks,$lock);
-
+   
       my $nodes_lock_params = $node_activelock->getChildNodes();
       next unless $nodes_lock_params;
       my $prop_count = $nodes_lock_params->getLength;
 
       for (my $prop_num = 0; $prop_num < $prop_count; $prop_num++) {
-         my $node_lock_param = $nodes_lock_params->item($prop_num);
+         my $node_lock_param = $nodes_lock_params->item($prop_num);   
 
          # $node_lock_param is one of the following
          # 1. <!ELEMENT lockscope (exclusive | shared) >
@@ -170,45 +170,45 @@ sub XML_lockdiscovery_parse {
 
          my $lock_prop_name = $node_lock_param->getNodeName();
          $lock_prop_name =~ s/.*:(.*)/$1/g;
-
+   
          # 1. RFC2518 currently only allows locktype of exclusive or shared
          if ( $lock_prop_name eq "lockscope" ) {
             my $node_lock_scope = HTTP::DAV::Utils::get_only_element($node_lock_param);
             my $lock_scope = $node_lock_scope->getNodeName;
             $lock_scope =~ s/.*:(.*)/$1/g;
             $lock->set_scope($lock_scope);
-         }
-
+         } 
+   
          # 2. RFC2518 currently only allows locktype of "write"
          elsif ( $lock_prop_name eq "locktype" ) {
             my $node_lock_type = HTTP::DAV::Utils::get_only_element($node_lock_param);
             my $lock_type = $node_lock_type->getNodeName;
             $lock_type =~ s/.*:(.*)/$1/g;
             $lock->set_type($lock_type);
-         }
-
+         } 
+   
          # 3. RFC2518 allows only depth of 0,1,infinity
          elsif ( $lock_prop_name eq "depth" ) {
             my $lock_depth = HTTP::DAV::Utils::get_only_cdata($node_lock_param);
             $lock->set_depth($lock_depth);
          }
-
+   
          # 4. RFC2518 allows anything here.
          # Patrick: I'm just going to convert the XML to a string
          elsif ( $lock_prop_name eq "owner" ) {
             $lock->set_owner( $node_lock_param->getFirstChild->toString );
          }
-
+   
          # 5. RFC2518 (Section 9.8) e.g. Timeout: Second-234234 or Timeout: infinity
          elsif ( $lock_prop_name eq "timeout" ) {
             my $lock_timeout = HTTP::DAV::Utils::get_only_cdata($node_lock_param);
             my $timeout = HTTP::DAV::Lock->interpret_timeout($lock_timeout);
             $lock->set_timeout( $timeout );
             #if ( $HTTP::DAV::DEBUG ) {
-            #   $lock->{ "_timeout_val" } = HTTP::Date::time2str($timeout)
+            #   $lock->{ "_timeout_val" } = HTTP::Date::time2str($timeout) 
             #}
          }
-
+   
          # 6. RFC2518 allows one or more <href>'s
          # Push them all into the lock object.
          elsif ( $lock_prop_name eq "locktoken" ) {
@@ -242,7 +242,7 @@ sub XML_lockdiscovery_parse {
 #  @supportedlocks'  = (
 #    { 'type' => 'write', 'scope' => 'exclusive' },
 #    { 'type' => 'write', 'scope' => 'shared'    }
-#  );
+#  );    
 
 sub get_supportedlock_details {
    my ($node_supportedlock) = @_;
@@ -301,7 +301,7 @@ Timeout at:
     2000-02-31 00:40:33              at the indicated time & date
     For more time and date formats that are handled see HTTP::Date
 
-RFC2518 states that the timeout value MUST NOT be greater
+RFC2518 states that the timeout value MUST NOT be greater 
 than 2^32-1. If this occurs it will simply set the timeout to infinity
 =cut
 
@@ -313,10 +313,10 @@ sub timeout {
 
    if ($timeout =~ /^\d+[a-zA-Z]$/ ) {
       $timeoutret = _timeout_calc($timeout);
-   }
+   } 
    elsif ($timeout =~ /infinity/i || $timeout =~ /^\d+$/ ) {
       $timeoutret = $timeout;
-   }
+   } 
    else {
       my ($epochgmt) = HTTP::Date::str2time($timeout);
       $timeoutret = $epochgmt - time;
@@ -325,7 +325,7 @@ sub timeout {
    # Timeout value cannot be greater than 2^32-1 as per RFC2518
    if ( $timeoutret =~ /infinity/i || $timeoutret >= 4294967295 ) {
       return "Infinite, Second-4294967295 ";
-   }
+   } 
    elsif ( $timeoutret <= 0 ) {
       return 0;
    } else {

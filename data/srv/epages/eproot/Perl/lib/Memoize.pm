@@ -5,7 +5,7 @@
 #
 # Copyright 1998, 1999, 2000, 2001 M-J. Dominus.
 # You may copy and distribute this program under the
-# same terms as Perl itself.  If in doubt,
+# same terms as Perl itself.  If in doubt, 
 # write to mjd-perl-memoize+@plover.com for a license.
 #
 # Version 1.01 $Revision: 1.18 $ $Date: 2001/06/24 17:16:47 $
@@ -14,8 +14,8 @@ package Memoize;
 $VERSION = '1.01_03';
 
 # Compile-time constants
-sub SCALAR () { 0 }
-sub LIST () { 1 }
+sub SCALAR () { 0 } 
+sub LIST () { 1 } 
 
 
 #
@@ -47,14 +47,14 @@ sub memoize {
   my $fn = shift;
   my %options = @_;
   my $options = \%options;
-
-  unless (defined($fn) &&
-          (ref $fn eq 'CODE' || ref $fn eq '')) {
+  
+  unless (defined($fn) && 
+	  (ref $fn eq 'CODE' || ref $fn eq '')) {
     croak "Usage: memoize 'functionname'|coderef {OPTIONS}";
   }
 
-  my $uppack = caller;          # TCL me Elmo!
-  my $cref;                     # Code reference to original function
+  my $uppack = caller;		# TCL me Elmo!
+  my $cref;			# Code reference to original function
   my $name = (ref $fn ? undef : $fn);
 
   # Convert function names to code references
@@ -70,16 +70,16 @@ sub memoize {
   # 'usethreads' works around a bug in threadperl having to do with
   # magic goto.  It would be better to fix the bug and use the magic
   # goto version everywhere.
-  my $wrapper =
-      $Config{usethreads}
-        ? eval "sub $proto { &_memoizer(\$cref, \@_); }"
+  my $wrapper = 
+      $Config{usethreads} 
+        ? eval "sub $proto { &_memoizer(\$cref, \@_); }" 
         : eval "sub $proto { unshift \@_, \$cref; goto &_memoizer; }";
 
   my $normalizer = $options{NORMALIZER};
   if (defined $normalizer  && ! ref $normalizer) {
     $normalizer = _make_cref($normalizer, $uppack);
   }
-
+  
   my $install_name;
   if (defined $options->{INSTALL}) {
     # INSTALL => name
@@ -93,9 +93,9 @@ sub memoize {
 
   if (defined $install_name) {
     $install_name = $uppack . '::' . $install_name
-        unless $install_name =~ /::/;
+	unless $install_name =~ /::/;
     no strict;
-    local($^W) = 0;            # ``Subroutine $install_name redefined at ...''
+    local($^W) = 0;	       # ``Subroutine $install_name redefined at ...''
     *{$install_name} = $wrapper; # Install memoized version
   }
 
@@ -105,7 +105,7 @@ sub memoize {
   my %caches;
   for my $context (qw(SCALAR LIST)) {
     # suppress subsequent 'uninitialized value' warnings
-    $options{"${context}_CACHE"} ||= '';
+    $options{"${context}_CACHE"} ||= ''; 
 
     my $cache_opt = $options{"${context}_CACHE"};
     my @cache_opt_args;
@@ -148,11 +148,11 @@ sub memoize {
       _my_tie($context, $caches{$context}, $options);  # Croaks on failure
     }
   }
-
+  
   # We should put some more stuff in here eventually.
   # We've been saying that for serveral versions now.
   # And you know what?  More stuff keeps going in!
-  $memotable{$cref} =
+  $memotable{$cref} = 
   {
     O => $options,  # Short keys here for things we need to access frequently
     N => $normalizer,
@@ -164,7 +164,7 @@ sub memoize {
     L => $caches{LIST},
   };
 
-  $wrapper                      # Return just memoized version
+  $wrapper			# Return just memoized version
 }
 
 # This function tries to load a tied hash class and tie the hash to it.
@@ -174,7 +174,7 @@ sub _my_tie {
 
   # We already checked to make sure that this works.
   my $shortopt = (ref $fullopt) ? $fullopt->[0] : $fullopt;
-
+  
   return unless defined $shortopt && $shortopt eq 'TIE';
   carp("TIE option to memoize() is deprecated; use HASH instead")
       if $^W;
@@ -205,7 +205,7 @@ sub flush_cache {
   for my $context (qw(S L)) {
     my $cache = $info->{$context};
     if (tied %$cache && ! (tied %$cache)->can('CLEAR')) {
-      my $funcname = defined($info->{NAME}) ?
+      my $funcname = defined($info->{NAME}) ? 
           "function $info->{NAME}" : "anonymous function $func";
       my $context = {S => 'scalar', L => 'list'}->{$context};
       croak "Tied cache hash for $context-context $funcname does not support flushing";
@@ -217,14 +217,14 @@ sub flush_cache {
 
 # This is the function that manages the memo tables.
 sub _memoizer {
-  my $orig = shift;             # stringized version of ref to original func.
+  my $orig = shift;		# stringized version of ref to original func.
   my $info = $memotable{$orig};
   my $normalizer = $info->{N};
-
+  
   my $argstr;
   my $context = (wantarray() ? LIST : SCALAR);
 
-  if (defined $normalizer) {
+  if (defined $normalizer) { 
     no strict;
     if ($context == SCALAR) {
       $argstr = &{$normalizer}(@_);
@@ -235,21 +235,21 @@ sub _memoizer {
     }
   } else {                      # Default normalizer
     local $^W = 0;
-    $argstr = join chr(28),@_;
+    $argstr = join chr(28),@_;  
   }
 
   if ($context == SCALAR) {
     my $cache = $info->{S};
     _crap_out($info->{NAME}, 'scalar') unless $cache;
-    if (exists $cache->{$argstr}) {
+    if (exists $cache->{$argstr}) { 
       return $cache->{$argstr};
     } else {
       my $val = &{$info->{U}}(@_);
       # Scalars are considered to be lists; store appropriately
       if ($info->{O}{SCALAR_CACHE} eq 'MERGE') {
-        $cache->{$argstr} = [$val];
+	$cache->{$argstr} = [$val];
       } else {
-        $cache->{$argstr} = $val;
+	$cache->{$argstr} = $val;
       }
       $val;
     }
@@ -283,7 +283,7 @@ sub unmemoize {
   unless (exists $revmemotable{$cref}) {
     croak "Could not unmemoize function `$f', because it was not memoized to begin with";
   }
-
+  
   my $tabent = $memotable{$revmemotable{$cref}};
   unless (defined $tabent) {
     croak "Could not figure out how to unmemoize function `$f'";
@@ -291,7 +291,7 @@ sub unmemoize {
   my $name = $tabent->{NAME};
   if (defined $name) {
     no strict;
-    local($^W) = 0;            # ``Subroutine $install_name redefined at ...''
+    local($^W) = 0;	       # ``Subroutine $install_name redefined at ...''
     *{$name} = $tabent->{U}; # Replace with original function
   }
   undef $memotable{$revmemotable{$cref}};
@@ -299,7 +299,7 @@ sub unmemoize {
 
   # This removes the last reference to the (possibly tied) memo tables
   # my ($old_function, $memotabs) = @{$tabent}{'U','S','L'};
-  # undef $tabent;
+  # undef $tabent; 
 
 #  # Untie the memo tables if they were tied.
 #  my $i;
@@ -363,29 +363,29 @@ Memoize - Make functions faster by trading space for time
 =head1 SYNOPSIS
 
         # This is the documentation for Memoize 1.01
-        use Memoize;
-        memoize('slow_function');
-        slow_function(arguments);    # Is faster than it was before
+	use Memoize;
+	memoize('slow_function');
+	slow_function(arguments);    # Is faster than it was before
 
 
 This is normally all you need to know.  However, many options are available:
 
-        memoize(function, options...);
+	memoize(function, options...);
 
 Options include:
 
-        NORMALIZER => function
-        INSTALL => new_name
+	NORMALIZER => function
+	INSTALL => new_name
 
-        SCALAR_CACHE => 'MEMORY'
+	SCALAR_CACHE => 'MEMORY'
         SCALAR_CACHE => ['HASH', \%cache_hash ]
-        SCALAR_CACHE => 'FAULT'
-        SCALAR_CACHE => 'MERGE'
+	SCALAR_CACHE => 'FAULT'
+	SCALAR_CACHE => 'MERGE'
 
-        LIST_CACHE => 'MEMORY'
+	LIST_CACHE => 'MEMORY'
         LIST_CACHE => ['HASH', \%cache_hash ]
-        LIST_CACHE => 'FAULT'
-        LIST_CACHE => 'MERGE'
+	LIST_CACHE => 'FAULT'
+	LIST_CACHE => 'MERGE'
 
 =head1 DESCRIPTION
 
@@ -398,12 +398,12 @@ the function compute the value all over again.
 Here is an extreme example.  Consider the Fibonacci sequence, defined
 by the following function:
 
-        # Compute Fibonacci numbers
-        sub fib {
-          my $n = shift;
-          return $n if $n < 2;
-          fib($n-1) + fib($n-2);
-        }
+	# Compute Fibonacci numbers
+	sub fib {
+	  my $n = shift;
+	  return $n if $n < 2;
+	  fib($n-1) + fib($n-2);
+	}
 
 This function is very slow.  Why?  To compute fib(14), it first wants
 to compute fib(13) and fib(12), and add the results.  But to compute
@@ -430,22 +430,22 @@ recursive calls to `fib', it makes 15.  This makes the function about
 You could do the memoization yourself, by rewriting the function, like
 this:
 
-        # Compute Fibonacci numbers, memoized version
-        { my @fib;
-          sub fib {
-            my $n = shift;
-            return $fib[$n] if defined $fib[$n];
-            return $fib[$n] = $n if $n < 2;
-            $fib[$n] = fib($n-1) + fib($n-2);
-          }
+	# Compute Fibonacci numbers, memoized version
+	{ my @fib;
+  	  sub fib {
+	    my $n = shift;
+	    return $fib[$n] if defined $fib[$n];
+	    return $fib[$n] = $n if $n < 2;
+	    $fib[$n] = fib($n-1) + fib($n-2);
+	  }
         }
 
 Or you could use this module, like this:
 
-        use Memoize;
-        memoize('fib');
+	use Memoize;
+	memoize('fib');
 
-        # Rest of the fib function just like the original version.
+	# Rest of the fib function just like the original version.
 
 This makes it easy to turn memoizing on and off.
 
@@ -473,7 +473,7 @@ functions in this package are None of Your Business.
 
 You should say
 
-        memoize(function)
+	memoize(function)
 
 where C<function> is the name of the function you want to memoize, or
 a reference to it.  C<memoize> returns a reference to the new,
@@ -491,11 +491,11 @@ There are some optional options you can pass to C<memoize> to change
 the way it behaves a little.  To supply options, invoke C<memoize>
 like this:
 
-        memoize(function, NORMALIZER => function,
-                          INSTALL => newname,
+	memoize(function, NORMALIZER => function,
+			  INSTALL => newname,
                           SCALAR_CACHE => option,
-                          LIST_CACHE => option
-                         );
+	                  LIST_CACHE => option
+			 );
 
 Each of these options is optional; you can include some, all, or none
 of them.
@@ -504,13 +504,13 @@ of them.
 
 If you supply a function name with C<INSTALL>, memoize will install
 the new, memoized version of the function under the name you give.
-For example,
+For example, 
 
-        memoize('fib', INSTALL => 'fastfib')
+	memoize('fib', INSTALL => 'fastfib')
 
 installs the memoized version of C<fib> as C<fastfib>; without the
 C<INSTALL> option it would have replaced the old C<fib> with the
-memoized version.
+memoized version.  
 
 To prevent C<memoize> from installing the memoized version anywhere, use
 C<INSTALL =E<gt> undef>.
@@ -519,24 +519,24 @@ C<INSTALL =E<gt> undef>.
 
 Suppose your function looks like this:
 
-        # Typical call: f('aha!', A => 11, B => 12);
-        sub f {
-          my $a = shift;
-          my %hash = @_;
-          $hash{B} ||= 2;  # B defaults to 2
-          $hash{C} ||= 7;  # C defaults to 7
+	# Typical call: f('aha!', A => 11, B => 12);
+	sub f {
+	  my $a = shift;
+	  my %hash = @_;
+	  $hash{B} ||= 2;  # B defaults to 2
+	  $hash{C} ||= 7;  # C defaults to 7
 
-          # Do something with $a, %hash
-        }
+	  # Do something with $a, %hash
+	}
 
 Now, the following calls to your function are all completely equivalent:
 
-        f(OUCH);
-        f(OUCH, B => 2);
-        f(OUCH, C => 7);
-        f(OUCH, B => 2, C => 7);
-        f(OUCH, C => 7, B => 2);
-        (etc.)
+	f(OUCH);
+	f(OUCH, B => 2);
+	f(OUCH, C => 7);
+	f(OUCH, B => 2, C => 7);
+	f(OUCH, C => 7, B => 2);
+	(etc.)
 
 However, unless you tell C<Memoize> that these calls are equivalent,
 it will not know that, and it will compute the values for these
@@ -547,23 +547,23 @@ program arguments into a string in a way that equivalent arguments
 turn into the same string.  A C<NORMALIZER> function for C<f> above
 might look like this:
 
-        sub normalize_f {
-          my $a = shift;
-          my %hash = @_;
-          $hash{B} ||= 2;
-          $hash{C} ||= 7;
+	sub normalize_f {
+	  my $a = shift;
+	  my %hash = @_;
+	  $hash{B} ||= 2;
+	  $hash{C} ||= 7;
 
-          join(',', $a, map ($_ => $hash{$_}) sort keys %hash);
-        }
+	  join(',', $a, map ($_ => $hash{$_}) sort keys %hash);
+	}
 
 Each of the argument lists above comes out of the C<normalize_f>
 function looking exactly the same, like this:
 
-        OUCH,B,2,C,7
+	OUCH,B,2,C,7
 
 You would tell C<Memoize> to use this normalizer this way:
 
-        memoize('f', NORMALIZER => 'normalize_f');
+	memoize('f', NORMALIZER => 'normalize_f');
 
 C<memoize> knows that if the normalized version of the arguments is
 the same for two argument lists, then it can safely look up the value
@@ -577,9 +577,9 @@ always works correctly for functions with only one string argument,
 and also when the arguments never contain character 28.  However, it
 can confuse certain argument lists:
 
-        normalizer("a\034", "b")
-        normalizer("a", "\034b")
-        normalizer("a\034\034b")
+	normalizer("a\034", "b")
+	normalizer("a", "\034b")
+	normalizer("a\034\034b")
 
 for example.
 
@@ -589,7 +589,7 @@ when the function's arguments are references.  For example, consider a
 function C<g> which gets two arguments: A number, and a reference to
 an array of numbers:
 
-        g(13, [1,2,3,4,5,6,7]);
+	g(13, [1,2,3,4,5,6,7]);
 
 The default normalizer will turn this into something like
 C<"13\034ARRAY(0x436c1f)">.  That would be all right, except that a
@@ -598,7 +598,7 @@ even though it contains the same data.  If this happens, C<Memoize>
 will think that the arguments are different, even though they are
 equivalent.  In this case, a normalizer like this is appropriate:
 
-        sub normalize { join ' ', $_[0], @{$_[1]} }
+	sub normalize { join ' ', $_[0], @{$_[1]} }
 
 For the example above, this produces the key "13 1 2 3 4 5 6 7".
 
@@ -606,16 +606,16 @@ Another use for normalizers is when the function depends on data other
 than those in its arguments.  Suppose you have a function which
 returns a value which depends on the current hour of the day:
 
-        sub on_duty {
+	sub on_duty {
           my ($problem_type) = @_;
-          my $hour = (localtime)[2];
+	  my $hour = (localtime)[2];
           open my $fh, "$DIR/$problem_type" or die...;
           my $line;
           while ($hour-- > 0)
             $line = <$fh>;
-          }
-          return $line;
-        }
+          } 
+	  return $line;
+	}
 
 At 10:23, this function generates the 10th line of a data file; at
 3:45 PM it generates the 15th line instead.  By default, C<Memoize>
@@ -649,9 +649,9 @@ behavior of both contexts independently with these options.
 The argument to C<LIST_CACHE> or C<SCALAR_CACHE> must either be one of
 the following four strings:
 
-        MEMORY
-        FAULT
-        MERGE
+	MEMORY
+	FAULT
+	MERGE
         HASH
 
 or else it must be a reference to a list whose first element is one of
@@ -703,9 +703,9 @@ be converted to use the C<HASH> option instead.
 is merely a shortcut for
 
         require PACKAGE;
-        { my %cache;
+	{ my %cache;
           tie %cache, PACKAGE, ARGS...;
-        }
+	}
         memoize ... [HASH => \%cache];
 
 =item C<FAULT>
@@ -714,8 +714,8 @@ C<FAULT> means that you never expect to call the function in scalar
 (or list) context, and that if C<Memoize> detects such a call, it
 should abort the program.  The error message is one of
 
-        `foo' function called in forbidden list context at line ...
-        `foo' function called in forbidden scalar context at line ...
+	`foo' function called in forbidden list context at line ...
+	`foo' function called in forbidden scalar context at line ...
 
 =item C<MERGE>
 
@@ -729,7 +729,7 @@ but it probably does something useful.
 
 Consider this function:
 
-        sub pi { 3; }
+	sub pi { 3; }
 
 Normally, the following code will result in two calls to C<pi>:
 
@@ -756,17 +756,17 @@ keep the two sets of return values separate.  For example:
 
         tie my %cache => 'MLDBM', 'DB_File', $filename, ...;
 
-        memoize 'myfunc',
-          NORMALIZER => 'n',
-          SCALAR_CACHE => [HASH => \%cache],
-          LIST_CACHE => MERGE,
-        ;
+	memoize 'myfunc',
+	  NORMALIZER => 'n',
+	  SCALAR_CACHE => [HASH => \%cache],
+	  LIST_CACHE => MERGE,
+	;
 
-        sub n {
-          my $context = wantarray() ? 'L' : 'S';
-          # ... now compute the hash key from the arguments ...
-          $hashkey = "$context:$hashkey";
-        }
+	sub n {
+	  my $context = wantarray() ? 'L' : 'S';
+	  # ... now compute the hash key from the arguments ...
+	  $hashkey = "$context:$hashkey";
+	}
 
 This normalizer function will store scalar context return values in
 the disk file under keys that begin with C<S:>, and list context
@@ -812,7 +812,7 @@ method, this will cause a run-time error.
 An alternative approach to cache flushing is to use the C<HASH> option
 (see above) to request that C<Memoize> use a particular hash variable
 as its cache.  Then you can examine or modify the hash at any time in
-any way you desire.  You may flush the cache by using C<%hash = ()>.
+any way you desire.  You may flush the cache by using C<%hash = ()>. 
 
 =head1 CAVEATS
 
@@ -827,9 +827,9 @@ state other than its own arguments, such as global variables, the time
 of day, or file input.  These functions will not produce correct
 results when memoized.  For a particularly easy example:
 
-        sub f {
-          time;
-        }
+	sub f {
+	  time;
+	}
 
 This function takes no arguments, and as far as C<Memoize> is
 concerned, it always returns the same result.  C<Memoize> is wrong, of
@@ -841,11 +841,11 @@ every time you call it after that.
 
 Do not memoize a function with side effects.
 
-        sub f {
-          my ($a, $b) = @_;
+	sub f {
+	  my ($a, $b) = @_;
           my $s = $a + $b;
-          print "$a + $b = $s.\n";
-        }
+	  print "$a + $b = $s.\n";
+	}
 
 This function accepts two arguments, adds them, and prints their sum.
 Its return value is the numuber of characters it printed, but you
@@ -864,19 +864,19 @@ Consider these functions:  C<getusers> returns a list of users somehow,
 and then C<main> throws away the first user on the list and prints the
 rest:
 
-        sub main {
-          my $userlist = getusers();
-          shift @$userlist;
-          foreach $u (@$userlist) {
-            print "User $u\n";
-          }
-        }
+	sub main {
+	  my $userlist = getusers();
+	  shift @$userlist;
+	  foreach $u (@$userlist) {
+	    print "User $u\n";
+	  }
+	}
 
-        sub getusers {
-          my @users;
-          # Do something to get a list of users;
-          \@users;  # Return reference to list.
-        }
+	sub getusers {
+	  my @users;
+	  # Do something to get a list of users;
+	  \@users;  # Return reference to list.
+	}
 
 If you memoize C<getusers> here, it will work right exactly once.  The
 reference to the users list will be stored in the memo table.  C<main>
@@ -889,15 +889,15 @@ and shorter every time you call C<main>.
 
 Similarly, this:
 
-        $u1 = getusers();
-        $u2 = getusers();
-        pop @$u1;
+	$u1 = getusers();    
+	$u2 = getusers();    
+	pop @$u1;
 
 will modify $u2 as well as $u1, because both variables are references
 to the same array.  Had C<getusers> not been memoized, $u1 and $u2
 would have referred to different arrays.
 
-=item *
+=item * 
 
 Do not memoize a very simple function.
 
@@ -950,10 +950,10 @@ memoize the function, and stored back at the time you unmemoize the
 function (or when your program exits):
 
         tie my %cache => 'Memoize::Storable', $filename;
-        memoize 'function', SCALAR_CACHE => [HASH => \%cache];
+	memoize 'function', SCALAR_CACHE => [HASH => \%cache];
 
         tie my %cache => 'Memoize::Storable', $filename, 'nstore';
-        memoize 'function', SCALAR_CACHE => [HASH => \%cache];
+	memoize 'function', SCALAR_CACHE => [HASH => \%cache];
 
 Include the `nstore' option to have the C<Storable> database written
 in `network order'.  (See L<Storable> for more details about this.)

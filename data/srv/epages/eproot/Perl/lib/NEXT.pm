@@ -6,28 +6,28 @@ use overload ();
 
 sub NEXT::ELSEWHERE::ancestors
 {
-        my @inlist = shift;
-        my @outlist = ();
-        while (my $next = shift @inlist) {
-                push @outlist, $next;
-                no strict 'refs';
-                unshift @inlist, @{"$outlist[-1]::ISA"};
-        }
-        return @outlist;
+	my @inlist = shift;
+	my @outlist = ();
+	while (my $next = shift @inlist) {
+		push @outlist, $next;
+		no strict 'refs';
+		unshift @inlist, @{"$outlist[-1]::ISA"};
+	}
+	return @outlist;
 }
 
 sub NEXT::ELSEWHERE::ordered_ancestors
 {
-        my @inlist = shift;
-        my @outlist = ();
-        while (my $next = shift @inlist) {
-                push @outlist, $next;
-                no strict 'refs';
-                push @inlist, @{"$outlist[-1]::ISA"};
-        }
-        return sort { $a->isa($b) ? -1
-                    : $b->isa($a) ? +1
-                    :                0 } @outlist;
+	my @inlist = shift;
+	my @outlist = ();
+	while (my $next = shift @inlist) {
+		push @outlist, $next;
+		no strict 'refs';
+		push @inlist, @{"$outlist[-1]::ISA"};
+	}
+	return sort { $a->isa($b) ? -1
+	            : $b->isa($a) ? +1
+	            :                0 } @outlist;
 }
 
 sub NEXT::ELSEWHERE::buildAUTOLOAD
@@ -100,13 +100,13 @@ sub NEXT::ELSEWHERE::buildAUTOLOAD
 
 no strict 'vars';
 package NEXT;                                  NEXT::ELSEWHERE::buildAUTOLOAD();
-package NEXT::UNSEEN;           @ISA = 'NEXT';     NEXT::ELSEWHERE::buildAUTOLOAD();
-package NEXT::DISTINCT;         @ISA = 'NEXT';     NEXT::ELSEWHERE::buildAUTOLOAD();
-package NEXT::ACTUAL;           @ISA = 'NEXT';     NEXT::ELSEWHERE::buildAUTOLOAD();
-package NEXT::ACTUAL::UNSEEN;   @ISA = 'NEXT'; NEXT::ELSEWHERE::buildAUTOLOAD();
-package NEXT::ACTUAL::DISTINCT; @ISA = 'NEXT'; NEXT::ELSEWHERE::buildAUTOLOAD();
-package NEXT::UNSEEN::ACTUAL;   @ISA = 'NEXT'; NEXT::ELSEWHERE::buildAUTOLOAD();
-package NEXT::DISTINCT::ACTUAL; @ISA = 'NEXT'; NEXT::ELSEWHERE::buildAUTOLOAD();
+package NEXT::UNSEEN;		@ISA = 'NEXT';     NEXT::ELSEWHERE::buildAUTOLOAD();
+package NEXT::DISTINCT;		@ISA = 'NEXT';     NEXT::ELSEWHERE::buildAUTOLOAD();
+package NEXT::ACTUAL;		@ISA = 'NEXT';     NEXT::ELSEWHERE::buildAUTOLOAD();
+package NEXT::ACTUAL::UNSEEN;	@ISA = 'NEXT'; NEXT::ELSEWHERE::buildAUTOLOAD();
+package NEXT::ACTUAL::DISTINCT;	@ISA = 'NEXT'; NEXT::ELSEWHERE::buildAUTOLOAD();
+package NEXT::UNSEEN::ACTUAL;	@ISA = 'NEXT'; NEXT::ELSEWHERE::buildAUTOLOAD();
+package NEXT::DISTINCT::ACTUAL;	@ISA = 'NEXT'; NEXT::ELSEWHERE::buildAUTOLOAD();
 
 package EVERY;
 
@@ -221,7 +221,7 @@ NEXT.pm - Provide a pseudo-class NEXT (et al) that allows method redispatch
 
     my $obj = bless {}, "D";
 
-    $obj->method();             # Calls D::method, A::method, C::method
+    $obj->method();		# Calls D::method, A::method, C::method
     $obj->missing_method(); # Calls D::AUTOLOAD, B::AUTOLOAD, C::AUTOLOAD
 
     # Clean-up calls D::DESTROY, B::DESTROY, A::DESTROY, C::DESTROY
@@ -278,27 +278,27 @@ find a "next" method to call.
 
 To do this, simple invoke the redispatch as:
 
-        $self->NEXT::ACTUAL::method();
+	$self->NEXT::ACTUAL::method();
 
 rather than:
 
-        $self->NEXT::method();
+	$self->NEXT::method();
 
 The C<ACTUAL> tells C<NEXT> that there must actually be a next method to call,
 or it should throw an exception.
 
 C<NEXT::ACTUAL> is most commonly used in C<AUTOLOAD> methods, as a means to
-decline an C<AUTOLOAD> request, but preserve the normal exception-on-failure
+decline an C<AUTOLOAD> request, but preserve the normal exception-on-failure 
 semantics:
 
-        sub AUTOLOAD {
-                if ($AUTOLOAD =~ /foo|bar/) {
-                        # handle here
-                }
-                else {  # try elsewhere
-                        shift()->NEXT::ACTUAL::AUTOLOAD(@_);
-                }
-        }
+	sub AUTOLOAD {
+		if ($AUTOLOAD =~ /foo|bar/) {
+			# handle here
+		}
+		else {  # try elsewhere
+			shift()->NEXT::ACTUAL::AUTOLOAD(@_);
+		}
+	}
 
 By using C<NEXT::ACTUAL>, if there is no other C<AUTOLOAD> to handle the
 method call, an exception will be thrown (as usually happens in the absence of
@@ -309,30 +309,30 @@ a suitable C<AUTOLOAD>).
 
 If C<NEXT> redispatching is used in the methods of a "diamond" class hierarchy:
 
-        #     A   B
-        #    / \ /
-        #   C   D
-        #    \ /
-        #     E
+	#     A   B
+	#    / \ /
+	#   C   D
+	#    \ /
+	#     E
 
-        use NEXT;
+	use NEXT;
 
-        package A;
-        sub foo { print "called A::foo\n"; shift->NEXT::foo() }
+	package A;                 
+	sub foo { print "called A::foo\n"; shift->NEXT::foo() }
 
-        package B;
-        sub foo { print "called B::foo\n"; shift->NEXT::foo() }
+	package B;                 
+	sub foo { print "called B::foo\n"; shift->NEXT::foo() }
 
-        package C; @ISA = qw( A );
-        sub foo { print "called C::foo\n"; shift->NEXT::foo() }
+	package C; @ISA = qw( A );
+	sub foo { print "called C::foo\n"; shift->NEXT::foo() }
 
-        package D; @ISA = qw(A B);
-        sub foo { print "called D::foo\n"; shift->NEXT::foo() }
+	package D; @ISA = qw(A B);
+	sub foo { print "called D::foo\n"; shift->NEXT::foo() }
 
-        package E; @ISA = qw(C D);
-        sub foo { print "called E::foo\n"; shift->NEXT::foo() }
+	package E; @ISA = qw(C D);
+	sub foo { print "called E::foo\n"; shift->NEXT::foo() }
 
-        E->foo();
+	E->foo();
 
 then derived classes may (re-)inherit base-class methods through two or
 more distinct paths (e.g. in the way C<E> inherits C<A::foo> twice --
@@ -350,7 +350,7 @@ inherited. For example, the above code prints:
 (i.e. C<A::foo> is called twice).
 
 In some cases this I<may> be the desired effect within a diamond hierarchy,
-but in others (e.g. for destructors) it may be more appropriate to
+but in others (e.g. for destructors) it may be more appropriate to 
 call each method only once during a sequence of redispatches.
 
 To cover such cases, you can redispatch methods via:
@@ -366,10 +366,10 @@ once. That is, to skip any classes in the hierarchy that it has
 already visited during redispatch. So, for example, if the
 previous example were rewritten:
 
-        package A;
+        package A;                 
         sub foo { print "called A::foo\n"; shift->NEXT::DISTINCT::foo() }
 
-        package B;
+        package B;                 
         sub foo { print "called B::foo\n"; shift->NEXT::DISTINCT::foo() }
 
         package C; @ISA = qw( A );
@@ -384,7 +384,7 @@ previous example were rewritten:
         E->foo();
 
 then it would print:
-
+        
         called E::foo
         called C::foo
         called A::foo
@@ -414,29 +414,29 @@ Yet another pseudo-class that NEXT.pm provides is C<EVERY>.
 Its behaviour is considerably simpler than that of the C<NEXT> family.
 A call to:
 
-        $obj->EVERY::foo();
+	$obj->EVERY::foo();
 
 calls I<every> method named C<foo> that the object in C<$obj> has inherited.
 That is:
 
-        use NEXT;
+	use NEXT;
 
-        package A; @ISA = qw(B D X);
-        sub foo { print "A::foo " }
+	package A; @ISA = qw(B D X);
+	sub foo { print "A::foo " }
 
-        package B; @ISA = qw(D X);
-        sub foo { print "B::foo " }
+	package B; @ISA = qw(D X);
+	sub foo { print "B::foo " }
 
-        package X; @ISA = qw(D);
-        sub foo { print "X::foo " }
+	package X; @ISA = qw(D);
+	sub foo { print "X::foo " }
 
-        package D;
-        sub foo { print "D::foo " }
+	package D;
+	sub foo { print "D::foo " }
 
-        package main;
+	package main;
 
-        my $obj = bless {}, 'A';
-        $obj->EVERY::foo();        # prints" A::foo B::foo X::foo D::foo
+	my $obj = bless {}, 'A';
+	$obj->EVERY::foo();        # prints" A::foo B::foo X::foo D::foo
 
 Prefixing a method call with C<EVERY::> causes every method in the
 object's hierarchy with that name to be invoked. As the above example
@@ -458,11 +458,11 @@ initializers) where it's more appropriate that the least-derived methods be
 called first (as more-derived methods may rely on the behaviour of their
 "ancestors"). In that case, instead of using the C<EVERY> pseudo-class:
 
-        $obj->EVERY::foo();        # prints" A::foo B::foo X::foo D::foo
+	$obj->EVERY::foo();        # prints" A::foo B::foo X::foo D::foo      
 
 you can use the C<EVERY::LAST> pseudo-class:
 
-        $obj->EVERY::LAST::foo();  # prints" D::foo X::foo B::foo A::foo
+	$obj->EVERY::LAST::foo();  # prints" D::foo X::foo B::foo A::foo      
 
 which reverses the order of method call.
 
@@ -498,11 +498,11 @@ left-most-depth-first-est one):
         package Base;
         sub DESTROY { $_[0]->EVERY::Destroy }
 
-        package Derived1;
+        package Derived1; 
         use base 'Base';
         sub Destroy {...}
 
-        package Derived2;
+        package Derived2; 
         use base 'Base', 'Derived1';
         sub Destroy {...}
 
@@ -516,24 +516,24 @@ a new object is invoked:
 
         package Base;
         sub new {
-                my ($class, %args) = @_;
-                my $obj = bless {}, $class;
-                $obj->EVERY::LAST::Init(\%args);
-        }
+		my ($class, %args) = @_;
+		my $obj = bless {}, $class;
+		$obj->EVERY::LAST::Init(\%args);
+	}
 
-        package Derived1;
+        package Derived1; 
         use base 'Base';
         sub Init {
-                my ($argsref) = @_;
-                ...
-        }
+		my ($argsref) = @_;
+		...
+	}
 
-        package Derived2;
+        package Derived2; 
         use base 'Base', 'Derived1';
         sub Init {
-                my ($argsref) = @_;
-                ...
-        }
+		my ($argsref) = @_;
+		...
+	}
 
 et cetera. Every derived class than needs some additional initialization
 behaviour simply adds its own C<Init> method (I<not> a C<new> method),

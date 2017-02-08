@@ -10,63 +10,63 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]+)(\d)(B\d\d)?$/i) {
-                return $2 == $self->_compute_checkdigits($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]+)(\d)(B\d\d)?$/i) {
+		return $2 == $self->_compute_checkdigits($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]+)(?:.(B\d\d))?$/
-           and (my $cd = $self->_compute_checkdigits($1)) ne '') {
-                my $tail = $2 || '';
-                return $1 . $cd . $tail;
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]+)(?:.(B\d\d))?$/
+	   and (my $cd = $self->_compute_checkdigits($1)) ne '') {
+		my $tail = $2 || '';
+		return $1 . $cd . $tail;
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]+)(\d)(B\d\d)?$/i) {
-                my $tail = $3 ? ".$3" : '';
-                return $1 . $tail if ($2 == $self->_compute_checkdigits($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]+)(\d)(B\d\d)?$/i) {
+		my $tail = $3 ? ".$3" : '';
+		return $1 . $tail if ($2 == $self->_compute_checkdigits($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]+)(\d)(B\d\d)?$/) {
-                return $2 if ($2 == $self->_compute_checkdigits($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]+)(\d)(B\d\d)?$/) {
+		return $2 if ($2 == $self->_compute_checkdigits($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigits {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        $number =~ s/\.//g;
+	$number =~ s/\.//g;
 
-        my @digits = split(//,$number);
-        my $len = scalar(@digits) + 1;
-        my $sum = 0;
-        for (my $i = 0; $i <= $#digits; $i++) {
-                $sum += ($len - $i) * $digits[$i];
-        }
-        $sum %= 11;
-        return ($sum == 10) ? '' : $sum;
+	my @digits = split(//,$number);
+	my $len = scalar(@digits) + 1;
+	my $sum = 0;
+	for (my $i = 0; $i <= $#digits; $i++) {
+		$sum += ($len - $i) * $digits[$i];
+	}
+	$sum %= 11;
+	return ($sum == 10) ? '' : $sum;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -85,10 +85,10 @@ CheckDigits::M11_011 - compute check digits for VAT Registration Number (NL)
   $ustid = CheckDigits('ustid_nl');
 
   if ($ustid->is_valid('123456782')) {
-        # do something
+	# do something
   }
   if ($ustid->is_valid('123456782B04')) {
-        # do something
+	# do something
   }
 
   $cn = $ustid->complete('12345678');
@@ -105,7 +105,7 @@ CheckDigits::M11_011 - compute check digits for VAT Registration Number (NL)
   # $bn = '12345678';
   $bn = $ustid->basenumber('123456782B04');
   # $bn = '12345678.B04';
-
+  
 =head1 DESCRIPTION
 
 This VATRN has 12 "digits", the third last must be a I<B>, the fourth

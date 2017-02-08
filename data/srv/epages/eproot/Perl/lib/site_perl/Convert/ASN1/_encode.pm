@@ -55,8 +55,8 @@ sub _encode {
       $optn,
       $op,
       (UNIVERSAL::isa($stash, 'HASH')
-        ? ($stash, defined($var) ? $stash->{$var} : undef)
-        : ({}, $stash)),
+	? ($stash, defined($var) ? $stash->{$var} : undef)
+	: ({}, $stash)),
       $_[4],
       $op->[cLOOP],
       $path,
@@ -227,7 +227,7 @@ sub _enc_real {
   _enc_integer(undef, undef, undef, $exponent, $eExp);
 
   # $eExp will br prefixed by a length byte
-
+  
   if (5 > length $eExp) {
     $eExp =~ s/\A.//s;
     $first |= length($eExp)-1;
@@ -259,18 +259,18 @@ sub _enc_sequence {
       push @{$_[6]}, -1;
 
       foreach my $var (@{$_[3]}) {
-        $_[6]->[-1]++;
-        $_[4] .= $tag;
+	$_[6]->[-1]++;
+	$_[4] .= $tag;
 
-        &{$enc}(
-          $_[0], # $optn
-          $op,   # $op
-          $_[2], # $stash
-          $var,  # $var
-          $_[4], # $buf
-          $loop, # $loop
-          $_[6], # $path
-        );
+	&{$enc}(
+	  $_[0], # $optn
+	  $op,   # $op
+	  $_[2], # $stash
+	  $var,  # $var
+	  $_[4], # $buf
+	  $loop, # $loop
+	  $_[6], # $path
+	);
       }
       pop @{$_[6]};
     }
@@ -316,7 +316,7 @@ sub _enc_time {
     else {
       @time = localtime($_[3]);
       my @g = gmtime($_[3]);
-
+      
       $offset = ($time[1] - $g[1]) + ($time[2] - $g[2]) * 60;
       $time = $_[3] + $offset*60;
     }

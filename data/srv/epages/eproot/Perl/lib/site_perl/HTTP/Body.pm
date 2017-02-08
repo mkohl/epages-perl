@@ -32,13 +32,13 @@ HTTP::Body - HTTP Body Parser
 =head1 SYNOPSIS
 
     use HTTP::Body;
-
+    
     sub handler : method {
         my ( $class, $r ) = @_;
 
         my $content_type   = $r->headers_in->get('Content-Type');
         my $content_length = $r->headers_in->get('Content-Length');
-
+        
         my $body   = HTTP::Body->new( $content_type, $content_length );
         my $length = $content_length;
 
@@ -47,10 +47,10 @@ HTTP::Body - HTTP Body Parser
             $r->read( my $buffer, ( $length < 8192 ) ? $length : 8192 );
 
             $length -= length($buffer);
-
+            
             $body->add($buffer);
         }
-
+        
         my $uploads     = $body->upload;     # hashref
         my $params      = $body->param;      # hashref
         my $param_order = $body->param_order # arrayref
@@ -76,9 +76,9 @@ at DESTROY-time.
 
 =head1 METHODS
 
-=over 4
+=over 4 
 
-=item new
+=item new 
 
 Constructor. Takes content type and content length as parameters,
 returns a L<HTTP::Body> object.
@@ -127,14 +127,14 @@ sub new {
 
 sub DESTROY {
     my $self = shift;
-
+    
     if ( $self->{cleanup} ) {
         my @temps = ();
         for my $upload ( values %{ $self->{upload} } ) {
             push @temps, map { $_->{tempname} || () }
                 ( ref $upload eq 'ARRAY' ? @{$upload} : $upload );
         }
-
+        
         unlink map { $_ } grep { -e $_ } @temps;
     }
 }
@@ -148,26 +148,26 @@ length before adding self.
 
 sub add {
     my $self = shift;
-
+    
     if ( $self->{chunked} ) {
         $self->{chunk_buffer} .= $_[0];
-
+        
         while ( $self->{chunk_buffer} =~ m/^([\da-fA-F]+).*\x0D\x0A/ ) {
             my $chunk_len = hex($1);
-
+            
             if ( $chunk_len == 0 ) {
                 # Strip chunk len
                 $self->{chunk_buffer} =~ s/^([\da-fA-F]+).*\x0D\x0A//;
-
+                
                 # End of data, there may be trailing headers
                 if (  my ($headers) = $self->{chunk_buffer} =~ m/(.*)\x0D\x0A/s ) {
                     if ( my $message = HTTP::Message->parse( $headers ) ) {
                         $self->{trailing_headers} = $message->headers;
                     }
                 }
-
+                
                 $self->{chunk_buffer} = '';
-
+                
                 # Set content_length equal to the amount of data we read,
                 # so the spin methods can finish up.
                 $self->{content_length} = $self->{length};
@@ -177,13 +177,13 @@ sub add {
                 if ( length( $self->{chunk_buffer} ) >= $chunk_len ) {
                     # Strip chunk len
                     $self->{chunk_buffer} =~ s/^([\da-fA-F]+).*\x0D\x0A//;
-
+                    
                     # Pull chunk data out of chunk buffer into real buffer
                     $self->{buffer} .= substr $self->{chunk_buffer}, 0, $chunk_len, '';
-
+                
                     # Strip remaining CRLF
                     $self->{chunk_buffer} =~ s/^\x0D\x0A//;
-
+                
                     $self->{length} += $chunk_len;
                 }
                 else {
@@ -191,26 +191,26 @@ sub add {
                     return;
                 }
             }
-
+            
             unless ( $self->{state} eq 'done' ) {
                 $self->spin;
             }
         }
-
+        
         return;
     }
-
+    
     my $cl = $self->content_length;
 
     if ( defined $_[0] ) {
         $self->{length} += length( $_[0] );
-
+        
         # Don't allow buffer data to exceed content-length
         if ( $self->{length} > $cl ) {
             $_[0] = substr $_[0], 0, $cl - $self->{length};
             $self->{length} = $cl;
         }
-
+        
         $self->{buffer} .= $_[0];
     }
 
@@ -387,7 +387,7 @@ sub upload {
     return $self->{upload};
 }
 
-=item tmpdir
+=item tmpdir 
 
 Specify a different path for temporary files.  Defaults to the system temporary path.
 
@@ -445,7 +445,7 @@ Torsten Raudssus <torsten@raudssus.de>
 
 =head1 LICENSE
 
-This library is free software. You can redistribute it and/or modify
+This library is free software. You can redistribute it and/or modify 
 it under the same terms as perl itself.
 
 =cut

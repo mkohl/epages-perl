@@ -156,7 +156,7 @@ BEGIN {
       # using it as a string breaks the versiony magic
       # but an untouched value works fine
       # ok, if it has literal dots it is a number
-      my $version =
+      my $version = 
         $module eq '5' ? '5.000' :
         $module =~ m/^5(?:\.|$)/ ? $module : sprintf("%vd", $module);
       push(@$list, {file => $f, line => $l, ver => $version,

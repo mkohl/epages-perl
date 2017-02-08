@@ -32,13 +32,13 @@ Pod::Usage, pod2usage() - print a usage message from embedded pod documentation
   pod2usage($exit_status);
 
   pod2usage( { -message => $message_text ,
-               -exitval => $exit_status  ,
-               -verbose => $verbose_level,
+               -exitval => $exit_status  ,  
+               -verbose => $verbose_level,  
                -output  => $filehandle } );
 
   pod2usage(   -msg     => $message_text ,
-               -exitval => $exit_status  ,
-               -verbose => $verbose_level,
+               -exitval => $exit_status  ,  
+               -verbose => $verbose_level,  
                -output  => $filehandle   );
 
   pod2usage(   -verbose => 2,
@@ -79,7 +79,7 @@ keys:
 =item C<-msg>
 
 The text of a message to print immediately prior to printing the
-program's usage message.
+program's usage message. 
 
 =item C<-exitval>
 
@@ -108,7 +108,7 @@ when -verbose is set to 99, e.g. C<"NAME|SYNOPSIS|DESCRIPTION|VERSION">.
 
 Alternatively, an array reference of section specifications can be used:
 
-  pod2usage(-verbose => 99,
+  pod2usage(-verbose => 99, 
             -sections => [ qw(fred fred/subsection) ] );
 
 =item C<-output>
@@ -144,7 +144,7 @@ MSWin32 and DOS).
 By default, Pod::Usage will call L<perldoc> when -verbose >= 2 is
 specified. This does not work well e.g. if the script was packed
 with L<PAR>. The -noperldoc option suppresses the external call to
-L<perldoc> and uses the simple text formatter (L<Pod::Text>) to
+L<perldoc> and uses the simple text formatter (L<Pod::Text>) to 
 output the POD.
 
 =back
@@ -568,7 +568,7 @@ sub pod2usage {
        print { $opts{'-output'} } ($opts{'-message'}, "\n") if($opts{'-message'});
        if(defined $opts{-input} && $opts{-input} =~ /^\s*(\S.*?)\s*$/) {
          # the perldocs back to 5.005 should all have -F
-         # without -F there are warnings in -T scripts
+	 # without -F there are warnings in -T scripts
          system($progpath, '-F', $1);
          if($?) {
            # RT16091: fall back to more if perldoc failed

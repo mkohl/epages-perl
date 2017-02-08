@@ -21,29 +21,29 @@ sub look {
     $key = lc $key if $fold;
     $max = int($size / $blksize);
     while ($max - $min > 1) {
-        $mid = int(($max + $min) / 2);
-        seek(FH,$mid * $blksize,0);
-        $_ = <FH> if $mid;              # probably a partial line
-        $_ = <FH>;
-        chop;
-        s/[^\w\s]//g if $dict;
-        $_ = lc $_ if $fold;
-        if ($_ lt $key) {
-            $min = $mid;
-        }
-        else {
-            $max = $mid;
-        }
+	$mid = int(($max + $min) / 2);
+	seek(FH,$mid * $blksize,0);
+	$_ = <FH> if $mid;		# probably a partial line
+	$_ = <FH>;
+	chop;
+	s/[^\w\s]//g if $dict;
+	$_ = lc $_ if $fold;
+	if ($_ lt $key) {
+	    $min = $mid;
+	}
+	else {
+	    $max = $mid;
+	}
     }
     $min *= $blksize;
     seek(FH,$min,0);
     <FH> if $min;
     while (<FH>) {
-        chop;
-        s/[^\w\s]//g if $dict;
-        $_ = lc $_ if $fold;
-        last if $_ ge $key;
-        $min = tell(FH);
+	chop;
+	s/[^\w\s]//g if $dict;
+	$_ = lc $_ if $fold;
+	last if $_ ge $key;
+	$min = tell(FH);
     }
     seek(FH,$min,0);
     $min;

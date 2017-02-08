@@ -176,7 +176,7 @@ C</wiki> by:
 
   # MyWikiApp looks at PATH_INFO and handles /index and /page/*
   my $wiki_app = sub { MyWikiApp->run(@_) };
-
+  
   use Plack::App::URLMap;
   my $app = Plack::App::URLMap->new;
   $app->mount("/wiki" => $wiki_app);

@@ -65,7 +65,7 @@ SCOPE: {
           $_ = ord;
           exists $escapes{$_}
           ? $escapes{$_}
-          : $Text::Diff::Config::Output_Unicode
+          : $Text::Diff::Config::Output_Unicode 
           ? $c
           : sprintf( "\\x{%04x}", $_ );
       } split //, shift;
@@ -110,7 +110,7 @@ sub hunk {
     my @elts;
     for ( 0..$#A ) {
         my ( $A, $B ) = (shift @A, shift @B );
-
+        
         ## Do minimal cleaning on identical elts so these look "normal":
         ## tabs are expanded, trailing newelts removed, etc.  For differing
         ## elts, make invisible characters visible if the invisible characters
@@ -215,9 +215,9 @@ sub file_footer {
     my $options = pop;
 
     my @heading_lines;
-
+    
     if ( defined $options->{FILENAME_A} || defined $options->{FILENAME_B} ) {
-        push @heading_lines, [
+        push @heading_lines, [ 
             map(
                 {
                     ( "", escape( defined $_ ? $_ : "<undef>" ) );
@@ -323,7 +323,7 @@ __END__
 =head1 SYNOPSIS
 
   use Text::Diff;
-
+  
   diff \@a, $b { STYLE => "Table" };
 
 =head1 DESCRIPTION

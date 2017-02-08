@@ -10,16 +10,16 @@ use strict;
 require Exporter;
 
 #-----------------------------------------------------------------------
-#       Public Global Variables
+#	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw($VERSION @ISA @EXPORT);
 $VERSION   = sprintf("%d.%02d", q$Revision: 2.7 $ =~ /(\d+)\.(\d+)/);
-@ISA    = qw(Exporter);
+@ISA	= qw(Exporter);
 @EXPORT = qw(LOCALE_CODE_ALPHA_2 LOCALE_CODE_ALPHA_3 LOCALE_CODE_NUMERIC
-                LOCALE_CODE_DEFAULT);
+		LOCALE_CODE_DEFAULT);
 
 #-----------------------------------------------------------------------
-#       Constants
+#	Constants
 #-----------------------------------------------------------------------
 use constant LOCALE_CODE_ALPHA_2 => 1;
 use constant LOCALE_CODE_ALPHA_3 => 2;

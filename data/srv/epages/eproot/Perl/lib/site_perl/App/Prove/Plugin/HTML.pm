@@ -34,12 +34,12 @@ sub load {
     # parse the args
     my %TFH_args;
     foreach my $arg (@args) {
-        my ($key, $val) = split(/:/, $arg, 2);
-        if (grep {$key eq $_} qw(css_uri js_uri)) {
-            push @{ $TFH_args{$key . 's'}}, $val;
-        } else {
-            $TFH_args{$key} = $val;
-        }
+	my ($key, $val) = split(/:/, $arg, 2);
+	if (grep {$key eq $_} qw(css_uri js_uri)) {
+	    push @{ $TFH_args{$key . 's'}}, $val;
+	} else {
+	    $TFH_args{$key} = $val;
+	}
     }
 
     # set the formatter to use
@@ -48,8 +48,8 @@ sub load {
     # set ENV vars in order to pass args to TAP::Formatter::HTML
     # horrible, but it's currently the only way :-/
     while (my ($key, $val) = each %TFH_args) {
-        $val = join( ':', @$val ) if (ref($val) eq 'ARRAY');
-        $ENV{"TAP_FORMATTER_HTML_".uc($key)} = $val;
+	$val = join( ':', @$val ) if (ref($val) eq 'ARRAY');
+	$ENV{"TAP_FORMATTER_HTML_".uc($key)} = $val;
     }
 
     # we're done

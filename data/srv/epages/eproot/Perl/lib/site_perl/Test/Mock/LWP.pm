@@ -23,7 +23,7 @@ Make LWP packages to make testing easier.
 
     # Validate args passed to request constructor
     is_deeply $Mock_request->new_args, \@expected_args;
-
+    
     # Validate request headers
     is_deeply [ $Mock_req->next_call ],
               [ 'header', [ 'Accept', 'text/plain' ] ];
@@ -73,7 +73,7 @@ BEGIN {
         my ($real, $imports) = @$c;
         if (!$mo->check_class_loaded($real)) {
             my $mock_class = "Test::Mock::$real";
-            eval "require $mock_class";
+            eval "require $mock_class"; 
             if ($@) {
                 warn "error during require $mock_class: $@" if $@;
                 next;

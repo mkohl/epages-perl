@@ -39,7 +39,7 @@ my %code = (
       "  return \$_[0]->{%s} unless \$#_ > 0;\n",
     set =>
       "  \$_[0]->{%s} = \$_[1];\n",
-    sub_end =>
+    sub_end => 
       "  return \$_[0]->{%s};\n}\n",
 );
 
@@ -144,9 +144,9 @@ $_new_error = sub {
     $error->arguments([@_]);
     return $error;
 };
-
+    
 $parse_arguments = sub {
-    my $paired_arguments = shift || [];
+    my $paired_arguments = shift || []; 
     my ($args, @values) = ({}, ());
     my %pairs = map { ($_, 1) } @$paired_arguments;
     while (@_) {
@@ -158,7 +158,7 @@ $parse_arguments = sub {
             push @values, $elem;
         }
     }
-    return wantarray ? ($args, @values) : $args;
+    return wantarray ? ($args, @values) : $args;        
 };
 
 $default_as_code = sub {

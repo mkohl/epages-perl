@@ -36,11 +36,11 @@ if ($^O =~ /Win32/i) {
   # Hack to avoid this Win32 spewage:
   # Your vendor has not defined POSIX macro ECONNREFUSED
   my @pairs = (ECONNREFUSED => 10061, # "Unknown Error" Special Win32 Response?
-               ENOTCONN     => 10057,
-               ECONNRESET   => 10054,
-               EINPROGRESS  => 10036,
-               EWOULDBLOCK  => 10035,
-          );
+	       ENOTCONN     => 10057,
+	       ECONNRESET   => 10054,
+	       EINPROGRESS  => 10036,
+	       EWOULDBLOCK  => 10035,
+	  );
   while (my $name = shift @pairs) {
     my $value = shift @pairs;
     # When defined, these all are non-zero
@@ -239,28 +239,28 @@ sub bind
 sub mselect
 {
     if ($_[3] > 0 and $^O eq 'MSWin32') {
-        # On windows, select() doesn't process the message loop,
-        # but sleep() will, allowing alarm() to interrupt the latter.
-        # So we chop up the timeout into smaller pieces and interleave
-        # select() and sleep() calls.
-        my $t = $_[3];
-        my $gran = 0.5;  # polling granularity in seconds
-        my @args = @_;
-        while (1) {
-            $gran = $t if $gran > $t;
-            my $nfound = select($_[0], $_[1], $_[2], $gran);
-            undef $nfound if $nfound == -1;
-            $t -= $gran;
-            return $nfound if $nfound or !defined($nfound) or $t <= 0;
+	# On windows, select() doesn't process the message loop,
+	# but sleep() will, allowing alarm() to interrupt the latter.
+	# So we chop up the timeout into smaller pieces and interleave
+	# select() and sleep() calls.
+	my $t = $_[3];
+	my $gran = 0.5;  # polling granularity in seconds
+	my @args = @_;
+	while (1) {
+	    $gran = $t if $gran > $t;
+	    my $nfound = select($_[0], $_[1], $_[2], $gran);
+	    undef $nfound if $nfound == -1;
+	    $t -= $gran;
+	    return $nfound if $nfound or !defined($nfound) or $t <= 0;
 
-            sleep(0);
-            ($_[0], $_[1], $_[2]) = @args;
-        }
+	    sleep(0);
+	    ($_[0], $_[1], $_[2]) = @args;
+	}
     }
     else {
-        my $nfound = select($_[0], $_[1], $_[2], $_[3]);
-        undef $nfound if $nfound == -1;
-        return $nfound;
+	my $nfound = select($_[0], $_[1], $_[2], $_[3]);
+	undef $nfound if $nfound == -1;
+	return $nfound;
     }
 }
 
@@ -494,7 +494,7 @@ sub ping_icmp
           ($from_seq == $self->{"seq"})) {
         if ($from_type == ICMP_ECHOREPLY) {
           $ret = 1;
-          $done = 1;
+	  $done = 1;
         } elsif ($from_type == ICMP_UNREACHABLE) {
           $done = 1;
         }
@@ -627,9 +627,9 @@ sub tcp_connect
         vec($wbits, $self->{"fh"}->fileno, 1) = 1;
 
         my $nfound = mselect(undef,
-                            ($wout = $wbits),
-                            ($^O eq 'MSWin32' ? ($wexc = $wbits) : undef),
-                            $timeout);
+			    ($wout = $wbits),
+			    ($^O eq 'MSWin32' ? ($wexc = $wbits) : undef),
+			    $timeout);
         warn("select: $!") unless defined $nfound;
 
         if ($nfound && vec($wout, $self->{"fh"}->fileno, 1)) {
@@ -654,17 +654,17 @@ sub tcp_connect
           }
         } else {
           # the connection attempt timed out (or there were connect
-          # errors on Windows)
-          if ($^O =~ 'MSWin32') {
-              # If the connect will fail on a non-blocking socket,
-              # winsock reports ECONNREFUSED as an exception, and we
-              # need to fetch the socket-level error code via getsockopt()
-              # instead of using the thread-level error code that is in $!.
-              if ($nfound && vec($wexc, $self->{"fh"}->fileno, 1)) {
-                  $! = unpack("i", getsockopt($self->{"fh"}, SOL_SOCKET,
-                                              SO_ERROR));
-              }
-          }
+	  # errors on Windows)
+	  if ($^O =~ 'MSWin32') {
+	      # If the connect will fail on a non-blocking socket,
+	      # winsock reports ECONNREFUSED as an exception, and we
+	      # need to fetch the socket-level error code via getsockopt()
+	      # instead of using the thread-level error code that is in $!.
+	      if ($nfound && vec($wexc, $self->{"fh"}->fileno, 1)) {
+		  $! = unpack("i", getsockopt($self->{"fh"}, SOL_SOCKET,
+			                      SO_ERROR));
+	      }
+	  }
         }
       }
     } else {

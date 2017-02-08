@@ -1,8 +1,8 @@
 ;# timelocal.pl
 ;#
 ;# Usage:
-;#      $time = timelocal($sec,$min,$hours,$mday,$mon,$year);
-;#      $time = timegm($sec,$min,$hours,$mday,$mon,$year);
+;#	$time = timelocal($sec,$min,$hours,$mday,$mon,$year);
+;#	$time = timegm($sec,$min,$hours,$mday,$mon,$year);
 
 ;# This file has been superseded by the Time::Local library module.
 ;# It is implemented as a call to that module for backwards compatibility

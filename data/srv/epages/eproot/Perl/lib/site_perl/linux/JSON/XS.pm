@@ -26,7 +26,7 @@ JSON::XS - 正しくて高速な JSON シリアライザ/デシリアライザ
  # Note that JSON version 2.0 and above will automatically use JSON::XS
  # if available, at virtually no speed overhead either, so you should
  # be able to just:
-
+ 
  use JSON;
 
  # and do the same things, except that you have a pure-perl fallback now.

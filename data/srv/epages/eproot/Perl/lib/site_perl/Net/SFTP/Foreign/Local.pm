@@ -16,7 +16,7 @@ our @ISA = qw(Net::SFTP::Foreign::Common);
 sub new {
     my $class = shift;
     my $self = { status => 0,
-                 error => 0 };
+		 error => 0 };
     bless $self, $class;
 }
 
@@ -29,7 +29,7 @@ sub stat {
     $! = 0;
     my $a = Net::SFTP::Foreign::Attributes->new_from_stat(CORE::stat($_[1]));
     unless ($a) {
-        $_[0]->_set_error(SFTP_ERR_LOCAL_STAT_FAILED, "Couldn't stat local file '$_[1]'", $!);
+	$_[0]->_set_error(SFTP_ERR_LOCAL_STAT_FAILED, "Couldn't stat local file '$_[1]'", $!);
     }
     $a
 }
@@ -38,7 +38,7 @@ sub lstat {
     $! = 0;
     my $a = Net::SFTP::Foreign::Attributes->new_from_stat(CORE::lstat($_[1]));
     unless ($a) {
-        $_[0]->_set_error(SFTP_ERR_LOCAL_STAT_FAILED, "Couldn't stat local file '$_[1]'", $!);
+	$_[0]->_set_error(SFTP_ERR_LOCAL_STAT_FAILED, "Couldn't stat local file '$_[1]'", $!);
     }
     $a
 }
@@ -47,7 +47,7 @@ sub readlink {
     $! = 0;
     my $target = readlink $_[1];
     unless (defined $target) {
-        $_[0]->_set_error(SFTP_ERR_LOCAL_READLINK_FAILED, "Couldn't read link '$_[1]'", $!);
+	$_[0]->_set_error(SFTP_ERR_LOCAL_READLINK_FAILED, "Couldn't read link '$_[1]'", $!);
     }
     $target
 }
@@ -68,37 +68,37 @@ sub ls {
     my $atomic_readdir = delete $opts{atomic_readdir};
 
     my $wanted = delete $opts{_wanted} ||
-        _gen_wanted(delete $opts{wanted},
-                    delete $opts{no_wanted});
+	_gen_wanted(delete $opts{wanted},
+		    delete $opts{no_wanted});
 
     %opts and croak "invalid option(s) '".CORE::join("', '", keys %opts)."'";
 
     $! = 0;
 
     opendir(my $ldh, $dir)
-        or return undef;
+	or return undef;
 
     my @dir;
     while (defined(my $part = readdir $ldh)) {
-        my $fn = File::Spec->join($dir, $part);
-        my $a = $self->lstat($fn);
-        if ($a and $follow_links and S_ISLNK($a->perm)) {
-            if (my $fa = $self->stat($fn)) {
-                $a = $fa;
-            }
-            else {
-                $! = 0;
-            }
-        }
-        my $entry = { filename => $part,
-                      a => $a };
-        if ($atomic_readdir or !$wanted or $wanted->($self, $entry)) {
-            push @dir, $entry;
-        }
+	my $fn = File::Spec->join($dir, $part);
+	my $a = $self->lstat($fn);
+	if ($a and $follow_links and S_ISLNK($a->perm)) {
+	    if (my $fa = $self->stat($fn)) {
+		$a = $fa;
+	    }
+	    else {
+		$! = 0;
+	    }
+	}
+	my $entry = { filename => $part,
+		      a => $a };
+	if ($atomic_readdir or !$wanted or $wanted->($self, $entry)) {
+	    push @dir, $entry;
+	}
     }
 
     if ($atomic_readdir and $wanted) {
-        @dir = grep { $wanted->($self, $_) } @dir;
+	@dir = grep { $wanted->($self, $_) } @dir;
     }
 
     _sort_entries(\@dir) if $ordered;

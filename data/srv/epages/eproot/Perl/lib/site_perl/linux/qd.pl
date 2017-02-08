@@ -2,18 +2,18 @@
 
 # $Id: qd.pl,v 1.1.1.1 2001-12-06 23:25:48 lstein Exp $
 
-# This is a package of routines that let you create Macintosh
+# This is a package of routines that let you create Macintosh 
 # PICT files from within perl.  It implements a subset of Quickdraw
 # drawing commands, primarily those related to line drawing, rectangles,
-# ovals, polygons, and text.  Flagrantly absent are: regions and the
+# ovals, polygons, and text.  Flagrantly absent are: regions and the 
 # snazzy color transfer modes.  Regions are absent because they were
 # more trouble than I had time for, and the transfer modes because I
-# never use them.  (The latter shouldn't be too hard to add.)  Also
+# never use them.  (The latter shouldn't be too hard to add.)  Also 
 # missing are the pixmap commands.  If you want to do pixmaps, you
 # should be using the ppm utilities.
 
 # A QUICK TUTORIAL ON QUICKDRAW
-#
+# 
 # Quickdraw is not Postscript.  You cannot write routines in it or get
 # (any useful) information out of it.  Quickdraw pictures are a series of
 # drawing commands, concatenated together in a binary format.
@@ -32,7 +32,7 @@
 # RECTANGLES
 #
 # To open a picture you need to define a rectangle that will serve as
-# its frame and will define its drawing area.  The rectangle is (of
+# its frame and will define its drawing area.  The rectangle is (of 
 # course) a binary structure.  The following utilities allow you to
 # create and manipulate rectangles:
 #
@@ -54,11 +54,11 @@
 # to the area within the rectangle.  Even if you don't use clipping, however, it's a
 # good idea to define the rectangle because some drawing programs behave eratically
 # when displaying unclipped pictures.
-#
+# 
 # You then issue drawing commands.  When you're done you can get the picture data with
 # something like $pictData = &qd'ClosePicture;
 
-#
+# 
 # SETTING THE FOREGROUND AND BACKGROUND COLORS
 #
 # The foreground color is the color of the ink when a "frame" or "paint" command
@@ -71,7 +71,7 @@
 #     $qd'REDCOLOR,$qd'GREENCOLOR, etc.  This gives you a limited number of highly
 #     satured colors.
 #
-#  2. The new 24-bit color system.  Call the routines &qd'RGBForeColor() and
+#  2. The new 24-bit color system.  Call the routines &qd'RGBForeColor() and 
 #     &qd'RGBBackColor(), passing the routines the red, green and blue components
 #     of the color.  These components are two-byte unsigned integers, so you can choose
 #     any value between 0x000 and 0xFFFF.  Higher is darker, so:
@@ -83,7 +83,7 @@
 
 # SETTING THE PATTERN
 #
-# Like colors, the drawing commands use the current pattern, a 32 row x 32 column
+# Like colors, the drawing commands use the current pattern, a 32 row x 32 column 
 # bit array that defines the pattern of the "ink".
 # The default pattern is $qd'BLACK, which is solid black.  The only
 # other pattern I've defined is $qd'GRAY, which is a 50% checkerboard.  You
@@ -97,7 +97,7 @@
 # Quickdraw has the concept of the "current point" of the pen.  Generally
 # you move the pen to a point and then start drawing.  The next time you draw,
 # the pen will be wherever the last drawing command left it.  In addition, the
-# pen has a width, a pattern and a color.  In the below descriptions,
+# pen has a width, a pattern and a color.  In the below descriptions, 
 # h=horizontal, v=vertical
 #
 # &qd'MoveTo(h,v)           # Move to indicated coordinates (0,0 is upper left of picture)
@@ -111,7 +111,7 @@
 #
 # The original quickdraw was incapable of drawing at higher than the screen resolution,
 # so even if the PenSize is set to (1,1) the lines will appear chunky when printed out
-# on the laserwriter (which has four times the resolution of the screen).  Call
+# on the laserwriter (which has four times the resolution of the screen).  Call 
 # &qd'Scale(1,4) to fix this problem by shrinking the pen down to a quarter of its
 # (1,1) size.
 #
@@ -128,7 +128,7 @@
 #
 # &qd'TextFace(attributes)  # Set one or more font style attributes.  Currently defined
 #                             are $qd'PLAIN, $qd'BOLD, $qd'ITALIC, $qd'UNDERLINE, and
-#                             can be used in combination:
+#                             can be used in combination: 
 #                             &qd'TextFace($qd'BOLD + $qd'ITALIC);
 #
 # &qd'DrawString(string)    # Draw the indicated text.  It will be drawn from the
@@ -140,13 +140,13 @@
 #                             Unfortunately, since perl has no access to the Macintosh
 #                             font description tables, the number returned by this
 #                             routine will be wildly inaccurate at best.
-#                             However, if you have X11R5 bdf fonts installed, we look
+#                             However, if you have X11R5 bdf fonts installed, we look 
 #                             in the directory $qd'X11FONTS in order to find a bdf metrics
 #                             font to use.  This will give you extremely accurate measurements.
 #                             Please set this variable to whatever is correct for your local
 #                             system.  To add more fonts, put them in your bdf font directory
 #                             and update the %qd'font_metric_files array at the bottom of this
-#                             file.  It maps a key consisting of the Quickdraw font number,
+#                             file.  It maps a key consisting of the Quickdraw font number, 
 #                             font size, and font style (0 for plain, 1 for italic, 2 for bold,
 #                             3 for both) to the appropriate bdf file.
 
@@ -169,10 +169,10 @@
 #   &qd'EraseOval($myRect);                     # Erase the oval (fill with bg color)
 #   &qd'InvertOval($myRect);                    # Invert black and white in oval
 #   &qd'FillOval($myRect,$pat);                 # Fill with specified pattern
-#
+# 
 
 # ROUND RECTANGLES
-#
+# 
 # Draw round-cornered rectangles with these routines.  They each take an oval radius
 # to determine the amount of curvature.  Values of 10-20 are typical.
 #   &qd'FrameRoundRect($myRect,$ovalWidth,$ovalHeight); # wire-frame outline
@@ -238,7 +238,7 @@
 
 #  # Pipe through binhex, setting the creator type to JVWR for JPEG Viewer
 #  # Note: BinHex is available at <ftp://genome.wi.mit.edu/software/util/BinHex>
-# open (BINHEX "| BinHex -t PICT -c JVWR -n 'An Example'");
+# open (BINHEX "| BinHex -t PICT -c JVWR -n 'An Example'"); 
 # print BINHEX $data;
 # close BINHEX;
 
@@ -331,7 +331,7 @@ sub OpenPicture {               # begin a picture
 
 sub ClosePicture {              # close pict and return it
     $pict .= pack ('n',0x00FF); # end of pict code
-    substr($pict,512,2) = pack('n',length($pict) - 512); # fill in length
+    substr($pict,512,2) = pack('n',length($pict) - 512); # fill in length 
     return $pict;
 }
 
@@ -417,7 +417,7 @@ sub OffsetRect {
     local($v1,$h1,$v2,$h2) = unpack('n4',$r);
     $h1 += $x; $h2 += $x;
     $v1 += $y; $v2 += $y;
-    $r = pack ('n4',$v1,$h1,$v2,$h2);
+    $r = pack ('n4',$v1,$h1,$v2,$h2);    
 }
 
 sub InsetRect {
@@ -425,7 +425,7 @@ sub InsetRect {
     local($v1,$h1,$v2,$h2) = unpack('n4',$r);
     $h1 -= int($x/2); $h2 -= int($x/2);
     $v1 -= int($y/2); $v2 -= int($y/2);
-    $r = pack ('n4',$v1,$h1,$v2,$h2);
+    $r = pack ('n4',$v1,$h1,$v2,$h2);    
 }
 
 # A few utility routine to translate between perl
@@ -643,7 +643,7 @@ sub OpenPoly {
     @polySave = (10,0,0,0,0); # initialize it to empty size and rectangle
     return $_polyName;
 }
-
+ 
 sub ClosePoly {
     *polySave = 'scratch';
     undef @polySave;
@@ -690,7 +690,7 @@ sub FillPoly {
 }
 
 sub OffsetPoly {
-    local(*poly,$dh,$dv) = @_;
+    local(*poly,$dh,$dv) = @_; 
   return unless @poly;
     local($size,@vertices) = @poly;
     local($i);
@@ -719,7 +719,7 @@ sub MapPoly {
 # A utility routine to add a vertex to the growing polygon structure
 # We need to grow both the size of the polygon and increase the bounding
 # rectangle.  A special case occurs when we add the first vertex:
-# we store both the current position
+# we store both the current position 
 sub _addVertex {
     local(*polygon,$h,$v) = @_;
     local($size,$top,$left,$bottom,$right,@vertices) = @polygon;
@@ -796,7 +796,7 @@ sub _getFontMetrics {
         elsif (/^DWIDTH\s+(\d+)/)   { $metrics{$char}=$1; }
     }
     close(BDF);
-
+    
     # Remember the name of the metrics array and return it
     return $_metricsArrays{$key} = $next_metric;
 }

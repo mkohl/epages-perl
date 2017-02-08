@@ -75,11 +75,11 @@ sub _new {
 
   # Create the process.
   if (Win32::Process::Create($os_obj,
-                             $args[0],
-                             "@args",
-                             0,
-                             NORMAL_PRIORITY_CLASS,
-                             '.')) {
+			     $args[0],
+			     "@args",
+			     0,
+			     NORMAL_PRIORITY_CLASS,
+			     '.')) {
     $self->{_pid}    = $os_obj->GetProcessID;
     $self->{_os_obj} = $os_obj;
     return $self;

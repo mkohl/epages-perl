@@ -16,8 +16,8 @@ sub new
     my($class, $uri, $base) = @_;
     my $ibase = $base;
     if ($base && ref($base) && UNIVERSAL::isa($base, __PACKAGE__)) {
-        $base = $base->abs;
-        $ibase = $base->[0];
+	$base = $base->abs;
+	$ibase = $base->[0];
     }
     bless [URI->new($uri, $ibase), $base], $class;
 }
@@ -66,10 +66,10 @@ sub base {
     my $base  = $self->[1];
 
     if (@_) { # set
-        my $new_base = shift;
-        # ensure absoluteness
-        $new_base = $new_base->abs if ref($new_base) && $new_base->isa(__PACKAGE__);
-        $self->[1] = $new_base;
+	my $new_base = shift;
+	# ensure absoluteness
+	$new_base = $new_base->abs if ref($new_base) && $new_base->isa(__PACKAGE__);
+	$self->[1] = $new_base;
     }
     return unless defined wantarray;
 
@@ -79,8 +79,8 @@ sub base {
     # The main benefit is to make it much cheaper to say:
     #   URI::WithBase->new($random_url_string, 'http:')
     if (defined($base) && !ref($base)) {
-        $base = ref($self)->new($base);
-        $self->[1] = $base unless @_;
+	$base = ref($self)->new($base);
+	$self->[1] = $base unless @_;
     }
     $base;
 }

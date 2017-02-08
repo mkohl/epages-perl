@@ -17,7 +17,7 @@ my %bitmask = (
 );
 
 sub setcolor {
- eval {                         # Ignore errors
+ eval {				# Ignore errors
   require Term::Cap;
 
   my $terminal = Tgetent Term::Cap ({OSPEED => 9600}); # Avoid warning.
@@ -75,15 +75,15 @@ if (defined &DynaLoader::boot_DynaLoader) {
 sub _load_unload {
     my ($on)= @_;
     if ($on) {
-        # We call install() every time, as if we didn't, we wouldn't
-        # "see" any changes to the color environment var since
-        # the last time it was called.
+	# We call install() every time, as if we didn't, we wouldn't
+	# "see" any changes to the color environment var since
+	# the last time it was called.
 
-        # install() returns an integer, which if casted properly
-        # in C resolves to a structure containing the regexp
-        # hooks. Setting it to a random integer will guarantee
-        # segfaults.
-        $^H{regcomp} = install();
+	# install() returns an integer, which if casted properly
+	# in C resolves to a structure containing the regexp
+	# hooks. Setting it to a random integer will guarantee
+	# segfaults.
+	$^H{regcomp} = install();
     } else {
         delete $^H{regcomp};
     }
@@ -93,8 +93,8 @@ sub bits {
     my $on = shift;
     my $bits = 0;
     unless (@_) {
-        require Carp;
-        Carp::carp("Useless use of \"re\" pragma");
+	require Carp;
+	Carp::carp("Useless use of \"re\" pragma"); 
     }
     foreach my $idx (0..$#_){
         my $s=$_[$idx];
@@ -117,20 +117,20 @@ sub bits {
             _load_unload($on ? 1 : ${^RE_DEBUG_FLAGS});
             last;
         } elsif ($s eq 'debug' or $s eq 'debugcolor') {
-            setcolor() if $s =~/color/i;
-            _load_unload($on);
-            last;
+	    setcolor() if $s =~/color/i;
+	    _load_unload($on);
+	    last;
         } elsif (exists $bitmask{$s}) {
-            $bits |= $bitmask{$s};
-        } elsif ($EXPORT_OK{$s}) {
-            require Exporter;
-            re->export_to_level(2, 're', $s);
-        } else {
-            require Carp;
-            Carp::carp("Unknown \"re\" subpragma '$s' (known ones are: ",
+	    $bits |= $bitmask{$s};
+	} elsif ($EXPORT_OK{$s}) {
+	    require Exporter;
+	    re->export_to_level(2, 're', $s);
+	} else {
+	    require Carp;
+	    Carp::carp("Unknown \"re\" subpragma '$s' (known ones are: ",
                        join(', ', map {qq('$_')} 'debug', 'debugcolor', sort keys %bitmask),
                        ")");
-        }
+	}
     }
     $bits;
 }
@@ -160,21 +160,21 @@ re - Perl pragma to alter regular expression behaviour
 
     $pat = '(?{ $foo = 1 })';
     use re 'eval';
-    /foo${pat}bar/;                # won't fail (when not under -T switch)
+    /foo${pat}bar/;		   # won't fail (when not under -T switch)
 
     {
-        no re 'taint';             # the default
-        ($x) = ($^X =~ /^(.*)$/s); # $x is not tainted here
+	no re 'taint';		   # the default
+	($x) = ($^X =~ /^(.*)$/s); # $x is not tainted here
 
-        no re 'eval';              # the default
-        /foo${pat}bar/;            # disallowed (with or without -T switch)
+	no re 'eval';		   # the default
+	/foo${pat}bar/;		   # disallowed (with or without -T switch)
     }
 
-    use re 'debug';                # output debugging info during
-    /^(.*)$/s;                     #     compile and run time
+    use re 'debug';		   # output debugging info during
+    /^(.*)$/s;			   #     compile and run time
 
 
-    use re 'debugcolor';           # same as 'debug', but with colored output
+    use re 'debugcolor';	   # same as 'debug', but with colored output
     ...
 
     use re qw(Debug All);          # Finer tuned debugging options.
@@ -183,7 +183,7 @@ re - Perl pragma to alter regular expression behaviour
 
     use re qw(is_regexp regexp_pattern); # import utility functions
     my ($pat,$mods)=regexp_pattern(qr/foo/i);
-    if (is_regexp($obj)) {
+    if (is_regexp($obj)) { 
         print "Got regexp: ",
             scalar regexp_pattern($obj); # just as perl would stringify it
     }                                    # but no hassle with blessed re's.
@@ -208,7 +208,7 @@ subexpressions, even if the regular expression contains
 variable interpolation.  That is normally disallowed, since it is a
 potential security risk.  Note that this pragma is ignored when the regular
 expression is obtained from tainted data, i.e.  evaluation is always
-disallowed with tainted regular expressions.  See L<perlre/(?{ code })>
+disallowed with tainted regular expressions.  See L<perlre/(?{ code })> 
 and L<perlre/(??{ code })>.
 
 For the purpose of this pragma, interpolation of precompiled regular
@@ -234,7 +234,7 @@ strings on/off, pre-point part on/off.
 See L<perldebug/"Debugging regular expressions"> for additional info.
 
 As of 5.9.5 the directive C<use re 'debug'> and its equivalents are
-lexically scoped, as the other directives are.  However they have both
+lexically scoped, as the other directives are.  However they have both 
 compile-time and run-time effects.
 
 See L<perlmodlib/Pragmatic Modules>.

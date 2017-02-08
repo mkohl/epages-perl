@@ -103,7 +103,7 @@ Identifiers (URI): Generic Syntax>. August 1998.
 
 =item B<[RFC 2616]>
 
-Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L.,
+Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L., 
 Leach, P. and Berners-Lee, Tim: I<Hypertext Transfer Protocol -- HTTP/1.1>.
 June 1999.
 

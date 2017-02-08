@@ -225,7 +225,7 @@ superclass's _init method, and then initializes the new attributes:
     my($this, $options) = @_[0,1];
     $this->SUPER::_init($options); # call my superclass's _init to
       # init all the attributes I'm inheriting
-
+    
     # Now init /my/ new attributes:
     $this->{'amigos'} = []; # for example
   }
@@ -235,10 +235,10 @@ superclass's _init method, and then initializes the new attributes:
   sub _init {
     my($this, $options) = @_[0,1];
     $this->SUPER::_init($options);
-
+    
     $this->_init_amigos($options);
   }
-
+  
   sub _init_amigos {
     my $this = $_[0];
     # Or my($this,$options) = @_[0,1]; if I'm using $options
@@ -256,10 +256,10 @@ _init_[attribute] method, like this:
   sub _init {
     my($this, $options) = @_[0,1];
     $this->SUPER::_init($options);
-
+    
     $this->_init_amigos($options);
   }
-
+  
   sub _init_amigos {
     my($this,$options) = @_[0,1]; # I need options this time
     $this->{'amigos'} = [];
@@ -606,7 +606,7 @@ essentially the same as going
 but is rather more efficient because (since $daughter is guaranteed new
 and isn't linked to/from anything), it doesn't have to check that
 $daughter isn't an ancestor of $mother, isn't already daughter to a
-mother it needs to be unlinked from, isn't already in $mother's
+mother it needs to be unlinked from, isn't already in $mother's 
 daughter list, etc.
 
 As you'd expect for a constructor, it returns the node-object created.
@@ -669,8 +669,8 @@ sub remove_daughters { # write-only method
 
   my %to_delete;
   @daughters = grep {ref($_)
-                       and defined($_->{'mother'})
-                       and $mother eq $_->{'mother'}
+		       and defined($_->{'mother'})
+		       and $mother eq $_->{'mother'}
                     } @daughters;
   return unless @daughters;
   @to_delete{ @daughters } = undef;
@@ -807,7 +807,7 @@ to.
 
 sub replace_with { # write-only method
   my($this, @replacements) = @_;
-
+  
   if(not( defined($this->{'mother'}) && ref($this->{'mother'}) )) { # if root
     foreach my $replacement (@replacements) {
       $replacement->{'mother'}->remove_daughters($replacement)
@@ -904,7 +904,7 @@ $node).
 sub add_left_sisters { # write-only method
   my($this, @new) = @_;
   return() unless @new;
-
+  
   @new = $this->replace_with(@new, $this);
   shift @new; pop @new; # kill the copies of $this
   return @new;
@@ -1017,7 +1017,7 @@ sub attribute { # alias
 ###########################################################################
 # Secret Stuff.
 
-sub no_cyclicity { # croak iff I'm in a CYCLIC class.
+sub no_cyclicity { # croak iff I'm in a CYCLIC class. 
   my($it) = $_[0];
   # If, God forbid, I use this to make a cyclic class, then I'd
   # expand the functionality of this routine to actually look for
@@ -1282,13 +1282,13 @@ ancestor of $node, it behaves as if you called just $node->generation().
 =cut
 
 sub generation {
-  my($node, $limit) = @_[0,1];
+  my($node, $limit) = @_[0,1]; 
   # $node->no_cyclicity;
   return $node
     if $node eq $limit || not(
-                              defined($node->{'mother'}) &&
-                              ref($node->{'mother'})
-                             ); # bailout
+			      defined($node->{'mother'}) &&
+			      ref($node->{'mother'})
+			     ); # bailout
 
   return map(@{$_->{'daughters'}}, $node->{'mother'}->generation($limit));
     # recurse!
@@ -1296,7 +1296,7 @@ sub generation {
 }
 
 sub generation_under {
-  my($node, @rest) = @_;
+  my($node, @rest) = @_; 
   return $node->generation(@rest);
 }
 
@@ -1357,7 +1357,7 @@ sub left_sister {
   my $mother = $it->{'mother'};
   return undef unless $mother;
   my @sisters = @{$mother->{'daughters'}};
-
+  
   return undef if @sisters  == 1; # I'm an only daughter
 
   my $left = undef;
@@ -1614,7 +1614,7 @@ sub common { # Return the lowest node common to all these nodes...
     }
     return undef unless $higher;
     $first = $higher;
-  }
+  } 
   return $first;
 }
 
@@ -1820,7 +1820,7 @@ sub dump_names {
              &Tree::DAG_Node::_dump_quote($this->name || $this),
              "\n"
         )
-      );
+      );      
       return 1;
     }
   ;
@@ -1898,7 +1898,7 @@ sub random_network { # constructor or method.
    Mother:
     foreach my $mother (@mothers) {
       last Gen if $node_count > $max_node_count;
-      my $children_number;
+      my $children_number;    
       if($depth <= $min_depth) {
         until( $children_number = int(rand(1 + $max_children)) ) {}
       } else {
@@ -1956,22 +1956,22 @@ An example will illustrate:
 
 ...returns this tree:
 
-                   |
-                  <S>
-                   |
-                /------------------\
-                |                  |
-              <NP>                <VP>
-                |                  |
+                   |                   
+                  <S>                  
+                   |                   
+                /------------------\   
+                |                  |   
+              <NP>                <VP> 
+                |                  |   
         /---------------\        <died>
-        |               |
-      <NP>            <PP>
-        |               |
-     /-------\   </with rabies\>
-     |       |
- <Det:The>  <N>
-             |
-           <dog>
+        |               |              
+      <NP>            <PP>             
+        |               |              
+     /-------\   </with rabies\>       
+     |       |                         
+ <Det:The>  <N>                        
+             |                         
+           <dog>                       
 
 By the way (and this rather follows from the above rules), when
 denoting a LoL tree consisting of just one node, this:
@@ -2002,7 +2002,7 @@ sub lol_to_tree {
 
   #  It's a non-terminal node.
 
-  my @options = @$lol;
+  my @options = @$lol; 
   unless(ref($options[-1]) eq 'ARRAY') {
     # This is what separates this method from simple_lol_to_tree
     $node->name(pop(@options));
@@ -2035,7 +2035,7 @@ prints the following (which I've broken over two lines for sake of
 printablitity of documentation):
 
   [[[['Det:The'], [['dog'], 'N'], 'NP'], [["/with rabies\x5c"],
-  'PP'], 'NP'], [['died'], 'VP'], 'S'],
+  'PP'], 'NP'], [['died'], 'VP'], 'S'], 
 
 Doing this:
 
@@ -2070,7 +2070,7 @@ sub tree_to_lol_notation {
       push(@out,
              $o->{'indent'} x $o->{'_depth'},
              "[$line_end",
-      );
+      );      
       return 1;
     }
   ;
@@ -2399,7 +2399,7 @@ sub draw_ascii_tree {
           $size_l = length($1) if $b1->[$line] =~ /( +)$/s;
           $size_r = length($1) if $b2->[$line] =~ /^( +)/s;
           my $sum = $size_l + $size_r;
-
+      
           $min_diff = $sum if $sum < $min_diff;
           push @diffs, [$sum, $size_l, $size_r];
         }
@@ -2419,7 +2419,7 @@ sub draw_ascii_tree {
           my $remaining = $to_chop;
           if($remaining) {
             my($l_chop, $r_chop) = @{$diffs[$line]}[1,2];
-
+      
             if($l_chop) {
               if($l_chop > $remaining) {
                 $l_chop = $remaining;
@@ -2431,7 +2431,7 @@ sub draw_ascii_tree {
               }
             }
             if($r_chop) {
-              if($r_chop > $remaining) {
+              if($r_chop > $remaining) { 
                 $r_chop = $remaining;
                 $remaining = 0;
               } elsif($r_chop == $remaining) {
@@ -2544,9 +2544,9 @@ sub copy_tree {
   my($this, $o) = @_[0,1];
   my $root = $this->root;
   $o = {} unless ref $o;
-
+  
   my $new_root = $root->copy_at_and_under($o);
-
+  
   return $new_root;
 }
 
@@ -2603,7 +2603,7 @@ copying object attributes containing references, you probably
 shouldn't fight it or try to fix it -- simply override copy_tree with:
 
   sub copy_tree {
-    use Storable qw(dclone);
+    use Storable qw(dclone); 
     my $this = $_[0];
     return dclone($this->root);
      # d for "deep"
@@ -2644,7 +2644,7 @@ sub copy {
 
   # Straight dupe, and bless into same class:
   my $to = bless { %$from }, ref($from);
-
+  
   # Null out linkages.
   $to->_init_mother;
   $to->_init_daughters;
@@ -2802,8 +2802,8 @@ destroy the tree D-X-Y.  Instead it merely splits the tree into two:
      A                        D
     / \                      / \
    B   C                    X   Y
-   |
-   E
+   | 
+   E 
 
 To destroy D and its little tree, you have to explicitly call
 delete_tree on it.
@@ -2875,7 +2875,7 @@ would be the case for any object belonging to a class derived from
 C<Tree::DAG_Node>, or belonging to C<Tree::DAG_Node> itself.
 
 When routines in this class access a node's "mother" attribute, or its
-"daughters" attribute, they (generally) do so directly (via
+"daughters" attribute, they (generally) do so directly (via 
 $node->{'mother'}, etc.), for sake of efficiency.  But classes derived
 from this class should probably do this instead thru a method (via
 $node->mother, etc.), for sake of portability, abstraction, and general

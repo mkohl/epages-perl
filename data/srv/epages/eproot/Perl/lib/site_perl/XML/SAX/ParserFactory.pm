@@ -25,7 +25,7 @@ sub parser {
     if (!ref($self)) {
         $self = $self->new();
     }
-
+    
     my $parser_class = $self->_parser_class();
 
     my $version = '';
@@ -99,7 +99,7 @@ sub _parser_class {
                     return $parser->{Name};
                 }
                 XML::SAX->do_warn("Unable to provide SAX.ini required features. Using fallback\n");
-            }
+            } 
             last; # stop after first INI found
         }
     }

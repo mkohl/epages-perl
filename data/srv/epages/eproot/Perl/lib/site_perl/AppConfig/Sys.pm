@@ -2,7 +2,7 @@
 #
 # AppConfig::Sys.pm
 #
-# Perl5 module providing platform-specific information and operations as
+# Perl5 module providing platform-specific information and operations as 
 # required by other AppConfig::* modules.
 #
 # Written by Andy Wardley <abw@wardley.org>
@@ -26,31 +26,31 @@ our ($AUTOLOAD, $OS, %CAN, %METHOD);
 BEGIN {
     # define the methods that may be available
     if($^O =~ m/win32/i) {
-        $METHOD{ getpwuid } = sub {
-            return wantarray()
+        $METHOD{ getpwuid } = sub { 
+            return wantarray() 
                 ? ( (undef) x 7, getlogin() )
-                : getlogin();
+                : getlogin(); 
         };
-        $METHOD{ getpwnam } = sub {
-            die("Can't getpwnam on win32");
+        $METHOD{ getpwnam } = sub { 
+            die("Can't getpwnam on win32"); 
         };
     }
     else
     {
-        $METHOD{ getpwuid } = sub {
-            getpwuid( defined $_[0] ? shift : $< );
+        $METHOD{ getpwuid } = sub { 
+            getpwuid( defined $_[0] ? shift : $< ); 
         };
-        $METHOD{ getpwnam } = sub {
+        $METHOD{ getpwnam } = sub { 
             getpwnam( defined $_[0] ? shift : '' );
         };
     }
-
+    
     # try out each METHOD to see if it's supported on this platform;
     # it's important we do this before defining AUTOLOAD which would
     # otherwise catch the unresolved call
     foreach my $method  (keys %METHOD) {
         eval { &{ $METHOD{ $method } }() };
-        $CAN{ $method } = ! $@;
+    	$CAN{ $method } = ! $@;
     }
 }
 
@@ -67,7 +67,7 @@ BEGIN {
 
 sub new {
     my $class = shift;
-
+    
     my $self = {
         METHOD => \%METHOD,
         CAN    => \%CAN,
@@ -76,7 +76,7 @@ sub new {
     bless $self, $class;
 
     $self->_configure(@_);
-
+	
     return $self;
 }
 
@@ -84,9 +84,9 @@ sub new {
 #------------------------------------------------------------------------
 # AUTOLOAD
 #
-# Autoload function called whenever an unresolved object method is
-# called.  If the method name relates to a METHODS entry, then it is
-# called iff the corresponding CAN_$method is set true.  If the
+# Autoload function called whenever an unresolved object method is 
+# called.  If the method name relates to a METHODS entry, then it is 
+# called iff the corresponding CAN_$method is set true.  If the 
 # method name relates to a CAN_$method value then that is returned.
 #------------------------------------------------------------------------
 
@@ -105,7 +105,7 @@ sub AUTOLOAD {
     if ($method =~ s/^can_//i && exists $self->{ CAN }->{ $method }) {
         return $self->{ CAN }->{ $method };
     }
-    # method()
+    # method() 
     elsif (exists $self->{ METHOD }->{ $method }) {
         if ($self->{ CAN }->{ $method }) {
             return &{ $self->{ METHOD }->{ $method } }(@_);
@@ -113,7 +113,7 @@ sub AUTOLOAD {
         else {
             return undef;
         }
-    }
+    } 
     # variable
     elsif (exists $self->{ uc $method }) {
         return $self->{ uc $method };
@@ -142,18 +142,18 @@ sub _configure {
     my $os = shift || $OS;
 
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # The following was lifted (and adapated slightly) from Lincoln Stein's
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    # The following was lifted (and adapated slightly) from Lincoln Stein's 
     # CGI.pm module, version 2.36...
     #
     # FIGURE OUT THE OS WE'RE RUNNING UNDER
     # Some systems support the $^O variable.  If not
     # available then require() the Config library
     unless ($os) {
-        unless ($os = $^O) {
-            require Config;
-            $os = $Config::Config{'osname'};
-        }
+	unless ($os = $^O) {
+	    require Config;
+	    $os = $Config::Config{'osname'};
+	}
     }
     if ($os =~ /win32/i) {
         $os = 'WINDOWS';
@@ -179,7 +179,7 @@ sub _configure {
     }->{ $os };
     #
     # Thanks Lincoln!
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
     $self->{ OS      } = $os;
@@ -247,13 +247,13 @@ appear in your Perl script:
 AppConfig::Sys is implemented using object-oriented methods.  A new
 AppConfig::Sys object is created and initialised using the
 AppConfig::Sys->new() method.  This returns a reference to a new
-AppConfig::Sys object.
+AppConfig::Sys object.  
 
     my $sys = AppConfig::Sys->new();
 
 This will attempt to detect your operating system and create a reference to
-a new AppConfig::Sys object that is applicable to your platform.  You may
-explicitly specify an operating system name to override this automatic
+a new AppConfig::Sys object that is applicable to your platform.  You may 
+explicitly specify an operating system name to override this automatic 
 detection:
 
     $unix_sys = AppConfig::Sys->new("Unix");
@@ -280,7 +280,7 @@ Calls the system function getpwuid() if available and returns the result.
 Returns undef if not available.  The can_getpwuid() method can be called to
 determine if this function is available.
 
-=item
+=item 
 
 =back
 
@@ -294,7 +294,7 @@ Copyright (C) 1997-2007 Andy Wardley.  All Rights Reserved.
 
 Copyright (C) 1997,1998 Canon Research Centre Europe Ltd.
 
-This module is free software; you can redistribute it and/or modify it under
+This module is free software; you can redistribute it and/or modify it under 
 the term of the Perl Artistic License.
 
 =head1 SEE ALSO

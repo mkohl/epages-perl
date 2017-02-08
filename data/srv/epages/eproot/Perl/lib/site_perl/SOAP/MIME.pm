@@ -15,7 +15,7 @@ $VERSION=0.55;
 BEGIN {
 
   # This is being added by Byrne to support attachments. I need to add
-  # an array property to the SOAP::SOM object as a placeholder for
+  # an array property to the SOAP::SOM object as a placeholder for 
   # decoded attachments. I add this getter/setting for attachments, and
   # I will then call this in SOAP::Deserializer to populate the SOM object
   # with the decoded attachments (MIME::Entity's)
@@ -31,7 +31,7 @@ BEGIN {
     SOAP::Trace::trace('()');
     my $self = shift->new;
 
-    # initialize
+    # initialize 
     $self->hrefs({});
     $self->ids({});
 
@@ -79,7 +79,7 @@ BEGIN {
       my @chars=('a'..'z','A'..'Z','0'..'9','_');
       my $random_string;
       foreach (1..$len) {
-        $random_string .= $chars[rand @chars];
+	$random_string .= $chars[rand @chars];
       }
       return $random_string;
     }
@@ -88,11 +88,11 @@ BEGIN {
     my $self = shift;
     my $entity = eval { $self->parse_data(shift) }
       or die "Something wrong with MIME message: @{[$@ || $self->last_error]}\n";
-    # I changed this to better populate the array with references
+    # I changed this to better populate the array with references 
     # to the MIME::Entity to prevent memory bloat
     for (my $i=1;$i<=$entity->parts;$i++) {
       push(@{$self->{_parts}},\$entity->parts($i))
-        if ref($entity->parts($i)) eq "MIME::Entity";
+	if ref($entity->parts($i)) eq "MIME::Entity";
     }
     my @result = ();
     if ($entity->head->mime_type eq 'multipart/form-data') {
@@ -104,9 +104,9 @@ BEGIN {
     } else {
       die "Can't handle MIME messsage with specified type (@{[$entity->head->mime_type]})\n";
     }
-    @result ? @result
+    @result ? @result 
       : $entity->bodyhandle->as_string ? [undef, '', undef, $entity->bodyhandle->as_string]
-        : die "No content in MIME message\n";
+	: die "No content in MIME message\n";
   }
 
   sub SOAP::MIMEParser::decode_related {
@@ -130,12 +130,12 @@ BEGIN {
       # If a Content-Location header cannot be found, this will look for an
       # alternative in the following MIME Header attributes
       my $plocation = $part->head->get('content-location') ||
-        $part->head->mime_attr('Content-Disposition.filename') ||
-          $part->head->mime_attr('Content-Type.name');
+	$part->head->mime_attr('Content-Disposition.filename') ||
+	  $part->head->mime_attr('Content-Type.name');
       if ($start && $pid eq $start) {
-        unshift(@result, [$start, $location, $type, $part->bodyhandle->as_string]);
+	unshift(@result, [$start, $location, $type, $part->bodyhandle->as_string]);
       } else {
-        push(@result, [$pid, $plocation, $type, $part->bodyhandle->as_string]);
+	push(@result, [$pid, $plocation, $type, $part->bodyhandle->as_string]);
       }
     }
     die "Can't find 'start' parameter in multipart MIME message\n"
@@ -167,20 +167,20 @@ BEGIN {
     my $headers=new HTTP::Headers();
     if ($self->parts) {
       $top = MIME::Entity->build(
-                                 'Type' => "Multipart/Related"
-                                );
+				 'Type' => "Multipart/Related"
+				);
 
       my @args = @_;
       $top->attach(
-                   'Type'             => 'text/xml',
-                   'Content-Transfer-Encoding' => '8bit',
-                   'Content-Location' => '/main_envelope',
-                   'Content-ID'       => '<main_envelope>',
-                   'Data'             => $serializer->envelope(method => shift(@args), @args),
-                  );
+		   'Type'             => 'text/xml',
+		   'Content-Transfer-Encoding' => '8bit',
+		   'Content-Location' => '/main_envelope',
+		   'Content-ID'       => '<main_envelope>',
+		   'Data'             => $serializer->envelope(method => shift(@args), @args),
+		  );
 
       foreach $a (@{$self->parts}) {
-        $top->add_part($a);
+	$top->add_part($a);
       }
 
       my ($boundary) = $top->head->multipart_boundary;
@@ -206,7 +206,7 @@ BEGIN {
 
     if (!$self->transport->is_success || # transport fault
         $@ ||                            # not deserializible
-        # fault message even if transport OK
+        # fault message even if transport OK 
         # or no transport error (for example, fo TCP, POP3, IO implementations)
         UNIVERSAL::isa($result => 'SOAP::SOM') && $result->fault) {
       return $self->{_call} = ($self->on_fault->($self, $@ ? $@ . ($response || '') : $result) || $result);
@@ -257,63 +257,63 @@ BEGIN {
       $self->serializer->soapversion(1.1);
       my $request = eval { $self->deserializer->deserialize($_[0]) };
       die SOAP::Fault
-        ->faultcode($SOAP::Constants::FAULT_VERSION_MISMATCH)
-          ->faultstring($@)
-            if $@ && $@ =~ /^$SOAP::Constants::WRONG_VERSION/;
+	->faultcode($SOAP::Constants::FAULT_VERSION_MISMATCH)
+	  ->faultstring($@)
+	    if $@ && $@ =~ /^$SOAP::Constants::WRONG_VERSION/;
       die "Application failed during request deserialization: $@" if $@;
       my $som = ref $request;
       die "Can't find root element in the message" unless $request->match($som->envelope);
       $self->serializer->soapversion(SOAP::Lite->soapversion);
       $self->serializer->xmlschema($SOAP::Constants::DEFAULT_XML_SCHEMA
-                                   = $self->deserializer->xmlschema)
-        if $self->deserializer->xmlschema;
+				   = $self->deserializer->xmlschema)
+	if $self->deserializer->xmlschema;
 
       die SOAP::Fault
-        ->faultcode($SOAP::Constants::FAULT_MUST_UNDERSTAND)
-          ->faultstring("Unrecognized header has mustUnderstand attribute set to 'true'")
-            if !$SOAP::Constants::DO_NOT_CHECK_MUSTUNDERSTAND &&
-              grep { $_->mustUnderstand &&
-                       (!$_->actor || $_->actor eq $SOAP::Constants::NEXT_ACTOR)
-                     } $request->dataof($som->headers);
+	->faultcode($SOAP::Constants::FAULT_MUST_UNDERSTAND)
+	  ->faultstring("Unrecognized header has mustUnderstand attribute set to 'true'")
+	    if !$SOAP::Constants::DO_NOT_CHECK_MUSTUNDERSTAND &&
+	      grep { $_->mustUnderstand && 
+		       (!$_->actor || $_->actor eq $SOAP::Constants::NEXT_ACTOR)
+		     } $request->dataof($som->headers);
 
       die "Can't find method element in the message" unless $request->match($som->method);
 
       my($class, $method_uri, $method_name) = $self->find_target($request);
 
       my @results = eval {
-        local $^W;
-        my @parameters = $request->paramsin;
+	local $^W;
+	my @parameters = $request->paramsin;
 
-        # SOAP::Trace::dispatch($fullname);
-        SOAP::Trace::parameters(@parameters);
+	# SOAP::Trace::dispatch($fullname);
+	SOAP::Trace::parameters(@parameters);
 
-        push @parameters, $request
-          if UNIVERSAL::isa($class => 'SOAP::Server::Parameters');
+	push @parameters, $request 
+	  if UNIVERSAL::isa($class => 'SOAP::Server::Parameters');
 
-        SOAP::Server::Object->references(defined $parameters[0] &&
-                                         ref $parameters[0] &&
-                                         UNIVERSAL::isa($parameters[0] => $class)
-                ? do {
-                  my $object = shift @parameters;
-                  SOAP::Server::Object->object(ref $class ? $class : $object)
-                      ->$method_name(SOAP::Server::Object->objects(@parameters)),
-                        # send object back as a header
-                        # preserve name, specify URI
-                        SOAP::Header
-                            ->uri($SOAP::Constants::NS_SL_HEADER => $object)
-                            ->name($request->dataof($som->method.'/[1]')->name)
-                }
-                : $class->$method_name(SOAP::Server::Object->objects(@parameters))
+	SOAP::Server::Object->references(defined $parameters[0] &&
+					 ref $parameters[0] &&
+					 UNIVERSAL::isa($parameters[0] => $class)
+		? do {
+		  my $object = shift @parameters;
+		  SOAP::Server::Object->object(ref $class ? $class : $object)
+		      ->$method_name(SOAP::Server::Object->objects(@parameters)),
+			# send object back as a header
+			# preserve name, specify URI
+			SOAP::Header
+			    ->uri($SOAP::Constants::NS_SL_HEADER => $object)
+			    ->name($request->dataof($som->method.'/[1]')->name)
+		}
+		: $class->$method_name(SOAP::Server::Object->objects(@parameters))
         );
       };
       SOAP::Trace::result(@results);
 
       # let application errors pass through with 'Server' code
       die ref $@ ?
-        $@ : $@ =~ /^Can't locate object method "$method_name"/ ?
+	$@ : $@ =~ /^Can't locate object method "$method_name"/ ?
           "Failed to locate method ($method_name) in class ($class)" :
-            SOAP::Fault->faultcode($SOAP::Constants::FAULT_SERVER)->faultstring($@)
-                if $@;
+	    SOAP::Fault->faultcode($SOAP::Constants::FAULT_SERVER)->faultstring($@)
+		if $@;
 
     return $self->serializer
       ->prefix('s') # distinguish generated element names between client and server
@@ -332,8 +332,8 @@ BEGIN {
 
     # died with SOAP::Fault
     return $self->make_fault($@->faultcode   || $SOAP::Constants::FAULT_SERVER,
-                             $@->faultstring || 'Application error',
-                             $@->faultdetail, $@->faultactor)
+			     $@->faultstring || 'Application error',
+			     $@->faultdetail, $@->faultactor)
       if UNIVERSAL::isa($@ => 'SOAP::Fault');
 
     # died with complex detail
@@ -363,12 +363,12 @@ sub SOAP::Transport::HTTP::Server::make_response {
   $self->response(HTTP::Response->new(
      $code => undef,
      HTTP::Headers->new(
-                        'SOAPServer' => $self->product_tokens,
-                        $compressed ? ('Content-Encoding' => $COMPRESS) : (),
-                        'Content-Type' => join('; ', 'text/xml',
-                                               !$SOAP::Constants::DO_NOT_USE_CHARSET &&
-                                               $encoding ? 'charset=' . lc($encoding) : ()),
-                        'Content-Length' => SOAP::Utils::bytelength $response),
+			'SOAPServer' => $self->product_tokens,
+			$compressed ? ('Content-Encoding' => $COMPRESS) : (),
+			'Content-Type' => join('; ', 'text/xml',
+					       !$SOAP::Constants::DO_NOT_USE_CHARSET &&
+					       $encoding ? 'charset=' . lc($encoding) : ()),
+			'Content-Length' => SOAP::Utils::bytelength $response),
      $response,
   ));
   $self->response->headers->header('Content-Type' => 'Multipart/Related; type="text/xml"; start="<main_envelope>"; boundary="'.$is_multipart.'"') if $is_multipart;
@@ -381,12 +381,12 @@ sub SOAP::Serializer::envelope {
 
   # SOAP::MIME added the attachments bit here
   my(@parameters, @header, @attachments);
-  for (@_) {
+  for (@_) { 
     defined $_ && ref $_ && UNIVERSAL::isa($_ => 'SOAP::Header') ?
       push(@header, $_) :
-        UNIVERSAL::isa($_ => 'MIME::Entity') ?
-            push(@attachments, $_) :
-              push(@parameters, $_);
+	UNIVERSAL::isa($_ => 'MIME::Entity') ?
+	    push(@attachments, $_) :
+	      push(@parameters, $_);
   }
   my $header = @header ? SOAP::Data->set_value(@header) : undef;
   my($body,$parameters);
@@ -394,7 +394,7 @@ sub SOAP::Serializer::envelope {
     SOAP::Trace::method(@parameters);
     my $method = shift(@parameters) or die "Unspecified method for SOAP call\n";
     $parameters = @parameters ? SOAP::Data->set_value(@parameters) : undef;
-    $body = UNIVERSAL::isa($method => 'SOAP::Data')
+    $body = UNIVERSAL::isa($method => 'SOAP::Data') 
       ? $method : SOAP::Data->name($method)->uri($self->uri);
     $body->set_value($parameters ? \$parameters : ());
   } elsif ($type eq 'fault') {
@@ -428,7 +428,7 @@ sub SOAP::Serializer::envelope {
 
   # IMHO multirefs should be encoded after Body, but only some
   # toolkits understand this encoding, so we'll keep them for now (04/15/2001)
-  # as the last element inside the Body
+  # as the last element inside the Body 
   #                 v -------------- subelements of Envelope
   #                      vv -------- last of them (Body)
   #                            v --- subelements
@@ -437,15 +437,15 @@ sub SOAP::Serializer::envelope {
   # SOAP::MIME magic goes here...
   if (@attachments) {
     my $top = MIME::Entity->build(
-                                  'Type' => "Multipart/Related"
-                                 );
+				  'Type' => "Multipart/Related"
+				 );
     $top->attach(
-                 'Type'             => 'text/xml',
-                 'Content-Transfer-Encoding' => '8bit',
-                 'Content-Location' => '/main_envelope',
-                 'Content-ID'       => '<main_envelope>',
-                 'Data'             => $self->xmlize($encoded)
-                );
+		 'Type'             => 'text/xml',
+		 'Content-Transfer-Encoding' => '8bit',
+		 'Content-Location' => '/main_envelope',
+		 'Content-ID'       => '<main_envelope>',
+		 'Data'             => $self->xmlize($encoded)
+		);
     foreach $a (@attachments) {
       $top->add_part($a);
     }
@@ -488,62 +488,62 @@ sub send_receive {
 
     my $compressed
       = !exists $SOAP::Transport::HTTP::Client::nocompress{$endpoint} &&
-        $self->options->{is_compress} &&
-          ($self->options->{compress_threshold} || 0) < length $envelope;
+	$self->options->{is_compress} &&
+	  ($self->options->{compress_threshold} || 0) < length $envelope;
     $envelope = Compress::Zlib::memGzip($envelope) if $compressed;
 
     while (1) {
 
       # check cache for redirect
       $endpoint = $SOAP::Transport::HTTP::Client::redirect{$endpoint}
-        if exists $SOAP::Transport::HTTP::Client::redirect{$endpoint};
+	if exists $SOAP::Transport::HTTP::Client::redirect{$endpoint};
       # check cache for M-POST
       $method = 'M-POST'
-        if exists $SOAP::Transport::HTTP::Client::mpost{$endpoint};
+	if exists $SOAP::Transport::HTTP::Client::mpost{$endpoint};
 
       my $req =
-        HTTP::Request->new($method => $endpoint,
-                           (defined $headers ? $headers : $HTTP::Headers->new),
+	HTTP::Request->new($method => $endpoint,
+			   (defined $headers ? $headers : $HTTP::Headers->new),
       # MIME:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
       # MIME: This is done so that the HTTP Headers instance is properly
       #       created.
-                           $envelope);
+			   $envelope);
       $req->protocol('HTTP/1.1');
 
       $req->proxy_authorization_basic($ENV{'HTTP_proxy_user'},
-                                      $ENV{'HTTP_proxy_pass'})
-        if ($ENV{'HTTP_proxy_user'} && $ENV{'HTTP_proxy_pass'});
+				      $ENV{'HTTP_proxy_pass'})
+	if ($ENV{'HTTP_proxy_user'} && $ENV{'HTTP_proxy_pass'});
       # by Murray Nesbitt
 
       if ($method eq 'M-POST') {
-        my $prefix = sprintf '%04d', int(rand(1000));
-        $req->header(Man => qq!"$SOAP::Constants::NS_ENV"; ns=$prefix!);
-        $req->header("$prefix-SOAPAction" => $action) if defined $action;
+	my $prefix = sprintf '%04d', int(rand(1000));
+	$req->header(Man => qq!"$SOAP::Constants::NS_ENV"; ns=$prefix!);
+	$req->header("$prefix-SOAPAction" => $action) if defined $action;
       } else {
-        $req->header(SOAPAction => $action) if defined $action;
+	$req->header(SOAPAction => $action) if defined $action;
       }
 
       # allow compress if present and let server know we could handle it
       $req->header(Accept => ['text/xml', 'multipart/*']);
 
-      $req->header('Accept-Encoding' =>
-                   [$SOAP::Transport::HTTP::Client::COMPRESS])
-        if $self->options->{is_compress};
+      $req->header('Accept-Encoding' => 
+		   [$SOAP::Transport::HTTP::Client::COMPRESS])
+	if $self->options->{is_compress};
       $req->content_encoding($SOAP::Transport::HTTP::Client::COMPRESS)
-        if $compressed;
+	if $compressed;
 
       if(!$req->content_type){
-        $req->content_type(join '; ',
-                           'text/xml',
-                           !$SOAP::Constants::DO_NOT_USE_CHARSET && $encoding ?
-                           'charset=' . lc($encoding) : ());
+	$req->content_type(join '; ',
+			   'text/xml',
+			   !$SOAP::Constants::DO_NOT_USE_CHARSET && $encoding ?
+			   'charset=' . lc($encoding) : ());
       }elsif (!$SOAP::Constants::DO_NOT_USE_CHARSET && $encoding ){
-        my $tmpType=$req->headers->header('Content-type');
-        # MIME:     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # MIME: This was changed from $req->content_type which was a bug,
-        #       because it does not properly maintain the entire content-type
-        #       header.
-        $req->content_type($tmpType.'; charset=' . lc($encoding));
+	my $tmpType=$req->headers->header('Content-type');
+	# MIME:     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	# MIME: This was changed from $req->content_type which was a bug,
+	#       because it does not properly maintain the entire content-type
+	#       header.
+	$req->content_type($tmpType.'; charset=' . lc($encoding));
       }
 
       $req->content_length(length($envelope));
@@ -559,14 +559,14 @@ sub send_receive {
 
       # 100 OK, continue to read?
       if (($resp->code == 510 || $resp->code == 501) && $method ne 'M-POST') {
-        $SOAP::Transport::HTTP::Client::mpost{$endpoint} = 1;
-      } elsif ($resp->code == 415 && $compressed) {
-        # 415 Unsupported Media Type
-        $SOAP::Transport::HTTP::Client::nocompress{$endpoint} = 1;
-        $envelope = Compress::Zlib::memGunzip($envelope);
-        redo COMPRESS; # try again without compression
+	$SOAP::Transport::HTTP::Client::mpost{$endpoint} = 1;
+      } elsif ($resp->code == 415 && $compressed) { 
+	# 415 Unsupported Media Type
+	$SOAP::Transport::HTTP::Client::nocompress{$endpoint} = 1;
+	$envelope = Compress::Zlib::memGunzip($envelope);
+	redo COMPRESS; # try again without compression
       } else {
-        last;
+	last;
       }
     }
   }
@@ -580,13 +580,13 @@ sub send_receive {
   $self->status($resp->status_line);
 
   my $content =
-    ($resp->content_encoding || '')
+    ($resp->content_encoding || '') 
       =~ /\b$SOAP::Transport::HTTP::Client::COMPRESS\b/o &&
-        $self->options->{is_compress} ?
-          Compress::Zlib::memGunzip($resp->content)
-              : ($resp->content_encoding || '') =~ /\S/
-                ? die "Can't understand returned Content-Encoding (@{[$resp->content_encoding]})\n"
-                  : $resp->content;
+	$self->options->{is_compress} ? 
+	  Compress::Zlib::memGunzip($resp->content)
+	      : ($resp->content_encoding || '') =~ /\S/
+		? die "Can't understand returned Content-Encoding (@{[$resp->content_encoding]})\n"
+		  : $resp->content;
   $resp->content_type =~ m!^multipart/!
     ? join("\n", $resp->headers_as_string, $content) : $content;
 }
@@ -654,7 +654,7 @@ attached to the SOAP message.
   my $soap = SOAP::Lite
     ->readable(1)
       ->uri($NS)
-        ->proxy($HOST);
+	->proxy($HOST);
   my $som = $soap->foo();
 
   foreach my $part (${$som->parts}) {
@@ -687,11 +687,11 @@ attached to the SOAP message.
     my $self = shift;
     my $envelope = pop;
     my $ent = build MIME::Entity
-        'Id'          => "<1234>",
-        'Type'        => "text/xml",
-        'Path'        => "examples/attachments/some2.xml",
-        'Filename'    => "some2.xml",
-        'Disposition' => "attachment";
+	'Id'          => "<1234>",
+	'Type'        => "text/xml",
+	'Path'        => "examples/attachments/some2.xml",
+	'Filename'    => "some2.xml",
+	'Disposition' => "attachment";
     return SOAP::Data->name("foo" => $STRING),$ent;
   }
 

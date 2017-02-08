@@ -328,7 +328,7 @@ sub parse
                 $self->{CURR}++;
                 $self->{CNAME}->[$self->{CURR}] = $name;
             }
-
+    
             $self->{XML} = substr($self->{XML},$close+1,length($self->{XML})-$close-1);
             next;
         }
@@ -341,9 +341,9 @@ sub parse
                 $self->{PARSING} = 0;
                 return $self->returnData(0);
             }
-
+            
             &{$self->{HANDLER}->{characters}}($self,substr($self->{XML},9,$cdataclose-9));
-
+            
             $self->{XML} = substr($self->{XML},$cdataclose+3,length($self->{XML})-$cdataclose-3);
             next;
          }
@@ -513,7 +513,7 @@ sub characters
 
     return unless ($self->{DOC} == 1);
 
-    if ($self->{STYLE} eq "debug")
+    if ($self->{STYLE} eq "debug") 
     {
         my $str = $cdata;
         $str =~ s/\n/\#10\;/g;
@@ -533,7 +533,7 @@ sub characters
         {
             push @{$self->{TREE}[$#{$self->{TREE}}]}, 0;
             push @{$self->{TREE}[$#{$self->{TREE}}]}, $cdata;
-        }
+        }  
     }
 }
 
