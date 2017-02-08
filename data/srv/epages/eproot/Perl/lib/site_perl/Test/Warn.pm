@@ -253,7 +253,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
-    @EXPORT     
+    @EXPORT	
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );

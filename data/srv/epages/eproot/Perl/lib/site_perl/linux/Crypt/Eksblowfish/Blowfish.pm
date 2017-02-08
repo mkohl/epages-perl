@@ -4,20 +4,20 @@ Crypt::Eksblowfish::Blowfish - Blowfish block cipher via Eksblowfish engine
 
 =head1 SYNOPSIS
 
-        use Crypt::Eksblowfish::Blowfish;
+	use Crypt::Eksblowfish::Blowfish;
 
-        $block_size = Crypt::Eksblowfish::Blowfish->blocksize;
-        $key_size = Crypt::Eksblowfish::Blowfish->keysize;
+	$block_size = Crypt::Eksblowfish::Blowfish->blocksize;
+	$key_size = Crypt::Eksblowfish::Blowfish->keysize;
 
-        $cipher = Crypt::Eksblowfish::Blowfish->new($key);
+	$cipher = Crypt::Eksblowfish::Blowfish->new($key);
 
-        $block_size = $cipher->blocksize;
-        $ciphertext = $cipher->encrypt($plaintext);
-        $plaintext = $cipher->decrypt($ciphertext);
+	$block_size = $cipher->blocksize;
+	$ciphertext = $cipher->encrypt($plaintext);
+	$plaintext = $cipher->decrypt($ciphertext);
 
-        $p_array = $cipher->p_array;
-        $s_boxes = $cipher->s_boxes;
-        if($cipher->is_weak) { ...
+	$p_array = $cipher->p_array;
+	$s_boxes = $cipher->s_boxes;
+	if($cipher->is_weak) { ...
 
 =head1 DESCRIPTION
 
@@ -48,7 +48,7 @@ our $VERSION = "0.009";
 use parent "Crypt::Eksblowfish::Subkeyed";
 
 die "mismatched versions of Crypt::Eksblowfish modules"
-        unless $Crypt::Eksblowfish::Subkeyed::VERSION eq $VERSION;
+	unless $Crypt::Eksblowfish::Subkeyed::VERSION eq $VERSION;
 
 =head1 CLASS METHODS
 

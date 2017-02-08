@@ -63,7 +63,7 @@ sub __PPIX_TOKENIZER__regexp {
     my ( $class, $tokenizer, $character ) = @_;
 
     $tokenizer->prior( 'can_be_quantified' )
-        or return;
+	or return;
 
     return $quantifier{$character};
 }

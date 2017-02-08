@@ -10,19 +10,19 @@ PPI::Find - Object version of the Element->find method
 
   # Create the Find object
   my $Find = PPI::Find->new( \&wanted );
-
+  
   # Return all matching Elements as a list
   my @found = $Find->in( $Document );
-
+  
   # Can we find any matching Elements
   if ( $Find->any_matches($Document) ) {
-        print "Found at least one matching Element";
+  	print "Found at least one matching Element";
   }
-
+  
   # Use the object as an iterator
   $Find->start($Document) or die "Failed to execute search";
   while ( my $token = $Find->match ) {
-        ...
+  	...
   }
 
 =head1 DESCRIPTION
@@ -76,7 +76,7 @@ use Params::Util qw{_INSTANCE};
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '1.215';
+	$VERSION = '1.215';
 }
 
 
@@ -98,15 +98,15 @@ Returns a new PPI::Find object, or C<undef> if not passed a CODE reference.
 =cut
 
 sub new {
-        my $class  = ref $_[0] ? ref shift : shift;
-        my $wanted = ref $_[0] eq 'CODE' ? shift : return undef;
+	my $class  = ref $_[0] ? ref shift : shift;
+	my $wanted = ref $_[0] eq 'CODE' ? shift : return undef;
 
-        # Create the object
-        my $self = bless {
-                wanted => $wanted,
-        }, $class;
+	# Create the object
+	my $self = bless {
+		wanted => $wanted,
+	}, $class;
 
-        $self;
+	$self;
 }
 
 =pod
@@ -124,16 +124,16 @@ Returns a duplicate PPI::Find object.
 =cut
 
 sub clone {
-        my $self = ref $_[0] ? shift
-                : die "->clone can only be called as an object method";
-        my $class = ref $self;
+	my $self = ref $_[0] ? shift
+		: die "->clone can only be called as an object method";
+	my $class = ref $self;
 
-        # Create the object
-        my $clone = bless {
-                wanted => $self->{wanted},
-        }, $class;
+	# Create the object
+	my $clone = bless {
+		wanted => $self->{wanted},
+	}, $class;
 
-        $clone;
+	$clone;
 }
 
 
@@ -170,48 +170,48 @@ The ->errstr method can still be used to get the error message as normal.
 =cut
 
 sub in {
-        my $self    = shift;
-        my $Element = shift;
-        my %params  = @_;
-        delete $self->{errstr};
+	my $self    = shift;
+	my $Element = shift;
+	my %params  = @_;
+	delete $self->{errstr};
+ 
+	# Are we already acting as an iterator
+	if ( $self->{in} ) {
+		return $self->_error('->in called while another search is in progress', %params);
+	}
 
-        # Are we already acting as an iterator
-        if ( $self->{in} ) {
-                return $self->_error('->in called while another search is in progress', %params);
-        }
+	# Get the root element for the search
+	unless ( _INSTANCE($Element, 'PPI::Element') ) {
+		return $self->_error('->in was not passed a PPI::Element object', %params);
+	}
 
-        # Get the root element for the search
-        unless ( _INSTANCE($Element, 'PPI::Element') ) {
-                return $self->_error('->in was not passed a PPI::Element object', %params);
-        }
+	# Prepare the search
+	$self->{in}      = $Element;
+	$self->{matches} = [];
 
-        # Prepare the search
-        $self->{in}      = $Element;
-        $self->{matches} = [];
+	# Execute the search
+	eval {
+		$self->_execute;
+	};
+	if ( $@ ) {
+		my $errstr = $@;
+		$errstr =~ s/\s+at\s+line\s+.+$//;
+		return $self->_error("Error while searching: $errstr", %params);
+	}
 
-        # Execute the search
-        eval {
-                $self->_execute;
-        };
-        if ( $@ ) {
-                my $errstr = $@;
-                $errstr =~ s/\s+at\s+line\s+.+$//;
-                return $self->_error("Error while searching: $errstr", %params);
-        }
+	# Clean up and return
+	delete $self->{in};
+	if ( $params{array_ref} ) {
+		if ( @{$self->{matches}} ) {
+			return delete $self->{matches};
+		}
+		delete $self->{matches};
+		return '';
+	}
 
-        # Clean up and return
-        delete $self->{in};
-        if ( $params{array_ref} ) {
-                if ( @{$self->{matches}} ) {
-                        return delete $self->{matches};
-                }
-                delete $self->{matches};
-                return '';
-        }
-
-        # Return as a list
-        my $matches = delete $self->{matches};
-        @$matches;
+	# Return as a list
+	my $matches = delete $self->{matches};
+	@$matches;
 }
 
 =pod
@@ -230,36 +230,36 @@ Returns true if the search completes, and false on error.
 =cut
 
 sub start {
-        my $self    = shift;
-        my $Element = shift;
-        delete $self->{errstr};
+	my $self    = shift;
+	my $Element = shift;
+	delete $self->{errstr};
 
-        # Are we already acting as an iterator
-        if ( $self->{in} ) {
-                return $self->_error('->in called while another search is in progress');
-        }
+	# Are we already acting as an iterator
+	if ( $self->{in} ) {
+		return $self->_error('->in called while another search is in progress');
+	}
 
-        # Get the root element for the search
-        unless ( _INSTANCE($Element, 'PPI::Element') ) {
-                return $self->_error('->in was not passed a PPI::Element object');
-        }
+	# Get the root element for the search
+	unless ( _INSTANCE($Element, 'PPI::Element') ) {
+		return $self->_error('->in was not passed a PPI::Element object');
+	}
 
-        # Prepare the search
-        $self->{in}      = $Element;
-        $self->{matches} = [];
+	# Prepare the search
+	$self->{in}      = $Element;
+	$self->{matches} = [];
 
-        # Execute the search
-        eval {
-                $self->_execute;
-        };
-        if ( $@ ) {
-                my $errstr = $@;
-                $errstr =~ s/\s+at\s+line\s+.+$//;
-                $self->_error("Error while searching: $errstr");
-                return undef;
-        }
+	# Execute the search
+	eval {
+		$self->_execute;
+	};
+	if ( $@ ) {
+		my $errstr = $@;
+		$errstr =~ s/\s+at\s+line\s+.+$//;
+		$self->_error("Error while searching: $errstr");
+		return undef;
+	}
 
-        1;
+	1;
 }
 
 =pod
@@ -274,15 +274,15 @@ Elements to be returned.
 =cut
 
 sub match {
-        my $self = shift;
-        return undef unless $self->{matches};
+	my $self = shift;
+	return undef unless $self->{matches};
 
-        # Fetch and return the next match
-        my $match = shift @{$self->{matches}};
-        return $match if $match;
+	# Fetch and return the next match
+	my $match = shift @{$self->{matches}};
+	return $match if $match;
 
-        $self->finish;
-        undef;
+	$self->finish;
+	undef;
 }
 
 =pod
@@ -305,11 +305,11 @@ Always returns true
 =cut
 
 sub finish {
-        my $self = shift;
-        delete $self->{in};
-        delete $self->{matches};
-        delete $self->{errstr};
-        1;
+	my $self = shift;
+	delete $self->{in};
+	delete $self->{matches};
+	delete $self->{errstr};
+	1;
 }
 
 
@@ -320,33 +320,33 @@ sub finish {
 # Support Methods and Error Handling
 
 sub _execute {
-        my $self   = shift;
-        my $wanted = $self->{wanted};
-        my @queue  = ( $self->{in} );
+	my $self   = shift;
+	my $wanted = $self->{wanted};
+	my @queue  = ( $self->{in} );
 
-        # Pull entries off the queue and hand them off to the wanted function
-        while ( my $Element = shift @queue ) {
-                my $rv = &$wanted( $Element, $self->{in} );
+	# Pull entries off the queue and hand them off to the wanted function
+	while ( my $Element = shift @queue ) {
+		my $rv = &$wanted( $Element, $self->{in} );
 
-                # Add to the matches if returns true
-                push @{$self->{matches}}, $Element if $rv;
+		# Add to the matches if returns true
+		push @{$self->{matches}}, $Element if $rv;
 
-                # Continue and don't descend if it returned undef
-                # or if it doesn't have children
-                next unless defined $rv;
-                next unless $Element->isa('PPI::Node');
+		# Continue and don't descend if it returned undef
+		# or if it doesn't have children
+		next unless defined $rv;
+		next unless $Element->isa('PPI::Node');
 
-                # Add the children to the head of the queue
-                if ( $Element->isa('PPI::Structure') ) {
-                        unshift @queue, $Element->finish if $Element->finish;
-                        unshift @queue, $Element->children;
-                        unshift @queue, $Element->start if $Element->start;
-                } else {
-                        unshift @queue, $Element->children;
-                }
-        }
+		# Add the children to the head of the queue
+		if ( $Element->isa('PPI::Structure') ) {
+			unshift @queue, $Element->finish if $Element->finish;
+			unshift @queue, $Element->children;
+			unshift @queue, $Element->start if $Element->start;
+		} else {
+			unshift @queue, $Element->children;
+		}
+	}
 
-        1;
+	1;
 }
 
 =pod
@@ -361,14 +361,14 @@ Returns a string, or C<undef> if there is no error.
 =cut
 
 sub errstr {
-        shift->{errstr};
+	shift->{errstr};
 }
 
 sub _error {
-        my $self = shift;
-        $self->{errstr} = shift;
-        my %params = @_;
-        $params{array_ref} ? undef : ();
+	my $self = shift;
+	$self->{errstr} = shift;
+	my %params = @_;
+	$params{array_ref} ? undef : ();
 }
 
 1;

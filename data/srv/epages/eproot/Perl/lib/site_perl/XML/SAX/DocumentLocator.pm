@@ -14,7 +14,7 @@ sub new {
 sub TIEHASH {
     my $class = shift;
     my ($pubmeth, $sysmeth, $linemeth, $colmeth, $encmeth, $xmlvmeth) = @_;
-    return bless {
+    return bless { 
         pubmeth => $pubmeth,
         sysmeth => $sysmeth,
         linemeth => $linemeth,
@@ -124,7 +124,7 @@ code for XML::SAX::PurePerl for a usage example.
 
 There is only 1 method: C<new>. Simply pass it a list of
 closures that when called will return the PublicId, the
-SystemId, the LineNumber, the ColumnNumber, the Encoding
+SystemId, the LineNumber, the ColumnNumber, the Encoding 
 and the XMLVersion respectively.
 
 The closures are passed a single parameter, the key being

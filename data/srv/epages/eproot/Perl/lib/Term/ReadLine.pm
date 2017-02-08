@@ -24,11 +24,11 @@ CPAN (under the C<Term::ReadLine::*> namespace).
 
 =head1 Minimal set of supported functions
 
-All the supported functions should be called as methods, i.e., either as
+All the supported functions should be called as methods, i.e., either as 
 
   $term = Term::ReadLine->new('name');
 
-or as
+or as 
 
   $term->addhistory('row');
 
@@ -105,7 +105,7 @@ All these commands are callable via method interface and have names
 which conform to standard conventions with the leading C<rl_> stripped.
 
 The stub package included with the perl distribution allows some
-additional methods:
+additional methods: 
 
 =over 12
 
@@ -141,7 +141,7 @@ None
 The environment variable C<PERL_RL> governs which ReadLine clone is
 loaded. If the value is false, a dummy interface is used. If the value
 is true, it should be tail of the name of the package to use, such as
-C<Perl> or C<Gnu>.
+C<Perl> or C<Gnu>.  
 
 As a special case, if the value of this variable is space-separated,
 the tail might be used to disable the ornaments by setting the tail to
@@ -150,10 +150,10 @@ be C<o=0> or C<ornaments=0>.  The head should be as described above, say
 If the variable is not set, or if the head of space-separated list is
 empty, the best available package is loaded.
 
-  export "PERL_RL=Perl o=0"     # Use Perl ReadLine without ornaments
-  export "PERL_RL= o=0"         # Use best available ReadLine without ornaments
+  export "PERL_RL=Perl o=0"	# Use Perl ReadLine without ornaments
+  export "PERL_RL= o=0"		# Use best available ReadLine without ornaments
 
-(Note that processing of C<PERL_RL> for ornaments is in the discretion of the
+(Note that processing of C<PERL_RL> for ornaments is in the discretion of the 
 particular used C<Term::ReadLine::*> package).
 
 =head1 CAVEATS
@@ -179,7 +179,7 @@ use strict;
 package Term::ReadLine::Stub;
 our @ISA = qw'Term::ReadLine::Tk Term::ReadLine::TermCap';
 
-$DB::emacs = $DB::emacs;        # To peacify -w
+$DB::emacs = $DB::emacs;	# To peacify -w
 our @rl_term_set;
 *rl_term_set = \@Term::ReadLine::TermCap::rl_term_set;
 
@@ -190,17 +190,17 @@ sub readline {
   my $self = shift;
   my ($in,$out,$str) = @$self;
   my $prompt = shift;
-  print $out $rl_term_set[0], $prompt, $rl_term_set[1], $rl_term_set[2];
-  $self->register_Tk
+  print $out $rl_term_set[0], $prompt, $rl_term_set[1], $rl_term_set[2]; 
+  $self->register_Tk 
      if not $Term::ReadLine::registered and $Term::ReadLine::toloop
-        and defined &Tk::DoOneEvent;
+	and defined &Tk::DoOneEvent;
   #$str = scalar <$in>;
   $str = $self->get_line;
   $str =~ s/^\s*\Q$prompt\E// if ($^O eq 'MacOS');
   utf8::upgrade($str)
       if (${^UNICODE} & PERL_UNICODE_STDIN || defined ${^ENCODING}) &&
          utf8::valid($str);
-  print $out $rl_term_set[3];
+  print $out $rl_term_set[3]; 
   # bug in 5.000: chomping empty string creats length -1:
   chomp $str if defined $str;
   $str;
@@ -214,22 +214,22 @@ sub findConsole {
     if ($^O eq 'MacOS') {
         $console = "Dev:Console";
     } elsif (-e "/dev/tty") {
-        $console = "/dev/tty";
+	$console = "/dev/tty";
     } elsif (-e "con" or $^O eq 'MSWin32') {
        $console = 'CONIN$';
        $consoleOUT = 'CONOUT$';
     } else {
-        $console = "sys\$command";
+	$console = "sys\$command";
     }
 
     if (($^O eq 'amigaos') || ($^O eq 'beos') || ($^O eq 'epoc')) {
-        $console = undef;
+	$console = undef;
     }
     elsif ($^O eq 'os2') {
       if ($DB::emacs) {
-        $console = undef;
+	$console = undef;
       } else {
-        $console = "/dev/con";
+	$console = "/dev/con";
       }
     }
 
@@ -242,7 +242,7 @@ sub findConsole {
 }
 
 sub new {
-  die "method new called with wrong number of arguments"
+  die "method new called with wrong number of arguments" 
     unless @_==2 or @_==4;
   #local (*FIN, *FOUT);
   my ($FIN, $FOUT, $ret);
@@ -256,20 +256,20 @@ sub new {
                                                               "<$console";
     open FOUT,">$consoleOUT";
 
-    #OUT->autoflush(1);         # Conflicts with debugger?
+    #OUT->autoflush(1);		# Conflicts with debugger?
     my $sel = select(FOUT);
-    $| = 1;                             # for DB::OUT
+    $| = 1;				# for DB::OUT
     select($sel);
     $ret = bless [\*FIN, \*FOUT];
-  } else {                      # Filehandles supplied
+  } else {			# Filehandles supplied
     $FIN = $_[2]; $FOUT = $_[3];
-    #OUT->autoflush(1);         # Conflicts with debugger?
+    #OUT->autoflush(1);		# Conflicts with debugger?
     my $sel = select($FOUT);
-    $| = 1;                             # for DB::OUT
+    $| = 1;				# for DB::OUT
     select($sel);
     $ret = bless [$FIN, $FOUT];
   }
-  if ($ret->Features->{ornaments}
+  if ($ret->Features->{ornaments} 
       and not ($ENV{PERL_RL} and $ENV{PERL_RL} =~ /\bo\w*=0/)) {
     local $Term::ReadLine::termcap_nowarn = 1;
     $ret->ornaments(1);
@@ -282,7 +282,7 @@ sub newTTY {
   $self->[0] = $in;
   $self->[1] = $out;
   my $sel = select($out);
-  $| = 1;                               # for DB::OUT
+  $| = 1;				# for DB::OUT
   select($sel);
 }
 
@@ -301,7 +301,7 @@ sub get_line {
   return scalar <$in>;
 }
 
-package Term::ReadLine;         # So late to allow the above code be defined?
+package Term::ReadLine;		# So late to allow the above code be defined?
 
 our $VERSION = '1.05';
 
@@ -317,7 +317,7 @@ if ($which) {
   } else {
     eval "use Term::ReadLine::$which;";
   }
-} elsif (defined $which and $which ne '') {     # Defined but false
+} elsif (defined $which and $which ne '') {	# Defined but false
   # Do nothing fancy
 } else {
   eval "use Term::ReadLine::Gnu; 1" or eval "use Term::ReadLine::Perl; 1";
@@ -349,7 +349,7 @@ our $rl_term_set = ',,,';
 our $terminal;
 sub LoadTermCap {
   return if defined $terminal;
-
+  
   require Term::Cap;
   $terminal = Tgetent Term::Cap ({OSPEED => 9600}); # Avoid warning.
 }
@@ -381,7 +381,7 @@ our($giveup);
 sub handle {$giveup = 1; $count_handle++}
 
 sub Tk_loop {
-  # Tk->tkwait('variable',\$giveup);    # needs Widget
+  # Tk->tkwait('variable',\$giveup);	# needs Widget
   $count_DoOne++, Tk::DoOneEvent(0) until $giveup;
   $count_loop++;
   $giveup = 0;
@@ -389,7 +389,7 @@ sub Tk_loop {
 
 sub register_Tk {
   my $self = shift;
-  $Term::ReadLine::registered++
+  $Term::ReadLine::registered++ 
     or Tk->fileevent($self->IN,'readable',\&handle);
 }
 

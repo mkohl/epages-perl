@@ -147,7 +147,7 @@ sub read
         } elsif ($t->{'Version'} == 2)
         {
             my ($wid, $off, $numg, $maxl, $maxr, $j);
-
+            
             $wid = unpack("n", $dat);
             $off = unpack("n", substr($dat, 2));
             ($t->{'left_first'}, $numg) = unpack("n2", substr($dat, $off));

@@ -44,15 +44,15 @@ sub params_form
     my $paramstr = $3;
 
     if (@_) {
-        my @args = @_;
+    	my @args = @_; 
         $$self = $1 . $2;
         my $rest = $4;
-        my @new;
-        for (my $i=0; $i < @args; $i += 2) {
-            push(@new, "$args[$i]=$args[$i+1]");
-        }
-        $paramstr = join(";", @new);
-        $$self .= ";" . $paramstr . $rest;
+	my @new;
+	for (my $i=0; $i < @args; $i += 2) {
+	    push(@new, "$args[$i]=$args[$i+1]");
+	}
+	$paramstr = join(";", @new);
+	$$self .= ";" . $paramstr . $rest;
     }
     $paramstr =~ s/^;//o;
     return split(/[;=]/, $paramstr);
@@ -65,10 +65,10 @@ sub params
     my $paramstr = $3;
 
     if (@_) {
-        my $new = shift;
+    	my $new = shift; 
         $$self = $1 . $2;
         my $rest = $4;
-        $$self .= $paramstr . $rest;
+	$$self .= $paramstr . $rest;
     }
     $paramstr =~ s/^;//o;
     return $paramstr;

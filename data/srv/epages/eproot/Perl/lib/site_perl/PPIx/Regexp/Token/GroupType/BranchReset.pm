@@ -50,8 +50,8 @@ sub __PPIX_TOKENIZER__regexp {
     # optional escapes are because any of the non-open-bracket
     # punctuation characters may also be the delimiter.
     if ( my $accept = $tokenizer->find_regexp(
-            qr{ \A \\? \? \\? \| }smx ) ) {
-        return $accept;
+	    qr{ \A \\? \? \\? \| }smx ) ) {
+	return $accept;
     }
 
     return;

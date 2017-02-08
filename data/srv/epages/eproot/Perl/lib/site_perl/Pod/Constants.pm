@@ -100,33 +100,33 @@ sub end_input {
     print "Found end of $parser->{active}\n" if ($parser->{DEBUG});
     my $whereto = $parser->{wanted_pod_tags}->{$parser->{active}};
     print "\$_ will be set to:\n---\n$parser->{paragraphs}\n---\n"
-        if ($parser->{DEBUG});
+	if ($parser->{DEBUG});
 
     $parser->{paragraphs} =~ s/^\s*|\s*$//gs
-        if $parser->{trimmed_tags}->{$parser->{active}};
+	if $parser->{trimmed_tags}->{$parser->{active}};
 
     if (ref $whereto eq "CODE") {
-        print "calling sub\n" if $parser->{DEBUG};
-        local ($_) = $parser->{paragraphs};
-        $whereto->();
-        print "done\n" if $parser->{DEBUG};
+	print "calling sub\n" if $parser->{DEBUG};
+	local ($_) = $parser->{paragraphs};
+	$whereto->();
+	print "done\n" if $parser->{DEBUG};
     } elsif (ref $whereto eq "SCALAR") {
-        print "inserting into scalar\n" if $parser->{DEBUG};
-        $$whereto = $parser->{paragraphs};
+	print "inserting into scalar\n" if $parser->{DEBUG};
+	$$whereto = $parser->{paragraphs};
     } elsif (ref $whereto eq "ARRAY") {
-        print "inserting into array\n" if $parser->{DEBUG};
-        @$whereto = split /\n/, $parser->{paragraphs};
+	print "inserting into array\n" if $parser->{DEBUG};
+	@$whereto = split /\n/, $parser->{paragraphs};
     } elsif (ref $whereto eq "HASH") {
-        print "inserting into hash\n" if $parser->{DEBUG};
-        # Oh, sorry, should I be in LISP101?
-        %$whereto = (map { map { s/^\s*|\s*$//g; $_ }
-                               split /=>/, $_ }
-                     grep m/^
-                            ( (?:[^=]|=[^>])+ )   # scan up to "=>"
-                            =>
-                            ( (?:[^=]|=[^>])+ =? )# don't allow more "=>"'s
-                            $/x,
-                     split /\n/, $parser->{paragraphs});
+	print "inserting into hash\n" if $parser->{DEBUG};
+	# Oh, sorry, should I be in LISP101?
+	%$whereto = (map { map { s/^\s*|\s*$//g; $_ }
+			       split /=>/, $_ }
+		     grep m/^
+			    ( (?:[^=]|=[^>])+ )   # scan up to "=>"
+			    =>
+			    ( (?:[^=]|=[^>])+ =? )# don't allow more "=>"'s
+			    $/x,
+		     split /\n/, $parser->{paragraphs});
     } else { die $whereto }
     $parser->{active} = undef;
 }
@@ -138,7 +138,7 @@ sub command {
     $paragraph =~ s/(?:\r\n|\n\r)/\n/g;
 
     print "Got command =$command, value=$paragraph\n"
-        if $parser->{DEBUG};
+	if $parser->{DEBUG};
 
     $parser->end_input() if $parser->{active};
 
@@ -147,39 +147,39 @@ sub command {
     my ($lookup);
     # first check for a catch-all for this command type
     if ( exists $parser->{wanted_pod_tags}->{"*$command"} ) {
-        $parser->{paragraphs} = $paragraph;
-        $parser->{active} = "*$command";
-        $does_she_want_it_sir = "oohw";
+	$parser->{paragraphs} = $paragraph;
+	$parser->{active} = "*$command";
+	$does_she_want_it_sir = "oohw";
 
     } elsif ($command =~ m/^(head\d+|item|(for|begin))$/) {
-        if ( $2 ) {
-            # if it's a "for" or "begin" section, the title is the
-            # first word only
-            ($lookup, $parser->{paragraphs}) =
-                ($paragraph =~ m/^\s*(\S*)\s*(.*)/s);
-        } else {
-            # otherwise, it's up to the end of the line
-            ($lookup, $parser->{paragraphs})
-                = ($paragraph =~ m/^\s*(\S[^\n]*?)\s*\n(.*)$/s);
-        }
+	if ( $2 ) {
+	    # if it's a "for" or "begin" section, the title is the
+	    # first word only
+	    ($lookup, $parser->{paragraphs}) =
+		($paragraph =~ m/^\s*(\S*)\s*(.*)/s);
+	} else {
+	    # otherwise, it's up to the end of the line
+	    ($lookup, $parser->{paragraphs})
+		= ($paragraph =~ m/^\s*(\S[^\n]*?)\s*\n(.*)$/s);
+	}
 
-        # Look for a match by name
-        if (defined $lookup
-            and exists $parser->{wanted_pod_tags}->{$lookup}) {
-            print "Found $lookup\n" if ($parser->{DEBUG});
-            $parser->{active} = $lookup;
-            $does_she_want_it_sir = "suits you sir";
-        }
+	# Look for a match by name
+	if (defined $lookup
+	    and exists $parser->{wanted_pod_tags}->{$lookup}) {
+	    print "Found $lookup\n" if ($parser->{DEBUG});
+	    $parser->{active} = $lookup;
+	    $does_she_want_it_sir = "suits you sir";
+	}
 
     } else {
-        # nothing
-        print "Ignoring =$command (not known)\n" if $parser->{DEBUG};
+	# nothing
+	print "Ignoring =$command (not known)\n" if $parser->{DEBUG};
     }
 
     {
-        local $^W = 0;
-        print "Ignoring =$command $paragraph (lookup = $lookup)\n"
-            if (!$does_she_want_it_sir and $parser->{DEBUG})
+	local $^W = 0;
+	print "Ignoring =$command $paragraph (lookup = $lookup)\n"
+	    if (!$does_she_want_it_sir and $parser->{DEBUG})
     }
 }
 
@@ -189,11 +189,11 @@ sub verbatim {
     $paragraph =~ s/(?:\r\n|\n\r)/\n/g;
 
     print("Got paragraph: $paragraph ("
-          .($parser->{active}?"using":"ignoring").")\n")
-        if $parser->{DEBUG};
+	  .($parser->{active}?"using":"ignoring").")\n")
+	if $parser->{DEBUG};
 
     if (defined $parser->{active}) {
-        $parser->{paragraphs} .= $paragraph;
+	$parser->{paragraphs} .= $paragraph;
     }
 }
 
@@ -235,7 +235,7 @@ splitters) for leading and trailing whitespace.
 
 The name of HOOK is matched against any "=head1", "=head2", "=item",
 "=for", "=begin" value.  If you specify the special hooknames "*item",
-"*head1", etc, then you will get a function that is run for every
+"*head1", etc, then you will get a function that is run for every 
 
 Note that the supplied functions for array and hash splitting are
 exactly equivalent to fairly simple Perl blocks:
@@ -249,11 +249,11 @@ Hash:
   HOOK => sub {
   %hash =
       (map { map { s/^\s+|\s+$//g; $_ } split /=>/, $_ }
-            (grep m/^
-                    ( (?:[^=]|=[^>])+ )   # scan up to "=>"
-                    =>
-                    ( (?:[^=]|=[^>])+ =? )# don't allow more "=>"'s
-                    $/x, split /\n/, $_));
+	    (grep m/^
+		    ( (?:[^=]|=[^>])+ )   # scan up to "=>"
+		    =>
+		    ( (?:[^=]|=[^>])+ =? )# don't allow more "=>"'s
+		    $/x, split /\n/, $_));
   }
 
 Well, they're simple if you can grok map, a regular expression like
@@ -283,14 +283,14 @@ sub import {
     # try to guess the source file of the caller
     my $source_file;
     if (caller ne "main") {
-        (my $module = caller().".pm") =~ s|::|/|g;
-        $source_file = $INC{$module};
+	(my $module = caller().".pm") =~ s|::|/|g;
+	$source_file = $INC{$module};
     }
     $source_file ||= $0;
 
     ( -f $source_file )
-        or croak ("Cannot find source file (guessed $source_file) for"
-                  ." package ".caller());
+	or croak ("Cannot find source file (guessed $source_file) for"
+		  ." package ".caller());
 
     # nasty tricks with the stack so we don't have to be silly with
     # caller()
@@ -322,10 +322,10 @@ sub import_from_file {
     $parser->add_hook(@_);
 
     print "Pod::Parser: DEBUG: Opening $filename for reading\n"
-        if $parser->{DEBUG};
+	if $parser->{DEBUG};
     my $fh = new IO::Handle;
     open $fh, "<$filename"
-        or die ("cannot open $filename for reading; $!");
+	or die ("cannot open $filename for reading; $!");
 
     $parser->parse_from_filehandle($fh, \*STDOUT);
 
@@ -346,34 +346,34 @@ release.
 sub add_hook {
     my $parser;
     if ( UNIVERSAL::isa($_[0], __PACKAGE__) ) {
-        $parser = shift;
+	$parser = shift;
     } else {
-        $parser = $parsers{caller()}
-            or die("add_hook called, but don't know what for - "
-                   ."caller = ".caller());
+	$parser = $parsers{caller()}
+	    or die("add_hook called, but don't know what for - "
+		   ."caller = ".caller());
     }
     while (my ($pod_tag, $var) = splice @_, 0, 2) {
-        #print "$pod_tag: $var\n";
-        if (lc($pod_tag) eq "-trim") {
-            $parser->{trim_next} = $var;
-        } elsif ( lc($pod_tag) eq "-debug" ) {
-            $parser->{DEBUG} = $var;
-        } elsif (lc($pod_tag) eq "-usage") {
-            # an idea for later - automatic "usage"
-            #%wanted_pod_tags{@tags}
-        } else {
-            if ((ref $var) =~ /^(?:SCALAR|CODE|ARRAY|HASH)$/) {
-                print "Will look for $pod_tag.\n"
-                    if ($parser->{DEBUG});
-                $parser->{wanted_pod_tags}->{$pod_tag} = $var;
-                $parser->{trimmed_tags}->{$pod_tag} = 1
-                    if $parser->{trim_next};
-            } else {
-                die ("Sorry - need a reference to import POD "
-                     ."sections into, not the scalar value $var"
-                     ." importing $pod_tag into ".caller());
-            }
-        }
+	#print "$pod_tag: $var\n";
+	if (lc($pod_tag) eq "-trim") {
+	    $parser->{trim_next} = $var;
+	} elsif ( lc($pod_tag) eq "-debug" ) {
+	    $parser->{DEBUG} = $var;
+	} elsif (lc($pod_tag) eq "-usage") {
+	    # an idea for later - automatic "usage"
+	    #%wanted_pod_tags{@tags}
+	} else {
+	    if ((ref $var) =~ /^(?:SCALAR|CODE|ARRAY|HASH)$/) {
+		print "Will look for $pod_tag.\n"
+		    if ($parser->{DEBUG});
+		$parser->{wanted_pod_tags}->{$pod_tag} = $var;
+		$parser->{trimmed_tags}->{$pod_tag} = 1
+		    if $parser->{trim_next};
+	    } else {
+		die ("Sorry - need a reference to import POD "
+		     ."sections into, not the scalar value $var"
+		     ." importing $pod_tag into ".caller());
+	    }
+	}
     }
 }
 
@@ -386,15 +386,15 @@ Deletes the named hooks.  Companion function to add_hook
 sub delete_hook {
     my $parser;
     if ( UNIVERSAL::isa($_[0], __PACKAGE__) ) {
-        $parser = shift;
+	$parser = shift;
     } else {
-        $parser = $parsers{caller()}
-            or die("delete_hook called, but don't know what for - "
-                   ."caller = ".caller());
+	$parser = $parsers{caller()}
+	    or die("delete_hook called, but don't know what for - "
+		   ."caller = ".caller());
     }
     while ( my $label = shift ) {
-        delete $parser->{wanted_pod_tags}->{$label};
-        delete $parser->{trimmed_tags}->{$label};
+	delete $parser->{wanted_pod_tags}->{$label};
+	delete $parser->{trimmed_tags}->{$label};
     }
 }
 
@@ -430,7 +430,7 @@ method seems to break dh-make-perl.
  EOF
 
  my ($VERSION, $NAME, $PREREQ_PM, $ABSTRACT, $AUTHOR);
- Pod::Constants::import_from_file
+ Pod::Constants::import_from_file 
      (
       'MyTestModule.pm',
       'MODULE RELEASE' => sub { ($VERSION) = m/(\d+\.\d+)/ },
@@ -442,7 +442,7 @@ method seems to break dh-make-perl.
 
  WriteMakefile
      (
-      'NAME'            => $NAME,
+      'NAME'		=> $NAME,
       'PREREQ_PM'        => $PREREQ_PM,
       'VERSION'          => $VERSION,
       ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
@@ -501,17 +501,17 @@ to happen if you submit them as a patch to the distribution.
 
 Source is kept at
 
-  git://utsl.gen.nz/Pod-Constants
+  git://utsl.gen.nz/Pod-Constants 
 
 =cut
 
 BEGIN {
     Pod::Constants->import
-            (
-             SYNOPSIS => sub {
-                 eval pop @{[ grep /^\s*\$VERSION/, split /\n/, $_ ]}
-             }
-            )
+	    (
+	     SYNOPSIS => sub {
+		 eval pop @{[ grep /^\s*\$VERSION/, split /\n/, $_ ]}
+	     }
+	    )
 };
 
 1.4142;

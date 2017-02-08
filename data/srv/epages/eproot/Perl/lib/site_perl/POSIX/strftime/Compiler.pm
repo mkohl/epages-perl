@@ -331,7 +331,7 @@ sub compile {
              \%([\%\+a-zA-Z]|$)
         )
     ! $char_handler->($1,\$need9char) !egx;
-
+    
     my $need9char_code='';
     if ( $need9char ) {
         $need9char_code = q~if ( @_ == 6 ) {
@@ -390,7 +390,7 @@ POSIX::strftime::Compiler - GNU C library compatible strftime for loggers and se
     use POSIX::strftime::Compiler qw/strftime/;
 
     say strftime('%a, %d %b %Y %T %z',localtime):
-
+    
     my $psc = POSIX::strftime::Compiler->new($fmt);
     say $psc->to_string(localtime);
 
@@ -399,7 +399,7 @@ POSIX::strftime::Compiler - GNU C library compatible strftime for loggers and se
 POSIX::strftime::Compiler provides GNU C library compatible strftime(3). But this module will not affected
 by the system locale.  This feature is useful when you want to write loggers, servers and portable applications.
 
-For generate same result strings on any locale, POSIX::strftime::Compiler wraps POSIX::strftime and
+For generate same result strings on any locale, POSIX::strftime::Compiler wraps POSIX::strftime and 
 converts some format characters to perl code
 
 =head1 FUNCTION
@@ -433,7 +433,7 @@ Generate formatted string from time.
 
 =head1 FORMAT CHARACTERS
 
-POSIX::strftime::Compiler supports almost all characters that GNU strftime(3) supports.
+POSIX::strftime::Compiler supports almost all characters that GNU strftime(3) supports. 
 But C<%E[cCxXyY]> and C<%O[deHImMSuUVwWy]> are not supported, just remove E and O prefix.
 
 =head1 A RECOMMEND MODULE
@@ -449,7 +449,7 @@ I strongly recommend you to install this if you use C<%z>.
 
 =head1 PERFORMANCE ISSUES ON WINDOWS
 
-Windows and Cygwin and some system may not support C<%z> and C<%Z>. For these system,
+Windows and Cygwin and some system may not support C<%z> and C<%Z>. For these system, 
 POSIX::strftime::Compiler calculate time zone offset and find zone name. This is not fast.
 If you need performance on Windows and Cygwin, please install L<Time::TZOffset>
 

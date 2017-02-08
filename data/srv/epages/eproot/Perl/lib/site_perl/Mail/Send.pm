@@ -20,7 +20,7 @@ sub new(@)
     my $self = bless {}, $class;
 
     while(my($key, $value) = each %attr)
-    {   $key = lc $key;
+    {	$key = lc $key;
         $self->$key($value);
     }
 
@@ -31,7 +31,7 @@ sub new(@)
 sub set($@)
 {   my ($self, $hdr, @values) = @_;
     $self->{$hdr} = [ @values ] if @values;
-    @{$self->{$hdr} || []};     # return new (or original) values
+    @{$self->{$hdr} || []};	# return new (or original) values
 }
 
 
@@ -47,10 +47,10 @@ sub delete($)
 }
 
 
-sub to          { my $self=shift; $self->set('To', @_); }
-sub cc          { my $self=shift; $self->set('Cc', @_); }
-sub bcc         { my $self=shift; $self->set('Bcc', @_); }
-sub subject     { my $self=shift; $self->set('Subject', join (' ', @_)); }
+sub to		{ my $self=shift; $self->set('To', @_); }
+sub cc		{ my $self=shift; $self->set('Cc', @_); }
+sub bcc		{ my $self=shift; $self->set('Bcc', @_); }
+sub subject	{ my $self=shift; $self->set('Subject', join (' ', @_)); }
 
 
 sub open(@)

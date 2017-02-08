@@ -41,11 +41,11 @@ sub end_document {
     my $self = shift; my $document = shift;
 
     if (defined $self->{IOHandle}) {
-        return ();
+	return ();
     } else {
-        my $text = join ('', @{$self->{'_text_array'}});
-        undef $self->{'_text_array'};
-        return $text;
+	my $text = join ('', @{$self->{'_text_array'}});
+	undef $self->{'_text_array'};
+	return $text;
     }
 }
 
@@ -56,7 +56,7 @@ sub start_element {
     my $key;
     my $attrs = $element->{Attributes};
     foreach $key (sort keys %$attrs) {
-        $self->_print(" $key=\"" . $self->_escape($attrs->{$key}) . '"');
+	$self->_print(" $key=\"" . $self->_escape($attrs->{$key}) . '"');
     }
     $self->_print('>');
 }
@@ -94,9 +94,9 @@ sub comment {
     my $self = shift; my $comment = shift;
 
     if ($self->{PrintComments}) {
-        $self->_print('<!--' . $comment->{Data} . '-->');
+	$self->_print('<!--' . $comment->{Data} . '-->');
     } else {
-        return ();
+	return ();
     }
 }
 
@@ -104,10 +104,10 @@ sub _print {
     my $self = shift; my $string = shift;
 
     if (defined $self->{IOHandle}) {
-        $self->{IOHandle}->print($string);
-        return ();
+	$self->{IOHandle}->print($string);
+	return ();
     } else {
-        push @{$self->{'_text_array'}}, $string;
+	push @{$self->{'_text_array'}}, $string;
     }
 }
 

@@ -32,7 +32,7 @@ sub config {
 sub config_revert {
   my $self = shift;
   die "Can't use config_revert() as a class method" unless ref($self);
-
+  
   delete $self->{$_} foreach @_;
 }
 
@@ -72,9 +72,9 @@ sub find_perl_interpreter {
   }
 
   foreach my $perl ( $self->config('perlpath'),
-                     map( File::Spec->catfile($_, $thisperl),
-                          File::Spec->path() )
-                   ) {
+		     map( File::Spec->catfile($_, $thisperl),
+			  File::Spec->path() )
+		   ) {
     return $perl if -f $perl and $self->perl_is_same($perl);
   }
   return;
@@ -97,45 +97,45 @@ sub perl_inc {
 
 {
   my %OSTYPES = qw(
-                   aix       Unix
-                   bsdos     Unix
-                   dgux      Unix
-                   dynixptx  Unix
-                   freebsd   Unix
-                   linux     Unix
-                   hpux      Unix
-                   irix      Unix
-                   darwin    Unix
-                   machten   Unix
-                   next      Unix
-                   openbsd   Unix
-                   netbsd    Unix
-                   dec_osf   Unix
-                   svr4      Unix
-                   svr5      Unix
-                   sco_sv    Unix
-                   unicos    Unix
-                   unicosmk  Unix
-                   solaris   Unix
-                   sunos     Unix
-                   cygwin    Unix
-                   os2       Unix
+		   aix       Unix
+		   bsdos     Unix
+		   dgux      Unix
+		   dynixptx  Unix
+		   freebsd   Unix
+		   linux     Unix
+		   hpux      Unix
+		   irix      Unix
+		   darwin    Unix
+		   machten   Unix
+		   next      Unix
+		   openbsd   Unix
+		   netbsd    Unix
+		   dec_osf   Unix
+		   svr4      Unix
+		   svr5      Unix
+		   sco_sv    Unix
+		   unicos    Unix
+		   unicosmk  Unix
+		   solaris   Unix
+		   sunos     Unix
+		   cygwin    Unix
+		   os2       Unix
 
-                   dos       Windows
-                   MSWin32   Windows
+		   dos       Windows
+		   MSWin32   Windows
 
-                   os390     EBCDIC
-                   os400     EBCDIC
-                   posix-bc  EBCDIC
-                   vmesa     EBCDIC
+		   os390     EBCDIC
+		   os400     EBCDIC
+		   posix-bc  EBCDIC
+		   vmesa     EBCDIC
 
-                   MacOS     MacOS
-                   VMS       VMS
-                   VOS       VOS
-                   riscos    RiscOS
-                   amigaos   Amiga
-                   mpeix     MPEiX
-                  );
+		   MacOS     MacOS
+		   VMS       VMS
+		   VOS       VOS
+		   riscos    RiscOS
+		   amigaos   Amiga
+		   mpeix     MPEiX
+		  );
 
 
   sub os_type {
@@ -158,31 +158,31 @@ Probe::Perl - Information about the currently running perl
 
  use Probe::Perl;
  $p = Probe::Perl->new();
-
+ 
  # Version of this perl as a floating point number
  $ver = $p->perl_version();
  $ver = Probe::Perl->perl_version();
-
+ 
  # Convert a multi-dotted string to a floating point number
  $ver = $p->perl_version_to_float($ver);
  $ver = Probe::Perl->perl_version_to_float($ver);
-
+ 
  # Check if the given perl is the same as the one currently running
  $bool = $p->perl_is_same($perl_path);
  $bool = Probe::Perl->perl_is_same($perl_path);
-
+ 
  # Find a path to the currently-running perl
  $path = $p->find_perl_interpreter();
  $path = Probe::Perl->find_perl_interpreter();
-
+ 
  # Get @INC before run-time additions
  @paths = $p->perl_inc();
  @paths = Probe::Perl->perl_inc();
-
+ 
  # Get the general type of operating system
  $type = $p->os_type();
  $type = Probe::Perl->os_type();
-
+ 
  # Access Config.pm values
  $val = $p->config('foo');
  $val = Probe::Perl->config('foo');

@@ -344,7 +344,7 @@ to fit in one document.  This POD itself explains the top-level APIs
 and general topics at a glance.  For other topics and more details,
 see the PODs below:
 
-  Name                          Description
+  Name			        Description
   --------------------------------------------------------
   Encode::Alias         Alias definitions to encodings
   Encode::Encoding      Encode Implementation Base Class
@@ -897,18 +897,18 @@ Now that is overruled by Larry Wall himself.
   To: perl-unicode@perl.org
   Subject: Re: Make Encode.pm support the real UTF-8
   Message-Id: <20041204025158.GA28754@wall.org>
-
+  
   On Fri, Dec 03, 2004 at 10:12:12PM +0000, Tim Bunce wrote:
   : I've no problem with 'utf8' being perl's unrestricted uft8 encoding,
   : but "UTF-8" is the name of the standard and should give the
   : corresponding behaviour.
-
+  
   For what it's worth, that's how I've always kept them straight in my
   head.
-
+  
   Also for what it's worth, Perl 6 will mostly default to strict but
   make it easy to switch back to lax.
-
+  
   Larry
 
 Do you copy?  As of Perl 5.8.7, B<UTF-8> means strict, official UTF-8

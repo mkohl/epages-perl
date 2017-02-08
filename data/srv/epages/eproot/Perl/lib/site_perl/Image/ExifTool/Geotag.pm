@@ -156,7 +156,7 @@ sub LoadTrackLog($$;$)
                 next;
             } elsif ($nmeaStart and /^B/) {
                 # parse IGC fixes without a date
-                $format = 'IGC';
+                $format = 'IGC';                
             } else {
                 # search only first 50 lines of file for a valid fix
                 last if ++$skipped > 50;

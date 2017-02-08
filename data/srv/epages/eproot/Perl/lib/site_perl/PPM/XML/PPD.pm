@@ -12,7 +12,7 @@ $PPM::XML::PPD::revision = '$Id: PPD.pm,v 1.2 2000/01/27 19:33:17 graham Exp $';
 $PPM::XML::PPD::VERSION  = '0.01';
 
 ###############################################################################
-# Set up PPM::XML::PPD to export its sub-packages so that we can use them in
+# Set up PPM::XML::PPD to export its sub-packages so that we can use them in 
 # other XML documents without too much effort.
 ###############################################################################
 package PPM::XML::PPD;
@@ -34,7 +34,7 @@ package PPM::XML::PPD::SOFTPKG;
 @ISA = qw( PPM::XML::ValidatingElement );
 @oattrs = qw( VERSION );
 @rattrs = qw( NAME );
-@okids  = qw( ABSTRACT AUTHOR IMPLEMENTATION LICENSE
+@okids  = qw( ABSTRACT AUTHOR IMPLEMENTATION LICENSE 
               TITLE INSTALL UNINSTALL PROVIDE);
 
 ###############################################################################

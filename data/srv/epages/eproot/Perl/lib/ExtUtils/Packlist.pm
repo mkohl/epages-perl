@@ -44,10 +44,10 @@ sub __find_relocations
 {
     my %paths;
     while (my ($raw_key, $raw_val) = each %Config) {
-        my $exp_key = $raw_key . "exp";
-        next unless exists $Config{$exp_key};
-        next unless $raw_val =~ m!\.\.\./!;
-        $paths{$Config{$exp_key}}++;
+	my $exp_key = $raw_key . "exp";
+	next unless exists $Config{$exp_key};
+	next unless $raw_val =~ m!\.\.\./!;
+	$paths{$Config{$exp_key}}++;
     }
     # Longest prefixes go first in the alternatives
     my $alternations = join "|", map {quotemeta $_}
@@ -136,11 +136,11 @@ while (defined($line = <$fh>))
 
       if ($Config{userelocatableinc} && $data->{relocate_as})
       {
-          require File::Spec;
-          require Cwd;
-          my ($vol, $dir) = File::Spec->splitpath($packfile);
-          my $newpath = File::Spec->catpath($vol, $dir, $data->{relocate_as});
-          $key = Cwd::realpath($newpath);
+	  require File::Spec;
+	  require Cwd;
+	  my ($vol, $dir) = File::Spec->splitpath($packfile);
+	  my $newpath = File::Spec->catpath($vol, $dir, $data->{relocate_as});
+	  $key = Cwd::realpath($newpath);
       }
          }
    $key =~ s!/\./!/!g;   # Some .packlists have spurious '/./' bits in the paths
@@ -162,27 +162,27 @@ foreach my $key (sort(keys(%{$self->{data}})))
    {
        my $data = $self->{data}->{$key};
        if ($Config{userelocatableinc}) {
-           $Relocations ||= __find_relocations();
-           if ($packfile =~ $Relocations) {
-               # We are writing into a subdirectory of a run-time relocated
-               # path. Figure out if the this file is also within a subdir.
-               my $prefix = $1;
-               if (File::Spec->no_upwards(File::Spec->abs2rel($key, $prefix)))
-               {
-                   # The relocated path is within the found prefix
-                   my $packfile_prefix;
-                   (undef, $packfile_prefix)
-                       = File::Spec->splitpath($packfile);
+	   $Relocations ||= __find_relocations();
+	   if ($packfile =~ $Relocations) {
+	       # We are writing into a subdirectory of a run-time relocated
+	       # path. Figure out if the this file is also within a subdir.
+	       my $prefix = $1;
+	       if (File::Spec->no_upwards(File::Spec->abs2rel($key, $prefix)))
+	       {
+		   # The relocated path is within the found prefix
+		   my $packfile_prefix;
+		   (undef, $packfile_prefix)
+		       = File::Spec->splitpath($packfile);
 
-                   my $relocate_as
-                       = File::Spec->abs2rel($key, $packfile_prefix);
+		   my $relocate_as
+		       = File::Spec->abs2rel($key, $packfile_prefix);
 
-                   if (!ref $data) {
-                       $data = {};
-                   }
-                   $data->{relocate_as} = $relocate_as;
-               }
-           }
+		   if (!ref $data) {
+		       $data = {};
+		   }
+		   $data->{relocate_as} = $relocate_as;
+	       }
+	   }
        }
    print $fh ("$key");
    if (ref($data))
@@ -311,11 +311,11 @@ Here's C<modrm>, a little utility to cleanly remove an installed module.
     use ExtUtils::Installed;
 
     sub emptydir($) {
-        my ($dir) = @_;
-        my $dh = IO::Dir->new($dir) || return(0);
-        my @count = $dh->read();
-        $dh->close();
-        return(@count == 2 ? 1 : 0);
+	my ($dir) = @_;
+	my $dh = IO::Dir->new($dir) || return(0);
+	my @count = $dh->read();
+	$dh->close();
+	return(@count == 2 ? 1 : 0);
     }
 
     # Find all the installed packages
@@ -328,20 +328,20 @@ Here's C<modrm>, a little utility to cleanly remove an installed module.
        print("Do you want to delete $module? [n] ");
        my $r = <STDIN>; chomp($r);
        if ($r && $r =~ /^y/i) {
-          # Remove all the files
-          foreach my $file (sort($installed->files($module))) {
-             print("rm $file\n");
-             unlink($file);
-          }
-          my $pf = $installed->packlist($module)->packlist_file();
-          print("rm $pf\n");
-          unlink($pf);
-          foreach my $dir (sort($installed->directory_tree($module))) {
-             if (emptydir($dir)) {
-                print("rmdir $dir\n");
-                rmdir($dir);
-             }
-          }
+	  # Remove all the files
+	  foreach my $file (sort($installed->files($module))) {
+	     print("rm $file\n");
+	     unlink($file);
+	  }
+	  my $pf = $installed->packlist($module)->packlist_file();
+	  print("rm $pf\n");
+	  unlink($pf);
+	  foreach my $dir (sort($installed->directory_tree($module))) {
+	     if (emptydir($dir)) {
+		print("rmdir $dir\n");
+		rmdir($dir);
+	     }
+	  }
        }
     }
 

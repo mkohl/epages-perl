@@ -271,7 +271,7 @@ L<Sub::Exporter>.
 
 sub exporter {
   my ($arg) = @_;
-
+  
   my %is_exported = map { $_ => undef } @{ $arg->{exports} };
 
   sub {

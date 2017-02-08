@@ -8,35 +8,35 @@
 # Don't use it directly.
 
 # 'X' below means that this form is discouraged.  Consult perluniprops.pod
-#
+# 
 # This file returns the 256 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{Block=Hangul_Jamo}
 #         \p{Blk=Hangul_Jamo}
 #         \p{Is_Block=Hangul_Jamo}
 #         \p{Is_Blk=Hangul_Jamo}
-#
+# 
 # X       \p{Hangul_Jamo}
 # X       \p{Is_Hangul_Jamo}
 #         \p{In_Hangul_Jamo}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Blk: Hangul_Jamo}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-1100    11FF     # [256]
+1100	11FF	 # [256]
 END

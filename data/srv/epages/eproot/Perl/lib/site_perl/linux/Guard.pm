@@ -5,13 +5,13 @@ Guard - safe cleanup blocks
 =head1 SYNOPSIS
 
    use Guard;
-
+   
    # temporarily chdir to "/etc" directory, but make sure
    # to go back to "/" no matter how myfun exits:
    sub myfun {
       scope_guard { chdir "/" };
       chdir "/etc";
-
+   
       code_that_might_die_or_does_other_fun_stuff;
    }
 

@@ -38,7 +38,7 @@ sub _compile {
   my $bidi_check = shift;
   my $unassigned_check = shift;
 
-  croak 'Unsupported Unicode version '.$unicode_version.'.'
+  croak 'Unsupported Unicode version '.$unicode_version.'.' 
     if $unicode_version != 3.2;
 
   my $mapping_sub = _compile_mapping($mapping_tables);
@@ -53,7 +53,7 @@ sub _compile {
 
   $code .= '$string .= pack("U0");' if $] < 5.008;
 
-  $code .= join('', map { $_ ? "{$_}\n" : ''}
+  $code .= join('', map { $_ ? "{$_}\n" : ''} 
     grep { defined $_ }
       $mapping_sub,
       $normalization_sub,
@@ -85,7 +85,7 @@ sub _compile_mapping {
 
   return '' if !%map;
 
-  sub _compile_mapping_r {
+  sub _compile_mapping_r { 
      my $map = shift;
      if($#_ <= 7) {
        return (join '', (map { '$char == '.$_.
@@ -95,9 +95,9 @@ sub _compile_mapping {
       my @a = splice @_, 0, int($#_/2);
       return '$char < '.$_[0].' ? ('.
         _compile_mapping_r($map,@a).
-        ') : ('.
+	') : ('.
         _compile_mapping_r($map,@_).
-        ')';
+	')';
      }
   };
 
@@ -139,7 +139,7 @@ sub _compile_set {
   return undef if !@set;
 
   return '['.join('', map {
-    sprintf( $_->[0] >= $_->[1]
+    sprintf( $_->[0] >= $_->[1] 
       ? "\\x{%X}"
       : "\\x{%X}-\\x{%X}",
       @{$_})
@@ -190,7 +190,7 @@ sub _compile_prohibited {
   my $prohibited = _compile_set(@_);
 
   if($prohibited) {
-    return
+    return 
       'if($string =~ m/('.$prohibited.')/os) {'.
           'die sprintf("prohibited character U+%04X",ord($1))'.
       '}';
@@ -226,7 +226,7 @@ my $is_Combining = _compile_set(  0x0300,0x0314, 0x0316,0x0319, 0x031C,0x0320,
     0x20D2,0x20D3, 0x20D4,0x20D7, 0x20D8,0x20DA, 0x20DB,0x20DC, 0x20E5,0x20E6,
     0x302E,0x302F, 0x3099,0x309A, 0xFE20,0xFE23,
     0x1D165,0x1D166, 0x1D167,0x1D169, 0x1D16E,0x1D172, 0x1D17B,0x1D182,
-    0x1D185,0x1D189, 0x1D18A,0x1D18B, 0x1D1AA,0x1D1AD,
+    0x1D185,0x1D189, 0x1D18A,0x1D18B, 0x1D1AA,0x1D1AD, 
     map { ($_,$_) } 0x0315, 0x031A, 0x031B, 0x0345, 0x0346, 0x0362, 0x0591,
     0x0596, 0x059A, 0x059B, 0x05AA, 0x05AD, 0x05AE, 0x05AF, 0x05B0, 0x05B1,
     0x05B2, 0x05B3, 0x05B4, 0x05B5, 0x05B6, 0x05B7, 0x05B8, 0x05B9, 0x05BB,
@@ -288,17 +288,17 @@ my $is_HangulLV = _compile_set( map { ($_,$_) }     0xAC00, 0xAC1C, 0xAC38,
 
 sub _check_pr29 {
   die "String contains Unicode Corrigendum #5 problem sequences" if shift =~ m/
-    \x{09C7}$is_Combining+[\x{09BE}\x{09D7}]            | # BENGALI VOWEL SIGN E
-    \x{0B47}$is_Combining+[\x{0B3E}\x{0B56}\x{0B57}]    | # ORIYA VOWEL SIGN E
-    \x{0BC6}$is_Combining+[\x{0BBE}\x{0BD7}]            | # TAMIL VOWEL SIGN E
-    \x{0BC7}$is_Combining+\x{0BBE}                      | # TAMIL VOWEL SIGN EE
-    \x{0B92}$is_Combining+\x{0BD7}                      | # TAMIL LETTER O
-    \x{0CC6}$is_Combining+[\x{0CC2}\x{0CD5}\x{0CD6}]    | # KANNADA VOWEL SIGN E
-    [\x{0CBF}\x{0CCA}]$is_Combining\x{0CD5}             | # KANNADA VOWEL SIGN I or KANNADA VOWEL SIGN O
-    \x{0D47}$is_Combining+\x{0D3E}                      | # MALAYALAM VOWEL SIGN EE
-    \x{0D46}$is_Combining+[\x{0D3E}\x{0D57}]            | # MALAYALAM VOWEL SIGN E
-    \x{1025}$is_Combining+\x{102E}                      | # MYANMAR LETTER U
-    \x{0DD9}$is_Combining+[\x{0DCF}\x{0DDF}]            | # SINHALA VOWEL SIGN KOMBUVA
+    \x{09C7}$is_Combining+[\x{09BE}\x{09D7}]		| # BENGALI VOWEL SIGN E
+    \x{0B47}$is_Combining+[\x{0B3E}\x{0B56}\x{0B57}]	| # ORIYA VOWEL SIGN E
+    \x{0BC6}$is_Combining+[\x{0BBE}\x{0BD7}]		| # TAMIL VOWEL SIGN E
+    \x{0BC7}$is_Combining+\x{0BBE}			| # TAMIL VOWEL SIGN EE
+    \x{0B92}$is_Combining+\x{0BD7}			| # TAMIL LETTER O
+    \x{0CC6}$is_Combining+[\x{0CC2}\x{0CD5}\x{0CD6}]	| # KANNADA VOWEL SIGN E
+    [\x{0CBF}\x{0CCA}]$is_Combining\x{0CD5}		| # KANNADA VOWEL SIGN I or KANNADA VOWEL SIGN O
+    \x{0D47}$is_Combining+\x{0D3E}			| # MALAYALAM VOWEL SIGN EE
+    \x{0D46}$is_Combining+[\x{0D3E}\x{0D57}]		| # MALAYALAM VOWEL SIGN E
+    \x{1025}$is_Combining+\x{102E}			| # MYANMAR LETTER U
+    \x{0DD9}$is_Combining+[\x{0DCF}\x{0DDF}]		| # SINHALA VOWEL SIGN KOMBUVA
     [\x{1100}-\x{1112}]$is_Combining[\x{1161}-\x{1175} ] | # HANGUL CHOSEONG KIYEOK..HIEUH
     ($is_HangulLV|[\x{1100}-\x{1112}][\x{1161}-\x{1175}])($is_Combining)([\x{11A8}-\x{11C2}]) # HANGUL SyllableType=LV
   /osx;
@@ -368,7 +368,7 @@ Currently, this parameter must be C<3.2> (numeric).
 
 =item $mapping_tables
 
-The mapping tables used for stringprep.
+The mapping tables used for stringprep.  
 
 The parameter may be a reference to a hash or an array, or C<undef>. A hash
 must map Unicode codepoints (as integers, S<e. g.> C<0x0020> for U+0020) to
@@ -381,7 +381,7 @@ S<Appendix B>.
 
 For further information on the mapping step, see S<RFC 3454>, S<section 3>.
 
-=item $unicode_normalization
+=item $unicode_normalization 
 
 The Unicode normalization to be used.
 
@@ -396,9 +396,9 @@ which the normalization can't be implemented in an interoperable way.
 
 For more information, see L</CAVEATS> below.
 
-=item $prohibited_tables
+=item $prohibited_tables 
 
-The list of prohibited output characters for stringprep.
+The list of prohibited output characters for stringprep. 
 
 The parameter may be a reference to an array, or C<undef>. The
 array contains B<pairs> of codepoints, which define the B<start>
@@ -409,7 +409,7 @@ The array may also contain references to nested arrays.
 L<Unicode::Stringprep::Prohibited> provides the tables from S<RFC 3454>,
 S<Appendix C>.
 
-For further information on the prohibition checking step, see
+For further information on the prohibition checking step, see 
 S<RFC 3454>, S<section 5>.
 
 =item $bidi_check
@@ -427,7 +427,7 @@ The check must be used when creating I<stored> strings. It should not be used
 for I<query> strings, increasing the chance that newly assigned characters work
 as expected.
 
-For further information on I<stored> and I<query> strings, see S<RFC 3454>,
+For further information on I<stored> and I<query> strings, see S<RFC 3454>, 
 S<section 7>.
 
 =back
@@ -481,32 +481,32 @@ C<Unicode::Stringprep>.
 
 =item * L<Unicode::Stringprep::Unassigned>
 
-  @Unicode::Stringprep::Unassigned::A1  # Appendix A.1
+  @Unicode::Stringprep::Unassigned::A1	# Appendix A.1
 
 =item * L<Unicode::Stringprep::Mapping>
 
-  @Unicode::Stringprep::Mapping::B1     # Appendix B.1
-  @Unicode::Stringprep::Mapping::B2     # Appendix B.2
-  @Unicode::Stringprep::Mapping::B2     # Appendix B.3
+  @Unicode::Stringprep::Mapping::B1	# Appendix B.1
+  @Unicode::Stringprep::Mapping::B2	# Appendix B.2
+  @Unicode::Stringprep::Mapping::B2	# Appendix B.3
 
 =item * L<Unicode::Stringprep::Prohibited>
 
-  @Unicode::Stringprep::Prohibited::C11 # Appendix C.1.1
-  @Unicode::Stringprep::Prohibited::C12 # Appendix C.1.2
-  @Unicode::Stringprep::Prohibited::C21 # Appendix C.2.1
-  @Unicode::Stringprep::Prohibited::C22 # Appendix C.2.2
-  @Unicode::Stringprep::Prohibited::C3  # Appendix C.3
-  @Unicode::Stringprep::Prohibited::C4  # Appendix C.4
-  @Unicode::Stringprep::Prohibited::C5  # Appendix C.5
-  @Unicode::Stringprep::Prohibited::C6  # Appendix C.6
-  @Unicode::Stringprep::Prohibited::C7  # Appendix C.7
-  @Unicode::Stringprep::Prohibited::C8  # Appendix C.8
-  @Unicode::Stringprep::Prohibited::C9  # Appendix C.9
+  @Unicode::Stringprep::Prohibited::C11	# Appendix C.1.1
+  @Unicode::Stringprep::Prohibited::C12	# Appendix C.1.2
+  @Unicode::Stringprep::Prohibited::C21	# Appendix C.2.1
+  @Unicode::Stringprep::Prohibited::C22	# Appendix C.2.2
+  @Unicode::Stringprep::Prohibited::C3	# Appendix C.3
+  @Unicode::Stringprep::Prohibited::C4	# Appendix C.4
+  @Unicode::Stringprep::Prohibited::C5	# Appendix C.5
+  @Unicode::Stringprep::Prohibited::C6	# Appendix C.6
+  @Unicode::Stringprep::Prohibited::C7	# Appendix C.7
+  @Unicode::Stringprep::Prohibited::C8	# Appendix C.8
+  @Unicode::Stringprep::Prohibited::C9	# Appendix C.9
 
 =item * L<Unicode::Stringprep::BiDi>
 
-  @Unicode::Stringprep::BiDi::D1        # Appendix D.1
-  @Unicode::Stringprep::BiDi::D2        # Appendix D.2
+  @Unicode::Stringprep::BiDi::D1	# Appendix D.1
+  @Unicode::Stringprep::BiDi::D2	# Appendix D.2
 
 =back
 
@@ -525,7 +525,7 @@ L<http://unicode.org/reports/tr15/#Stability_Prior_to_Unicode41> for details.
 
 This module will check for these strings and, if normalization is done,
 prohibit them in output as it is not possible to interoperate under these
-circumstandes.
+circumstandes. 
 
 Please note that due to this, the I<normalization> step may cause the
 preparation to fail. That is, the preparation function may die even if there

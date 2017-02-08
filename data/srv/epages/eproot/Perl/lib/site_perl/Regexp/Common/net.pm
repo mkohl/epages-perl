@@ -114,7 +114,7 @@ of the works of this interface.
 
 Do not use this module directly, but load it via I<Regexp::Common>.
 
-This modules gives you regular expressions for various style IPv4
+This modules gives you regular expressions for various style IPv4 
 and MAC (or ethernet) addresses.
 
 =head2 C<$RE{net}{IPv4}>
@@ -156,7 +156,7 @@ captures the final component of the address
 Returns a pattern that matches a valid IP address in "dotted decimal"
 
 If C<< -sep=I<P> >> is specified the pattern I<P> is used as the separator.
-By default I<P> is C<qr/[.]/>.
+By default I<P> is C<qr/[.]/>. 
 
 =head2 C<$RE{net}{IPv4}{hex}{-sep}>
 
@@ -235,7 +235,7 @@ Returns a pattern that matches a valid MAC address as colon separated
 decimals.
 
 If C<< -sep=I<P> >> is specified the pattern I<P> is used as the separator.
-By default I<P> is C<qr/:/>.
+By default I<P> is C<qr/:/>. 
 
 =head2 C<$RE{net}{MAC}{hex}{-sep}>
 

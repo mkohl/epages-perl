@@ -488,9 +488,9 @@ problems mentioned in the description of signal watchers apply.
 Example: fork a process and wait for it
 
    my $done = AnyEvent->condvar;
-
+  
    my $pid = fork or exit 5;
-
+  
    my $w = AnyEvent->child (
       pid => $pid,
       cb  => sub {
@@ -499,7 +499,7 @@ Example: fork a process and wait for it
          $done->send;
       },
    );
-
+  
    # do something else, then wait for process exit
    $done->recv;
 
@@ -1324,16 +1324,16 @@ sub _logger($;$) {
    $AnyEvent::Log::LOGGER{$logger+0} = $logger;
 
 #   return unless defined wantarray;
-#
+# 
 #   require AnyEvent::Util;
 #   my $guard = AnyEvent::Util::guard (sub {
 #      # "clean up"
 #      delete $LOGGER{$logger+0};
 #   });
-#
+# 
 #   sub {
 #      return 0 unless $$renabled;
-#
+# 
 #      $guard if 0; # keep guard alive, but don't cause runtime overhead
 #      require AnyEvent::Log unless $AnyEvent::Log::VERSION;
 #      package AnyEvent::Log;
@@ -1555,7 +1555,7 @@ package AE;
 our $VERSION = $AnyEvent::VERSION;
 
 sub _reset() {
-   eval q{
+   eval q{ 
       # fall back to the main API by default - backends and AnyEvent::Base
       # implementations can overwrite these.
 
@@ -1722,7 +1722,7 @@ sub sig2name($) { &$_sig_name_init; &sig2name }
 
 sub signal {
    eval q{ # poor man's autoloading {}
-      # probe for availability of Async::Interrupt
+      # probe for availability of Async::Interrupt 
       if (_have_async_interrupt) {
          AnyEvent::log 8 => "Using Async::Interrupt for race-free signal handling.";
 
@@ -2655,13 +2655,13 @@ a new one that moves the timeout into the future.
 
 =head3 Results
 
-     name sockets create  request
-       EV   20000  62.66     7.99
-     Perl   20000  68.32    32.64
+     name sockets create  request 
+       EV   20000  62.66     7.99 
+     Perl   20000  68.32    32.64 
   IOAsync   20000 174.06   101.15 epoll
   IOAsync   20000 174.67   610.84 poll
-    Event   20000 202.69   242.91
-     Glib   20000 557.01  1689.52
+    Event   20000 202.69   242.91 
+     Glib   20000 557.01  1689.52 
       POE   20000 341.54 12086.32 uses POE::Loop::Event
 
 =head3 Discussion
@@ -2715,11 +2715,11 @@ The columns are identical to the previous table.
 
 =head3 Results
 
-    name sockets create request
-      EV      16  20.00    6.54
-    Perl      16  25.75   12.62
-   Event      16  81.27   35.86
-    Glib      16  32.63   15.48
+    name sockets create request 
+      EV      16  20.00    6.54 
+    Perl      16  25.75   12.62 
+   Event      16  81.27   35.86 
+    Glib      16  32.63   15.48 
      POE      16 261.87  276.28 uses POE::Loop::Event
 
 =head3 Discussion
@@ -2978,7 +2978,7 @@ You can make AnyEvent completely ignore this variable by deleting it
 before the first watcher gets created, e.g. with a C<BEGIN> block:
 
    BEGIN { delete $ENV{PERL_ANYEVENT_MODEL} }
-
+  
    use AnyEvent;
 
 Similar considerations apply to $ENV{PERL_ANYEVENT_VERBOSE}, as that can

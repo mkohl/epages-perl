@@ -7,35 +7,35 @@ REST::Client - A simple client for interacting with RESTful http/https resources
 =head1 SYNOPSIS
 
  use REST::Client;
-
+ 
  #The basic use case
  my $client = REST::Client->new();
  $client->GET('http://example.com/dir/file.xml');
  print $client->responseContent();
-
+  
  #A host can be set for convienience
  $client->setHost('http://example.com');
  $client->PUT('/dir/file.xml', '<example>new content</example>');
  if( $client->responseCode() eq '200' ){
      print "Updated\n";
  }
-
+  
  #custom request headers may be added
  $client->addHeader('CustomHeader', 'Value');
-
+  
  #response headers may be gathered
  print $client->responseHeader('ResponseHeader');
-
+  
  #X509 client authentication
  $client->setCert('/path/to/ssl.crt');
  $client->setKey('/path/to/ssl.key');
-
+  
  #add a CA to verify server certificates
  $client->setCa('/path/to/ca.file');
-
+  
  #you may set a timeout on requests, in seconds
  $client->setTimeout(10);
-
+  
  #options may be passed as well as set
  $client = REST::Client->new({
          host    => 'https://example.com',
@@ -45,12 +45,12 @@ REST::Client - A simple client for interacting with RESTful http/https resources
          timeout => 10,
      });
  $client->GET('/dir/file', {CustomHeader => 'Value'});
-
+  
  # Requests can be specificed directly as well
  $client->request('GET', '/dir/file', 'request body content', {CustomHeader => 'Value'});
 
  # Requests can optionally automatically follow redirects and auth, defaults to
- # false
+ # false 
  $client->setFollow(1);
 
  #It is possible to access the L<LWP::UserAgent> object REST::Client is using to
@@ -138,13 +138,13 @@ The password for the PKCS12 certificate specified with 'pkcs12'.
 =item follow
 
 Boolean that determins whether REST::Client attempts to automatically follow
-redirects/authentication.
+redirects/authentication.  
 
 The default is false.
 
 =item useragent
 
-An L<LWP::UserAgent> object, ready to make http requests.
+An L<LWP::UserAgent> object, ready to make http requests.  
 
 REST::Client will provide a default for you if you do not set this.
 
@@ -184,7 +184,7 @@ sub addHeader {
     my $self = shift;
     my $header = shift;
     my $value = shift;
-
+    
     my $headers = $self->{'_headers'} || {};
     $headers->{$header} = $value;
     $self->{'_headers'} = $headers;
@@ -365,7 +365,7 @@ sub request {
         croak "REST::Client exception: Cannot read cert and key file" unless -f $self->getCert && -f $self->getKey;
 
         $ENV{'HTTPS_CERT_FILE'} = $self->getCert;
-        $ENV{'HTTPS_KEY_FILE'}  = $self->getKey;
+        $ENV{'HTTPS_KEY_FILE'}  = $self->getKey; 
         if(my $ca = $self->getCa){
             croak "REST::Client exception: Cannot read CA file" unless -f $ca;
             $ENV{'HTTPS_CA_FILE'}  = $ca

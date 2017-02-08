@@ -4,15 +4,15 @@ Data::Entropy::Source - encapsulated source of entropy
 
 =head1 SYNOPSIS
 
-        use Data::Entropy::Source;
+	use Data::Entropy::Source;
 
-        $source = Data::Entropy::Source->new($handle, "sysread");
+	$source = Data::Entropy::Source->new($handle, "sysread");
 
-        $c = $source->get_octet;
-        $str = $source->get_bits(17);
-        $i = $source->get_int(12345);
-        $i = $source->get_int(Math::BigInt->new("1000000000000"));
-        $j = $source->get_prob(1, 2);
+	$c = $source->get_octet;
+	$str = $source->get_bits(17);
+	$i = $source->get_int(12345);
+	$i = $source->get_int(Math::BigInt->new("1000000000000"));
+	$j = $source->get_prob(1, 2);
 
 =head1 DESCRIPTION
 
@@ -76,16 +76,16 @@ interface to implement when a non-I/O object is being used for the handle.
 =cut
 
 sub new {
-        my($class, $rawsrc, $readstyle) = @_;
-        croak "no raw entropy source given" unless defined $rawsrc;
-        croak "read style `$readstyle' not recognised"
-                unless $readstyle =~ /\A(?:getc|sysread)\z/;
-        return bless({
-                rawsrc => $rawsrc,
-                readstyle => $readstyle,
-                limit => 1,
-                num => 0,
-        }, $class);
+	my($class, $rawsrc, $readstyle) = @_;
+	croak "no raw entropy source given" unless defined $rawsrc;
+	croak "read style `$readstyle' not recognised"
+		unless $readstyle =~ /\A(?:getc|sysread)\z/;
+	return bless({
+		rawsrc => $rawsrc,
+		readstyle => $readstyle,
+		limit => 1,
+		num => 0,
+	}, $class);
 }
 
 =back
@@ -102,62 +102,62 @@ direct access to the raw entropy source.
 =cut
 
 sub get_octet {
-        my($self) = @_;
-        if($self->{readstyle} eq "getc") {
-                my $errno = $!;
-                $! = 0;
-                my $octet = $self->{rawsrc}->getc;
-                unless(defined $octet) {
-                        my $errmsg = $!;
-                        unless($errmsg) {
-                                $errmsg = "EOF";
-                                $! = $errno;
-                        }
-                        croak "entropy source failed: $errmsg";
-                }
-                $! = $errno;
-                return $octet;
-        } elsif($self->{readstyle} eq "sysread") {
-                my $octet;
-                my $n = $self->{rawsrc}->sysread($octet, 1);
-                croak "entropy source failed: ".(defined($n) ? $! : "EOF")
-                        unless $n;
-                return $octet;
-        }
+	my($self) = @_;
+	if($self->{readstyle} eq "getc") {
+		my $errno = $!;
+		$! = 0;
+		my $octet = $self->{rawsrc}->getc;
+		unless(defined $octet) {
+			my $errmsg = $!;
+			unless($errmsg) {
+				$errmsg = "EOF";
+				$! = $errno;
+			}
+			croak "entropy source failed: $errmsg";
+		}
+		$! = $errno;
+		return $octet;
+	} elsif($self->{readstyle} eq "sysread") {
+		my $octet;
+		my $n = $self->{rawsrc}->sysread($octet, 1);
+		croak "entropy source failed: ".(defined($n) ? $! : "EOF")
+			unless $n;
+		return $octet;
+	}
 }
 
 # ->_get_small_int may be used only with a native integer argument, up to 256.
 
 sub _get_small_int {
-        my($self, $limit) = @_;
-        use integer;
-        my $reqlimit = $limit << 15;
-        while(1) {
-                while($self->{limit} < $reqlimit) {
-                        $self->{num} = ($self->{num} << 8) +
-                                        ord($self->get_octet);
-                        $self->{limit} <<= 8;
-                }
-                my $rep = $self->{limit} / $limit;
-                my $uselimit = $rep * $limit;
-                if($self->{num} < $uselimit) {
-                        my $num = $self->{num} / $rep;
-                        $self->{num} %= $rep;
-                        $self->{limit} = $rep;
-                        return $num;
-                }
-                $self->{num} -= $uselimit;
-                $self->{limit} -= $uselimit;
-        }
+	my($self, $limit) = @_;
+	use integer;
+	my $reqlimit = $limit << 15;
+	while(1) {
+		while($self->{limit} < $reqlimit) {
+			$self->{num} = ($self->{num} << 8) +
+					ord($self->get_octet);
+			$self->{limit} <<= 8;
+		}
+		my $rep = $self->{limit} / $limit;
+		my $uselimit = $rep * $limit;
+		if($self->{num} < $uselimit) {
+			my $num = $self->{num} / $rep;
+			$self->{num} %= $rep;
+			$self->{limit} = $rep;
+			return $num;
+		}
+		$self->{num} -= $uselimit;
+		$self->{limit} -= $uselimit;
+	}
 }
 
 # ->_put_small_int is used to return the unused portion of some entropy that
 # was extracted using ->_get_small_int.
 
 sub _put_small_int {
-        my($self, $limit, $num) = @_;
-        $self->{limit} *= $limit;
-        $self->{num} = $self->{num} * $limit + $num;
+	my($self, $limit, $num) = @_;
+	$self->{limit} *= $limit;
+	$self->{num} = $self->{num} * $limit + $num;
 }
 
 =item $source->get_bits(NBITS)
@@ -169,13 +169,13 @@ significant bits set to zero.
 =cut
 
 sub get_bits {
-        my($self, $nbits) = @_;
-        my $nbytes = $nbits >> 3;
-        $nbits &= 7;
-        my $str = "";
-        $str .= $self->get_octet while $nbytes--;
-        $str .= chr($self->_get_small_int(1 << $nbits)) if $nbits;
-        return $str;
+	my($self, $nbits) = @_;
+	my $nbytes = $nbits >> 3;
+	$nbits &= 7;
+	my $str = "";
+	$str .= $self->get_octet while $nbytes--;
+	$str .= chr($self->_get_small_int(1 << $nbits)) if $nbits;
+	return $str;
 }
 
 =item $source->get_int(LIMIT)
@@ -193,50 +193,50 @@ obtained is 1 bit, with LIMIT = 2.
 =cut
 
 sub _break_int {
-        my($num) = @_;
-        my $type = ref($num);
-        $num = $num->as_number if $type eq "Math::BigRat";
-        my @limbs;
-        while($num != 0) {
-                my $l = $num & 255;
-                $l = $l->numify if $type ne "";
-                push @limbs, $l;
-                $num >>= 8;
-        }
-        return \@limbs;
+	my($num) = @_;
+	my $type = ref($num);
+	$num = $num->as_number if $type eq "Math::BigRat";
+	my @limbs;
+	while($num != 0) {
+		my $l = $num & 255;
+		$l = $l->numify if $type ne "";
+		push @limbs, $l;
+		$num >>= 8;
+	}
+	return \@limbs;
 }
 
 sub get_int {
-        my($self, $limit) = @_;
-        my $type = ref($limit);
-        my $max = _break_int($limit - 1);
-        my $len = @$max;
-        my @num_limbs;
-        if($len) {
-                TRY_AGAIN:
-                my $i = $len;
-                my $ml = $max->[--$i];
-                my $nl = $self->_get_small_int($ml + 1);
-                @num_limbs = ($nl);
-                while($i && $nl == $ml) {
-                        $ml = $max->[--$i];
-                        $nl = $self->_get_small_int(256);
-                        if($nl > $ml) {
-                                $self->_put_small_int(255-$ml, $nl-$ml-1);
-                                goto TRY_AGAIN;
-                        }
-                        push @num_limbs, $nl;
-                }
-                push @num_limbs, ord($self->get_octet) while $i--;
-        }
-        my $num = $type eq "" ? 0 : Math::BigInt->new(0);
-        for(my $i = $len; $i--; ) {
-                my $l = $num_limbs[$len-1-$i];
-                $l = Math::BigInt->new($l) if $type ne "";
-                $num += $l << ($i << 3);
-        }
-        $num = Math::BigRat->new($num) if $type eq "Math::BigRat";
-        return $num;
+	my($self, $limit) = @_;
+	my $type = ref($limit);
+	my $max = _break_int($limit - 1);
+	my $len = @$max;
+	my @num_limbs;
+	if($len) {
+		TRY_AGAIN:
+		my $i = $len;
+		my $ml = $max->[--$i];
+		my $nl = $self->_get_small_int($ml + 1);
+		@num_limbs = ($nl);
+		while($i && $nl == $ml) {
+			$ml = $max->[--$i];
+			$nl = $self->_get_small_int(256);
+			if($nl > $ml) {
+				$self->_put_small_int(255-$ml, $nl-$ml-1);
+				goto TRY_AGAIN;
+			}
+			push @num_limbs, $nl;
+		}
+		push @num_limbs, ord($self->get_octet) while $i--;
+	}
+	my $num = $type eq "" ? 0 : Math::BigInt->new(0);
+	for(my $i = $len; $i--; ) {
+		my $l = $num_limbs[$len-1-$i];
+		$l = Math::BigInt->new($l) if $type ne "";
+		$num += $l << ($i << 3);
+	}
+	$num = Math::BigRat->new($num) if $type eq "Math::BigRat";
+	return $num;
 }
 
 =item $source->get_prob(PROB0, PROB1)
@@ -257,43 +257,43 @@ approximately 0.918 bits of entropy.
 =cut
 
 sub get_prob {
-        my($self, $prob0, $prob1) = @_;
-        croak "probabilities must be non-negative"
-                unless $prob0 >= 0 && $prob1 >= 0;
-        if($prob0 == 0) {
-                croak "can't have nothing possible" if $prob1 == 0;
-                return 1;
-        } elsif($prob1 == 0) {
-                return 0;
-        }
-        my $max0 = _break_int($prob0 - 1);
-        my $maxt = _break_int($prob0 + $prob1 - 1);
-        my $len = @$maxt;
-        push @$max0, (0) x ($len - @$max0) unless @$max0 == $len;
-        TRY_AGAIN:
-        my $maybe0 = 1;
-        my $maybebad = 1;
-        my($mtl, $m0l, $nl);
-        for(my $i = $len - 1; ; $i--) {
-                $nl = $self->_get_small_int(
-                        $i == $len-1 ? $maxt->[-1] + 1 : 256);
-                $m0l = $maybe0 ? $max0->[$i] : -1;
-                $mtl = $maybebad ? $maxt->[$i] : 256;
-                my $lastlimb = $i ? 0 : 1;
-                if($nl < $m0l + $lastlimb) {
-                        $self->_put_small_int($m0l + $lastlimb, $nl);
-                        return 0;
-                } elsif($nl > $m0l && $nl < $mtl + $lastlimb) {
-                        $self->_put_small_int($mtl + $lastlimb - $m0l - 1,
-                                                $nl - $m0l - 1);
-                        return 1;
-                } elsif($nl > $mtl) {
-                        $self->_put_small_int(255 - $mtl, $nl - $mtl - 1);
-                        goto TRY_AGAIN;
-                }
-                $maybe0 = 0 if $nl > $m0l;
-                $maybebad = 0 if $nl < $mtl;
-        }
+	my($self, $prob0, $prob1) = @_;
+	croak "probabilities must be non-negative"
+		unless $prob0 >= 0 && $prob1 >= 0;
+	if($prob0 == 0) {
+		croak "can't have nothing possible" if $prob1 == 0;
+		return 1;
+	} elsif($prob1 == 0) {
+		return 0;
+	}
+	my $max0 = _break_int($prob0 - 1);
+	my $maxt = _break_int($prob0 + $prob1 - 1);
+	my $len = @$maxt;
+	push @$max0, (0) x ($len - @$max0) unless @$max0 == $len;
+	TRY_AGAIN:
+	my $maybe0 = 1;
+	my $maybebad = 1;
+	my($mtl, $m0l, $nl);
+	for(my $i = $len - 1; ; $i--) {
+		$nl = $self->_get_small_int(
+			$i == $len-1 ? $maxt->[-1] + 1 : 256);
+		$m0l = $maybe0 ? $max0->[$i] : -1;
+		$mtl = $maybebad ? $maxt->[$i] : 256;
+		my $lastlimb = $i ? 0 : 1;
+		if($nl < $m0l + $lastlimb) {
+			$self->_put_small_int($m0l + $lastlimb, $nl);
+			return 0;
+		} elsif($nl > $m0l && $nl < $mtl + $lastlimb) {
+			$self->_put_small_int($mtl + $lastlimb - $m0l - 1,
+						$nl - $m0l - 1);
+			return 1;
+		} elsif($nl > $mtl) {
+			$self->_put_small_int(255 - $mtl, $nl - $mtl - 1);
+			goto TRY_AGAIN;
+		}
+		$maybe0 = 0 if $nl > $m0l;
+		$maybebad = 0 if $nl < $mtl;
+	}
 }
 
 =back

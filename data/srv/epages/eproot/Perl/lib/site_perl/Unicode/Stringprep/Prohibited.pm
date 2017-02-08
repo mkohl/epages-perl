@@ -132,17 +132,17 @@ Unicode::Stringprep::Prohibited - Tables from S<RFC 3454>, S<Appendix C>
 
 =head1 SYNOPSIS
 
-  @Unicode::Stringprep::Prohibited::C11 # Appendix C.1.1
-  @Unicode::Stringprep::Prohibited::C12 # Appendix C.1.2
-  @Unicode::Stringprep::Prohibited::C21 # Appendix C.2.1
-  @Unicode::Stringprep::Prohibited::C22 # Appendix C.2.2
-  @Unicode::Stringprep::Prohibited::C3  # Appendix C.3
-  @Unicode::Stringprep::Prohibited::C4  # Appendix C.4
-  @Unicode::Stringprep::Prohibited::C5  # Appendix C.5
-  @Unicode::Stringprep::Prohibited::C6  # Appendix C.6
-  @Unicode::Stringprep::Prohibited::C7  # Appendix C.7
-  @Unicode::Stringprep::Prohibited::C8  # Appendix C.8
-  @Unicode::Stringprep::Prohibited::C9  # Appendix C.9
+  @Unicode::Stringprep::Prohibited::C11	# Appendix C.1.1
+  @Unicode::Stringprep::Prohibited::C12	# Appendix C.1.2
+  @Unicode::Stringprep::Prohibited::C21	# Appendix C.2.1
+  @Unicode::Stringprep::Prohibited::C22	# Appendix C.2.2
+  @Unicode::Stringprep::Prohibited::C3	# Appendix C.3
+  @Unicode::Stringprep::Prohibited::C4	# Appendix C.4
+  @Unicode::Stringprep::Prohibited::C5	# Appendix C.5
+  @Unicode::Stringprep::Prohibited::C6	# Appendix C.6
+  @Unicode::Stringprep::Prohibited::C7	# Appendix C.7
+  @Unicode::Stringprep::Prohibited::C8	# Appendix C.8
+  @Unicode::Stringprep::Prohibited::C9	# Appendix C.9
 
 =head1 DESCRIPTION
 

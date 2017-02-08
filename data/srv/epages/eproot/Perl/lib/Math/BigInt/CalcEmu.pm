@@ -2,7 +2,7 @@ package Math::BigInt::CalcEmu;
 
 use 5.006002;
 use strict;
-# use warnings; # dont use warnings for older Perls
+# use warnings;	# dont use warnings for older Perls
 use vars qw/$VERSION/;
 
 $VERSION = '0.05';
@@ -25,35 +25,35 @@ sub __emu_band
   my ($self,$x,$y,$sx,$sy,@r) = @_;
 
   return $x->bzero(@r) if $y->is_zero() || $x->is_zero();
-
-  my $sign = 0;                                 # sign of result
+  
+  my $sign = 0;					# sign of result
   $sign = 1 if $sx == -1 && $sy == -1;
 
   my ($bx,$by);
 
-  if ($sx == -1)                                # if x is negative
+  if ($sx == -1)				# if x is negative
     {
     # two's complement: inc and flip all "bits" in $bx
-    $bx = $x->binc()->as_hex();                 # -1 => 0, -2 => 1, -3 => 2 etc
+    $bx = $x->binc()->as_hex();			# -1 => 0, -2 => 1, -3 => 2 etc
     $bx =~ s/-?0x//;
     $bx =~ tr/0123456789abcdef/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
   else
     {
-    $bx = $x->as_hex();                         # get binary representation
+    $bx = $x->as_hex();				# get binary representation
     $bx =~ s/-?0x//;
     $bx =~ tr/fedcba9876543210/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
-  if ($sy == -1)                                # if y is negative
+  if ($sy == -1)				# if y is negative
     {
     # two's complement: inc and flip all "bits" in $by
-    $by = $y->copy()->binc()->as_hex();         # -1 => 0, -2 => 1, -3 => 2 etc
+    $by = $y->copy()->binc()->as_hex();		# -1 => 0, -2 => 1, -3 => 2 etc
     $by =~ s/-?0x//;
     $by =~ tr/0123456789abcdef/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
   else
     {
-    $by = $y->as_hex();                         # get binary representation
+    $by = $y->as_hex();				# get binary representation
     $by =~ s/-?0x//;
     $by =~ tr/fedcba9876543210/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
@@ -75,7 +75,7 @@ sub __emu_band
     # if $xx eq "\x00", we can cut $by, otherwise we need to padd $bx
     $bx .= $xx x abs($diff);
     }
-
+  
   # and the strings together
   my $r = $bx & $by;
 
@@ -113,34 +113,34 @@ sub __emu_bior
 
   return $x->round(@r) if $y->is_zero();
 
-  my $sign = 0;                                 # sign of result
+  my $sign = 0;					# sign of result
   $sign = 1 if ($sx == -1) || ($sy == -1);
 
   my ($bx,$by);
 
-  if ($sx == -1)                                # if x is negative
+  if ($sx == -1)				# if x is negative
     {
     # two's complement: inc and flip all "bits" in $bx
-    $bx = $x->binc()->as_hex();                 # -1 => 0, -2 => 1, -3 => 2 etc
+    $bx = $x->binc()->as_hex();			# -1 => 0, -2 => 1, -3 => 2 etc
     $bx =~ s/-?0x//;
     $bx =~ tr/0123456789abcdef/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
   else
     {
-    $bx = $x->as_hex();                         # get binary representation
+    $bx = $x->as_hex();				# get binary representation
     $bx =~ s/-?0x//;
     $bx =~ tr/fedcba9876543210/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
-  if ($sy == -1)                                # if y is negative
+  if ($sy == -1)				# if y is negative
     {
     # two's complement: inc and flip all "bits" in $by
-    $by = $y->copy()->binc()->as_hex();         # -1 => 0, -2 => 1, -3 => 2 etc
+    $by = $y->copy()->binc()->as_hex();		# -1 => 0, -2 => 1, -3 => 2 etc
     $by =~ s/-?0x//;
     $by =~ tr/0123456789abcdef/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
   else
     {
-    $by = $y->as_hex();                         # get binary representation
+    $by = $y->as_hex();				# get binary representation
     $by =~ s/-?0x//;
     $by =~ tr/fedcba9876543210/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
@@ -199,34 +199,34 @@ sub __emu_bxor
 
   return $x->round(@r) if $y->is_zero();
 
-  my $sign = 0;                                 # sign of result
+  my $sign = 0;					# sign of result
   $sign = 1 if $x->{sign} ne $y->{sign};
 
   my ($bx,$by);
 
-  if ($sx == -1)                                # if x is negative
+  if ($sx == -1)				# if x is negative
     {
     # two's complement: inc and flip all "bits" in $bx
-    $bx = $x->binc()->as_hex();                 # -1 => 0, -2 => 1, -3 => 2 etc
+    $bx = $x->binc()->as_hex();			# -1 => 0, -2 => 1, -3 => 2 etc
     $bx =~ s/-?0x//;
     $bx =~ tr/0123456789abcdef/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
   else
     {
-    $bx = $x->as_hex();                         # get binary representation
+    $bx = $x->as_hex();				# get binary representation
     $bx =~ s/-?0x//;
     $bx =~ tr/fedcba9876543210/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
-  if ($sy == -1)                                # if y is negative
+  if ($sy == -1)				# if y is negative
     {
     # two's complement: inc and flip all "bits" in $by
-    $by = $y->copy()->binc()->as_hex();         # -1 => 0, -2 => 1, -3 => 2 etc
+    $by = $y->copy()->binc()->as_hex();		# -1 => 0, -2 => 1, -3 => 2 etc
     $by =~ s/-?0x//;
     $by =~ tr/0123456789abcdef/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
   else
     {
-    $by = $y->as_hex();                         # get binary representation
+    $by = $y->as_hex();				# get binary representation
     $by =~ s/-?0x//;
     $by =~ tr/fedcba9876543210/\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08\x07\x06\x05\x04\x03\x02\x01\x00/;
     }
@@ -290,7 +290,7 @@ Math::BigInt::CalcEmu - Emulate low-level math with BigInt code
 
 =head1 SYNOPSIS
 
-        use Math::BigInt::CalcEmu;
+	use Math::BigInt::CalcEmu;
 
 =head1 DESCRIPTION
 
@@ -312,9 +312,9 @@ using a call to the native lib.
 =head2 __emu_bior
 
 =head1 LICENSE
-
+ 
 This program is free software; you may redistribute it and/or modify it under
-the same terms as Perl itself.
+the same terms as Perl itself. 
 
 =head1 AUTHORS
 

@@ -13,7 +13,7 @@ $VERSION = '2010010201';
 
 
 my $scheme = "pop";
-my $uri    = "(?k:(?k:$scheme)://(?:(?k:$enc_user)"     .
+my $uri    = "(?k:(?k:$scheme)://(?:(?k:$enc_user)"     .  
              "(?:;AUTH=(?k:[*]|$enc_auth_type))?\@)?"   .
              "(?k:$host)(?::(?k:$port))?)";
 

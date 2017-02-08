@@ -49,15 +49,15 @@ sub new {
     foreach my $cxx (@{$cc2cxx{$ccbase}}) {
       if( can_run( File::Spec->catfile( $ccpath, $cxx, $ccsfx ) ) ) {
         $self->{config}{cxx} = File::Spec->catfile( $ccpath, $cxx, $ccsfx );
-        last;
+	last;
       }
       if( can_run( File::Spec->catfile( $cxx, $ccsfx ) ) ) {
         $self->{config}{cxx} = File::Spec->catfile( $cxx, $ccsfx );
-        last;
+	last;
       }
       if( can_run( $cxx ) ) {
         $self->{config}{cxx} = $cxx;
-        last;
+	last;
       }
     }
     unless ( exists $self->{config}{cxx} ) {

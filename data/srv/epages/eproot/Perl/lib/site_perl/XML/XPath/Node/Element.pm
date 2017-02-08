@@ -16,13 +16,13 @@ use XML::XPath::Node ':node_keys';
 sub new {
     my $class = shift;
     my ($tag, $prefix) = @_;
-
+        
     my $pos = XML::XPath::Node->nextPos;
 
     my @vals;
     @vals[node_global_pos, node_prefix, node_children, node_name, node_attribs] =
             ($pos, $prefix, [], $tag, []);
-
+        
     my $self = \@vals;
     bless $self, $class;
 }
@@ -46,7 +46,7 @@ sub appendChild {
         }
         else {
             my $pos_number = $self->get_global_pos() + 1;
-
+            
             if (my $brother = $self->getNextSibling()) { # optimisation
                 if ($pos_number == $brother->get_global_pos()) {
                     $self->renumber('following::node()', +5);
@@ -54,7 +54,7 @@ sub appendChild {
             }
             else {
                 eval {
-                    if ($pos_number ==
+                    if ($pos_number == 
                             $self->findnodes(
                                 'following::node()'
                                 )->get_node(1)->get_global_pos()) {
@@ -62,7 +62,7 @@ sub appendChild {
                     }
                 };
             }
-
+            
             push @{$self->[node_children]}, $newnode;
             $newnode->setParentNode($self);
             $newnode->set_pos($#{$self->[node_children]});
@@ -74,27 +74,27 @@ sub appendChild {
 sub removeChild {
     my $self = shift;
     my $delnode = shift;
-
+    
     my $pos = $delnode->get_pos;
-
+    
 #    warn "removeChild: $pos\n";
-
+    
 #    warn "children: ", scalar @{$self->[node_children]}, "\n";
-
+    
 #    my $node = $self->[node_children][$pos];
 #    warn "child at $pos is: $node\n";
-
+    
     splice @{$self->[node_children]}, $pos, 1;
-
+    
 #    warn "children now: ", scalar @{$self->[node_children]}, "\n";
-
+    
     for (my $i = $pos; $i < @{$self->[node_children]}; $i++) {
 #        warn "Changing pos of child: $i\n";
         $self->[node_children][$i]->set_pos($i);
     }
-
+    
     $delnode->del_parent_link;
-
+    
 }
 
 sub appendIdElement {
@@ -108,7 +108,7 @@ sub DESTROY {
     my $self = shift;
 #    warn "DESTROY ELEMENT: ", $self->[node_name], "\n";
 #    warn "DESTROY ROOT\n" unless $self->[node_name];
-
+    
     foreach my $kid ($self->getChildNodes) {
         $kid && $kid->del_parent_link;
     }
@@ -193,7 +193,7 @@ sub getAttributes {
 sub appendAttribute {
     my $self = shift;
     my $attribute = shift;
-
+    
     if (shift) { # internal call
         push @{$self->[node_attribs]}, $attribute;
         $attribute->setParentNode($self);
@@ -207,61 +207,61 @@ sub appendAttribute {
         else {
             $node_num = $self->get_global_pos() + 1;
         }
-
+        
         eval {
             if (@{$self->[node_children]}) {
                 if ($node_num == $self->[node_children][-1]->get_global_pos()) {
                     $self->renumber('descendant::node() | following::node()', +5);
                 }
             }
-            elsif ($node_num ==
+            elsif ($node_num == 
                     $self->findnodes('following::node()')->get_node(1)->get_global_pos()) {
                 $self->renumber('following::node()', +5);
             }
         };
-
+        
         push @{$self->[node_attribs]}, $attribute;
         $attribute->setParentNode($self);
         $attribute->set_pos($#{$self->[node_attribs]});
         $attribute->set_global_pos($node_num);
-
+        
     }
 }
 
 sub removeAttribute {
     my $self = shift;
     my $attrib = shift;
-
+    
     if (!ref($attrib)) {
         $attrib = $self->getAttributeNode($attrib);
     }
-
+    
     my $pos = $attrib->get_pos;
-
+    
     splice @{$self->[node_attribs]}, $pos, 1;
-
+    
     for (my $i = $pos; $i < @{$self->[node_attribs]}; $i++) {
         $self->[node_attribs][$i]->set_pos($i);
     }
-
+    
     $attrib->del_parent_link;
 }
 
 sub setAttribute {
     my $self = shift;
     my ($name, $value) = @_;
-
+    
     if (my $attrib = $self->getAttributeNode($name)) {
         $attrib->setNodeValue($value);
         return $attrib;
     }
-
+    
     my ($nsprefix) = ($name =~ /^($XML::XPath::Parser::NCName):($XML::XPath::Parser::NCName)$/o);
-
+    
     if ($nsprefix && !$self->getNamespace($nsprefix)) {
         die "No namespace matches prefix: $nsprefix";
     }
-
+    
     my $newnode = XML::XPath::Node::Attribute->new($name, $value, $nsprefix);
     $self->appendAttribute($newnode);
 }
@@ -269,18 +269,18 @@ sub setAttribute {
 sub setAttributeNode {
     my $self = shift;
     my ($node) = @_;
-
+    
     if (my $attrib = $self->getAttributeNode($node->getName)) {
         $attrib->setNodeValue($node->getValue);
         return $attrib;
     }
-
+    
     my ($nsprefix) = ($node->getName() =~ /^($XML::XPath::Parser::NCName):($XML::XPath::Parser::NCName)$/o);
-
+    
     if ($nsprefix && !$self->getNamespace($nsprefix)) {
         die "No namespace matches prefix: $nsprefix";
     }
-
+    
     $self->appendAttribute($node);
 }
 
@@ -293,7 +293,7 @@ sub getNamespace {
         return $ns if $ns->getPrefix eq $prefix;
     }
     my $parent = $self->getParentNode;
-
+    
     return $parent->getNamespace($prefix) if $parent;
 }
 
@@ -329,18 +329,18 @@ sub getExpandedName {
 sub _to_sax {
     my $self = shift;
     my ($doch, $dtdh, $enth) = @_;
-
+    
     my $tag = $self->getName;
     my @attr;
-
+    
     for my $attr ($self->getAttributes) {
         push @attr, $attr->getName, $attr->getValue;
     }
-
+    
     my $ns = $self->getNamespace($self->[node_prefix]);
     if ($ns) {
-        $doch->start_element(
-                {
+        $doch->start_element( 
+                { 
                 Name => $tag,
                 Attributes => { @attr },
                 NamespaceURI => $ns->getExpanded,
@@ -357,13 +357,13 @@ sub _to_sax {
                 }
             );
     }
-
+    
     for my $kid ($self->getChildNodes) {
         $kid->_to_sax($doch, $dtdh, $enth);
     }
-
+    
     if ($ns) {
-        $doch->end_element(
+        $doch->end_element( 
                 {
                 Name => $tag,
                 NamespaceURI => $ns->getExpanded,
@@ -398,24 +398,24 @@ sub toString {
             return join('', map { $_->toString($norecurse) } @{$self->[node_children]});
     }
     $string .= "<" . $self->[node_name];
-
+    
         $string .= join('', map { $_->toString } @{$self->[node_namespaces]});
-
+    
         $string .= join('', map { $_->toString } @{$self->[node_attribs]});
-
+    
     if (@{$self->[node_children]}) {
         $string .= ">";
 
         if (!$norecurse) {
                         $string .= join('', map { $_->toString($norecurse) } @{$self->[node_children]});
         }
-
+        
         $string .= "</" . $self->[node_name] . ">";
     }
     else {
         $string .= " />";
     }
-
+    
     return $string;
 }
 

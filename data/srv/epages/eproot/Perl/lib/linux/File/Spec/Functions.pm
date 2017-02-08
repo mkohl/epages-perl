@@ -13,26 +13,26 @@ require Exporter;
 @ISA = qw(Exporter);
 
 @EXPORT = qw(
-        canonpath
-        catdir
-        catfile
-        curdir
-        rootdir
-        updir
-        no_upwards
-        file_name_is_absolute
-        path
+	canonpath
+	catdir
+	catfile
+	curdir
+	rootdir
+	updir
+	no_upwards
+	file_name_is_absolute
+	path
 );
 
 @EXPORT_OK = qw(
-        devnull
-        tmpdir
-        splitpath
-        splitdir
-        catpath
-        abs2rel
-        rel2abs
-        case_tolerant
+	devnull
+	tmpdir
+	splitpath
+	splitdir
+	catpath
+	abs2rel
+	rel2abs
+	case_tolerant
 );
 
 %EXPORT_TAGS = ( ALL => [ @EXPORT_OK, @EXPORT ] );
@@ -53,8 +53,8 @@ File::Spec::Functions - portably perform operations on file names
 
 =head1 SYNOPSIS
 
-        use File::Spec::Functions;
-        $x = catfile('a','b');
+	use File::Spec::Functions;
+	$x = catfile('a','b');
 
 =head1 DESCRIPTION
 
@@ -70,27 +70,27 @@ L<File::Spec::OS2>, L<File::Spec::Win32>, or L<File::Spec::VMS>.
 
 The following functions are exported by default.
 
-        canonpath
-        catdir
-        catfile
-        curdir
-        rootdir
-        updir
-        no_upwards
-        file_name_is_absolute
-        path
+	canonpath
+	catdir
+	catfile
+	curdir
+	rootdir
+	updir
+	no_upwards
+	file_name_is_absolute
+	path
 
 
 The following functions are exported only by request.
 
-        devnull
-        tmpdir
-        splitpath
-        splitdir
-        catpath
-        abs2rel
-        rel2abs
-        case_tolerant
+	devnull
+	tmpdir
+	splitpath
+	splitdir
+	catpath
+	abs2rel
+	rel2abs
+	case_tolerant
 
 All the functions may be imported using the C<:ALL> tag.
 

@@ -58,7 +58,7 @@ Class method. Returns this method's name.
 =back
 
     my $method = OAuth::Lite::SignatureMethod::PLAINTEXT->new(
-        consumer_secret => $consumer_secret,
+        consumer_secret => $consumer_secret, 
         token_secret    => $bar,
     );
 

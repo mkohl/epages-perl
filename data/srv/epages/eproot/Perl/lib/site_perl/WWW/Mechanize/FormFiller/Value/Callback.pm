@@ -8,7 +8,7 @@ $VERSION = '0.10';
 sub new {
   my ($class,$name,$coderef) = @_;
   my $self = $class->SUPER::new($name);
-
+  
   $self->{callback} = $coderef;
 
   $self;

@@ -25,8 +25,8 @@ sub first_entry { # compat
 sub next_entry { # compat
   my $self = shift;
   $self->entry( defined $self->{'CurrentEntry'}
-                ? $self->{'CurrentEntry'} + 1
-                : 0);
+		? $self->{'CurrentEntry'} + 1
+		: 0);
 }
 
 
@@ -128,16 +128,16 @@ sub sorted {
       my $v;
       my $i = 2;
       foreach my $attr (@_) {
-        $v = ($a->[$i] ||= join("\000", @{$a->[0]->get_value($attr, asref => 1) || []}))
-              cmp
-             ($b->[$i] ||= join("\000", @{$b->[0]->get_value($attr, asref => 1) || []}))
-          and last;
-        $i++;
+	$v = ($a->[$i] ||= join("\000", @{$a->[0]->get_value($attr, asref => 1) || []}))
+	      cmp
+	     ($b->[$i] ||= join("\000", @{$b->[0]->get_value($attr, asref => 1) || []}))
+	  and last;
+	$i++;
       }
 
       $v ||= ($a->[1] ||= Net::LDAP::Util::canonical_dn( $a->[0]->dn, "reverse" => 1, separator => "\0"))
-                cmp
-             ($b->[1] ||= Net::LDAP::Util::canonical_dn( $b->[0]->dn, "reverse" => 1, separator => "\0"));
+		cmp
+	     ($b->[1] ||= Net::LDAP::Util::canonical_dn( $b->[0]->dn, "reverse" => 1, separator => "\0"));
     }
     map { [ $_ ] } @{$self->{entries}};
 }

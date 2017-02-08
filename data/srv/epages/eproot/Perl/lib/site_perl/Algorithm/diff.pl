@@ -30,7 +30,7 @@ $diffs = diff(\@f1, \@f2);
 exit 0 unless @$diffs;
 
 foreach $chunk (@$diffs) {
-
+  
   foreach $line (@$chunk) {
     my ($sign, $lineno, $text) = @$line;
     printf "%4d$sign %s\n", $lineno+1, $text;

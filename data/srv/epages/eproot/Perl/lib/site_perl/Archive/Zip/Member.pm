@@ -805,7 +805,7 @@ sub readChunk {
 }
 
 # Read the next raw chunk of my data. Subclasses MUST implement.
-#       my ( $bytesRead, $status) = $self->_readRawChunk( \$buffer, $chunkSize );
+#	my ( $bytesRead, $status) = $self->_readRawChunk( \$buffer, $chunkSize );
 sub _readRawChunk {
     my $self = shift;
     return $self->_subclassResponsibility();

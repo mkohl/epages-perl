@@ -80,8 +80,8 @@ sub init_platform {
     }
 
     $self->{'NLM_VERSION'} = $Config{'nlm_version'};
-    $self->{'MPKTOOL'}  = $Config{'mpktool'};
-    $self->{'TOOLPATH'} = $Config{'toolpath'};
+    $self->{'MPKTOOL'}	= $Config{'mpktool'};
+    $self->{'TOOLPATH'}	= $Config{'toolpath'};
 
     (my $boot = $self->{'NAME'}) =~ s/:/_/g;
     $self->{'BOOT_SYMBOL'}=$boot;
@@ -133,8 +133,8 @@ sub const_cccmd {
     return '' unless $self->needs_linking();
     return $self->{CONST_CCCMD} = <<'MAKE_FRAG';
 CCCMD = $(CC) $(CCFLAGS) $(INC) $(OPTIMIZE) \
-        $(PERLTYPE) $(MPOLLUTE) -o $@ \
-        -DVERSION=\"$(VERSION)\" -DXS_VERSION=\"$(XS_VERSION)\"
+	$(PERLTYPE) $(MPOLLUTE) -o $@ \
+	-DVERSION=\"$(VERSION)\" -DXS_VERSION=\"$(XS_VERSION)\"
 MAKE_FRAG
 
 }
@@ -151,13 +151,13 @@ sub static_lib {
 
     my $m = <<'END';
 $(INST_STATIC): $(OBJECT) $(MYEXTLIB) $(INST_ARCHAUTODIR)$(DFSEP).exists
-        $(RM_RF) $@
+	$(RM_RF) $@
 END
 
     # If this extension has it's own library (eg SDBM_File)
     # then copy that to $(INST_STATIC) and add $(OBJECT) into it.
     $m .= <<'END'  if $self->{MYEXTLIB};
-        $self->{CP} $(MYEXTLIB) $@
+	$self->{CP} $(MYEXTLIB) $@
 END
 
     my $ar_arg;
@@ -172,13 +172,13 @@ END
     }
 
     $m .= sprintf <<'END', $ar_arg;
-        $(AR) %s
-        $(NOECHO) $(ECHO) "$(EXTRALIBS)" > $(INST_ARCHAUTODIR)\extralibs.ld
-        $(CHMOD) 755 $@
+	$(AR) %s
+	$(NOECHO) $(ECHO) "$(EXTRALIBS)" > $(INST_ARCHAUTODIR)\extralibs.ld
+	$(CHMOD) 755 $@
 END
 
     $m .= <<'END' if $self->{PERL_SRC};
-        $(NOECHO) $(ECHO) "$(EXTRALIBS)" >> $(PERL_SRC)\ext.libs
+	$(NOECHO) $(ECHO) "$(EXTRALIBS)" >> $(PERL_SRC)\ext.libs
 
 
 END
@@ -211,23 +211,23 @@ INST_DYNAMIC_DEP = '.$inst_dynamic_dep.'
 
 # Create xdc data for an MT safe NLM in case of mpk build
 $(INST_DYNAMIC): $(OBJECT) $(MYEXTLIB) $(BOOTSTRAP) $(INST_ARCHAUTODIR)$(DFSEP).exists
-        $(NOECHO) $(ECHO) Export boot_$(BOOT_SYMBOL) > $(BASEEXT).def
-        $(NOECHO) $(ECHO) $(BASE_IMPORT) >> $(BASEEXT).def
-        $(NOECHO) $(ECHO) Import @$(PERL_INC)\perl.imp >> $(BASEEXT).def
+	$(NOECHO) $(ECHO) Export boot_$(BOOT_SYMBOL) > $(BASEEXT).def
+	$(NOECHO) $(ECHO) $(BASE_IMPORT) >> $(BASEEXT).def
+	$(NOECHO) $(ECHO) Import @$(PERL_INC)\perl.imp >> $(BASEEXT).def
 MAKE_FRAG
 
 
     if ( $self->{CCFLAGS} =~ m/ -DMPK_ON /) {
         $m .= <<'MAKE_FRAG';
-        $(MPKTOOL) $(XDCFLAGS) $(BASEEXT).xdc
-        $(NOECHO) $(ECHO) xdcdata $(BASEEXT).xdc >> $(BASEEXT).def
+	$(MPKTOOL) $(XDCFLAGS) $(BASEEXT).xdc
+	$(NOECHO) $(ECHO) xdcdata $(BASEEXT).xdc >> $(BASEEXT).def
 MAKE_FRAG
     }
 
     # Reconstruct the X.Y.Z version.
     my $version = join '.', map { sprintf "%d", $_ }
                               $] =~ /(\d)\.(\d{3})(\d{2})/;
-    $m .= sprintf '     $(LD) $(LDFLAGS) $(OBJECT:.obj=.obj) -desc "Perl %s Extension ($(BASEEXT))  XS_VERSION: $(XS_VERSION)" -nlmversion $(NLM_VERSION)', $version;
+    $m .= sprintf '	$(LD) $(LDFLAGS) $(OBJECT:.obj=.obj) -desc "Perl %s Extension ($(BASEEXT))  XS_VERSION: $(XS_VERSION)" -nlmversion $(NLM_VERSION)', $version;
 
     # Taking care of long names like FileHandle, ByteLoader, SDBM_File etc
     if($self->{NLM_SHORT_NAME}) {
@@ -245,14 +245,14 @@ MAKE_FRAG
 
     if($self->{NLM_SHORT_NAME}) {
         $m .= <<'MAKE_FRAG';
-        if exist $(INST_AUTODIR)\$(NLM_SHORT_NAME).$(DLEXT) del $(INST_AUTODIR)\$(NLM_SHORT_NAME).$(DLEXT)
-        move $(NLM_SHORT_NAME).$(DLEXT) $(INST_AUTODIR)
+	if exist $(INST_AUTODIR)\$(NLM_SHORT_NAME).$(DLEXT) del $(INST_AUTODIR)\$(NLM_SHORT_NAME).$(DLEXT)
+	move $(NLM_SHORT_NAME).$(DLEXT) $(INST_AUTODIR)
 MAKE_FRAG
     }
 
     $m .= <<'MAKE_FRAG';
 
-        $(CHMOD) 755 $@
+	$(CHMOD) 755 $@
 MAKE_FRAG
 
     return $m;

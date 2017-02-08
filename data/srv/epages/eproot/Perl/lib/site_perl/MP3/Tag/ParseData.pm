@@ -150,7 +150,7 @@ sub DESTROY {}
 sub parse_one {
     my ($self, $in) = @_;
 
-    my @patterns = @$in;                # Apply shift to a copy, not original...
+    my @patterns = @$in;		# Apply shift to a copy, not original...
     my $flags = shift @patterns;
     my $data  = shift @patterns;
 
@@ -159,52 +159,52 @@ sub parse_one {
     my @opatterns = @patterns;
 
     if ($flags =~ /[oO]/) {
-        @patterns = map $self->{parent}->interpolate($_), @patterns
-            if $flags =~ /O/;
-        return unless length $data[0] or $flags =~ /z/;
-        for my $file (@patterns) {
-            if ($flags =~ /D/ and $file =~ m,(.*)[/\\],s) {
-                require File::Path;
-                File::Path::mkpath($1);
-            }
-            open OUT, "> $file" or die "open(`$file') for write: $!";
-            if ($flags =~ /b/) {
-              binmode OUT;
-            } else {
-              my $e;
-              if ($e = $self->get_config('encode_encoding_files') and $e->[0]) {
-                eval "binmode OUT, ':encoding($e->[0])'"; # old binmode won't compile...
-              }
-            }
-            local ($/, $,) = ('', '');
-            print OUT $data[0];
-            close OUT or die "close(`$file') for write: $!";
-        }
-        return;
+	@patterns = map $self->{parent}->interpolate($_), @patterns
+	    if $flags =~ /O/;
+	return unless length $data[0] or $flags =~ /z/;
+	for my $file (@patterns) {
+	    if ($flags =~ /D/ and $file =~ m,(.*)[/\\],s) {
+		require File::Path;
+		File::Path::mkpath($1);
+	    }
+	    open OUT, "> $file" or die "open(`$file') for write: $!";
+	    if ($flags =~ /b/) {
+	      binmode OUT;
+	    } else {
+	      my $e;
+	      if ($e = $self->get_config('encode_encoding_files') and $e->[0]) {
+		eval "binmode OUT, ':encoding($e->[0])'"; # old binmode won't compile...
+	      }
+	    }
+	    local ($/, $,) = ('', '');
+	    print OUT $data[0];
+	    close OUT or die "close(`$file') for write: $!";
+	}
+	return;
     }
     if ($flags =~ /R/) {
-        @patterns = map $self->{parent}->parse_rex_prepare($_), @patterns;
+	@patterns = map $self->{parent}->parse_rex_prepare($_), @patterns;
     } else {
-        @patterns = map $self->{parent}->parse_prepare($_), @patterns;
+	@patterns = map $self->{parent}->parse_prepare($_), @patterns;
     }
     for $data (@data) {
-        my $pattern;
-        for $pattern (@patterns) {
-            last if $res = $self->{parent}->parse_rex_match($pattern, $data);
-        }
-        last if $res;
+	my $pattern;
+	for $pattern (@patterns) {
+	    last if $res = $self->{parent}->parse_rex_match($pattern, $data);
+	}
+	last if $res;
     }
     {   local $" = "' `";
-        die "Pattern(s) `@opatterns' did not succeed vs `@data'"
-            if $flags =~ /m/ and not $res;
+	die "Pattern(s) `@opatterns' did not succeed vs `@data'"
+	    if $flags =~ /m/ and not $res;
     }
     my $k;
     for $k (keys %$res) {
-        unless ($flags =~ /b/) {
-          $res->{$k} =~ s/^\s+//;
-          $res->{$k} =~ s/\s+$//;
-        }
-        delete $res->{$k} unless length $res->{$k} or $flags =~ /z/;
+	unless ($flags =~ /b/) {
+	  $res->{$k} =~ s/^\s+//;
+	  $res->{$k} =~ s/\s+$//;
+	}
+	delete $res->{$k} unless length $res->{$k} or $flags =~ /z/;
     }
     return unless $res and keys %$res;
     return $res;
@@ -215,11 +215,11 @@ sub parse_one {
 # by sorting config('parse_data') in the opposite order; but not both.
 # Only practice can show whether our choice is correct...   How to customize?
 
-sub parse {     # Later recipies can access results of earlier ones.
+sub parse {	# Later recipies can access results of earlier ones.
     my ($self,$what) = @_;
 
-    return $self->{parsed}->{$what}     # Recalculate during recursive calls
-        if not $self->{parsing} and exists $self->{parsed}; # Do not recalc after finish
+    return $self->{parsed}->{$what}	# Recalculate during recursive calls
+	if not $self->{parsing} and exists $self->{parsed}; # Do not recalc after finish
 
     my $data = $self->get_config('parse_data');
     return unless $data and @$data;
@@ -228,35 +228,35 @@ sub parse {     # Later recipies can access results of earlier ones.
 
     my (%res, $d, $c);
     for $d (@$data) {
-        $c++;
-        $self->{parsing} = $c;
-        # Protect against recursion: later $d can access results of earlier ones
-        last if $parsing and $parsing <= $c;
-        my $res = $self->parse_one($d);
-        # warn "Failure: [@$d]\n" unless $res;
-        # Set user-scratch space data immediately
-        for my $k (keys %$res) {
-          if ($k eq 'year') {   # Do nothing
-          } elsif ($k =~ /^U(\d{1,2})$/) {
-            $self->{parent}->set_user($1, delete $res->{$k})
-          } elsif (0 and $k =~ /^\w{4}(\d{2,})?$/) {
-            if (length $res->{$k}
-                or $self->get_config('id3v2_frame_empty_ok')->[0]) {
-              $self->{parent}->set_id3v2_frame($k, delete $res->{$k})
-            } else {
-              delete $res->{$k};
-              $self->{parent}->set_id3v2_frame($k);     # delete
-            }
-          } elsif ($k =~ /^\w{4}(\d{2,}|(?:\(([^()]*(?:\([^()]+\)[^()]*)*)\))?(?:\[(\\.|[^]\\]*)\])?)$/) {
-            my $r = delete $res->{$k};
-            $r = undef unless length $r or $self->get_config('id3v2_frame_empty_ok')->[0];
-            if (defined $r or $self->{parent}->_get_tag('ID3v2')) {
-              $self->{parent}->select_id3v2_frame_by_descr($k, $r);
-            }
-          }
-        }
-        # later ones overwrite earlier
-        %res = (%res, %$res) if $res;
+	$c++;
+	$self->{parsing} = $c;
+	# Protect against recursion: later $d can access results of earlier ones
+	last if $parsing and $parsing <= $c;
+	my $res = $self->parse_one($d);
+	# warn "Failure: [@$d]\n" unless $res;
+	# Set user-scratch space data immediately
+	for my $k (keys %$res) {
+	  if ($k eq 'year') {	# Do nothing
+	  } elsif ($k =~ /^U(\d{1,2})$/) {
+	    $self->{parent}->set_user($1, delete $res->{$k})
+	  } elsif (0 and $k =~ /^\w{4}(\d{2,})?$/) {
+	    if (length $res->{$k}
+		or $self->get_config('id3v2_frame_empty_ok')->[0]) {
+	      $self->{parent}->set_id3v2_frame($k, delete $res->{$k})
+	    } else {
+	      delete $res->{$k};
+	      $self->{parent}->set_id3v2_frame($k);	# delete
+	    }
+	  } elsif ($k =~ /^\w{4}(\d{2,}|(?:\(([^()]*(?:\([^()]+\)[^()]*)*)\))?(?:\[(\\.|[^]\\]*)\])?)$/) {
+	    my $r = delete $res->{$k};
+	    $r = undef unless length $r or $self->get_config('id3v2_frame_empty_ok')->[0];
+	    if (defined $r or $self->{parent}->_get_tag('ID3v2')) {
+	      $self->{parent}->select_id3v2_frame_by_descr($k, $r);
+	    }
+	  }
+	}
+	# later ones overwrite earlier
+	%res = (%res, %$res) if $res;
     }
     $self->{parsed} = \%res;
     # return unless keys %res;

@@ -4,7 +4,7 @@
 #
 # Perl5 module to provide a CGI interface to AppConfig.  Internal variables
 # may be set through the CGI "arguments" appended to a URL.
-#
+# 
 # Written by Andy Wardley <abw@wardley.org>
 #
 # Copyright (C) 1997-2003 Andy Wardley.  All Rights Reserved.
@@ -22,8 +22,8 @@ our $VERSION = '1.65';
 #------------------------------------------------------------------------
 # new($state, $query)
 #
-# Module constructor.  The first, mandatory parameter should be a
-# reference to an AppConfig::State object to which all actions should
+# Module constructor.  The first, mandatory parameter should be a 
+# reference to an AppConfig::State object to which all actions should 
 # be applied.  The second parameter may be a string containing a CGI
 # QUERY_STRING which is then passed to parse() to process.  If no second
 # parameter is specifiied then the parse() process is skipped.
@@ -40,8 +40,8 @@ sub new {
         PEDANTIC => $state->_pedantic,     # and pedantic flags
     };
     bless $self, $class;
-
-    # call parse(@_) to parse any arg list passed
+        
+    # call parse(@_) to parse any arg list passed 
     $self->parse(@_)
         if @_;
 
@@ -52,9 +52,9 @@ sub new {
 #------------------------------------------------------------------------
 # parse($query)
 #
-# Method used to parse a CGI QUERY_STRING and set internal variable
+# Method used to parse a CGI QUERY_STRING and set internal variable 
 # values accordingly.  If a query is not passed as the first parameter,
-# then _get_cgi_query() is called to try to determine the query by
+# then _get_cgi_query() is called to try to determine the query by 
 # examing the environment as per CGI protocol.
 #
 # Returns 0 if one or more errors or warnings were raised or 1 if the
@@ -66,7 +66,7 @@ sub parse {
     my $query    = shift;
     my $warnings = 0;
     my ($variable, $value, $nargs);
-
+    
 
     # take a local copy of the state to avoid much hash dereferencing
     my ($state, $debug, $pedantic) = @$self{ qw( STATE DEBUG PEDANTIC ) };
@@ -78,16 +78,16 @@ sub parse {
     # no query to process
     return 1 unless defined $query;
 
-    # we want to install a custom error handler into the AppConfig::State
-    # which appends filename and line info to error messages and then
-    # calls the previous handler;  we start by taking a copy of the
+    # we want to install a custom error handler into the AppConfig::State 
+    # which appends filename and line info to error messages and then 
+    # calls the previous handler;  we start by taking a copy of the 
     # current handler..
     my $errhandler = $state->_ehandler();
 
     # install a closure as a new error handler
     $state->_ehandler(
         sub {
-            # modify the error message
+            # modify the error message 
             my $format  = shift;
             $format =~ s/</&lt;/g;
             $format =~ s/>/&gt;/g;
@@ -171,7 +171,7 @@ AppConfig::CGI - Perl5 module for processing CGI script parameters.
 
 =head1 OVERVIEW
 
-AppConfig::CGI is a Perl5 module which implements a CGI interface to
+AppConfig::CGI is a Perl5 module which implements a CGI interface to 
 AppConfig.  It examines the QUERY_STRING environment variable, or a string
 passed explicitly by parameter, which represents the additional parameters
 passed to a CGI query.  This is then used to update variable values in an
@@ -194,18 +194,18 @@ AppConfig::CGI is implemented using object-oriented methods.  A new
 AppConfig::CGI object is created and initialised using the new()
 method.  This returns a reference to a new AppConfig::CGI object.  A
 reference to an AppConfig::State object should be passed in as the
-first parameter:
+first parameter: 
 
-    my $state = AppConfig::State->new();
+    my $state = AppConfig::State->new(); 
     my $cgi   = AppConfig::CGI->new($state);
 
-This will create and return a reference to a new AppConfig::CGI object.
+This will create and return a reference to a new AppConfig::CGI object. 
 
 =head2 PARSING CGI QUERIES
 
-The C<parse()> method is used to parse a CGI query which can be specified
-explicitly, or is automatically extracted from the "QUERY_STRING" CGI
-environment variable.  This currently limits the module to only supporting
+The C<parse()> method is used to parse a CGI query which can be specified 
+explicitly, or is automatically extracted from the "QUERY_STRING" CGI 
+environment variable.  This currently limits the module to only supporting 
 the GET method.
 
 See AppConfig for information about using the AppConfig::CGI
@@ -221,7 +221,7 @@ Copyright (C) 1997-2007 Andy Wardley.  All Rights Reserved.
 
 Copyright (C) 1997,1998 Canon Research Centre Europe Ltd.
 
-This module is free software; you can redistribute it and/or modify it
+This module is free software; you can redistribute it and/or modify it 
 under the same terms as Perl itself.
 
 =head1 SEE ALSO

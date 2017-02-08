@@ -6,33 +6,33 @@ use XML::XPath::Literal;
 use strict;
 
 use overload
-                '""' => \&value,
-                '<=>' => \&cmp;
+		'""' => \&value,
+		'<=>' => \&cmp;
 
 sub True {
-        my $class = shift;
-        my $val = 1;
-        bless \$val, $class;
+	my $class = shift;
+	my $val = 1;
+	bless \$val, $class;
 }
 
 sub False {
-        my $class = shift;
-        my $val = 0;
-        bless \$val, $class;
+	my $class = shift;
+	my $val = 0;
+	bless \$val, $class;
 }
 
 sub value {
-        my $self = shift;
-        $$self;
+	my $self = shift;
+	$$self;
 }
 
 sub cmp {
-        my $self = shift;
-        my ($other, $swap) = @_;
-        if ($swap) {
-                return $other <=> $$self;
-        }
-        return $$self <=> $other;
+	my $self = shift;
+	my ($other, $swap) = @_;
+	if ($swap) {
+		return $other <=> $$self;
+	}
+	return $$self <=> $other;
 }
 
 sub to_number { XML::XPath::Number->new($_[0]->value); }

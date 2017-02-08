@@ -36,8 +36,8 @@ sub _adapt {
     $delta += $delta / $numpoints;
     my $k = 0;
     while ($delta > ((BASE - TMIN) * TMAX) / 2) {
-        $delta /= BASE - TMIN;
-        $k += BASE;
+	$delta /= BASE - TMIN;
+	$k += BASE;
     }
     return $k + (((BASE - TMIN + 1) * $delta) / ($delta + SKEW));
 }
@@ -65,36 +65,36 @@ sub decode_punycode {
 
     croak('invalid digit in input for decode_punycode') if $code =~ m/[^$PunyRE]/os;
 
-    utf8::downgrade($input);    ## handling failure of downgrade is more expensive than
-                                ## doing the above regexp w/ utf8 semantics
+    utf8::downgrade($input);	## handling failure of downgrade is more expensive than
+				## doing the above regexp w/ utf8 semantics
 
     while(length $code)
     {
-        my $oldi = $i;
-        my $w    = 1;
+	my $oldi = $i;
+	my $w    = 1;
     LOOP:
-        for (my $k = BASE; 1; $k += BASE) {
-            my $cp = substr($code, 0, 1, '');
-            croak("incomplete encoded code point in decode_punycode") if !defined $cp;
-            my $digit = ord $cp;
+	for (my $k = BASE; 1; $k += BASE) {
+	    my $cp = substr($code, 0, 1, '');
+	    croak("incomplete encoded code point in decode_punycode") if !defined $cp;
+	    my $digit = ord $cp;
+		
+	    ## NB: this depends on the PunyRE catching invalid digit characters
+	    ## before they turn up here
+	    ##
+	    $digit = $digit < 0x40 ? $digit + (26-0x30) : ($digit & 0x1f) -1;
 
-            ## NB: this depends on the PunyRE catching invalid digit characters
-            ## before they turn up here
-            ##
-            $digit = $digit < 0x40 ? $digit + (26-0x30) : ($digit & 0x1f) -1;
+	    $i += $digit * $w;
+	    my $t =  $k - $bias;
+	    $t = $t < TMIN ? TMIN : $t > TMAX ? TMAX : $t;
 
-            $i += $digit * $w;
-            my $t =  $k - $bias;
-            $t = $t < TMIN ? TMIN : $t > TMAX ? TMAX : $t;
-
-            last LOOP if $digit < $t;
-            $w *= (BASE - $t);
-        }
-        $bias = _adapt($i - $oldi, @output + 1, $oldi == 0);
-        $n += $i / (@output + 1);
-        $i = $i % (@output + 1);
-        splice(@output, $i, 0, chr($n));
-        $i++;
+	    last LOOP if $digit < $t;
+	    $w *= (BASE - $t);
+	}
+	$bias = _adapt($i - $oldi, @output + 1, $oldi == 0);
+	$n += $i / (@output + 1);
+	$i = $i % (@output + 1);
+	splice(@output, $i, 0, chr($n));
+	$i++;
     }
     return join '', @output;
 }
@@ -110,7 +110,7 @@ sub encode_punycode {
 
     my $h = my $b = length $output;
     $output .= $Delimiter if $b > 0;
-    utf8::downgrade($output);   ## no unnecessary use of utf8 semantics
+    utf8::downgrade($output);	## no unnecessary use of utf8 semantics
 
     my @input = map ord, split //, $input;
     my @chars = sort grep { $_ >= INITIAL_N } @input;
@@ -120,37 +120,37 @@ sub encode_punycode {
     my $bias = INITIAL_BIAS;
 
     foreach my $m (@chars) {
-        next if $m < $n;
-        $delta += ($m - $n) * ($h + 1);
-        $n = $m;
-        for(my $i = 0; $i < $input_length; $i++)
-        {
-            my $c = $input[$i];
-            $delta++ if $c < $n;
-            if ($c == $n) {
-                my $q = $delta;
-            LOOP:
-                for (my $k = BASE; 1; $k += BASE) {
-                    my $t = $k - $bias;
-                    $t = $t < TMIN ? TMIN : $t > TMAX ? TMAX : $t;
+ 	next if $m < $n;
+	$delta += ($m - $n) * ($h + 1);
+	$n = $m;
+	for(my $i = 0; $i < $input_length; $i++)
+	{
+	    my $c = $input[$i];
+	    $delta++ if $c < $n;
+	    if ($c == $n) {
+		my $q = $delta;
+	    LOOP:
+		for (my $k = BASE; 1; $k += BASE) {
+		    my $t = $k - $bias;
+	            $t = $t < TMIN ? TMIN : $t > TMAX ? TMAX : $t;
 
-                    last LOOP if $q < $t;
+		    last LOOP if $q < $t;
 
                     my $o = $t + (($q - $t) % (BASE - $t));
                     $output .= chr $o + ($o < 26 ? 0x61 : 0x30-26);
 
-                    $q = ($q - $t) / (BASE - $t);
-                }
-                croak("input exceeds punycode limit") if $q > BASE;
+		    $q = ($q - $t) / (BASE - $t);
+		}
+		croak("input exceeds punycode limit") if $q > BASE;
                 $output .= chr $q + ($q < 26 ? 0x61 : 0x30-26);
 
-                $bias = _adapt($delta, $h + 1, $h == $b);
-                $delta = 0;
-                $h++;
-            }
-        }
-        $delta++;
-        $n++;
+		$bias = _adapt($delta, $h + 1, $h == $b);
+		$delta = 0;
+		$h++;
+	    }
+	}
+	$delta++;
+	$n++;
     }
     return $output;
 }

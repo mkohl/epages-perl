@@ -202,7 +202,7 @@ Determine if words are reserved by Oracle Database.
 
 =item is_reserved( $word )
 
-Returns a boolean indicating if C<$word> is reserved by either Oracle7,
+Returns a boolean indicating if C<$word> is reserved by either Oracle7, 
 Oracle8i, Oracle9i or Oracle10g.
 
 =item is_reserved_by_oracle7( $word )

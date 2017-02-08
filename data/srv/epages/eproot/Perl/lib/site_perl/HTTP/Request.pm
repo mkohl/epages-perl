@@ -23,11 +23,11 @@ sub parse
     my($class, $str) = @_;
     my $request_line;
     if ($str =~ s/^(.*)\n//) {
-        $request_line = $1;
+	$request_line = $1;
     }
     else {
-        $request_line = $str;
-        $str = "";
+	$request_line = $str;
+	$str = "";
     }
 
     my $self = $class->SUPER::parse($str);
@@ -60,26 +60,26 @@ sub uri
     my $self = shift;
     my $old = $self->{'_uri'};
     if (@_) {
-        my $uri = shift;
-        if (!defined $uri) {
-            # that's ok
-        }
-        elsif (ref $uri) {
-            Carp::croak("A URI can't be a " . ref($uri) . " reference")
-                if ref($uri) eq 'HASH' or ref($uri) eq 'ARRAY';
-            Carp::croak("Can't use a " . ref($uri) . " object as a URI")
-                unless $uri->can('scheme');
-            $uri = $uri->clone;
-            unless ($HTTP::URI_CLASS eq "URI") {
-                # Argh!! Hate this... old LWP legacy!
-                eval { local $SIG{__DIE__}; $uri = $uri->abs; };
-                die $@ if $@ && $@ !~ /Missing base argument/;
-            }
-        }
-        else {
-            $uri = $HTTP::URI_CLASS->new($uri);
-        }
-        $self->{'_uri'} = $uri;
+	my $uri = shift;
+	if (!defined $uri) {
+	    # that's ok
+	}
+	elsif (ref $uri) {
+	    Carp::croak("A URI can't be a " . ref($uri) . " reference")
+		if ref($uri) eq 'HASH' or ref($uri) eq 'ARRAY';
+	    Carp::croak("Can't use a " . ref($uri) . " object as a URI")
+		unless $uri->can('scheme');
+	    $uri = $uri->clone;
+	    unless ($HTTP::URI_CLASS eq "URI") {
+		# Argh!! Hate this... old LWP legacy!
+		eval { local $SIG{__DIE__}; $uri = $uri->abs; };
+		die $@ if $@ && $@ !~ /Missing base argument/;
+	    }
+	}
+	else {
+	    $uri = $HTTP::URI_CLASS->new($uri);
+	}
+	$self->{'_uri'} = $uri;
         delete $self->{'_uri_canonical'};
     }
     $old;
@@ -121,12 +121,12 @@ sub dump
     my $self = shift;
     my @pre = ($self->method || "-", $self->uri || "-");
     if (my $prot = $self->protocol) {
-        push(@pre, $prot);
+	push(@pre, $prot);
     }
 
     return $self->SUPER::dump(
         preheader => join(" ", @pre),
-        @_,
+	@_,
     );
 }
 

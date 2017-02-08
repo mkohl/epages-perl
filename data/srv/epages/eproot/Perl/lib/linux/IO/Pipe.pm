@@ -26,7 +26,7 @@ sub new {
     my($readfh,$writefh) = @_ ? @_ : $me->handles;
 
     pipe($readfh, $writefh)
-        or return undef;
+	or return undef;
 
     @{*$me} = ($readfh, $writefh);
 
@@ -56,11 +56,11 @@ sub _doit {
         if ($do_spawn) {
           require Fcntl;
           $save = IO::Handle->new_from_fd($io, $mode);
-          my $handle = shift;
+	  my $handle = shift;
           # Close in child:
-          unless ($^O eq 'MSWin32') {
+	  unless ($^O eq 'MSWin32') {
             fcntl($handle, Fcntl::F_SETFD(), 1) or croak "fcntl: $!";
-          }
+	  }
           $fh = $rw ? ${*$me}[0] : ${*$me}[1];
         } else {
           shift;
@@ -68,12 +68,12 @@ sub _doit {
         }
         bless $io, "IO::Handle";
         $io->fdopen($fh, $mode);
-        $fh->close;
+	$fh->close;
 
         if ($do_spawn) {
           $pid = eval { system 1, @_ }; # 1 == P_NOWAIT
           my $err = $!;
-
+    
           $io->fdopen($save, $mode);
           $save->close or croak "Cannot close $!";
           croak "IO::Pipe: Cannot spawn-NOWAIT: $err" if not $pid or $pid < 0;
@@ -95,7 +95,7 @@ sub reader {
     my $me = shift;
 
     return undef
-        unless(ref($me) || ref($me = $me->new));
+	unless(ref($me) || ref($me = $me->new));
 
     my $fh  = ${*$me}[0];
     my $pid;
@@ -106,7 +106,7 @@ sub reader {
     bless $me, ref($fh);
     *$me = *$fh;          # Alias self to handle
     $me->fdopen($fh->fileno,"r")
-        unless defined($me->fileno);
+	unless defined($me->fileno);
     bless $fh;                  # Really wan't un-bless here
     ${*$me}{'io_pipe_pid'} = $pid
         if defined $pid;
@@ -119,7 +119,7 @@ sub writer {
     my $me = shift;
 
     return undef
-        unless(ref($me) || ref($me = $me->new));
+	unless(ref($me) || ref($me = $me->new));
 
     my $fh  = ${*$me}[1];
     my $pid;
@@ -130,7 +130,7 @@ sub writer {
     bless $me, ref($fh);
     *$me = *$fh;          # Alias self to handle
     $me->fdopen($fh->fileno,"w")
-        unless defined($me->fileno);
+	unless defined($me->fileno);
     bless $fh;                  # Really wan't un-bless here
     ${*$me}{'io_pipe_pid'} = $pid
         if defined $pid;
@@ -149,7 +149,7 @@ sub close {
     my $r = $fh->SUPER::close(@_);
 
     waitpid(${*$fh}{'io_pipe_pid'},0)
-        if(defined ${*$fh}{'io_pipe_pid'});
+	if(defined ${*$fh}{'io_pipe_pid'});
 
     $r;
 }
@@ -164,33 +164,33 @@ IO::Pipe - supply object methods for pipes
 
 =head1 SYNOPSIS
 
-        use IO::Pipe;
+	use IO::Pipe;
 
-        $pipe = new IO::Pipe;
+	$pipe = new IO::Pipe;
 
-        if($pid = fork()) { # Parent
-            $pipe->reader();
+	if($pid = fork()) { # Parent
+	    $pipe->reader();
 
-            while(<$pipe>) {
-                ...
-            }
+	    while(<$pipe>) {
+		...
+	    }
 
-        }
-        elsif(defined $pid) { # Child
-            $pipe->writer();
+	}
+	elsif(defined $pid) { # Child
+	    $pipe->writer();
 
-            print $pipe ...
-        }
+	    print $pipe ...
+	}
 
-        or
+	or
 
-        $pipe = new IO::Pipe;
+	$pipe = new IO::Pipe;
 
-        $pipe->reader(qw(ls -l));
+	$pipe->reader(qw(ls -l));
 
-        while(<$pipe>) {
-            ...
-        }
+	while(<$pipe>) {
+	    ...
+	}
 
 =head1 DESCRIPTION
 

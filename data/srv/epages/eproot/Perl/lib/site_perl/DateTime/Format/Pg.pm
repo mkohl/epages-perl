@@ -118,7 +118,7 @@ sub new
   my $self = bless {}, ref($class)||$class;
   if (ref $class)
   {
-    $self->{'_european'}            = ( scalar $class->{'_european'} );
+    $self->{'_european'} 	    = ( scalar $class->{'_european'} );
   }
   _add_param($self,@_);
   return $self;
@@ -173,9 +173,9 @@ my $pg_infinity =
 #
 my $pg_dateonly_iso =
 {
-  regex         => qr/^(\d{4,})-(\d{2,})-(\d{2,})( BC)?$/,
-  params        => [ qw( year    month    day     era ) ],
-  postprocess   => \&_fix_era,
+  regex		=> qr/^(\d{4,})-(\d{2,})-(\d{2,})( BC)?$/,
+  params 	=> [ qw( year    month    day     era ) ],
+  postprocess	=> \&_fix_era,
 };
 
 # 18/04/2003 (USE_SQL_DATES, EuroDates)
@@ -185,18 +185,18 @@ my $pg_dateonly_iso =
 #
 my $pg_dateonly_sql =
 {
-  regex         => qr/^(\d{2,})[\/-](\d{2,})[\/-](\d{4,})( BC)?$/,
-  params        => [ qw( month       day          year    era) ],
-  postprocess   => [ \&_fix_era, \&_fix_eu ],
+  regex		=> qr/^(\d{2,})[\/-](\d{2,})[\/-](\d{4,})( BC)?$/,
+  params 	=> [ qw( month       day          year    era) ],
+  postprocess	=> [ \&_fix_era, \&_fix_eu ],
 };
 
 #   18.04.2003 (USE_GERMAN_DATES)
 #
 my $pg_dateonly_german =
 {
-  regex         => qr/^(\d{2,})\.(\d{2,})\.(\d{4,})( BC)?$/,
-  params        => [ qw( day      month     year    era ) ],
-  postprocess   => \&_fix_era
+  regex		=> qr/^(\d{2,})\.(\d{2,})\.(\d{4,})( BC)?$/,
+  params 	=> [ qw( day      month     year    era ) ],
+  postprocess	=> \&_fix_era
 };
 
 # Times (with/without time zone)
@@ -209,10 +209,10 @@ my $pg_dateonly_german =
 #
 my $pg_timeonly =
 {
-  regex         => qr/^(\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? *([-\+][\d:]+)?$/,
-  params        => [ qw( hour    minute  second nanosecond  time_zone) ],
-  extra         => { year => '1970' },
-  postprocess   => [ \&_fix_timezone, \&_fix_nanosecond ],
+  regex		=> qr/^(\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? *([-\+][\d:]+)?$/,
+  params 	=> [ qw( hour    minute  second nanosecond  time_zone) ],
+  extra		=> { year => '1970' },
+  postprocess	=> [ \&_fix_timezone, \&_fix_nanosecond ],
 };
 
 # Timestamps (with/without time zone)
@@ -225,27 +225,27 @@ my $pg_timeonly =
 #
 my $pg_datetime_iso =
 {
-  regex         => qr/^(\d{4,})-(\d{2,})-(\d{2,}) (\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? *([-\+][\d:]+)?( BC)?$/,
-  params        => [ qw( year    month    day      hour     minute  second nanosecond time_zone       era) ],
-  postprocess   => [ \&_fix_era, \&_fix_timezone, \&_fix_nanosecond ],
+  regex		=> qr/^(\d{4,})-(\d{2,})-(\d{2,}) (\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? *([-\+][\d:]+)?( BC)?$/,
+  params 	=> [ qw( year    month    day      hour     minute  second nanosecond time_zone       era) ],
+  postprocess 	=> [ \&_fix_era, \&_fix_timezone, \&_fix_nanosecond ],
 };
 
 # Fri 18 Apr 17:20:24.373942 2003 CEST (USE_POSTGRES_DATES, EuroDates)
 #
 my $pg_datetime_pg_eu =
 {
-  regex         => qr/^\S{3,} (\d{2,}) (\S{3,}) (\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? (\d{4,}) *((?:[-\+][\d:]+)|(?:\S+))?( BC)?$/,
-  params        => [ qw(       day      month    hour     minute  second nanosecond year      time_zone                 era ) ],
-  postprocess   => [ \&_fix_era, \&_fix_timezone, \&_fix_nanosecond ],
+  regex		=> qr/^\S{3,} (\d{2,}) (\S{3,}) (\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? (\d{4,}) *((?:[-\+][\d:]+)|(?:\S+))?( BC)?$/,
+  params 	=> [ qw(       day      month    hour     minute  second nanosecond year      time_zone                 era ) ],
+  postprocess 	=> [ \&_fix_era, \&_fix_timezone, \&_fix_nanosecond ],
 };
 
 # Fri Apr 18 17:20:24.373942 2003 CEST (USE_POSTGRES_DATES, !EuroDates)
 #
 my $pg_datetime_pg_us =
 {
-  regex         => qr/^\S{3,} (\S{3,}) (\s{2,}) (\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? (\d{4,}) *((?:[-\+][\d:]+)|(?:\S+))?( BC)?$/,
-  params        => [ qw(       month    day      hour     minute  second nanosecond year     time_zone                 era ) ],
-  postprocess   => [ \&_fix_era, \&_fix_month_names, \&_fix_timezone, \&_fix_nanosecond ],
+  regex		=> qr/^\S{3,} (\S{3,}) (\s{2,}) (\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? (\d{4,}) *((?:[-\+][\d:]+)|(?:\S+))?( BC)?$/,
+  params 	=> [ qw(       month    day      hour     minute  second nanosecond year     time_zone                 era ) ],
+  postprocess 	=> [ \&_fix_era, \&_fix_month_names, \&_fix_timezone, \&_fix_nanosecond ],
 };
 
 # 18/04/2003 17:20:24.373942 CEST (USE_SQL_DATES, EuroDates)
@@ -253,18 +253,18 @@ my $pg_datetime_pg_us =
 #
 my $pg_datetime_sql =
 {
-  regex         => qr/^(\d{2,})\/(\d{2,})\/(\d{4,}) (\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? *((?:[-\+][\d:]+)|(?:\S+))?( BC)?$/,
-  params        => [ qw( month    day       year    hour     minute   second nanosecond    time_zone               era ) ],
-  postprocess   => [ \&_fix_era, \&_fix_eu, \&_fix_timezone, \&_fix_nanosecond ],
+  regex		=> qr/^(\d{2,})\/(\d{2,})\/(\d{4,}) (\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? *((?:[-\+][\d:]+)|(?:\S+))?( BC)?$/,
+  params 	=> [ qw( month    day       year    hour     minute   second nanosecond    time_zone               era ) ],
+  postprocess 	=> [ \&_fix_era, \&_fix_eu, \&_fix_timezone, \&_fix_nanosecond ],
 };
 
 # 18.04.2003 17:20:24.373942 CEST (USE_GERMAN_DATES)
 #
 my $pg_datetime_german =
 {
-  regex         => qr/^(\d{2,})\.(\d{2,})\.(\d{4,}) (\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? *((?:[-\+][\d:]+)|(?:\S+))?( BC)?$/,
-  params        => [ qw( day      month     year    hour     minute   second nanosecond time_zone                 era ) ],
-  postprocess   => [ \&_fix_era, \&_fix_timezone, \&_fix_nanosecond ],
+  regex		=> qr/^(\d{2,})\.(\d{2,})\.(\d{4,}) (\d{2,}):(\d{2,}):(\d{2,})(\.\d+)? *((?:[-\+][\d:]+)|(?:\S+))?( BC)?$/,
+  params 	=> [ qw( day      month     year    hour     minute   second nanosecond time_zone                 era ) ],
+  postprocess 	=> [ \&_fix_era, \&_fix_timezone, \&_fix_nanosecond ],
 };
 
 # Helper functions
@@ -310,7 +310,7 @@ sub _fix_month_names {
 sub _fix_timezone {
   my %args = @_;
   my %param = $args{'args'} ? (@{$args{'args'}}) : ();
-
+ 
   if($param{'_force_tz'}) {
     $args{'parsed'}->{'time_zone'} = $param{'_force_tz'};
   }
@@ -337,11 +337,11 @@ sub _fix_timezone {
 
   # Numerical time zone
   #
-
+  
   elsif($args{'parsed'}->{'time_zone'} =~ m/^[-\+](\d+)(:\d+)?$/) {
     $args{'parsed'}->{'time_zone'} .= ':00' if !$2 && length($1) == 2;
   }
-
+  
   # Non-numerical time zone returned, which can be ambiguous :(
   #
   else
@@ -371,17 +371,17 @@ DateTime::Format::Builder->create_class
 (
   parsers =>
   {
-    parse_date          => [ $pg_dateonly_iso, $pg_dateonly_sql,
-                             $pg_dateonly_german, $pg_infinity ],
-    parse_timetz        => [ $pg_timeonly, ],
-    parse_timestamptz   => [ $pg_datetime_iso, $pg_datetime_pg_eu,
+    parse_date		=> [ $pg_dateonly_iso, $pg_dateonly_sql,
+    			     $pg_dateonly_german, $pg_infinity ],
+    parse_timetz	=> [ $pg_timeonly, ],
+    parse_timestamptz	=> [ $pg_datetime_iso, $pg_datetime_pg_eu,
                              $pg_datetime_pg_us, $pg_datetime_sql,
-                             $pg_datetime_german, $pg_infinity ],
-    parse_datetime      => [ $pg_datetime_iso, $pg_datetime_pg_eu,
-                             $pg_datetime_pg_us, $pg_datetime_sql,
-                             $pg_datetime_german,
-                             $pg_dateonly_iso, $pg_dateonly_german,
-                             $pg_dateonly_sql, $pg_timeonly, $pg_infinity],
+			     $pg_datetime_german, $pg_infinity ],
+    parse_datetime	=> [ $pg_datetime_iso, $pg_datetime_pg_eu,
+			     $pg_datetime_pg_us, $pg_datetime_sql,
+			     $pg_datetime_german,
+			     $pg_dateonly_iso, $pg_dateonly_german,
+			     $pg_dateonly_sql, $pg_timeonly, $pg_infinity],
   }
 );
 
@@ -420,7 +420,7 @@ Given a string containing a date and/or time representation, this method
 will return a new C<DateTime> object.
 
 If the input string does not contain a date, it is set to 1970-01-01.
-If the input string does not contain a time, it is set to 00:00:00.
+If the input string does not contain a time, it is set to 00:00:00. 
 If the input string does not contain a time zone, it is set to the
 floating time zone.
 
@@ -790,8 +790,8 @@ sub format_duration {
   my $output = '@';
 
   if($deltas{'nanoseconds'}) {
-    $deltas{'seconds'} =
-      sprintf('%f', $deltas{'seconds'} + $deltas{'nanoseconds'} /
+    $deltas{'seconds'} = 
+      sprintf('%f', $deltas{'seconds'} + $deltas{'nanoseconds'} / 
                                         DateTime::Duration::MAX_NANOSECONDS);
   }
 
@@ -885,7 +885,7 @@ list.  See http://lists.perl.org/ for more details.
 
 Daisuke Maki E<lt>daisuke@endeworks.jpE<gt>
 
-=head1 AUTHOR EMERITUS
+=head1 AUTHOR EMERITUS 
 
 Claus A. Faerber <perl@faerber.muc.de>
 

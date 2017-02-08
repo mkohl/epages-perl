@@ -107,7 +107,7 @@ C<+Parent> or C<+Clone> then see L</VIRTUAL HOSTS> below.
 =head1 DESCRIPTION
 
 This module allows mod_perl applications to be profiled using
-C<Devel::NYTProf>.
+C<Devel::NYTProf>. 
 
 If the NYTPROF environment variable isn't set I<at the time
 Devel::NYTProf::Apache is loaded> then Devel::NYTProf::Apache will issue a
@@ -118,7 +118,7 @@ warning and default it to:
 The file actually created by NTProf will also have the process id appended to
 it because the C<addpid> option is enabled by default.
 
-See L<Devel::NYTProf/"ENVIRONMENT VARIABLES"> for
+See L<Devel::NYTProf/"ENVIRONMENT VARIABLES"> for 
 more details on the settings effected by this environment variable.
 Try using C<PerlPassEnv> so you can set the NYTPROF environment variable externally.
 

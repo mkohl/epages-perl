@@ -5,7 +5,7 @@ BEGIN
 {
     if ($^W)
     {
-        warn "XML::DOM::PerlSAX has been renamed to XML::Handler::BuildDOM, please modify your code accordingly.";
+	warn "XML::DOM::PerlSAX has been renamed to XML::Handler::BuildDOM, please modify your code accordingly.";
     }
 }
 
@@ -30,8 +30,8 @@ XML::DOM::PerlSAX - Old name of L<XML::Handler::BuildDOM>
 XML::DOM::PerlSAX was renamed to L<XML::Handler::BuildDOM> to comply
 with naming conventions for PerlSAX filters/handlers.
 
-For backward compatibility, this package will remain in existence
-(it simply includes XML::Handler::BuildDOM), but it will print a warning when
+For backward compatibility, this package will remain in existence 
+(it simply includes XML::Handler::BuildDOM), but it will print a warning when 
 running with I<'perl -w'>.
 
 =head1 AUTHOR

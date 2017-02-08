@@ -39,8 +39,8 @@ use Net::SFTP::Foreign::Helpers qw(_is_reg _is_lnk _is_dir _debug
                                    _file_part _umask_save_and_set
                                    _untaint);
 use Net::SFTP::Foreign::Constants qw( :fxp :flags :att
-                                      :status :error
-                                      SSH2_FILEXFER_VERSION );
+				      :status :error
+				      SSH2_FILEXFER_VERSION );
 use Net::SFTP::Foreign::Attributes;
 use Net::SFTP::Foreign::Buffer;
 require Net::SFTP::Foreign::Common;
@@ -53,7 +53,7 @@ BEGIN {
     $windows = $^O =~ /Win(?:32|64)/;
 
     if ($^O =~ /solaris/i) {
-        $dirty_cleanup = 1 unless defined $dirty_cleanup;
+	$dirty_cleanup = 1 unless defined $dirty_cleanup;
     }
 }
 
@@ -86,9 +86,9 @@ sub _queue_msg {
     my $len = length $bytes;
 
     if ($debug and $debug & 1) {
-        $sftp->{_queued}++;
-        _debug(sprintf("queueing msg len: %i, code:%i, id:%i ... [$sftp->{_queued}]",
-                       $len, unpack(CN => $bytes)));
+	$sftp->{_queued}++;
+	_debug(sprintf("queueing msg len: %i, code:%i, id:%i ... [$sftp->{_queued}]",
+		       $len, unpack(CN => $bytes)));
 
         $debug & 16 and _hexdump(pack('N', length($bytes)) . $bytes);
     }
@@ -106,11 +106,11 @@ sub _conn_lost {
     $debug and $debug & 32 and _debug("_conn_lost");
 
     $sftp->{_status} or
-        $sftp->_set_status(defined $status ? $status : SSH2_FX_CONNECTION_LOST);
+	$sftp->_set_status(defined $status ? $status : SSH2_FX_CONNECTION_LOST);
 
     $sftp->{_error} or
-        $sftp->_set_error((defined $err ? $err : SFTP_ERR_CONNECTION_BROKEN),
-                          (@str ? @str : "Connection to remote server is broken"));
+	$sftp->_set_error((defined $err ? $err : SFTP_ERR_CONNECTION_BROKEN),
+			  (@str ? @str : "Connection to remote server is broken"));
 
     undef $sftp->{_connected};
 }
@@ -120,7 +120,7 @@ sub _conn_failed {
     $sftp->_conn_lost(SSH2_FX_NO_CONNECTION,
                       SFTP_ERR_CONNECTION_BROKEN,
                       @_)
-        unless $sftp->{_error};
+	unless $sftp->{_error};
 }
 
 sub _get_msg {
@@ -129,8 +129,8 @@ sub _get_msg {
     $debug and $debug & 1 and _debug("waiting for message... [$sftp->{_queued}]");
 
     unless ($sftp->_do_io($sftp->{_timeout})) {
-        $sftp->_conn_lost(undef, undef, "Connection to remote server stalled");
-        return undef;
+	$sftp->_conn_lost(undef, undef, "Connection to remote server stalled");
+	return undef;
     }
 
     my $bin = \$sftp->{_bin};
@@ -138,11 +138,11 @@ sub _get_msg {
     my $msg = Net::SFTP::Foreign::Buffer->make(substr($$bin, 0, $len, ''));
 
     if ($debug and $debug & 1) {
-        $sftp->{_queued}--;
+	$sftp->{_queued}--;
         my ($code, $id, $status) = unpack( CNN => $$msg);
-        $id = '-' if $code == SSH2_FXP_VERSION;
+	$id = '-' if $code == SSH2_FXP_VERSION;
         $status = '-' unless $code == SSH2_FXP_STATUS;
-        _debug(sprintf("got it!, len:%i, code:%i, id:%s, status: %s",
+	_debug(sprintf("got it!, len:%i, code:%i, id:%s, status: %s",
                        $len, $code, $id, $status));
         $debug & 8 and _hexdump($$msg);
     }
@@ -175,10 +175,10 @@ sub new {
     my %opts = @_;
 
     my $sftp = { _msg_id    => 0,
-                 _bout      => '',
-                 _bin       => '',
-                 _connected => 1,
-                 _queued    => 0,
+		 _bout      => '',
+		 _bin       => '',
+		 _connected => 1,
+		 _queued    => 0,
                  _error     => 0,
                  _status    => 0 };
 
@@ -196,14 +196,14 @@ sub new {
 
     my $backend = delete $opts{backend};
     unless (ref $backend) {
-        $backend = ($windows ? 'Windows' : 'Unix')
-            unless (defined $backend);
-        $backend =~ /^\w+$/
-            or croak "Bad backend name $backend";
-        my $backend_class = "Net::SFTP::Foreign::Backend::$backend";
-        eval "require $backend_class; 1"
-            or croak "Unable to load backend $backend: $@";
-        $backend = $backend_class->_new($sftp, \%opts);
+	$backend = ($windows ? 'Windows' : 'Unix')
+	    unless (defined $backend);
+	$backend =~ /^\w+$/
+	    or croak "Bad backend name $backend";
+	my $backend_class = "Net::SFTP::Foreign::Backend::$backend";
+	eval "require $backend_class; 1"
+	    or croak "Unable to load backend $backend: $@";
+	$backend = $backend_class->_new($sftp, \%opts);
     }
     $sftp->{_backend} = $backend;
 
@@ -283,20 +283,20 @@ sub disconnect {
         close $sftp->{ssh_out} if (defined $sftp->{ssh_out} and not $sftp->{_ssh_out_is_not_dupped});
         close $sftp->{ssh_in} if defined $sftp->{ssh_in};
         if ($windows) {
-            kill KILL => $pid
+	    kill KILL => $pid
                 and waitpid($pid, 0);
             $debug and $debug & 4 and _debug "process $pid reaped";
         }
         else {
-            my $dirty = ( defined $sftp->{_dirty_cleanup}
-                          ? $sftp->{_dirty_cleanup}
-                          : $dirty_cleanup );
+	    my $dirty = ( defined $sftp->{_dirty_cleanup}
+			  ? $sftp->{_dirty_cleanup}
+			  : $dirty_cleanup );
 
-            if ($dirty or not defined $dirty) {
+	    if ($dirty or not defined $dirty) {
                 $debug and $debug & 4 and _debug("starting dirty cleanup of process $pid");
-                for my $sig (($dirty ? () : 0), qw(TERM TERM KILL KILL)) {
+		for my $sig (($dirty ? () : 0), qw(TERM TERM KILL KILL)) {
                     $debug and $debug & 4 and _debug("killing process $pid with signal $sig");
-                    $sig and kill $sig, $pid;
+		    $sig and kill $sig, $pid;
 
                     local ($@, $SIG{__DIE__}, $SIG{__WARN__});
                     my $wpr;
@@ -312,18 +312,18 @@ sub disconnect {
                         # $wpr < 0 ==> some error happened, retry unless ECHILD
                         last if $wpr > 0 or $! == Errno::ECHILD();
                     }
-                }
-            }
-            else {
-                while (1) {
-                    last if waitpid($pid, 0) > 0;
-                    if ($! != Errno::EINTR) {
-                        warn "internal error: unexpected error in waitpid($pid): $!"
-                            if $! != Errno::ECHILD;
-                        last;
-                    }
-                }
-            }
+		}
+	    }
+	    else {
+		while (1) {
+		    last if waitpid($pid, 0) > 0;
+		    if ($! != Errno::EINTR) {
+			warn "internal error: unexpected error in waitpid($pid): $!"
+			    if $! != Errno::ECHILD;
+			last;
+		    }
+		}
+	    }
             $debug and $debug & 4 and _debug "process $pid reaped";
         }
     }
@@ -354,14 +354,14 @@ sub DESTROY {
 sub _init {
     my $sftp = shift;
     $sftp->_queue_msg( Net::SFTP::Foreign::Buffer->new(int8 => SSH2_FXP_INIT,
-                                                       int32 => SSH2_FILEXFER_VERSION));
+						       int32 => SSH2_FILEXFER_VERSION));
 
     if (my $msg = $sftp->_get_msg) {
-        my $type = $msg->get_int8;
-        if ($type == SSH2_FXP_VERSION) {
-            my $version = $msg->get_int32;
+	my $type = $msg->get_int8;
+	if ($type == SSH2_FXP_VERSION) {
+	    my $version = $msg->get_int32;
 
-            $sftp->{server_version} = $version;
+	    $sftp->{server_version} = $version;
             $sftp->{server_extensions} = {};
             while (length $$msg) {
                 my $key = $msg->get_str;
@@ -389,18 +389,18 @@ sub _init {
                 }
             }
 
-            return $version;
-        }
+	    return $version;
+	}
 
-        $sftp->_conn_lost(SSH2_FX_BAD_MESSAGE,
-                          SFTP_ERR_REMOTE_BAD_MESSAGE,
-                          "bad packet type, expecting SSH2_FXP_VERSION, got $type");
+	$sftp->_conn_lost(SSH2_FX_BAD_MESSAGE,
+			  SFTP_ERR_REMOTE_BAD_MESSAGE,
+			  "bad packet type, expecting SSH2_FXP_VERSION, got $type");
     }
     elsif ($sftp->{_status} == SSH2_FX_CONNECTION_LOST
-           and $sftp->{_password_authentication}
-           and $sftp->{_password_sent}) {
-        $sftp->_set_error(SFTP_ERR_PASSWORD_AUTHENTICATION_FAILED,
-                          "Password authentication failed or connection lost");
+	   and $sftp->{_password_authentication}
+	   and $sftp->{_password_sent}) {
+	$sftp->_set_error(SFTP_ERR_PASSWORD_AUTHENTICATION_FAILED,
+			  "Password authentication failed or connection lost");
     }
     return undef;
 }
@@ -422,32 +422,32 @@ sub _get_msg_and_check {
     my ($sftp, $etype, $eid, $err, $errstr) = @_;
     my $msg = $sftp->_get_msg;
     if ($msg) {
-        my $type = $msg->get_int8;
-        my $id = $msg->get_int32;
+	my $type = $msg->get_int8;
+	my $id = $msg->get_int32;
 
-        $sftp->_clear_error_and_status;
+	$sftp->_clear_error_and_status;
 
-        if ($id != $eid) {
-            $sftp->_conn_lost(SSH2_FX_BAD_MESSAGE,
-                              SFTP_ERR_REMOTE_BAD_MESSAGE,
-                              $errstr, "bad packet sequence, expected $eid, got $id");
-            return undef;
-        }
+	if ($id != $eid) {
+	    $sftp->_conn_lost(SSH2_FX_BAD_MESSAGE,
+			      SFTP_ERR_REMOTE_BAD_MESSAGE,
+			      $errstr, "bad packet sequence, expected $eid, got $id");
+	    return undef;
+	}
 
-        if ($type != $etype) {
-            if ($type == SSH2_FXP_STATUS) {
+	if ($type != $etype) {
+	    if ($type == SSH2_FXP_STATUS) {
                 my $code = $msg->get_int32;
                 my $str = Encode::decode(utf8 => $msg->get_str);
-                my $status = $sftp->_set_status($code, (defined $str ? $str : ()));
-                $sftp->_set_error($err, $errstr, $status);
-            }
-            else {
-                $sftp->_conn_lost(SSH2_FX_BAD_MESSAGE,
-                                  SFTP_ERR_REMOTE_BAD_MESSAGE,
-                                  $errstr, "bad packet type, expected $etype packet, got $type");
-            }
-            return undef;
-        }
+		my $status = $sftp->_set_status($code, (defined $str ? $str : ()));
+		$sftp->_set_error($err, $errstr, $status);
+	    }
+	    else {
+		$sftp->_conn_lost(SSH2_FX_BAD_MESSAGE,
+				  SFTP_ERR_REMOTE_BAD_MESSAGE,
+				  $errstr, "bad packet type, expected $etype packet, got $type");
+	    }
+	    return undef;
+	}
     }
     $msg;
 }
@@ -456,8 +456,8 @@ sub _get_msg_and_check {
 sub _get_handle {
     my ($sftp, $eid, $error, $errstr) = @_;
     if (my $msg = $sftp->_get_msg_and_check(SSH2_FXP_HANDLE, $eid,
-                                            $error, $errstr)) {
-        return $msg->get_str;
+					    $error, $errstr)) {
+	return $msg->get_str;
     }
     return undef;
 }
@@ -466,8 +466,8 @@ sub _rid {
     my ($sftp, $rfh) = @_;
     my $rid = $rfh->_rid;
     unless (defined $rid) {
-        $sftp->_set_error(SFTP_ERR_REMOTE_ACCESING_CLOSED_FILE,
-                          "Couldn't access a file that has been previosly closed");
+	$sftp->_set_error(SFTP_ERR_REMOTE_ACCESING_CLOSED_FILE,
+			  "Couldn't access a file that has been previosly closed");
     }
     $rid
 }
@@ -488,7 +488,7 @@ sub _queue_rid_request {
     return undef unless defined $rid;
 
     $sftp->_queue_new_msg($code, str => $rid,
-                         (defined $attrs ? (attr => $attrs) : ()));
+			 (defined $attrs ? (attr => $attrs) : ()));
 }
 
 sub _queue_rfid_request {
@@ -504,7 +504,7 @@ sub _queue_rdid_request {
 sub _queue_str_request {
     my($sftp, $code, $str, $attrs) = @_;
     $sftp->_queue_new_msg($code, str => $str,
-                         (defined $attrs ? (attr => $attrs) : ()));
+			 (defined $attrs ? (attr => $attrs) : ()));
 }
 
 sub _check_status_ok {
@@ -567,7 +567,7 @@ sub cwd {
 # returns handle on success, undef on failure
 sub open {
     (@_ >= 2 and @_ <= 4)
-        or croak 'Usage: $sftp->open($path [, $flags [, $attrs]])';
+	or croak 'Usage: $sftp->open($path [, $flags [, $attrs]])';
     ${^TAINT} and &_catch_tainted_args;
 
     my ($sftp, $path, $flags, $a) = @_;
@@ -579,8 +579,8 @@ sub open {
                                    int32 => $flags, attr => $a);
 
     my $rid = $sftp->_get_handle($id,
-                                SFTP_ERR_REMOTE_OPEN_FAILED,
-                                "Couldn't open remote file '$path'");
+				SFTP_ERR_REMOTE_OPEN_FAILED,
+				"Couldn't open remote file '$path'");
 
     if ($debug and $debug & 2) {
         if (defined $rid) {
@@ -631,7 +631,7 @@ sub opendir {
     $path = $sftp->_rel2abs($path);
     my $id = $sftp->_queue_str_request(SSH2_FXP_OPENDIR, $sftp->_fs_encode($path), @_);
     my $rid = $sftp->_get_handle($id, SFTP_ERR_REMOTE_OPENDIR_FAILED,
-                                 "Couldn't open remote dir '$path'");
+				 "Couldn't open remote dir '$path'");
 
     if ($debug and $debug & 2) {
         _debug("new remote dir '$path' open, rid:");
@@ -639,7 +639,7 @@ sub opendir {
     }
 
     defined $rid
-        or return undef;
+	or return undef;
 
     Net::SFTP::Foreign::DirHandle->_new_from_rid($sftp, $rid, 0)
 }
@@ -648,25 +648,25 @@ sub opendir {
 # returns data on success undef on failure
 sub sftpread {
     (@_ >= 3 and @_ <= 4)
-        or croak 'Usage: $sftp->sftpread($fh, $offset [, $size])';
+	or croak 'Usage: $sftp->sftpread($fh, $offset [, $size])';
 
     my ($sftp, $rfh, $offset, $size) = @_;
 
     unless ($size) {
-        return '' if defined $size;
-        $size = $sftp->{_block_size};
+	return '' if defined $size;
+	$size = $sftp->{_block_size};
     }
 
     my $rfid = $sftp->_rfid($rfh);
     defined $rfid or return undef;
 
     my $id = $sftp->_queue_new_msg(SSH2_FXP_READ, str=> $rfid,
-                                  int64 => $offset, int32 => $size);
+				  int64 => $offset, int32 => $size);
 
     if (my $msg = $sftp->_get_msg_and_check(SSH2_FXP_DATA, $id,
-                                            SFTP_ERR_REMOTE_READ_FAILED,
-                                            "Couldn't read from remote file")) {
-        return $msg->get_str;
+					    SFTP_ERR_REMOTE_READ_FAILED,
+					    "Couldn't read from remote file")) {
+	return $msg->get_str;
     }
     return undef;
 }
@@ -682,19 +682,19 @@ sub sftpwrite {
     utf8::downgrade($_[3], 1) or croak "wide characters found in data";
 
     my $id = $sftp->_queue_new_msg(SSH2_FXP_WRITE, str => $rfid,
-                                  int64 => $offset, str => $_[3]);
+				  int64 => $offset, str => $_[3]);
 
     if ($sftp->_check_status_ok($id,
-                                SFTP_ERR_REMOTE_WRITE_FAILED,
-                                "Couldn't write to remote file")) {
-        return 1;
+				SFTP_ERR_REMOTE_WRITE_FAILED,
+				"Couldn't write to remote file")) {
+	return 1;
     }
     return undef;
 }
 
 sub seek {
     (@_ >= 3 and @_ <= 4)
-        or croak 'Usage: $sftp->seek($fh, $pos [, $whence])';
+	or croak 'Usage: $sftp->seek($fh, $pos [, $whence])';
 
     my ($sftp, $rfh, $pos, $whence) = @_;
     $sftp->flush($rfh) or return undef;
@@ -706,11 +706,11 @@ sub seek {
         $rfh->_inc_pos($pos)
     }
     elsif ($whence == 2) {
-        my $a = $sftp->stat($rfh) or return undef;
+	my $a = $sftp->stat($rfh) or return undef;
         $rfh->_pos($pos + $a->size);
     }
     else {
-        croak "invalid value for whence argument ('$whence')";
+	croak "invalid value for whence argument ('$whence')";
     }
     1;
 }
@@ -746,30 +746,30 @@ sub _write {
     my $end;
 
     while (!$end or @msgid) {
-        while (!$end and @msgid < $qsize) {
-            my $data = $cb->();
-            if (defined $data and length $data) {
-                my $id = $sftp->_queue_new_msg(SSH2_FXP_WRITE, str => $rfid,
-                                              int64 => $off + $written, str => $data);
-                push @written, $written;
-                $written += length $data;
-                push @msgid, $id;
-            }
-            else {
-                $end = 1;
-            }
-        }
+	while (!$end and @msgid < $qsize) {
+	    my $data = $cb->();
+	    if (defined $data and length $data) {
+		my $id = $sftp->_queue_new_msg(SSH2_FXP_WRITE, str => $rfid,
+					      int64 => $off + $written, str => $data);
+		push @written, $written;
+		$written += length $data;
+		push @msgid, $id;
+	    }
+	    else {
+		$end = 1;
+	    }
+	}
 
-        my $eid = shift @msgid;
-        my $last = shift @written;
-        unless ($sftp->_check_status_ok($eid,
-                                        SFTP_ERR_REMOTE_WRITE_FAILED,
-                                        "Couldn't write to remote file")) {
+	my $eid = shift @msgid;
+	my $last = shift @written;
+	unless ($sftp->_check_status_ok($eid,
+					SFTP_ERR_REMOTE_WRITE_FAILED,
+					"Couldn't write to remote file")) {
 
-            # discard responses to queued requests:
-            $sftp->_get_msg for @msgid;
-            return $last;
-        }
+	    # discard responses to queued requests:
+	    $sftp->_get_msg for @msgid;
+	    return $last;
+	}
     }
 
     return $written;
@@ -787,14 +787,14 @@ sub write {
     my $len = length $$bout;
 
     $sftp->flush($rfh, 'out')
-        if ($len >= $sftp->{_write_delay} or ($len and $sftp->{_autoflush} ));
+	if ($len >= $sftp->{_write_delay} or ($len and $sftp->{_autoflush} ));
 
     return $datalen;
 }
 
 sub flush {
     (@_ >= 2 and @_ <= 3)
-        or croak 'Usage: $sftp->flush($fh [, $direction])';
+	or croak 'Usage: $sftp->flush($fh [, $direction])';
 
     my ($sftp, $rfh, $dir) = @_;
     $dir ||= '';
@@ -802,37 +802,37 @@ sub flush {
     defined $sftp->_rfid($rfh) or return;
 
     if ($dir ne 'out') { # flush in!
-        ${$rfh->_bin} = '';
+	${$rfh->_bin} = '';
     }
 
     if ($dir ne 'in') { # flush out!
-        my $bout = $rfh->_bout;
-        my $len = length $$bout;
-        if ($len) {
-            my $start;
-            my $append = $rfh->_flag('append');
-            if ($append) {
-                my $attr = $sftp->stat($rfh)
-                    or return undef;
-                $start = $attr->size;
-            }
-            else {
-                $start = $rfh->_pos;
-                ${$rfh->_bin} = '';
-            }
-            my $off = 0;
-            my $written = $sftp->_write($rfh, $start,
-                                        sub {
-                                            my $data = substr($$bout, $off, $sftp->{_block_size});
-                                            $off += length $data;
-                                            $data;
-                                        } );
-            $rfh->_inc_pos($written)
-                unless $append;
+	my $bout = $rfh->_bout;
+	my $len = length $$bout;
+	if ($len) {
+	    my $start;
+	    my $append = $rfh->_flag('append');
+	    if ($append) {
+		my $attr = $sftp->stat($rfh)
+		    or return undef;
+		$start = $attr->size;
+	    }
+	    else {
+		$start = $rfh->_pos;
+		${$rfh->_bin} = '';
+	    }
+	    my $off = 0;
+	    my $written = $sftp->_write($rfh, $start,
+					sub {
+					    my $data = substr($$bout, $off, $sftp->{_block_size});
+					    $off += length $data;
+					    $data;
+					} );
+	    $rfh->_inc_pos($written)
+		unless $append;
 
-            substr($$bout, 0, $written, '');
-            $written == $len or return undef;
-        }
+	    substr($$bout, 0, $written, '');
+	    $written == $len or return undef;
+	}
     }
     1;
 }
@@ -843,7 +843,7 @@ sub _fill_read_cache {
     $sftp->_clear_error_and_status;
 
     $sftp->flush($rfh, 'out')
-        or return undef;
+	or return undef;
 
     my $rfid = $sftp->_rfid($rfh);
     defined $rfid or return undef;
@@ -851,11 +851,11 @@ sub _fill_read_cache {
     my $bin = $rfh->_bin;
 
     if (defined $len) {
-        return 1 if ($len < length $$bin);
+	return 1 if ($len < length $$bin);
 
-        my $read_ahead = $sftp->{_read_ahead};
-        $len = length($$bin) + $read_ahead
-            if $len - length($$bin) < $read_ahead;
+	my $read_ahead = $sftp->{_read_ahead};
+	$len = length($$bin) + $read_ahead
+	    if $len - length($$bin) < $read_ahead;
     }
 
     my $pos = $rfh->_pos;
@@ -868,41 +868,41 @@ sub _fill_read_cache {
     my $eof;
 
     while (!defined $len or length $$bin < $len) {
-        while ((!defined $len or $askoff < $len) and @msgid < $qsize) {
-            my $id = $sftp->_queue_new_msg(SSH2_FXP_READ, str=> $rfid,
-                                          int64 => $pos + $askoff, int32 => $bsize);
-            push @msgid, $id;
-            $askoff += $bsize;
-        }
+	while ((!defined $len or $askoff < $len) and @msgid < $qsize) {
+	    my $id = $sftp->_queue_new_msg(SSH2_FXP_READ, str=> $rfid,
+					  int64 => $pos + $askoff, int32 => $bsize);
+	    push @msgid, $id;
+	    $askoff += $bsize;
+	}
 
-        my $eid = shift @msgid;
-        my $msg = $sftp->_get_msg_and_check(SSH2_FXP_DATA, $eid,
-                                            SFTP_ERR_REMOTE_READ_FAILED,
-                                            "Couldn't read from remote file")
-            or last;
+	my $eid = shift @msgid;
+	my $msg = $sftp->_get_msg_and_check(SSH2_FXP_DATA, $eid,
+					    SFTP_ERR_REMOTE_READ_FAILED,
+					    "Couldn't read from remote file")
+	    or last;
 
-        my $data = $msg->get_str;
-        $$bin .= $data;
-        if (length $data < $bsize) {
-            unless (defined $len) {
-                $eof = $sftp->_queue_new_msg(SSH2_FXP_READ, str=> $rfid,
-                                             int64 => $pos + length $$bin, int32 => 1);
-            }
-            last;
-        }
+	my $data = $msg->get_str;
+	$$bin .= $data;
+	if (length $data < $bsize) {
+	    unless (defined $len) {
+		$eof = $sftp->_queue_new_msg(SSH2_FXP_READ, str=> $rfid,
+					     int64 => $pos + length $$bin, int32 => 1);
+	    }
+	    last;
+	}
 
     }
 
     $sftp->_get_msg for @msgid;
 
     if ($eof) {
-        $sftp->_get_msg_and_check(SSH2_FXP_DATA, $eof,
-                                  SFTP_ERR_REMOTE_BLOCK_TOO_SMALL,
-                                  "received block was too small")
+	$sftp->_get_msg_and_check(SSH2_FXP_DATA, $eof,
+				  SFTP_ERR_REMOTE_BLOCK_TOO_SMALL,
+				  "received block was too small")
     }
 
     if ($sftp->{_status} == SSH2_FX_EOF and length $$bin) {
-        $sftp->_clear_error_and_status;
+	$sftp->_clear_error_and_status;
     }
 
     return $sftp->{_error} ? undef : length $$bin;
@@ -913,10 +913,10 @@ sub read {
 
     my ($sftp, $rfh, $len) = @_;
     if ($sftp->_fill_read_cache($rfh, $len)) {
-        my $bin = $rfh->_bin;
-        my $data = substr($$bin, 0, $len, '');
-        $rfh->_inc_pos(length $data);
-        return $data;
+	my $bin = $rfh->_bin;
+	my $data = substr($$bin, 0, $len, '');
+	$rfh->_inc_pos(length $data);
+	return $data;
     }
     return undef;
 }
@@ -932,50 +932,50 @@ sub _readline {
     my $last = 0;
 
     while(1) {
-        my $ix = index $$bin, $sep, $last + 1 - $sl ;
-        if ($ix >= 0) {
-            $ix += $sl;
-            $rfh->_inc_pos($ix);
-            return substr($$bin, 0, $ix, '');
-        }
+	my $ix = index $$bin, $sep, $last + 1 - $sl ;
+	if ($ix >= 0) {
+	    $ix += $sl;
+	    $rfh->_inc_pos($ix);
+	    return substr($$bin, 0, $ix, '');
+	}
 
-        $last = length $$bin;
-        $sftp->_fill_read_cache($rfh, length($$bin) + 1);
+	$last = length $$bin;
+	$sftp->_fill_read_cache($rfh, length($$bin) + 1);
 
-        unless (length $$bin > $last) {
-            $sftp->{_error}
-                and return undef;
+	unless (length $$bin > $last) {
+	    $sftp->{_error}
+		and return undef;
 
-            my $line = $$bin;
-            $rfh->_inc_pos(length $line);
-            $$bin = '';
-            return $line;
-        }
+	    my $line = $$bin;
+	    $rfh->_inc_pos(length $line);
+	    $$bin = '';
+	    return $line;
+	}
     }
 }
 
 sub readline {
     (@_ >= 2 and @_ <= 3)
-        or croak 'Usage: $sftp->readline($fh [, $sep])';
+	or croak 'Usage: $sftp->readline($fh [, $sep])';
 
     my ($sftp, $rfh, $sep) = @_;
     $sep = "\n" if @_ < 3;
     if (!defined $sep or $sep eq '') {
-        $sftp->_fill_read_cache($rfh);
-        $sftp->{_error}
-            and return undef;
-        my $bin = $rfh->_bin;
-        my $line = $$bin;
-        $rfh->_inc_pos(length $line);
-        $$bin = '';
-        return $line;
+	$sftp->_fill_read_cache($rfh);
+	$sftp->{_error}
+	    and return undef;
+	my $bin = $rfh->_bin;
+	my $line = $$bin;
+	$rfh->_inc_pos(length $line);
+	$$bin = '';
+	return $line;
     }
     if (wantarray) {
-        my @lines;
-        while (defined (my $line = $sftp->_readline($rfh, $sep))) {
-            push @lines, $line;
-        }
-        return @lines;
+	my @lines;
+	while (defined (my $line = $sftp->_readline($rfh, $sep))) {
+	    push @lines, $line;
+	}
+	return @lines;
     }
     return $sftp->_readline($rfh, $sep);
 }
@@ -988,8 +988,8 @@ sub getc {
     $sftp->_fill_read_cache($rfh, 1);
     my $bin = $rfh->_bin;
     if (length $bin) {
-        $rfh->_inc_pos(1);
-        return substr $$bin, 0, 1, '';
+	$rfh->_inc_pos(1);
+	return substr $$bin, 0, 1, '';
     }
     return undef;
 }
@@ -1040,7 +1040,7 @@ sub fstat {
 sub _gen_remove_method {
     my($name, $code, $error, $errstr) = @_;
     my $sub = sub {
-        @_ == 2 or croak "Usage: \$sftp->$name(\$path)";
+	@_ == 2 or croak "Usage: \$sftp->$name(\$path)";
         ${^TAINT} and &_catch_tainted_args;
 
         my ($sftp, $path) = @_;
@@ -1080,21 +1080,21 @@ sub join {
     my $sftp = shift;
     my $a = '.';
     while (@_) {
-        my $b = shift;
-        if (defined $b) {
-            $b =~ s|^(?:\./+)+||;
-            if (length $b and $b ne '.') {
-                if ($b !~ m|^/| and $a ne '.' ) {
-                    $a = ($a =~ m|/$| ? "$a$b" : "$a/$b");
-                }
-                else {
-                    $a = $b
-                }
-                $a =~ s|(?:/+\.)+/?$|/|;
-                $a =~ s|(?<=[^/])/+$||;
-                $a = '.' unless length $a;
-            }
-        }
+	my $b = shift;
+	if (defined $b) {
+	    $b =~ s|^(?:\./+)+||;
+	    if (length $b and $b ne '.') {
+		if ($b !~ m|^/| and $a ne '.' ) {
+		    $a = ($a =~ m|/$| ? "$a$b" : "$a/$b");
+		}
+		else {
+		    $a = $b
+		}
+		$a =~ s|(?:/+\.)+/?$|/|;
+		$a =~ s|(?<=[^/])/+$||;
+		$a = '.' unless length $a;
+	    }
+	}
     }
     $a;
 }
@@ -1127,36 +1127,36 @@ sub mkpath {
         else {
             $path =~ s{/*[^/]*$}{}
         }
-        my $p = "$start$path";
-        $debug and $debug & 8192 and _debug "checking $p";
-        if ($sftp->test_d($p)) {
-            $debug and $debug & 8192 and _debug "$p is a dir";
-            last;
-        }
-        unless (length $path) {
-            $sftp->_set_error(SFTP_ERR_REMOTE_MKDIR_FAILED,
+	my $p = "$start$path";
+	$debug and $debug & 8192 and _debug "checking $p";
+	if ($sftp->test_d($p)) {
+	    $debug and $debug & 8192 and _debug "$p is a dir";
+	    last;
+	}
+	unless (length $path) {
+	    $sftp->_set_error(SFTP_ERR_REMOTE_MKDIR_FAILED,
                               "Unable to make path, bad root");
-            return undef;
-        }
-        unshift @path, $p;
+	    return undef;
+	}
+	unshift @path, $p;
 
     }
     for my $p (@path) {
-        $debug and $debug & 8192 and _debug "mkdir $p";
-        if ($p =~ m{^(?:.*/)?\.{1,2}$} or $p =~ m{/$}) {
-            $debug and $debug & 8192 and _debug "$p is a symbolic dir, skipping";
-            unless ($sftp->test_d($p)) {
-                $debug and $debug & 8192 and _debug "symbolic dir $p can not be checked";
-                $sftp->{_error} or
-                    $sftp->_set_error(SFTP_ERR_REMOTE_MKDIR_FAILED,
-                                      "Unable to make path, bad name");
-                return undef;
-            }
-        }
-        else {
-            $sftp->mkdir($p, $attrs)
+	$debug and $debug & 8192 and _debug "mkdir $p";
+	if ($p =~ m{^(?:.*/)?\.{1,2}$} or $p =~ m{/$}) {
+	    $debug and $debug & 8192 and _debug "$p is a symbolic dir, skipping";
+	    unless ($sftp->test_d($p)) {
+		$debug and $debug & 8192 and _debug "symbolic dir $p can not be checked";
+		$sftp->{_error} or
+		    $sftp->_set_error(SFTP_ERR_REMOTE_MKDIR_FAILED,
+				      "Unable to make path, bad name");
+		return undef;
+	    }
+	}
+	else {
+	    $sftp->mkdir($p, $attrs)
                 or return undef;
-        }
+	}
     }
     1;
 }
@@ -1290,11 +1290,11 @@ sub close {
     # defined $sftp->_rfid($rfh) or return undef;
     # ^--- commented out because flush already checks it is an open file
     $sftp->flush($rfh)
-        or return undef;
+	or return undef;
 
     if ($sftp->_close($rfh)) {
-        $rfh->_close;
-        return 1
+	$rfh->_close;
+	return 1
     }
     undef
 }
@@ -1307,8 +1307,8 @@ sub closedir {
     $rdh->_check_is_dir;
 
     if ($sftp->_close($rdh)) {
-        $rdh->_close;
-        return 1;
+	$rdh->_close;
+	return 1;
     }
     undef
 }
@@ -1325,28 +1325,28 @@ sub readdir {
     my $cache = $rdh->_cache;
 
     while (!@$cache or wantarray) {
-        my $id = $sftp->_queue_str_request(SSH2_FXP_READDIR, $rdid);
-        if (my $msg = $sftp->_get_msg_and_check(SSH2_FXP_NAME, $id,
-                                                SFTP_ERR_REMOTE_READDIR_FAILED,
-                                                "Couldn't read remote directory" )) {
-            my $count = $msg->get_int32 or last;
+	my $id = $sftp->_queue_str_request(SSH2_FXP_READDIR, $rdid);
+	if (my $msg = $sftp->_get_msg_and_check(SSH2_FXP_NAME, $id,
+						SFTP_ERR_REMOTE_READDIR_FAILED,
+						"Couldn't read remote directory" )) {
+	    my $count = $msg->get_int32 or last;
 
-            for (1..$count) {
-                push @$cache, { filename => $sftp->_fs_decode($msg->get_str),
-                                longname => $sftp->_fs_decode($msg->get_str),
-                                a => $msg->get_attributes };
-            }
-        }
-        else {
-            $sftp->_set_error if $sftp->{_status} == SSH2_FX_EOF;
-            last;
-        }
+	    for (1..$count) {
+		push @$cache, { filename => $sftp->_fs_decode($msg->get_str),
+				longname => $sftp->_fs_decode($msg->get_str),
+				a => $msg->get_attributes };
+	    }
+	}
+	else {
+	    $sftp->_set_error if $sftp->{_status} == SSH2_FX_EOF;
+	    last;
+	}
     }
 
     if (wantarray) {
-        my $old = $cache;
-        $cache = [];
-        return @$old;
+	my $old = $cache;
+	$cache = [];
+	return @$old;
     }
     shift @$cache;
 }
@@ -1354,36 +1354,36 @@ sub readdir {
 sub _readdir {
     my ($sftp, $rdh);
     if (wantarray) {
-        my $line = $sftp->readdir($rdh);
-        if (defined $line) {
-            return $line->{filename};
-        }
+	my $line = $sftp->readdir($rdh);
+	if (defined $line) {
+	    return $line->{filename};
+	}
     }
     else {
-        return map { $_->{filename} } $sftp->readdir($rdh);
+	return map { $_->{filename} } $sftp->readdir($rdh);
     }
 }
 
 sub _gen_getpath_method {
     my ($code, $error, $name) = @_;
     return sub {
-        @_ == 2 or croak 'Usage: $sftp->some_method($path)';
+	@_ == 2 or croak 'Usage: $sftp->some_method($path)';
         ${^TAINT} and &_catch_tainted_args;
 
-        my ($sftp, $path) = @_;
-        $path = $sftp->_rel2abs($path);
-        my $id = $sftp->_queue_str_request($code, $sftp->_fs_encode($path));
+	my ($sftp, $path) = @_;
+	$path = $sftp->_rel2abs($path);
+	my $id = $sftp->_queue_str_request($code, $sftp->_fs_encode($path));
 
-        if (my $msg = $sftp->_get_msg_and_check(SSH2_FXP_NAME, $id,
-                                                $error,
-                                                "Couldn't get $name for remote '$path'")) {
-            $msg->get_int32 > 0
-                and return $sftp->_fs_decode($msg->get_str);
+	if (my $msg = $sftp->_get_msg_and_check(SSH2_FXP_NAME, $id,
+						$error,
+						"Couldn't get $name for remote '$path'")) {
+	    $msg->get_int32 > 0
+		and return $sftp->_fs_decode($msg->get_str);
 
-            $sftp->_set_error($error,
-                              "Couldn't get $name for remote '$path', no names on reply")
-        }
-        return undef;
+	    $sftp->_set_error($error,
+			      "Couldn't get $name for remote '$path', no names on reply")
+	}
+	return undef;
     };
 }
 
@@ -1391,11 +1391,11 @@ sub _gen_getpath_method {
 ## SSH2_FXP_READLINK (19)
 # return path on success, undef on failure
 *realpath = _gen_getpath_method(SSH2_FXP_REALPATH,
-                                SFTP_ERR_REMOTE_REALPATH_FAILED,
-                                "realpath");
+				SFTP_ERR_REMOTE_REALPATH_FAILED,
+				"realpath");
 *readlink = _gen_getpath_method(SSH2_FXP_READLINK,
-                                SFTP_ERR_REMOTE_READLINK_FAILED,
-                                "link target");
+				SFTP_ERR_REMOTE_READLINK_FAILED,
+				"link target");
 
 ## SSH2_FXP_RENAME (18)
 # true on success, undef on failure
@@ -1520,9 +1520,9 @@ sub hardlink {
 sub _gen_save_status_method {
     my $method = shift;
     sub {
-        my $sftp = shift;
+	my $sftp = shift;
         local ($sftp->{_error}, $sftp->{_status}) if $sftp->{_error};
-        $sftp->$method(@_);
+	$sftp->$method(@_);
     }
 }
 
@@ -1577,19 +1577,19 @@ sub get {
     my $mkpath = delete $opts{mkpath};
 
     croak "'perm' and 'copy_perm' options can not be used simultaneously"
-        if (defined $perm and defined $copy_perm);
+	if (defined $perm and defined $copy_perm);
     croak "'resume' and 'append' options can not be used simultaneously"
-        if ($resume and $append);
+	if ($resume and $append);
     croak "'numbered' can not be used with 'overwrite', 'resume' or 'append'"
-        if ($numbered and ($overwrite or $resume or $append));
+	if ($numbered and ($overwrite or $resume or $append));
     croak "'atomic' can not be used with 'resume' or 'append'"
         if ($atomic and ($resume or $append));
     if ($local_is_fh) {
-        my $append = 'option can not be used when target is a file handle';
-        $resume and croak "'resume' $append";
-        $overwrite and croak "'overwrite' $append";
-        $numbered and croak "'numbered' $append";
-        $dont_save and croak "'dont_save' $append";
+	my $append = 'option can not be used when target is a file handle';
+	$resume and croak "'resume' $append";
+	$overwrite and croak "'overwrite' $append";
+	$numbered and croak "'numbered' $append";
+	$dont_save and croak "'dont_save' $append";
         $atomic and croak "'croak' $append";
     }
     %opts and _croak_bad_options(keys %opts);
@@ -1662,11 +1662,11 @@ sub get {
     }
     else {
         unless ($local_is_fh or $overwrite or $append or $resume or $numbered) {
-            if (-e $local) {
+	    if (-e $local) {
                 $sftp->_set_error(SFTP_ERR_LOCAL_ALREADY_EXISTS,
                                   "local file $local already exists");
                 return undef
-            }
+	    }
         }
 
         if ($atomic) {
@@ -1680,7 +1680,7 @@ sub get {
         if ($resume) {
             if (CORE::open $fh, '+<', $local) {
                 binmode $fh;
-                CORE::seek($fh, 0, 2);
+		CORE::seek($fh, 0, 2);
                 $askoff = CORE::tell $fh;
                 if ($askoff < 0) {
                     # something is going really wrong here, fall
@@ -1704,14 +1704,14 @@ sub get {
         $rfh = $sftp->open($remote, SSH2_FXF_READ);
         defined $rfh or return undef;
 
-        unless (defined $fh) {
-            if ($local_is_fh) {
-                $fh = $local;
-                local ($@, $SIG{__DIE__}, $SIG{__WARN__});
-                eval { $lstart = CORE::tell($fh) };
-                $lstart = 0 unless ($lstart and $lstart > 0);
-            }
-            else {
+	unless (defined $fh) {
+	    if ($local_is_fh) {
+		$fh = $local;
+		local ($@, $SIG{__DIE__}, $SIG{__WARN__});
+		eval { $lstart = CORE::tell($fh) };
+		$lstart = 0 unless ($lstart and $lstart > 0);
+	    }
+	    else {
                 my $flags = Fcntl::O_CREAT|Fcntl::O_WRONLY;
                 $flags |= Fcntl::O_APPEND if $append;
                 $flags |= Fcntl::O_EXCL if ($numbered or (!$overwrite and !$append));
@@ -1729,26 +1729,26 @@ sub get {
                     _inc_numbered($local);
                 }
                 $$numbered = $local if ref $numbered;
-                binmode $fh;
-                $lstart = sysseek($fh, 0, 1) if $append;
-            }
-        }
+		binmode $fh;
+		$lstart = sysseek($fh, 0, 1) if $append;
+	    }
+	}
 
-        if (defined $perm) {
+	if (defined $perm) {
             my $error;
-            do {
+	    do {
                 local ($@, $SIG{__DIE__}, $SIG{__WARN__});
                 unless (eval { CORE::chmod($perm, $local) > 0 }) {
                     $error = ($@ ? $@ : $!);
                 }
             };
-            if ($error and !$best_effort) {
+	    if ($error and !$best_effort) {
                 unlink $local unless $resume or $append;
-                $sftp->_set_error(SFTP_ERR_LOCAL_CHMOD_FAILED,
-                                  "Can't chmod $local", $error);
-                return undef
-            }
-        }
+		$sftp->_set_error(SFTP_ERR_LOCAL_CHMOD_FAILED,
+				  "Can't chmod $local", $error);
+		return undef
+	    }
+	}
     }
 
     my $converter = _gen_converter $conversion;
@@ -1972,7 +1972,7 @@ sub get_content {
     my @data;
 
     my $rfh = $sftp->open($name)
-        or return undef;
+	or return undef;
 
     scalar $sftp->readline($rfh, undef);
 }
@@ -2014,15 +2014,15 @@ sub put {
     my $mkpath = delete $opts{mkpath};
 
     croak "'perm' and 'umask' options can not be used simultaneously"
-        if (defined $perm and defined $umask);
+	if (defined $perm and defined $umask);
     croak "'perm' and 'copy_perm' options can not be used simultaneously"
-        if (defined $perm and $copy_perm);
+	if (defined $perm and $copy_perm);
     croak "'resume' and 'append' options can not be used simultaneously"
-        if ($resume and $append);
+	if ($resume and $append);
     croak "'resume' and 'overwrite' options can not be used simultaneously"
-        if ($resume and $overwrite);
+	if ($resume and $overwrite);
     croak "'numbered' can not be used with 'overwrite', 'resume' or 'append'"
-        if ($numbered and ($overwrite or $resume or $append));
+	if ($numbered and ($overwrite or $resume or $append));
     croak "'atomic' can not be used with 'resume' or 'append'"
         if ($atomic and ($resume or $append));
 
@@ -2037,59 +2037,59 @@ sub put {
 
     my $neg_umask;
     if (defined $perm) {
-        $neg_umask = $perm;
+	$neg_umask = $perm;
     }
     else {
-        $umask = umask unless defined $umask;
-        $neg_umask = 0777 & ~$umask;
+	$umask = umask unless defined $umask;
+	$neg_umask = 0777 & ~$umask;
     }
 
     my ($fh, $lmode, $lsize, $latime, $lmtime);
     if ($local_is_fh) {
-        $fh = $local;
-        # we don't set binmode for the passed file handle on purpose
+	$fh = $local;
+	# we don't set binmode for the passed file handle on purpose
     }
     else {
-        unless (CORE::open $fh, '<', $local) {
-            $sftp->_set_error(SFTP_ERR_LOCAL_OPEN_FAILED,
-                              "Unable to open local file '$local'", $!);
-            return undef;
-        }
-        binmode $fh;
+	unless (CORE::open $fh, '<', $local) {
+	    $sftp->_set_error(SFTP_ERR_LOCAL_OPEN_FAILED,
+			      "Unable to open local file '$local'", $!);
+	    return undef;
+	}
+	binmode $fh;
     }
 
     {
-        # as $fh can come from the outside, it may be a tied object
-        # lacking support for some methods, so we call them wrapped
-        # inside eval blocks
-        local ($@, $SIG{__DIE__}, $SIG{__WARN__});
-        if ((undef, undef, $lmode, undef, undef,
-             undef, undef, $lsize, $latime, $lmtime) =
-            eval {
-                no warnings; # Calling stat on a tied handler
+	# as $fh can come from the outside, it may be a tied object
+	# lacking support for some methods, so we call them wrapped
+	# inside eval blocks
+	local ($@, $SIG{__DIE__}, $SIG{__WARN__});
+	if ((undef, undef, $lmode, undef, undef,
+	     undef, undef, $lsize, $latime, $lmtime) =
+	    eval {
+		no warnings; # Calling stat on a tied handler
                              # generates a warning because the op is
                              # not supported by the tie API.
-                CORE::stat $fh;
-            }
-           ) {
+		CORE::stat $fh;
+	    }
+	   ) {
             $debug and $debug & 16384 and _debug "local file size is " . (defined $lsize ? $lsize : '<undef>');
 
-            # $fh can point at some place inside the file, not just at the
-            # begining
-            if ($local_is_fh and defined $lsize) {
-                my $tell = eval { CORE::tell $fh };
-                $lsize -= $tell if $tell and $tell > 0;
-            }
-        }
-        elsif ($copy_perm or $copy_time) {
-            $sftp->_set_error(SFTP_ERR_LOCAL_STAT_FAILED,
-                              "Couldn't stat local file '$local'", $!);
-            return undef;
-        }
-        elsif ($resume and $resume eq 'auto') {
+	    # $fh can point at some place inside the file, not just at the
+	    # begining
+	    if ($local_is_fh and defined $lsize) {
+		my $tell = eval { CORE::tell $fh };
+		$lsize -= $tell if $tell and $tell > 0;
+	    }
+	}
+	elsif ($copy_perm or $copy_time) {
+	    $sftp->_set_error(SFTP_ERR_LOCAL_STAT_FAILED,
+			      "Couldn't stat local file '$local'", $!);
+	    return undef;
+	}
+	elsif ($resume and $resume eq 'auto') {
             $debug and $debug & 16384 and _debug "not resuming because stat'ing the local file failed";
-            undef $resume
-        }
+	    undef $resume
+	}
     }
 
     $perm = $lmode & $neg_umask if $copy_perm;
@@ -2103,21 +2103,21 @@ sub put {
     my $rattrs;
 
     if ($resume or $append) {
-        $rattrs = do {
+	$rattrs = do {
             local $sftp->{_autodie};
             $sftp->stat($remote);
         };
-        if ($rattrs) {
-            if ($resume and $resume eq 'auto' and $rattrs->mtime <= $lmtime) {
+	if ($rattrs) {
+	    if ($resume and $resume eq 'auto' and $rattrs->mtime <= $lmtime) {
                 $debug and $debug & 16384 and
                     _debug "not resuming because local file is newer, r: ".$rattrs->mtime." l: $lmtime";
-                undef $resume;
-            }
-            else {
-                $writeoff = $rattrs->size;
-                $debug and $debug & 16384 and _debug "resuming from $writeoff";
-            }
-        }
+		undef $resume;
+	    }
+	    else {
+		$writeoff = $rattrs->size;
+		$debug and $debug & 16384 and _debug "resuming from $writeoff";
+	    }
+	}
         else {
             if ($append) {
                 $sftp->{_status} == SSH2_FX_NO_SUCH_FILE
@@ -2230,7 +2230,7 @@ sub put {
             $debug and $debug & 128 and _debug("temporal remote file name: $remote");
         }
         local $sftp->{_autodie};
-        if ($numbered) {
+	if ($numbered) {
             while (1) {
                 $rfh = $sftp->_open_mkpath($remote,
                                           $mkpath,
@@ -2240,9 +2240,9 @@ sub put {
                          $sftp->{_status} != SSH2_FX_FAILURE or
                          !$sftp->test_e($remote));
                 _inc_numbered($remote);
-            }
+	    }
             $$numbered = $remote if $rfh and ref $numbered;
-        }
+	}
         else {
             # open can fail due to a remote file with the wrong
             # permissions being already there. We are optimistic here,
@@ -2454,25 +2454,25 @@ sub ls {
     my $names_only = delete $opts{names_only};
     my $realpath = delete $opts{realpath};
     my $queue_size = delete $opts{queue_size};
-    my $cheap = ($names_only and !$realpath);
+    my $cheap = ($names_only and !$realpath); 
     my ($cheap_wanted, $wanted);
     if ($cheap and
-        ref $opts{wanted} eq 'RegExp' and
-        not defined $opts{no_wanted}) {
-        $cheap_wanted = delete $opts{wanted}
+	ref $opts{wanted} eq 'RegExp' and 
+	not defined $opts{no_wanted}) {
+	$cheap_wanted = delete $opts{wanted}
     }
     else {
-        $wanted = (delete $opts{_wanted} ||
-                   _gen_wanted(delete $opts{wanted},
-                               delete $opts{no_wanted}));
-        undef $cheap if defined $wanted;
+	$wanted = (delete $opts{_wanted} ||
+		   _gen_wanted(delete $opts{wanted},
+			       delete $opts{no_wanted}));
+	undef $cheap if defined $wanted;
     }
 
     %opts and _croak_bad_options(keys %opts);
 
     my $delayed_wanted = ($atomic_readdir and $wanted);
     $queue_size = 1 if ($follow_links or $realpath or
-                        ($wanted and not $delayed_wanted));
+			($wanted and not $delayed_wanted));
     my $max_queue_size = $queue_size || $sftp->{_queue_size};
     $queue_size ||= 2;
 
@@ -2556,13 +2556,13 @@ sub ls {
         $sftp->_closedir_save_status($rdh) if $rdh;
     };
     unless ($sftp->{_error}) {
-        if ($delayed_wanted) {
-            @dir = grep { $wanted->($sftp, $_) } @dir;
-            @dir = map { defined $_->{realpath}
-                         ? $_->{realpath}
-                         : $_->{filename} } @dir
-                if $names_only;
-        }
+	if ($delayed_wanted) {
+	    @dir = grep { $wanted->($sftp, $_) } @dir;
+	    @dir = map { defined $_->{realpath}
+			 ? $_->{realpath}
+			 : $_->{filename} } @dir
+		if $names_only;
+	}
         if ($ordered) {
             if ($names_only) {
                 @dir = sort @dir;
@@ -2571,7 +2571,7 @@ sub ls {
                 _sort_entries \@dir;
             }
         }
-        return \@dir;
+	return \@dir;
     }
     croak $sftp->{_error} if $sftp->{_autodie};
     return undef;
@@ -2586,7 +2586,7 @@ sub rremove {
     my $on_error = delete $opts{on_error};
     local $sftp->{_autodie} if $on_error;
     my $wanted = _gen_wanted( delete $opts{wanted},
-                              delete $opts{no_wanted});
+			      delete $opts{no_wanted});
 
     %opts and _croak_bad_options(keys %opts);
 
@@ -2594,38 +2594,38 @@ sub rremove {
 
     my @dirs;
     $sftp->find( $dirs,
-                 on_error => $on_error,
-                 atomic_readdir => 1,
-                 wanted => sub {
-                     my $e = $_[1];
-                     my $fn = $e->{filename};
-                     if (_is_dir($e->{a}->perm)) {
-                         push @dirs, $e;
-                     }
-                     else {
-                         if (!$wanted or $wanted->($sftp, $e)) {
-                             if ($sftp->remove($fn)) {
-                                 $count++;
-                             }
-                             else {
-                                 $sftp->_call_on_error($on_error, $e);
-                             }
-                         }
-                     }
-                 } );
+		 on_error => $on_error,
+		 atomic_readdir => 1,
+		 wanted => sub {
+		     my $e = $_[1];
+		     my $fn = $e->{filename};
+		     if (_is_dir($e->{a}->perm)) {
+			 push @dirs, $e;
+		     }
+		     else {
+			 if (!$wanted or $wanted->($sftp, $e)) {
+			     if ($sftp->remove($fn)) {
+				 $count++;
+			     }
+			     else {
+				 $sftp->_call_on_error($on_error, $e);
+			     }
+			 }
+		     }
+		 } );
 
     _sort_entries(\@dirs);
 
     while (@dirs) {
-        my $e = pop @dirs;
-        if (!$wanted or $wanted->($sftp, $e)) {
-            if ($sftp->rmdir($e->{filename})) {
-                $count++;
-            }
-            else {
-                $sftp->_call_on_error($on_error, $e);
-            }
-        }
+	my $e = pop @dirs;
+	if (!$wanted or $wanted->($sftp, $e)) {
+	    if ($sftp->rmdir($e->{filename})) {
+		$count++;
+	    }
+	    else {
+		$sftp->_call_on_error($on_error, $e);
+	    }
+	}
     }
 
     return $count;
@@ -2638,16 +2638,16 @@ sub get_symlink {
     my $numbered = delete $opts{numbered};
 
     croak "'overwrite' and 'numbered' can not be used together"
-        if ($overwrite and $numbered);
+	if ($overwrite and $numbered);
    %opts and _croak_bad_options(keys %opts);
 
     $overwrite = 1 unless (defined $overwrite or $numbered);
 
     my $a = $sftp->lstat($remote) or return undef;
     unless (_is_lnk($a->perm)) {
-        $sftp->_set_error(SFTP_ERR_REMOTE_BAD_OBJECT,
-                          "Remote object '$remote' is not a symlink");
-        return undef;
+	$sftp->_set_error(SFTP_ERR_REMOTE_BAD_OBJECT,
+			  "Remote object '$remote' is not a symlink");
+	return undef;
     }
 
     my $link = $sftp->readlink($remote) or return undef;
@@ -2657,20 +2657,20 @@ sub get_symlink {
         _inc_numbered($local) while -e $local;
     }
     elsif (-e $local) {
-        if ($overwrite) {
-            unlink $local;
-        }
-        else {
-            $sftp->_set_error(SFTP_ERR_LOCAL_ALREADY_EXISTS,
-                              "local file $local already exists");
-            return undef
-        }
+	if ($overwrite) {
+	    unlink $local;
+	}
+	else {
+	    $sftp->_set_error(SFTP_ERR_LOCAL_ALREADY_EXISTS,
+			      "local file $local already exists");
+	    return undef
+	}
     }
 
     unless (eval { CORE::symlink $link, $local }) {
-        $sftp->_set_error(SFTP_ERR_LOCAL_SYMLINK_FAILED,
-                          "creation of symlink '$local' failed", $!);
-        return undef;
+	$sftp->_set_error(SFTP_ERR_LOCAL_SYMLINK_FAILED,
+			  "creation of symlink '$local' failed", $!);
+	return undef;
     }
     $$numbered = $local if ref $numbered;
 
@@ -2684,26 +2684,26 @@ sub put_symlink {
     my $numbered = delete $opts{numbered};
 
     croak "'overwrite' and 'numbered' can not be used together"
-        if ($overwrite and $numbered);
+	if ($overwrite and $numbered);
     %opts and _croak_bad_options(keys %opts);
 
     $overwrite = 1 unless (defined $overwrite or $numbered);
     my $perm = (CORE::lstat $local)[2];
     unless (defined $perm) {
-        $sftp->_set_error(SFTP_ERR_LOCAL_STAT_FAILED,
-                          "Couldn't stat local file '$local'", $!);
-        return undef;
+	$sftp->_set_error(SFTP_ERR_LOCAL_STAT_FAILED,
+			  "Couldn't stat local file '$local'", $!);
+	return undef;
     }
     unless (_is_lnk($perm)) {
-        $sftp->_set_error(SFTP_ERR_LOCAL_BAD_OBJECT,
-                          "Local file $local is not a symlink");
-        return undef;
+	$sftp->_set_error(SFTP_ERR_LOCAL_BAD_OBJECT,
+			  "Local file $local is not a symlink");
+	return undef;
     }
     my $target = readlink $local;
     unless (defined $target) {
-        $sftp->_set_error(SFTP_ERR_LOCAL_READLINK_FAILED,
-                          "Couldn't read link '$local'", $!);
-        return undef;
+	$sftp->_set_error(SFTP_ERR_LOCAL_READLINK_FAILED,
+			  "Couldn't read link '$local'", $!);
+	return undef;
     }
 
     while (1) {
@@ -2747,7 +2747,7 @@ sub rget {
     # my $relative_links = delete $opts{relative_links};
 
     my $wanted = _gen_wanted( delete $opts{wanted},
-                              delete $opts{no_wanted} );
+			      delete $opts{no_wanted} );
 
     my %get_opts = (map { $_ => delete $opts{$_} }
                     qw(block_size queue_size overwrite conversion
@@ -2775,88 +2775,88 @@ sub rget {
 
     my $count = 0;
     $sftp->find( [$remote],
-                 descend => sub {
-                     my $e = $_[1];
-                     # print "descend: $e->{filename}\n";
-                     if (!$wanted or $wanted->($sftp, $e)) {
-                         my $fn = $e->{filename};
-                         if ($fn =~ $reremote) {
-                             my $lpath = File::Spec->catdir($local, $1);
+		 descend => sub {
+		     my $e = $_[1];
+		     # print "descend: $e->{filename}\n";
+		     if (!$wanted or $wanted->($sftp, $e)) {
+			 my $fn = $e->{filename};
+			 if ($fn =~ $reremote) {
+			     my $lpath = File::Spec->catdir($local, $1);
                              ($lpath) = $lpath =~ /(.*)/ if ${^TAINT};
-                             if (-d $lpath) {
-                                 $sftp->_set_error(SFTP_ERR_LOCAL_ALREADY_EXISTS,
-                                                   "directory '$lpath' already exists");
-                                 $sftp->_call_on_error($on_error, $e);
-                                 return 1;
-                             }
-                             else {
+			     if (-d $lpath) {
+				 $sftp->_set_error(SFTP_ERR_LOCAL_ALREADY_EXISTS,
+						   "directory '$lpath' already exists");
+				 $sftp->_call_on_error($on_error, $e);
+				 return 1;
+			     }
+			     else {
                                  my $perm = ($copy_perm ? $e->{a}->perm & 0777 : 0777);
                                  if (CORE::mkdir($lpath, $perm) or
                                      ($mkpath and $sftp->_mkpath_local($lpath, $perm))) {
-                                     $count++;
-                                     return 1;
-                                 }
+				     $count++;
+				     return 1;
+				 }
                                  $sftp->_set_error(SFTP_ERR_LOCAL_MKDIR_FAILED,
                                                    "mkdir '$lpath' failed", $!);
-                             }
-                         }
-                         else {
-                             $sftp->_set_error(SFTP_ERR_REMOTE_BAD_PATH,
-                                               "bad remote path '$fn'");
-                         }
-                         $sftp->_call_on_error($on_error, $e);
-                     }
-                     return undef;
-                 },
-                 wanted => sub {
-                     my $e = $_[1];
-                     # print "file fn:$e->{filename}, a:$e->{a}\n";
-                     unless (_is_dir($e->{a}->perm)) {
-                         if (!$wanted or $wanted->($sftp, $e)) {
-                             my $fn = $e->{filename};
-                             if ($fn =~ $reremote) {
-                                 my $lpath = File::Spec->catfile($local, $1);
+			     }
+			 }
+			 else {
+			     $sftp->_set_error(SFTP_ERR_REMOTE_BAD_PATH,
+					       "bad remote path '$fn'");
+			 }
+			 $sftp->_call_on_error($on_error, $e);
+		     }
+		     return undef;
+		 },
+		 wanted => sub {
+		     my $e = $_[1];
+		     # print "file fn:$e->{filename}, a:$e->{a}\n";
+		     unless (_is_dir($e->{a}->perm)) {
+			 if (!$wanted or $wanted->($sftp, $e)) {
+			     my $fn = $e->{filename};
+			     if ($fn =~ $reremote) {
+				 my $lpath = File::Spec->catfile($local, $1);
                                  ($lpath) = $lpath =~ /(.*)/ if ${^TAINT};
-                                 if (_is_lnk($e->{a}->perm) and !$ignore_links) {
-                                     if ($sftp->get_symlink($fn, $lpath,
-                                                            # copy_time => $copy_time,
+				 if (_is_lnk($e->{a}->perm) and !$ignore_links) {
+				     if ($sftp->get_symlink($fn, $lpath,
+							    # copy_time => $copy_time,
                                                             %get_symlink_opts)) {
-                                         $count++;
-                                         return undef;
-                                     }
-                                 }
-                                 elsif (_is_reg($e->{a}->perm)) {
-                                     if ($newer_only and -e $lpath
-                                         and (CORE::stat _)[9] >= $e->{a}->mtime) {
-                                         $sftp->_set_error(SFTP_ERR_LOCAL_ALREADY_EXISTS,
-                                                           "newer local file '$lpath' already exists");
-                                     }
-                                     else {
-                                         if ($sftp->get($fn, $lpath,
-                                                        copy_perm => $copy_perm,
-                                                        copy_time => $copy_time,
+					 $count++;
+					 return undef;
+				     }
+				 }
+				 elsif (_is_reg($e->{a}->perm)) {
+				     if ($newer_only and -e $lpath
+					 and (CORE::stat _)[9] >= $e->{a}->mtime) {
+					 $sftp->_set_error(SFTP_ERR_LOCAL_ALREADY_EXISTS,
+							   "newer local file '$lpath' already exists");
+				     }
+				     else {
+					 if ($sftp->get($fn, $lpath,
+							copy_perm => $copy_perm,
+							copy_time => $copy_time,
                                                         %get_opts)) {
-                                             $count++;
-                                             return undef;
-                                         }
-                                     }
-                                 }
-                                 else {
-                                     $sftp->_set_error(SFTP_ERR_REMOTE_BAD_OBJECT,
-                                                       ( $ignore_links
-                                                         ? "remote file '$fn' is not regular file or directory"
-                                                         : "remote file '$fn' is not regular file, directory or link"));
-                                 }
-                             }
-                             else {
-                                 $sftp->_set_error(SFTP_ERR_REMOTE_BAD_PATH,
-                                                   "bad remote path '$fn'");
-                             }
-                             $sftp->_call_on_error($on_error, $e);
-                         }
-                     }
-                     return undef;
-                 } );
+					     $count++;
+					     return undef;
+					 }
+				     }
+				 }
+				 else {
+				     $sftp->_set_error(SFTP_ERR_REMOTE_BAD_OBJECT,
+						       ( $ignore_links
+							 ? "remote file '$fn' is not regular file or directory"
+							 : "remote file '$fn' is not regular file, directory or link"));
+				 }
+			     }
+			     else {
+				 $sftp->_set_error(SFTP_ERR_REMOTE_BAD_PATH,
+						   "bad remote path '$fn'");
+			     }
+			     $sftp->_call_on_error($on_error, $e);
+			 }
+		     }
+		     return undef;
+		 } );
 
     return $count;
 }
@@ -2883,10 +2883,10 @@ sub rput {
     my $mkpath = delete $opts{mkpath};
 
     my $wanted = _gen_wanted( delete $opts{wanted},
-                              delete $opts{no_wanted} );
+			      delete $opts{no_wanted} );
 
     my %put_opts = (map { $_ => delete $opts{$_} }
-                    qw(block_size queue_size overwrite
+		    qw(block_size queue_size overwrite
                        conversion resume numbered
                        late_set_perm atomic best_effort
                        sparse));
@@ -2907,11 +2907,11 @@ sub rput {
     $local = $lfs->join($local, './');
     my $relocal;
     if ($local =~ m|^\./?$|) {
-        $relocal = qr/^(.*)$/;
+	$relocal = qr/^(.*)$/;
     }
     else {
-        my $qlocal = quotemeta $local;
-        $relocal = qr/^$qlocal(.*)$/i;
+	my $qlocal = quotemeta $local;
+	$relocal = qr/^$qlocal(.*)$/i;
     }
 
     $copy_perm = 1 unless defined $copy_perm;
@@ -2928,25 +2928,25 @@ sub rput {
     }
 
     if ($on_error) {
-        my $on_error1 = $on_error;
-        $on_error = sub {
-            my $lfs = shift;
-            $sftp->_copy_error($lfs);
-            $sftp->_call_on_error($on_error1, @_);
-        }
+	my $on_error1 = $on_error;
+	$on_error = sub {
+	    my $lfs = shift;
+	    $sftp->_copy_error($lfs);
+	    $sftp->_call_on_error($on_error1, @_);
+	}
     }
 
     my $count = 0;
     $lfs->find( [$local],
-                descend => sub {
-                    my $e = $_[1];
-                    # print "descend: $e->{filename}\n";
-                    if (!$wanted or $wanted->($lfs, $e)) {
-                        my $fn = $e->{filename};
-                        $debug and $debug & 32768 and _debug "rput handling $fn";
-                        if ($fn =~ $relocal) {
-                            my $rpath = $sftp->join($remote, File::Spec->splitdir($1));
-                            $debug and $debug & 32768 and _debug "rpath: $rpath";
+		descend => sub {
+		    my $e = $_[1];
+		    # print "descend: $e->{filename}\n";
+		    if (!$wanted or $wanted->($lfs, $e)) {
+			my $fn = $e->{filename};
+			$debug and $debug & 32768 and _debug "rput handling $fn";
+			if ($fn =~ $relocal) {
+			    my $rpath = $sftp->join($remote, File::Spec->splitdir($1));
+			    $debug and $debug & 32768 and _debug "rpath: $rpath";
                             my $a = Net::SFTP::Foreign::Attributes->new;
                             if (defined $perm) {
                                 $a->set_perm($mask | 0300);
@@ -2968,75 +2968,75 @@ sub rput {
                             }
                             $lfs->_copy_error($sftp);
                             if ($sftp->test_d($rpath)) {
-                                $lfs->_set_error(SFTP_ERR_REMOTE_ALREADY_EXISTS,
-                                                 "Remote directory '$rpath' already exists");
-                                $lfs->_call_on_error($on_error, $e);
-                                return 1;
-                            }
-                        }
-                        else {
-                            $lfs->_set_error(SFTP_ERR_LOCAL_BAD_PATH,
-                                              "Bad local path '$fn'");
-                        }
-                        $lfs->_call_on_error($on_error, $e);
-                    }
-                    return undef;
-                },
-                wanted => sub {
-                    my $e = $_[1];
-                    # print "file fn:$e->{filename}, a:$e->{a}\n";
-                    unless (_is_dir($e->{a}->perm)) {
-                        if (!$wanted or $wanted->($lfs, $e)) {
-                            my $fn = $e->{filename};
-                            $debug and $debug & 32768 and _debug "rput handling $fn";
-                            if ($fn =~ $relocal) {
-                                my (undef, $d, $f) = File::Spec->splitpath($1);
-                                my $rpath = $sftp->join($remote, File::Spec->splitdir($d), $f);
-                                if (_is_lnk($e->{a}->perm) and !$ignore_links) {
-                                    if ($sftp->put_symlink($fn, $rpath,
+				$lfs->_set_error(SFTP_ERR_REMOTE_ALREADY_EXISTS,
+						 "Remote directory '$rpath' already exists");
+				$lfs->_call_on_error($on_error, $e);
+				return 1;
+			    }
+			}
+			else {
+			    $lfs->_set_error(SFTP_ERR_LOCAL_BAD_PATH,
+					      "Bad local path '$fn'");
+			}
+			$lfs->_call_on_error($on_error, $e);
+		    }
+		    return undef;
+		},
+		wanted => sub {
+		    my $e = $_[1];
+		    # print "file fn:$e->{filename}, a:$e->{a}\n";
+		    unless (_is_dir($e->{a}->perm)) {
+			if (!$wanted or $wanted->($lfs, $e)) {
+			    my $fn = $e->{filename};
+			    $debug and $debug & 32768 and _debug "rput handling $fn";
+			    if ($fn =~ $relocal) {
+				my (undef, $d, $f) = File::Spec->splitpath($1);
+				my $rpath = $sftp->join($remote, File::Spec->splitdir($d), $f);
+				if (_is_lnk($e->{a}->perm) and !$ignore_links) {
+				    if ($sftp->put_symlink($fn, $rpath,
                                                            %put_symlink_opts)) {
-                                        $count++;
-                                        return undef;
-                                    }
-                                    $lfs->_copy_error($sftp);
-                                }
-                                elsif (_is_reg($e->{a}->perm)) {
-                                    my $ra;
-                                    if ( $newer_only and
-                                         $ra = $sftp->stat($rpath) and
-                                         $ra->mtime >= $e->{a}->mtime) {
-                                        $lfs->_set_error(SFTP_ERR_REMOTE_ALREADY_EXISTS,
-                                                         "Newer remote file '$rpath' already exists");
-                                    }
-                                    else {
-                                        if ($sftp->put($fn, $rpath,
+					$count++;
+					return undef;
+				    }
+				    $lfs->_copy_error($sftp);
+				}
+				elsif (_is_reg($e->{a}->perm)) {
+				    my $ra;
+				    if ( $newer_only and
+					 $ra = $sftp->stat($rpath) and
+					 $ra->mtime >= $e->{a}->mtime) {
+					$lfs->_set_error(SFTP_ERR_REMOTE_ALREADY_EXISTS,
+							 "Newer remote file '$rpath' already exists");
+				    }
+				    else {
+					if ($sftp->put($fn, $rpath,
                                                        ( defined($perm) ? (perm => $perm)
                                                          : $copy_perm   ? (perm => $e->{a}->perm & $mask)
                                                          : (copy_perm => 0, umask => $umask) ),
-                                                       copy_time => $copy_time,
+						       copy_time => $copy_time,
                                                        %put_opts)) {
-                                            $count++;
-                                            return undef;
-                                        }
-                                        $lfs->_copy_error($sftp);
-                                    }
-                                }
-                                else {
-                                    $lfs->_set_error(SFTP_ERR_LOCAL_BAD_OBJECT,
-                                                      ( $ignore_links
-                                                        ? "Local file '$fn' is not regular file or directory"
-                                                        : "Local file '$fn' is not regular file, directory or link"));
-                                }
-                            }
-                            else {
-                                $lfs->_set_error(SFTP_ERR_LOCAL_BAD_PATH,
-                                                  "Bad local path '$fn'");
-                            }
-                            $lfs->_call_on_error($on_error, $e);
-                        }
-                    }
-                    return undef;
-                } );
+					    $count++;
+					    return undef;
+					}
+					$lfs->_copy_error($sftp);
+				    }
+				}
+				else {
+				    $lfs->_set_error(SFTP_ERR_LOCAL_BAD_OBJECT,
+						      ( $ignore_links
+							? "Local file '$fn' is not regular file or directory"
+							: "Local file '$fn' is not regular file, directory or link"));
+				}
+			    }
+			    else {
+				$lfs->_set_error(SFTP_ERR_LOCAL_BAD_PATH,
+						  "Bad local path '$fn'");
+			    }
+			    $lfs->_call_on_error($on_error, $e);
+			}
+		    }
+		    return undef;
+		} );
 
     return $count;
 }
@@ -3054,14 +3054,14 @@ sub mget {
     my $ignore_links = delete $opts{ignore_links};
 
     my %glob_opts = (map { $_ => delete $opts{$_} }
-                     qw(on_error follow_links ignore_case
+		     qw(on_error follow_links ignore_case
                         wanted no_wanted strict_leading_dot));
 
     my %get_symlink_opts = (map { $_ => $opts{$_} }
-                            qw(overwrite numbered));
+			    qw(overwrite numbered));
 
     my %get_opts = (map { $_ => delete $opts{$_} }
-                    qw(umask perm copy_perm copy_time block_size queue_size
+		    qw(umask perm copy_perm copy_time block_size queue_size
                        overwrite conversion resume numbered atomic best_effort mkpath));
 
     %opts and _croak_bad_options(keys %opts);
@@ -3072,28 +3072,28 @@ sub mget {
 
     require File::Spec;
     for my $e (@remote) {
-        my $perm = $e->{a}->perm;
-        if (_is_dir($perm)) {
-            $sftp->_set_error(SFTP_ERR_REMOTE_BAD_OBJECT,
-                              "Remote object '$e->{filename}' is a directory");
-        }
-        else {
-            my $fn = $e->{filename};
-            my ($local) = $fn =~ m{([^\\/]*)$};
+	my $perm = $e->{a}->perm;
+	if (_is_dir($perm)) {
+	    $sftp->_set_error(SFTP_ERR_REMOTE_BAD_OBJECT,
+			      "Remote object '$e->{filename}' is a directory");
+	}
+	else {
+	    my $fn = $e->{filename};
+	    my ($local) = $fn =~ m{([^\\/]*)$};
 
-            $local = File::Spec->catfile($localdir, $local)
-                if defined $localdir;
+	    $local = File::Spec->catfile($localdir, $local)
+		if defined $localdir;
 
-            if (_is_lnk($perm)) {
-                next if $ignore_links;
-                $sftp->get_symlink($fn, $local, %get_symlink_opts);
-            }
-            else {
-                $sftp->get($fn, $local, %get_opts);
-            }
-        }
-        $count++ unless $sftp->{_error};
-        $sftp->_call_on_error($on_error, $e);
+	    if (_is_lnk($perm)) {
+		next if $ignore_links;
+		$sftp->get_symlink($fn, $local, %get_symlink_opts);
+	    }
+	    else {
+		$sftp->get($fn, $local, %get_opts);
+	    }
+	}
+	$count++ unless $sftp->{_error};
+	$sftp->_call_on_error($on_error, $e);
     }
     $count;
 }
@@ -3110,13 +3110,13 @@ sub mput {
     my $ignore_links = delete $opts{ignore_links};
 
     my %glob_opts = (map { $_ => delete $opts{$_} }
-                     qw(on_error follow_links ignore_case
+		     qw(on_error follow_links ignore_case
                         wanted no_wanted strict_leading_dot));
     my %put_symlink_opts = (map { $_ => $opts{$_} }
-                            qw(overwrite numbered));
+			    qw(overwrite numbered));
 
     my %put_opts = (map { $_ => delete $opts{$_} }
-                    qw(umask perm copy_perm copy_time block_size queue_size
+		    qw(umask perm copy_perm copy_time block_size queue_size
                        overwrite conversion resume numbered late_set_perm
                        atomic best_effort sparse mkpath));
 
@@ -3129,27 +3129,27 @@ sub mput {
     my $count = 0;
     require File::Spec;
     for my $e (@local) {
-        my $perm = $e->{a}->perm;
-        if (_is_dir($perm)) {
-            $sftp->_set_error(SFTP_ERR_REMOTE_BAD_OBJECT,
-                              "Remote object '$e->{filename}' is a directory");
-        }
-        else {
-            my $fn = $e->{filename};
-            my $remote = (File::Spec->splitpath($fn))[2];
-            $remote = $sftp->join($remotedir, $remote)
-                if defined $remotedir;
+	my $perm = $e->{a}->perm;
+	if (_is_dir($perm)) {
+	    $sftp->_set_error(SFTP_ERR_REMOTE_BAD_OBJECT,
+			      "Remote object '$e->{filename}' is a directory");
+	}
+	else {
+	    my $fn = $e->{filename};
+	    my $remote = (File::Spec->splitpath($fn))[2];
+	    $remote = $sftp->join($remotedir, $remote)
+		if defined $remotedir;
 
-            if (_is_lnk($perm)) {
-                next if $ignore_links;
-                $sftp->put_symlink($fn, $remote, %put_symlink_opts);
-            }
-            else {
-                $sftp->put($fn, $remote, %put_opts);
-            }
-        }
-        $count++ unless $sftp->{_error};
-        $sftp->_call_on_error($on_error, $e);
+	    if (_is_lnk($perm)) {
+		next if $ignore_links;
+		$sftp->put_symlink($fn, $remote, %put_symlink_opts);
+	    }
+	    else {
+		$sftp->put($fn, $remote, %put_opts);
+	    }
+	}
+	$count++ unless $sftp->{_error};
+	$sftp->_call_on_error($on_error, $e);
     }
     $count;
 }
@@ -3221,41 +3221,41 @@ our @CARP_NOT = qw(Net::SFTP::Foreign Tie::Handle);
 my $gen_accessor = sub {
     my $ix = shift;
     sub {
-        my $st = *{shift()}{ARRAY};
-        if (@_) {
-            $st->[$ix] = shift;
-        }
-        else {
-            $st->[$ix]
-        }
+	my $st = *{shift()}{ARRAY};
+	if (@_) {
+	    $st->[$ix] = shift;
+	}
+	else {
+	    $st->[$ix]
+	}
     }
 };
 
 my $gen_proxy_method = sub {
     my $method = shift;
     sub {
-        my $self = $_[0];
-        $self->_check
-            or return undef;
+	my $self = $_[0];
+	$self->_check
+	    or return undef;
 
-        my $sftp = $self->_sftp;
-        if (wantarray) {
-            my @ret = $sftp->$method(@_);
-            $sftp->_set_errno unless @ret;
-            return @ret;
-        }
-        else {
-            my $ret = $sftp->$method(@_);
-            $sftp->_set_errno unless defined $ret;
-            return $ret;
-        }
+	my $sftp = $self->_sftp;
+	if (wantarray) {
+	    my @ret = $sftp->$method(@_);
+	    $sftp->_set_errno unless @ret;
+	    return @ret;
+	}
+	else {
+	    my $ret = $sftp->$method(@_);
+	    $sftp->_set_errno unless defined $ret;
+	    return $ret;
+	}
     }
 };
 
 my $gen_not_supported = sub {
     sub {
-        $! = Errno::ENOTSUP();
-        undef
+	$! = Errno::ENOTSUP();
+	undef
     }
 };
 
@@ -3291,7 +3291,7 @@ sub _check {
 sub FILENO {
     my $self = shift;
     $self->_check
-        or return undef;
+	or return undef;
 
     my $hrid = unpack 'H*' => $self->_rid;
     "-1:sftp(0x$hrid)"
@@ -3316,12 +3316,12 @@ sub _flag {
     my $flag = $flag_bit{$fn};
     Carp::croak("unknown flag $fn") unless defined $flag;
     if (@_) {
-        if (shift) {
-            $st->[3] |= $flag;
-        }
-        else {
-            $st->[3] &= ~$flag;
-        }
+	if (shift) {
+	    $st->[3] |= $flag;
+	}
+	else {
+	    $st->[3] &= ~$flag;
+	}
     }
     $st->[3] & $flag ? 1 : 0
 }
@@ -3338,15 +3338,15 @@ sub AUTOLOAD {
     my $self = shift;
     our $AUTOLOAD;
     if ($autoloaded) {
-        my $class = ref $self || $self;
-        Carp::croak qq|Can't locate object method "$AUTOLOAD" via package "$class|;
+	my $class = ref $self || $self;
+	Carp::croak qq|Can't locate object method "$AUTOLOAD" via package "$class|;
     }
     else {
-        $autoloaded = 1;
-        require IO::File;
-        require IO::Dir;
-        my ($method) = $AUTOLOAD =~ /^.*::(.*)$/;
-        $self->$method(@_);
+	$autoloaded = 1;
+	require IO::File;
+	require IO::Dir;
+	my ($method) = $AUTOLOAD =~ /^.*::(.*)$/;
+	$self->$method(@_);
     }
 }
 
@@ -3370,7 +3370,7 @@ sub _bout { \(*{shift()}{ARRAY}[5]) }
 sub WRITE {
     my ($self, undef, $length, $offset) = @_;
     $self->_check
-        or return undef;
+	or return undef;
 
     $offset = 0 unless defined $offset;
     $offset = length $_[1] + $offset if $offset < 0;
@@ -3386,17 +3386,17 @@ sub WRITE {
 sub READ {
     my ($self, undef, $len, $offset) = @_;
     $self->_check
-        or return undef;
+	or return undef;
 
     $_[1] = '' unless defined $_[1];
     $offset ||= 0;
     if ($offset > length $_[1]) {
-        $_[1] .= "\0" x ($offset - length $_[1])
+	$_[1] .= "\0" x ($offset - length $_[1])
     }
 
     if ($len == 0) {
-        substr($_[1], $offset) = '';
-        return 0;
+	substr($_[1], $offset) = '';
+	return 0;
     }
 
     my $sftp = $self->_sftp;
@@ -3404,10 +3404,10 @@ sub READ {
 
     my $bin = $self->_bin;
     if (length $$bin) {
-        my $data = substr($$bin, 0, $len, '');
-        $self->_inc_pos($len);
-        substr($_[1], $offset) = $data;
-        return length $data;
+	my $data = substr($$bin, 0, $len, '');
+	$self->_inc_pos($len);
+	substr($_[1], $offset) = $data;
+	return length $data;
     }
     return 0 if $sftp->{_status} == $sftp->SSH2_FX_EOF;
     $sftp->_set_errno;
@@ -3443,7 +3443,7 @@ sub DESTROY {
     $debug and $debug & 4 and Net::SFTP::Foreign::_debug("$self->DESTROY called (sftp: ".($sftp||'<undef>').")");
     if ($self->_check and $sftp) {
         local $sftp->{_autodie};
-        $sftp->_close_save_status($self)
+	$sftp->_close_save_status($self)
     }
 }
 
@@ -3485,7 +3485,7 @@ sub DESTROY {
 
     if ($self->_check and $sftp) {
         local $sftp->{_autodie};
-        $sftp->_closedir_save_status($self)
+	$sftp->_closedir_save_status($self)
     }
 }
 
@@ -4419,11 +4419,11 @@ before). For instance:
   use Fcntl ':mode';
 
   my $files = $sftp->ls ( '/home/hommer',
-                          wanted => sub {
-                              my $entry = $_[1];
-                              S_ISREG($entry->{a}->perm)
-                          } )
-        or die "ls failed: ".$sftp->error;
+			  wanted => sub {
+			      my $entry = $_[1];
+			      S_ISREG($entry->{a}->perm)
+			  } )
+	or die "ls failed: ".$sftp->error;
 
 
 =item no_wanted =E<gt> qr/.../
@@ -4433,8 +4433,8 @@ before). For instance:
 those options have the opposite result to their C<wanted> counterparts:
 
   my $no_hidden = $sftp->ls( '/home/homer',
-                             no_wanted => qr/^\./ )
-        or die "ls failed";
+			     no_wanted => qr/^\./ )
+	or die "ls failed";
 
 
 When both C<no_wanted> and C<wanted> rules are used, the C<no_wanted>
@@ -4505,11 +4505,11 @@ passed: the C<$sftp> object and the entry that was being processed
 when the error happened. For instance:
 
   my @find = $sftp->find( '/',
-                          on_error => sub {
-                              my ($sftp, $e) = @_;
-                              print STDERR "error processing $e->{filename}: "
-                                   . $sftp->error;
-                          } );
+			  on_error => sub {
+			      my ($sftp, $e) = @_;
+		 	      print STDERR "error processing $e->{filename}: "
+				   . $sftp->error;
+			  } );
 
 =item realpath =E<gt> 1
 
@@ -4555,11 +4555,11 @@ creating the full listing of entries in memory (that could use huge
 amounts of RAM for big file trees):
 
   $sftp->find($src_dir,
-              wanted => sub {
-                  my $fn = $_[1]->{filename}
-                  print "$fn\n" if $fn =~ /\.p[ml]$/;
-                  return undef # so it is discarded
-              });
+	      wanted => sub {
+		  my $fn = $_[1]->{filename}
+		  print "$fn\n" if $fn =~ /\.p[ml]$/;
+		  return undef # so it is discarded
+	      });
 
 =item descend =E<gt> qr/.../
 
@@ -4574,10 +4574,10 @@ search, discarding full subdirectories. For instance:
 
     use Fcntl ':mode';
     my @files = $sftp->find( '.',
-                             no_descend => qr/\.svn$/,
-                             wanted => sub {
-                                 S_ISREG($_[1]->{a}->perm)
-                             } );
+			     no_descend => qr/\.svn$/,
+			     wanted => sub {
+				 S_ISREG($_[1]->{a}->perm)
+			     } );
 
 
 C<descend> and C<wanted> rules are unrelated. A directory discarded by

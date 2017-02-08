@@ -279,7 +279,7 @@ sub each_arrayref {
         my $i = $index++;
 
         # Return ith elements
-        return map $_->[$i], @list;
+        return map $_->[$i], @list; 
     }
 }
 
@@ -297,7 +297,7 @@ sub mesh (\@\@;\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@\@) {
     map {
         my $ix = $_;
         map $_->[$ix], @_;
-    } 0 .. $max;
+    } 0 .. $max; 
 }
 
 sub uniq (@) {
@@ -459,7 +459,7 @@ is true. Sets C<$_> for each item in LIST in turn:
     printf "item with index %i in list is 4", firstidx { $_ == 4 } @list;
     __END__
     item with index 1 in list is 4
-
+    
 Returns C<-1> if no such item could be found.
 
 C<first_index> is an alias for C<firstidx>.
@@ -493,7 +493,7 @@ true. Sets C<$_> for each item in LIST in turn.
 
 =item insert_after_string STRING VALUE LIST
 
-Inserts VALUE after the first item in LIST which is equal to STRING.
+Inserts VALUE after the first item in LIST which is equal to STRING. 
 
     my @list = qw/This is a list/;
     insert_after_string "a", "longer" => @list;
@@ -577,12 +577,12 @@ them will modify the input arrays.
 
     @a = (1 .. 5);
     @b = (11 .. 15);
-    @x = pairwise { $a + $b } @a, @b;   # returns 12, 14, 16, 18, 20
+    @x = pairwise { $a + $b } @a, @b;	# returns 12, 14, 16, 18, 20
 
     # mesh with pairwise
     @a = qw/a b c/;
     @b = qw/1 2 3/;
-    @x = pairwise { ($a, $b) } @a, @b;  # returns a, 1, b, 2, c, 3
+    @x = pairwise { ($a, $b) } @a, @b;	# returns a, 1, b, 2, c, 3
 
 =item each_array ARRAY1 ARRAY2 ...
 
@@ -638,7 +638,7 @@ Examples:
 
     @x = qw/a b c d/;
     @y = qw/1 2 3 4/;
-    @z = mesh @x, @y;       # returns a, 1, b, 2, c, 3, d, 4
+    @z = mesh @x, @y;	    # returns a, 1, b, 2, c, 3, d, 4
 
     @a = ('x');
     @b = ('1', '2');
@@ -688,7 +688,7 @@ reference to an array.
 You can have a sparse list of partitions as well where non-set partitions will
 be undef:
 
-    my @part = part { 2 } 1 .. 10;          # returns undef, undef, [ 1 .. 10 ]
+    my @part = part { 2 } 1 .. 10;	    # returns undef, undef, [ 1 .. 10 ]
 
 Be careful with negative values, though:
 
@@ -759,7 +759,7 @@ L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=List-MoreUtils>
 
 Credits go to a number of people: Steve Purkis for giving me namespace advice
 and James Keenan and Terrence Branno for their effort of keeping the CPAN
-tidier by making L<List::Utils> obsolete.
+tidier by making L<List::Utils> obsolete. 
 
 Brian McCauley suggested the inclusion of apply() and provided the pure-Perl
 implementation for it.

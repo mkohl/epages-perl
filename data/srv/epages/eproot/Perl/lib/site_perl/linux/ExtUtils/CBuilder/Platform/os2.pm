@@ -18,7 +18,7 @@ sub prelink {
   die "Unexpected number of DEF files" unless @res == 1;
   die "Can't find DEF file in the output"
     unless $res[0] =~ m,^(.*)\.def$,si;
-  my $libname = "$1$self->{config}{lib_ext}";   # Put .LIB file near .DEF file
+  my $libname = "$1$self->{config}{lib_ext}";	# Put .LIB file near .DEF file
   $self->do_system('emximp', '-o', $libname, $res[0]) or die "emxexp: res=$?";
   return (@res, $libname);
 }

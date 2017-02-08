@@ -23,14 +23,14 @@ sub new {
     elsif ($_[0] =~ /^-[a-zA-Z_]{1,20}$/) {
       my %tmp = @_;
       while ( my($key,$value) = each %tmp) {
-        $key =~ s/^-//;
-        $options->{lc $key} = $value;
+	$key =~ s/^-//;
+	$options->{lc $key} = $value;
       }
     }
 
     else {
-        $options->{key}    = shift;
-        $options->{cipher} = shift;
+	$options->{key}    = shift;
+	$options->{cipher} = shift;
     }
 
     my $cipher_object_provided = $options->{cipher} && ref $options->{cipher};
@@ -41,7 +41,7 @@ sub new {
 
     if ($cipher_object_provided) {
       carp "Both a key and a pre-initialized Crypt::* object were passed. The key will be ignored"
-        if defined $pass;
+	if defined $pass;
       $pass ||= '';
     }
     elsif (!defined $pass) {
@@ -89,7 +89,7 @@ sub new {
 
     # Default behavior is to treat -key as a passphrase.
     # But if the literal_key option is true, then use key as is
-    croak "The options -literal_key and -regenerate_key are incompatible with each other"
+    croak "The options -literal_key and -regenerate_key are incompatible with each other" 
       if exists $options->{literal_key} && exists $options->{regenerate_key};
     my $key;
     $key     = $pass if $options->{literal_key};
@@ -112,34 +112,34 @@ sub new {
     if ($padding && ref($padding) eq 'CODE') {
       # check to see that this code does its padding correctly
       for my $i (1..$bs-1) {
-        my $rbs = length($padding->(" "x$i,$bs,'e'));
-        croak "padding method callback does not behave properly: expected $bs bytes back, got $rbs bytes back."
-          unless ($rbs == $bs);
+	my $rbs = length($padding->(" "x$i,$bs,'e'));
+	croak "padding method callback does not behave properly: expected $bs bytes back, got $rbs bytes back." 
+	  unless ($rbs == $bs);
       }
     } else {
       $padding = $padding eq 'null'           ? \&_null_padding
-                :$padding eq 'space'          ? \&_space_padding
-                :$padding eq 'oneandzeroes'   ? \&_oneandzeroes_padding
-                :$padding eq 'rijndael_compat'? \&_rijndael_compat
+	        :$padding eq 'space'          ? \&_space_padding
+		:$padding eq 'oneandzeroes'   ? \&_oneandzeroes_padding
+		:$padding eq 'rijndael_compat'? \&_rijndael_compat
                 :$padding eq 'standard'       ? \&_standard_padding
-                :croak "'$padding' padding not supported.  See perldoc Crypt::CBC for instructions on creating your own.";
+	        :croak "'$padding' padding not supported.  See perldoc Crypt::CBC for instructions on creating your own.";
     }
 
     # CONSISTENCY CHECKS
     # HEADER consistency
     if ($header_mode eq 'salt') {
       croak "Cannot use salt-based key generation if literal key is specified"
-        if $options->{literal_key};
+	if $options->{literal_key};
       croak "Cannot use salt-based IV generation if literal IV is specified"
-        if exists $options->{iv};
+	if exists $options->{iv};
     }
     elsif ($header_mode eq 'randomiv') {
       croak "Cannot encrypt using a non-8 byte blocksize cipher when using randomiv header mode"
-        unless $bs == 8 || $legacy_hack;
+	unless $bs == 8 || $legacy_hack;
     }
     elsif ($header_mode eq 'none') {
       croak "You must provide an initialization vector using -iv when using -header=>'none'"
-        unless exists $options->{iv};
+	unless exists $options->{iv};
     }
 
     # KEYSIZE consistency
@@ -154,20 +154,20 @@ sub new {
 
 
     return bless {'cipher'      => $cipher,
-                  'passphrase'  => $pass,
-                  'key'         => $key,
-                  'iv'          => $iv,
-                  'salt'        => $salt,
-                  'padding'     => $padding,
-                  'blocksize'   => $bs,
-                  'keysize'     => $ks,
+		  'passphrase'  => $pass,
+		  'key'         => $key,
+		  'iv'          => $iv,
+		  'salt'        => $salt,
+		  'padding'     => $padding,
+		  'blocksize'   => $bs,
+		  'keysize'     => $ks,
                   'header_mode' => $header_mode,
-                  'legacy_hack' => $legacy_hack,
+		  'legacy_hack' => $legacy_hack,
                   'literal_key' => $literal_key,
                   'pcbc'        => $pcbc,
-                  'make_random_salt' => $random_salt,
-                  'make_random_iv'   => $random_iv,
-                  },$class;
+		  'make_random_salt' => $random_salt,
+		  'make_random_iv'   => $random_iv,
+		  },$class;
 }
 
 sub encrypt (\$$) {
@@ -230,7 +230,7 @@ sub crypt (\$$){
 
     croak "When using rijndael_compat padding, plaintext size must be a multiple of $bs"
       if $self->{'padding'} eq \&_rijndael_compat
-        and length($data) % $bs;
+	and length($data) % $bs;
 
     return $result unless (length($self->{'buffer'}) >= $bs);
 
@@ -245,14 +245,14 @@ sub crypt (\$$){
 
     foreach my $block (@blocks) {
       if ($d) { # decrypting
-        $result .= $iv = $iv ^ $self->{'crypt'}->decrypt($block);
-        $iv = $block unless $self->{pcbc};
+	$result .= $iv = $iv ^ $self->{'crypt'}->decrypt($block);
+	$iv = $block unless $self->{pcbc};
       } else { # encrypting
-        $result .= $iv = $self->{'crypt'}->encrypt($iv ^ $block);
+	$result .= $iv = $self->{'crypt'}->encrypt($iv ^ $block);
       }
       $iv = $iv ^ $block if $self->{pcbc};
     }
-    $self->{'civ'} = $iv;               # remember the iv
+    $self->{'civ'} = $iv;	        # remember the iv
     return $result;
 }
 
@@ -266,14 +266,14 @@ sub finish (\$) {
 
     my $result;
     if ($self->{'decrypt'}) { #decrypting
-        $block = length $block ? pack("a$bs",$block) : ''; # pad and truncate to block size
-
-        if (length($block)) {
-          $result = $self->{'civ'} ^ $self->{'crypt'}->decrypt($block);
-          $result = $self->{'padding'}->($result, $bs, 'd');
-        } else {
-          $result = '';
-        }
+	$block = length $block ? pack("a$bs",$block) : ''; # pad and truncate to block size
+	
+	if (length($block)) {
+	  $result = $self->{'civ'} ^ $self->{'crypt'}->decrypt($block);
+	  $result = $self->{'padding'}->($result, $bs, 'd');
+	} else {
+	  $result = '';
+	}
 
     } else { # encrypting
       $block  = $self->{'padding'}->($block,$bs,'e') || '';
@@ -334,7 +334,7 @@ sub _generate_iv_and_cipher_from_datastream {
   # now we can generate the crypt object itself
   $self->{crypt} = ref $self->{cipher} ? $self->{cipher}
                                        : $self->{cipher}->new($self->{key})
-                                         or croak "Could not create $self->{cipher} object: $@";
+					 or croak "Could not create $self->{cipher} object: $@";
   return '';
 }
 
@@ -377,7 +377,7 @@ sub _generate_iv_and_cipher_from_options {
   $self->_taintcheck($self->{key});
   $self->{crypt} = ref $self->{cipher} ? $self->{cipher}
                                        : $self->{cipher}->new($self->{key})
-                                         or croak "Could not create $self->{cipher} object: $@";
+					 or croak "Could not create $self->{cipher} object: $@";
   return $result;
 }
 
@@ -390,16 +390,16 @@ sub _taintcheck {
     my $tainted;
 
     if ($has_scalar_util) {
-        $tainted = Scalar::Util::tainted($key);
+	$tainted = Scalar::Util::tainted($key);
     } else {
-        local($@, $SIG{__DIE__}, $SIG{__WARN__});
-        local $^W = 0;
-        eval { kill 0 * $key };
-        $tainted = $@ =~ /^Insecure/;
+	local($@, $SIG{__DIE__}, $SIG{__WARN__});
+	local $^W = 0;
+	eval { kill 0 * $key };
+	$tainted = $@ =~ /^Insecure/;
     }
 
     croak "Taint checks are turned on and your key is tainted. Please untaint the key and try again"
-        if $tainted;
+	if $tainted;
 }
 
 sub _key_from_key {
@@ -584,8 +584,8 @@ Crypt::CBC - Encrypt Data with Cipher Block Chaining Mode
 
   use Crypt::CBC;
   $cipher = Crypt::CBC->new( -key    => 'my secret key',
-                             -cipher => 'Blowfish'
-                            );
+			     -cipher => 'Blowfish'
+			    );
 
   $ciphertext = $cipher->encrypt("This data is hush hush");
   $plaintext  = $cipher->decrypt($ciphertext);
@@ -633,15 +633,15 @@ operate on a whole data value at once.
 =head2 new()
 
   $cipher = Crypt::CBC->new( -key    => 'my secret key',
-                             -cipher => 'Blowfish',
-                           );
+			     -cipher => 'Blowfish',
+			   );
 
   # or (for compatibility with versions prior to 2.13)
   $cipher = Crypt::CBC->new( {
                               key    => 'my secret key',
-                              cipher => 'Blowfish'
+			      cipher => 'Blowfish'
                              }
-                           );
+			   );
 
 
   # or (for compatibility with versions prior to 2.0)
@@ -677,7 +677,7 @@ The new() method creates a new Crypt::CBC object. It accepts a list of
   -literal_key    If true, the key provided by "key" is used directly
                       for encryption/decryption.  Otherwise the actual
                       key used will be a hash of the provided key.
-                      (default false)
+		      (default false)
 
   -pcbc           Whether to use the PCBC chaining algorithm rather than
                     the standard CBC algorithm (default false).
@@ -845,7 +845,7 @@ decryption.
    $ciphertext = $cipher->crypt($plaintext);
 
 After calling start(), you should call crypt() as many times as
-necessary to encrypt the desired data.
+necessary to encrypt the desired data.  
 
 =head2  finish()
 
@@ -971,9 +971,9 @@ it must be padded. Padding methods include: "standard" (i.e., PKCS#5),
 "oneandzeroes", "space", "rijndael_compat" and "null".
 
    standard: (default) Binary safe
-      pads with the number of bytes that should be truncated. So, if
+      pads with the number of bytes that should be truncated. So, if 
       blocksize is 8, then "0A0B0C" will be padded with "05", resulting
-      in "0A0B0C0505050505". If the final block is a full block of 8
+      in "0A0B0C0505050505". If the final block is a full block of 8 
       bytes, then a whole block of "0808080808080808" is appended.
 
    oneandzeroes: Binary safe
@@ -989,7 +989,7 @@ it must be padded. Padding methods include: "standard" (i.e., PKCS#5),
       of 16 bytes.
 
    null: text only
-      pads with as many "00" necessary to fill the block. If the last
+      pads with as many "00" necessary to fill the block. If the last 
       block is a full block and blocksize is 8, a block of
       "0000000000000000" will be appended.
 
@@ -1017,7 +1017,7 @@ in to always be that length. See _standard_padding(), _space_padding(),
 _null_padding(), or _oneandzeroes_padding() in the source for examples.
 
 Standard and oneandzeroes padding are recommended, as both space and
-null padding can potentially truncate more characters than they should.
+null padding can potentially truncate more characters than they should. 
 
 =head1 EXAMPLES
 

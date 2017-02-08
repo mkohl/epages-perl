@@ -4,19 +4,19 @@ Crypt::Eksblowfish - the Eksblowfish block cipher
 
 =head1 SYNOPSIS
 
-        use Crypt::Eksblowfish;
+	use Crypt::Eksblowfish;
 
-        $block_size = Crypt::Eksblowfish->blocksize;
+	$block_size = Crypt::Eksblowfish->blocksize;
 
-        $cipher = Crypt::Eksblowfish->new(8, $salt, $key);
+	$cipher = Crypt::Eksblowfish->new(8, $salt, $key);
 
-        $block_size = $cipher->blocksize;
-        $ciphertext = $cipher->encrypt($plaintext);
-        $plaintext = $cipher->decrypt($ciphertext);
+	$block_size = $cipher->blocksize;
+	$ciphertext = $cipher->encrypt($plaintext);
+	$plaintext = $cipher->decrypt($ciphertext);
 
-        $p_array = $cipher->p_array;
-        $s_boxes = $cipher->s_boxes;
-        if($cipher->is_weak) { ...
+	$p_array = $cipher->p_array;
+	$s_boxes = $cipher->s_boxes;
+	if($cipher->is_weak) { ...
 
 =head1 DESCRIPTION
 
@@ -52,7 +52,7 @@ our $VERSION = "0.009";
 use parent "Crypt::Eksblowfish::Subkeyed";
 
 die "mismatched versions of Crypt::Eksblowfish modules"
-        unless $Crypt::Eksblowfish::Subkeyed::VERSION eq $VERSION;
+	unless $Crypt::Eksblowfish::Subkeyed::VERSION eq $VERSION;
 
 =head1 CLASS METHODS
 

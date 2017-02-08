@@ -11,7 +11,7 @@ $VERSION = "1.00";
 
 @DoW = qw(domingo lunes martes miércoles jueves viernes sábado);
 @MoY = qw(enero febrero marzo abril mayo junio
-          julio agosto septiembre octubre noviembre diciembre);
+	  julio agosto septiembre octubre noviembre diciembre);
 @DoWs = map { substr($_,0,3) } @DoW;
 @MoYs = map { substr($_,0,3) } @MoY;
 @AMPM = qw(AM PM);

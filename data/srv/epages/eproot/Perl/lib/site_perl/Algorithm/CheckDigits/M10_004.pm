@@ -104,7 +104,7 @@ CheckDigits::M10_004 - compute check digits for 2aus5, EAN, ILN, ISBN13, NVE
   $ean = CheckDigits('ean');
 
   if ($ean->is_valid('7622200004607')) {
-        # do something
+	# do something
   }
 
   $cn = $ean->complete('762220000460');
@@ -115,7 +115,7 @@ CheckDigits::M10_004 - compute check digits for 2aus5, EAN, ILN, ISBN13, NVE
 
   $bn = $ean->basenumber('7622200004607');
   # $bn = '762220000460'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

@@ -10,79 +10,79 @@ our $VERSION = '1.1.2';
 our @ISA = qw(Algorithm::CheckDigits);
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^([-\d.]+)(\d\d)$/) {
-                return $2 eq $self->_compute_checkdigit($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^([-\d.]+)(\d\d)$/) {
+		return $2 eq $self->_compute_checkdigit($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^[-\d.]+$/) {
-                my $cd = $self->_compute_checkdigit($number);
-                return $number . $cd unless 0 > $cd;
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^[-\d.]+$/) {
+		my $cd = $self->_compute_checkdigit($number);
+		return $number . $cd unless 0 > $cd;
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^([-\d.]+)(\d\d)$/) {
-                return $1 if ($2 eq $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([-\d.]+)(\d\d)$/) {
+		return $1 if ($2 eq $self->_compute_checkdigit($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^([-\d.]+)(\d\d)$/) {
-                return $2 if ($2 eq $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([-\d.]+)(\d\d)$/) {
+		return $2 if ($2 eq $self->_compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
-        my ($cd1,$cd2) = ('','');
+	my $self   = shift;
+	my $number = shift;
+	my ($cd1,$cd2) = ('','');
 
-        my $calc_cd = sub {
-                my $number = shift;
-                my $weight = shift;
-                my @digits = split(//,$number);
-                my $sum    = 0;
-                for (my $i = 0; $i <= $#digits; $i++) {
-                        $sum += $weight * $digits[$i];
-                        --$weight;
-                };
-                $sum %= 11;
-                return 0 if (2 > $sum);
-                return 11 - $sum;
-        };
+	my $calc_cd = sub {
+		my $number = shift;
+		my $weight = shift;
+		my @digits = split(//,$number);
+		my $sum    = 0;
+		for (my $i = 0; $i <= $#digits; $i++) {
+			$sum += $weight * $digits[$i];
+			--$weight;
+		};
+		$sum %= 11;
+		return 0 if (2 > $sum);
+		return 11 - $sum;
+	};
 
-        return -1 unless ($number =~ /^[-\d.]+$/);
+	return -1 unless ($number =~ /^[-\d.]+$/);
 
-        $number =~ s/[-.]//g;
-        if ('cpf' eq $self->{type}) {
-                return -1 unless length($number) == 9;
-                $cd1 = $calc_cd->($number,10);
-                $cd2 = $calc_cd->($number . $cd1,11);
-        } elsif ('titulo_eleitor' eq $self->{type}) {
-                $number = substr("00000000000" . $number, -10);
-                $cd1 = $calc_cd->(substr($number,0,8),9);
-                $cd2 = $calc_cd->(substr($number,-2) . $cd1,4);
-        }
-        return $cd1 . $cd2;
+	$number =~ s/[-.]//g;
+	if ('cpf' eq $self->{type}) {
+		return -1 unless length($number) == 9;
+		$cd1 = $calc_cd->($number,10);
+		$cd2 = $calc_cd->($number . $cd1,11);
+	} elsif ('titulo_eleitor' eq $self->{type}) {
+		$number = substr("00000000000" . $number, -10);
+		$cd1 = $calc_cd->(substr($number,0,8),9);
+		$cd2 = $calc_cd->(substr($number,-2) . $cd1,4);
+	}
+	return $cd1 . $cd2;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -103,7 +103,7 @@ CheckDigits::M11_004 - compute check digits for CPF (BR), Título Eleitoral (BR)
   $cpf = CheckDigits('cpf');
 
   if ($cpf->is_valid('043.033.407-90')) {
-        # do something
+	# do something
   }
 
   $cn = $cpf->complete('043.033.407-');
@@ -114,7 +114,7 @@ CheckDigits::M11_004 - compute check digits for CPF (BR), Título Eleitoral (BR)
 
   $bn = $cpf->basenumber('043.033.407-90');
   # $bn = '043.033.407-'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

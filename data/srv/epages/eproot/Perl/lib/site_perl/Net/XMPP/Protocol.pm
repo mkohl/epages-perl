@@ -1056,8 +1056,8 @@ sub SetIQCallBacks
 
         foreach my $type (keys(%{$hash}))
         {
-                $self->{DEBUG}->Log1("SetIQCallBacks: type($type) func($hash->{$type}) ".
-                        "namespace($namespace)");
+	    	$self->{DEBUG}->Log1("SetIQCallBacks: type($type) func($hash->{$type}) ".
+	    		"namespace($namespace)");
             if (defined($hash->{$type}))
             {
                 $self->{CB}->{IQns}->{$namespace}->{$type} = $hash->{$type};
@@ -1083,7 +1083,7 @@ sub SetPresenceCallBacks
 
     foreach my $type (keys(%types))
     {
-        $self->{DEBUG}->Log1("SetPresenceCallBacks: type($type) func($types{$type})");
+    	$self->{DEBUG}->Log1("SetPresenceCallBacks: type($type) func($types{$type})");
 
         if (defined($types{$type}))
         {
@@ -1109,7 +1109,7 @@ sub SetMessageCallBacks
 
     foreach my $type (keys(%types))
     {
-        $self->{DEBUG}->Log1("SetMessageCallBacks: type($type) func($types{$type})");
+    	$self->{DEBUG}->Log1("SetMessageCallBacks: type($type) func($types{$type})");
 
         if (defined($types{$type}))
         {
@@ -3170,7 +3170,7 @@ sub callbackMessage
     my $type = "normal";
     $type = $message->GetType() if $message->DefinedType();
 
-        $self->{DEBUG}->Log1("callbackMessage: type($type) sid($sid) ");
+   	$self->{DEBUG}->Log1("callbackMessage: type($type) sid($sid) ");
 
     if (exists($self->{CB}->{Mess}->{$type})
       #&& (ref($self->{CB}->{Mess}->{$type}) =~ /CODE/)
@@ -3180,7 +3180,7 @@ sub callbackMessage
     }
     else
     {
-        $self->{DEBUG}->Log1("callbackMessage: type($type) not code (ref($self->{CB}->{Mess}->{$type})) ");
+      	$self->{DEBUG}->Log1("callbackMessage: type($type) not code (ref($self->{CB}->{Mess}->{$type})) ");
     }
 }
 
@@ -3199,7 +3199,7 @@ sub callbackPresence
     my $type = "available";
     $type = $presence->GetType() if $presence->DefinedType();
 
-        $self->{DEBUG}->Log1("callbackPresence: type($type) sid($sid) ");
+   	$self->{DEBUG}->Log1("callbackPresence: type($type) sid($sid) ");
 
     if (exists($self->{CB}->{Pres}->{$type})
 #       && (ref($self->{CB}->{Pres}->{$type}) =~ /CODE/)

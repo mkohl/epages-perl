@@ -32,15 +32,15 @@ sub asn_recv { # $socket, $buffer, $flags
     if ($depth) { # Are we searching of "\0\0"
 
       unless (2+$pos <= length $buf) {
-        next MORE if $n == length $buf;
-        last MORE;
+	next MORE if $n == length $buf;
+	last MORE;
       }
 
       if(substr($buf,$pos,2) eq "\0\0") {
-        unless (--$depth) {
-          $len = $pos + 2;
-          last MORE;
-        }
+	unless (--$depth) {
+	  $len = $pos + 2;
+	  last MORE;
+	}
       }
     }
 
@@ -62,12 +62,12 @@ sub asn_recv { # $socket, $buffer, $flags
 
     if ($lb) {
       if ($depth) {
-        $pos += $tb + $lb + $len;
-        redo MORE;
+	$pos += $tb + $lb + $len;
+	redo MORE;
       }
       else {
-        $len += $tb + $lb + $pos;
-        last MORE;
+	$len += $tb + $lb + $pos;
+	last MORE;
       }
     }
   }
@@ -76,12 +76,12 @@ sub asn_recv { # $socket, $buffer, $flags
     if ($len > length $buf) {
       # Check we can read the whole element
       goto error
-        unless defined($peer = recv($_[0],$buf,$len,MSG_PEEK));
+	unless defined($peer = recv($_[0],$buf,$len,MSG_PEEK));
 
       if ($len > length $buf) {
-        # Cannot get whole element
-        $_[1]='';
-        return $peer;
+	# Cannot get whole element
+	$_[1]='';
+	return $peer;
       }
     }
     elsif ($len == 0) {
@@ -128,14 +128,14 @@ sub asn_read { # $fh, $buffer, $offset
   my $ch;
   my $n;
   my $e;
-
+  
 
   while(1) {
     $need = ($pos + ($depth * 2)) || 2;
 
     while(($n = $need - length $_[1]) > 0) {
       $e = sysread($_[0],$_[1],$n,length $_[1]) or
-        goto READ_ERR;
+	goto READ_ERR;
     }
 
     my $tch = ord(substr($_[1],$pos++,1));
@@ -144,11 +144,11 @@ sub asn_read { # $fh, $buffer, $offset
       my $ch;
       do {
         $need++;
-        while(($n = $need - length $_[1]) > 0) {
-          $e = sysread($_[0],$_[1],$n,length $_[1]) or
-              goto READ_ERR;
-        }
-        $ch = ord(substr($_[1],$pos++,1));
+	while(($n = $need - length $_[1]) > 0) {
+	  $e = sysread($_[0],$_[1],$n,length $_[1]) or
+	      goto READ_ERR;
+	}
+	$ch = ord(substr($_[1],$pos++,1));
       } while($ch & 0x80);
     }
 
@@ -156,21 +156,21 @@ sub asn_read { # $fh, $buffer, $offset
 
     while(($n = $need - length $_[1]) > 0) {
       $e = sysread($_[0],$_[1],$n,length $_[1]) or
-          goto READ_ERR;
+	  goto READ_ERR;
     }
 
     my $len = ord(substr($_[1],$pos++,1));
 
     if($len & 0x80) {
       unless ($len &= 0x7f) {
-        $depth++;
-        next;
+	$depth++;
+	next;
       }
       $need = $pos + $len;
 
       while(($n = $need - length $_[1]) > 0) {
-        $e = sysread($_[0],$_[1],$n,length $_[1]) or
-            goto READ_ERR;
+	$e = sysread($_[0],$_[1],$n,length $_[1]) or
+	    goto READ_ERR;
       }
 
       $pos += $len + unpack("N", "\0" x (4 - $len) . substr($_[1],$pos,$len));
@@ -178,7 +178,7 @@ sub asn_read { # $fh, $buffer, $offset
     elsif (!$len && !$tch) {
       die "Bad ASN PDU" unless $depth;
       unless (--$depth) {
-        last;
+	last;
       }
     }
     else {
@@ -246,7 +246,7 @@ sub asn_ready { # $fh
   my $href = \%{*$fh};
 
   return 0 unless exists $href->{'asn_buffer'};
-
+  
   return $href->{'asn_need'} <= length $href->{'asn_buffer'}
     if exists $href->{'asn_need'};
 

@@ -155,9 +155,9 @@ sub _reap {
   # Try to wait on the process.  Use the OS dependent wait call using
   # the Proc::Background::*::waitpid call, which returns one of three
   # values.
-  #   (0, exit_value)   : sucessfully waited on.
-  #   (1, undef)        : process already reaped and exist value lost.
-  #   (2, undef)        : process still running.
+  #   (0, exit_value)	: sucessfully waited on.
+  #   (1, undef)	: process already reaped and exist value lost.
+  #   (2, undef)	: process still running.
   my ($result, $exit_value) = $self->_waitpid($timeout);
   if ($result == 0 or $result == 1) {
     $self->{_exit_value} = defined($exit_value) ? $exit_value : 0;

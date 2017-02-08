@@ -43,7 +43,7 @@ sub _t {
     "{0,1}"
 }
 
-# Returns the (sub)pattern for the country named '$name', and the
+# Returns the (sub)pattern for the country named '$name', and the 
 # -country option '$country'.
 sub _c {
     my ($name, $country) = @_;
@@ -73,7 +73,7 @@ my %zip = (
                     # Postal codes of the form: 'DDDD', with the first
                     # digit representing the distribution region, the
                     # second digit the distribution district. Postal
-                    # codes do not start with a zero. Postal codes
+                    # codes do not start with a zero. Postal codes 
                     # starting with '39' are in Greenland.
 
     France      =>  "(?k:(?k:[0-8][0-9]|9[0-8])(?k:[0-9]{3}))",
@@ -189,25 +189,25 @@ pattern name    => [qw /zip US -prefix= -country= -extended= -sep=-/],
 # pattern name   => [qw /zip British/, "-sep= "],
 #         create => sub {
 #             my $sep     = $_ [1] -> {-sep};
-#
+# 
 #             my $london  = '(?:EC[1-4]|WC[12]|S?W1)[A-Z]';
 #             my $single  = '[BGLMS][0-9]{1,2}';
 #             my $double  = '[A-Z]{2}[0-9]{1,2}';
-#
+# 
 #             my $left    = "(?:$london|$single|$double)";
 #             my $right   = '[0-9][ABD-HJLNP-UW-Z]{2}';
-#
+# 
 #             "(?k:(?k:$left)(?k:$sep)(?k:$right))";
 #         },
 #         ;
-#
+# 
 # pattern name   => [qw /zip Canadian/, "-sep= "],
 #         create => sub {
 #             my $sep     = $_ [1] -> {-sep};
-#
+# 
 #             my $left    = '[A-Z][0-9][A-Z]';
 #             my $right   = '[0-9][A-Z][0-9]';
-#
+# 
 #             "(?k:(?k:$left)(?k:$sep)(?k:$right))";
 #         },
 #         ;
@@ -274,7 +274,7 @@ Examples:
 
  /$RE{zip}{Germany}/;
            # Matches 'DE-12345' and 'D-12345'.
- /$RE{zip}{Germany}{-country => 'iso'}/;
+ /$RE{zip}{Germany}{-country => 'iso'}/; 
            # Matches 'DE-12345' but not 'D-12345'.
  /$RE{zip}{Germany}{-country => 'cept'}/;
            # Matches 'D-12345' but not 'DE-12345'.
@@ -301,7 +301,7 @@ Examples:
 Returns a pattern that recognizes Australian postal codes. Australian
 postal codes consist of four digits; the first two digits, which range
 from '10' to '97', indicate the state. Territories use '02' or '08'
-as starting digits; the leading zero is optional. '0909' is the only
+as starting digits; the leading zero is optional. '0909' is the only 
 postal code starting with '09' (the leading zero is optional here as
 well) - this is the postal code for the Nothern Territory University).
 The (optional) country
@@ -447,7 +447,7 @@ The last three digits.
 
 Returns a pattern that recognizes German postal codes. German postal
 codes consist of five numbers; the first number indicating the
-distribution zone, the second the distribution region, while the
+distribution zone, the second the distribution region, while the 
 latter three indicate the distribution district and the postal town.
 The (optional) country prefixes are I<DE> (ISO country code) and
 I<D> (CEPT code).
@@ -525,7 +525,7 @@ Returns a pattern recognizing Italian postal codes. Italian postal
 codes consist of 5 digits. The first digit indicates the region, the
 second the province. The third digit is odd for province capitals,
 and even for the province itself. The fourth digit indicates the
-route, and the fifth a place on the route (0 for small places,
+route, and the fifth a place on the route (0 for small places, 
 alphabetically for the rest).
 
 The country prefix is either I<IT> (the ISO country code), or
@@ -555,7 +555,7 @@ The region.
 
 The province.
 
-=item $6
+=item $6 
 
 Capital or province.
 
@@ -574,7 +574,7 @@ The place on the route.
 Returns a pattern that recognizes Dutch postal codes. Dutch postal
 codes consist of 4 digits and 2 letters, separated by a space.
 The separator can be changed using the C<{-sep}> option, as discussed
-above. The (optional) country prefix is I<NL>, which is both the
+above. The (optional) country prefix is I<NL>, which is both the 
 ISO country code and the CEPT code. Regexp::Common 2.107 and earlier
 used C<$RE{zip}{Dutch}>. This is still supported.
 
@@ -602,7 +602,7 @@ The digits part of the postal code.
 
 The separator between the digits and the letters.
 
-=item $6
+=item $6 
 
 The letters part of the postal code.
 
@@ -687,7 +687,7 @@ fourth the post office number.
 
 Returns a pattern that recognizes US zip codes. US zip codes consist
 of 5 digits, with an optional 4 digit extension. By default, extensions
-are allowed, but not required. This can be influenced by the
+are allowed, but not required. This can be influenced by the 
 C<-extended> option. If its argument starts with a C<y>,
 extensions are required; if the argument starts with a C<n>,
 extensions will not be recognized. If an extension is used, a dash
@@ -729,7 +729,7 @@ a post office facility or delivery area. New in Regexp::Common 2.119.
 
 =item $7
 
-The separator between the 5 digit part and the 4 digit part. Up to
+The separator between the 5 digit part and the 4 digit part. Up to 
 Regexp::Common 2.118, this used to be $5.
 
 =item $8

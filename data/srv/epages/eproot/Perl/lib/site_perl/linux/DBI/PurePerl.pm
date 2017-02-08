@@ -1,6 +1,6 @@
 ########################################################################
-package         # hide from PAUSE
-        DBI;
+package		# hide from PAUSE
+	DBI;
 # vim: ts=8:sw=4
 ########################################################################
 #
@@ -112,19 +112,19 @@ use constant SQL_CURSOR_DYNAMIC       => 2;
 use constant SQL_CURSOR_STATIC        => 3;
 use constant SQL_CURSOR_TYPE_DEFAULT  => SQL_CURSOR_FORWARD_ONLY;
 
-use constant IMA_HAS_USAGE      => 0x0001; #/* check parameter usage    */
-use constant IMA_FUNC_REDIRECT  => 0x0002; #/* is $h->func(..., "method")*/
-use constant IMA_KEEP_ERR       => 0x0004; #/* don't reset err & errstr */
-use constant IMA_KEEP_ERR_SUB   => 0x0008; #/*  '' if in nested call */
-use constant IMA_NO_TAINT_IN    => 0x0010; #/* don't check for tainted args*/
-use constant IMA_NO_TAINT_OUT   => 0x0020; #/* don't taint results      */
+use constant IMA_HAS_USAGE	=> 0x0001; #/* check parameter usage	*/
+use constant IMA_FUNC_REDIRECT	=> 0x0002; #/* is $h->func(..., "method")*/
+use constant IMA_KEEP_ERR	=> 0x0004; #/* don't reset err & errstr	*/
+use constant IMA_KEEP_ERR_SUB	=> 0x0008; #/*  '' if in nested call */
+use constant IMA_NO_TAINT_IN   	=> 0x0010; #/* don't check for tainted args*/
+use constant IMA_NO_TAINT_OUT   => 0x0020; #/* don't taint results	*/
 use constant IMA_COPY_UP_STMT   => 0x0040; #/* copy sth Statement to dbh */
-use constant IMA_END_WORK       => 0x0080; #/* set on commit & rollback */
-use constant IMA_STUB           => 0x0100; #/* donothing eg $dbh->connected */
+use constant IMA_END_WORK	=> 0x0080; #/* set on commit & rollback	*/
+use constant IMA_STUB		=> 0x0100; #/* donothing eg $dbh->connected */
 use constant IMA_CLEAR_STMT     => 0x0200; #/* clear Statement before call  */
 use constant IMA_UNRELATED_TO_STMT=> 0x0400; #/* profile as empty Statement   */
-use constant IMA_NOT_FOUND_OKAY => 0x0800; #/* not error if not found */
-use constant IMA_EXECUTE        => 0x1000; #/* do/execute: DBIcf_Executed   */
+use constant IMA_NOT_FOUND_OKAY	=> 0x0800; #/* not error if not found */
+use constant IMA_EXECUTE	=> 0x1000; #/* do/execute: DBIcf_Executed   */
 use constant IMA_SHOW_ERR_STMT  => 0x2000; #/* dbh meth relates to Statement*/
 use constant IMA_HIDE_ERR_PARAMVALUES => 0x4000; #/* ParamValues are not relevant */
 use constant IMA_IS_FACTORY     => 0x8000; #/* new h ie connect & prepare */
@@ -134,65 +134,65 @@ use constant DBIstcf_STRICT           => 0x0001;
 use constant DBIstcf_DISCARD_STRING   => 0x0002;
 
 my %is_flag_attribute = map {$_ =>1 } qw(
-        Active
-        AutoCommit
-        ChopBlanks
-        CompatMode
-        Executed
-        Taint
-        TaintIn
-        TaintOut
-        InactiveDestroy
-        AutoInactiveDestroy
-        LongTruncOk
-        MultiThread
-        PrintError
-        PrintWarn
-        RaiseError
-        ShowErrorStatement
-        Warn
+	Active
+	AutoCommit
+	ChopBlanks
+	CompatMode
+	Executed
+	Taint
+	TaintIn
+	TaintOut
+	InactiveDestroy
+	AutoInactiveDestroy
+	LongTruncOk
+	MultiThread
+	PrintError
+	PrintWarn
+	RaiseError
+	ShowErrorStatement
+	Warn
 );
 my %is_valid_attribute = map {$_ =>1 } (keys %is_flag_attribute, qw(
-        ActiveKids
-        Attribution
-        BegunWork
-        CachedKids
+	ActiveKids
+	Attribution
+	BegunWork
+	CachedKids
         Callbacks
-        ChildHandles
-        CursorName
-        Database
-        DebugDispatch
-        Driver
+	ChildHandles
+	CursorName
+	Database
+	DebugDispatch
+	Driver
         Err
         Errstr
-        ErrCount
-        FetchHashKeyName
-        HandleError
-        HandleSetErr
-        ImplementorClass
-        Kids
-        LongReadLen
-        NAME NAME_uc NAME_lc NAME_uc_hash NAME_lc_hash
-        NULLABLE
-        NUM_OF_FIELDS
-        NUM_OF_PARAMS
-        Name
-        PRECISION
-        ParamValues
-        Profile
-        Provider
+	ErrCount
+	FetchHashKeyName
+	HandleError
+	HandleSetErr
+	ImplementorClass
+	Kids
+	LongReadLen
+	NAME NAME_uc NAME_lc NAME_uc_hash NAME_lc_hash
+	NULLABLE
+	NUM_OF_FIELDS
+	NUM_OF_PARAMS
+	Name
+	PRECISION
+	ParamValues
+	Profile
+	Provider
         ReadOnly
-        RootClass
-        RowCacheSize
-        RowsInCache
-        SCALE
+	RootClass
+	RowCacheSize
+	RowsInCache
+	SCALE
         State
-        Statement
-        TYPE
+	Statement
+	TYPE
         Type
-        TraceLevel
-        Username
-        Version
+	TraceLevel
+	Username
+	Version
 ));
 
 sub valid_attribute {
@@ -206,7 +206,7 @@ my $initial_setup;
 sub initial_setup {
     $initial_setup = 1;
     print $DBI::tfh  __FILE__ . " version " . $DBI::PurePerl::VERSION . "\n"
-        if $DBI::dbi_debug & 0xF;
+	if $DBI::dbi_debug & 0xF;
     untie $DBI::err;
     untie $DBI::errstr;
     untie $DBI::state;
@@ -226,88 +226,88 @@ sub  _install_method {
 
     push @pre_call_frag, q{
         # ignore DESTROY for outer handle (DESTROY for inner likely to follow soon)
-        return if $h_inner;
+	return if $h_inner;
         # handle AutoInactiveDestroy and InactiveDestroy
         $h->{InactiveDestroy} = 1
             if $h->{AutoInactiveDestroy} and $$ != $h->{dbi_pp_pid};
         $h->{Active} = 0
             if $h->{InactiveDestroy};
-        # copy err/errstr/state up to driver so $DBI::err etc still work
-        if ($h->{err} and my $drh = $h->{Driver}) {
-            $drh->{$_} = $h->{$_} for ('err','errstr','state');
-        }
+	# copy err/errstr/state up to driver so $DBI::err etc still work
+	if ($h->{err} and my $drh = $h->{Driver}) {
+	    $drh->{$_} = $h->{$_} for ('err','errstr','state');
+	}
     } if $method_name eq 'DESTROY';
 
     push @pre_call_frag, q{
-        return $h->{$_[0]} if exists $h->{$_[0]};
+	return $h->{$_[0]} if exists $h->{$_[0]};
     } if $method_name eq 'FETCH' && !exists $ENV{DBI_TRACE}; # XXX ?
 
     push @pre_call_frag, "return;"
-        if IMA_STUB & $bitmask;
+	if IMA_STUB & $bitmask;
 
     push @pre_call_frag, q{
-        $method_name = pop @_;
+	$method_name = pop @_;
     } if IMA_FUNC_REDIRECT & $bitmask;
 
     push @pre_call_frag, q{
-        my $parent_dbh = $h->{Database};
+	my $parent_dbh = $h->{Database};
     } if (IMA_COPY_UP_STMT|IMA_EXECUTE) & $bitmask;
 
     push @pre_call_frag, q{
-        warn "No Database set for $h on $method_name!" unless $parent_dbh; # eg proxy problems
-        $parent_dbh->{Statement} = $h->{Statement} if $parent_dbh;
+	warn "No Database set for $h on $method_name!" unless $parent_dbh; # eg proxy problems
+	$parent_dbh->{Statement} = $h->{Statement} if $parent_dbh;
     } if IMA_COPY_UP_STMT & $bitmask;
 
     push @pre_call_frag, q{
-        $h->{Executed} = 1;
-        $parent_dbh->{Executed} = 1 if $parent_dbh;
+	$h->{Executed} = 1;
+	$parent_dbh->{Executed} = 1 if $parent_dbh;
     } if IMA_EXECUTE & $bitmask;
 
     push @pre_call_frag, q{
-        %{ $h->{CachedKids} } = () if $h->{CachedKids};
+	%{ $h->{CachedKids} } = () if $h->{CachedKids};
     } if IMA_CLEAR_CACHED_KIDS & $bitmask;
 
     if (IMA_KEEP_ERR & $bitmask) {
-        push @pre_call_frag, q{
-            my $keep_error = 1;
-        };
+	push @pre_call_frag, q{
+	    my $keep_error = 1;
+	};
     }
     else {
-        my $ke_init = (IMA_KEEP_ERR_SUB & $bitmask)
-                ? q{= $h->{dbi_pp_parent}->{dbi_pp_call_depth} }
-                : "";
-        push @pre_call_frag, qq{
-            my \$keep_error $ke_init;
-        };
-        my $keep_error_code = q{
-            #warn "$method_name cleared err";
-            $h->{err}    = $DBI::err    = undef;
-            $h->{errstr} = $DBI::errstr = undef;
-            $h->{state}  = $DBI::state  = '';
-        };
-        $keep_error_code = q{
-            printf $DBI::tfh "    !! %s: %s CLEARED by call to }.$method_name.q{ method\n".
-                    $h->{err}, $h->{err}
-                if defined $h->{err} && $DBI::dbi_debug & 0xF;
-        }. $keep_error_code
-            if exists $ENV{DBI_TRACE};
-        push @pre_call_frag, ($ke_init)
-                ? qq{ unless (\$keep_error) { $keep_error_code }}
-                : $keep_error_code
-            unless $method_name eq 'set_err';
+	my $ke_init = (IMA_KEEP_ERR_SUB & $bitmask)
+		? q{= $h->{dbi_pp_parent}->{dbi_pp_call_depth} }
+		: "";
+	push @pre_call_frag, qq{
+	    my \$keep_error $ke_init;
+	};
+	my $keep_error_code = q{
+	    #warn "$method_name cleared err";
+	    $h->{err}    = $DBI::err    = undef;
+	    $h->{errstr} = $DBI::errstr = undef;
+	    $h->{state}  = $DBI::state  = '';
+	};
+	$keep_error_code = q{
+	    printf $DBI::tfh "    !! %s: %s CLEARED by call to }.$method_name.q{ method\n".
+		    $h->{err}, $h->{err}
+		if defined $h->{err} && $DBI::dbi_debug & 0xF;
+	}. $keep_error_code
+	    if exists $ENV{DBI_TRACE};
+	push @pre_call_frag, ($ke_init)
+		? qq{ unless (\$keep_error) { $keep_error_code }}
+		: $keep_error_code
+	    unless $method_name eq 'set_err';
     }
 
     push @pre_call_frag, q{
-        my $ErrCount = $h->{ErrCount};
+	my $ErrCount = $h->{ErrCount};
     };
 
     push @pre_call_frag, q{
         if (($DBI::dbi_debug & 0xF) >= 2) {
-            local $^W;
-            my $args = join " ", map { DBI::neat($_) } ($h, @_);
-            printf $DBI::tfh "    > $method_name in $imp ($args) [$@]\n";
-        }
-    } if exists $ENV{DBI_TRACE};        # note use of 'exists'
+	    local $^W;
+	    my $args = join " ", map { DBI::neat($_) } ($h, @_);
+	    printf $DBI::tfh "    > $method_name in $imp ($args) [$@]\n";
+	}
+    } if exists $ENV{DBI_TRACE};	# note use of 'exists'
 
     push @pre_call_frag, q{
         $h->{'dbi_pp_last_method'} = $method_name;
@@ -318,22 +318,22 @@ sub  _install_method {
 
     push @post_call_frag, q{
         if (my $trace_level = ($DBI::dbi_debug & 0xF)) {
-            if ($h->{err}) {
-                printf $DBI::tfh "    !! ERROR: %s %s\n", $h->{err}, $h->{errstr};
-            }
-            my $ret = join " ", map { DBI::neat($_) } @ret;
-            my $msg = "    < $method_name= $ret";
-            $msg = ($trace_level >= 2) ? Carp::shortmess($msg) : "$msg\n";
-            print $DBI::tfh $msg;
-        }
+	    if ($h->{err}) {
+		printf $DBI::tfh "    !! ERROR: %s %s\n", $h->{err}, $h->{errstr};
+	    }
+	    my $ret = join " ", map { DBI::neat($_) } @ret;
+	    my $msg = "    < $method_name= $ret";
+	    $msg = ($trace_level >= 2) ? Carp::shortmess($msg) : "$msg\n";
+	    print $DBI::tfh $msg;
+	}
     } if exists $ENV{DBI_TRACE}; # note use of exists
 
     push @post_call_frag, q{
-        $h->{Executed} = 0;
-        if ($h->{BegunWork}) {
-            $h->{BegunWork}  = 0;
-            $h->{AutoCommit} = 1;
-        }
+	$h->{Executed} = 0;
+	if ($h->{BegunWork}) {
+	    $h->{BegunWork}  = 0;
+	    $h->{AutoCommit} = 1;
+	}
     } if IMA_END_WORK & $bitmask;
 
     push @post_call_frag, q{
@@ -347,105 +347,105 @@ sub  _install_method {
     } if IMA_IS_FACTORY & $bitmask;
 
     push @post_call_frag, q{
-        $keep_error = 0 if $keep_error && $h->{ErrCount} > $ErrCount;
+	$keep_error = 0 if $keep_error && $h->{ErrCount} > $ErrCount;
 
-        $DBI::err    = $h->{err};
-        $DBI::errstr = $h->{errstr};
-        $DBI::state  = $h->{state};
+	$DBI::err    = $h->{err};
+	$DBI::errstr = $h->{errstr};
+	$DBI::state  = $h->{state};
 
         if ( !$keep_error
-        && defined(my $err = $h->{err})
-        && ($call_depth <= 1 && !$h->{dbi_pp_parent}{dbi_pp_call_depth})
-        ) {
+	&& defined(my $err = $h->{err})
+	&& ($call_depth <= 1 && !$h->{dbi_pp_parent}{dbi_pp_call_depth})
+	) {
 
-            my($pe,$pw,$re,$he) = @{$h}{qw(PrintError PrintWarn RaiseError HandleError)};
-            my $msg;
+	    my($pe,$pw,$re,$he) = @{$h}{qw(PrintError PrintWarn RaiseError HandleError)};
+	    my $msg;
 
-            if ($err && ($pe || $re || $he)     # error
-            or (!$err && length($err) && $pw)   # warning
-            ) {
-                my $last = ($DBI::last_method_except{$method_name})
-                    ? ($h->{'dbi_pp_last_method'}||$method_name) : $method_name;
-                my $errstr = $h->{errstr} || $DBI::errstr || $err || '';
-                my $msg = sprintf "%s %s %s: %s", $imp, $last,
-                        ($err eq "0") ? "warning" : "failed", $errstr;
+	    if ($err && ($pe || $re || $he)	# error
+	    or (!$err && length($err) && $pw)	# warning
+	    ) {
+		my $last = ($DBI::last_method_except{$method_name})
+		    ? ($h->{'dbi_pp_last_method'}||$method_name) : $method_name;
+		my $errstr = $h->{errstr} || $DBI::errstr || $err || '';
+		my $msg = sprintf "%s %s %s: %s", $imp, $last,
+			($err eq "0") ? "warning" : "failed", $errstr;
 
-                if ($h->{'ShowErrorStatement'} and my $Statement = $h->{Statement}) {
-                    $msg .= ' [for Statement "' . $Statement;
-                    if (my $ParamValues = $h->FETCH('ParamValues')) {
-                        $msg .= '" with ParamValues: ';
-                        $msg .= DBI::_concat_hash_sorted($ParamValues, "=", ", ", 1, undef);
+		if ($h->{'ShowErrorStatement'} and my $Statement = $h->{Statement}) {
+		    $msg .= ' [for Statement "' . $Statement;
+		    if (my $ParamValues = $h->FETCH('ParamValues')) {
+			$msg .= '" with ParamValues: ';
+			$msg .= DBI::_concat_hash_sorted($ParamValues, "=", ", ", 1, undef);
                         $msg .= "]";
-                    }
+		    }
                     else {
                         $msg .= '"]';
                     }
-                }
-                if ($err eq "0") { # is 'warning' (not info)
-                    carp $msg if $pw;
-                }
-                else {
-                    my $do_croak = 1;
-                    if (my $subsub = $h->{'HandleError'}) {
-                        $do_croak = 0 if &$subsub($msg,$h,$ret[0]);
-                    }
-                    if ($do_croak) {
-                        printf $DBI::tfh "    $method_name has failed ($h->{PrintError},$h->{RaiseError})\n"
-                                if ($DBI::dbi_debug & 0xF) >= 4;
-                        carp  $msg if $pe;
-                        die $msg if $h->{RaiseError};
-                    }
-                }
-            }
-        }
+		}
+		if ($err eq "0") { # is 'warning' (not info)
+		    carp $msg if $pw;
+		}
+		else {
+		    my $do_croak = 1;
+		    if (my $subsub = $h->{'HandleError'}) {
+			$do_croak = 0 if &$subsub($msg,$h,$ret[0]);
+		    }
+		    if ($do_croak) {
+			printf $DBI::tfh "    $method_name has failed ($h->{PrintError},$h->{RaiseError})\n"
+				if ($DBI::dbi_debug & 0xF) >= 4;
+			carp  $msg if $pe;
+			die $msg if $h->{RaiseError};
+		    }
+		}
+	    }
+	}
     };
 
 
     my $method_code = q[
       sub {
         my $h = shift;
-        my $h_inner = tied(%$h);
-        $h = $h_inner if $h_inner;
+	my $h_inner = tied(%$h);
+	$h = $h_inner if $h_inner;
 
         my $imp;
-        if ($method_name eq 'DESTROY') {
-            # during global destruction, $h->{...} can trigger "Can't call FETCH on an undef value"
-            # implying that tied() above lied to us, so we need to use eval
-            local $@;    # protect $@
-            $imp = eval { $h->{"ImplementorClass"} } or return; # probably global destruction
-        }
-        else {
-            $imp = $h->{"ImplementorClass"} or do {
+	if ($method_name eq 'DESTROY') {
+	    # during global destruction, $h->{...} can trigger "Can't call FETCH on an undef value"
+	    # implying that tied() above lied to us, so we need to use eval
+	    local $@;	 # protect $@
+	    $imp = eval { $h->{"ImplementorClass"} } or return; # probably global destruction
+	}
+	else {
+	    $imp = $h->{"ImplementorClass"} or do {
                 warn "Can't call $method_name method on handle $h after take_imp_data()\n"
                     if not exists $h->{Active};
                 return; # or, more likely, global destruction
             };
-        }
+	}
 
-        ] . join("\n", '', @pre_call_frag, '') . q[
+	] . join("\n", '', @pre_call_frag, '') . q[
 
-        my $call_depth = $h->{'dbi_pp_call_depth'} + 1;
-        local ($h->{'dbi_pp_call_depth'}) = $call_depth;
+	my $call_depth = $h->{'dbi_pp_call_depth'} + 1;
+	local ($h->{'dbi_pp_call_depth'}) = $call_depth;
 
-        my @ret;
+	my @ret;
         my $sub = $imp->can($method_name);
         if (!$sub and IMA_FUNC_REDIRECT & $bitmask and $sub = $imp->can('func')) {
             push @_, $method_name;
         }
-        if ($sub) {
-            (wantarray) ? (@ret = &$sub($h,@_)) : (@ret = scalar &$sub($h,@_));
-        }
-        else {
-            # XXX could try explicit fallback to $imp->can('AUTOLOAD') etc
-            # which would then let Multiplex pass PurePerl tests, but some
-            # hook into install_method may be better.
-            croak "Can't locate DBI object method \"$method_name\" via package \"$imp\""
-                if ] . ((IMA_NOT_FOUND_OKAY & $bitmask) ? 0 : 1) . q[;
-        }
+	if ($sub) {
+	    (wantarray) ? (@ret = &$sub($h,@_)) : (@ret = scalar &$sub($h,@_));
+	}
+	else {
+	    # XXX could try explicit fallback to $imp->can('AUTOLOAD') etc
+	    # which would then let Multiplex pass PurePerl tests, but some
+	    # hook into install_method may be better.
+	    croak "Can't locate DBI object method \"$method_name\" via package \"$imp\""
+		if ] . ((IMA_NOT_FOUND_OKAY & $bitmask) ? 0 : 1) . q[;
+	}
 
-        ] . join("\n", '', @post_call_frag, '') . q[
+	] . join("\n", '', @post_call_frag, '') . q[
 
-        return (wantarray) ? @ret : $ret[0];
+	return (wantarray) ? @ret : $ret[0];
       }
     ];
     no strict qw(refs);
@@ -454,8 +454,8 @@ sub  _install_method {
     die "$@\n$method_code\n" if $@;
     *$method = $code_ref;
     if (0 && $method =~ /\b(connect|FETCH)\b/) { # debuging tool
-        my $l=0; # show line-numbered code for method
-        warn "*$method code:\n".join("\n", map { ++$l.": $_" } split/\n/,$method_code);
+	my $l=0; # show line-numbered code for method
+	warn "*$method code:\n".join("\n", map { ++$l.": $_" } split/\n/,$method_code);
     }
 }
 
@@ -485,53 +485,53 @@ sub _setup_handle {
     my($h, $imp_class, $parent, $imp_data) = @_;
     my $h_inner = tied(%$h) || $h;
     if (($DBI::dbi_debug & 0xF) >= 4) {
-        local $^W;
-        print $DBI::tfh "      _setup_handle(@_)\n";
+	local $^W;
+	print $DBI::tfh "      _setup_handle(@_)\n";
     }
     $h_inner->{"imp_data"} = $imp_data;
     $h_inner->{"ImplementorClass"} = $imp_class;
-    $h_inner->{"Kids"} = $h_inner->{"ActiveKids"} = 0;  # XXX not maintained
+    $h_inner->{"Kids"} = $h_inner->{"ActiveKids"} = 0;	# XXX not maintained
     if ($parent) {
-        foreach (qw(
-            RaiseError PrintError PrintWarn HandleError HandleSetErr
-            Warn LongTruncOk ChopBlanks AutoCommit ReadOnly
-            ShowErrorStatement FetchHashKeyName LongReadLen CompatMode
-        )) {
-            $h_inner->{$_} = $parent->{$_}
-                if exists $parent->{$_} && !exists $h_inner->{$_};
-        }
-        if (ref($parent) =~ /::db$/) {
-            $h_inner->{Database} = $parent;
-            $parent->{Statement} = $h_inner->{Statement};
-            $h_inner->{NUM_OF_PARAMS} = 0;
-        }
-        elsif (ref($parent) =~ /::dr$/){
-            $h_inner->{Driver} = $parent;
-        }
-        $h_inner->{dbi_pp_parent} = $parent;
+	foreach (qw(
+	    RaiseError PrintError PrintWarn HandleError HandleSetErr
+	    Warn LongTruncOk ChopBlanks AutoCommit ReadOnly
+	    ShowErrorStatement FetchHashKeyName LongReadLen CompatMode
+	)) {
+	    $h_inner->{$_} = $parent->{$_}
+		if exists $parent->{$_} && !exists $h_inner->{$_};
+	}
+	if (ref($parent) =~ /::db$/) {
+	    $h_inner->{Database} = $parent;
+	    $parent->{Statement} = $h_inner->{Statement};
+	    $h_inner->{NUM_OF_PARAMS} = 0;
+	}
+	elsif (ref($parent) =~ /::dr$/){
+	    $h_inner->{Driver} = $parent;
+	}
+	$h_inner->{dbi_pp_parent} = $parent;
 
-        # add to the parent's ChildHandles
-        if ($HAS_WEAKEN) {
-            my $handles = $parent->{ChildHandles} ||= [];
-            push @$handles, $h;
-            Scalar::Util::weaken($handles->[-1]);
-            # purge destroyed handles occasionally
-            if (@$handles % 120 == 0) {
-                @$handles = grep { defined } @$handles;
-                Scalar::Util::weaken($_) for @$handles; # re-weaken after grep
-            }
-        }
+	# add to the parent's ChildHandles
+	if ($HAS_WEAKEN) {
+	    my $handles = $parent->{ChildHandles} ||= [];
+	    push @$handles, $h;
+	    Scalar::Util::weaken($handles->[-1]);
+	    # purge destroyed handles occasionally
+	    if (@$handles % 120 == 0) {
+		@$handles = grep { defined } @$handles;
+		Scalar::Util::weaken($_) for @$handles; # re-weaken after grep
+	    }
+	}
     }
-    else {      # setting up a driver handle
-        $h_inner->{Warn}                = 1;
-        $h_inner->{PrintWarn}           = $^W;
-        $h_inner->{AutoCommit}          = 1;
-        $h_inner->{TraceLevel}          = 0;
-        $h_inner->{CompatMode}          = (1==0);
-        $h_inner->{FetchHashKeyName}    ||= 'NAME';
-        $h_inner->{LongReadLen}         ||= 80;
-        $h_inner->{ChildHandles}        ||= [] if $HAS_WEAKEN;
-        $h_inner->{Type}                ||= 'dr';
+    else {	# setting up a driver handle
+        $h_inner->{Warn}		= 1;
+        $h_inner->{PrintWarn}		= $^W;
+        $h_inner->{AutoCommit}		= 1;
+        $h_inner->{TraceLevel}		= 0;
+        $h_inner->{CompatMode}		= (1==0);
+	$h_inner->{FetchHashKeyName}	||= 'NAME';
+	$h_inner->{LongReadLen}		||= 80;
+	$h_inner->{ChildHandles}        ||= [] if $HAS_WEAKEN;
+	$h_inner->{Type}                ||= 'dr';
     }
     $h_inner->{"dbi_pp_call_depth"} = 0;
     $h_inner->{"dbi_pp_pid"} = $$;
@@ -546,14 +546,14 @@ sub constant {
 sub trace {
     my ($h, $level, $file) = @_;
     $level = $h->parse_trace_flags($level)
-        if defined $level and !DBI::looks_like_number($level);
+	if defined $level and !DBI::looks_like_number($level);
     my $old_level = $DBI::dbi_debug;
     _set_trace_file($file) if $level;
     if (defined $level) {
-        $DBI::dbi_debug = $level;
-        print $DBI::tfh "    DBI $DBI::VERSION (PurePerl) "
+	$DBI::dbi_debug = $level;
+	print $DBI::tfh "    DBI $DBI::VERSION (PurePerl) "
                 . "dispatch trace level set to $DBI::dbi_debug\n"
-                if $DBI::dbi_debug & 0xF;
+		if $DBI::dbi_debug & 0xF;
     }
     _set_trace_file($file) if !$level;
     return $old_level;
@@ -568,23 +568,23 @@ sub _set_trace_file {
     $DBI::tfh = undef unless $DBI::tfh_needs_close;
 
     if (ref $file eq 'GLOB') {
-        $DBI::tfh = $file;
+	$DBI::tfh = $file;
         select((select($DBI::tfh), $| = 1)[0]);
         $DBI::tfh_needs_close = 0;
         return 1;
     }
     if ($file && ref \$file eq 'GLOB') {
-        $DBI::tfh = *{$file}{IO};
+	$DBI::tfh = *{$file}{IO};
         select((select($DBI::tfh), $| = 1)[0]);
         $DBI::tfh_needs_close = 0;
         return 1;
     }
     $DBI::tfh_needs_close = 1;
     if (!$file || $file eq 'STDERR') {
-        open $DBI::tfh, ">&STDERR" or carp "Can't dup STDERR: $!";
+	open $DBI::tfh, ">&STDERR" or carp "Can't dup STDERR: $!";
     }
     elsif ($file eq 'STDOUT') {
-        open $DBI::tfh, ">&STDOUT" or carp "Can't dup STDOUT: $!";
+	open $DBI::tfh, ">&STDOUT" or carp "Can't dup STDOUT: $!";
     }
     else {
         open $DBI::tfh, ">>$file" or carp "Can't open $file: $!";
@@ -599,16 +599,16 @@ sub dump_handle   {
     $msg||="dump_handle $h";
     print $DBI::tfh "$msg:\n";
     for my $attrib (sort keys %$h) {
-        print $DBI::tfh "\t$attrib => ".DBI::neat($h->{$attrib})."\n";
+	print $DBI::tfh "\t$attrib => ".DBI::neat($h->{$attrib})."\n";
     }
 }
 
 sub _handles {
     my $h = shift;
     my $h_inner = tied %$h;
-    if ($h_inner) {     # this is okay
-        return $h unless wantarray;
-        return ($h, $h_inner);
+    if ($h_inner) {	# this is okay
+	return $h unless wantarray;
+	return ($h, $h_inner);
     }
     # XXX this isn't okay... we have an inner handle but
     # currently have no way to get at its outer handle,
@@ -633,22 +633,22 @@ sub hash {
         $hash |= 0x40000000;    # set bit 31
         return -$hash;          # return negative int
     }
-    elsif ($type == 1) {        # Fowler/Noll/Vo hash
+    elsif ($type == 1) {	# Fowler/Noll/Vo hash
         # see http://www.isthe.com/chongo/tech/comp/fnv/
         require Math::BigInt;   # feel free to reimplement w/o BigInt!
-        (my $version = $Math::BigInt::VERSION || 0) =~ s/_.*//; # eg "1.70_01"
-        if ($version >= 1.56) {
-            $hash = Math::BigInt->new(0x811c9dc5);
-            for my $uchar (unpack ("C*", $key)) {
-                # multiply by the 32 bit FNV magic prime mod 2^64
-                $hash = ($hash * 0x01000193) & 0xffffffff;
-                # xor the bottom with the current octet
-                $hash ^= $uchar;
-            }
-            # cast to int
-            return unpack "i", pack "i", $hash;
-        }
-        croak("DBI::PurePerl doesn't support hash type 1 without Math::BigInt >= 1.56 (available on CPAN)");
+	(my $version = $Math::BigInt::VERSION || 0) =~ s/_.*//; # eg "1.70_01"
+	if ($version >= 1.56) {
+	    $hash = Math::BigInt->new(0x811c9dc5);
+	    for my $uchar (unpack ("C*", $key)) {
+		# multiply by the 32 bit FNV magic prime mod 2^64
+		$hash = ($hash * 0x01000193) & 0xffffffff;
+		# xor the bottom with the current octet
+		$hash ^= $uchar;
+	    }
+	    # cast to int
+	    return unpack "i", pack "i", $hash;
+	}
+	croak("DBI::PurePerl doesn't support hash type 1 without Math::BigInt >= 1.56 (available on CPAN)");
     }
     else {
         croak("bad hash type $type");
@@ -678,8 +678,8 @@ sub neat {
     }
     my $maxlen = shift || $DBI::neat_maxlen;
     if ($maxlen && $maxlen < length($v) + 2) {
-        $v = substr($v,0,$maxlen-5);
-        $v .= '...';
+	$v = substr($v,0,$maxlen-5);
+	$v .= '...';
     }
     $v =~ s/[^[:print:]]/./g;
     return "$quote$v$quote";
@@ -757,7 +757,7 @@ sub _get_sorted_hash_keys {
             for keys %$hash_ref;
         $num_sort = $sort_guess;
     }
-
+    
     my @keys = keys %$hash_ref;
     no warnings 'numeric';
     my @sorted = ($num_sort)
@@ -769,7 +769,7 @@ sub _get_sorted_hash_keys {
 
 
 package
-        DBI::var;
+	DBI::var;
 
 sub FETCH {
     my($key)=shift;
@@ -779,7 +779,7 @@ sub FETCH {
 }
 
 package
-        DBD::_::common;
+	DBD::_::common;
 
 sub swap_inner_handle {
     my ($h1, $h2) = @_;
@@ -788,21 +788,21 @@ sub swap_inner_handle {
     return $h1->set_err($DBI::stderr, "swap_inner_handle not currently supported by DBI::PurePerl");
 }
 
-sub trace {     # XXX should set per-handle level, not global
+sub trace {	# XXX should set per-handle level, not global
     my ($h, $level, $file) = @_;
     $level = $h->parse_trace_flags($level)
-        if defined $level and !DBI::looks_like_number($level);
+	if defined $level and !DBI::looks_like_number($level);
     my $old_level = $DBI::dbi_debug;
     DBI::_set_trace_file($file) if defined $file;
     if (defined $level) {
-        $DBI::dbi_debug = $level;
-        if ($DBI::dbi_debug) {
-            printf $DBI::tfh
-                "    %s trace level set to %d in DBI $DBI::VERSION (PurePerl)\n",
-                $h, $DBI::dbi_debug;
-            print $DBI::tfh "    Full trace not available because DBI_TRACE is not in environment\n"
-                unless exists $ENV{DBI_TRACE};
-        }
+	$DBI::dbi_debug = $level;
+	if ($DBI::dbi_debug) {
+	    printf $DBI::tfh
+		"    %s trace level set to %d in DBI $DBI::VERSION (PurePerl)\n",
+		$h, $DBI::dbi_debug;
+	    print $DBI::tfh "    Full trace not available because DBI_TRACE is not in environment\n"
+		unless exists $ENV{DBI_TRACE};
+	}
     }
     return $old_level;
 }
@@ -833,9 +833,9 @@ sub FETCH {
         return $h->{$key};
     }
     if (!defined $v && !exists $h->{$key}) {
-        return ($h->FETCH('TaintIn') && $h->FETCH('TaintOut')) if $key eq'Taint';
-        return (1==0) if $is_flag_attribute{$key}; # return perl-style sv_no, not undef
-        return $DBI::dbi_debug if $key eq 'TraceLevel';
+	return ($h->FETCH('TaintIn') && $h->FETCH('TaintOut')) if $key eq'Taint';
+	return (1==0) if $is_flag_attribute{$key}; # return perl-style sv_no, not undef
+	return $DBI::dbi_debug if $key eq 'TraceLevel';
         return [] if $key eq 'ChildHandles' && $HAS_WEAKEN;
         if ($key eq 'Type') {
             return "dr" if $h->isa('DBI::dr');
@@ -843,10 +843,10 @@ sub FETCH {
             return "st" if $h->isa('DBI::st');
             Carp::carp( sprintf "Can't determine Type for %s",$h );
         }
-        if (!$is_valid_attribute{$key} and $key =~ m/^[A-Z]/) {
-            local $^W; # hide undef warnings
-            Carp::carp( sprintf "Can't get %s->{%s}: unrecognised attribute (@{[ %$h ]})",$h,$key )
-        }
+	if (!$is_valid_attribute{$key} and $key =~ m/^[A-Z]/) {
+	    local $^W; # hide undef warnings
+	    Carp::carp( sprintf "Can't get %s->{%s}: unrecognised attribute (@{[ %$h ]})",$h,$key )
+	}
     }
     return $v;
 }
@@ -854,16 +854,16 @@ sub STORE {
     my ($h,$key,$value) = @_;
     if ($key eq 'AutoCommit') {
         Carp::croak("DBD driver has not implemented the AutoCommit attribute")
-            unless $value == -900 || $value == -901;
-        $value = ($value == -901);
+	    unless $value == -900 || $value == -901;
+	$value = ($value == -901);
     }
     elsif ($key =~ /^Taint/ ) {
-        Carp::croak(sprintf "Can't set %s->{%s}: Taint mode not supported by DBI::PurePerl",$h,$key)
-                if $value;
+	Carp::croak(sprintf "Can't set %s->{%s}: Taint mode not supported by DBI::PurePerl",$h,$key)
+		if $value;
     }
     elsif ($key eq 'TraceLevel') {
-        $h->trace($value);
-        return 1;
+	$h->trace($value);
+	return 1;
     }
     elsif ($key eq 'NUM_OF_FIELDS') {
         $h->{$key} = $value;
@@ -871,11 +871,11 @@ sub STORE {
             my $fbav = DBD::_::st::dbih_setup_fbav($h);
             @$fbav = (undef) x $value if @$fbav != $value;
         }
-        return 1;
+	return 1;
     }
     elsif (!$is_valid_attribute{$key} && $key =~ /^[A-Z]/ && !exists $h->{$key}) {
        Carp::carp(sprintf "Can't set %s->{%s}: unrecognised attribute or invalid value %s",
-            $h,$key,$value);
+	    $h,$key,$value);
     }
     $h->{$key} = $is_flag_attribute{$key} ? !!$value : $value;
     return 1;
@@ -888,50 +888,50 @@ sub set_err {
     $h = tied(%$h) || $h;
 
     if (my $hss = $h->{HandleSetErr}) {
-        return if $hss->($h, $errnum, $msg, $state, $method);
+	return if $hss->($h, $errnum, $msg, $state, $method);
     }
 
     if (!defined $errnum) {
-        $h->{err}    = $DBI::err    = undef;
-        $h->{errstr} = $DBI::errstr = undef;
-        $h->{state}  = $DBI::state  = '';
+	$h->{err}    = $DBI::err    = undef;
+	$h->{errstr} = $DBI::errstr = undef;
+	$h->{state}  = $DBI::state  = '';
         return;
     }
 
     if ($h->{errstr}) {
-        $h->{errstr} .= sprintf " [err was %s now %s]", $h->{err}, $errnum
-                if $h->{err} && $errnum && $h->{err} ne $errnum;
-        $h->{errstr} .= sprintf " [state was %s now %s]", $h->{state}, $state
-                if $h->{state} and $h->{state} ne "S1000" && $state && $h->{state} ne $state;
-        $h->{errstr} .= "\n$msg" if $h->{errstr} ne $msg;
-        $DBI::errstr = $h->{errstr};
+	$h->{errstr} .= sprintf " [err was %s now %s]", $h->{err}, $errnum
+		if $h->{err} && $errnum && $h->{err} ne $errnum;
+	$h->{errstr} .= sprintf " [state was %s now %s]", $h->{state}, $state
+		if $h->{state} and $h->{state} ne "S1000" && $state && $h->{state} ne $state;
+	$h->{errstr} .= "\n$msg" if $h->{errstr} ne $msg;
+	$DBI::errstr = $h->{errstr};
     }
     else {
-        $h->{errstr} = $DBI::errstr = $msg;
+	$h->{errstr} = $DBI::errstr = $msg;
     }
 
     # assign if higher priority: err > "0" > "" > undef
     my $err_changed;
-    if ($errnum                 # new error: so assign
-        or !defined $h->{err}   # no existing warn/info: so assign
+    if ($errnum			# new error: so assign
+	or !defined $h->{err}	# no existing warn/info: so assign
            # new warn ("0" len 1) > info ("" len 0): so assign
-        or defined $errnum && length($errnum) > length($h->{err})
+	or defined $errnum && length($errnum) > length($h->{err})
     ) {
         $h->{err} = $DBI::err = $errnum;
-        ++$h->{ErrCount} if $errnum;
-        ++$err_changed;
+	++$h->{ErrCount} if $errnum;
+	++$err_changed;
     }
 
     if ($err_changed) {
-        $state ||= "S1000" if $DBI::err;
-        $h->{state} = $DBI::state = ($state eq "00000") ? "" : $state
-            if $state;
+	$state ||= "S1000" if $DBI::err;
+	$h->{state} = $DBI::state = ($state eq "00000") ? "" : $state
+	    if $state;
     }
 
     if (my $p = $h->{Database}) { # just sth->dbh, not dbh->drh (see ::db::DESTROY)
-        $p->{err}    = $DBI::err;
-        $p->{errstr} = $DBI::errstr;
-        $p->{state}  = $DBI::state;
+	$p->{err}    = $DBI::err;
+	$p->{errstr} = $DBI::errstr;
+	$p->{state}  = $DBI::state;
     }
 
     $h->{'dbi_pp_last_method'} = $method;
@@ -978,23 +978,23 @@ sub DESTROY {
 }
 
 package
-        DBD::_::dr;
+	DBD::_::dr;
 
 sub dbixs_revision {
     return 0;
 }
 
 package
-        DBD::_::db;
+	DBD::_::db;
 
 sub connected {
 }
 
 
 package
-        DBD::_::st;
+	DBD::_::st;
 
-sub fetchrow_arrayref   {
+sub fetchrow_arrayref	{
     my $h = shift;
     # if we're here then driver hasn't implemented fetch/fetchrow_arrayref
     # so we assume they've implemented fetchrow_array and call that instead
@@ -1004,7 +1004,7 @@ sub fetchrow_arrayref   {
 # twice to avoid typo warning
 *fetch = \&fetchrow_arrayref;  *fetch = \&fetchrow_arrayref;
 
-sub fetchrow_array      {
+sub fetchrow_array	{
     my $h = shift;
     # if we're here then driver hasn't implemented fetchrow_array
     # so we assume they've implemented fetch/fetchrow_arrayref
@@ -1043,10 +1043,10 @@ sub _set_fbav {
     my $h = shift;
     my $fbav = $h->{'_fbav'};
     if ($fbav) {
-        $DBI::rows = ++$h->{'_rows'};
+	$DBI::rows = ++$h->{'_rows'};
     }
     else {
-        $fbav = $h->_get_fbav;
+	$fbav = $h->_get_fbav;
     }
     my $row = shift;
     if (my $bc = $h->{'_bound_cols'}) {
@@ -1068,7 +1068,7 @@ sub bind_col {
         if $col < 1 or $col > $num_of_fields;
     return 1 if not defined $value_ref; # ie caller is just trying to set TYPE
     DBI::croak("bind_col($col,$value_ref) needs a reference to a scalar")
-        unless ref $value_ref eq 'SCALAR';
+	unless ref $value_ref eq 'SCALAR';
     $h->{'_bound_cols'}->[$col-1] = $value_ref;
     return 1;
 }
@@ -1156,7 +1156,7 @@ For example:
 Then add this to the top of scripts:
 
  BEGIN {
-   $ENV{DBI_PUREPERL} = 1;      # or =2
+   $ENV{DBI_PUREPERL} = 1;	# or =2
    unshift @INC, '/usr/jdoe/mylibs';
  }
 

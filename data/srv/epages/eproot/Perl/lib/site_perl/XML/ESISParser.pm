@@ -13,8 +13,8 @@ use UNIVERSAL;
 package XML::ESISParser;
 
 use vars qw{ $VERSION $NSGMLS_sgml $NSGMLS_FLAGS_sgml $NSGMLS_ENV_sgml
-             $NSGMLS_xml $NSGMLS_FLAGS_xml $NSGMLS_ENV_xml
-             $XML_DECL };
+	     $NSGMLS_xml $NSGMLS_FLAGS_xml $NSGMLS_ENV_xml
+	     $XML_DECL };
 
 # will be substituted by make-rel script
 $VERSION = "0.08";
@@ -38,14 +38,14 @@ sub parse {
     my $self = shift;
 
     die "XML::ESISParser: parser instance ($self) already parsing\n"
-        if (defined $self->{ParseOptions});
+	if (defined $self->{ParseOptions});
 
     # If there's one arg and it has no ref, it's a string
     my $args;
     if (scalar (@_) == 1 && !ref($_[0])) {
-        $args = { Source => { String => shift } };
+	$args = { Source => { String => shift } };
     } else {
-        $args = (scalar (@_) == 1) ? shift : { @_ };
+	$args = (scalar (@_) == 1) ? shift : { @_ };
     }
 
     my $parse_options = { %$self, %$args };
@@ -53,114 +53,114 @@ sub parse {
 
     # ensure that we have at least one source
     if (!defined $parse_options->{Source}
-        || !(defined $parse_options->{Source}{String}
-             || defined $parse_options->{Source}{ByteStream}
-             || defined $parse_options->{Source}{SystemId}
-             || defined $parse_options->{Source}{ESISStream})) {
-        die "XML::ESISParser: no source defined for parse\n";
+	|| !(defined $parse_options->{Source}{String}
+	     || defined $parse_options->{Source}{ByteStream}
+	     || defined $parse_options->{Source}{SystemId}
+	     || defined $parse_options->{Source}{ESISStream})) {
+	die "XML::ESISParser: no source defined for parse\n";
     }
 
     # assign default Handler to any undefined handlers
     if (defined $parse_options->{Handler}) {
-        $parse_options->{DocumentHandler} = $parse_options->{Handler}
-            if (!defined $parse_options->{DocumentHandler});
-        $parse_options->{DTDHandler} = $parse_options->{Handler}
-            if (!defined $parse_options->{DTDHandler});
-        $parse_options->{ErrorHandler} = $parse_options->{Handler}
-            if (!defined $parse_options->{ErrorHandler});
+	$parse_options->{DocumentHandler} = $parse_options->{Handler}
+	    if (!defined $parse_options->{DocumentHandler});
+	$parse_options->{DTDHandler} = $parse_options->{Handler}
+	    if (!defined $parse_options->{DTDHandler});
+	$parse_options->{ErrorHandler} = $parse_options->{Handler}
+	    if (!defined $parse_options->{ErrorHandler});
     }
 
     # create the NSGMLS command
     my ($nsgmls_command, $nsgmls, $nsgmls_flags);
     if (defined $parse_options->{NSGMLSCommand}) {
-        $nsgmls_command = $parse_options->{NSGMLSCommand};
+	$nsgmls_command = $parse_options->{NSGMLSCommand};
     } elsif (defined $parse_options->{IsSGML}
-             && $parse_options->{IsSGML}) {
-        my $declaration = (defined $parse_options->{Declaration})
-            ? " " . $parse_options->{Declaration} : "";
-        $nsgmls = $parse_options->{NSGMLS} = $NSGMLS_sgml;
-        $nsgmls_flags = $parse_options->{NSGMLS_FLAGS} = $NSGMLS_FLAGS_sgml;
-        $nsgmls_command = $parse_options->{NSGMLS_COMMAND} = "$nsgmls $nsgmls_flags $declaration";
+	     && $parse_options->{IsSGML}) {
+	my $declaration = (defined $parse_options->{Declaration})
+	    ? " " . $parse_options->{Declaration} : "";
+	$nsgmls = $parse_options->{NSGMLS} = $NSGMLS_sgml;
+	$nsgmls_flags = $parse_options->{NSGMLS_FLAGS} = $NSGMLS_FLAGS_sgml;
+	$nsgmls_command = $parse_options->{NSGMLS_COMMAND} = "$nsgmls $nsgmls_flags $declaration";
     } else {
-        my $declaration = (defined $parse_options->{Declaration})
-            ? $parse_options->{Declaration} : $XML_DECL;
-        $nsgmls = $parse_options->{NSGMLS} = $NSGMLS_xml;
-        $nsgmls_flags = $parse_options->{NSGMLS_FLAGS} = $NSGMLS_FLAGS_xml;
-        $nsgmls_command = $parse_options->{NSGMLS_COMMAND} = "$NSGMLS_ENV_xml $nsgmls $nsgmls_flags $declaration";
+	my $declaration = (defined $parse_options->{Declaration})
+	    ? $parse_options->{Declaration} : $XML_DECL;
+	$nsgmls = $parse_options->{NSGMLS} = $NSGMLS_xml;
+	$nsgmls_flags = $parse_options->{NSGMLS_FLAGS} = $NSGMLS_FLAGS_xml;
+	$nsgmls_command = $parse_options->{NSGMLS_COMMAND} = "$NSGMLS_ENV_xml $nsgmls $nsgmls_flags $declaration";
     }
-
+	
 
     my $result;
     if (defined $self->{ParseOptions}{Source}{ESISStream}) {
-        # read ESIS stream directly
-        my $system_id = (defined $self->{ParseOptions}{Source}{SystemId})
-            ? "\`$self->{ParseOptions}{Source}{SystemId}'" : 'ESIS Stream';
-        eval { $result = $self->parse_fh ($self->{ParseOptions}{Source}{ESISStream}) };
-        my $retval = $@;
+	# read ESIS stream directly
+	my $system_id = (defined $self->{ParseOptions}{Source}{SystemId})
+	    ? "\`$self->{ParseOptions}{Source}{SystemId}'" : 'ESIS Stream';
+	eval { $result = $self->parse_fh ($self->{ParseOptions}{Source}{ESISStream}) };
+	my $retval = $@;
 
-        if ($retval) {
-            die "XML::ESISParser::parse: unable to parse \`$system_id'\n$retval";
-        }
+	if ($retval) {
+	    die "XML::ESISParser::parse: unable to parse \`$system_id'\n$retval";
+	}
     } elsif (defined $self->{ParseOptions}{Source}{ByteStream}) {
-        # call nsgmls using file handle
-        # FIXME special case stdin?
+	# call nsgmls using file handle
+	# FIXME special case stdin?
 
-        # For ByteStreams (Perl file handles) we create a sub-process
-        # that we feed the XML/SGML document and we get back the ESIS
-        # stream
-        my $retval;
-        my $system_id = (defined $self->{ParseOptions}{Source}{SystemId})
-            ? "\`$self->{ParseOptions}{Source}{SystemId}'" : 'Byte Stream';
-        my ($pid) = open (ESIS, "-|");
-        if ($pid == 0) {
-            # 20% speed increase if grep swipes implieds (only 8% if
-            # we do it in `parse_fh').  XXX use a C routine or patch SP
-            open (SGML, "| $nsgmls_command 2>&1 | egrep -v '^A.* IMPLIED\$'")
-                or die "XML::ESISParser::parse: can't run \`$nsgmls' on \`$system_id'\n";
+	# For ByteStreams (Perl file handles) we create a sub-process
+	# that we feed the XML/SGML document and we get back the ESIS
+	# stream
+	my $retval;
+	my $system_id = (defined $self->{ParseOptions}{Source}{SystemId})
+	    ? "\`$self->{ParseOptions}{Source}{SystemId}'" : 'Byte Stream';
+	my ($pid) = open (ESIS, "-|");
+	if ($pid == 0) {
+	    # 20% speed increase if grep swipes implieds (only 8% if
+	    # we do it in `parse_fh').  XXX use a C routine or patch SP
+	    open (SGML, "| $nsgmls_command 2>&1 | egrep -v '^A.* IMPLIED\$'")
+	        or die "XML::ESISParser::parse: can't run \`$nsgmls' on \`$system_id'\n";
 
-            $self->{ParseOptions}{Source}{ByteStream}->print (*SGML);
+	    $self->{ParseOptions}{Source}{ByteStream}->print (*SGML);
 
-            close (SGML)
-                or die "XML::ESISParser::parse: can't run \`$nsgmls' on \`$system_id'\n";
+	    close (SGML)
+		or die "XML::ESISParser::parse: can't run \`$nsgmls' on \`$system_id'\n";
 
-            exit 0;
-        } else {
-            eval { $result = $self->parse_fh (*ESIS) };
-            $retval = $@;
-            wait;               # clean up that process
-        }
-        close (ESIS);
+	    exit 0;
+	} else {
+	    eval { $result = $self->parse_fh (*ESIS) };
+	    $retval = $@;
+	    wait;		# clean up that process
+	}
+	close (ESIS);
 
-        $self->{ParseOptions}{Source}{ByteStream}->close ();
+	$self->{ParseOptions}{Source}{ByteStream}->close ();
 
-        if ($retval) {
-            die "XML::ESISParser::parse: unable to parse \`$system_id'\n$retval";
-        }
+	if ($retval) {
+	    die "XML::ESISParser::parse: unable to parse \`$system_id'\n$retval";
+	}
     } elsif (defined $self->{ParseOptions}{Source}{String}) {
-        # call nsgmls with a literal string
+	# call nsgmls with a literal string
     } elsif (defined $self->{ParseOptions}{Source}{SystemId}) {
-        # if SystemId is a file, call nsgmls with file name
-        # otherwise, open stream on SystemId and do ByteStream
+	# if SystemId is a file, call nsgmls with file name
+	# otherwise, open stream on SystemId and do ByteStream
 
-        # FIXME this only handles file SystemIds right now
-        # 20% speed increase if grep swipes implieds (only 8% if
-        # we do it in `parse').  XXX use a C routine or patch SP
-        my $system_id = $self->{ParseOptions}{Source}{SystemId};
-        my ($fh) = IO::File->new
-            ("$nsgmls_command '$system_id' 2>&1 | egrep -v '^A.* IMPLIED\$' |");
-        die "XML::ESISParser::parse: can't run \`$nsgmls' on \`$system_id'\n"
-            if (!defined $fh);
+	# FIXME this only handles file SystemIds right now
+	# 20% speed increase if grep swipes implieds (only 8% if
+	# we do it in `parse').  XXX use a C routine or patch SP
+	my $system_id = $self->{ParseOptions}{Source}{SystemId};
+	my ($fh) = IO::File->new
+	    ("$nsgmls_command '$system_id' 2>&1 | egrep -v '^A.* IMPLIED\$' |");
+	die "XML::ESISParser::parse: can't run \`$nsgmls' on \`$system_id'\n"
+	    if (!defined $fh);
 
-        eval { $result = $self->parse_fh ($fh) };
-        my $retval = $@;
+	eval { $result = $self->parse_fh ($fh) };
+	my $retval = $@;
 
-        close ($fh);
+	close ($fh);
 
-        if ($retval) {
-            die "XML::ESISParser::parse: unable to parse \`$system_id'\n$retval";
-        }
+	if ($retval) {
+	    die "XML::ESISParser::parse: unable to parse \`$system_id'\n$retval";
+	}
     }
-
+	
 
     # clean up parser instance
     delete $self->{ParseOptions};
@@ -191,312 +191,312 @@ sub parse_fh {
 
     my $line = 0;
     $doc_h->start_document( { } )
-        if ($doc_h->can('start_document'));
+	if ($doc_h->can('start_document'));
 
     # 30% speed improvement by breaking the encapsulation
     my ($is_filehandle) = (ref ($file) eq "FileHandle"
-                           || ref ($file) eq "IO::File");
+			   || ref ($file) eq "IO::File");
     while ($_ = ($is_filehandle ? <$file> : $file->getline())) {
-        chop;
+	chop;
 
-        if (/^A/) {             # attribute
-            # Note: the output of `nsgmls' is `grep -v'ed to get rid of
-            # IMPLIED attributes, if we do it here we only get an 8%
-            # speed boost
+	if (/^A/) {		# attribute
+	    # Note: the output of `nsgmls' is `grep -v'ed to get rid of
+	    # IMPLIED attributes, if we do it here we only get an 8%
+	    # speed boost
 
-            my ($name, $type, $value) = split (/\s/, $', 3);
+	    my ($name, $type, $value) = split (/\s/, $', 3);
 
-            push (@attributes, $name => $value);
+	    push (@attributes, $name => $value);
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^\(/) {            # start element
-            # break the encapsulation for an 8% boost
-            if ($#attributes >= 0) {
-                push (@properties, Attributes => { @attributes });
-            }
-            $doc_h->start_element ({ Name => $', @properties })
-                if ($can_start_element);
+	if (/^\(/) {		# start element
+	    # break the encapsulation for an 8% boost
+	    if ($#attributes >= 0) {
+		push (@properties, Attributes => { @attributes });
+	    }
+	    $doc_h->start_element ({ Name => $', @properties })
+		if ($can_start_element);
 
-            @properties = (); @attributes = ();
-            next;
-        }
+	    @properties = (); @attributes = ();
+	    next;
+	}
 
-        if (/^\)/) {            # end element
-            $doc_h->end_element ({ Name => $' })
-                if ($can_end_element);
+	if (/^\)/) {		# end element
+	    $doc_h->end_element ({ Name => $' })
+		if ($can_end_element);
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^L/) {             # line number
-            $line = $';
+	if (/^L/) {		# line number
+	    $line = $';
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^-/) {             # data (including sdata entities)
-            # This section is derived from David Megginson's SGMLSpm
-            my $sdata_flag = 0;
-            my $out = '';
-            my $data = $';
+	if (/^-/) {		# data (including sdata entities)
+	    # This section is derived from David Megginson's SGMLSpm
+	    my $sdata_flag = 0;
+	    my $out = '';
+	    my $data = $';
 
-            while ($data =~ /\\(\\|n|\||[0-7]{1,3})/) {
-                $out .= $`;
-                $data = $';
+	    while ($data =~ /\\(\\|n|\||[0-7]{1,3})/) {
+		$out .= $`;
+		$data = $';
 
-                if ($1 eq '|') {
-                    # beginning or end of SDATA
-                    if ("$out" ne '') {
-                        if ($sdata_flag) {
-                            $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} })
-                                if ($doc_h->can('internal_entity_ref'));
-                        } else {
-                            $doc_h->characters({ Data => $out })
-                                if ($can_characters);
-                        }
-                        $out = '';
-                    }
-                    $sdata_flag = !$sdata_flag;
+		if ($1 eq '|') {
+		    # beginning or end of SDATA
+		    if ("$out" ne '') {
+			if ($sdata_flag) {
+			    $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} })
+				if ($doc_h->can('internal_entity_ref'));
+			} else {
+			    $doc_h->characters({ Data => $out })
+				if ($can_characters);
+			}
+			$out = '';
+		    }
+		    $sdata_flag = !$sdata_flag;
 
-                } elsif ($1 eq 'n') {
-                    # record end
-                    if ("$out" ne '') {
-                        if ($sdata_flag) {
-                            $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} })
-                                if ($doc_h->can('internal_entity_ref'));
-                        } else {
-                            $doc_h->characters({ Data => $out })
-                                if ($can_characters);
-                        }
-                        $out = '';
-                    }
-                    if ($can_record_end) {
-                        $doc_h->record_end( { } );
-                    } else {
-                        $doc_h->characters({ Data => "\n" })
-                            if ($can_characters);
-                    }
-                } elsif ($1 eq '\\') {
-                    $out .= '\\';
-                } else {
-                    $out .= chr(oct($1));
-                }
-            }
-            $out .= $data;
-            if ("$out" ne '') {
-                if ($sdata_flag) {
-                    $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} })
-                        if ($doc_h->can('internal_entity_ref'));
-                } else {
-                    $doc_h->characters({ Data => $out })
-                        if ($can_characters);
-                }
-            }
+		} elsif ($1 eq 'n') {
+		    # record end
+		    if ("$out" ne '') {
+			if ($sdata_flag) {
+			    $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} })
+				if ($doc_h->can('internal_entity_ref'));
+			} else {
+			    $doc_h->characters({ Data => $out })
+				if ($can_characters);
+			}
+			$out = '';
+		    }
+		    if ($can_record_end) {
+			$doc_h->record_end( { } );
+		    } else {
+			$doc_h->characters({ Data => "\n" })
+			    if ($can_characters);
+		    }
+		} elsif ($1 eq '\\') {
+		    $out .= '\\';
+		} else {
+		    $out .= chr(oct($1));
+		}
+	    }
+	    $out .= $data;
+	    if ("$out" ne '') {
+		if ($sdata_flag) {
+		    $doc_h->internal_entity_ref({ Name => $self->{'internal_entities_by_value'}{$out} })
+			if ($doc_h->can('internal_entity_ref'));
+		} else {
+		    $doc_h->characters({ Data => $out })
+			if ($can_characters);
+		}
+	    }
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^s/) {             # sysid
-            push (@properties, SystemId => $');
+	if (/^s/) {		# sysid
+	    push (@properties, SystemId => $');
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^p/) {             # pubid
-            push (@properties, PublicId => $');
+	if (/^p/) {		# pubid
+	    push (@properties, PublicId => $');
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^f/) {             # file
-            if (!defined $files) {
-                $files = $';
-            } elsif (!ref $files) {
-                $files = [ $files, $' ];
-            } else {
-                push (@$files, $');
-            }
+	if (/^f/) {		# file
+	    if (!defined $files) {
+		$files = $';
+	    } elsif (!ref $files) {
+		$files = [ $files, $' ];
+	    } else {
+		push (@$files, $');
+	    }
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^E/) {             # external entity definition
-            my ($entity_data) = $';
-            $entity_data =~ /^(\S+) (\S+) (\S+)$/
-                or die "XML::ESISParser::parse_fh: bad external entity event data: $entity_data\n";
-            my ($name,$type,$notation) = ($1,$2,$3);
-            if (defined $files) {
-                push (@properties, GeneratedId => $files);
-            }
-            $dtd_h->external_entity_decl ({ Name => $name, Type => $type,
-                                            Notation => $notation, @properties })
-                if ($dtd_h->can('external_entity_decl'));
+	if (/^E/) {		# external entity definition
+	    my ($entity_data) = $';
+	    $entity_data =~ /^(\S+) (\S+) (\S+)$/
+		or die "XML::ESISParser::parse_fh: bad external entity event data: $entity_data\n";
+	    my ($name,$type,$notation) = ($1,$2,$3);
+	    if (defined $files) {
+		push (@properties, GeneratedId => $files);
+	    }
+	    $dtd_h->external_entity_decl ({ Name => $name, Type => $type,
+					    Notation => $notation, @properties })
+		if ($dtd_h->can('external_entity_decl'));
 
-            @properties = (); undef $files;
-            next;
-        }
+	    @properties = (); undef $files;
+	    next;
+	}
 
-        if (/^I/) {             # internal entity definition
-            my ($name, $type, $value) = split (/\s/, $', 3);
-            $self->{'internal_entities_by_value'}{$value} = $name;
-            $dtd_h->internal_entity_decl ({ Name => $name, Type => $type,
-                                            Value => $value })
-                if ($dtd_h->can('internal_entity_decl'));
+	if (/^I/) {             # internal entity definition
+	    my ($name, $type, $value) = split (/\s/, $', 3);
+	    $self->{'internal_entities_by_value'}{$value} = $name;
+	    $dtd_h->internal_entity_decl ({ Name => $name, Type => $type,
+					    Value => $value })
+		if ($dtd_h->can('internal_entity_decl'));
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^&/) {             # external entity reference
-            my ($name) = $';
-            $doc_h->external_entity_ref({ Name => $name })
-                if ($doc_h->can('external_entity_ref'));
+	if (/^&/) {		# external entity reference
+	    my ($name) = $';
+	    $doc_h->external_entity_ref({ Name => $name })
+		if ($doc_h->can('external_entity_ref'));
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^\?/) {            # processing instruction (PI)
-            my ($data) = $';
-            if ($self->{ParseOptions}{IsSGML}) {
-                $doc_h->processing_instruction({ Data => $data })
-                    if ($doc_h->can('processing_instruction'));
-            } else {
-                my ($target, $pi_data) = split (/\s+/, $data, 2);
-                $doc_h->processing_instruction({ Target => $target, Data => $pi_data })
-                    if ($doc_h->can('processing_instruction'));
-            }
+	if (/^\?/) {		# processing instruction (PI)
+	    my ($data) = $';
+	    if ($self->{ParseOptions}{IsSGML}) {
+		$doc_h->processing_instruction({ Data => $data })
+		    if ($doc_h->can('processing_instruction'));
+	    } else {
+		my ($target, $pi_data) = split (/\s+/, $data, 2);
+		$doc_h->processing_instruction({ Target => $target, Data => $pi_data })
+		    if ($doc_h->can('processing_instruction'));
+	    }
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^N/) {             # notation definition
-            my ($name) = $';
-            if (defined $files) {
-                push (@properties, GeneratedId => $files);
-            }
-            $dtd_h->notation_decl ({ Name => $name, @properties })
-                if ($dtd_h->can('notation_decl'));
+	if (/^N/) {		# notation definition
+	    my ($name) = $';
+	    if (defined $files) {
+		push (@properties, GeneratedId => $files);
+	    }
+	    $dtd_h->notation_decl ({ Name => $name, @properties })
+		if ($dtd_h->can('notation_decl'));
 
-            @properties = (); undef $files;
-            next;
-        }
+	    @properties = (); undef $files;
+	    next;
+	}
 
-        if (/^S/) {             # subdoc definition
-            my ($name) = $';
-            if (defined $files) {
-                push (@properties, GeneratedId => $files);
-            }
-            $dtd_h->subdoc_entity_decl ({ Name => $name, @properties })
-                if ($dtd_h->can('subdoc_entity_decl'));
+	if (/^S/) {		# subdoc definition
+	    my ($name) = $';
+	    if (defined $files) {
+		push (@properties, GeneratedId => $files);
+	    }
+	    $dtd_h->subdoc_entity_decl ({ Name => $name, @properties })
+		if ($dtd_h->can('subdoc_entity_decl'));
 
-            @properties = (); undef $files;
-            next;
-        }
+	    @properties = (); undef $files;
+	    next;
+	}
 
-        if (/^T/) {             # external SGML text entity definition
-            my ($name) = $';
-            if (defined $files) {
-                push (@properties, GeneratedId => $files);
-            }
-            $dtd_h->external_sgml_entity_decl ({ Name => $name, @properties })
-                if ($dtd_h->can('external_sgml_entity_decl'));
+	if (/^T/) {		# external SGML text entity definition
+	    my ($name) = $';
+	    if (defined $files) {
+		push (@properties, GeneratedId => $files);
+	    }
+	    $dtd_h->external_sgml_entity_decl ({ Name => $name, @properties })
+		if ($dtd_h->can('external_sgml_entity_decl'));
 
-            @properties = (); undef $files;
-            next;
-        }
+	    @properties = (); undef $files;
+	    next;
+	}
 
-        if (/^D/) {             # data attribute
-            # FIXME
-            my $message = "XML::ESISParser: can't handle data attributes yet\n";
-            if ($err_h->can('error')) {
-                $err_h->error ({ Message => $message });
-            } else {
-                die "$message";
-            }
+	if (/^D/) {             # data attribute
+	    # FIXME
+	    my $message = "XML::ESISParser: can't handle data attributes yet\n";
+	    if ($err_h->can('error')) {
+		$err_h->error ({ Message => $message });
+	    } else {
+		die "$message";
+	    }
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^D/) {             # link attribute
-            # FIXME
-            my $message = "XML::ESISParser: can't handle link attributes yet\n";
-            if ($err_h->can('error')) {
-                $err_h->error ({ Message => $message });
-            } else {
-                die "$message";
-            }
+	if (/^D/) {             # link attribute
+	    # FIXME
+	    my $message = "XML::ESISParser: can't handle link attributes yet\n";
+	    if ($err_h->can('error')) {
+		$err_h->error ({ Message => $message });
+	    } else {
+		die "$message";
+	    }
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^{/) {             # subdoc start
-            my ($name) = $';
-            $doc_h->start_subdoc ({ Name => $name })
-                if ($doc_h->can('start_subdoc'));
+	if (/^{/) {		# subdoc start
+	    my ($name) = $';
+	    $doc_h->start_subdoc ({ Name => $name })
+		if ($doc_h->can('start_subdoc'));
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^}/) {             # subdoc end
-            my ($name) = $';
-            $doc_h->end_subdoc ({ Name => $name })
-                if ($doc_h->can('end_subdoc'));
+	if (/^}/) {		# subdoc end
+	    my ($name) = $';
+	    $doc_h->end_subdoc ({ Name => $name })
+		if ($doc_h->can('end_subdoc'));
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^#/) {             # appinfo
-            my ($text) = $';
-            $doc_h->appinfo ({ Text => $text })
-                if ($doc_h->can('appinfo'));
+	if (/^#/) {		# appinfo
+	    my ($text) = $';
+	    $doc_h->appinfo ({ Text => $text })
+	        if ($doc_h->can('appinfo'));
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^i/) {             # next element is an included subelement
-            push (@properties, IncludedSubelement => 1);
+	if (/^i/) {             # next element is an included subelement
+	    push (@properties, IncludedSubelement => 1);
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^e/) {             # next element is declared empty
-            push (@properties, Empty => 1);
+	if (/^e/) {             # next element is declared empty
+	    push (@properties, Empty => 1);
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^C/) {             # conforming
-            $doc_h->conforming({})
-                if ($doc_h->can('conforming'));
+	if (/^C/) {		# conforming
+	    $doc_h->conforming({})
+		if ($doc_h->can('conforming'));
 
-            next;
-        }
+	    next;
+	}
 
-        if (/^$self->{ParseOptions}{NSGMLS}:/) {        # `nsgmls' error
-            my $message = $_;
-            if ($err_h->can('error')) {
-                $err_h->error ({ Message => $message });
-            } else {
-                die "$message\n";
-            }
+	if (/^$self->{ParseOptions}{NSGMLS}:/) {	# `nsgmls' error
+	    my $message = $_;
+	    if ($err_h->can('error')) {
+		$err_h->error ({ Message => $message });
+	    } else {
+		die "$message\n";
+	    }
 
-            next;
-        }
+	    next;
+	}
 
-        my ($op) = substr ($_, 0, 1);
-        my $message = "XML::ESISParser::parse_fh: ESIS command character \`$op' not recognized when reading line \`$_' around line $line ($.)";
-        if ($err_h->can('error')) {
-            $err_h->error ({ Message => $message });
-        } else {
-            die "$message";
-        }
+	my ($op) = substr ($_, 0, 1);
+	my $message = "XML::ESISParser::parse_fh: ESIS command character \`$op' not recognized when reading line \`$_' around line $line ($.)";
+	if ($err_h->can('error')) {
+	    $err_h->error ({ Message => $message });
+	} else {
+	    die "$message";
+	}
     }
 
     if ($doc_h->can('end_document')) {
-        return $doc_h->end_document({});
+	return $doc_h->end_document({});
     } else {
-        return ();
+	return ();
     }
 }
 
@@ -634,7 +634,7 @@ should convert this to a new-line.
 
 =item processing_instruction
 
-Receive notification of a processing instruction.
+Receive notification of a processing instruction. 
 
  Target           The processing instruction target in XML.
  Data             The processing instruction data, if any.

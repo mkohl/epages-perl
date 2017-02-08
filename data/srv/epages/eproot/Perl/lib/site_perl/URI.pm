@@ -38,28 +38,28 @@ sub new
 
     $uri = defined ($uri) ? "$uri" : "";   # stringify
     # Get rid of potential wrapping
-    $uri =~ s/^<(?:URL:)?(.*)>$/$1/;  #
+    $uri =~ s/^<(?:URL:)?(.*)>$/$1/;  # 
     $uri =~ s/^"(.*)"$/$1/;
     $uri =~ s/^\s+//;
     $uri =~ s/\s+$//;
 
     my $impclass;
     if ($uri =~ m/^($scheme_re):/so) {
-        $scheme = $1;
+	$scheme = $1;
     }
     else {
-        if (($impclass = ref($scheme))) {
-            $scheme = $scheme->scheme;
-        }
-        elsif ($scheme && $scheme =~ m/^($scheme_re)(?::|$)/o) {
-            $scheme = $1;
+	if (($impclass = ref($scheme))) {
+	    $scheme = $scheme->scheme;
+	}
+	elsif ($scheme && $scheme =~ m/^($scheme_re)(?::|$)/o) {
+	    $scheme = $1;
         }
     }
     $impclass ||= implementor($scheme) ||
-        do {
-            require URI::_foreign;
-            $impclass = 'URI::_foreign';
-        };
+	do {
+	    require URI::_foreign;
+	    $impclass = 'URI::_foreign';
+	};
 
     return $impclass->_init($uri, $scheme);
 }
@@ -99,14 +99,14 @@ sub implementor
 {
     my($scheme, $impclass) = @_;
     if (!$scheme || $scheme !~ /\A$scheme_re\z/o) {
-        require URI::_generic;
-        return "URI::_generic";
+	require URI::_generic;
+	return "URI::_generic";
     }
 
     $scheme = lc($scheme);
 
     if ($impclass) {
-        # Set the implementor class for a given scheme
+	# Set the implementor class for a given scheme
         my $old = $implements{$scheme};
         $impclass->_init_implementor($scheme);
         $implements{$scheme} = $impclass;
@@ -163,28 +163,28 @@ sub _scheme
     my $self = shift;
 
     unless (@_) {
-        return undef unless $$self =~ /^($scheme_re):/o;
-        return $1;
+	return undef unless $$self =~ /^($scheme_re):/o;
+	return $1;
     }
 
     my $old;
     my $new = shift;
     if (defined($new) && length($new)) {
-        Carp::croak("Bad scheme '$new'") unless $new =~ /^$scheme_re$/o;
-        $old = $1 if $$self =~ s/^($scheme_re)://o;
-        my $newself = URI->new("$new:$$self");
-        $$self = $$newself;
-        bless $self, ref($newself);
+	Carp::croak("Bad scheme '$new'") unless $new =~ /^$scheme_re$/o;
+	$old = $1 if $$self =~ s/^($scheme_re)://o;
+	my $newself = URI->new("$new:$$self");
+	$$self = $$newself; 
+	bless $self, ref($newself);
     }
     else {
-        if ($self->_no_scheme_ok) {
-            $old = $1 if $$self =~ s/^($scheme_re)://o;
-            Carp::carp("Oops, opaque part now look like scheme")
-                if $^W && $$self =~ m/^$scheme_re:/o
-        }
-        else {
-            $old = $1 if $$self =~ m/^($scheme_re):/o;
-        }
+	if ($self->_no_scheme_ok) {
+	    $old = $1 if $$self =~ s/^($scheme_re)://o;
+	    Carp::carp("Oops, opaque part now look like scheme")
+		if $^W && $$self =~ m/^$scheme_re:/o
+	}
+	else {
+	    $old = $1 if $$self =~ m/^($scheme_re):/o;
+	}
     }
 
     return $old;
@@ -207,12 +207,12 @@ sub opaque
     my $self = shift;
 
     unless (@_) {
-        $$self =~ /^(?:$scheme_re:)?([^\#]*)/o or die;
-        return $1;
+	$$self =~ /^(?:$scheme_re:)?([^\#]*)/o or die;
+	return $1;
     }
 
     $$self =~ /^($scheme_re:)?    # optional scheme
-                ([^\#]*)          # opaque
+	        ([^\#]*)          # opaque
                 (\#.*)?           # optional fragment
               $/sx or die;
 
@@ -239,8 +239,8 @@ sub fragment
 {
     my $self = shift;
     unless (@_) {
-        return undef unless $$self =~ /\#(.*)/s;
-        return $1;
+	return undef unless $$self =~ /\#(.*)/s;
+	return $1;
     }
 
     my $old;
@@ -248,9 +248,9 @@ sub fragment
 
     my $new_frag = shift;
     if (defined $new_frag) {
-        $new_frag =~ s/([^$uric])/ URI::Escape::escape_char($1) /ego;
-        utf8::downgrade($new_frag);
-        $$self .= "#$new_frag";
+	$new_frag =~ s/([^$uric])/ URI::Escape::escape_char($1) /ego;
+	utf8::downgrade($new_frag);
+	$$self .= "#$new_frag";
     }
     $old;
 }
@@ -268,24 +268,24 @@ sub as_iri
     my $self = shift;
     my $str = $$self;
     if ($str =~ s/%([89a-fA-F][0-9a-fA-F])/chr(hex($1))/eg) {
-        # All this crap because the more obvious:
-        #
-        #   Encode::decode("UTF-8", $str, sub { sprintf "%%%02X", shift })
-        #
-        # doesn't work before Encode 2.39.  Wait for a standard release
-        # to bundle that version.
+	# All this crap because the more obvious:
+	#
+	#   Encode::decode("UTF-8", $str, sub { sprintf "%%%02X", shift })
+	#
+	# doesn't work before Encode 2.39.  Wait for a standard release
+	# to bundle that version.
 
-        require Encode;
-        my $enc = Encode::find_encoding("UTF-8");
-        my $u = "";
-        while (length $str) {
-            $u .= $enc->decode($str, Encode::FB_QUIET());
-            if (length $str) {
-                # escape next char
-                $u .= URI::Escape::escape_char(substr($str, 0, 1, ""));
-            }
-        }
-        $str = $u;
+	require Encode;
+	my $enc = Encode::find_encoding("UTF-8");
+	my $u = "";
+	while (length $str) {
+	    $u .= $enc->decode($str, Encode::FB_QUIET());
+	    if (length $str) {
+		# escape next char
+		$u .= URI::Escape::escape_char(substr($str, 0, 1, ""));
+	    }
+	}
+	$str = $u;
     }
     return $str;
 }
@@ -304,11 +304,11 @@ sub canonical
 
     my $other = $self->clone;
     if ($uc_scheme) {
-        $other->_scheme(lc $scheme);
+	$other->_scheme(lc $scheme);
     }
     if ($esc) {
-        $$other =~ s{%([0-9a-fA-F]{2})}
-                    { my $a = chr(hex($1));
+	$$other =~ s{%([0-9a-fA-F]{2})}
+	            { my $a = chr(hex($1));
                       $a =~ /^[$unreserved]\z/o ? $a : "%\U$1"
                     }ge;
     }
@@ -321,7 +321,7 @@ sub eq {
     $self  = URI->new($self, $other) unless ref $self;
     $other = URI->new($other, $self) unless ref $other;
     ref($self) eq ref($other) &&                # same class
-        $self->canonical->as_string eq $other->canonical->as_string;
+	$self->canonical->as_string eq $other->canonical->as_string;
 }
 
 # generic-URI transformation methods

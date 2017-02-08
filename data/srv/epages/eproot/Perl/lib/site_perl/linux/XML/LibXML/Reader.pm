@@ -21,7 +21,7 @@ use 5.008_000;
 BEGIN {
   UNIVERSAL::can('XML::LibXML::Reader','_newForFile') or
       croak("Cannot use XML::LibXML::Reader module - ".
-            "your libxml2 is compiled without reader support!");
+	    "your libxml2 is compiled without reader support!");
 }
 
 use base qw(Exporter);
@@ -101,10 +101,10 @@ $EXPORT_TAGS{all}=\@EXPORT_OK;
 
 {
   my %props = (
-    load_ext_dtd => 1,           # load the external subset
-    complete_attributes => 2,    # default DTD attributes
-    validation => 3,             # validate with the DTD
-    expand_entities => 4,        # substitute entities
+    load_ext_dtd => 1,		 # load the external subset
+    complete_attributes => 2,	 # default DTD attributes
+    validation => 3,		 # validate with the DTD
+    expand_entities => 4,	 # substitute entities
   );
   sub getParserProp {
     my ($self, $name) = @_;
@@ -145,7 +145,7 @@ $EXPORT_TAGS{all}=\@EXPORT_OK;
     }
     elsif ( defined $args{DOM} ) {
       croak("DOM must be a XML::LibXML::Document node")
-        unless UNIVERSAL::isa($args{DOM}, 'XML::LibXML::Document');
+	unless UNIVERSAL::isa($args{DOM}, 'XML::LibXML::Document');
       $self = $class->_newForDOM( $args{DOM} );
     }
     elsif ( defined $args{FD} ) {
@@ -157,18 +157,18 @@ $EXPORT_TAGS{all}=\@EXPORT_OK;
     }
     if ($args{RelaxNG}) {
       if (ref($args{RelaxNG})) {
-        $rng_pool{$self} = \$args{RelaxNG};
-        $self->_setRelaxNG($args{RelaxNG});
+	$rng_pool{$self} = \$args{RelaxNG};
+	$self->_setRelaxNG($args{RelaxNG});
       } else {
-        $self->_setRelaxNGFile($args{RelaxNG});
+	$self->_setRelaxNGFile($args{RelaxNG});
       }
     }
     if ($args{Schema}) {
       if (ref($args{Schema})) {
-        $xsd_pool{$self} = \$args{Schema};
-        $self->_setXSD($args{Schema});
+	$xsd_pool{$self} = \$args{Schema};
+	$self->_setXSD($args{Schema});
       } else {
-        $self->_setXSDFile($args{Schema});
+	$self->_setXSDFile($args{Schema});
       }
     }
     return $self;

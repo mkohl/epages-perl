@@ -9,26 +9,26 @@
 
 # This file returns the 32 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{PosixPunct}
 #         \p{Is_PosixPunct}
-#
+# 
 #     Meaning: Graphical characters that aren't Word characters = [\x21-
 #     \x2F\x3A-\x40\x5B-\x60\x7B-\x7E]
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-0021    002F     # [15]
-003A    0040     # [7]
-005B    0060     # [6]
-007B    007E     # [4]
+0021	002F	 # [15]
+003A	0040	 # [7]
+005B	0060	 # [6]
+007B	007E	 # [4]
 END

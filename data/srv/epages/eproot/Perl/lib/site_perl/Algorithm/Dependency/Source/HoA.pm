@@ -14,7 +14,7 @@ Algorithm::Dependency::Source::HoA - Source for a HASH of ARRAYs
       bar => [],
       baz => [ 'bar' ],
       };
-
+  
   # Create the source from it
   my $Source = Algorithm::Dependency::Source::HoA->new( $deps );
 
@@ -38,8 +38,8 @@ use Params::Util qw{_HASH _ARRAY0};
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.110';
-        @ISA     = 'Algorithm::Dependency::Source';
+	$VERSION = '1.110';
+	@ISA     = 'Algorithm::Dependency::Source';
 }
 
 
@@ -62,19 +62,19 @@ Returns the object, or C<undef> if the structure is not correct.
 =cut
 
 sub new {
-        my $class = shift;
-        my $hash  = _HASH(shift) or return undef;
-        foreach my $deps ( values %$hash ) {
-                _ARRAY0($deps) or return undef;
-        }
+	my $class = shift;
+	my $hash  = _HASH(shift) or return undef;
+	foreach my $deps ( values %$hash ) {
+		_ARRAY0($deps) or return undef;
+	}
 
-        # Get the basic source object
-        my $self = $class->SUPER::new() or return undef;
+	# Get the basic source object
+	my $self = $class->SUPER::new() or return undef;
 
-        # Add our arguments
-        $self->{hash} = $hash;
+	# Add our arguments
+	$self->{hash} = $hash;
 
-        $self;
+	$self;
 }
 
 
@@ -85,16 +85,16 @@ sub new {
 # Private Methods
 
 sub _load_item_list {
-        my $self = shift;
+	my $self = shift;
 
-        # Build the item objects from the data
-        my $hash  = $self->{hash};
-        my @items = map {
-                Algorithm::Dependency::Item->new( $_, @{$hash->{$_}} )
-                or return undef;
-                } keys %$hash;
+	# Build the item objects from the data
+	my $hash  = $self->{hash};
+	my @items = map {
+		Algorithm::Dependency::Item->new( $_, @{$hash->{$_}} )
+		or return undef;
+		} keys %$hash;
 
-        \@items;
+	\@items;
 }
 
 1;

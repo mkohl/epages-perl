@@ -40,8 +40,8 @@ sub handle {
 
     my ($self, $r, $url, $responder, $req) = @_;
 
-    $responder->badRequest( $r, "PROPFINDVAGUE" ) unless exists $req->{'{DAV:}prop'}
-                                            || exists $req->{'{DAV:}allprop'}
+    $responder->badRequest( $r, "PROPFINDVAGUE" ) unless exists $req->{'{DAV:}prop'} 
+                                            || exists $req->{'{DAV:}allprop'} 
                                             || exists $req->{'{DAV:}propname'};
 
     $url =~ s#/*$##;
@@ -77,7 +77,7 @@ sub handle {
                 $xml .= qq(<propstat>\n<href>http://$host$url</href>\n<prop>\n);
                 map { $xml .= qq(\t<$_/>\n) } keys %fileProps;
                 $xml .= qq(</prop>\n<status>HTTP/1.1 200 OK</status>\n</propstat>\n);
-            }
+            } 
 
             if ( -d "$root/$url" ) {
 
@@ -106,7 +106,7 @@ sub handle {
 
 
     my $reqProps=$req->{'{DAV:}prop'} || undef;
-
+    
     # Property values response
     my $response=[];
     fetchProps( $root, $url, "http://$host", $reqProps, $depth, $response );
@@ -268,7 +268,7 @@ sub file {
 
 =head1 SUPPORT
 
-For technical support please email to jlawrenc@cpan.org ...
+For technical support please email to jlawrenc@cpan.org ... 
 for faster service please include "HTTP::DAVServer" and "help" in your subject line.
 
 =head1 AUTHOR

@@ -75,10 +75,10 @@ Net::LDAP::Control::Paged - LDAPv3 Paged results control object
  $page = Net::LDAP::Control::Paged->new( size => 100 );
 
  @args = ( base     => "cn=subnets,cn=sites,cn=configuration,$BASE_DN",
-           scope    => "subtree",
-           filter   => "(objectClass=subnet)",
-           callback => \&process_entry, # Call this sub for each entry
-           control  => [ $page ],
+	   scope    => "subtree",
+	   filter   => "(objectClass=subnet)",
+	   callback => \&process_entry, # Call this sub for each entry
+	   control  => [ $page ],
  );
 
  my $cookie;

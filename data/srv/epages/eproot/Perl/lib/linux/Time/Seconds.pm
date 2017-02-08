@@ -8,18 +8,18 @@ use vars qw/@EXPORT @EXPORT_OK @ISA/;
 @ISA = 'Exporter';
 
 @EXPORT = qw(
-                ONE_MINUTE
-                ONE_HOUR
-                ONE_DAY
-                ONE_WEEK
-                ONE_MONTH
+		ONE_MINUTE 
+		ONE_HOUR 
+		ONE_DAY 
+		ONE_WEEK 
+		ONE_MONTH
                 ONE_REAL_MONTH
-                ONE_YEAR
+		ONE_YEAR
                 ONE_REAL_YEAR
-                ONE_FINANCIAL_MONTH
-                LEAP_YEAR
-                NON_LEAP_YEAR
-                );
+		ONE_FINANCIAL_MONTH
+		LEAP_YEAR 
+		NON_LEAP_YEAR
+		);
 
 @EXPORT_OK = qw(cs_sec cs_mon);
 
@@ -39,12 +39,12 @@ use constant NON_LEAP_YEAR => 31_536_000; # 365 * ONE_DAY
 use constant cs_sec => 0;
 use constant cs_mon => 1;
 
-use overload
+use overload 
                 'fallback' => 'undef',
-                '0+' => \&seconds,
-                '""' => \&seconds,
-                '<=>' => \&compare,
-                '+' => \&add,
+		'0+' => \&seconds,
+		'""' => \&seconds,
+		'<=>' => \&compare,
+		'+' => \&add,
                 '-' => \&subtract,
                 '-=' => \&subtract_from,
                 '+=' => \&add_to,
@@ -107,7 +107,7 @@ sub subtract_from {
 }
 
 sub copy {
-        Time::Seconds->new(${$_[0]});
+	Time::Seconds->new(${$_[0]});
 }
 
 sub seconds {
@@ -161,13 +161,13 @@ Time::Seconds - a simple API to convert seconds to other date values
 
     use Time::Piece;
     use Time::Seconds;
-
+    
     my $t = localtime;
     $t += ONE_DAY;
-
+    
     my $t2 = localtime;
     my $s = $t - $t2;
-
+    
     print "Difference is: ", $s->days, "\n";
 
 =head1 DESCRIPTION
@@ -183,9 +183,9 @@ Time::Seconds also exports the following constants:
     ONE_WEEK
     ONE_HOUR
     ONE_MINUTE
-        ONE_MONTH
-        ONE_YEAR
-        ONE_FINANCIAL_MONTH
+	ONE_MONTH
+	ONE_YEAR
+	ONE_FINANCIAL_MONTH
     LEAP_YEAR
     NON_LEAP_YEAR
 
@@ -202,8 +202,8 @@ The following methods are available:
     $val->hours;
     $val->days;
     $val->weeks;
-        $val->months;
-        $val->financial_months; # 30 days
+	$val->months;
+	$val->financial_months; # 30 days
     $val->years;
 
 The methods make the assumption that there are 24 hours in a day, 7 days in

@@ -21,24 +21,24 @@ sub _group
     my $self = shift;
     my $old = $self->path;
     if (@_) {
-        my($group,$from,$to) = @_;
-        if ($group =~ /\@/) {
+	my($group,$from,$to) = @_;
+	if ($group =~ /\@/) {
             $group =~ s/^<(.*)>$/$1/;  # "<" and ">" should not be part of it
-        }
-        $group =~ s,%,%25,g;
-        $group =~ s,/,%2F,g;
-        my $path = $group;
-        if (defined $from) {
-            $path .= "/$from";
-            $path .= "-$to" if defined $to;
-        }
-        $self->path($path);
+	}
+	$group =~ s,%,%25,g;
+	$group =~ s,/,%2F,g;
+	my $path = $group;
+	if (defined $from) {
+	    $path .= "/$from";
+	    $path .= "-$to" if defined $to;
+	}
+	$self->path($path);
     }
 
     $old =~ s,^/,,;
     if ($old !~ /\@/ && $old =~ s,/(.*),, && wantarray) {
-        my $extra = $1;
-        return (uri_unescape($old), split(/-/, $extra));
+	my $extra = $1;
+	return (uri_unescape($old), split(/-/, $extra));
     }
     uri_unescape($old);
 }
@@ -48,7 +48,7 @@ sub group
 {
     my $self = shift;
     if (@_) {
-        Carp::croak("Group name can't contain '\@'") if $_[0] =~ /\@/;
+	Carp::croak("Group name can't contain '\@'") if $_[0] =~ /\@/;
     }
     my @old = $self->_group(@_);
     return if $old[0] =~ /\@/;
@@ -59,7 +59,7 @@ sub message
 {
     my $self = shift;
     if (@_) {
-        Carp::croak("Message must contain '\@'") unless $_[0] =~ /\@/;
+	Carp::croak("Message must contain '\@'") unless $_[0] =~ /\@/;
     }
     my $old = $self->_group(@_);
     return undef unless $old =~ /\@/;

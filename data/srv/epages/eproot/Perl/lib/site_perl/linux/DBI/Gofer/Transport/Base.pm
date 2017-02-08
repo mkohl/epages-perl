@@ -53,7 +53,7 @@ sub _freeze_data {
             if !$skip_trace and $self->trace;
 
         local $data->{meta}; # don't include meta in serialization
-        $serializer ||= $self->{serializer_obj};
+	$serializer ||= $self->{serializer_obj};
         my ($data, $deserializer_class)  = $serializer->serialize($data);
 
         $packet_header_text . $data;
@@ -82,7 +82,7 @@ sub _thaw_data {
         (my $frozen = $frozen_data) =~ s/$packet_header_regex//o
             or die "does not have gofer header\n";
         my ($t_version) = $1;
-        $serializer ||= $self->{serializer_obj};
+	$serializer ||= $self->{serializer_obj};
         $data = $serializer->deserialize($frozen);
         die ref($serializer)."->deserialize didn't return a reference"
             unless ref $data;

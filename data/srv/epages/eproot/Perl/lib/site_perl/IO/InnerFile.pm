@@ -11,13 +11,13 @@ IO::InnerFile - define a file inside another file
     ### Read a subset of a file:
     $inner = IO::InnerFile->new($fh, $start, $length);
     while (<$inner>) {
-        ...
+	...
     }
 
 
 =head1 DESCRIPTION
 
-If you have a filehandle that can seek() and tell(), then you
+If you have a filehandle that can seek() and tell(), then you 
 can open an IO::InnerFile on a range of the underlying file.
 
 
@@ -53,33 +53,33 @@ sub new {
 
    ### Create the underlying "object":
    my $a = {
-      FH        =>      $fh,
-      CRPOS     =>      0,
-      START     =>      $start,
-      LG        =>      $lg,
+      FH 	=> 	$fh,
+      CRPOS 	=> 	0,
+      START	=>	$start,
+      LG	=>	$lg,
    };
 
    ### Create a new filehandle tied to this object:
    $fh = gensym;
-   tie(*$fh, $class, $a);
+   tie(*$fh, $class, $a); 
    return bless($fh, $class);
 }
 
-sub TIEHANDLE {
+sub TIEHANDLE { 
    my ($class, $data) = @_;
    return bless($data, $class);
 }
 
-sub DESTROY {
+sub DESTROY { 
    my ($self) = @_;
-   $self->close() if (ref($self) eq 'SCALAR');
+   $self->close() if (ref($self) eq 'SCALAR'); 
 }
 
 #------------------------------
 
 =item set_length LENGTH
 
-=item get_length
+=item get_length 
 
 =item add_length NBYTES
 
@@ -96,7 +96,7 @@ sub add_length { tied(${$_[0]})->{LG} += $_[1]; }
 
 =item set_start START
 
-=item get_start
+=item get_start 
 
 =item add_start NBYTES
 
@@ -106,7 +106,7 @@ Get/set the virtual start position of the inner file.
 =cut
 
 sub set_start  { tied(${$_[0]})->{START} = $_[1]; }
-sub get_start  { tied(${$_[0]})->{START}; }
+sub get_start  { tied(${$_[0]})->{START}; } 
 sub set_end    { tied(${$_[0]})->{LG} =  $_[1] - tied(${$_[0]})->{START}; }
 sub get_end    { tied(${$_[0]})->{LG} + tied(${$_[0]})->{START}; }
 
@@ -166,11 +166,11 @@ sub seek {
    return 1;
 }
 
-sub tell {
-    return tied(${$_[0]})->{CRPOS};
+sub tell { 
+    return tied(${$_[0]})->{CRPOS}; 
 }
 
-sub WRITE  {
+sub WRITE  { 
     die "inner files can only open for reading\n";
 }
 
@@ -178,11 +178,11 @@ sub PRINT  {
     die "inner files can only open for reading\n";
 }
 
-sub PRINTF {
+sub PRINTF { 
     die "inner files can only open for reading\n";
 }
 
-sub GETC   {
+sub GETC   { 
     my ($self) = @_;
     return 0 if ($self->{CRPOS} >= $self->{LG});
 
@@ -199,11 +199,11 @@ sub GETC   {
     ### ...and restore:
     $self->{FH}->seek($old_pos, 0);
 
-    $self->{LG} = $self->{CRPOS} unless ($lg);
+    $self->{LG} = $self->{CRPOS} unless ($lg); 
     return ($lg ? $data : undef);
 }
 
-sub READ   {
+sub READ   { 
     my ($self, $undefined, $lg, $ofs) = @_;
     $undefined = undef;
 
@@ -222,11 +222,11 @@ sub READ   {
     ### ...and restore:
     $self->{FH}->seek($old_pos, 0);
 
-    $self->{LG} = $self->{CRPOS} unless ($lg);
+    $self->{LG} = $self->{CRPOS} unless ($lg); 
     return $lg;
 }
 
-sub READLINE {
+sub READLINE { 
     my ($self) = @_;
     return undef if ($self->{CRPOS} >= $self->{LG});
 
@@ -241,7 +241,7 @@ sub READLINE {
     $self->{FH}->seek($old_pos, 0);
 
     #### If we detected a new EOF ...
-    unless (defined $text) {
+    unless (defined $text) {  
        $self->{LG} = $self->{CRPOS};
        return undef;
     }

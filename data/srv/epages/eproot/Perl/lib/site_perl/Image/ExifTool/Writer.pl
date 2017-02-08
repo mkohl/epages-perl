@@ -2105,7 +2105,7 @@ Conv: for (;;) {
             $type = $convType || $$self{ConvType} || 'PrintConv';
         } elsif ($type ne 'ValueConv') {
             $type = 'ValueConv';
-        } else {
+        } else {    
             # finally, do our value check
             my ($err2, $v);
             if ($tagInfo->{WriteCheck}) {
@@ -5051,7 +5051,7 @@ sub CheckValue($$;$)
                         return 'Must be an unsigned rational';
                     }
                 }
-                return 'Not a floating point number'
+                return 'Not a floating point number' 
             }
             if ($format =~ /^rational\d+u$/ and $val < 0) {
                 return 'Must be a positive number';

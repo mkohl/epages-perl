@@ -31,9 +31,9 @@ OAuth::Lite2::Client::UsernameAndPassword - OAuth 2.0 Username And Password Prof
         my $your_app = shift;
 
         my $access_token = $client->get_access_token(
-            username => $your_app->request->param("username"),
-            password => $your_app->request->param("password"),
-            scope    => q{photo},
+            username => $your_app->request->param("username"), 
+            password => $your_app->request->param("password"), 
+            scope    => q{photo}, 
         ) or return $your_app->error( $client->errstr );
 
         $your_app->store->save( access_token  => $access_token->access_token  );
@@ -209,7 +209,7 @@ sub get_access_token {
     my $headers = HTTP::Headers->new;
     $headers->header("Content-Type" => q{application/x-www-form-urlencoded});
     $headers->header("Content-Length" => bytes::length($content));
-    $headers->authorization_basic($self->{id}, $self->{secret})
+    $headers->authorization_basic($self->{id}, $self->{secret})    
         if($args{use_basic_schema});
     my $req = HTTP::Request->new( POST => $args{uri}, $headers, $content );
 
@@ -273,7 +273,7 @@ sub refresh_access_token {
     my $headers = HTTP::Headers->new;
     $headers->header("Content-Type" => q{application/x-www-form-urlencoded});
     $headers->header("Content-Length" => bytes::length($content));
-    $headers->authorization_basic($self->{id}, $self->{secret})
+    $headers->authorization_basic($self->{id}, $self->{secret})    
         if($args{use_basic_schema});
     my $req = HTTP::Request->new( POST => $args{uri}, $headers, $content );
 

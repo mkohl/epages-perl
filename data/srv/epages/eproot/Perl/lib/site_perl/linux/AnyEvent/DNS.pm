@@ -5,7 +5,7 @@ AnyEvent::DNS - fully asynchronous DNS resolution
 =head1 SYNOPSIS
 
    use AnyEvent::DNS;
-
+   
    my $cv = AnyEvent->condvar;
    AnyEvent::DNS::a "www.google.de", $cv;
    # ... later
@@ -101,7 +101,7 @@ strings, you need to call the resolver manually:
 Tries to resolve the given service, protocol and domain name into a list
 of service records.
 
-Each C<$srv_rr> is an array reference with the following contents:
+Each C<$srv_rr> is an array reference with the following contents: 
 C<[$priority, $weight, $transport, $target]>.
 
 They will be sorted with lowest priority first, then randomly
@@ -282,7 +282,7 @@ sub reverse_lookup($$) {
 
 sub reverse_verify($$) {
    my ($ip, $cb) = @_;
-
+   
    my $ipn = AnyEvent::Socket::parse_address ($ip)
       or return $cb->();
 
@@ -299,7 +299,7 @@ sub reverse_verify($$) {
    ptr $ptr, sub {
       for my $name (@_) {
          ++$cnt;
-
+         
          # () around AF_INET to work around bug in 5.8
          resolver->resolve ("$name." => ($af == (AF_INET) ? "a" : "aaaa"), sub {
             for (@_) {
@@ -443,14 +443,14 @@ Examples:
 
    # very simple request, using lots of default values:
    { rd => 1, qd => [ [ "host.domain", "a"] ] }
-
+  
    # more complex example, showing how flags etc. are named:
-
+  
    {
       id => 10000,
       op => "query",
       rc => "nxdomain",
-
+  
       # flags
       qr => 1,
       aa => 0,
@@ -459,7 +459,7 @@ Examples:
       ra => 0,
       ad => 0,
       cd => 0,
-
+  
       qd => [@rr], # query section
       an => [@rr], # answer section
       ns => [@rr], # authority section
@@ -536,7 +536,7 @@ our %dec_rr = (
      1 => sub { join ".", unpack "C4", $_ }, # a
      2 => sub { local $ofs = $ofs - length; _dec_name }, # ns
      5 => sub { local $ofs = $ofs - length; _dec_name }, # cname
-     6 => sub {
+     6 => sub { 
              local $ofs = $ofs - length;
              my $mname = _dec_name;
              my $rname = _dec_name;
@@ -607,9 +607,9 @@ Examples:
      'rd' => 1,
      'op' => 'query'
    }
-
+   
    # a successful reply
-
+   
    {
      'qd' => [ [ 'www.google.de', 'a', 'in' ] ],
      'rc' => 0,
@@ -1143,7 +1143,7 @@ sub _exec {
          };
 
       my ($server, $timeout) = @$retry_cfg;
-
+      
       $self->{id}{$req->[2]} = [(AE::timer $timeout, 0, sub {
          $NOW = time;
 
@@ -1188,7 +1188,7 @@ sub _exec {
             undef $do_retry; return $req->[1]->($res);
          }
       }];
-
+      
       my $sa = AnyEvent::Socket::pack_sockaddr (DOMAIN_PORT, $server);
 
       my $fh = AF_INET == AnyEvent::Socket::sockaddr_family ($sa)
@@ -1405,7 +1405,7 @@ sub resolve($%) {
 
       # advance in searchlist
       my ($do_search, $do_req);
-
+      
       $do_search = sub {
          @search
             or (undef $do_search), (undef $do_req), return $cb->();

@@ -47,14 +47,14 @@ sub _new {
     my ( $class, @children ) = @_;
     ref $class and $class = ref $class;
     foreach my $elem ( @children ) {
-        __instance( $elem, 'PPIx::Regexp::Element' ) or return;
+	__instance( $elem, 'PPIx::Regexp::Element' ) or return;
     }
     my $self = {
-        children => \@children,
+	children => \@children,
     };
     bless $self, $class;
     foreach my $elem ( @children ) {
-        $elem->_parent( $self );
+	$elem->_parent( $self );
     }
     return $self;
 }
@@ -103,7 +103,7 @@ sub contains {
     my $addr = refaddr( $self );
 
     while ( $elem = $elem->parent() ) {
-        $addr == refaddr( $elem ) and return 1;
+	$addr == refaddr( $elem ) and return 1;
     }
 
     return;
@@ -132,7 +132,7 @@ C<PPIx::Regexp::Node> proper, it is the same as C<children()>.
  my $rslt = $node->find( 'Token::Literal' );
  my $rslt = $node->find( sub {
      return $_[1]->isa( 'PPIx::Regexp::Token::Literal' )
-         && $_[1]->ordinal < ord(' ');
+	 && $_[1]->ordinal < ord(' ');
      } );
 
 This method finds things.
@@ -158,9 +158,9 @@ sub _find_routine {
     ref $want eq 'CODE' and return $want;
     ref $want and return;
     $want =~ m/ \A PPIx::Regexp:: /smx
-        or $want = 'PPIx::Regexp::' . $want;
+	or $want = 'PPIx::Regexp::' . $want;
     return sub {
-        return __instance( $_[1], $want ) ? 1 : 0;
+	return __instance( $_[1], $want ) ? 1 : 0;
     };
 }
 
@@ -174,14 +174,14 @@ sub find {
     # We use a recursion to find what we want. PPI::Node uses an
     # iteration.
     foreach my $elem ( $self->elements() ) {
-        my $rslt = eval { $want->( $self, $elem ) }
-            and push @found, $elem;
-        $@ and return;
+	my $rslt = eval { $want->( $self, $elem ) }
+	    and push @found, $elem;
+	$@ and return;
 
-        __instance( $elem, 'PPIx::Regexp::Node' ) or next;
-        defined $rslt or next;
-        $rslt = $elem->find( $want )
-            and push @found, @{ $rslt };
+	__instance( $elem, 'PPIx::Regexp::Node' ) or next;
+	defined $rslt or next;
+	$rslt = $elem->find( $want )
+	    and push @found, @{ $rslt };
     }
 
     return @found ? \@found : 0;
@@ -214,9 +214,9 @@ sub find_parents {
     my %parents;
     my @rslt;
     foreach my $elem ( @{ $found } ) {
-        my $dad = $elem->parent() or next;
-        $parents{ refaddr( $dad ) }++
-            or push @rslt, $dad;
+	my $dad = $elem->parent() or next;
+	$parents{ refaddr( $dad ) }++
+	    or push @rslt, $dad;
     }
 
     return \@rslt;
@@ -238,16 +238,16 @@ sub find_first {
     # We use a recursion to find what we want. PPI::Node uses an
     # iteration.
     foreach my $elem ( $self->elements() ) {
-        my $rslt = eval { $want->( $self, $elem ) }
-            and return $elem;
-        $@ and return;
+	my $rslt = eval { $want->( $self, $elem ) }
+	    and return $elem;
+	$@ and return;
 
-        __instance( $elem, 'PPIx::Regexp::Node' ) or next;
-        defined $rslt or next;
+	__instance( $elem, 'PPIx::Regexp::Node' ) or next;
+	defined $rslt or next;
 
-        defined( $rslt = $elem->find_first( $want ) )
-            or return;
-        $rslt and return $rslt;
+	defined( $rslt = $elem->find_first( $want ) )
+	    or return;
+	$rslt and return $rslt;
     }
 
     return 0;
@@ -289,7 +289,7 @@ supported by this package.
 sub perl_version_introduced {
     my ( $self ) = @_;
     return max( MINIMUM_PERL,
-        map { $_->perl_version_introduced() } $self->elements() );
+	map { $_->perl_version_introduced() } $self->elements() );
 }
 
 =head2 perl_version_removed
@@ -306,13 +306,13 @@ sub perl_version_removed {
     my ( $self ) = @_;
     my $max;
     foreach my $elem ( $self->elements() ) {
-        if ( defined ( my $ver = $elem->perl_version_removed() ) ) {
-            if ( defined $max ) {
-                $ver < $max and $max = $ver;
-            } else {
-                $max = $ver;
-            }
-        }
+	if ( defined ( my $ver = $elem->perl_version_removed() ) ) {
+	    if ( defined $max ) {
+		$ver < $max and $max = $ver;
+	    } else {
+		$max = $ver;
+	    }
+	}
     }
     return $max;
 }
@@ -334,27 +334,27 @@ sub schild {
 
     if ( $inx >= 0 ) {
 
-        my $loc = 0;
+	my $loc = 0;
 
-        while ( exists $kids->[$loc] ) {
-            $kids->[$loc]->significant() or next;
-            --$inx >= 0 and next;
-            return $kids->[$loc];
-        } continue {
-            $loc++;
-        }
+	while ( exists $kids->[$loc] ) {
+	    $kids->[$loc]->significant() or next;
+	    --$inx >= 0 and next;
+	    return $kids->[$loc];
+	} continue {
+	    $loc++;
+	}
 
     } else {
 
-        my $loc = -1;
-
-        while ( exists $kids->[$loc] ) {
-            $kids->[$loc]->significant() or next;
-            $inx++ < -1 and next;
-            return $kids->[$loc];
-        } continue {
-            --$loc;
-        }
+	my $loc = -1;
+	
+	while ( exists $kids->[$loc] ) {
+	    $kids->[$loc]->significant() or next;
+	    $inx++ < -1 and next;
+	    return $kids->[$loc];
+	} continue {
+	    --$loc;
+	}
 
     }
 
@@ -370,15 +370,15 @@ This method returns the significant children of the node.
 sub schildren {
     my ( $self ) = @_;
     if ( wantarray ) {
-        return ( grep { $_->significant() } @{ $self->{children} } );
+	return ( grep { $_->significant() } @{ $self->{children} } );
     } elsif ( defined wantarray ) {
-        my $kids = 0;
-        foreach ( @{ $self->{children} } ) {
-            $_->significant() and $kids++;
-        }
-        return $kids;
+	my $kids = 0;
+	foreach ( @{ $self->{children} } ) {
+	    $_->significant() and $kids++;
+	}
+	return $kids;
     } else {
-        return;
+	return;
     }
 }
 
@@ -391,9 +391,9 @@ sub tokens {
 sub _nav {
     my ( $self, $child ) = @_;
     refaddr( $child->parent() ) == refaddr( $self )
-        or return;
+	or return;
     my ( $method, $inx ) = $child->_my_inx()
-        or return;
+	or return;
 
     return ( $method => [ $inx ] );
 }
@@ -405,7 +405,7 @@ sub __PPIX_LEXER__finalize {
     my ( $self ) = @_;
     my $rslt = 0;
     foreach my $elem ( $self->elements() ) {
-        $rslt += $elem->__PPIX_LEXER__finalize();
+	$rslt += $elem->__PPIX_LEXER__finalize();
     }
     return $rslt;
 }
@@ -414,7 +414,7 @@ sub __PPIX_LEXER__finalize {
 sub __PPIX_LEXER__record_capture_number {
     my ( $self, $number ) = @_;
     foreach my $kid ( $self->children() ) {
-        $number = $kid->__PPIX_LEXER__record_capture_number( $number );
+	$number = $kid->__PPIX_LEXER__record_capture_number( $number );
     }
     return $number;
 }

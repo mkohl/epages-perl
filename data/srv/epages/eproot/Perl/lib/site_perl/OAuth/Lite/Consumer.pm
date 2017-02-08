@@ -116,9 +116,9 @@ This module helps you to build OAuth Consumer application.
 If you use OAuth 1.31 or older version, its has invalid way to normalize params.
 (when there are two or more same key and they contain ASCII and non ASCII value)
 
-But the many services have already supported deprecated version,
+But the many services have already supported deprecated version, 
 and the correct way breaks backward compatibility.
-So, from 1.32, supported both correct and deprecated method.
+So, from 1.32, supported both correct and deprecated method. 
 
 use $OAuth::Lite::USE_DEPRECATED_NORMALIZER to switch behaviour.
 Currently 1 is set by default to keep backward compatibility.
@@ -141,7 +141,7 @@ Currently 1 is set by default to keep backward compatibility.
 
 consumer_key value
 
-=item consumer_secret
+=item consumer_secret 
 
 consumer_secret value
 
@@ -166,7 +166,7 @@ The OAuth realm value for a protected-resource you wanto to access to. (optional
 If you use Request Body Hash extension, set 1.
 See Also L<http://oauth.googlecode.com/svn/spec/ext/body_hash/1.0/drafts/4/spec.html>
 
-=item site
+=item site 
 
 The base site url of Service Provider
 
@@ -198,7 +198,7 @@ If the authorization_url is run under another domain, for example.
 
     my $consumer = OAuth::Lite::Consumer->new(
         ...
-        site => q{http://api.example.org},
+        site => q{http://api.example.org}, 
         request_token_path => q{/request_token},
         access_token_path  => q{/access_token},
         authorize_path     => q{http://www.example.org/authorize},
@@ -372,7 +372,7 @@ request token value
 =back
 
     my $url = $consumer->url_to_authorize(
-        url          => q{http://example.org/authorize},
+        url          => q{http://example.org/authorize}, 
         token        => $request_token,
         callback_url => q{http://www.yousrservice/callback},
     );
@@ -519,7 +519,7 @@ You can continue to use get_access_token for backward compatibility.
         url => $access_token_url,
         token => $request_token,
         params => {
-            oauth_verifier => $verification_code,
+            oauth_verifier => $verification_code, 
         },
     );
 
@@ -619,7 +619,7 @@ sub get_access_token {
 Returns L<HTTP::Request> object.
 
     my $req = $consumer->gen_oauth_request(
-        method  => 'GET',
+        method  => 'GET', 
         url     => 'http://example.com/',
         headers => [ Accept => q{...}, 'Content-Type' => q{...}, ... ],
         content => $content,

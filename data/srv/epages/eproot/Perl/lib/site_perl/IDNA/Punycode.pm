@@ -8,8 +8,8 @@ our $VERSION = "1.100";
 $VERSION = eval $VERSION;
 
 require Exporter;
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(encode_punycode decode_punycode idn_prefix);
+our @ISA	= qw(Exporter);
+our @EXPORT 	= qw(encode_punycode decode_punycode idn_prefix);
 
 use Carp;
 use Net::IDN::Punycode();
@@ -19,7 +19,7 @@ use Net::IDN::Nameprep();
 our $PREFIX = 'xn--';
 
 sub idn_prefix {
-        $PREFIX = shift;
+	$PREFIX = shift;
 }
 
 # These functions are copied from Net::IDN::Encode. This allows us to optimise
@@ -69,19 +69,19 @@ sub _to_unicode {
 }
 
 sub decode_punycode {
-        if ($PREFIX) {
-                return _to_unicode(shift);
-        } else {
-                return Net::IDN::Punycode::decode_punycode(shift);
-        }
+	if ($PREFIX) {
+		return _to_unicode(shift);
+	} else {
+		return Net::IDN::Punycode::decode_punycode(shift);
+	}
 }
 
 sub encode_punycode {
-        if ($PREFIX) {
-                return _to_ascii(shift);
-        } else {
-                return Net::IDN::Punycode::encode_punycode(shift);
-        }
+	if ($PREFIX) {
+		return _to_ascii(shift);
+	} else {
+		return Net::IDN::Punycode::encode_punycode(shift);
+	}
 }
 
 1;

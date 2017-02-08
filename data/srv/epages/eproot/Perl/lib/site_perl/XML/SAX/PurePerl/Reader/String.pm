@@ -49,7 +49,7 @@ sub move_along {
     my($self, $bytes) = @_;
     my $discarded = substr($self->[BUFFER], 0, $bytes, '');
     $self->[DISCARDED] += length($discarded);
-
+    
     # Wish I could skip this lot - tells us where we are in the file
     my $lines = $discarded =~ tr/\n//;
     $self->[LINE] += $lines;

@@ -2263,9 +2263,9 @@ Unicode::Stringprep::Mapping - Tables from S<RFC 3454>, S<Appendix B>
 
 =head1 SYNOPSIS
 
-  @Unicode::Stringprep::Mapping::B1     # Appendix B.1
-  @Unicode::Stringprep::Mapping::B2     # Appendix B.2
-  @Unicode::Stringprep::Mapping::B3     # Appendix B.3
+  @Unicode::Stringprep::Mapping::B1	# Appendix B.1
+  @Unicode::Stringprep::Mapping::B2	# Appendix B.2
+  @Unicode::Stringprep::Mapping::B3	# Appendix B.3
 
 =head1 DESCRIPTION
 

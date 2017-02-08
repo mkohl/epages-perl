@@ -344,15 +344,15 @@ sub add_option {
 
 # TODO this is only sugar then?
 # =head2 add_action
-#
+# 
 #   $go->add_action(name => sub {...}, %settings);
-#
+# 
 # =cut
-#
+# 
 # sub add_action {
 #   my $self = shift;
 #   my ($name, $callback, @and) = @_;
-#
+# 
 #   $self->add_option($name, @and, call => $callback);
 # } # end subroutine add_action definition
 # ########################################################################
@@ -406,7 +406,7 @@ sub add_aliases {
       if(exists($at->{$item}));
     $at->{$item} = $canon;
   }
-
+  
 } # end subroutine add_aliases definition
 ########################################################################
 
@@ -544,7 +544,7 @@ sub _find_option {
   # exact match
   if(my $d = $self->{opt_data}{$key}) { return($d); }
 
-  my @hit = grep({$_ =~ m/^$key/}
+  my @hit = grep({$_ =~ m/^$key/} 
     keys %{$self->{aliases}},
     keys %{$self->{opt_data}}
   );

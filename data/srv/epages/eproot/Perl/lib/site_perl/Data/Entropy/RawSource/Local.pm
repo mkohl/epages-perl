@@ -4,12 +4,12 @@ Data::Entropy::RawSource::Local - read randomness from local device
 
 =head1 SYNOPSIS
 
-        use Data::Entropy::RawSource::Local;
+	use Data::Entropy::RawSource::Local;
 
-        my $rawsrc = Data::Entropy::RawSource::Local->new;
+	my $rawsrc = Data::Entropy::RawSource::Local->new;
 
-        $rawsrc->sysread($c, 1);
-        # and the rest of the I/O handle interface
+	$rawsrc->sysread($c, 1);
+	# and the rest of the I/O handle interface
 
 =head1 DESCRIPTION
 
@@ -67,11 +67,11 @@ if their equivalent devices are in different places.
 =cut
 
 sub new {
-        my($class, $filename) = @_;
-        $filename = "/dev/random" unless defined $filename;
-        my $self = IO::File->new($filename, "r");
-        croak "can't open $filename: $!" unless defined $self;
-        return $self;
+	my($class, $filename) = @_;
+	$filename = "/dev/random" unless defined $filename;
+	my $self = IO::File->new($filename, "r");
+	croak "can't open $filename: $!" unless defined $self;
+	return $self;
 }
 
 =back

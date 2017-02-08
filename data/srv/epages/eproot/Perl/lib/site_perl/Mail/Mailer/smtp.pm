@@ -23,7 +23,7 @@ sub exec {
     $opt{Debug} ||= 0;
 
     my $smtp = Net::SMTP->new($host, %opt)
-        or return undef;
+	or return undef;
 
     if($opt{Auth})
     {   $smtp->auth(@{$opt{Auth}})

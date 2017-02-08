@@ -16,15 +16,15 @@ sub new {
 
 sub new_from_stat {
     if (@_ > 1) {
-        my ($class, undef, undef, $mode, undef,
-            $uid, $gid, undef, $size, $atime, $mtime) = @_;
-        my $self = $class->new;
+	my ($class, undef, undef, $mode, undef,
+	    $uid, $gid, undef, $size, $atime, $mtime) = @_;
+	my $self = $class->new;
 
-        $self->set_perm($mode);
-        $self->set_ugid($uid, $gid);
-        $self->set_size($size);
-        $self->set_amtime($atime, $mtime);
-        return $self;
+	$self->set_perm($mode);
+	$self->set_ugid($uid, $gid);
+	$self->set_size($size);
+	$self->set_amtime($atime, $mtime);
+	return $self;
     }
     return undef;
 }
@@ -35,26 +35,26 @@ sub new_from_buffer {
     my $flags = $self->{flags} = $buf->get_int32_untaint;
 
     if ($flags & SSH2_FILEXFER_ATTR_SIZE) {
-        $self->{size} = $buf->get_int64_untaint;
+	$self->{size} = $buf->get_int64_untaint;
     }
 
     if ($flags & SSH2_FILEXFER_ATTR_UIDGID) {
-        $self->{uid} = $buf->get_int32_untaint;
-        $self->{gid} = $buf->get_int32_untaint;
+	$self->{uid} = $buf->get_int32_untaint;
+	$self->{gid} = $buf->get_int32_untaint;
     }
 
     if ($flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-        $self->{perm} = $buf->get_int32_untaint;
+	$self->{perm} = $buf->get_int32_untaint;
     }
 
     if ($flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-        $self->{atime} = $buf->get_int32_untaint;
-        $self->{mtime} = $buf->get_int32_untaint;
+	$self->{atime} = $buf->get_int32_untaint;
+	$self->{mtime} = $buf->get_int32_untaint;
     }
 
     if ($flags & SSH2_FILEXFER_ATTR_EXTENDED) {
         my $n = $buf->get_int32;
-        $n >= 0 and $n <= 10000 or return undef;
+	$n >= 0 and $n <= 10000 or return undef;
         my @pairs = map $buf->get_str, 1..2*$n;
         $self->{extended} = \@pairs;
     }
@@ -66,22 +66,22 @@ sub skip_from_buffer {
     my ($class, $buf) = @_;
     my $flags = $buf->get_int32;
     if ($flags == ( SSH2_FILEXFER_ATTR_SIZE |
-                    SSH2_FILEXFER_ATTR_UIDGID |
-                    SSH2_FILEXFER_ATTR_PERMISSIONS |
-                    SSH2_FILEXFER_ATTR_ACMODTIME )) {
-        $buf->skip_bytes(28);
+		    SSH2_FILEXFER_ATTR_UIDGID |
+		    SSH2_FILEXFER_ATTR_PERMISSIONS |
+		    SSH2_FILEXFER_ATTR_ACMODTIME )) {
+	$buf->skip_bytes(28);
     }
     else {
-        my $len = 0;
-        $len += 8 if $flags & SSH2_FILEXFER_ATTR_SIZE;
-        $len += 8 if $flags & SSH2_FILEXFER_ATTR_UIDGID;
-        $len += 4 if $flags & SSH2_FILEXFER_ATTR_PERMISSIONS;
-        $len += 8 if $flags & SSH2_FILEXFER_ATTR_ACMODTIME;
-        $buf->skip_bytes($len);
-        if ($flags & SSH2_FILEXFER_ATTR_EXTENDED) {
-            my $n = $buf->get_int32;
-            $buf->skip_str, $buf->skip_str for (1..$n);
-        }
+	my $len = 0;
+	$len += 8 if $flags & SSH2_FILEXFER_ATTR_SIZE;
+	$len += 8 if $flags & SSH2_FILEXFER_ATTR_UIDGID;
+	$len += 4 if $flags & SSH2_FILEXFER_ATTR_PERMISSIONS;
+	$len += 8 if $flags & SSH2_FILEXFER_ATTR_ACMODTIME;
+	$buf->skip_bytes($len);
+	if ($flags & SSH2_FILEXFER_ATTR_EXTENDED) {
+	    my $n = $buf->get_int32;
+	    $buf->skip_str, $buf->skip_str for (1..$n);
+	}
     }
 }
 
@@ -117,12 +117,12 @@ sub size { shift->{size} }
 sub set_size {
     my ($self, $size) = @_;
     if (defined $size) {
-        $self->{flags} |= SSH2_FILEXFER_ATTR_SIZE;
-        $self->{size} = $size;
+	$self->{flags} |= SSH2_FILEXFER_ATTR_SIZE;
+	$self->{size} = $size;
     }
     else {
-        $self->{flags} &= ~SSH2_FILEXFER_ATTR_SIZE;
-        delete $self->{size}
+	$self->{flags} &= ~SSH2_FILEXFER_ATTR_SIZE;
+	delete $self->{size}
     }
 }
 
@@ -133,17 +133,17 @@ sub gid { shift->{gid} }
 sub set_ugid {
     my ($self, $uid, $gid) = @_;
     if (defined $uid and defined $gid) {
-        $self->{flags} |= SSH2_FILEXFER_ATTR_UIDGID;
-        $self->{uid} = $uid;
-        $self->{gid} = $gid;
+	$self->{flags} |= SSH2_FILEXFER_ATTR_UIDGID;
+	$self->{uid} = $uid;
+	$self->{gid} = $gid;
     }
     elsif (!defined $uid and !defined $gid) {
-        $self->{flags} &= ~SSH2_FILEXFER_ATTR_UIDGID;
-        delete $self->{uid};
-        delete $self->{gid};
+	$self->{flags} &= ~SSH2_FILEXFER_ATTR_UIDGID;
+	delete $self->{uid};
+	delete $self->{gid};
     }
     else {
-        croak "wrong arguments for set_ugid"
+	croak "wrong arguments for set_ugid"
     }
 }
 
@@ -152,12 +152,12 @@ sub perm { shift->{perm} }
 sub set_perm {
     my ($self, $perm) = @_;
     if (defined $perm) {
-        $self->{flags} |= SSH2_FILEXFER_ATTR_PERMISSIONS;
-        $self->{perm} = $perm;
+	$self->{flags} |= SSH2_FILEXFER_ATTR_PERMISSIONS;
+	$self->{perm} = $perm;
     }
     else {
-        $self->{flags} &= ~SSH2_FILEXFER_ATTR_PERMISSIONS;
-        delete $self->{perm}
+	$self->{flags} &= ~SSH2_FILEXFER_ATTR_PERMISSIONS;
+	delete $self->{perm}
     }
 }
 
@@ -168,17 +168,17 @@ sub mtime { shift->{mtime} }
 sub set_amtime {
     my ($self, $atime, $mtime) = @_;
     if (defined $atime and defined $mtime) {
-        $self->{flags} |= SSH2_FILEXFER_ATTR_ACMODTIME;
-        $self->{atime} = $atime;
-        $self->{mtime} = $mtime;
+	$self->{flags} |= SSH2_FILEXFER_ATTR_ACMODTIME;
+	$self->{atime} = $atime;
+	$self->{mtime} = $mtime;
     }
     elsif (!defined $atime and !defined $mtime) {
-        $self->{flags} &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
-        delete $self->{atime};
-        delete $self->{mtime};
+	$self->{flags} &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
+	delete $self->{atime};
+	delete $self->{mtime};
     }
     else {
-        croak "wrong arguments for set_amtime"
+	croak "wrong arguments for set_amtime"
     }
 }
 

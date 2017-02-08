@@ -43,7 +43,7 @@ my %noYes = ( 0 => 'No', 1 => 'Yes' );
     NOTES => q{
         Canon Digital Photo Professional writes VRD (Recipe Data) information as a
         trailer record to JPEG, TIFF, CRW and CR2 images, or as a stand-alone VRD
-        file.  The tags listed below represent information found in this record.
+        file.  The tags listed below represent information found in this record. 
         The complete VRD data record may be accessed as a block using the Extra
         'CanonVRD' tag, but this tag is not extracted or copied unless specified
         explicitly.
@@ -1046,8 +1046,8 @@ sub ProcessIHL($$$)
         $pos += $next;
     }
     return 1;
-}
-
+}    
+    
 #------------------------------------------------------------------------------
 # Process VRD IHL EXIF data
 # Inputs: 0) ExifTool object ref, 1) dirInfo ref, 2) tag table ref

@@ -13,13 +13,13 @@ our @EXPORT  = qw(ynode);
 sub ynode {
     my $self;
     if (ref($_[0]) eq 'HASH') {
-        $self = tied(%{$_[0]});
+	$self = tied(%{$_[0]});
     }
     elsif (ref($_[0]) eq 'ARRAY') {
-        $self = tied(@{$_[0]});
+	$self = tied(@{$_[0]});
     }
     else {
-        $self = tied($_[0]);
+	$self = tied($_[0]);
     }
     return (ref($self) =~ /^yaml_/) ? $self : undef;
 }
@@ -31,14 +31,14 @@ sub new {
     my (undef, $type) = $class->node_info($node);
     $self->{KIND} = (not defined $type) ? 'scalar' :
                     ($type eq 'ARRAY') ? 'sequence' :
-                    ($type eq 'HASH') ? 'mapping' :
-                    $class->die("Can't create YAML::Node from '$type'");
+		    ($type eq 'HASH') ? 'mapping' :
+		    $class->die("Can't create YAML::Node from '$type'");
     tag($self, ($tag || ''));
     if ($self->{KIND} eq 'scalar') {
-        yaml_scalar->new($self, $_[1]);
-        return \ $_[1];
+	yaml_scalar->new($self, $_[1]);
+	return \ $_[1];
     }
-    my $package = "yaml_" . $self->{KIND};
+    my $package = "yaml_" . $self->{KIND};    
     $package->new($self)
 }
 
@@ -47,8 +47,8 @@ sub kind { $_->{KIND} }
 sub tag {
     my ($self, $value) = @_;
     if (defined $value) {
-        $self->{TAG} = YAML::Tag->new($value);
-        return $self;
+       	$self->{TAG} = YAML::Tag->new($value);
+	return $self;
     }
     else {
        return $self->{TAG};
@@ -57,8 +57,8 @@ sub tag {
 sub keys {
     my ($self, $value) = @_;
     if (defined $value) {
-        $self->{KEYS} = $value;
-        return $self;
+       	$self->{KEYS} = $value;
+	return $self;
     }
     else {
        return $self->{KEYS};
@@ -127,8 +127,8 @@ sub undone {
     die "Not implemented yet"; # XXX
 }
 
-*STORESIZE = *POP = *PUSH = *SHIFT = *UNSHIFT = *SPLICE = *DELETE = *EXISTS =
-*STORESIZE = *POP = *PUSH = *SHIFT = *UNSHIFT = *SPLICE = *DELETE = *EXISTS =
+*STORESIZE = *POP = *PUSH = *SHIFT = *UNSHIFT = *SPLICE = *DELETE = *EXISTS = 
+*STORESIZE = *POP = *PUSH = *SHIFT = *UNSHIFT = *SPLICE = *DELETE = *EXISTS = 
 *undone; # XXX Must implement before release
 
 #==============================================================================
@@ -138,7 +138,7 @@ package yaml_mapping;
 
 sub new {
     my ($class, $self) = @_;
-    @{$self->{KEYS}} = sort keys %{$self->{NODE}};
+    @{$self->{KEYS}} = sort keys %{$self->{NODE}}; 
     my $new;
     tie %$new, $class, $self;
     $new
@@ -152,8 +152,8 @@ sub TIEHASH {
 sub FETCH {
     my ($self, $key) = @_;
     if (exists $self->{NODE}{$key}) {
-        return (grep {$_ eq $key} @{$self->{KEYS}})
-               ? $self->{NODE}{$key} : undef;
+	return (grep {$_ eq $key} @{$self->{KEYS}}) 
+	       ? $self->{NODE}{$key} : undef;
     }
     return $self->{HASH}{$key};
 }
@@ -161,16 +161,16 @@ sub FETCH {
 sub STORE {
     my ($self, $key, $value) = @_;
     if (exists $self->{NODE}{$key}) {
-        $self->{NODE}{$key} = $value;
+	$self->{NODE}{$key} = $value;
     }
     elsif (exists $self->{HASH}{$key}) {
-        $self->{HASH}{$key} = $value;
+	$self->{HASH}{$key} = $value;
     }
     else {
-        if (not grep {$_ eq $key} @{$self->{KEYS}}) {
-            push(@{$self->{KEYS}}, $key);
-        }
-        $self->{HASH}{$key} = $value;
+	if (not grep {$_ eq $key} @{$self->{KEYS}}) {
+	    push(@{$self->{KEYS}}, $key);
+	}
+	$self->{HASH}{$key} = $value;
     }
     $value
 }
@@ -179,15 +179,15 @@ sub DELETE {
     my ($self, $key) = @_;
     my $return;
     if (exists $self->{NODE}{$key}) {
-        $return = $self->{NODE}{$key};
+	$return = $self->{NODE}{$key};
     }
     elsif (exists $self->{HASH}{$key}) {
-        $return = delete $self->{NODE}{$key};
+	$return = delete $self->{NODE}{$key};
     }
     for (my $i = 0; $i < @{$self->{KEYS}}; $i++) {
-        if ($self->{KEYS}[$i] eq $key) {
-            splice(@{$self->{KEYS}}, $i, 1);
-        }
+	if ($self->{KEYS}[$i] eq $key) {
+	    splice(@{$self->{KEYS}}, $i, 1);
+	}
     }
     return $return;
 }
@@ -226,7 +226,7 @@ YAML::Node - A generic data node that encapsulates YAML information
 
     use YAML;
     use YAML::Node;
-
+    
     my $ynode = YAML::Node->new({}, 'ingerson.com/fruit');
     %$ynode = qw(orange orange apple red grape green);
     print Dump $ynode;
@@ -267,7 +267,7 @@ keys() works like this:
 
     use YAML;
     use YAML::Node;
-
+    
     %$node = qw(orange orange apple red grape green);
     $ynode = YAML::Node->new($node);
     ynode($ynode)->keys(['grape', 'apple']);

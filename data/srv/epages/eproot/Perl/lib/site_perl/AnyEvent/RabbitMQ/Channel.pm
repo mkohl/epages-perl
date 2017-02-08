@@ -93,7 +93,7 @@ sub open {
             $args{on_success}->($self);
         },
         sub {
-            $self->{_state} = _ST_CLOSED;
+	    $self->{_state} = _ST_CLOSED;
             $args{on_failure}->($self);
         },
         $self->{id},
@@ -112,15 +112,15 @@ sub close {
 
     weaken(my $wself = $self);
     my $t; $t = AE::timer 0, 1, sub {
-        (my $self = $wself) or undef $t, return;
-        return if $self->{_state} == _ST_OPENING;
+	(my $self = $wself) or undef $t, return;
+	return if $self->{_state} == _ST_OPENING;
 
-        # No more tests are required
-        undef $t;
+	# No more tests are required
+	undef $t;
 
         # Double close is OK
-        if ($self->{_state} == _ST_CLOSED) {
-            $args{on_success}->($self);
+	if ($self->{_state} == _ST_CLOSED) {
+	    $args{on_success}->($self);
             return;
         }
 
@@ -219,7 +219,7 @@ sub declare_exchange {
             ticket      => 0,
             nowait      => 0, # FIXME
         },
-        'Exchange::DeclareOk',
+        'Exchange::DeclareOk', 
         $cb,
         $failure_cb,
         $self->{id},
@@ -242,7 +242,7 @@ sub delete_exchange {
             ticket    => 0,
             nowait    => 0, # FIXME
         },
-        'Exchange::DeleteOk',
+        'Exchange::DeleteOk', 
         $cb,
         $failure_cb,
         $self->{id},
@@ -270,7 +270,7 @@ sub declare_queue {
             ticket      => 0,
             nowait      => 0, # FIXME
         },
-        'Queue::DeclareOk',
+        'Queue::DeclareOk', 
         $cb,
         $failure_cb,
         $self->{id},
@@ -290,7 +290,7 @@ sub bind_queue {
             ticket => 0,
             nowait => 0, # FIXME
         },
-        'Queue::BindOk',
+        'Queue::BindOk', 
         $cb,
         $failure_cb,
         $self->{id},
@@ -311,7 +311,7 @@ sub unbind_queue {
             %args, # queue, exchange, routing_key
             ticket => 0,
         },
-        'Queue::UnbindOk',
+        'Queue::UnbindOk', 
         $cb,
         $failure_cb,
         $self->{id},
@@ -333,7 +333,7 @@ sub purge_queue {
             ticket => 0,
             nowait => 0, # FIXME
         },
-        'Queue::PurgeOk',
+        'Queue::PurgeOk', 
         $cb,
         $failure_cb,
         $self->{id},
@@ -357,7 +357,7 @@ sub delete_queue {
             ticket    => 0,
             nowait    => 0, # FIXME
         },
-        'Queue::DeleteOk',
+        'Queue::DeleteOk', 
         $cb,
         $failure_cb,
         $self->{id},
@@ -575,7 +575,7 @@ sub get {
             %args, # queue
             ticket => 0,
         },
-        [qw(Basic::GetOk Basic::GetEmpty)],
+        [qw(Basic::GetOk Basic::GetEmpty)], 
         sub {
             my $frame = shift;
             return $cb->({empty => $frame})
@@ -623,7 +623,7 @@ sub qos {
             prefetch_size  => 0,
             global         => 0,
         },
-        'Basic::QosOk',
+        'Basic::QosOk', 
         $cb,
         $failure_cb,
         $self->{id},

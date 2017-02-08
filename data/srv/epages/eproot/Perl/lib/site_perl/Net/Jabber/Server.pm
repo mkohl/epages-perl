@@ -57,11 +57,11 @@ Net::Jabber::Server - Jabber Server Library
 
     $Server->Start();
     $Server->Start(jabberxml=>"custom_jabber.xml",
-                   hostname=>"foobar.net");
+	           hostname=>"foobar.net");
 
     %status = $Server->Process();
     %status = $Server->Process(5);
-
+    
     $Server->Stop();
 
 =head1 METHODS
@@ -78,7 +78,7 @@ Net::Jabber::Server - Jabber Server Library
                              Net::Jabber::Debug.
 
     Start(hostname=>string, - starts the server listening on the proper
-          jaberxml=>string)   ports.  hostname is a quick way of telling
+	  jaberxml=>string)   ports.  hostname is a quick way of telling
                               the server the hostname to listen on.
                               jabberxml defines the path to a different
                               jabberd configuration file (default is
@@ -97,7 +97,7 @@ Net::Jabber::Server - Jabber Server Library
                            1   - Status ok, data received.
                            0   - Status ok, no data received.
                          undef - Status not ok, stop processing.
-
+                       
                        IMPORTANT: You need to check the output of every
                        Process.  If you get an undef then the connection
                        died and you should behave accordingly.

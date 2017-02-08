@@ -40,15 +40,15 @@ sub soundex_noxs
         my $code = uc($_);
         $code =~ tr/AaEeHhIiOoUuWwYyBbFfPpVvCcGgJjKkQqSsXxZzDdTtLlMmNnRr//cd;
 
-        if (length($code)) {
+	if (length($code)) {
             my $firstchar = substr($code, 0, 1);
-            $code =~ tr[AaEeHhIiOoUuWwYyBbFfPpVvCcGgJjKkQqSsXxZzDdTtLlMmNnRr]
+	    $code =~ tr[AaEeHhIiOoUuWwYyBbFfPpVvCcGgJjKkQqSsXxZzDdTtLlMmNnRr]
                        [0000000000000000111111112222222222222222333344555566]s;
-            ($code = substr($code, 1)) =~ tr/0//d;
-            substr($firstchar . $code . '000', 0, 4);
-        } else {
-            $nocode;
-        }
+	    ($code = substr($code, 1)) =~ tr/0//d;
+	    substr($firstchar . $code . '000', 0, 4);
+	} else {
+	    $nocode;
+	}
     } @_;
 
     wantarray ? @results : $results[0];
@@ -59,19 +59,19 @@ sub soundex_nara
     # US census (NARA) algorithm.
 
     my @results = map {
-        my $code = uc($_);
+	my $code = uc($_);
         $code =~ tr/AaEeHhIiOoUuWwYyBbFfPpVvCcGgJjKkQqSsXxZzDdTtLlMmNnRr//cd;
 
-        if (length($code)) {
+	if (length($code)) {
             my $firstchar = substr($code, 0, 1);
-            $code =~ tr[AaEeHhIiOoUuWwYyBbFfPpVvCcGgJjKkQqSsXxZzDdTtLlMmNnRr]
+	    $code =~ tr[AaEeHhIiOoUuWwYyBbFfPpVvCcGgJjKkQqSsXxZzDdTtLlMmNnRr]
                        [0000990000009900111111112222222222222222333344555566]s;
             $code =~ s/(.)9\1/$1/gs;
-            ($code = substr($code, 1)) =~ tr/09//d;
-            substr($firstchar . $code . '000', 0, 4);
-        } else {
-            $nocode
-        }
+	    ($code = substr($code, 1)) =~ tr/09//d;
+	    substr($firstchar . $code . '000', 0, 4);
+	} else {
+	    $nocode
+	}
     } @_;
 
     wantarray ? @results : $results[0];

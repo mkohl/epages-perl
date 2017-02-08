@@ -97,10 +97,10 @@ L<PPI::Statement::Expression> is a little more speculative, and is intended
 to help represent the special rules relating to "expressions" such as in:
 
   # Several examples of expression statements
-
+  
   # Boolean conditions
   if ( expression ) { ... }
-
+  
   # Lists, such as for arguments
   Foo->bar( expression )
 
@@ -154,9 +154,9 @@ use PPI::Exception ();
 
 use vars qw{$VERSION @ISA *_PARENT};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Node';
-        *_PARENT = *PPI::Element::_PARENT;
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Node';
+	*_PARENT = *PPI::Element::_PARENT;
 }
 
 use PPI::Statement::Break          ();
@@ -188,27 +188,27 @@ sub __LEXER__normal { 1 }
 # Constructor
 
 sub new {
-        my $class = shift;
-        if ( ref $class ) {
-                PPI::Exception->throw;
-        }
+	my $class = shift;
+	if ( ref $class ) {
+		PPI::Exception->throw;
+	}
 
-        # Create the object
-        my $self = bless {
-                children => [],
-        }, $class;
+	# Create the object
+	my $self = bless { 
+		children => [],
+	}, $class;
 
-        # If we have been passed what should be an initial token, add it
-        my $token = shift;
-        if ( _INSTANCE($token, 'PPI::Token') ) {
-                # Inlined $self->__add_element(shift);
-                Scalar::Util::weaken(
-                        $_PARENT{Scalar::Util::refaddr $token} = $self
-                );
-                push @{$self->{children}}, $token;
-        }
+	# If we have been passed what should be an initial token, add it
+	my $token = shift;
+	if ( _INSTANCE($token, 'PPI::Token') ) {
+		# Inlined $self->__add_element(shift);
+		Scalar::Util::weaken(
+			$_PARENT{Scalar::Util::refaddr $token} = $self
+		);
+		push @{$self->{children}}, $token;
+	}
 
-        $self;
+	$self;
 }
 
 =pod
@@ -229,10 +229,10 @@ Returns false if the statement does not have a label.
 =cut
 
 sub label {
-        my $first = shift->schild(1) or return '';
-        $first->isa('PPI::Token::Label')
-                ? substr($first, 0, length($first) - 1)
-                : '';
+	my $first = shift->schild(1) or return '';
+	$first->isa('PPI::Token::Label')
+		? substr($first, 0, length($first) - 1)
+		: '';
 }
 
 =pod
@@ -292,7 +292,7 @@ ok( ! $statements->[9]->specialized,                    'Statement 10: is not sp
 # client code from doing.  However, since it's here, if the
 # implementation changes, code outside PPI doesn't care.
 sub specialized {
-        __PACKAGE__ ne ref $_[0];
+	__PACKAGE__ ne ref $_[0];
 }
 
 =pod
@@ -310,7 +310,7 @@ error.
 =cut
 
 sub stable {
-        die "The ->stable method has not yet been implemented";
+	die "The ->stable method has not yet been implemented";	
 }
 
 
@@ -323,39 +323,39 @@ sub stable {
 # Is the statement complete.
 # By default for a statement, we need a semi-colon at the end.
 sub _complete {
-        my $self = shift;
-        my $semi = $self->schild(-1);
-        return !! (
-                defined $semi
-                and
-                $semi->isa('PPI::Token::Structure')
-                and
-                $semi->content eq ';'
-        );
+	my $self = shift;
+	my $semi = $self->schild(-1);
+	return !! (
+		defined $semi
+		and
+		$semi->isa('PPI::Token::Structure')
+		and
+		$semi->content eq ';'
+	);
 }
 
 # You can insert either a statement or a non-significant token.
 sub insert_before {
-        my $self    = shift;
-        my $Element = _INSTANCE(shift, 'PPI::Element') or return undef;
-        if ( $Element->isa('PPI::Statement') ) {
-                return $self->__insert_before($Element);
-        } elsif ( $Element->isa('PPI::Token') and ! $Element->significant ) {
-                return $self->__insert_before($Element);
-        }
-        '';
+	my $self    = shift;
+	my $Element = _INSTANCE(shift, 'PPI::Element') or return undef;
+	if ( $Element->isa('PPI::Statement') ) {
+		return $self->__insert_before($Element);
+	} elsif ( $Element->isa('PPI::Token') and ! $Element->significant ) {
+		return $self->__insert_before($Element);
+	}
+	'';
 }
 
 # As above, you can insert a statement, or a non-significant token
 sub insert_after {
-        my $self    = shift;
-        my $Element = _INSTANCE(shift, 'PPI::Element') or return undef;
-        if ( $Element->isa('PPI::Statement') ) {
-                return $self->__insert_after($Element);
-        } elsif ( $Element->isa('PPI::Token') and ! $Element->significant ) {
-                return $self->__insert_after($Element);
-        }
-        '';
+	my $self    = shift;
+	my $Element = _INSTANCE(shift, 'PPI::Element') or return undef;
+	if ( $Element->isa('PPI::Statement') ) {
+		return $self->__insert_after($Element);
+	} elsif ( $Element->isa('PPI::Token') and ! $Element->significant ) {
+		return $self->__insert_after($Element);
+	}
+	'';
 }
 
 1;

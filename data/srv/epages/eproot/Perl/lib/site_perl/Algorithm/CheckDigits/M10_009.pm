@@ -10,67 +10,67 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9 ]*)([0-9])$/) {
-                my $cd = $self->_compute_checkdigit($1);
-                return ($2 == $cd || $2 == ((5 + $cd) % 10));
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9 ]*)([0-9])$/) {
+		my $cd = $self->_compute_checkdigit($1);
+		return ($2 == $cd || $2 == ((5 + $cd) % 10));
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^[0-9 ]*$/) {
-                return  $number . $self->_compute_checkdigit($number);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^[0-9 ]*$/) {
+		return  $number . $self->_compute_checkdigit($number);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9 ]*)([0-9])$/) {
-                return $1 if ($self->is_valid($number));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9 ]*)([0-9])$/) {
+		return $1 if ($self->is_valid($number));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9 ]*)([0-9])$/) {
-                return $2 if ($self->is_valid($number));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9 ]*)([0-9])$/) {
+		return $2 if ($self->is_valid($number));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
-        $number =~ s/\s//g;
-        if ($number =~ /^([0-9]*)$/) {
-                my @digits = split(//,$number);
-                my $even = 0;
-                my $sum  = 0;
-                for (my $i = 0; $i <= $#digits; $i++) {
-                        if ($even) {
-                                my $tmp = 2 * $digits[$i];
-                                $sum += $tmp / 10 + $tmp % 10;
-                        } else {
-                                $sum += $digits[$i];
-                        }
-                        $even = not $even;
-                }
-                return $sum % 10;
-        }
-        return -1;
+	my $self   = shift;
+	my $number = shift;
+	$number =~ s/\s//g;
+	if ($number =~ /^([0-9]*)$/) {
+		my @digits = split(//,$number);
+		my $even = 0;
+		my $sum  = 0;
+		for (my $i = 0; $i <= $#digits; $i++) {
+			if ($even) {
+				my $tmp = 2 * $digits[$i];
+				$sum += $tmp / 10 + $tmp % 10;
+			} else {
+				$sum += $digits[$i];
+			}
+			$even = not $even;
+		}
+		return $sum % 10;
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -89,7 +89,7 @@ CheckDigits::M10_009 - compute check digits for Betriebsnummer (DE)
   $betrnr = CheckDigits('betriebsnummer');
 
   if ($betrnr->is_valid('73282932000074')) {
-        # do something
+	# do something
   }
 
   $cn = $betrnr->complete('7328293200007');
@@ -100,7 +100,7 @@ CheckDigits::M10_009 - compute check digits for Betriebsnummer (DE)
 
   $bn = $betrnr->basenumber('73282932000074');
   # $bn = '7328293200007'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

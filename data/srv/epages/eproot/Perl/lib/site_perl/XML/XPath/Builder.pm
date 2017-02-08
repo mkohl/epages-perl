@@ -29,14 +29,14 @@ sub start_document {
     my $self = shift;
 
     $self->{IdNames} = {};
-    $self->{InScopeNamespaceStack} = [ {
+    $self->{InScopeNamespaceStack} = [ { 
             '_Default' => undef,
             'xmlns' => $xmlns_ns,
             'xml' => $xml_ns,
         } ];
-
+    
     $self->{NodeStack} = [ ];
-
+    
     my $document = XML::XPath::Node::Element->new();
     my $newns = XML::XPath::Node::Namespace->new('xml', $xml_ns);
     $document->appendNamespace($newns);
@@ -45,7 +45,7 @@ sub start_document {
 
 sub end_document {
     my $self = shift;
-
+    
     return $self->{DOC_Node};
 }
 
@@ -53,16 +53,16 @@ sub characters {
     my $self = shift;
     my $sarg = shift;
     my $text = $sarg->{Data};
-
+    
     my $parent = $self->{current};
-
+    
     my $last = $parent->getLastChild;
     if ($last && $last->isTextNode) {
         # append to previous text node
         $last->appendText($text);
         return;
     }
-
+    
     my $node = XML::XPath::Node::Text->new($text);
     $parent->appendChild($node, 1);
 }
@@ -76,13 +76,13 @@ sub start_element {
     push @{ $self->{InScopeNamespaceStack} },
          { %{ $self->{InScopeNamespaceStack}[-1] } };
     $self->_scan_namespaces(@_);
-
+    
     my ($prefix, $namespace) = $self->_namespace($tag);
-
+    
     my $node = XML::XPath::Node::Element->new($tag, $prefix);
-
+    
     foreach my $name (keys %$attr) {
-        my $value = $attr->{$name};
+	my $value = $attr->{$name};
 
         if ($name =~ /^xmlns(:(.*))?$/) {
             # namespace node
@@ -92,7 +92,7 @@ sub start_element {
             $node->appendNamespace($newns);
         }
         else {
-            my ($prefix, $namespace) = $self->_namespace($name);
+	    my ($prefix, $namespace) = $self->_namespace($name);
             undef $namespace unless $prefix;
 
             my $newattr = XML::XPath::Node::Attribute->new($name, $value, $prefix);
@@ -103,7 +103,7 @@ sub start_element {
             }
         }
     }
-
+        
     $self->{current}->appendChild($node, 1);
     $self->{current} = $node;
 }
@@ -131,12 +131,12 @@ sub _scan_namespaces {
     my ($self, %attributes) = @_;
 
     while (my ($attr_name, $value) = each %attributes) {
-        if ($attr_name eq 'xmlns') {
-            $self->{InScopeNamespaceStack}[-1]{'_Default'} = $value;
-        } elsif ($attr_name =~ /^xmlns:(.*)$/) {
-            my $prefix = $1;
-            $self->{InScopeNamespaceStack}[-1]{$prefix} = $value;
-        }
+	if ($attr_name eq 'xmlns') {
+	    $self->{InScopeNamespaceStack}[-1]{'_Default'} = $value;
+	} elsif ($attr_name =~ /^xmlns:(.*)$/) {
+	    my $prefix = $1;
+	    $self->{InScopeNamespaceStack}[-1]{$prefix} = $value;
+	}
     }
 }
 
@@ -145,13 +145,13 @@ sub _namespace {
 
     my ($prefix, $localname) = split(/:/, $name);
     if (!defined($localname)) {
-        if ($prefix eq 'xmlns') {
-            return '', undef;
-        } else {
-            return '', $self->{InScopeNamespaceStack}[-1]{'_Default'};
-        }
+	if ($prefix eq 'xmlns') {
+	    return '', undef;
+	} else {
+	    return '', $self->{InScopeNamespaceStack}[-1]{'_Default'};
+	}
     } else {
-        return $prefix, $self->{InScopeNamespaceStack}[-1]{$prefix};
+	return $prefix, $self->{InScopeNamespaceStack}[-1]{$prefix};
     }
 }
 

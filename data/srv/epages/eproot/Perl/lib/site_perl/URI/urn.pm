@@ -19,22 +19,22 @@ sub _init {
 
     $impclass = "URI::urn";
     if ($nid =~ /^[A-Za-z\d][A-Za-z\d\-]*\z/) {
-        my $id = $nid;
-        # make it a legal perl identifier
-        $id =~ s/-/_/g;
-        $id = "_$id" if $id =~ /^\d/;
+	my $id = $nid;
+	# make it a legal perl identifier
+	$id =~ s/-/_/g;
+	$id = "_$id" if $id =~ /^\d/;
 
-        $impclass = "URI::urn::$id";
-        no strict 'refs';
-        unless (@{"${impclass}::ISA"}) {
-            # Try to load it
-            eval "require $impclass";
-            die $@ if $@ && $@ !~ /Can\'t locate.*in \@INC/;
-            $impclass = "URI::urn" unless @{"${impclass}::ISA"};
-        }
+	$impclass = "URI::urn::$id";
+	no strict 'refs';
+	unless (@{"${impclass}::ISA"}) {
+	    # Try to load it
+	    eval "require $impclass";
+	    die $@ if $@ && $@ !~ /Can\'t locate.*in \@INC/;
+	    $impclass = "URI::urn" unless @{"${impclass}::ISA"};
+	}
     }
     else {
-        carp("Illegal namespace identifier '$nid' for URN '$self'") if $^W;
+	carp("Illegal namespace identifier '$nid' for URN '$self'") if $^W;
     }
     $implementor{$nid} = $impclass;
 
@@ -50,11 +50,11 @@ sub _nid {
     my $self = shift;
     my $opaque = $self->opaque;
     if (@_) {
-        my $v = $opaque;
-        my $new = shift;
-        $v =~ s/[^:]*/$new/;
-        $self->opaque($v);
-        # XXX possible rebless
+	my $v = $opaque;
+	my $new = shift;
+	$v =~ s/[^:]*/$new/;
+	$self->opaque($v);
+	# XXX possible rebless
     }
     $opaque =~ s/:.*//s;
     return $opaque;
@@ -71,15 +71,15 @@ sub nss {  # namespace specific string
     my $self = shift;
     my $opaque = $self->opaque;
     if (@_) {
-        my $v = $opaque;
-        my $new = shift;
-        if (defined $new) {
-            $v =~ s/(:|\z).*/:$new/;
-        }
-        else {
-            $v =~ s/:.*//s;
-        }
-        $self->opaque($v);
+	my $v = $opaque;
+	my $new = shift;
+	if (defined $new) {
+	    $v =~ s/(:|\z).*/:$new/;
+	}
+	else {
+	    $v =~ s/:.*//s;
+	}
+	$self->opaque($v);
     }
     return undef unless $opaque =~ s/^[^:]*://;
     return $opaque;

@@ -53,9 +53,9 @@ For example:
 
     ### Keep 7-bit characters as-is, convert 8-bit characters to '#':
     sub keep7bit {
-        local $_ = shift;
-        tr/\x00-\x7F/#/c;
-        $_;
+	local $_ = shift;
+	tr/\x00-\x7F/#/c;
+	$_;
     }
 
 Here's a decoder which uses that:
@@ -135,7 +135,7 @@ Get/set the default DECODER object.
 sub default {
     my $class = shift;
     if (@_) {
-        $Default = shift;
+	$Default = shift;
     }
     $Default;
 }
@@ -154,7 +154,7 @@ all-uppercase).
 If DECODER is given, installs such an object:
 
     MIME::WordDecoder->supported("ISO-8859-1" =>
-                                 (new MIME::WordDecoder::ISO_8859 "1"));
+				 (new MIME::WordDecoder::ISO_8859 "1"));
 
 You should not override this method.
 
@@ -213,8 +213,8 @@ For example:
     $wd = new MIME::WordDecoder;
     $wd->handler('US-ASCII'   => "KEEP");
     $wd->handler('ISO-8859-1' => \&handle_latin1,
-                 'ISO-8859-2' => \&handle_latin1,
-                 '*'          => "DIE");
+		 'ISO-8859-2' => \&handle_latin1,
+		 '*'          => "DIE");
 
 Notice that, much as with %SIG, the SUBREF can also be taken from
 a set of special keywords:
@@ -239,9 +239,9 @@ sub handler {
 
     ### Copy the hash, and edit it:
     while (@_) {
-        my $c   = shift;
-        my $sub = shift;
-        $self->{MWD_Map}{$c} = $self->real_handler($sub);
+	my $c   = shift;
+	my $sub = shift;
+	$self->{MWD_Map}{$c} = $self->real_handler($sub);
     }
     $self;
 }
@@ -260,19 +260,19 @@ sub decode {
     my ($self, $str) = @_;
     defined($str) or return undef;
     join('', map {
-        ### Get the data and (upcased) charset:
-        my $data    = $_->[0];
-        my $charset = (defined($_->[1]) ? uc($_->[1]) : 'raw');
-        $charset =~ s/\*\w+\Z//;   ### RFC2184 language suffix
+	### Get the data and (upcased) charset:
+	my $data    = $_->[0];
+	my $charset = (defined($_->[1]) ? uc($_->[1]) : 'raw');
+	$charset =~ s/\*\w+\Z//;   ### RFC2184 language suffix
 
-        ### Get the handler; guess if never seen before:
-        defined($self->{MWD_Map}{$charset}) or
-            $self->{MWD_Map}{$charset} =
-                ($self->real_handler($self->guess_handler($charset)) || 0);
-        my $subr = $self->{MWD_Map}{$charset} || $self->{MWD_Map}{'*'};
+	### Get the handler; guess if never seen before:
+	defined($self->{MWD_Map}{$charset}) or
+	    $self->{MWD_Map}{$charset} =
+		($self->real_handler($self->guess_handler($charset)) || 0);
+	my $subr = $self->{MWD_Map}{$charset} || $self->{MWD_Map}{'*'};
 
-        ### Map this chunk:
-        &$subr($data, $charset, $self);
+	### Map this chunk:
+	&$subr($data, $charset, $self);
     } decode_mimewords($str));
 }
 
@@ -299,8 +299,8 @@ sub guess_handler {
 sub real_handler {
     my ($self, $sub) = @_;
     (!$sub) or
-        (ref($sub) eq 'CODE') or
-            $sub = ($Handler{$sub} || croak "bad named handler: $sub\n");
+	(ref($sub) eq 'CODE') or
+	    $sub = ($Handler{$sub} || croak "bad named handler: $sub\n");
     $sub;
 }
 
@@ -441,14 +441,14 @@ sub h_utf8 {
     my $tgt = '';
     while (m{\G(
           ([\x00-\x7F])                | # 0xxxxxxx
-          ([\xC0-\xDF] [\x80-\xBF])    | # 110yyyyy 10xxxxxx
-          ([\xE0-\xEF] [\x80-\xBF]{2}) | # 1110zzzz 10yyyyyy 10xxxxxx
-          ([\xF0-\xF7] [\x80-\xBF]{3}) | # 11110uuu 10uuzzzz 10yyyyyy 10xxxxxx
-          .                              # error; synch
-          )}gcsx and ($1 ne '')) {
+	  ([\xC0-\xDF] [\x80-\xBF])    | # 110yyyyy 10xxxxxx
+	  ([\xE0-\xEF] [\x80-\xBF]{2}) | # 1110zzzz 10yyyyyy 10xxxxxx
+	  ([\xF0-\xF7] [\x80-\xBF]{3}) | # 11110uuu 10uuzzzz 10yyyyyy 10xxxxxx
+	  .                              # error; synch
+	  )}gcsx and ($1 ne '')) {
 
-        if    (defined($2))            { $tgt .= $2 }
-        elsif (defined($3) && $latin1) { $tgt .= "\x00" }
+	if    (defined($2))            { $tgt .= $2 }
+	elsif (defined($3) && $latin1) { $tgt .= "\x00" }
         else                           { $tgt .= "\x00" }
     }
 
@@ -468,14 +468,14 @@ sub h_utf16 {
     local($1,$2,$3,$4,$5);
     my $tgt = '';
     while (m{\G(
-                (  \x00  ([\x00-\x7F])) |  # 00000000 0xxxxxxx
-                (  \x00  ([\x80-\xFF])) |  # 00000000 1xxxxxxx
-                ( [^\x00] [\x00-\xFF])  |  # etc
-                )
-             }gcsx and ($1 ne '')) {
+		(  \x00  ([\x00-\x7F])) |  # 00000000 0xxxxxxx
+		(  \x00  ([\x80-\xFF])) |  # 00000000 1xxxxxxx
+		( [^\x00] [\x00-\xFF])  |  # etc
+		)
+	     }gcsx and ($1 ne '')) {
 
-        if    (defined($2))            { $tgt .= $3 }
-        elsif (defined($4) && $latin1) { $tgt .= $5 }
+	if    (defined($2))            { $tgt .= $3 }
+	elsif (defined($4) && $latin1) { $tgt .= $5 }
         else                           { $tgt .= "\x00" }
     }
 
@@ -499,7 +499,7 @@ sub new {
 
     my $self = $class->SUPER::new();
     $self->handler('raw'      => 'KEEP',
-                   'US-ASCII' => 'KEEP');
+		   'US-ASCII' => 'KEEP');
 
     $self->{MWDI_Num} = $num;
     $self->{MWDI_Unknown} = "?";
@@ -514,7 +514,7 @@ sub new {
 sub guess_handler {
     my ($self, $charset) = @_;
     return 'KEEP'              if (($charset =~ /^ISO[-_]?8859[-_](\d+)$/) &&
-                                   ($1 eq $self->{MWDI_Num}));
+				   ($1 eq $self->{MWDI_Num}));
     return \&h_keep7bit        if ($charset =~ /^ISO[-_]?8859/);
     return \&h_utf8            if ($charset =~ /^UTF[-_]?8$/);
     return \&h_utf16           if ($charset =~ /^UTF[-_]?16$/);
@@ -606,21 +606,21 @@ use vars qw(@ISA);
 
 sub h_convert_to_utf8
 {
-        my ($data, $charset, $decoder) = @_;
-        $charset = 'US-ASCII' if ($charset eq 'raw');
-        my $enc = Encode::find_encoding($charset);
-        if (!$enc) {
-                carp "Unable to convert text in character set `$charset' to UTF-8... ignoring\n";
-                return '';
-        }
-        my $ans = $enc->decode($data, Encode::FB_PERLQQ);
-        return $ans;
+	my ($data, $charset, $decoder) = @_;
+	$charset = 'US-ASCII' if ($charset eq 'raw');
+	my $enc = Encode::find_encoding($charset);
+	if (!$enc) {
+		carp "Unable to convert text in character set `$charset' to UTF-8... ignoring\n";
+		return '';
+	}
+	my $ans = $enc->decode($data, Encode::FB_PERLQQ);
+	return $ans;
 }
 
 sub new {
-        my ($class) = @_;
-        my $self = $class->SUPER::new();
-        $self->handler('*'     => \&h_convert_to_utf8);
+	my ($class) = @_;
+	my $self = $class->SUPER::new();
+	$self->handler('*'     => \&h_convert_to_utf8);
 }
 
 
@@ -668,15 +668,15 @@ my $wd = MIME::WordDecoder->supported($charset) || die "unsupported charset: $ch
 
 $wd->unknown('#');
 my @encs = (
-            'ASCII:  =?US-ASCII?Q?Keith_Moore?= <moore@cs.utk.edu>',
-            'Latin1: =?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?= <keld@dkuug.dk>',
-            'Latin1: =?ISO-8859-1?Q?Andr=E9_?= Pirard <PIRARD@vm1.ulg.ac.be>',
-            'Latin1: =?ISO-8859-1?Q?Andr=E9_?=Pirard <PIRARD@vm1.ulg.ac.be>',
-            ' UTF-8: =?UTF-8?Q?Andr=E9_?=Pirard <PIRARD@vm1.ulg.ac.be>',
-            'UTF-16: =?UTF-16?Q?=00A=00n=00d=00r=00=E9?= Pirard <PIRARD@vm1.ulg.ac.be>',
-            ('=?ISO-8859-1?B?SWYgeW91IGNhbiByZWFkIHRoaXMgeW8=?='.
-             '=?ISO-8859-2?B?dSB1bmRlcnN0YW5kIHRoZSBleGFtcGxlLg==?='.
-             '=?US-ASCII?Q?.._cool!?='));
+	    'ASCII:  =?US-ASCII?Q?Keith_Moore?= <moore@cs.utk.edu>',
+	    'Latin1: =?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?= <keld@dkuug.dk>',
+	    'Latin1: =?ISO-8859-1?Q?Andr=E9_?= Pirard <PIRARD@vm1.ulg.ac.be>',
+	    'Latin1: =?ISO-8859-1?Q?Andr=E9_?=Pirard <PIRARD@vm1.ulg.ac.be>',
+	    ' UTF-8: =?UTF-8?Q?Andr=E9_?=Pirard <PIRARD@vm1.ulg.ac.be>',
+	    'UTF-16: =?UTF-16?Q?=00A=00n=00d=00r=00=E9?= Pirard <PIRARD@vm1.ulg.ac.be>',
+	    ('=?ISO-8859-1?B?SWYgeW91IGNhbiByZWFkIHRoaXMgeW8=?='.
+	     '=?ISO-8859-2?B?dSB1bmRlcnN0YW5kIHRoZSBleGFtcGxlLg==?='.
+	     '=?US-ASCII?Q?.._cool!?='));
 $str = $wd->decode(join "\n", @encs);
 print "$str\n";
 1;

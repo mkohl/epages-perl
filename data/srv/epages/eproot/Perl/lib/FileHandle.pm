@@ -46,20 +46,20 @@ import IO::Handle grep { !defined(&$_) } @EXPORT, @EXPORT_OK;
     no strict 'refs';
 
     my %import = (
-        'IO::Handle' =>
-            [qw(DESTROY new_from_fd fdopen close fileno getc ungetc gets
-                eof flush error clearerr setbuf setvbuf _open_mode_string)],
-        'IO::Seekable' =>
-            [qw(seek tell getpos setpos)],
-        'IO::File' =>
-            [qw(new new_tmpfile open)]
+	'IO::Handle' =>
+	    [qw(DESTROY new_from_fd fdopen close fileno getc ungetc gets
+		eof flush error clearerr setbuf setvbuf _open_mode_string)],
+	'IO::Seekable' =>
+	    [qw(seek tell getpos setpos)],
+	'IO::File' =>
+	    [qw(new new_tmpfile open)]
     );
     for my $pkg (keys %import) {
-        for my $func (@{$import{$pkg}}) {
-            my $c = *{"${pkg}::$func"}{CODE}
-                or die "${pkg}::$func missing";
-            *$func = $c;
-        }
+	for my $func (@{$import{$pkg}}) {
+	    my $c = *{"${pkg}::$func"}{CODE}
+		or die "${pkg}::$func missing";
+	    *$func = $c;
+	}
     }
 }
 
@@ -77,8 +77,8 @@ sub import {
     #  export its constants.
     #
     eval {
-        require Fcntl;
-        Exporter::export('Fcntl', $callpkg);
+	require Fcntl;
+	Exporter::export('Fcntl', $callpkg);
     };
 }
 
@@ -256,7 +256,7 @@ respective pages for documentation on more functions.
 =head1 SEE ALSO
 
 The B<IO> extension,
-L<perlfunc>,
+L<perlfunc>, 
 L<perlop/"I/O Operators">.
 
 =cut

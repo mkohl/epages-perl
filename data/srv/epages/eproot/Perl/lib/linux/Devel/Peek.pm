@@ -12,7 +12,7 @@ use XSLoader ();
 
 @ISA = qw(Exporter);
 @EXPORT = qw(Dump mstat DeadCode DumpArray DumpWithOP DumpProg
-             fill_mstats mstats_fillhash mstats2hash runops_debug debug_flags);
+	     fill_mstats mstats_fillhash mstats2hash runops_debug debug_flags);
 @EXPORT_OK = qw(SvREFCNT SvREFCNT_inc SvREFCNT_dec CvGV);
 %EXPORT_TAGS = ('ALL' => [@EXPORT, @EXPORT_OK]);
 
@@ -77,7 +77,7 @@ Devel::Peek - A data debugging tool for the XS programmer
         Dump( $a );
         Dump( $a, 5 );
         DumpArray( 5, $a, $b, ... );
-        mstat "Point 5";
+	mstat "Point 5";
 
         use Devel::Peek ':opd=st';
 
@@ -182,14 +182,14 @@ So, if you want to collect memory info in a cycle, you may call
 
   $#buf = 999;
   fill_mstats($_) for @buf;
-  mstats_fillhash(%report, 1);          # Static info too
+  mstats_fillhash(%report, 1);		# Static info too
 
   foreach (@buf) {
     # Do something...
-    fill_mstats $_;                     # Collect statistic
+    fill_mstats $_;			# Collect statistic
   }
   foreach (@buf) {
-    mstats2hash($_, %report);           # Preserve static info
+    mstats2hash($_, %report);		# Preserve static info
     # Do something with %report
   }
 
@@ -391,27 +391,27 @@ The following shows the raw form of a reference to a hash.
 
 The output:
 
-        SV = RV(0x8177858) at 0x816a618
-          REFCNT = 1
-          FLAGS = (ROK)
-          RV = 0x814fc10
-          SV = PVHV(0x8167768) at 0x814fc10
-            REFCNT = 1
-            FLAGS = (SHAREKEYS)
-            IV = 1
-            NV = 0
-            ARRAY = 0x816c5b8  (0:7, 1:1)
-            hash quality = 100.0%
-            KEYS = 1
-            FILL = 1
-            MAX = 7
-            RITER = -1
-            EITER = 0x0
-            Elt "hello" HASH = 0xc8fd181b
-            SV = IV(0x816c030) at 0x814fcf4
-              REFCNT = 1
-              FLAGS = (IOK,pIOK)
-              IV = 42
+	SV = RV(0x8177858) at 0x816a618
+	  REFCNT = 1
+	  FLAGS = (ROK)
+	  RV = 0x814fc10
+	  SV = PVHV(0x8167768) at 0x814fc10
+	    REFCNT = 1
+	    FLAGS = (SHAREKEYS)
+	    IV = 1
+	    NV = 0
+	    ARRAY = 0x816c5b8  (0:7, 1:1)
+	    hash quality = 100.0%
+	    KEYS = 1
+	    FILL = 1
+	    MAX = 7
+	    RITER = -1
+	    EITER = 0x0
+	    Elt "hello" HASH = 0xc8fd181b
+	    SV = IV(0x816c030) at 0x814fcf4
+	      REFCNT = 1
+	      FLAGS = (IOK,pIOK)
+	      IV = 42
 
 This shows C<$a> is a reference pointing to an SV.  That SV is a PVHV, a
 hash. Fields RITER and EITER are used by C<L<each>>.
@@ -424,7 +424,7 @@ The total number of comparisons is equal to the sum of the squares of the
 number of entries in each bucket.  For a random hash of C<<n>> keys into
 C<<k>> buckets, the expected value is:
 
-                n + n(n-1)/2k
+		n + n(n-1)/2k
 
 =head2 Dumping a large array or hash
 
@@ -487,26 +487,26 @@ doesn't bless the object, might look something like this:
 
 Looks like this:
 
-        SV = RV(0x798ec)
-          REFCNT = 1
-          FLAGS = (TEMP,ROK)
-          RV = 0x1d453c
-        SV = PVCV(0x1c768c)
-          REFCNT = 2
-          FLAGS = ()
-          IV = 0
-          NV = 0
-          COMP_STASH = 0x31068  "main"
-          START = 0xb20e0
-          ROOT = 0xbece0
-          XSUB = 0x0
-          XSUBANY = 0
-          GVGV::GV = 0x1d44e8   "MY" :: "top_targets"
-          FILE = "(eval 5)"
-          DEPTH = 0
-          PADLIST = 0x1c9338
+	SV = RV(0x798ec)
+	  REFCNT = 1
+	  FLAGS = (TEMP,ROK)
+	  RV = 0x1d453c
+	SV = PVCV(0x1c768c)
+	  REFCNT = 2
+	  FLAGS = ()
+	  IV = 0
+	  NV = 0
+	  COMP_STASH = 0x31068  "main"
+	  START = 0xb20e0
+	  ROOT = 0xbece0
+	  XSUB = 0x0
+	  XSUBANY = 0
+	  GVGV::GV = 0x1d44e8   "MY" :: "top_targets"
+	  FILE = "(eval 5)"
+	  DEPTH = 0
+	  PADLIST = 0x1c9338
 
-This shows that
+This shows that 
 
 =over 4
 
@@ -521,7 +521,7 @@ that it was compiled in the package C<main>;
 
 =item *
 
-under the name C<MY::top_targets>;
+under the name C<MY::top_targets>; 
 
 =item *
 
@@ -551,7 +551,7 @@ frustration for all.
 
 =head1 AUTHOR
 
-Ilya Zakharevich        ilya@math.ohio-state.edu
+Ilya Zakharevich	ilya@math.ohio-state.edu
 
 Copyright (c) 1995-98 Ilya Zakharevich. All rights reserved.
 This program is free software; you can redistribute it and/or

@@ -143,7 +143,7 @@ sub mock
 
     Test::MockObject::_set_log( $self, $name, ( $name =~ s/^-// ? 0 : 1 ) );
 
-    my $mock_sub = sub
+    my $mock_sub = sub 
     {
         my ($self) = @_;
         $self->log_call( $name, @_ );

@@ -50,9 +50,9 @@ deal with FTP over IPv6. Also loads L<Net::INET6Glue::INET_is_INET6>.
 
 =head1 COPYRIGHT
 
-This module and the modules in the Net::INET6Glue Hierarchy distributed together
+This module and the modules in the Net::INET6Glue Hierarchy distributed together 
 with this module are copyright (c) 2008, Steffen Ullrich.
 All Rights Reserved.
-These modules are free software. They may be used, redistributed and/or modified
+These modules are free software. They may be used, redistributed and/or modified 
 under the same terms as Perl itself.
 

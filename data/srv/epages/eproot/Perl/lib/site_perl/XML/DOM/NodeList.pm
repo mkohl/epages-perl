@@ -7,17 +7,17 @@ use vars qw ( $EMPTY );
 # Empty NodeList
 $EMPTY = new XML::DOM::NodeList;
 
-sub new
+sub new 
 {
     bless [], $_[0];
 }
 
-sub item
+sub item 
 {
     $_[0]->[$_[1]];
 }
 
-sub getLength
+sub getLength 
 {
     int (@{$_[0]});
 }
@@ -30,7 +30,7 @@ sub dispose
     my $self = shift;
     for my $kid (@{$self})
     {
-        $kid->dispose;
+	$kid->dispose;
     }
 }
 
@@ -38,8 +38,8 @@ sub setOwnerDocument
 {
     my ($self, $doc) = @_;
     for my $kid (@{$self})
-    {
-        $kid->setOwnerDocument ($doc);
+    { 
+	$kid->setOwnerDocument ($doc);
     }
 }
 

@@ -25,7 +25,7 @@ sub read_mbox($)
 
     local *FH;
     open FH,'<', $file
-        or croak "cannot open '$file': $!\n";
+	or croak "cannot open '$file': $!\n";
 
     local $_;
     my @mbox;
@@ -35,13 +35,13 @@ sub read_mbox($)
     while(<FH>)
     {   if($blank && /^From .*\d{4}/)
         {   push @mbox, $mail if @$mail;
-            $mail  = [ $_ ];
-            $blank = 0;
-        }
-        else
+	    $mail  = [ $_ ];
+	    $blank = 0;
+	}
+	else
         {   $blank = m/^$/ ? 1 : 0;
-            push @$mail, $_;
-        }
+	    push @$mail, $_;
+	}
     }
 
     push @mbox, $mail if @$mail;
@@ -53,7 +53,7 @@ sub read_mbox($)
 
 sub maildomain()
 {   return $domain
-        if defined $domain;
+	if defined $domain;
 
     $domain = $ENV{MAILDOMAIN}
         and return $domain;
@@ -66,21 +66,21 @@ sub maildomain()
     local $_;
     if(defined $config && open CF, '<', $config)
     {   my %var;
-        while(<CF>)
+	while(<CF>)
         {   if(my ($v, $arg) = /^D([a-zA-Z])([\w.\$\-]+)/)
             {   $arg =~ s/\$([a-zA-Z])/exists $var{$1} ? $var{$1} : '$'.$1/eg;
-                $var{$v} = $arg;
-            }
-        }
-        close CF;
-        $domain = $var{j} if defined $var{j};
-        $domain = $var{M} if defined $var{M};
+		$var{$v} = $arg;
+	    }
+	}
+	close CF;
+	$domain = $var{j} if defined $var{j};
+	$domain = $var{M} if defined $var{M};
 
         $domain = $1
             if $domain && $domain =~ m/([A-Za-z0-9](?:[\.\-A-Za-z0-9]+))/;
 
-        return $domain
-            if defined $domain && $domain !~ /\$/;
+	return $domain
+	    if defined $domain && $domain !~ /\$/;
     }
 
     # Try smail config file if exists
@@ -89,13 +89,13 @@ sub maildomain()
     {   while(<CF>)
         {   if( /\A\s*hostnames?\s*=\s*(\S+)/ )
             {   $domain = (split /\:/,$1)[0];
-                last;
-            }
-        }
-        close CF;
+		last;
+	    }
+	}
+	close CF;
 
-        return $domain
-            if defined $domain;
+	return $domain
+	    if defined $domain;
     }
 
     # Try a SMTP connection to 'mailhost'
@@ -104,12 +104,12 @@ sub maildomain()
     {   foreach my $host (qw(mailhost localhost))
         {   # hosts are local, so short timeout
             my $smtp = eval { Net::SMTP->new($host, Timeout => 5) };
-            if(defined $smtp)
+	    if(defined $smtp)
             {   $domain = $smtp->domain;
-                $smtp->quit;
-                last;
-            }
-        }
+		$smtp->quit;
+		last;
+	    }
+	}
     }
 
     # Use internet(DNS) domain name, if it can be found
@@ -131,8 +131,8 @@ sub mailaddress()
     {   require Mac::InternetConfig;
 
         no strict;
-        Mac::InternetConfig->import;
-        $mailaddress = $InternetConfig{kICEmail()};
+	Mac::InternetConfig->import;
+	$mailaddress = $InternetConfig{kICEmail()};
     }
 
     $mailaddress ||= $ENV{USER} || $ENV{LOGNAME} || eval {getpwuid $>}
@@ -140,7 +140,7 @@ sub mailaddress()
 
     # Add domain if it does not exist
     $mailaddress .= '@' . maildomain
-        if $mailaddress !~ /\@/;
+	if $mailaddress !~ /\@/;
 
     $mailaddress =~ s/(^.*<|>.*$)//g;
     $mailaddress;

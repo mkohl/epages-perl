@@ -27,7 +27,7 @@ XML::Filter::Merger - Assemble multiple SAX streams in to one document
     $p->parse_uri( $uri );   ## Body of $uri inserted in <foo>...</foo>
     $h->end_element( { Name => "foo", ... } );
     ...
-
+        
 
 =head1 DESCRIPTION
 
@@ -307,7 +307,7 @@ sub _cutting {
     $self->_log(
         $v ? () : "NOT ",
         "CUTTING ",
-        do { my $c = (caller(1))[3]; $c =~ s/.*:://; $c },
+        do { my $c = (caller(1))[3]; $c =~ s/.*:://; $c }, 
         " (doccount=$self->{DocumentCount}",
         " docdepth=$self->{DocumentDepth}",
         " depth=$self->{Depth})"
@@ -495,12 +495,12 @@ sub end_manifold_document {
 
     my $r;
     if ( $self->{TailEvents} ) {
-        for ( @{$self->{TailEvents}} ) {
-            my $sub_name = shift @$_;
+	for ( @{$self->{TailEvents}} ) {
+	    my $sub_name = shift @$_;
             $self->_log( "PLAYING BACK $sub_name" ) if _logging;
             $sub_name = "SUPER::$sub_name";
-            $r = $self->$sub_name( @$_ );
-        }
+	    $r = $self->$sub_name( @$_ );
+	}
     }
     $self->{ManifoldDocumentStarted} = 0;
     $self->{AutoReset} = 1;

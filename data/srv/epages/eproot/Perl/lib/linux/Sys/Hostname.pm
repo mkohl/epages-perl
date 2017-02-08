@@ -17,12 +17,12 @@ our $host;
 BEGIN {
     $VERSION = '1.11';
     {
-        local $SIG{__DIE__};
-        eval {
-            require XSLoader;
-            XSLoader::load('Sys::Hostname', $VERSION);
-        };
-        warn $@ if $@;
+	local $SIG{__DIE__};
+	eval {
+	    require XSLoader;
+	    XSLoader::load('Sys::Hostname', $VERSION);
+	};
+	warn $@ if $@;
     }
 }
 
@@ -57,7 +57,7 @@ sub hostname {
 
     # rats!
     $host = '';
-    croak "Cannot get host name of local machine";
+    croak "Cannot get host name of local machine";  
 
   }
   elsif ($^O eq 'MSWin32') {
@@ -77,54 +77,54 @@ sub hostname {
     # method 2 - syscall is preferred since it avoids tainting problems
     # XXX: is it such a good idea to return hostname untainted?
     eval {
-        local $SIG{__DIE__};
-        require "syscall.ph";
-        $host = "\0" x 65; ## preload scalar
-        syscall(&SYS_gethostname, $host, 65) == 0;
+	local $SIG{__DIE__};
+	require "syscall.ph";
+	$host = "\0" x 65; ## preload scalar
+	syscall(&SYS_gethostname, $host, 65) == 0;
     }
 
     # method 2a - syscall using systeminfo instead of gethostname
     #           -- needed on systems like Solaris
     || eval {
-        local $SIG{__DIE__};
-        require "sys/syscall.ph";
-        require "sys/systeminfo.ph";
-        $host = "\0" x 65; ## preload scalar
-        syscall(&SYS_systeminfo, &SI_HOSTNAME, $host, 65) != -1;
+	local $SIG{__DIE__};
+	require "sys/syscall.ph";
+	require "sys/systeminfo.ph";
+	$host = "\0" x 65; ## preload scalar
+	syscall(&SYS_systeminfo, &SI_HOSTNAME, $host, 65) != -1;
     }
 
     # method 3 - trusty old hostname command
     || eval {
-        local $SIG{__DIE__};
-        local $SIG{CHLD};
-        $host = `(hostname) 2>/dev/null`; # bsdish
+	local $SIG{__DIE__};
+	local $SIG{CHLD};
+	$host = `(hostname) 2>/dev/null`; # bsdish
     }
 
     # method 4 - use POSIX::uname(), which strictly can't be expected to be
     # correct
     || eval {
-        local $SIG{__DIE__};
-        require POSIX;
-        $host = (POSIX::uname())[1];
+	local $SIG{__DIE__};
+	require POSIX;
+	$host = (POSIX::uname())[1];
     }
 
     # method 5 - sysV uname command (may truncate)
     || eval {
-        local $SIG{__DIE__};
-        $host = `uname -n 2>/dev/null`; ## sysVish
+	local $SIG{__DIE__};
+	$host = `uname -n 2>/dev/null`; ## sysVish
     }
 
     # method 6 - Apollo pre-SR10
     || eval {
-        local $SIG{__DIE__};
+	local $SIG{__DIE__};
         my($a,$b,$c,$d);
-        ($host,$a,$b,$c,$d)=split(/[:\. ]/,`/com/host`,6);
+	($host,$a,$b,$c,$d)=split(/[:\. ]/,`/com/host`,6);
     }
 
     # bummer
-    || croak "Cannot get host name of local machine";
+    || croak "Cannot get host name of local machine";  
 
-    # remove garbage
+    # remove garbage 
     $host =~ tr/\0\r\n//d;
     $host;
   }

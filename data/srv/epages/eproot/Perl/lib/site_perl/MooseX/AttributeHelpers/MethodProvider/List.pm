@@ -4,19 +4,19 @@ use Moose::Role;
 our $VERSION   = '0.23';
 $VERSION = eval $VERSION;
 our $AUTHORITY = 'cpan:STEVAN';
-
+ 
 sub count : method {
     my ($attr, $reader, $writer) = @_;
-    return sub {
-        scalar @{$reader->($_[0])}
-    };
+    return sub { 
+        scalar @{$reader->($_[0])} 
+    };        
 }
 
 sub empty : method {
     my ($attr, $reader, $writer) = @_;
-    return sub {
+    return sub { 
         scalar @{$reader->($_[0])} ? 1 : 0
-    };
+    };        
 }
 
 sub find : method {
@@ -110,7 +110,7 @@ __END__
 MooseX::AttributeHelpers::MethodProvider::List
 
 =head1 SYNOPSIS
-
+    
    package Stuff;
    use Moose;
    use MooseX::AttributeHelpers;
@@ -141,7 +141,7 @@ MooseX::AttributeHelpers::MethodProvider::List
 
 =head1 DESCRIPTION
 
-This is a role which provides the method generators for
+This is a role which provides the method generators for 
 L<MooseX::AttributeHelpers::Collection::List>.
 
 =head1 METHODS
@@ -254,7 +254,7 @@ Returns the last element of the list.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

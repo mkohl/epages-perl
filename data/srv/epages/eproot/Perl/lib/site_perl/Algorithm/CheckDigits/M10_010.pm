@@ -12,65 +12,65 @@ our @ISA = qw(Algorithm::CheckDigits);
 my @items = ( 0,9,4,6,8,2,7,1,3,5 );
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d\d-?\d{8})-?(\d)$/) {
-                return $2 == $self->_compute_checkdigit($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d\d-?\d{8})-?(\d)$/) {
+		return $2 == $self->_compute_checkdigit($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^\d\d-?\d{8}-?$/) {
-                return  $number . $self->_compute_checkdigit($number);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^\d\d-?\d{8}-?$/) {
+		return  $number . $self->_compute_checkdigit($number);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d\d-?\d{8}-?)(\d)$/) {
-                return $1 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d\d-?\d{8}-?)(\d)$/) {
+		return $1 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d\d-?\d{8})-?(\d)$/) {
-                return $2 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d\d-?\d{8})-?(\d)$/) {
+		return $2 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        if ($number =~ /^\d\d-?\d{8}-?$/) {
+	if ($number =~ /^\d\d-?\d{8}-?$/) {
 
-                $number =~ s/-//g;
-                my @digits = split(//,$number);
-                my $sum    = 0;
-                my $cf     = 0;
+		$number =~ s/-//g;
+		my @digits = split(//,$number);
+		my $sum    = 0;
+		my $cf     = 0;
 
-                for (my $i = 0; $i <= $#digits; $i++) {
+		for (my $i = 0; $i <= $#digits; $i++) {
 
-                        $cf = $items[($digits[$i] + $cf) % 10];
+			$cf = $items[($digits[$i] + $cf) % 10];
 
-                }
-                return (10 - $cf) % 10;
-        }
-        return -1;
+		}
+		return (10 - $cf) % 10;
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -89,7 +89,7 @@ CheckDigits::M10_010 - compute check digits for Postscheckkonti (CH)
   $pck = CheckDigits('postcheckkonti');
 
   if ($pck->is_valid('85-12345678-7')) {
-        # do something
+	# do something
   }
 
   $cn = $pck->complete('85-12345678');
@@ -100,7 +100,7 @@ CheckDigits::M10_010 - compute check digits for Postscheckkonti (CH)
 
   $bn = $pck->basenumber('85-12345678-7');
   # $bn = '85-12345678'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

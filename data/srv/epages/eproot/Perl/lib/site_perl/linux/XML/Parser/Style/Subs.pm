@@ -30,14 +30,14 @@ XML::Parser::Style::Subs
   use XML::Parser;
   my $p = XML::Parser->new(Style => 'Subs', Pkg => 'MySubs');
   $p->parsefile('foo.xml');
-
+  
   {
     package MySubs;
-
+    
     sub foo {
       # start of foo tag
     }
-
+    
     sub foo_ {
       # end of foo tag
     }

@@ -4,142 +4,142 @@ Data::Integer - details of the native integer data type
 
 =head1 SYNOPSIS
 
-        use Data::Integer qw(natint_bits);
+	use Data::Integer qw(natint_bits);
 
-        $n = natint_bits;
+	$n = natint_bits;
 
-        # and other constants; see text
+	# and other constants; see text
 
-        use Data::Integer qw(nint sint uint nint_is_sint nint_is_uint);
+	use Data::Integer qw(nint sint uint nint_is_sint nint_is_uint);
 
-        $ni = nint($ni);
-        $si = sint($si);
-        $ui = uint($ui);
-        if(nint_is_sint($ni)) { ...
-        if(nint_is_uint($ni)) { ...
+	$ni = nint($ni);
+	$si = sint($si);
+	$ui = uint($ui);
+	if(nint_is_sint($ni)) { ...
+	if(nint_is_uint($ni)) { ...
 
-        use Data::Integer qw(
-                nint_sgn sint_sgn uint_sgn
-                nint_abs sint_abs uint_abs
-                nint_cmp sint_cmp uint_cmp
-                nint_min sint_min uint_min
-                nint_max sint_max uint_max
-                nint_neg sint_neg uint_neg
-                nint_add sint_add uint_add
-                nint_sub sint_sub uint_sub
-        );
+	use Data::Integer qw(
+		nint_sgn sint_sgn uint_sgn
+		nint_abs sint_abs uint_abs
+		nint_cmp sint_cmp uint_cmp
+		nint_min sint_min uint_min
+		nint_max sint_max uint_max
+		nint_neg sint_neg uint_neg
+		nint_add sint_add uint_add
+		nint_sub sint_sub uint_sub
+	);
 
-        $sn = nint_sgn($ni);
-        $sn = sint_sgn($si);
-        $sn = uint_sgn($ui);
-        $ni = nint_abs($ni);
-        $si = sint_abs($si);
-        $ui = uint_abs($ui);
-        @sorted_nints = sort { nint_cmp($a, $b) } @nints;
-        @sorted_sints = sort { sint_cmp($a, $b) } @sints;
-        @sorted_uints = sort { uint_cmp($a, $b) } @uints;
-        $ni = nint_min($na, $nb);
-        $si = sint_min($sa, $sb);
-        $ui = uint_min($ua, $ub);
-        $ni = nint_max($na, $nb);
-        $si = sint_max($sa, $sb);
-        $ui = uint_max($ua, $ub);
-        $ni = nint_neg($ni);
-        $si = sint_neg($si);
-        $ui = uint_neg($ui);
-        $ni = nint_add($na, $nb);
-        $si = sint_add($sa, $sb);
-        $ui = uint_add($ua, $ub);
-        $ni = nint_sub($na, $nb);
-        $si = sint_sub($sa, $sb);
-        $ui = uint_sub($ua, $ub);
+	$sn = nint_sgn($ni);
+	$sn = sint_sgn($si);
+	$sn = uint_sgn($ui);
+	$ni = nint_abs($ni);
+	$si = sint_abs($si);
+	$ui = uint_abs($ui);
+	@sorted_nints = sort { nint_cmp($a, $b) } @nints;
+	@sorted_sints = sort { sint_cmp($a, $b) } @sints;
+	@sorted_uints = sort { uint_cmp($a, $b) } @uints;
+	$ni = nint_min($na, $nb);
+	$si = sint_min($sa, $sb);
+	$ui = uint_min($ua, $ub);
+	$ni = nint_max($na, $nb);
+	$si = sint_max($sa, $sb);
+	$ui = uint_max($ua, $ub);
+	$ni = nint_neg($ni);
+	$si = sint_neg($si);
+	$ui = uint_neg($ui);
+	$ni = nint_add($na, $nb);
+	$si = sint_add($sa, $sb);
+	$ui = uint_add($ua, $ub);
+	$ni = nint_sub($na, $nb);
+	$si = sint_sub($sa, $sb);
+	$ui = uint_sub($ua, $ub);
 
-        use Data::Integer qw(
-                sint_shl uint_shl
-                sint_shr uint_shr
-                sint_rol uint_rol
-                sint_ror uint_ror
-        );
+	use Data::Integer qw(
+		sint_shl uint_shl
+		sint_shr uint_shr
+		sint_rol uint_rol
+		sint_ror uint_ror
+	);
 
-        $si = sint_shl($si, $dist);
-        $ui = uint_shl($ui, $dist);
-        $si = sint_shr($si, $dist);
-        $ui = uint_shr($ui, $dist);
-        $si = sint_rol($si, $dist);
-        $ui = uint_rol($ui, $dist);
-        $si = sint_ror($si, $dist);
-        $ui = uint_ror($ui, $dist);
+	$si = sint_shl($si, $dist);
+	$ui = uint_shl($ui, $dist);
+	$si = sint_shr($si, $dist);
+	$ui = uint_shr($ui, $dist);
+	$si = sint_rol($si, $dist);
+	$ui = uint_rol($ui, $dist);
+	$si = sint_ror($si, $dist);
+	$ui = uint_ror($ui, $dist);
 
-        use Data::Integer qw(
-                nint_bits_as_sint nint_bits_as_uint
-                sint_bits_as_uint uint_bits_as_sint
-        );
+	use Data::Integer qw(
+		nint_bits_as_sint nint_bits_as_uint
+		sint_bits_as_uint uint_bits_as_sint
+	);
 
-        $si = nint_bits_as_sint($ni);
-        $ui = nint_bits_as_uint($ni);
-        $ui = sint_bits_as_uint($si);
-        $si = uint_bits_as_sint($ui);
+	$si = nint_bits_as_sint($ni);
+	$ui = nint_bits_as_uint($ni);
+	$ui = sint_bits_as_uint($si);
+	$si = uint_bits_as_sint($ui);
 
-        use Data::Integer qw(
-                sint_not uint_not
-                sint_and uint_and
-                sint_nand uint_nand
-                sint_andn uint_andn
-                sint_or uint_or
-                sint_nor uint_nor
-                sint_orn uint_orn
-                sint_xor uint_xor
-                sint_nxor uint_nxor
-                sint_mux uint_mux
-        );
+	use Data::Integer qw(
+		sint_not uint_not
+		sint_and uint_and
+		sint_nand uint_nand
+		sint_andn uint_andn
+		sint_or uint_or
+		sint_nor uint_nor
+		sint_orn uint_orn
+		sint_xor uint_xor
+		sint_nxor uint_nxor
+		sint_mux uint_mux
+	);
 
-        $si = sint_not($si);
-        $ui = uint_not($ui);
-        $si = sint_and($sa, $sb);
-        $ui = uint_and($ua, $ub);
-        $si = sint_nand($sa, $sb);
-        $ui = uint_nand($ua, $ub);
-        $si = sint_andn($sa, $sb);
-        $ui = uint_andn($ua, $ub);
-        $si = sint_or($sa, $sb);
-        $ui = uint_or($ua, $ub);
-        $si = sint_nor($sa, $sb);
-        $ui = uint_nor($ua, $ub);
-        $si = sint_orn($sa, $sb);
-        $ui = uint_orn($ua, $ub);
-        $si = sint_xor($sa, $sb);
-        $ui = uint_xor($ua, $ub);
-        $si = sint_nxor($sa, $sb);
-        $ui = uint_nxor($ua, $ub);
-        $si = sint_mux($sa, $sb, $sc);
-        $ui = uint_mux($ua, $ub, $uc);
+	$si = sint_not($si);
+	$ui = uint_not($ui);
+	$si = sint_and($sa, $sb);
+	$ui = uint_and($ua, $ub);
+	$si = sint_nand($sa, $sb);
+	$ui = uint_nand($ua, $ub);
+	$si = sint_andn($sa, $sb);
+	$ui = uint_andn($ua, $ub);
+	$si = sint_or($sa, $sb);
+	$ui = uint_or($ua, $ub);
+	$si = sint_nor($sa, $sb);
+	$ui = uint_nor($ua, $ub);
+	$si = sint_orn($sa, $sb);
+	$ui = uint_orn($ua, $ub);
+	$si = sint_xor($sa, $sb);
+	$ui = uint_xor($ua, $ub);
+	$si = sint_nxor($sa, $sb);
+	$ui = uint_nxor($ua, $ub);
+	$si = sint_mux($sa, $sb, $sc);
+	$ui = uint_mux($ua, $ub, $uc);
 
-        use Data::Integer qw(
-                sint_madd uint_madd
-                sint_msub uint_msub
-                sint_cadd uint_cadd
-                sint_csub uint_csub
-                sint_sadd uint_sadd
-                sint_ssub uint_ssub
-        );
+	use Data::Integer qw(
+		sint_madd uint_madd
+		sint_msub uint_msub
+		sint_cadd uint_cadd
+		sint_csub uint_csub
+		sint_sadd uint_sadd
+		sint_ssub uint_ssub
+	);
 
-        $si = sint_madd($sa, $sb);
-        $ui = uint_madd($ua, $ub);
-        $si = sint_msub($sa, $sb);
-        $ui = uint_msub($ua, $ub);
-        ($carry, $si) = sint_cadd($sa, $sb, $carry);
-        ($carry, $ui) = uint_cadd($ua, $ub, $carry);
-        ($carry, $si) = sint_csub($sa, $sb, $carry);
-        ($carry, $ui) = uint_csub($ua, $ub, $carry);
-        $si = sint_sadd($sa, $sb);
-        $ui = uint_sadd($ua, $ub);
-        $si = sint_ssub($sa, $sb);
-        $ui = uint_ssub($ua, $ub);
+	$si = sint_madd($sa, $sb);
+	$ui = uint_madd($ua, $ub);
+	$si = sint_msub($sa, $sb);
+	$ui = uint_msub($ua, $ub);
+	($carry, $si) = sint_cadd($sa, $sb, $carry);
+	($carry, $ui) = uint_cadd($ua, $ub, $carry);
+	($carry, $si) = sint_csub($sa, $sb, $carry);
+	($carry, $ui) = uint_csub($ua, $ub, $carry);
+	$si = sint_sadd($sa, $sb);
+	$ui = uint_sadd($ua, $ub);
+	$si = sint_ssub($sa, $sb);
+	$ui = uint_ssub($ua, $ub);
 
-        use Data::Integer qw(natint_hex hex_natint);
+	use Data::Integer qw(natint_hex hex_natint);
 
-        print natint_hex($value);
-        $value = hex_natint($string);
+	print natint_hex($value);
+	$value = hex_natint($string);
 
 =head1 DESCRIPTION
 
@@ -189,43 +189,43 @@ our $VERSION = "0.004";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
-        natint_bits
-        min_nint max_nint min_natint max_natint
-        min_sint max_sint min_signed_natint max_signed_natint
-        min_uint max_uint min_unsigned_natint max_unsigned_natint
-        nint sint uint
-        nint_is_sint nint_is_uint
-        nint_sgn sint_sgn uint_sgn
-        nint_abs sint_abs uint_abs
-        nint_cmp sint_cmp uint_cmp
-        nint_min sint_min uint_min
-        nint_max sint_max uint_max
-        nint_neg sint_neg uint_neg
-        nint_add sint_add uint_add
-        nint_sub sint_sub uint_sub
-        sint_shl uint_shl
-        sint_shr uint_shr
-        sint_rol uint_rol
-        sint_ror uint_ror
-        nint_bits_as_sint nint_bits_as_uint
-        sint_bits_as_uint uint_bits_as_sint
-        sint_not uint_not
-        sint_and uint_and
-        sint_nand uint_nand
-        sint_andn uint_andn
-        sint_or uint_or
-        sint_nor uint_nor
-        sint_orn uint_orn
-        sint_xor uint_xor
-        sint_nxor uint_nxor
-        sint_mux uint_mux
-        sint_madd uint_madd
-        sint_msub uint_msub
-        sint_cadd uint_cadd
-        sint_csub uint_csub
-        sint_sadd uint_sadd
-        sint_ssub uint_ssub
-        natint_hex hex_natint
+	natint_bits
+	min_nint max_nint min_natint max_natint
+	min_sint max_sint min_signed_natint max_signed_natint
+	min_uint max_uint min_unsigned_natint max_unsigned_natint
+	nint sint uint
+	nint_is_sint nint_is_uint
+	nint_sgn sint_sgn uint_sgn
+	nint_abs sint_abs uint_abs
+	nint_cmp sint_cmp uint_cmp
+	nint_min sint_min uint_min
+	nint_max sint_max uint_max
+	nint_neg sint_neg uint_neg
+	nint_add sint_add uint_add
+	nint_sub sint_sub uint_sub
+	sint_shl uint_shl
+	sint_shr uint_shr
+	sint_rol uint_rol
+	sint_ror uint_ror
+	nint_bits_as_sint nint_bits_as_uint
+	sint_bits_as_uint uint_bits_as_sint
+	sint_not uint_not
+	sint_and uint_and
+	sint_nand uint_nand
+	sint_andn uint_andn
+	sint_or uint_or
+	sint_nor uint_nor
+	sint_orn uint_orn
+	sint_xor uint_xor
+	sint_nxor uint_nxor
+	sint_mux uint_mux
+	sint_madd uint_madd
+	sint_msub uint_msub
+	sint_cadd uint_cadd
+	sint_csub uint_csub
+	sint_sadd uint_sadd
+	sint_ssub uint_ssub
+	natint_hex hex_natint
 );
 
 =head1 CONSTANTS
@@ -253,14 +253,14 @@ The width, in bits, of the native integer data types.
 # left until it turns into the sign bit.  "use integer" forces the use of a
 # signed integer representation.
 BEGIN {
-        use integer;
-        my $natint_bits = 1;
-        my $test_bit = 1;
-        while($test_bit > 0) {
-                $natint_bits += 1;
-                $test_bit <<= 1;
-        }
-        *natint_bits = sub () { $natint_bits };
+	use integer;
+	my $natint_bits = 1;
+	my $test_bit = 1;
+	while($test_bit > 0) {
+		$natint_bits += 1;
+		$test_bit <<= 1;
+	}
+	*natint_bits = sub () { $natint_bits };
 }
 
 =item min_nint
@@ -273,8 +273,8 @@ The minimum representable value in either representation.  This is
 =cut
 
 BEGIN {
-        my $min_nint = do { use integer; 1 << (natint_bits - 1) };
-        *min_natint = *min_nint = sub() { my $ret = $min_nint };
+	my $min_nint = do { use integer; 1 << (natint_bits - 1) };
+	*min_natint = *min_nint = sub() { my $ret = $min_nint };
 }
 
 =item max_nint
@@ -287,8 +287,8 @@ The maximum representable value in either representation.  This is
 =cut
 
 BEGIN {
-        my $max_nint = ~0;
-        *max_natint = *max_nint = sub() { my $ret = $max_nint };
+	my $max_nint = ~0;
+	*max_natint = *max_nint = sub() { my $ret = $max_nint };
 }
 
 =item min_sint
@@ -312,8 +312,8 @@ The maximum representable value in the signed representation.  This is
 =cut
 
 BEGIN {
-        my $max_sint = ~min_sint;
-        *max_signed_natint = *max_sint = sub() { my $ret = $max_sint };
+	my $max_sint = ~min_sint;
+	*max_signed_natint = *max_sint = sub() { my $ret = $max_sint };
 }
 
 =item min_uint
@@ -326,8 +326,8 @@ This is zero.
 =cut
 
 BEGIN {
-        my $min_uint = 0;
-        *min_unsigned_natint = *min_uint = sub() { my $ret = $min_uint };
+	my $min_uint = 0;
+	*min_unsigned_natint = *min_uint = sub() { my $ret = $min_uint };
 }
 
 =item max_uint
@@ -383,30 +383,30 @@ performed by all of the functions in this module, presented in isolation.
 =cut
 
 sub nint($) {
-        my $tval = $_[0];
-        croak "not a native integer"
-                unless int($tval) == $tval && $tval >= min_nint &&
-                        $tval <= max_nint;
-        return ($tval = $_[0]) < 0 ? do { use integer; 0 | $_[0] } : 0 | $_[0];
+	my $tval = $_[0];
+	croak "not a native integer"
+		unless int($tval) == $tval && $tval >= min_nint &&
+			$tval <= max_nint;
+	return ($tval = $_[0]) < 0 ? do { use integer; 0 | $_[0] } : 0 | $_[0];
 }
 
 sub sint($) {
-        my $tval = $_[0];
-        croak "not a signed native integer"
-                unless int($tval) == $tval && $tval >= min_sint &&
-                        $tval <= max_sint;
-        my $val = do { use integer; 0 | $_[0] };
-        croak "not a signed native integer"
-                if $tval >= 0 && do { use integer; $val < 0 };
-        return $val;
+	my $tval = $_[0];
+	croak "not a signed native integer"
+		unless int($tval) == $tval && $tval >= min_sint &&
+			$tval <= max_sint;
+	my $val = do { use integer; 0 | $_[0] };
+	croak "not a signed native integer"
+		if $tval >= 0 && do { use integer; $val < 0 };
+	return $val;
 }
 
 sub uint($) {
-        my $tval = $_[0];
-        croak "not an unsigned native integer"
-                unless int($tval) == $tval && $tval >= min_uint &&
-                        $tval <= max_uint;
-        return 0 | $_[0];
+	my $tval = $_[0];
+	croak "not an unsigned native integer"
+		unless int($tval) == $tval && $tval >= min_uint &&
+			$tval <= max_uint;
+	return 0 | $_[0];
 }
 
 =item nint_is_sint(A)
@@ -417,9 +417,9 @@ whether this value can be exactly represented as a signed native integer.
 =cut
 
 sub nint_is_sint($) {
-        my $val = nint($_[0]);
-        return (my $tval = $val) < 0 ||
-                do { use integer; ($val & min_sint) == 0 };
+	my $val = nint($_[0]);
+	return (my $tval = $val) < 0 ||
+		do { use integer; ($val & min_sint) == 0 };
 }
 
 =item nint_is_uint(A)
@@ -470,22 +470,22 @@ Absolute value (magnitude, discarding sign).
 =cut
 
 sub nint_abs($) {
-        my $a = nint($_[0]);
-        if((my $tval = $a) >= 0) {
-                return $a;
-        } elsif(do { use integer; $a == min_sint }) {
-                return 0 | min_sint;
-        } else {
-                use integer;
-                return -$a;
-        }
+	my $a = nint($_[0]);
+	if((my $tval = $a) >= 0) {
+		return $a;
+	} elsif(do { use integer; $a == min_sint }) {
+		return 0 | min_sint;
+	} else {
+		use integer;
+		return -$a;
+	}
 }
 
 sub sint_abs($) {
-        my $a = sint($_[0]);
-        use integer;
-        croak "integer overflow" if $a == min_sint;
-        return $a < 0 ? -$a : $a;
+	my $a = sint($_[0]);
+	use integer;
+	croak "integer overflow" if $a == min_sint;
+	return $a < 0 ? -$a : $a;
 }
 
 *uint_abs = \&uint;
@@ -502,29 +502,29 @@ less than, equal to, or greater than B.
 =cut
 
 sub nint_cmp($$) {
-        my($a, $b) = (nint($_[0]), nint($_[1]));
-        if((my $ta = $a) < 0) {
-                if((my $tb = $b) < 0) {
-                        use integer;
-                        return $a <=> $b;
-                } else {
-                        return -1;
-                }
-        } else {
-                if((my $tb = $b) < 0) {
-                        return 1;
-                } else {
-                        use integer;
-                        return ($a ^ min_sint) <=> ($b ^ min_sint);
-                }
-        }
+	my($a, $b) = (nint($_[0]), nint($_[1]));
+	if((my $ta = $a) < 0) {
+		if((my $tb = $b) < 0) {
+			use integer;
+			return $a <=> $b;
+		} else {
+			return -1;
+		}
+	} else {
+		if((my $tb = $b) < 0) {
+			return 1;
+		} else {
+			use integer;
+			return ($a ^ min_sint) <=> ($b ^ min_sint);
+		}
+	}
 }
 
 sub sint_cmp($$) { use integer; sint($_[0]) <=> sint($_[1]) }
 
 sub uint_cmp($$) {
-        use integer;
-        return (uint($_[0]) ^ min_sint) <=> (uint($_[1]) ^ min_sint);
+	use integer;
+	return (uint($_[0]) ^ min_sint) <=> (uint($_[1]) ^ min_sint);
 }
 
 =item nint_min(A, B)
@@ -539,34 +539,34 @@ arguments.
 =cut
 
 sub nint_min($$) {
-        my($a, $b) = (nint($_[0]), nint($_[1]));
-        if((my $ta = $a) < 0) {
-                if((my $tb = $b) < 0) {
-                        use integer;
-                        return $a < $b ? $a : $b;
-                } else {
-                        return $a;
-                }
-        } else {
-                if((my $tb = $b) < 0) {
-                        return $b;
-                } else {
-                        use integer;
-                        return ($a ^ min_sint) < ($b ^ min_sint) ? $a : $b;
-                }
-        }
+	my($a, $b) = (nint($_[0]), nint($_[1]));
+	if((my $ta = $a) < 0) {
+		if((my $tb = $b) < 0) {
+			use integer;
+			return $a < $b ? $a : $b;
+		} else {
+			return $a;
+		}
+	} else {
+		if((my $tb = $b) < 0) {
+			return $b;
+		} else {
+			use integer;
+			return ($a ^ min_sint) < ($b ^ min_sint) ? $a : $b;
+		}
+	}
 }
 
 sub sint_min($$) {
-        my($a, $b) = (sint($_[0]), sint($_[1]));
-        use integer;
-        return $a < $b ? $a : $b;
+	my($a, $b) = (sint($_[0]), sint($_[1]));
+	use integer;
+	return $a < $b ? $a : $b;
 }
 
 sub uint_min($$) {
-        my($a, $b) = (uint($_[0]), uint($_[1]));
-        use integer;
-        return ($a ^ min_sint) < ($b ^ min_sint) ? $a : $b;
+	my($a, $b) = (uint($_[0]), uint($_[1]));
+	use integer;
+	return ($a ^ min_sint) < ($b ^ min_sint) ? $a : $b;
 }
 
 =item nint_max(A, B)
@@ -581,34 +581,34 @@ arguments.
 =cut
 
 sub nint_max($$) {
-        my($a, $b) = (nint($_[0]), nint($_[1]));
-        if((my $ta = $a) < 0) {
-                if((my $tb = $b) < 0) {
-                        use integer;
-                        return $a < $b ? $b : $a;
-                } else {
-                        return $b;
-                }
-        } else {
-                if((my $tb = $b) < 0) {
-                        return $a;
-                } else {
-                        use integer;
-                        return ($a ^ min_sint) < ($b ^ min_sint) ? $b : $a;
-                }
-        }
+	my($a, $b) = (nint($_[0]), nint($_[1]));
+	if((my $ta = $a) < 0) {
+		if((my $tb = $b) < 0) {
+			use integer;
+			return $a < $b ? $b : $a;
+		} else {
+			return $b;
+		}
+	} else {
+		if((my $tb = $b) < 0) {
+			return $a;
+		} else {
+			use integer;
+			return ($a ^ min_sint) < ($b ^ min_sint) ? $b : $a;
+		}
+	}
 }
 
 sub sint_max($$) {
-        my($a, $b) = (sint($_[0]), sint($_[1]));
-        use integer;
-        return $a < $b ? $b : $a;
+	my($a, $b) = (sint($_[0]), sint($_[1]));
+	use integer;
+	return $a < $b ? $b : $a;
 }
 
 sub uint_max($$) {
-        my($a, $b) = (uint($_[0]), uint($_[1]));
-        use integer;
-        return ($a ^ min_sint) < ($b ^ min_sint) ? $b : $a;
+	my($a, $b) = (uint($_[0]), uint($_[1]));
+	use integer;
+	return ($a ^ min_sint) < ($b ^ min_sint) ? $b : $a;
 }
 
 =item nint_neg(A)
@@ -622,28 +622,28 @@ Negation: returns -A.
 =cut
 
 sub nint_neg($) {
-        my $a = nint($_[0]);
-        if((my $ta = $a) <= 0) {
-                return 0 | do { use integer; -$a };
-        } else {
-                use integer;
-                my $neg = -$a;
-                croak "integer overflow" if $neg >= 0;
-                return $neg;
-        }
+	my $a = nint($_[0]);
+	if((my $ta = $a) <= 0) {
+		return 0 | do { use integer; -$a };
+	} else {
+		use integer;
+		my $neg = -$a;
+		croak "integer overflow" if $neg >= 0;
+		return $neg;
+	}
 }
 
 sub sint_neg($) {
-        my $a = sint($_[0]);
-        use integer;
-        croak "integer overflow" if $a == min_sint;
-        return -$a;
+	my $a = sint($_[0]);
+	use integer;
+	croak "integer overflow" if $a == min_sint;
+	return -$a;
 }
 
 sub uint_neg($) {
-        use integer;
-        croak "integer overflow" unless uint($_[0]) == 0;
-        return my $zero = 0;
+	use integer;
+	croak "integer overflow" unless uint($_[0]) == 0;
+	return my $zero = 0;
 }
 
 =item nint_add(A, B)
@@ -657,49 +657,49 @@ Addition: returns A + B.
 =cut
 
 sub nint_add($$) {
-        my($a, $b) = (nint($_[0]), nint($_[1]));
-        if((my $ta = $a) < 0) {
-                if((my $tb = $b) < 0) {
-                        use integer;
-                        my $r = $a + $b;
-                        croak "integer overflow" if $r > $a;
-                        return $r;
-                } else {
-                        use integer;
-                        my $r = $a + $b;
-                        $r = do { no integer; 0 | $r } if $r < $a;
-                        return $r;
-                }
-        } else {
-                if((my $tb = $b) < 0) {
-                        use integer;
-                        my $r = $a + $b;
-                        $r = do { no integer; 0 | $r } if $r < $b;
-                        return $r;
-                } else {
-                        use integer;
-                        my $r = $a + $b;
-                        croak "integer overflow"
-                                if ($r ^ min_sint) < ($a ^ min_sint);
-                        return do { no integer; 0 | $r };
-                }
-        }
+	my($a, $b) = (nint($_[0]), nint($_[1]));
+	if((my $ta = $a) < 0) {
+		if((my $tb = $b) < 0) {
+			use integer;
+			my $r = $a + $b;
+			croak "integer overflow" if $r > $a;
+			return $r;
+		} else {
+			use integer;
+			my $r = $a + $b;
+			$r = do { no integer; 0 | $r } if $r < $a;
+			return $r;
+		}
+	} else {
+		if((my $tb = $b) < 0) {
+			use integer;
+			my $r = $a + $b;
+			$r = do { no integer; 0 | $r } if $r < $b;
+			return $r;
+		} else {
+			use integer;
+			my $r = $a + $b;
+			croak "integer overflow"
+				if ($r ^ min_sint) < ($a ^ min_sint);
+			return do { no integer; 0 | $r };
+		}
+	}
 }
 
 sub sint_add($$) {
-        my($a, $b) = (sint($_[0]), sint($_[1]));
-        use integer;
-        my $r = $a + $b;
-        croak "integer overflow" if $b < 0 ? $r > $a : $r < $a;
-        return $r;
+	my($a, $b) = (sint($_[0]), sint($_[1]));
+	use integer;
+	my $r = $a + $b;
+	croak "integer overflow" if $b < 0 ? $r > $a : $r < $a;
+	return $r;
 }
 
 sub uint_add($$) {
-        my($a, $b) = (uint($_[0]), uint($_[1]));
-        use integer;
-        my $r = $a + $b;
-        croak "integer overflow" if ($r ^ min_sint) < ($a ^ min_sint);
-        return do { no integer; 0 | $r };
+	my($a, $b) = (uint($_[0]), uint($_[1]));
+	use integer;
+	my $r = $a + $b;
+	croak "integer overflow" if ($r ^ min_sint) < ($a ^ min_sint);
+	return do { no integer; 0 | $r };
 }
 
 =item nint_sub(A, B)
@@ -713,60 +713,60 @@ Subtraction: returns A - B.
 =cut
 
 sub nint_sub($$) {
-        my($a, $b) = (nint($_[0]), nint($_[1]));
-        if((my $ta = $a) < 0) {
-                if((my $tb = $b) < 0) {
-                        use integer;
-                        return $a - $b;
-                } elsif(!($b & min_sint)) {
-                        use integer;
-                        my $r = $a - $b;
-                        croak "integer overflow" if $r >= 0;
-                        return $r;
-                } else {
-                        croak "integer overflow";
-                }
-        } elsif(!($a & min_sint)) {
-                if((my $tb = $b) < 0) {
-                        return 0 | do { use integer; $a - $b };
-                } elsif(!($b & min_sint)) {
-                        use integer;
-                        return $a - $b;
-                } else {
-                        use integer;
-                        my $r = $a - $b;
-                        croak "integer overflow" if $r >= 0;
-                        return $r;
-                }
-        } else {
-                if((my $tb = $b) < 0) {
-                        use integer;
-                        my $r = $a - $b;
-                        croak "integer overflow" if $r >= 0;
-                        return do { no integer; 0 | $r };
-                } elsif(!($b & min_sint)) {
-                        return 0 | do { use integer; $a - $b };
-                } else {
-                        use integer;
-                        return $a - $b;
-                }
-        }
+	my($a, $b) = (nint($_[0]), nint($_[1]));
+	if((my $ta = $a) < 0) {
+		if((my $tb = $b) < 0) {
+			use integer;
+			return $a - $b;
+		} elsif(!($b & min_sint)) {
+			use integer;
+			my $r = $a - $b;
+			croak "integer overflow" if $r >= 0;
+			return $r;
+		} else {
+			croak "integer overflow";
+		}
+	} elsif(!($a & min_sint)) {
+		if((my $tb = $b) < 0) {
+			return 0 | do { use integer; $a - $b };
+		} elsif(!($b & min_sint)) {
+			use integer;
+			return $a - $b;
+		} else {
+			use integer;
+			my $r = $a - $b;
+			croak "integer overflow" if $r >= 0;
+			return $r;
+		}
+	} else {
+		if((my $tb = $b) < 0) {
+			use integer;
+			my $r = $a - $b;
+			croak "integer overflow" if $r >= 0;
+			return do { no integer; 0 | $r };
+		} elsif(!($b & min_sint)) {
+			return 0 | do { use integer; $a - $b };
+		} else {
+			use integer;
+			return $a - $b;
+		}
+	}
 }
 
 sub sint_sub($$) {
-        my($a, $b) = (sint($_[0]), sint($_[1]));
-        use integer;
-        my $r = $a - $b;
-        croak "integer overflow" if $b > 0 ? $r > $a : $r < $a;
-        return $r;
+	my($a, $b) = (sint($_[0]), sint($_[1]));
+	use integer;
+	my $r = $a - $b;
+	croak "integer overflow" if $b > 0 ? $r > $a : $r < $a;
+	return $r;
 }
 
 sub uint_sub($$) {
-        my($a, $b) = (uint($_[0]), uint($_[1]));
-        use integer;
-        my $r = $a - $b;
-        croak "integer overflow" if ($r ^ min_sint) > ($a ^ min_sint);
-        return do { no integer; 0 | $r };
+	my($a, $b) = (uint($_[0]), uint($_[1]));
+	use integer;
+	my $r = $a - $b;
+	croak "integer overflow" if ($r ^ min_sint) > ($a ^ min_sint);
+	return do { no integer; 0 | $r };
 }
 
 =back
@@ -799,19 +799,19 @@ natint_bits).  Zeroes are shifted in from the right.
 =cut
 
 sub sint_shl($$) {
-        my($val, $dist) = @_;
-        $dist = uint($dist);
-        croak "shift distance exceeds word size" if $dist >= natint_bits;
-        use integer;
-        return sint($val) << $dist;
+	my($val, $dist) = @_;
+	$dist = uint($dist);
+	croak "shift distance exceeds word size" if $dist >= natint_bits;
+	use integer;
+	return sint($val) << $dist;
 }
 
 sub uint_shl($$) {
-        my($val, $dist) = @_;
-        $dist = uint($dist);
-        croak "shift distance exceeds word size" if $dist >= natint_bits;
-        no integer;
-        return uint($val) << $dist;
+	my($val, $dist) = @_;
+	$dist = uint($dist);
+	croak "shift distance exceeds word size" if $dist >= natint_bits;
+	no integer;
+	return uint($val) << $dist;
 }
 
 =item sint_shr(A, DIST)
@@ -829,19 +829,19 @@ so right-shifting a negative number always gives a negative result.
 =cut
 
 sub sint_shr($$) {
-        my($val, $dist) = @_;
-        $dist = uint($dist);
-        croak "shift distance exceeds word size" if $dist >= natint_bits;
-        use integer;
-        return sint($val) >> $dist;
+	my($val, $dist) = @_;
+	$dist = uint($dist);
+	croak "shift distance exceeds word size" if $dist >= natint_bits;
+	use integer;
+	return sint($val) >> $dist;
 }
 
 sub uint_shr($$) {
-        my($val, $dist) = @_;
-        $dist = uint($dist);
-        croak "shift distance exceeds word size" if $dist >= natint_bits;
-        no integer;
-        return uint($val) >> $dist;
+	my($val, $dist) = @_;
+	$dist = uint($dist);
+	croak "shift distance exceeds word size" if $dist >= natint_bits;
+	no integer;
+	return uint($val) >> $dist;
 }
 
 =item sint_rol(A, DIST)
@@ -856,23 +856,23 @@ the range [0, natint_bits).
 =cut
 
 sub sint_rol($$) {
-        my($val, $dist) = @_;
-        $dist = uint($dist);
-        croak "shift distance exceeds word size" if $dist >= natint_bits;
-        $val = sint($val);
-        return $val if $dist == 0;
-        my $low_val = $val >> (natint_bits - $dist);
-        use integer;
-        return $low_val | ($val << $dist);
+	my($val, $dist) = @_;
+	$dist = uint($dist);
+	croak "shift distance exceeds word size" if $dist >= natint_bits;
+	$val = sint($val);
+	return $val if $dist == 0;
+	my $low_val = $val >> (natint_bits - $dist);
+	use integer;
+	return $low_val | ($val << $dist);
 }
 
 sub uint_rol($$) {
-        my($val, $dist) = @_;
-        $dist = uint($dist);
-        croak "shift distance exceeds word size" if $dist >= natint_bits;
-        $val = uint($val);
-        return $val if $dist == 0;
-        return ($val >> (natint_bits - $dist)) | ($val << $dist);
+	my($val, $dist) = @_;
+	$dist = uint($dist);
+	croak "shift distance exceeds word size" if $dist >= natint_bits;
+	$val = uint($val);
+	return $val if $dist == 0;
+	return ($val >> (natint_bits - $dist)) | ($val << $dist);
 }
 
 =item sint_ror(A, DIST)
@@ -887,23 +887,23 @@ the range [0, natint_bits).
 =cut
 
 sub sint_ror($$) {
-        my($val, $dist) = @_;
-        $dist = uint($dist);
-        croak "shift distance exceeds word size" if $dist >= natint_bits;
-        $val = sint($val);
-        return $val if $dist == 0;
-        my $low_val = $val >> $dist;
-        use integer;
-        return $low_val | ($val << (natint_bits - $dist));
+	my($val, $dist) = @_;
+	$dist = uint($dist);
+	croak "shift distance exceeds word size" if $dist >= natint_bits;
+	$val = sint($val);
+	return $val if $dist == 0;
+	my $low_val = $val >> $dist;
+	use integer;
+	return $low_val | ($val << (natint_bits - $dist));
 }
 
 sub uint_ror($$) {
-        my($val, $dist) = @_;
-        $dist = uint($dist);
-        croak "shift distance exceeds word size" if $dist >= natint_bits;
-        $val = uint($val);
-        return $val if $dist == 0;
-        return ($val >> $dist) | ($val << (natint_bits - $dist));
+	my($val, $dist) = @_;
+	$dist = uint($dist);
+	croak "shift distance exceeds word size" if $dist >= natint_bits;
+	$val = uint($val);
+	return $val if $dist == 0;
+	return ($val >> $dist) | ($val << (natint_bits - $dist));
 }
 
 =back
@@ -1094,15 +1094,15 @@ OR ((NOT A) AND C).
 =cut
 
 sub sint_mux($$$) {
-        my $a = sint($_[0]);
-        use integer;
-        return ($a & sint($_[1])) | (~$a & sint($_[2]));
+	my $a = sint($_[0]);
+	use integer;
+	return ($a & sint($_[1])) | (~$a & sint($_[2]));
 }
 
 sub uint_mux($$$) {
-        my $a = uint($_[0]);
-        no integer;
-        return ($a & uint($_[1])) | (~$a & uint($_[2]));
+	my $a = uint($_[0]);
+	no integer;
+	return ($a & uint($_[1])) | (~$a & uint($_[2]));
 }
 
 =back
@@ -1158,25 +1158,25 @@ R) is such that CARRY_OUT*2^natint_bits + R = A + B + CARRY_IN.
 =cut
 
 sub sint_cadd($$$) {
-        my($a, $b, $cin) = map { sint($_) } @_;
-        use integer;
-        croak "invalid carry" unless $cin == 0 || $cin == 1;
-        my $r = $a + $b + $cin;
-        my $cout = $b < 0 ? $r > $a ? -1 : 0 : $r < $a ? +1 : 0;
-        return ($cout, $r);
+	my($a, $b, $cin) = map { sint($_) } @_;
+	use integer;
+	croak "invalid carry" unless $cin == 0 || $cin == 1;
+	my $r = $a + $b + $cin;
+	my $cout = $b < 0 ? $r > $a ? -1 : 0 : $r < $a ? +1 : 0;
+	return ($cout, $r);
 }
 
 sub uint_cadd($$$) {
-        my($a, $b, $cin) = map { uint($_) } @_;
-        use integer;
-        croak "invalid carry" unless $cin == 0 || $cin == 1;
-        my $r = $a + $b;
-        my $cout = ($r ^ min_sint) < ($a ^ min_sint) ? 1 : 0;
-        if($cin) {
-                $r += 1;
-                $cout = 1 if $r == 0;
-        }
-        return ($cout, do { no integer; 0 | $r });
+	my($a, $b, $cin) = map { uint($_) } @_;
+	use integer;
+	croak "invalid carry" unless $cin == 0 || $cin == 1;
+	my $r = $a + $b;
+	my $cout = ($r ^ min_sint) < ($a ^ min_sint) ? 1 : 0;
+	if($cin) {
+		$r += 1;
+		$cout = 1 if $r == 0;
+	}
+	return ($cout, do { no integer; 0 | $r });
 }
 
 =item sint_csub(A, B, CARRY_IN)
@@ -1193,25 +1193,25 @@ CARRY_OUT*2^natint_bits = A - B - CARRY_IN.
 =cut
 
 sub sint_csub($$$) {
-        my($a, $b, $cin) = map { sint($_) } @_;
-        use integer;
-        croak "invalid carry" unless $cin == 0 || $cin == 1;
-        my $r = $a - $b - $cin;
-        my $cout = $b < 0 ? $r < $a ? -1 : 0 : $r > $a ? +1 : 0;
-        return ($cout, $r);
+	my($a, $b, $cin) = map { sint($_) } @_;
+	use integer;
+	croak "invalid carry" unless $cin == 0 || $cin == 1;
+	my $r = $a - $b - $cin;
+	my $cout = $b < 0 ? $r < $a ? -1 : 0 : $r > $a ? +1 : 0;
+	return ($cout, $r);
 }
 
 sub uint_csub($$$) {
-        my($a, $b, $cin) = map { uint($_) } @_;
-        use integer;
-        croak "invalid carry" unless $cin == 0 || $cin == 1;
-        my $r = $a - $b;
-        my $cout = ($r ^ min_sint) > ($a ^ min_sint) ? 1 : 0;
-        if($cin) {
-                $cout = 1 if $r == 0;
-                $r -= 1;
-        }
-        return ($cout, do { no integer; 0 | $r });
+	my($a, $b, $cin) = map { uint($_) } @_;
+	use integer;
+	croak "invalid carry" unless $cin == 0 || $cin == 1;
+	my $r = $a - $b;
+	my $cout = ($r ^ min_sint) > ($a ^ min_sint) ? 1 : 0;
+	if($cin) {
+		$cout = 1 if $r == 0;
+		$r -= 1;
+	}
+	return ($cout, do { no integer; 0 | $r });
 }
 
 =item sint_sadd(A, B)
@@ -1225,23 +1225,23 @@ returned depending on the direction in which the addition overflowed.
 =cut
 
 sub sint_sadd($$) {
-        my($a, $b) = map { sint($_) } @_;
-        use integer;
-        my $r = $a + $b;
-        if($b < 0) {
-                $r = min_sint if $r > $a;
-        } else {
-                $r = max_sint if $r < $a;
-        }
-        return $r;
+	my($a, $b) = map { sint($_) } @_;
+	use integer;
+	my $r = $a + $b;
+	if($b < 0) {
+		$r = min_sint if $r > $a;
+	} else {
+		$r = max_sint if $r < $a;
+	}
+	return $r;
 }
 
 sub uint_sadd($$) {
-        my($a, $b) = map { uint($_) } @_;
-        use integer;
-        my $r = $a + $b;
-        $r = max_uint if ($r ^ min_sint) < ($a ^ min_sint);
-        return do { no integer; 0 | $r };
+	my($a, $b) = map { uint($_) } @_;
+	use integer;
+	my $r = $a + $b;
+	$r = max_uint if ($r ^ min_sint) < ($a ^ min_sint);
+	return do { no integer; 0 | $r };
 }
 
 =item sint_ssub(A, B)
@@ -1256,22 +1256,22 @@ overflowed.
 =cut
 
 sub sint_ssub($$) {
-        my($a, $b) = map { sint($_) } @_;
-        use integer;
-        my $r = $a - $b;
-        if($b >= 0) {
-                $r = min_sint if $r > $a;
-        } else {
-                $r = max_sint if $r < $a;
-        }
-        return $r;
+	my($a, $b) = map { sint($_) } @_;
+	use integer;
+	my $r = $a - $b;
+	if($b >= 0) {
+		$r = min_sint if $r > $a;
+	} else {
+		$r = max_sint if $r < $a;
+	}
+	return $r;
 }
 
 sub uint_ssub($$) {
-        my($a, $b) = map { uint($_) } @_;
-        use integer;
-        my $r = ($a ^ min_sint) <= ($b ^ min_sint) ? 0 : $a - $b;
-        return do { no integer; 0 | $r };
+	my($a, $b) = map { uint($_) } @_;
+	use integer;
+	my $r = ($a ^ min_sint) <= ($b ^ min_sint) ? 0 : $a - $b;
+	return do { no integer; 0 | $r };
 }
 
 =back
@@ -1290,20 +1290,20 @@ and "I<dddd>" is a sequence of hexadecimal digits.
 =cut
 
 sub natint_hex($) {
-        my $val = nint($_[0]);
-        my $sgn = nint_sgn($val);
-        $val = nint_abs($val);
-        my $digits = "";
-        my $i = (natint_bits+3) >> 2;
-        for(; $i >= 7; $i -= 7) {
-                $digits = sprintf("%07x", $val & 0xfffffff).$digits;
-                $val >>= 28;
-        }
-        for(; $i--; ) {
-                $digits = sprintf("%01x", $val & 0xf).$digits;
-                $val >>= 4;
-        }
-        return ($sgn == -1 ? "-" : "+")."0x".$digits;
+	my $val = nint($_[0]);
+	my $sgn = nint_sgn($val);
+	$val = nint_abs($val);
+	my $digits = "";
+	my $i = (natint_bits+3) >> 2;
+	for(; $i >= 7; $i -= 7) {
+		$digits = sprintf("%07x", $val & 0xfffffff).$digits;
+		$val >>= 28;
+	}
+	for(; $i--; ) {
+		$digits = sprintf("%01x", $val & 0xf).$digits;
+		$val >>= 4;
+	}
+	return ($sgn == -1 ? "-" : "+")."0x".$digits;
 }
 
 =item hex_natint(STRING)
@@ -1326,38 +1326,38 @@ point type.  It also doesn't enforce strict syntax on the input string.
 
 my %hexdigit_value;
 {
-        use integer;
-        $hexdigit_value{chr(ord("0") + $_)} = $_ foreach 0..9;
-        $hexdigit_value{chr(ord("a") + $_)} = 10+$_ foreach 0..5;
-        $hexdigit_value{chr(ord("A") + $_)} = 10+$_ foreach 0..5;
+	use integer;
+	$hexdigit_value{chr(ord("0") + $_)} = $_ foreach 0..9;
+	$hexdigit_value{chr(ord("a") + $_)} = 10+$_ foreach 0..5;
+	$hexdigit_value{chr(ord("A") + $_)} = 10+$_ foreach 0..5;
 }
 
 sub hex_natint($) {
-        my($str) = @_;
-        $str =~ /\A([-+]?)(?:0x)?([0-9a-f]+)\z/i
-                or croak "bad syntax for hexadecimal integer value";
-        my($sign, $digits) = ($1, $2);
-        use integer;
-        $digits =~ /\A0*/g;
-        return my $zero = 0 if $digits =~ /\G\z/gc;
-        $digits =~ /\G(.)/g;
-        my $value = $hexdigit_value{$1};
-        my $bits_to_go = (length($digits)-pos($digits)) << 2;
-        croak "integer value too large"
-                if $bits_to_go >= natint_bits ||
-                        ($bits_to_go + 4 > natint_bits &&
-                                (max_uint >> $bits_to_go) < $value);
-        while($digits =~ /\G(.)/g) {
-                $value = ($value << 4) | $hexdigit_value{$1};
-        }
-        if($sign eq "-") {
-                $value = -$value;
-                croak "integer value too large" if $value >= 0;
-                return $value;
-        } else {
-                no integer;
-                return 0 | $value;
-        }
+	my($str) = @_;
+	$str =~ /\A([-+]?)(?:0x)?([0-9a-f]+)\z/i
+		or croak "bad syntax for hexadecimal integer value";
+	my($sign, $digits) = ($1, $2);
+	use integer;
+	$digits =~ /\A0*/g;
+	return my $zero = 0 if $digits =~ /\G\z/gc;
+	$digits =~ /\G(.)/g;
+	my $value = $hexdigit_value{$1};
+	my $bits_to_go = (length($digits)-pos($digits)) << 2;
+	croak "integer value too large"
+		if $bits_to_go >= natint_bits ||
+			($bits_to_go + 4 > natint_bits &&
+				(max_uint >> $bits_to_go) < $value);
+	while($digits =~ /\G(.)/g) {
+		$value = ($value << 4) | $hexdigit_value{$1};
+	}
+	if($sign eq "-") {
+		$value = -$value;
+		croak "integer value too large" if $value >= 0;
+		return $value;
+	} else {
+		no integer;
+		return 0 | $value;
+	}
 }
 
 =back

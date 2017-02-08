@@ -23,7 +23,7 @@ for $mod (@ISA) {
 #  $file =~ s{::}{/}g;
   if (eval "require $mod") {
     print STDERR "AnyDBM_File => Selected $mod.\n" if $Verbose;
-    @ISA = ($mod);      # if we leave @ISA alone, warnings abound
+    @ISA = ($mod);	# if we leave @ISA alone, warnings abound
     return 1;
   }
 }

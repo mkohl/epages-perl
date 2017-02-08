@@ -219,9 +219,9 @@ sub _new_from_chunk {
 
     my $obj = bless { %entry, %args }, $class;
 
-        ### magic is a filetype string.. it should have something like 'ustar' or
-        ### something similar... if the chunk is garbage, skip it
-        return unless $obj->magic !~ /\W/;
+	### magic is a filetype string.. it should have something like 'ustar' or
+	### something similar... if the chunk is garbage, skip it
+	return unless $obj->magic !~ /\W/;
 
     ### store the original chunk ###
     $obj->raw( $chunk );
@@ -236,23 +236,23 @@ sub _new_from_chunk {
 
 sub _new_from_file {
     my $class       = shift;
-    my $path        = shift;
-
+    my $path        = shift;        
+    
     ### path has to at least exist
     return unless defined $path;
-
+    
     my $type        = __PACKAGE__->_filetype($path);
     my $data        = '';
 
-    READ: {
+    READ: { 
         unless ($type == DIR ) {
             my $fh = IO::File->new;
-
+        
             unless( $fh->open($path) ) {
                 ### dangling symlinks are fine, stop reading but continue
                 ### creating the object
                 last READ if $type == SYMLINK;
-
+                
                 ### otherwise, return from this function --
                 ### anything that's *not* a symlink should be
                 ### resolvable
@@ -405,27 +405,27 @@ sub _prefix_and_file {
 sub _filetype {
     my $self = shift;
     my $file = shift;
-
+    
     return unless defined $file;
 
-    return SYMLINK  if (-l $file);      # Symlink
+    return SYMLINK  if (-l $file);	# Symlink
 
-    return FILE     if (-f _);          # Plain file
+    return FILE     if (-f _);		# Plain file
 
-    return DIR      if (-d _);          # Directory
+    return DIR      if (-d _);		# Directory
 
-    return FIFO     if (-p _);          # Named pipe
+    return FIFO     if (-p _);		# Named pipe
 
-    return SOCKET   if (-S _);          # Socket
+    return SOCKET   if (-S _);		# Socket
 
-    return BLOCKDEV if (-b _);          # Block special
+    return BLOCKDEV if (-b _);		# Block special
 
-    return CHARDEV  if (-c _);          # Character special
+    return CHARDEV  if (-c _);		# Character special
 
     ### shouldn't happen, this is when making archives, not reading ###
     return LONGLINK if ( $file eq LONGLINK_NAME );
 
-    return UNKNOWN;                         # Something else (like what?)
+    return UNKNOWN;		            # Something else (like what?)
 
 }
 
@@ -442,7 +442,7 @@ sub _downgrade_to_plainfile {
 
 =head2 $bool = $file->extract( [ $alternative_name ] )
 
-Extract this object, optionally to an alternative name.
+Extract this object, optionally to an alternative name. 
 
 See C<< Archive::Tar->extract_file >> for details.
 
@@ -452,9 +452,9 @@ Returns true on success and false on failure.
 
 sub extract {
     my $self = shift;
-
+    
     local $Carp::CarpLevel += 1;
-
+    
     return Archive::Tar->_extract_file( $self, @_ );
 }
 
@@ -498,8 +498,8 @@ sub validate {
     ### http://www.gnu.org/software/tar/manual/tar.html#SEC139
     ### so we do both a signed AND unsigned validate. if one succeeds, that's
     ### good enough
-        return (   (unpack ("%16C*", $raw) == $self->chksum)
-                or (unpack ("%16c*", $raw) == $self->chksum)) ? 1 : 0;
+	return (   (unpack ("%16C*", $raw) == $self->chksum)
+	        or (unpack ("%16c*", $raw) == $self->chksum)) ? 1 : 0;
 }
 
 =head2 $bool = $file->has_content
@@ -576,7 +576,7 @@ Returns true on success and false on failure.
 sub rename {
     my $self = shift;
     my $path = shift;
-
+    
     return unless defined $path;
 
     my ($prefix,$file) = $self->_prefix_and_file( $path );
@@ -584,7 +584,7 @@ sub rename {
     $self->name( $file );
     $self->prefix( $prefix );
 
-        return 1;
+	return 1;
 }
 
 =head1 Convenience methods

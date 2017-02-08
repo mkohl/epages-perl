@@ -357,7 +357,7 @@ my %unreg = ( Notes => 'unregistered' );
         listed below are the only ones that can be written (unless new user-defined
         tags are added via the configuration file), however ExifTool will extract
         any other TextualData tags that are found.
-
+        
         These tags may be stored as tEXt, zTXt or iTXt chunks in the PNG image.  By
         default ExifTool writes new string-value tags as as uncompressed tEXt, or
         compressed zTXt if the Compress (-z) option is used and Compress::Zlib is

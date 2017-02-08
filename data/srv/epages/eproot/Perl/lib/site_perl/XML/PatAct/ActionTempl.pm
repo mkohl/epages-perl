@@ -20,13 +20,13 @@ sub new {
 
     my $usage = <<'EOF';
 usage: XML::PatAct::ACTION->new( Matcher => $matcher,
-                                 Patterns => $patterns );
+				 Patterns => $patterns );
 EOF
 
     die "No Matcher specified\n$usage\n"
-        if !defined $self->{Matcher};
+	if !defined $self->{Matcher};
     die "No Patterns specified\n$usage\n"
-        if !defined $self->{Patterns};
+	if !defined $self->{Patterns};
 
     # perform additional initialization here
 
@@ -71,8 +71,8 @@ sub start_element {
     push @{$self->{Nodes}}, $element;
 
     my $index = $self->{Matcher}->match($element,
-                                        $self->{Names},
-                                        $self->{Nodes});
+					$self->{Names},
+					$self->{Nodes});
 
     # use $index to retrieve an action for this element
 }
@@ -114,10 +114,10 @@ XML::PatAct::ACTION - An action module for
  use XML::PatAct::ACTION;
 
  my $patterns = [ PATTERN => ACTION,
-                  ... ];
+		  ... ];
 
  my $matcher = XML::PatAct::ACTION->new(Patterns => $patterns,
-                                        Matcher => $matcher );
+					Matcher => $matcher );
 
 
 =head1 DESCRIPTION

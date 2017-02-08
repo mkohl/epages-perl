@@ -154,9 +154,9 @@ EOT
         $skiplines = $linenum - 1;
         $line .= "#line ".(1+$headlines)."\n";
       } else {
-        $line .= "#line ".($linenum+$headlines)."\n";
+	$line .= "#line ".($linenum+$headlines)."\n";
       }
-        $linedone++;
+	$linedone++;
     }
     if ( $line =~ /^#\s*line\b/ and $linenum == 2 + $skiplines ) {
       $line = "";
@@ -233,9 +233,9 @@ sub split_like_shell {
       $arg .= '"';
       $i++;
     } elsif ( $ch eq '"' && $next_ch eq '"' && !$quote_mode &&
-              ( $i + 2 == length()  ||
-                substr( $_, $i + 2, 1 ) eq ' ' )
-            ) { # for cases like: a"" => [ 'a' ]
+	      ( $i + 2 == length()  ||
+		substr( $_, $i + 2, 1 ) eq ' ' )
+	    ) { # for cases like: a"" => [ 'a' ]
       push( @argv, $arg );
       $arg = '';
       $i += 2;
@@ -277,18 +277,18 @@ sub _maybe_command {
     my($self,$file) = @_;
     my @e = exists($ENV{'PATHEXT'})
           ? split(/;/, $ENV{PATHEXT})
-          : qw(.com .exe .bat .cmd);
+	  : qw(.com .exe .bat .cmd);
     my $e = '';
     for (@e) { $e .= "\Q$_\E|" }
     chop $e;
     # see if file ends in one of the known extensions
     if ($file =~ /($e)$/i) {
-        return $file if -e $file;
+	return $file if -e $file;
     }
     else {
-        for (@e) {
-            return "$file$_" if -e "$file$_";
-        }
+	for (@e) {
+	    return "$file$_" if -e "$file$_";
+	}
     }
     return;
 }

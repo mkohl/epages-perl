@@ -4,7 +4,7 @@ package Net::AMQP::Frame::Method;
 
 Net::AMQP::Frame::Method - AMQP wire-level method Frame object
 
-=head1 DESCRIPTION
+=head1 DESCRIPTION 
 
 Inherits from L<Net::AMQP::Frame>.
 
@@ -111,7 +111,7 @@ sub parse_payload {
                 last unless @bits;
                 $i++;
             }
-
+            
             next;
         }
 
@@ -153,7 +153,7 @@ sub to_raw_payload {
 
         if ($pack_args->[$i] eq 'bit') {
 
-            my $bits = '';
+            my $bits = '';           
 
             while (1) {
 
@@ -164,7 +164,7 @@ sub to_raw_payload {
                 last unless (length $bits < 8);
                 $i++;
             }
-
+            
             $response_payload .= pack("b8", $bits);
             next;
         }

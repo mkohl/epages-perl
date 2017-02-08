@@ -7,7 +7,7 @@ DateTime::Format::Builder::Parser::Strptime - strptime based date parsing
 =head1 SYNOPSIS
 
    my $parser = DateTime::Format::Builder->create_parser(
-        strptime => '%e/%b/%Y:%H:%M:%S %z',
+	strptime => '%e/%b/%Y:%H:%M:%S %z',
    );
 
 =head1 SPECIFICATION
@@ -33,8 +33,8 @@ use DateTime::Format::Builder::Parser::generic;
 @ISA = qw( DateTime::Format::Builder::Parser::generic );
 
 __PACKAGE__->valid_params(
-    strptime    => {
-        type    => SCALAR|HASHREF, # straight pattern or options to DTF::Strptime
+    strptime	=> {
+	type	=> SCALAR|HASHREF, # straight pattern or options to DTF::Strptime
     },
 );
 
@@ -48,20 +48,20 @@ sub create_parser
     # Create our strptime parser
     require DateTime::Format::Strptime;
     my $strptime = DateTime::Format::Strptime->new(
-        ( ref $pattern ? %$pattern : ( pattern => $pattern ) ),
+	( ref $pattern ? %$pattern : ( pattern => $pattern ) ),
     );
     unless (ref $self)
     {
-        $self = $self->new( %args );
+	$self = $self->new( %args );
     }
     $self->{strptime} = $strptime;
 
     # Create our parser
     return $self->generic_parser(
-        ( map { exists $args{$_} ? ( $_ => $args{$_} ) : () } qw(
-            on_match on_fail preprocess postprocess
-            ) ),
-        label => $args{label},
+	( map { exists $args{$_} ? ( $_ => $args{$_} ) : () } qw(
+	    on_match on_fail preprocess postprocess
+	    ) ),
+	label => $args{label},
     );
 }
 

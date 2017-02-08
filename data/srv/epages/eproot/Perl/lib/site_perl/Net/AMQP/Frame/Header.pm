@@ -4,7 +4,7 @@ package Net::AMQP::Frame::Header;
 
 Net::AMQP::Frame::Header - AMQP wire-level header Frame object
 
-=head1 DESCRIPTION
+=head1 DESCRIPTION 
 
 Inherits from L<Net::AMQP::Frame>.
 

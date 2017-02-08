@@ -115,11 +115,11 @@ sub find {
     my $conn = $self->_database->_client;
     my $ns = $self->full_name;
     my $cursor = MongoDB::Cursor->new(
-        _client => $conn,
-        _ns => $ns,
-        _query => $q,
-        _limit => $limit,
-        _skip => $skip
+	_client => $conn,
+	_ns => $ns,
+	_query => $q,
+	_limit => $limit,
+	_skip => $skip
     );
 
     $cursor->_init;
@@ -225,7 +225,7 @@ sub update {
 }
 
 
-sub find_and_modify {
+sub find_and_modify { 
     my ( $self, $opts ) = @_;
 
     my $conn = $self->_database->_client;
@@ -233,7 +233,7 @@ sub find_and_modify {
 
     my $result = $db->run_command( [ findAndModify => $self->name, %$opts ] );
 
-    if ( not $result->{ok} ) {
+    if ( not $result->{ok} ) { 
         return if ( $result->{errmsg} eq 'No matching object found' );
     }
 
@@ -241,7 +241,7 @@ sub find_and_modify {
 }
 
 
-sub aggregate {
+sub aggregate { 
     my ( $self, $pipeline ) = @_;
 
     my $db   = $self->_database;
@@ -260,7 +260,7 @@ sub rename {
     my $conn = $self->_database->_client;
     my $database = $conn->get_database( 'admin' );
     my $fullname = $self->full_name;
-
+  
     my ($db, @collection_bits) = split(/\./, $fullname);
     my $collection = join('.', @collection_bits);
     my $obj = $database->run_command([ 'renameCollection' => "$db.$collection", 'to' => "$db.$collectionname" ]);
@@ -635,7 +635,7 @@ See also core documentation on update: L<http://docs.mongodb.org/manual/core/upd
     my $result = $collection->find_and_modify( { query => { ... }, update => { ... } } );
 
 Perform an atomic update. C<find_and_modify> guarantees that nothing else will come along
-and change the queried documents before the update is performed.
+and change the queried documents before the update is performed. 
 
 Returns the old version of the document, unless C<new => 1> is specified. If no documents
 match the query, it returns nothing.
@@ -644,8 +644,8 @@ match the query, it returns nothing.
 
     my $result = $collection->aggregate( [ ... ] );
 
-Run a query using the MongoDB 2.2+ aggregation framework. The argument is an array-ref of
-aggregation pipeline operators. Returns an array-ref containing the results of
+Run a query using the MongoDB 2.2+ aggregation framework. The argument is an array-ref of 
+aggregation pipeline operators. Returns an array-ref containing the results of 
 the query. See L<Aggregation|http://docs.mongodb.org/manual/aggregation/> in the MongoDB manual
 for more information on how to construct aggregation queries.
 
@@ -653,7 +653,7 @@ for more information on how to construct aggregation queries.
 
     my $newcollection = $collection->rename("mynewcollection");
 
-Renames the collection.  It expects that the new name is currently not in use.
+Renames the collection.  It expects that the new name is currently not in use.  
 
 Returns the new collection.  If a collection already exists with that new collection name this will
 die.

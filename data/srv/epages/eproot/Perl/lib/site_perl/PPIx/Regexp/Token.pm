@@ -58,7 +58,7 @@ sub _new {
     ref $class and $class = ref $class;
 
     my $self = {
-        content => $content,
+	content => $content,
     };
 
     bless $self, $class;

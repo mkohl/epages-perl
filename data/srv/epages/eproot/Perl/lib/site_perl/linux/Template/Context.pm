@@ -4,7 +4,7 @@
 #
 # DESCRIPTION
 #   Module defining a context in which a template document is processed.
-#   This is the runtime processing interface through which templates
+#   This is the runtime processing interface through which templates 
 #   can access the functionality of the Template Toolkit.
 #
 # AUTHOR
@@ -15,7 +15,7 @@
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
-#
+# 
 #============================================================================
 
 package Template::Context;
@@ -45,14 +45,14 @@ our $AUTOLOAD;
 #========================================================================
 
 #------------------------------------------------------------------------
-# template($name)
+# template($name) 
 #
-# General purpose method to fetch a template and return it in compiled
+# General purpose method to fetch a template and return it in compiled 
 # form.  In the usual case, the $name parameter will be a simple string
-# containing the name of a template (e.g. 'header').  It may also be
-# a reference to Template::Document object (or sub-class) or a Perl
+# containing the name of a template (e.g. 'header').  It may also be 
+# a reference to Template::Document object (or sub-class) or a Perl 
 # sub-routine.  These are considered to be compiled templates and are
-# returned intact.  Finally, it may be a reference to any other kind
+# returned intact.  Finally, it may be a reference to any other kind 
 # of valid input source accepted by Template::Provider (e.g. scalar
 # ref, glob, IO handle, etc).
 #
@@ -65,11 +65,11 @@ our $AUTOLOAD;
 # any enclosing Template::Documents that we're visiting (e.g. we've
 # been called via an INCLUDE and we want to access a BLOCK defined in
 # the template that INCLUDE'd us).  If nothing is defined, then we
-# iterate through the LOAD_TEMPLATES providers list as a 'chain of
-# responsibility' (see Design Patterns) asking each object to fetch()
+# iterate through the LOAD_TEMPLATES providers list as a 'chain of 
+# responsibility' (see Design Patterns) asking each object to fetch() 
 # the template if it can.
 #
-# Returns the compiled template.  On error, undef is returned and
+# Returns the compiled template.  On error, undef is returned and 
 # the internal ERROR value (read via error()) is set to contain an
 # error message of the form "$name: $error".
 #------------------------------------------------------------------------
@@ -91,22 +91,22 @@ sub template {
     $shortname = $name;
 
     unless (ref $name) {
-
+        
         $self->debug("looking for block [$name]") if $self->{ DEBUG };
 
-        # we first look in the BLOCKS hash for a BLOCK that may have
+        # we first look in the BLOCKS hash for a BLOCK that may have 
         # been imported from a template (via PROCESS)
         return $template
             if ($template = $self->{ BLOCKS }->{ $name });
-
+        
         # then we iterate through the BLKSTACK list to see if any of the
         # Template::Documents we're visiting define this BLOCK
         foreach $blocks (@{ $self->{ BLKSTACK } }) {
             return $template
                 if $blocks && ($template = $blocks->{ $name });
         }
-
-        # now it's time to ask the providers, so we look to see if any
+        
+        # now it's time to ask the providers, so we look to see if any 
         # prefix is specified to indicate the desired provider set.
         if ($^O eq 'MSWin32') {
             # let C:/foo through
@@ -115,9 +115,9 @@ sub template {
         else {
             $prefix = $1 if $shortname =~ s/^(\w+)://;
         }
-
+        
         if (defined $prefix) {
-            $providers = $self->{ PREFIX_MAP }->{ $prefix }
+            $providers = $self->{ PREFIX_MAP }->{ $prefix } 
             || return $self->throw( Template::Constants::ERROR_FILE,
                                     "no providers for template prefix '$prefix'");
         }
@@ -127,13 +127,13 @@ sub template {
             unless $providers;
 
 
-    # Finally we try the regular template providers which will
+    # Finally we try the regular template providers which will 
     # handle references to files, text, etc., as well as templates
     # reference by name.  If
 
     $blockname = '';
     while ($shortname) {
-        $self->debug("asking providers for [$shortname] [$blockname]")
+        $self->debug("asking providers for [$shortname] [$blockname]") 
             if $self->{ DEBUG };
 
         foreach my $provider (@$providers) {
@@ -152,19 +152,19 @@ sub template {
                 # DECLINE is ok, carry on
             }
             elsif (length $blockname) {
-                return $template
+                return $template 
                     if $template = $template->blocks->{ $blockname };
             }
             else {
                 return $template;
             }
         }
-
+        
         last if ref $shortname || ! $self->{ EXPOSE_BLOCKS };
         $shortname =~ s{/([^/]+)$}{} || last;
         $blockname = length $blockname ? "$1/$blockname" : $1;
     }
-
+        
     $self->throw(Template::Constants::ERROR_FILE, "$name: not found");
 }
 
@@ -173,9 +173,9 @@ sub template {
 # plugin($name, \@args)
 #
 # Calls on each of the LOAD_PLUGINS providers in turn to fetch() (i.e. load
-# and instantiate) a plugin of the specified name.  Additional parameters
-# passed are propagated to the new() constructor for the plugin.
-# Returns a reference to a new plugin object or other reference.  On
+# and instantiate) a plugin of the specified name.  Additional parameters 
+# passed are propagated to the new() constructor for the plugin.  
+# Returns a reference to a new plugin object or other reference.  On 
 # error, undef is returned and the appropriate error message is set for
 # subsequent retrieval via error().
 #------------------------------------------------------------------------
@@ -183,10 +183,10 @@ sub template {
 sub plugin {
     my ($self, $name, $args) = @_;
     my ($provider, $plugin, $error);
-
+    
     $self->debug("plugin($name, ", defined $args ? @$args : '[ ]', ')')
         if $self->{ DEBUG };
-
+    
     # request the named plugin from each of the LOAD_PLUGINS providers in turn
     foreach my $provider (@{ $self->{ LOAD_PLUGINS } }) {
         ($plugin, $error) = $provider->fetch($name, $args, $self);
@@ -196,7 +196,7 @@ sub plugin {
             $self->throw(Template::Constants::ERROR_PLUGIN, $plugin);
         }
     }
-
+    
     $self->throw(Template::Constants::ERROR_PLUGIN, "$name: plugin not found");
 }
 
@@ -204,7 +204,7 @@ sub plugin {
 #------------------------------------------------------------------------
 # filter($name, \@args, $alias)
 #
-# Similar to plugin() above, but querying the LOAD_FILTERS providers to
+# Similar to plugin() above, but querying the LOAD_FILTERS providers to 
 # return filter instances.  An alias may be provided which is used to
 # save the returned filter in a local cache.
 #------------------------------------------------------------------------
@@ -212,17 +212,17 @@ sub plugin {
 sub filter {
     my ($self, $name, $args, $alias) = @_;
     my ($provider, $filter, $error);
-
-    $self->debug("filter($name, ",
-                 defined $args  ? @$args : '[ ]',
+    
+    $self->debug("filter($name, ", 
+                 defined $args  ? @$args : '[ ]', 
                  defined $alias ? $alias : '<no alias>', ')')
         if $self->{ DEBUG };
-
+    
     # use any cached version of the filter if no params provided
-    return $filter
+    return $filter 
         if ! $args && ! ref $name
             && ($filter = $self->{ FILTER_CACHE }->{ $name });
-
+    
     # request the named filter from each of the FILTERS providers in turn
     foreach my $provider (@{ $self->{ LOAD_FILTERS } }) {
         ($filter, $error) = $provider->fetch($name, $args, $self);
@@ -234,10 +234,10 @@ sub filter {
         # return $self->error($filter)
         #    if $error == &Template::Constants::STATUS_ERROR;
     }
-
+    
     return $self->error("$name: filter not found")
         unless $filter;
-
+    
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # commented out by abw on 19 Nov 2001 to fix problem with xmlstyle
     # plugin which may re-define a filter by calling define_filter()
@@ -260,7 +260,7 @@ sub filter {
 
 #------------------------------------------------------------------------
 # view(\%config)
-#
+# 
 # Create a new Template::View bound to this context.
 #------------------------------------------------------------------------
 
@@ -268,7 +268,7 @@ sub view {
     my $self = shift;
     require Template::View;
     return $VIEW_CLASS->new($self, @_)
-        || $self->throw(&Template::Constants::ERROR_VIEW,
+        || $self->throw(&Template::Constants::ERROR_VIEW, 
                         $VIEW_CLASS->error);
 }
 
@@ -287,7 +287,7 @@ sub view {
 # can handle INCLUDE calls: the stash will be localized.
 #
 # Returns the output of processing the template.  Errors are thrown
-# as Template::Exception objects via die().
+# as Template::Exception objects via die().  
 #------------------------------------------------------------------------
 
 sub process {
@@ -296,14 +296,14 @@ sub process {
     my (@compiled, $name, $compiled);
     my ($stash, $component, $tblocks, $error, $tmpout);
     my $output = '';
-
+    
     $template = [ $template ] unless ref $template eq 'ARRAY';
-
-    $self->debug("process([ ", join(', '), @$template, ' ], ',
-                 defined $params ? $params : '<no params>', ', ',
+    
+    $self->debug("process([ ", join(', '), @$template, ' ], ', 
+                 defined $params ? $params : '<no params>', ', ', 
                  $localize ? '<localized>' : '<unlocalized>', ')')
         if $self->{ DEBUG };
-
+    
     # fetch compiled template for each name specified
     foreach $name (@$template) {
         push(@compiled, $self->template($name));
@@ -324,7 +324,7 @@ sub process {
 
         foreach $name (@$template) {
             $compiled = shift @compiled;
-            my $element = ref $compiled eq 'CODE'
+            my $element = ref $compiled eq 'CODE' 
                 ? { (name => (ref $name ? '' : $name), modtime => time()) }
                 : $compiled;
 
@@ -335,7 +335,7 @@ sub process {
             }
 
             $stash->set('component', $element);
-
+            
             unless ($localize) {
                 # merge any local blocks defined in the Template::Document
                 # into our local BLOCKS cache
@@ -343,7 +343,7 @@ sub process {
                     if (blessed($compiled) && $compiled->isa(DOCUMENT))
                     && ($tblocks = $compiled->blocks);
             }
-
+            
             if (ref $compiled eq 'CODE') {
                 $tmpout = &$compiled($self);
             }
@@ -351,10 +351,10 @@ sub process {
                 $tmpout = $compiled->process($self);
             }
             else {
-                $self->throw('file',
+                $self->throw('file', 
                              "invalid template reference: $compiled");
             }
-
+            
             if ($trim) {
                 for ($tmpout) {
                     s/^\s+//;
@@ -363,9 +363,9 @@ sub process {
             }
             $output .= $tmpout;
 
-            # pop last item from callers.
-            # NOTE - this will not be called if template throws an
-            # error.  The whole issue of caller and callers should be
+            # pop last item from callers.  
+            # NOTE - this will not be called if template throws an 
+            # error.  The whole issue of caller and callers should be 
             # revisited to try and avoid putting this info directly into
             # the component data structure.  Perhaps use a local element
             # instead?
@@ -376,16 +376,16 @@ sub process {
         $stash->set('component', $component);
     };
     $error = $@;
-
+    
     if ($localize) {
         # ensure stash is delocalised before dying
         $self->{ STASH } = $self->{ STASH }->declone();
     }
-
-    $self->throw(ref $error
+    
+    $self->throw(ref $error 
                  ? $error : (Template::Constants::ERROR_FILE, $error))
         if $error;
-
+    
     return $output;
 }
 
@@ -393,15 +393,15 @@ sub process {
 #------------------------------------------------------------------------
 # include($template, \%params)    [% INCLUDE template   var = val, ... %]
 #
-# Similar to process() above but processing the template in a local
+# Similar to process() above but processing the template in a local 
 # context.  Any variables passed by reference to a hash as the second
-# parameter will be set before the template is processed and then
+# parameter will be set before the template is processed and then 
 # revert to their original values before the method returns.  Similarly,
-# any changes made to non-global variables within the template will
+# any changes made to non-global variables within the template will 
 # persist only until the template is processed.
 #
 # Returns the output of processing the template.  Errors are thrown
-# as Template::Exception objects via die().
+# as Template::Exception objects via die().  
 #------------------------------------------------------------------------
 
 sub include {
@@ -422,7 +422,7 @@ sub insert {
 
     my $files = ref $file eq 'ARRAY' ? $file : [ $file ];
 
-    $self->debug("insert([ ", join(', '), @$files, " ])")
+    $self->debug("insert([ ", join(', '), @$files, " ])") 
         if $self->{ DEBUG };
 
 
@@ -438,7 +438,7 @@ sub insert {
         }
 
         if (defined $prefix) {
-            $providers = $self->{ PREFIX_MAP }->{ $prefix }
+            $providers = $self->{ PREFIX_MAP }->{ $prefix } 
                 || return $self->throw(Template::Constants::ERROR_FILE,
                     "no providers for file prefix '$prefix'");
         }
@@ -478,16 +478,16 @@ sub insert {
 #   $context->throw("I'm sorry Dave, I can't do that");
 #   $context->throw('denied', "I'm sorry Dave, I can't do that");
 #
-# An optional third parameter can be supplied in the last case which
+# An optional third parameter can be supplied in the last case which 
 # is a reference to the current output buffer containing the results
-# of processing the template up to the point at which the exception
-# was thrown.  The RETURN and STOP directives, for example, use this
+# of processing the template up to the point at which the exception 
+# was thrown.  The RETURN and STOP directives, for example, use this 
 # to propagate output back to the user, but it can safely be ignored
 # in most cases.
-#
-# This method rides on a one-way ticket to die() oblivion.  It does not
-# return in any real sense of the word, but should get caught by a
-# surrounding eval { } block (e.g. a BLOCK or TRY) and handled
+# 
+# This method rides on a one-way ticket to die() oblivion.  It does not 
+# return in any real sense of the word, but should get caught by a 
+# surrounding eval { } block (e.g. a BLOCK or TRY) and handled 
 # accordingly, or returned to the caller as an uncaught exception.
 #------------------------------------------------------------------------
 
@@ -522,7 +522,7 @@ sub throw {
 # Called by various directives after catching an error thrown via die()
 # from within an eval { } block.  The first parameter contains the error
 # which may be a sanitized reference to a Template::Exception object
-# (such as that raised by the throw() method above, a plugin object,
+# (such as that raised by the throw() method above, a plugin object, 
 # and so on) or an error message thrown via die from somewhere in user
 # code.  The latter are coerced into 'undef' Template::Exception objects.
 # Like throw() above, a reference to a scalar may be passed as an
@@ -538,7 +538,7 @@ sub throw {
 sub catch {
     my ($self, $error, $output) = @_;
 
-    if ( blessed($error)
+    if ( blessed($error) 
       && ( $error->isa(EXCEPTION) || $error->isa(BADGER_EXCEPTION) ) ) {
         $error->text($output) if $output;
         return $error;
@@ -554,11 +554,11 @@ sub catch {
 # delocalise()
 #
 # The localise() method creates a local copy of the current stash,
-# allowing the existing state of variables to be saved and later
+# allowing the existing state of variables to be saved and later 
 # restored via delocalise().
 #
-# A reference to a hash array may be passed containing local variable
-# definitions which should be added to the cloned namespace.  These
+# A reference to a hash array may be passed containing local variable 
+# definitions which should be added to the cloned namespace.  These 
 # values persist until delocalisation.
 #------------------------------------------------------------------------
 
@@ -578,7 +578,7 @@ sub delocalise {
 #
 # Each Template::Document calls the visit() method on the context
 # before processing itself.  It passes a reference to the hash array
-# of named BLOCKs defined within the document, allowing them to be
+# of named BLOCKs defined within the document, allowing them to be 
 # added to the internal BLKSTACK list which is subsequently used by
 # template() to resolve templates.
 # from a provider.
@@ -643,7 +643,7 @@ sub define_filter {
     $self->throw(&Template::Constants::ERROR_FILTER, $result)
         if $error == &Template::Constants::STATUS_ERROR;
     }
-    $self->throw(&Template::Constants::ERROR_FILTER,
+    $self->throw(&Template::Constants::ERROR_FILTER, 
          "FILTER providers declined to store filter $name");
 }
 
@@ -674,15 +674,15 @@ sub define_view {
         my $base = $self->{ STASH }->get($params->{ base });
 
         return $self->throw(
-            &Template::Constants::ERROR_VIEW,
+            &Template::Constants::ERROR_VIEW, 
             "view base is not defined: $params->{ base }"
         ) unless $base;
 
         return $self->throw(
-            &Template::Constants::ERROR_VIEW,
+            &Template::Constants::ERROR_VIEW, 
             "view base is not a $VIEW_CLASS object: $params->{ base } => $base"
         ) unless blessed($base) && $base->isa($VIEW_CLASS);
-
+        
         $params->{ base } = $base;
     }
     my $view = $self->view($params);
@@ -699,18 +699,18 @@ sub define_view {
 
 sub define_views {
     my ($self, $views) = @_;
-
+    
     # a list reference is better because the order is deterministic (and so
-    # allows an earlier VIEW to be the base for a later VIEW), but we'll
+    # allows an earlier VIEW to be the base for a later VIEW), but we'll 
     # accept a hash reference and assume that the user knows the order of
     # processing is undefined
-    $views = [ %$views ]
+    $views = [ %$views ] 
         if ref $views eq 'HASH';
-
+    
     # make of copy so we don't destroy the original list reference
     my @items = @$views;
     my ($name, $view);
-
+    
     while (@items) {
         $self->define_view(splice(@items, 0, 2));
     }
@@ -719,9 +719,9 @@ sub define_views {
 
 #------------------------------------------------------------------------
 # reset()
-#
-# Reset the state of the internal BLOCKS hash to clear any BLOCK
-# definitions imported via the PROCESS directive.  Any original
+# 
+# Reset the state of the internal BLOCKS hash to clear any BLOCK 
+# definitions imported via the PROCESS directive.  Any original 
 # BLOCKS definitions passed to the constructor will be restored.
 #------------------------------------------------------------------------
 
@@ -750,8 +750,8 @@ sub stash {
 #
 # Method for controlling the debugging status of the context.  The first
 # argument can be 'on' or 'off' to enable/disable debugging, 'format'
-# to define the format of the debug message, or 'msg' to generate a
-# debugging message reporting the file, line, message text, etc.,
+# to define the format of the debug message, or 'msg' to generate a 
+# debugging message reporting the file, line, message text, etc., 
 # according to the current debug format.
 #------------------------------------------------------------------------
 
@@ -792,7 +792,7 @@ sub debugging {
 #------------------------------------------------------------------------
 # AUTOLOAD
 #
-# Provides pseudo-methods for read-only access to various internal
+# Provides pseudo-methods for read-only access to various internal 
 # members.  For example, templates(), plugins(), filters(),
 # eval_perl(), load_perl(), etc.  These aren't called very often, or
 # may never be called at all.
@@ -817,7 +817,7 @@ sub AUTOLOAD {
 # DESTROY
 #
 # Stash may contain references back to the Context via macro closures,
-# etc.  This breaks the circular references.
+# etc.  This breaks the circular references. 
 #------------------------------------------------------------------------
 
 sub DESTROY {
@@ -840,15 +840,15 @@ sub DESTROY {
 sub _init {
     my ($self, $config) = @_;
     my ($name, $item, $method, $block, $blocks);
-    my @itemlut = (
+    my @itemlut = ( 
         LOAD_TEMPLATES => 'provider',
         LOAD_PLUGINS   => 'plugins',
-        LOAD_FILTERS   => 'filters'
+        LOAD_FILTERS   => 'filters' 
     );
 
     # LOAD_TEMPLATE, LOAD_PLUGINS, LOAD_FILTERS - lists of providers
     while (($name, $method) = splice(@itemlut, 0, 2)) {
-        $item = $config->{ $name }
+        $item = $config->{ $name } 
             || Template::Config->$method($config)
             || return $self->error($Template::Config::ERROR);
         $self->{ $name } = ref $item eq 'ARRAY' ? $item : [ $item ];
@@ -857,15 +857,15 @@ sub _init {
     my $providers  = $self->{ LOAD_TEMPLATES };
     my $prefix_map = $self->{ PREFIX_MAP } = $config->{ PREFIX_MAP } || { };
     while (my ($key, $val) = each %$prefix_map) {
-        $prefix_map->{ $key } = [ ref $val ? $val :
+        $prefix_map->{ $key } = [ ref $val ? $val : 
                                   map { $providers->[$_] } split(/\D+/, $val) ]
                                   unless ref $val eq 'ARRAY';
     }
 
     # STASH
     $self->{ STASH } = $config->{ STASH } || do {
-        my $predefs  = $config->{ VARIABLES }
-            || $config->{ PRE_DEFINE }
+        my $predefs  = $config->{ VARIABLES } 
+            || $config->{ PRE_DEFINE } 
             || { };
 
         # hack to get stash to know about debug mode
@@ -873,21 +873,21 @@ sub _init {
                                  & &Template::Constants::DEBUG_UNDEF ) ? 1 : 0
                                  unless defined $predefs->{ _DEBUG };
         $predefs->{ _STRICT } = $config->{ STRICT };
-
+        
         Template::Config->stash($predefs)
             || return $self->error($Template::Config::ERROR);
     };
-
+    
     # compile any template BLOCKS specified as text
     $blocks = $config->{ BLOCKS } || { };
-    $self->{ INIT_BLOCKS } = $self->{ BLOCKS } = {
+    $self->{ INIT_BLOCKS } = $self->{ BLOCKS } = { 
         map {
             $block = $blocks->{ $_ };
             $block = $self->template(\$block)
                 || return undef
                 unless ref $block;
             ($_ => $block);
-        }
+        } 
         keys %$blocks
     };
 
@@ -911,13 +911,13 @@ sub _init {
     $self->{ BLKSTACK  } = [ ];
     $self->{ CONFIG    } = $config;
     $self->{ EXPOSE_BLOCKS } = defined $config->{ EXPOSE_BLOCKS }
-                                     ? $config->{ EXPOSE_BLOCKS }
+                                     ? $config->{ EXPOSE_BLOCKS } 
                                      : 0;
 
     $self->{ DEBUG_FORMAT  } =  $config->{ DEBUG_FORMAT };
-    $self->{ DEBUG_DIRS    } = ($config->{ DEBUG } || 0)
+    $self->{ DEBUG_DIRS    } = ($config->{ DEBUG } || 0) 
                                & Template::Constants::DEBUG_DIRS;
-    $self->{ DEBUG } = defined $config->{ DEBUG }
+    $self->{ DEBUG } = defined $config->{ DEBUG } 
         ? $config->{ DEBUG } & ( Template::Constants::DEBUG_CONTEXT
                                | Template::Constants::DEBUG_FLAGS )
         : $DEBUG;
@@ -970,41 +970,41 @@ Template::Context - Runtime context in which templates are processed
 =head1 SYNOPSIS
 
     use Template::Context;
-
+    
     # constructor
     $context = Template::Context->new(\%config)
         || die $Template::Context::ERROR;
-
+    
     # fetch (load and compile) a template
     $template = $context->template($template_name);
-
+    
     # fetch (load and instantiate) a plugin object
     $plugin = $context->plugin($name, \@args);
-
+    
     # fetch (return or create) a filter subroutine
     $filter = $context->filter($name, \@args, $alias);
-
+    
     # process/include a template, errors are thrown via die()
     $output = $context->process($template, \%vars);
     $output = $context->include($template, \%vars);
-
+    
     # raise an exception via die()
     $context->throw($error_type, $error_message, \$output_buffer);
-
+    
     # catch an exception, clean it up and fix output buffer
     $exception = $context->catch($exception, \$output_buffer);
-
+    
     # save/restore the stash to effect variable localisation
     $new_stash = $context->localise(\%vars);
     $old_stash = $context->delocalise();
-
+    
     # add new BLOCK or FILTER definitions
     $context->define_block($name, $block);
     $context->define_filter($name, \&filtersub, $is_dynamic);
-
+    
     # reset context, clearing any imported BLOCK definitions
     $context->reset();
-
+    
     # methods for accessing internal items
     $stash     = $context->stash();
     $tflag     = $context->trim();
@@ -1029,7 +1029,7 @@ L<new()|Template#new()> constructor method and will be forwarded to the
 C<Template::Context> constructor.
 
     use Template;
-
+    
     my $template = Template->new({
         TRIM      => 1,
         EVAL_PERL => 1,
@@ -1055,7 +1055,7 @@ C<CONTEXT> configuration item.
 
     use Template;
     use Template::Context;
-
+    
     my $context  = Template::Context->new({ TRIM => 1 });
     my $template = Template->new({ CONTEXT => $context });
 
@@ -1068,9 +1068,9 @@ L<context()|Template::Config#context()> factory method when a default context
 object is required.
 
     use Template;
-
+    
     $Template::Config::CONTEXT = 'MyOrg::Template::Context';
-
+    
     my $template = Template->new({
         EVAL_PERL   => 1,
         EXTRA_MAGIC => 'red hot',  # your extra config items
@@ -1079,7 +1079,7 @@ object is required.
 
 =head1 METHODS
 
-=head2 new(\%params)
+=head2 new(\%params) 
 
 The C<new()> constructor method is called to instantiate a
 C<Template::Context> object. Configuration parameters may be specified as a
@@ -1089,7 +1089,7 @@ HASH reference or as a list of C<name =E<gt> value> pairs.
         INCLUDE_PATH => 'header',
         POST_PROCESS => 'footer',
     });
-
+    
     my $context = Template::Context->new( EVAL_PERL => 1 );
 
 The C<new()> method returns a C<Template::Context> object or C<undef> on
@@ -1099,11 +1099,11 @@ C<$Template::Context::ERROR> package variable.
 
     my $context = Template::Context->new(\%config)
         || die Template::Context->error();
-
+    
     my $context = Template::Context->new(\%config)
         || die $Template::Context::ERROR;
 
-The following configuration items may be specified.  Please see
+The following configuration items may be specified.  Please see 
 L<Template::Manual::Config> for further details.
 
 =head3 VARIABLES
@@ -1130,11 +1130,11 @@ a default set of template blocks.
             footer  => sub { return $some_output_text },
             another => Template::Document->new({ ... }),
         },
-    });
+    }); 
 
 =head3 VIEWS
 
-The L<VIEWS|Template::Manual::Config#VIEWS> option can be used to pre-define
+The L<VIEWS|Template::Manual::Config#VIEWS> option can be used to pre-define 
 one or more L<Template::View> objects.
 
     my $context = Template::Context->new({
@@ -1154,12 +1154,12 @@ template files and C<BLOCK>s.
 example:
 
     [% BLOCK foo %]
-
+    
     Line 1 of foo
-
+    
     [% END %]
-
-    before
+    
+    before 
     [% INCLUDE foo %]
     after
 
@@ -1177,9 +1177,9 @@ default.
 
 =head3 RECURSION
 
-The L<RECURSION|Template::Manual::Config#RECURSION> can be set to
+The L<RECURSION|Template::Manual::Config#RECURSION> can be set to 
 allow templates to recursively process themselves, either directly
-(e.g. template C<foo> calls C<INCLUDE foo>) or indirectly (e.g.
+(e.g. template C<foo> calls C<INCLUDE foo>) or indirectly (e.g. 
 C<foo> calls C<INCLUDE bar> which calls C<INCLUDE foo>).
 
 =head3 LOAD_TEMPLATES
@@ -1224,9 +1224,9 @@ subroutines.
 
 =head3 STASH
 
-The L<STASH|Template::Manual::Config#STASH> option can be used to
+The L<STASH|Template::Manual::Config#STASH> option can be used to 
 specify a L<Template::Stash> object or sub-class which will take
-responsibility for managing template variables.
+responsibility for managing template variables.  
 
     my $stash = MyOrg::Template::Stash->new({ ... });
     my $context = Template::Context->new({
@@ -1239,15 +1239,15 @@ The L<DEBUG|Template::Manual::Config#DEBUG> option can be used to enable
 various debugging features of the L<Template::Context> module.
 
     use Template::Constants qw( :debug );
-
+    
     my $template = Template->new({
         DEBUG => DEBUG_CONTEXT | DEBUG_DIRS,
     });
 
-=head2 template($name)
+=head2 template($name) 
 
 Returns a compiled template by querying each of the L<LOAD_TEMPLATES> providers
-(instances of L<Template::Provider>, or sub-class) in turn.
+(instances of L<Template::Provider>, or sub-class) in turn.  
 
     $template = $context->template('header');
 
@@ -1291,10 +1291,10 @@ thrown as L<Template::Exception> objects with the type set to 'C<filter>'.
 
     # static filter (no args)
     $filter = $context->filter('html');
-
+    
     # dynamic filter (args) aliased to 'padright'
     $filter = $context->filter('format', '%60s', 'padright');
-
+    
     # retrieve previous filter via 'padright' alias
     $filter = $context->filter('padright');
 
@@ -1305,7 +1305,7 @@ the output generated.  An optional reference to a hash array may be passed
 as the second parameter, containing variable definitions which will be set
 before the template is processed.  The template is processed in the current
 context, with no localisation of variables performed.   Errors are thrown
-as L<Template::Exception> objects via C<die()>.
+as L<Template::Exception> objects via C<die()>.  
 
     $output = $context->process('header', { title => 'Hello World' });
 
@@ -1356,10 +1356,10 @@ reconstructed for simple or nested throws.
 
 =head2 define_block($name, $block)
 
-Adds a new block definition to the internal L<BLOCKS> cache.  The first
+Adds a new block definition to the internal L<BLOCKS> cache.  The first 
 argument should contain the name of the block and the second a reference
 to a L<Template::Document> object or template sub-routine, or template text
-which is automatically compiled into a template sub-routine.
+which is automatically compiled into a template sub-routine.  
 
 Returns a true value (the sub-routine or L<Template::Document> reference) on
 success or undef on failure. The relevant error message can be retrieved by
@@ -1373,13 +1373,13 @@ providers until accepted (in the usual case, this is accepted straight away by
 the one and only L<Template::Filters> provider). The first argument should
 contain the name of the filter and the second a reference to a filter
 subroutine. The optional third argument can be set to any true value to
-indicate that the subroutine is a dynamic filter factory.
+indicate that the subroutine is a dynamic filter factory. 
 
 Returns a true value or throws a 'C<filter>' exception on error.
 
 =head2 define_vmethod($type, $name, $code)
 
-This method is a wrapper around the L<Template::Stash>
+This method is a wrapper around the L<Template::Stash> 
 L<define_vmethod()|Template::Stash#define_vmethod()> method.  It can be used
 to define new virtual methods.
 
@@ -1395,10 +1395,10 @@ to define new virtual methods.
 
 This method allows you to define a named L<view|Template::View>.
 
-    $context->define_view(
-        my_view => {
-            prefix => 'my_templates/'
-        }
+    $context->define_view( 
+        my_view => { 
+            prefix => 'my_templates/' 
+        } 
     );
 
 The view is then accessible as a template variable.
@@ -1411,15 +1411,15 @@ This method allows you to define multiple named L<views|Template::View>.
 A reference to a hash array or list reference should be passed as an argument.
 
     $context->define_view({     # hash reference
-        my_view_one => {
-            prefix => 'my_templates_one/'
+        my_view_one => { 
+            prefix => 'my_templates_one/' 
         },
-        my_view_two => {
-            prefix => 'my_templates_two/'
-        }
+        my_view_two => { 
+            prefix => 'my_templates_two/' 
+        } 
     });
 
-If you're defining multiple views of which one or more are based on other
+If you're defining multiple views of which one or more are based on other 
 views in the same definition then you should pass them as a list reference.
 This ensures that they get created in the right order (Perl does not preserve
 the order of items defined in a hash reference so you can't guarantee that
@@ -1427,12 +1427,12 @@ your base class view will be defined before your subclass view).
 
     $context->define_view([     # list referenence
         my_view_one => {
-            prefix => 'my_templates_one/'
+            prefix => 'my_templates_one/' 
         },
-        my_view_two => {
+        my_view_two => { 
             prefix => 'my_templates_two/' ,
             base   => 'my_view_one',
-        }
+        } 
     ]);
 
 The views are then accessible as template variables.
@@ -1449,7 +1449,7 @@ template variables.
 
 =head2 localise(\%vars)
 
-Clones the stash to create a context with localised variables.  Returns a
+Clones the stash to create a context with localised variables.  Returns a 
 reference to the newly cloned stash object which is also stored
 internally.
 
@@ -1485,7 +1485,7 @@ L<BLOCKS> specified as a configuration item to the constructor will be reinstate
 =head2 debugging($flag, @args)
 
 This method is used to control debugging output.  It is used to implement
-the L<DEBUG|Template::Manual::Directives#DEBUG> directive.
+the L<DEBUG|Template::Manual::Directives#DEBUG> directive.  
 
 The first argument can be C<on> or C<off> to enable or disable debugging
 respectively.  The numerical values C<0> and C<1> can also be used if you
@@ -1495,7 +1495,7 @@ prefer.
 
 Alternately, the first argument can be C<format> to define a new debug message
 format.  The second argument should be the format string which can contain
-any of the C<$file>, C<$line> or C<$text> symbols to indicate where the
+any of the C<$file>, C<$line> or C<$text> symbols to indicate where the 
 relevant values should be inserted.
 
     # note single quotes to prevent interpolated of variables
@@ -1505,7 +1505,7 @@ The final use of this method is to generate debugging messages themselves.
 The first argument should be C<msg>, followed by a reference to a hash array
 of value to insert into the debugging format string.
 
-    $context->debugging(
+    $context->debugging( 
         msg => {
             line => 20,
             file => 'example.tt',

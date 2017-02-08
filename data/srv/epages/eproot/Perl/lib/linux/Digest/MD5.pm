@@ -26,15 +26,15 @@ eval {
 if ($@) {
     my $olderr = $@;
     eval {
-        # Try to load the pure perl version
-        require Digest::Perl::MD5;
+	# Try to load the pure perl version
+	require Digest::Perl::MD5;
 
-        Digest::Perl::MD5->import(qw(md5 md5_hex md5_base64));
-        push(@ISA, "Digest::Perl::MD5");  # make OO interface work
+	Digest::Perl::MD5->import(qw(md5 md5_hex md5_base64));
+	push(@ISA, "Digest::Perl::MD5");  # make OO interface work
     };
     if ($@) {
-        # restore the original error
-        die $olderr;
+	# restore the original error
+	die $olderr;
     }
 }
 else {
@@ -156,8 +156,8 @@ stream.  Example:
 
     my $md5 = Digest::MD5->new;
     while (<>) {
-        $md5->add($_);
-        print "Line $.: ", $md5->clone->hexdigest, "\n";
+	$md5->add($_);
+	print "Line $.: ", $md5->clone->hexdigest, "\n";
     }
 
 =item $md5->add($data,...)
@@ -245,12 +245,12 @@ The above example would print out the message:
 The same checksum can also be calculated in OO style:
 
     use Digest::MD5;
-
+    
     $md5 = Digest::MD5->new;
     $md5->add('foo', 'bar');
     $md5->add('baz');
     $digest = $md5->hexdigest;
-
+    
     print "Digest is $digest\n";
 
 With OO style you can break the message arbitrary.  This means that we

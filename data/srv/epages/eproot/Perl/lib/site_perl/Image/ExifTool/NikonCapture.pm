@@ -680,7 +680,7 @@ sub WriteNikonCapture($$$)
     SetByteOrder('II');
     my $tagID = Get32u($dataPt, $dirStart);
     my $size = Get32u($dataPt, $dirStart + 18);
-    my $pad = $dirLen - $size - 18;
+    my $pad = $dirLen - $size - 18; 
     unless ($tagID == 0x7a86a940 and $pad >= 0) {
         $exifTool->Warn('Unrecognized Nikon Capture Data header');
         return undef;

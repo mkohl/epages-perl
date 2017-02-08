@@ -147,8 +147,8 @@ stream.  Example:
 
     my $sha1 = Digest::SHA1->new;
     while (<>) {
-        $sha1->add($_);
-        print "Line $.: ", $sha1->clone->hexdigest, "\n";
+	$sha1->add($_);
+	print "Line $.: ", $sha1->clone->hexdigest, "\n";
     }
 
 =item $sha1->add($data,...)

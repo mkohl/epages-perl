@@ -49,10 +49,10 @@ sub dotsh {
    close (_SH_ENV);
    if (!$shell) {
       if ($ENV{'SHELL'} =~ /\/sh$|\/ksh$|\/zsh$|\/bash$|\/csh$/) {
-         $shell = "$ENV{'SHELL'} -c";
+	 $shell = "$ENV{'SHELL'} -c";
       } else {
-         print "SHELL not recognized!\nUsing /bin/sh...\n";
-         $shell = "/bin/sh -c";
+	 print "SHELL not recognized!\nUsing /bin/sh...\n";
+	 $shell = "/bin/sh -c";
       }
    }
    if (length($vars) > 0) {

@@ -33,9 +33,9 @@ Reads the table into memory
 sub read
 {
     my ($self, $fh) = @_;
-
+    
     die "incomplete";
-
+            
     $self;
 }
 
@@ -48,9 +48,9 @@ Writes the table to a file
 sub out_sub
 {
     my ($self, $fh) = @_;
-
+    
     die "incomplete";
-
+            
     $self;
 }
 
@@ -63,9 +63,9 @@ Prints a human-readable representation of the table
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     my $post = $self->post();
-
+    
     $fh = 'STDOUT' unless defined $fh;
 
     die "incomplete";

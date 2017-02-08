@@ -175,7 +175,7 @@ sub sql_user_name {
 
 PERL
 
-        print "\nour \%info = (\n";
+	print "\nour \%info = (\n";
     foreach my $key (sort keys %GetInfoType)
     {
         my $num = $GetInfoType{$key};
@@ -208,7 +208,7 @@ PERL
         }
         printf "%s %5d => %-30s # %s\n", (($val eq 'undef') ? '#' : ' '), $num, "$val,", $key;
     }
-        print ");\n\n1;\n\n__END__\n";
+	print ");\n\n1;\n\n__END__\n";
 }
 
 
@@ -348,7 +348,7 @@ package DBD::${driver}::TypeInfo;
 PERL
 
     # Generate SQL type name mapping hashes.
-        # See code fragment in DBI specification.
+	# See code fragment in DBI specification.
     my %sql_type_map;
     foreach (@{$DBI::EXPORT_TAGS{sql_types}})
     {

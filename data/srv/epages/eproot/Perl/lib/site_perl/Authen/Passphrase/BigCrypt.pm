@@ -4,24 +4,24 @@ Authen::Passphrase::BigCrypt - passphrases using bigcrypt algorithm
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::BigCrypt;
+	use Authen::Passphrase::BigCrypt;
 
-        $ppr = Authen::Passphrase::BigCrypt->new(
-                salt_base64 => "qi",
-                hash_base64 => "yh4XPJGsOZ2MEAyLkfWqeQ");
+	$ppr = Authen::Passphrase::BigCrypt->new(
+		salt_base64 => "qi",
+		hash_base64 => "yh4XPJGsOZ2MEAyLkfWqeQ");
 
-        $ppr = Authen::Passphrase::BigCrypt->new(
-                salt_random => 12,
-                passphrase => "passphrase");
+	$ppr = Authen::Passphrase::BigCrypt->new(
+		salt_random => 12,
+		passphrase => "passphrase");
 
-        $salt = $ppr->salt;
-        $salt_base64 = $ppr->salt_base64_2;
-        $hash = $ppr->hash;
-        $hash_base64 = $ppr->hash_base64;
+	$salt = $ppr->salt;
+	$salt_base64 = $ppr->salt_base64_2;
+	$hash = $ppr->hash;
+	$hash_base64 = $ppr->hash_base64;
 
-        $pprs = $ppr->sections;
+	$pprs = $ppr->sections;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
 =head1 DESCRIPTION
 
@@ -125,82 +125,82 @@ the passphrase.
 =cut
 
 sub new {
-        my $class = shift;
-        my $salt;
-        my @hashes;
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "salt") {
-                        croak "salt specified redundantly"
-                                if defined $salt;
-                        croak "\"$value\" is not a valid salt"
-                                unless $value == int($value) &&
-                                        $value >= 0 && $value < 4096;
-                        $salt = $value;
-                } elsif($attr eq "salt_base64") {
-                        croak "salt specified redundantly"
-                                if defined $salt;
-                        $value =~ m#\A[./0-9A-Za-z]{2}\z#
-                                or croak "\"$value\" is not a valid salt";
-                        $salt = base64_to_int12($value);
-                } elsif($attr eq "salt_random") {
-                        croak "salt specified redundantly"
-                                if defined $salt;
-                        croak "\"$value\" is not a valid salt size"
-                                unless $value == 12;
-                        $salt = rand_int(1 << $value);
-                } elsif($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if @hashes || defined($passphrase);
-                        $value =~ m#\A(?:[\x00-\xff]{8})+\z#
-                                or croak "not a valid bigcrypt hash";
-                        push @hashes, $1 while $value =~ /(.{8})/sg;
-                } elsif($attr eq "hash_base64") {
-                        croak "hash specified redundantly"
-                                if @hashes || defined($passphrase);
-                        $value =~ m#\A(?:[./0-9A-Za-z]{10}[.26AEIMQUYcgkosw])
-                                        +\z#x
-                                or croak "\"$value\" is not a valid ".
-                                                "encoded hash";
-                        while($value =~ /(.{11})/sg) {
-                                my $b64 = $1;
-                                push @hashes, base64_to_block($b64);
-                        }
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if @hashes || defined($passphrase);
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        croak "salt not specified" unless defined $salt;
-        my @sections;
-        if(defined $passphrase) {
-                my $nsegs = $passphrase eq "" ? 1 :
-                                ((length($passphrase) + 7) >> 3);
-                for(my $i = 0; $i != $nsegs; $i++) {
-                        push @sections,
-                                Authen::Passphrase::DESCrypt
-                                ->new(salt => $salt,
-                                      passphrase =>
-                                              substr($passphrase, $i << 3, 8));
-                        $salt = base64_to_int12(
-                                substr($sections[-1]->hash_base64, 0, 2));
-                }
-        } elsif(@hashes) {
-                foreach my $hash (@hashes) {
-                        push @sections, Authen::Passphrase::DESCrypt
-                                        ->new(salt => $salt, hash => $hash);
-                        $salt = base64_to_int12(
-                                substr($sections[-1]->hash_base64, 0, 2));
-                }
-        } else {
-                croak "hash not specified";
-        }
-        return bless(\@sections, $class);
+	my $class = shift;
+	my $salt;
+	my @hashes;
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "salt") {
+			croak "salt specified redundantly"
+				if defined $salt;
+			croak "\"$value\" is not a valid salt"
+				unless $value == int($value) &&
+					$value >= 0 && $value < 4096;
+			$salt = $value;
+		} elsif($attr eq "salt_base64") {
+			croak "salt specified redundantly"
+				if defined $salt;
+			$value =~ m#\A[./0-9A-Za-z]{2}\z#
+				or croak "\"$value\" is not a valid salt";
+			$salt = base64_to_int12($value);
+		} elsif($attr eq "salt_random") {
+			croak "salt specified redundantly"
+				if defined $salt;
+			croak "\"$value\" is not a valid salt size"
+				unless $value == 12;
+			$salt = rand_int(1 << $value);
+		} elsif($attr eq "hash") {
+			croak "hash specified redundantly"
+				if @hashes || defined($passphrase);
+			$value =~ m#\A(?:[\x00-\xff]{8})+\z#
+				or croak "not a valid bigcrypt hash";
+			push @hashes, $1 while $value =~ /(.{8})/sg;
+		} elsif($attr eq "hash_base64") {
+			croak "hash specified redundantly"
+				if @hashes || defined($passphrase);
+			$value =~ m#\A(?:[./0-9A-Za-z]{10}[.26AEIMQUYcgkosw])
+					+\z#x
+				or croak "\"$value\" is not a valid ".
+						"encoded hash";
+			while($value =~ /(.{11})/sg) {
+				my $b64 = $1;
+				push @hashes, base64_to_block($b64);
+			}
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if @hashes || defined($passphrase);
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	croak "salt not specified" unless defined $salt;
+	my @sections;
+	if(defined $passphrase) {
+		my $nsegs = $passphrase eq "" ? 1 :
+				((length($passphrase) + 7) >> 3);
+		for(my $i = 0; $i != $nsegs; $i++) {
+			push @sections,
+				Authen::Passphrase::DESCrypt
+				->new(salt => $salt,
+				      passphrase =>
+					      substr($passphrase, $i << 3, 8));
+			$salt = base64_to_int12(
+				substr($sections[-1]->hash_base64, 0, 2));
+		}
+	} elsif(@hashes) {
+		foreach my $hash (@hashes) {
+			push @sections, Authen::Passphrase::DESCrypt
+					->new(salt => $salt, hash => $hash);
+			$salt = base64_to_int12(
+				substr($sections[-1]->hash_base64, 0, 2));
+		}
+	} else {
+		croak "hash not specified";
+	}
+	return bless(\@sections, $class);
 }
 
 =back
@@ -259,15 +259,15 @@ This method is part of the standard L<Authen::Passphrase> interface.
 =cut
 
 sub match {
-        my Authen::Passphrase::BigCrypt $self = shift;
-        my($passphrase) = @_;
-        my $nsegs = $passphrase eq "" ? 1 : ((length($passphrase) + 7) >> 3);
-        return 0 unless $nsegs == @$self;
-        for(my $i = $nsegs; $i--; ) {
-                return 0 unless $self->[$i]
-                                ->match(substr($passphrase, $i << 3, 8));
-        }
-        return 1;
+	my Authen::Passphrase::BigCrypt $self = shift;
+	my($passphrase) = @_;
+	my $nsegs = $passphrase eq "" ? 1 : ((length($passphrase) + 7) >> 3);
+	return 0 unless $nsegs == @$self;
+	for(my $i = $nsegs; $i--; ) {
+		return 0 unless $self->[$i]
+				->match(substr($passphrase, $i << 3, 8));
+	}
+	return 1;
 }
 
 =back

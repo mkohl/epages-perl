@@ -50,8 +50,8 @@ use PPI::Token ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Token';
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Token';
 }
 
 
@@ -90,10 +90,10 @@ my $quotes = $Document->find('Token::Quote');
 is( ref($quotes), 'ARRAY', 'Found quotes' );
 is( scalar(@$quotes), 4, 'Found 4 quotes' );
 foreach my $Quote ( @$quotes ) {
-        isa_ok( $Quote, 'PPI::Token::Quote');
-        can_ok( $Quote, 'string'           );
-        is( $Quote->string, 'foo', '->string returns "foo" for '
-                . $Quote->content );
+	isa_ok( $Quote, 'PPI::Token::Quote');
+	can_ok( $Quote, 'string'           );
+	is( $Quote->string, 'foo', '->string returns "foo" for '
+		. $Quote->content );
 }
 
 =end testing
@@ -101,8 +101,8 @@ foreach my $Quote ( @$quotes ) {
 =cut
 
 #sub string {
-#       my $class = ref $_[0] || $_[0];
-#       die "$class does not implement method ->string";
+#	my $class = ref $_[0] || $_[0];
+#	die "$class does not implement method ->string";
 #}
 
 =pod

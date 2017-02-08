@@ -27,11 +27,11 @@ From RFC-2045 Section 6.2.:
    performed.  As such, they serve simply as indicators of the domain of
    the body data, and provide useful information about the sort of
    encoding that might be needed for transmission in a given transport
-   system.
+   system.  
 
-In keeping with this: as of MIME-tools 4.x,
-I<this class does no modification of its input when encoding;>
-all it does is attempt to I<detect violations> of the 7bit/8bit assertion,
+In keeping with this: as of MIME-tools 4.x, 
+I<this class does no modification of its input when encoding;> 
+all it does is attempt to I<detect violations> of the 7bit/8bit assertion, 
 and issue a warning (one per message) if any are found.
 
 
@@ -83,7 +83,7 @@ L<MIME::Decoder>
 
 Eryq (F<eryq@zeegee.com>), ZeeGee Software Inc (F<http://www.zeegee.com>).
 
-All rights reserved.  This program is free software; you can redistribute
+All rights reserved.  This program is free software; you can redistribute 
 it and/or modify it under the same terms as Perl itself.
 
 =cut
@@ -114,12 +114,12 @@ sub decode_it {
 
     ### Get chunks until done:
     while ($in->read($_, $DecodeChunkLength)) {
-        $and_also = $in->getline;
-        $_ .= $and_also if defined($and_also);
+	$and_also = $in->getline;
+	$_ .= $and_also if defined($and_also);
 
-        ### Just got a chunk ending in a line.
-        s/\015\012$/\n/g;
-        $out->print($_);
+	### Just got a chunk ending in a line.
+	s/\015\012$/\n/g;
+	$out->print($_);
     }
     1;
 }
@@ -137,18 +137,18 @@ sub encode_it {
     my $line;
     while (defined($line = $in->getline)) {
 
-        ### Whine if encoding is 7bit and it has 8-bit data:
-        if ($seven_bit && ($line =~ /[\200-\377]/)) { ### oops! saw 8-bit data!
-            whine "saw 8-bit data while encoding 7bit" unless $saw_8bit++;
-        }
+	### Whine if encoding is 7bit and it has 8-bit data:
+	if ($seven_bit && ($line =~ /[\200-\377]/)) { ### oops! saw 8-bit data!
+	    whine "saw 8-bit data while encoding 7bit" unless $saw_8bit++;
+	}
 
-        ### Whine if long lines detected:
-        if (length($line) > 998) {
-            whine "saw long line while encoding 7bit/8bit" unless $saw_long++;
-        }
+	### Whine if long lines detected:
+	if (length($line) > 998) {
+	    whine "saw long line while encoding 7bit/8bit" unless $saw_long++;
+	}
 
-        ### Output!
-        $out->print($line);
+	### Output!
+	$out->print($line);
     }
     1;
 }

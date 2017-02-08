@@ -15,7 +15,7 @@ $VERSION = "0.02";
 
 my %Class2ResponseName = (
 
-  'Net::LDAP::Intermediate::SyncInfo'           => LDAP_SYNC_INFO,
+  'Net::LDAP::Intermediate::SyncInfo'		=> LDAP_SYNC_INFO,
 );
 
 my %ResponseName2Class = reverse %Class2ResponseName;

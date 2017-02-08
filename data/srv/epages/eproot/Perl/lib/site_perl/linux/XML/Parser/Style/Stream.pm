@@ -18,16 +18,16 @@ sub Start {
   no strict 'refs';
   my $expat = shift;
   my $type = shift;
-
+  
   doText($expat);
   $_ = "<$type";
-
+  
   %_ = @_;
   while (@_) {
     $_ .= ' ' . shift() . '="' . shift() . '"';
   }
   $_ .= '>';
-
+  
   my $sub = $expat->{Pkg} . "::StartTag";
   if (defined(&$sub)) {
     &$sub($expat, $type);
@@ -40,14 +40,14 @@ sub End {
   no strict 'refs';
   my $expat = shift;
   my $type = shift;
-
+  
   # Set right context for Text handler
   push(@{$expat->{Context}}, $type);
   doText($expat);
   pop(@{$expat->{Context}});
-
+  
   $_ = "</$type>";
-
+  
   my $sub = $expat->{Pkg} . "::EndTag";
   if (defined(&$sub)) {
     &$sub($expat, $type);
@@ -66,11 +66,11 @@ sub Proc {
   my $expat = shift;
   my $target = shift;
   my $text = shift;
-
+  
   doText($expat);
 
   $_ = "<?$target $text?>";
-
+  
   my $sub = $expat->{Pkg} . "::PI";
   if (defined(&$sub)) {
     &$sub($expat, $target, $text);
@@ -91,7 +91,7 @@ sub doText {
   no strict 'refs';
   my $expat = shift;
   $_ = $expat->{Text};
-
+  
   if (length($_)) {
     my $sub = $expat->{Pkg} . "::Text";
     if (defined(&$sub)) {
@@ -99,7 +99,7 @@ sub doText {
     } else {
       print;
     }
-
+    
     $expat->{Text} = '';
   }
 }
@@ -116,20 +116,20 @@ XML::Parser::Style::Stream - Stream style for XML::Parser
   use XML::Parser;
   my $p = XML::Parser->new(Style => 'Stream', Pkg => 'MySubs');
   $p->parsefile('foo.xml');
-
+  
   {
     package MySubs;
-
+    
     sub StartTag {
       my ($e, $name) = @_;
       # do something with start tags
     }
-
+    
     sub EndTag {
       my ($e, $name) = @_;
       # do something with end tags
     }
-
+    
     sub Characters {
       my ($e, $data) = @_;
       # do something with text nodes

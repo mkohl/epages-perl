@@ -16,8 +16,8 @@ sub can_read {
 sub sysread {
     my $self = $_[0];
     if (${*$self}{'httpnb_read_count'}++) {
-        ${*$self}{'http_buf'} = ${*$self}{'httpnb_save'};
-        die "Multi-read\n";
+	${*$self}{'http_buf'} = ${*$self}{'httpnb_save'};
+	die "Multi-read\n";
     }
     my $buf;
     my $offset = $_[3] || 0;
@@ -32,8 +32,8 @@ sub read_response_headers {
     ${*$self}{'httpnb_save'} = ${*$self}{'http_buf'};
     my @h = eval { $self->SUPER::read_response_headers(@_) };
     if ($@) {
-        return if $@ eq "Multi-read\n";
-        die;
+	return if $@ eq "Multi-read\n";
+	die;
     }
     return @h;
 }
@@ -46,8 +46,8 @@ sub read_entity_body {
     # transfer-encoding transforms
     my $n = eval { $self->SUPER::read_entity_body(@_); };
     if ($@) {
-        $_[0] = "";
-        return -1;
+	$_[0] = "";
+	return -1;
     }
     return $n;
 }

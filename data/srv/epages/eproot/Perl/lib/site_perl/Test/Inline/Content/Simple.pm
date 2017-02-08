@@ -11,17 +11,17 @@ Test::Inline::Content::Simple - Simple templating Content Handler
   In your inline2test.tpl
   ----------------------
   #!/usr/bin/perl -w
-
+  
   use strict;
   use Test::More [% plan %];
   $| = 1;
-
-
-
+  
+  
+  
   [% tests %]
-
-
-
+  
+  
+  
   1;
 
 =head1 DESCRIPTION
@@ -50,8 +50,8 @@ use Test::Inline::Content ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '2.212';
-        @ISA     = 'Test::Inline::Content';
+	$VERSION = '2.212';
+	@ISA     = 'Test::Inline::Content';
 }
 
 
@@ -73,19 +73,19 @@ Returns a new C<Test::Inline::Content::Simple> object, or C<undef> on error.
 =cut
 
 sub new {
-        my $class = ref $_[0] ? ref shift : shift;
-        my $file  = (defined $_[0] and -r $_[0]) ? shift : return undef;
+	my $class = ref $_[0] ? ref shift : shift;
+	my $file  = (defined $_[0] and -r $_[0]) ? shift : return undef;
+	
+	# Create the object
+	my $self  = $class->SUPER::new() or return undef;
 
-        # Create the object
-        my $self  = $class->SUPER::new() or return undef;
+	# Load, check and add the file
+	my $template = File::Slurp::read_file( $file ) or return undef;
+	$template =~ /\[%\s+tests\s+\%\]/              or return undef;
+	# $template =~ /\[\%\s+plan\s+\%\]/              or return undef;
+	$self->{template} = $template;
 
-        # Load, check and add the file
-        my $template = File::Slurp::read_file( $file ) or return undef;
-        $template =~ /\[%\s+tests\s+\%\]/              or return undef;
-        # $template =~ /\[\%\s+plan\s+\%\]/              or return undef;
-        $self->{template} = $template;
-
-        $self;
+	$self;
 }
 
 =pod
@@ -114,26 +114,26 @@ The C<process> method is unchanged from C<Test::Inline::Content>.
 =cut
 
 sub process {
-        my $self   = shift;
-        my $Inline = _INSTANCE(shift, 'Test::Inline')         or return undef;
-        my $Script = _INSTANCE(shift, 'Test::Inline::Script') or return undef;
+	my $self   = shift;
+	my $Inline = _INSTANCE(shift, 'Test::Inline')         or return undef;
+	my $Script = _INSTANCE(shift, 'Test::Inline::Script') or return undef;
 
-        # Get the merged content
-        my $content = $Script->merged_content;
-        return undef unless defined $content;
+	# Get the merged content
+	my $content = $Script->merged_content;
+	return undef unless defined $content;
 
-        # Determine a plan
-        my $tests = $Script->tests;
-        my $plan  = defined $tests
-                ? "tests => $tests"
-                : "'no_plan'";
+	# Determine a plan
+	my $tests = $Script->tests;
+	my $plan  = defined $tests
+		? "tests => $tests"
+		: "'no_plan'";
 
-        # Replace the two values
-        my $script = $self->{template};
-        $script =~ s/\[%\s+tests\s+\%\]/$content/;
-        $script =~ s/\[\%\s+plan\s+\%\]/$plan/;
+	# Replace the two values
+	my $script = $self->{template};
+	$script =~ s/\[%\s+tests\s+\%\]/$content/;
+	$script =~ s/\[\%\s+plan\s+\%\]/$plan/;
 
-        $script;
+	$script;
 }
 
 1;

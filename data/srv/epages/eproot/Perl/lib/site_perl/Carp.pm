@@ -19,9 +19,9 @@ BEGIN {
     # On unaffected versions, we turn off just Unicode warnings, via
     # the proper API.
     if(!defined($warnings::VERSION) || eval($warnings::VERSION) < 1.06) {
-        ${^WARNING_BITS} = "";
+	${^WARNING_BITS} = "";
     } else {
-        "warnings"->unimport("utf8");
+	"warnings"->unimport("utf8");
     }
 }
 
@@ -31,10 +31,10 @@ sub _fetch_sub { # fetch sub without autovivifying
     # only works with top-level packages
     return unless exists($::{$pack});
     for ($::{$pack}) {
-        return unless ref \$_ eq 'GLOB' && *$_{HASH} && exists $$_{$sub};
-        for ($$_{$sub}) {
-            return ref \$_ eq 'GLOB' ? *$_{CODE} : undef
-        }
+	return unless ref \$_ eq 'GLOB' && *$_{HASH} && exists $$_{$sub};
+	for ($$_{$sub}) {
+	    return ref \$_ eq 'GLOB' ? *$_{CODE} : undef
+	}
     }
 }
 
@@ -48,9 +48,9 @@ sub _fetch_sub { # fetch sub without autovivifying
 # syntax error.
 BEGIN {
     if("$]" < 5.013011) {
-        *UTF8_REGEXP_PROBLEM = sub () { 1 };
+	*UTF8_REGEXP_PROBLEM = sub () { 1 };
     } else {
-        *UTF8_REGEXP_PROBLEM = sub () { 0 };
+	*UTF8_REGEXP_PROBLEM = sub () { 0 };
     }
 }
 
@@ -60,10 +60,10 @@ BEGIN {
 # onwards, extra effort is required here to make it work on Perl 5.6.
 BEGIN {
     if(defined(my $sub = _fetch_sub utf8 => 'is_utf8')) {
-        *is_utf8 = $sub;
+	*is_utf8 = $sub;
     } else {
-        # black magic for perl 5.6
-        *is_utf8 = sub { unpack("C", "\xaa".$_[0]) != 170 };
+	# black magic for perl 5.6
+	*is_utf8 = sub { unpack("C", "\xaa".$_[0]) != 170 };
     }
 }
 
@@ -72,18 +72,18 @@ BEGIN {
 # second argument that is a true value.
 BEGIN {
     if(defined(my $sub = _fetch_sub utf8 => 'downgrade')) {
-        *downgrade = \&{"utf8::downgrade"};
+	*downgrade = \&{"utf8::downgrade"};
     } else {
-        *downgrade = sub {
-            my $r = "";
-            my $l = length($_[0]);
-            for(my $i = 0; $i != $l; $i++) {
-                my $o = ord(substr($_[0], $i, 1));
-                return if $o > 255;
-                $r .= chr($o);
-            }
-            $_[0] = $r;
-        };
+	*downgrade = sub {
+	    my $r = "";
+	    my $l = length($_[0]);
+	    for(my $i = 0; $i != $l; $i++) {
+		my $o = ord(substr($_[0], $i, 1));
+		return if $o > 255;
+		$r .= chr($o);
+	    }
+	    $_[0] = $r;
+	};
     }
 }
 
@@ -170,10 +170,10 @@ sub cluck   { warn longmess @_ }
 
 BEGIN {
     if("$]" >= 5.015002 || ("$]" >= 5.014002 && "$]" < 5.015) ||
-            ("$]" >= 5.012005 && "$]" < 5.013)) {
-        *CALLER_OVERRIDE_CHECK_OK = sub () { 1 };
+	    ("$]" >= 5.012005 && "$]" < 5.013)) {
+	*CALLER_OVERRIDE_CHECK_OK = sub () { 1 };
     } else {
-        *CALLER_OVERRIDE_CHECK_OK = sub () { 0 };
+	*CALLER_OVERRIDE_CHECK_OK = sub () { 0 };
     }
 }
 
@@ -182,13 +182,13 @@ sub caller_info {
     my %call_info;
     my $cgc = _cgc();
     {
-        # Some things override caller() but forget to implement the
-        # @DB::args part of it, which we need.  We check for this by
-        # pre-populating @DB::args with a sentinel which no-one else
-        # has the address of, so that we can detect whether @DB::args
-        # has been properly populated.  However, on earlier versions
-        # of perl this check tickles a bug in CORE::caller() which
-        # leaks memory.  So we only check on fixed perls.
+	# Some things override caller() but forget to implement the
+	# @DB::args part of it, which we need.  We check for this by
+	# pre-populating @DB::args with a sentinel which no-one else
+	# has the address of, so that we can detect whether @DB::args
+	# has been properly populated.  However, on earlier versions
+	# of perl this check tickles a bug in CORE::caller() which
+	# leaks memory.  So we only check on fixed perls.
         @DB::args = \$i if CALLER_OVERRIDE_CHECK_OK;
         package DB;
         @call_info{
@@ -255,21 +255,21 @@ sub format_arg {
     if ( ref($arg) ) {
          # legitimate, let's not leak it.
         if (!$in_recurse &&
-            do {
+	    do {
                 local $@;
-                local $in_recurse = 1;
-                local $SIG{__DIE__} = sub{};
+	        local $in_recurse = 1;
+		local $SIG{__DIE__} = sub{};
                 eval {$arg->can('CARP_TRACE') }
             })
         {
             return $arg->CARP_TRACE();
         }
         elsif (!$in_recurse &&
-               defined($RefArgFormatter) &&
-               do {
+	       defined($RefArgFormatter) &&
+	       do {
                 local $@;
-                local $in_recurse = 1;
-                local $SIG{__DIE__} = sub{};
+	        local $in_recurse = 1;
+		local $SIG{__DIE__} = sub{};
                 eval {$arg = $RefArgFormatter->($arg); 1}
                 })
         {
@@ -277,34 +277,34 @@ sub format_arg {
         }
         else
         {
-            my $sub = _fetch_sub(overload => 'StrVal');
-            return $sub ? &$sub($arg) : "$arg";
+	    my $sub = _fetch_sub(overload => 'StrVal');
+	    return $sub ? &$sub($arg) : "$arg";
         }
     }
     return "undef" if !defined($arg);
     downgrade($arg, 1);
     return $arg if !(UTF8_REGEXP_PROBLEM && is_utf8($arg)) &&
-            $arg =~ /\A-?[0-9]+(?:\.[0-9]*)?(?:[eE][-+]?[0-9]+)?\z/;
+	    $arg =~ /\A-?[0-9]+(?:\.[0-9]*)?(?:[eE][-+]?[0-9]+)?\z/;
     my $suffix = "";
     if ( 2 < $MaxArgLen and $MaxArgLen < length($arg) ) {
         substr ( $arg, $MaxArgLen - 3 ) = "";
-        $suffix = "...";
+	$suffix = "...";
     }
     if(UTF8_REGEXP_PROBLEM && is_utf8($arg)) {
-        for(my $i = length($arg); $i--; ) {
-            my $c = substr($arg, $i, 1);
-            my $x = substr($arg, 0, 0);   # work around bug on Perl 5.8.{1,2}
-            if($c eq "\"" || $c eq "\\" || $c eq "\$" || $c eq "\@") {
-                substr $arg, $i, 0, "\\";
-                next;
-            }
-            my $o = ord($c);
-            substr $arg, $i, 1, sprintf("\\x{%x}", $o)
-                if $o < 0x20 || $o > 0x7f;
-        }
+	for(my $i = length($arg); $i--; ) {
+	    my $c = substr($arg, $i, 1);
+	    my $x = substr($arg, 0, 0);   # work around bug on Perl 5.8.{1,2}
+	    if($c eq "\"" || $c eq "\\" || $c eq "\$" || $c eq "\@") {
+		substr $arg, $i, 0, "\\";
+		next;
+	    }
+	    my $o = ord($c);
+	    substr $arg, $i, 1, sprintf("\\x{%x}", $o)
+		if $o < 0x20 || $o > 0x7f;
+	}
     } else {
-        $arg =~ s/([\"\\\$\@])/\\$1/g;
-        $arg =~ s/([^ -~])/sprintf("\\x{%x}",ord($1))/eg;
+	$arg =~ s/([\"\\\$\@])/\\$1/g;
+	$arg =~ s/([^ -~])/sprintf("\\x{%x}",ord($1))/eg;
     }
     downgrade($arg, 1);
     return "\"".$arg."\"".$suffix;
@@ -314,23 +314,23 @@ sub Regexp::CARP_TRACE {
     my $arg = "$_[0]";
     downgrade($arg, 1);
     if(UTF8_REGEXP_PROBLEM && is_utf8($arg)) {
-        for(my $i = length($arg); $i--; ) {
-            my $o = ord(substr($arg, $i, 1));
-            my $x = substr($arg, 0, 0);   # work around bug on Perl 5.8.{1,2}
-            substr $arg, $i, 1, sprintf("\\x{%x}", $o)
-                if $o < 0x20 || $o > 0x7f;
-        }
+	for(my $i = length($arg); $i--; ) {
+	    my $o = ord(substr($arg, $i, 1));
+	    my $x = substr($arg, 0, 0);   # work around bug on Perl 5.8.{1,2}
+	    substr $arg, $i, 1, sprintf("\\x{%x}", $o)
+		if $o < 0x20 || $o > 0x7f;
+	}
     } else {
-        $arg =~ s/([^ -~])/sprintf("\\x{%x}",ord($1))/eg;
+	$arg =~ s/([^ -~])/sprintf("\\x{%x}",ord($1))/eg;
     }
     downgrade($arg, 1);
     my $suffix = "";
     if($arg =~ /\A\(\?\^?([a-z]*)(?:-[a-z]*)?:(.*)\)\z/s) {
-        ($suffix, $arg) = ($1, $2);
+	($suffix, $arg) = ($1, $2);
     }
     if ( 2 < $MaxArgLen and $MaxArgLen < length($arg) ) {
         substr ( $arg, $MaxArgLen - 3 ) = "";
-        $suffix = "...".$suffix;
+	$suffix = "...".$suffix;
     }
     return "qr($arg)$suffix";
 }
@@ -565,7 +565,7 @@ sub trusts_directly {
 }
 
 if(!defined($warnings::VERSION) ||
-        do { no warnings "numeric"; $warnings::VERSION < 1.03 }) {
+	do { no warnings "numeric"; $warnings::VERSION < 1.03 }) {
     # Very old versions of warnings.pm import from Carp.  This can go
     # wrong due to the circular dependency.  If Carp is invoked before
     # warnings, then Carp starts by loading warnings, then warnings

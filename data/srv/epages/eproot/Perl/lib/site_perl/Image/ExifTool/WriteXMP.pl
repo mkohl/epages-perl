@@ -179,7 +179,7 @@ sub CheckXMP($$$)
             ($format eq 'rational' and ($$valPtr eq 'inf' or
              $$valPtr eq 'undef' or Image::ExifTool::IsRational($$valPtr))))
         {
-            return 'Not a floating point number'
+            return 'Not a floating point number' 
         }
         if ($format eq 'rational') {
             $$valPtr = join('/', Image::ExifTool::Rationalize($$valPtr));
@@ -757,7 +757,7 @@ sub WriteXMP($$;$)
         # to the ones used in this file
         $path = ConformPathToNamespace($exifTool, $path);
         # find existing property
-        my $cap = $capture{$path};
+        my $cap = $capture{$path}; 
         # MicrosoftPhoto screws up the case of some tags, so test for this
         # (NOTE: we don't currently do these tests when writing structures!
         #  --> add this to DeleteStruct() below if it turns out to be a problem)

@@ -147,7 +147,7 @@ A hash of info information saved with this file.
 
     $written = $file->print($fh, 50, 200);
 
-Writes the number of bytes specified from the offset specified
+Writes the number of bytes specified from the offset specified 
 to the given file handle.  If no C<$length> or C<$offset> are
 given, the entire file is written to C<$fh>.  Returns the number
 of bytes written.

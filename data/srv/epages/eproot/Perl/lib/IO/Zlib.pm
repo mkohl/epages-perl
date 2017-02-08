@@ -336,37 +336,37 @@ sub can_gunzip {
 sub _import {
     my $import = shift;
     while (@_) {
-        if ($_[0] eq ':gzip_external') {
-            shift;
-            if (@_) {
-                $gzip_external = shift;
-            } else {
-                croak "$import: ':gzip_external' requires an argument";
-            }
-        }
-        elsif ($_[0] eq ':gzip_read_open') {
-            shift;
-            if (@_) {
-                $gzip_read_open = shift;
-                croak "$import: ':gzip_read_open' '$gzip_read_open' is illegal"
-                    unless $gzip_read_open =~ /^.+%s.+\|\s*$/;
-            } else {
-                croak "$import: ':gzip_read_open' requires an argument";
-            }
-        }
-        elsif ($_[0] eq ':gzip_write_open') {
-            shift;
-            if (@_) {
-                $gzip_write_open = shift;
-                croak "$import: ':gzip_write_open' '$gzip_read_open' is illegal"
-                    unless $gzip_write_open =~ /^\s*\|.+%s.*$/;
-            } else {
-                croak "$import: ':gzip_write_open' requires an argument";
-            }
-        }
-        else {
-            last;
-        }
+	if ($_[0] eq ':gzip_external') {
+	    shift;
+	    if (@_) {
+		$gzip_external = shift;
+	    } else {
+		croak "$import: ':gzip_external' requires an argument";
+	    }
+	}
+	elsif ($_[0] eq ':gzip_read_open') {
+	    shift;
+	    if (@_) {
+		$gzip_read_open = shift;
+		croak "$import: ':gzip_read_open' '$gzip_read_open' is illegal"
+		    unless $gzip_read_open =~ /^.+%s.+\|\s*$/;
+	    } else {
+		croak "$import: ':gzip_read_open' requires an argument";
+	    }
+	}
+	elsif ($_[0] eq ':gzip_write_open') {
+	    shift;
+	    if (@_) {
+		$gzip_write_open = shift;
+		croak "$import: ':gzip_write_open' '$gzip_read_open' is illegal"
+		    unless $gzip_write_open =~ /^\s*\|.+%s.*$/;
+	    } else {
+		croak "$import: ':gzip_write_open' requires an argument";
+	    }
+	}
+	else {
+	    last;
+	}
     }
     return @_;
 }
@@ -374,19 +374,19 @@ sub _import {
 sub _alias {
     my $import = shift;
     if ((!$has_Compress_Zlib && !defined $gzip_external) || $gzip_external) {
-        # The undef *gzopen is really needed only during
-        # testing where we eval several 'use IO::Zlib's.
-        undef *gzopen;
+	# The undef *gzopen is really needed only during
+	# testing where we eval several 'use IO::Zlib's.
+	undef *gzopen;
         *gzopen                 = \&gzopen_external;
         *IO::Handle::gzread     = \&gzread_external;
         *IO::Handle::gzwrite    = \&gzwrite_external;
         *IO::Handle::gzreadline = \&gzreadline_external;
         *IO::Handle::gzeof      = \&gzeof_external;
         *IO::Handle::gzclose    = \&gzclose_external;
-        $gzip_used = 1;
+	$gzip_used = 1;
     } else {
-        croak "$import: no Compress::Zlib and no external gzip"
-            unless $has_Compress_Zlib;
+	croak "$import: no Compress::Zlib and no external gzip"
+	    unless $has_Compress_Zlib;
         *gzopen     = \&Compress::Zlib::gzopen;
         *gzread     = \&Compress::Zlib::gzread;
         *gzwrite    = \&Compress::Zlib::gzwrite;
@@ -400,9 +400,9 @@ sub import {
     shift;
     my $import = "IO::Zlib::import";
     if (@_) {
-        if (_import($import, @_)) {
-            croak "$import: '@_' is illegal";
-        }
+	if (_import($import, @_)) {
+	    croak "$import: '@_' is illegal";
+	}
     }
     _alias($import);
 }
@@ -537,7 +537,7 @@ sub getlines
     my $self = shift;
 
     croak "IO::Zlib::getlines: must be called in list context"
-        unless wantarray;
+	unless wantarray;
 
     return tied(*{$self})->READLINE();
 }
@@ -564,51 +564,51 @@ sub gzopen_external {
     require IO::Handle;
     my $fh = IO::Handle->new();
     if ($mode =~ /r/) {
-        # Because someone will try to read ungzipped files
-        # with this we peek and verify the signature.  Yes,
-        # this means that we open the file twice (if it is
-        # gzipped).
-        # Plenty of race conditions exist in this code, but
-        # the alternative would be to capture the stderr of
-        # gzip and parse it, which would be a portability nightmare.
-        if (-e $filename && open($fh, $filename)) {
-            binmode $fh;
-            my $sig;
-            my $rdb = read($fh, $sig, 2);
-            if ($rdb == 2 && $sig eq "\x1F\x8B") {
-                my $ropen = sprintf $gzip_read_open, $filename;
-                if (open($fh, $ropen)) {
-                    binmode $fh;
-                    return $fh;
-                } else {
-                    return undef;
-                }
-            }
-            seek($fh, 0, SEEK_SET) or
-                die "IO::Zlib: open('$filename', 'r'): seek: $!";
-            return $fh;
-        } else {
-            return undef;
-        }
+	# Because someone will try to read ungzipped files
+	# with this we peek and verify the signature.  Yes,
+	# this means that we open the file twice (if it is
+	# gzipped).
+	# Plenty of race conditions exist in this code, but
+	# the alternative would be to capture the stderr of
+	# gzip and parse it, which would be a portability nightmare.
+	if (-e $filename && open($fh, $filename)) {
+	    binmode $fh;
+	    my $sig;
+	    my $rdb = read($fh, $sig, 2);
+	    if ($rdb == 2 && $sig eq "\x1F\x8B") {
+		my $ropen = sprintf $gzip_read_open, $filename;
+		if (open($fh, $ropen)) {
+		    binmode $fh;
+		    return $fh;
+		} else {
+		    return undef;
+		}
+	    }
+	    seek($fh, 0, SEEK_SET) or
+		die "IO::Zlib: open('$filename', 'r'): seek: $!";
+	    return $fh;
+	} else {
+	    return undef;
+	}
     } elsif ($mode =~ /w/) {
-        my $level = '';
-        $level = "-$1" if $mode =~ /([1-9])/;
-        # To maximize portability we would need to open
-        # two filehandles here, one for "| gzip $level"
-        # and another for "> $filename", and then when
-        # writing copy bytes from the first to the second.
-        # We are using IO::Handle objects for now, however,
-        # and they can only contain one stream at a time.
-        my $wopen = sprintf $gzip_write_open, $filename;
-        if (open($fh, $wopen)) {
-            $fh->autoflush(1);
-            binmode $fh;
-            return $fh;
-        } else {
-            return undef;
-        }
+	my $level = '';
+	$level = "-$1" if $mode =~ /([1-9])/;
+	# To maximize portability we would need to open
+	# two filehandles here, one for "| gzip $level"
+	# and another for "> $filename", and then when
+	# writing copy bytes from the first to the second.
+	# We are using IO::Handle objects for now, however,
+	# and they can only contain one stream at a time.
+	my $wopen = sprintf $gzip_write_open, $filename;
+	if (open($fh, $wopen)) {
+	    $fh->autoflush(1);
+	    binmode $fh;
+	    return $fh;
+	} else {
+	    return undef;
+	}
     } else {
-        croak "IO::Zlib::gzopen_external: mode '$mode' is illegal";
+	croak "IO::Zlib::gzopen_external: mode '$mode' is illegal";
     }
     return undef;
 }

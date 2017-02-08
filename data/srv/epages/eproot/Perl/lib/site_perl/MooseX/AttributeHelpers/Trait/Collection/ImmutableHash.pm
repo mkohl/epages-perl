@@ -36,22 +36,22 @@ MooseX::AttributeHelpers::Collection::ImmutableHash
   package Stuff;
   use Moose;
   use MooseX::AttributeHelpers;
-
+  
   has 'options' => (
       metaclass => 'Collection::ImmutableHash',
       is        => 'ro',
       isa       => 'HashRef[Str]',
       default   => sub { {} },
       provides  => {
-          'get'    => 'get_option',
+          'get'    => 'get_option',            
           'empty'  => 'has_options',
           'keys'   => 'get_option_list',
       }
   );
-
+  
 =head1 DESCRIPTION
 
-This module provides a immutable HashRef attribute which provides a number of
+This module provides a immutable HashRef attribute which provides a number of 
 hash-line operations. See L<MooseX::AttributeHelpers::MethodProvider::ImmutableHash>
 for more details.
 
@@ -71,7 +71,7 @@ for more details.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

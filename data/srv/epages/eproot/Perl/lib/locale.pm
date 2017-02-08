@@ -8,12 +8,12 @@ locale - Perl pragma to use and avoid POSIX locales for built-in operations
 
 =head1 SYNOPSIS
 
-    @x = sort @y;       # ASCII sorting order
+    @x = sort @y;	# ASCII sorting order
     {
         use locale;
         @x = sort @y;   # Locale-defined sorting order
     }
-    @x = sort @y;       # ASCII sorting order again
+    @x = sort @y;	# ASCII sorting order again
 
 =head1 DESCRIPTION
 

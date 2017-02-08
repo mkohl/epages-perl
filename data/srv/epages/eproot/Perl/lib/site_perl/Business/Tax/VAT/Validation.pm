@@ -100,21 +100,21 @@ Business::Tax::VAT::Validation - A class for european VAT numbers validation.
 =head1 SYNOPSIS
 
   use Business::Tax::VAT::Validation;
-
+  
   my $hvatn=Business::Tax::VAT::Validation->new();
-
+  
   # Check number
   if ($hvatn->check($VAT, [$member_state])){
         print "OK\n";
   } else {
         print $hvatn->get_last_error;
   }
-
+  
 =head1 DESCRIPTION
 
 This class provides an easy api to check european VAT numbers' syntax, and if they has been registered by the competent authorities.
 
-It asks the EU database (VIES) for this, using its SOAP interface methods.
+It asks the EU database (VIES) for this, using its SOAP interface methods. 
 
 
 =head1 CONSTRUCTOR
@@ -124,12 +124,12 @@ It asks the EU database (VIES) for this, using its SOAP interface methods.
 =item B<new> Class constructor.
 
     $hvatn=Business::Tax::VAT::Validation->new();
-
-
+    
+    
     If your system is located behind a proxy :
-
+    
     $hvatn=Business::Tax::VAT::Validation->new(-proxy => ['http', 'http://example.com:8001/']);
-
+    
     Note : See LWP::UserAgent for proxy options.
 
 =cut
@@ -169,7 +169,7 @@ sub new {
             SE => '[0-9]{12}',
             SI => '[0-9]{8}',
             SK => '[0-9]{10}',
-            HR => '[0-9]{11}',
+	    HR => '[0-9]{11}',
         },
         proxy        => $arg{-proxy},
         informations => {}
@@ -188,7 +188,7 @@ sub new {
 =item B<member_states> Returns all member states 2-digit codes as array
 
     @ms=$hvatn->member_states;
-
+    
 =cut
 
 sub member_states {
@@ -224,7 +224,7 @@ sub regular_expressions {
 =over 4
 
 =item B<check> - Checks if a VAT number exists in the VIES database
-
+    
     $ok=$hvatn->check($vatNumber, [$countryCode]);
 
 You may either provide the VAT number under its complete form (e.g. BE-123456789, BE123456789)
@@ -251,14 +251,14 @@ sub check {
             $ua->env_proxy;
         }
         $ua->agent( 'Business::Tax::VAT::Validation/'. $Business::Tax::VAT::Validation::VERSION );
-
+        
         my $request = HTTP::Request->new(POST => $self->{baseurl});
         $request->header(SOAPAction => 'http://www.w3.org/2003/05/soap-envelope');
         $request->content(_in_soap_envelope($vatNumber, $countryCode));
         $request->content_type("Content-Type: application/soap+xml; charset=utf-8");
-
+        
         my $response = $ua->request($request);
-
+        
         return $countryCode . '-' . $vatNumber if $self->_is_res_ok( $response->code, $response->decoded_content );
     }
     0;
@@ -266,9 +266,9 @@ sub check {
 
 =item B<local_check> - Checks if a VAT number format is valid
     This method is based on regexps only and DOES NOT ask the VIES database
-
+    
     $ok=$hvatn->local_check($VAT, [$member_state]);
-
+    
 
 =cut
 
@@ -286,18 +286,18 @@ sub local_check {
 }
 
 =item B<informations> - Returns informations related to the last validated VAT number
-
+    
     %infos=$hvatn->informations();
-
+    
 
 =cut
 
 sub informations {
-    my ( $self, $key, @other ) = @_;
+    my ( $self, $key, @other ) = @_; 
     if ($key) {
-        return $self->{informations}{$key}
+        return $self->{informations}{$key} 
     } else {
-        return ($self->{informations})
+        return ($self->{informations})    
     }
 }
 
@@ -432,12 +432,12 @@ sub _is_res_ok {
             } elsif ($faultcode eq 'soap:Server' && $faultstring eq 'MS_UNAVAILABLE') {
                 return $self->_set_error(18, "Member State service unavailable. Please re-submit your request later.")
             } elsif ($faultstring=~m/^Couldn't parse stream/) {
-                    return $self->_set_error( 21, "The VIES database failed to parse a stream. Please re-submit your request later." );
+        	    return $self->_set_error( 21, "The VIES database failed to parse a stream. Please re-submit your request later." );
             } else {
                 return $self->_set_error( $code, $1.' '.$2 )
             }
         } elsif ($res=~m/^Can't connect to/) {
-                return $self->_set_error( 20, "Connexion to the VIES database failed. " . $res );
+        	return $self->_set_error( 20, "Connexion to the VIES database failed. " . $res );
         } else {
             return $self->_set_error( 257, "Invalid response [".$code."], please contact the author of this module. " . $res );
         }

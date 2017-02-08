@@ -98,15 +98,15 @@ merchantability or fitness for a particular purpose.
 
 =head1 AUTHOR
 Current Author:
-        Jeff Fearn C<< <jfearn@cpan.org> >>.
+	Jeff Fearn C<< <jfearn@cpan.org> >>.
 
 Original HTML-Tree author:
-        Gisle Aas.
+	Gisle Aas.
 
 Former Authors:
-        Sean M. Burke.
-        Andy Lester.
-        Pete Krawczyk C<< <petek@cpan.org> >>.
+	Sean M. Burke.
+	Andy Lester.
+	Pete Krawczyk C<< <petek@cpan.org> >>.
 
 =cut
 

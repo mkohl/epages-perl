@@ -42,7 +42,7 @@ sub init($)
     if(my $h2 = $args->{hooks})
     {   $self->addHook($_) for ref $h2 eq 'ARRAY' ? @$h2 : $h2;
     }
-
+ 
     $self->{key_rewrite} = [];
     if(my $kr = $args->{key_rewrite})
     {   $self->addKeyRewrite(ref $kr eq 'ARRAY' ? @$kr : $kr);
@@ -305,7 +305,7 @@ sub template($@)
 
     my $show
       = exists $args{show_comments} ? $args{show_comments}
-      : exists $args{show} ? $args{show} # pre-0.79 option name
+      : exists $args{show} ? $args{show} # pre-0.79 option name 
       : 'ALL';
 
     $show = 'struct,type,occur,facets' if $show eq 'ALL';

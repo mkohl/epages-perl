@@ -6,7 +6,7 @@ use Scalar::Util ();
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '0.07';
+	$VERSION = '0.07';
 }
 
 
@@ -17,30 +17,30 @@ BEGIN {
 # Constructor and Accessors
 
 sub new {
-        my $class = shift;
-        my $self  = bless { @_ }, $class;
+	my $class = shift;
+	my $self  = bless { @_ }, $class;
 
-        # Check params
-        unless ( _CLASS($self->class) ) {
-                Carp::croak("Did not provide a valid test class");
-        }
-        unless ( _CODELIKE($self->code) ) {
-                Carp::croak("Did not provide a valid CODE or callable object");
-        }
+	# Check params
+	unless ( _CLASS($self->class) ) {
+		Carp::croak("Did not provide a valid test class");
+	}
+	unless ( _CODELIKE($self->code) ) {
+		Carp::croak("Did not provide a valid CODE or callable object");
+	}
 
-        $self;
+	$self;
 }
 
 sub class {
-        $_[0]->{class};
+	$_[0]->{class};
 }
 
 sub tests {
-        $_[0]->{tests};
+	$_[0]->{tests};
 }
 
 sub code {
-        $_[0]->{code};
+	$_[0]->{code};
 }
 
 
@@ -51,7 +51,7 @@ sub code {
 # Main Methods
 
 sub run {
-        $_[0]->code->( $_[1] );
+	$_[0]->code->( $_[1] );
 }
 
 
@@ -64,14 +64,14 @@ sub run {
 # Stolen from Params::Util to avoid adding a dependency needlessly
 
 sub _CLASS ($) {
-        (defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s) ? $_[0] : undef;
+	(defined $_[0] and ! ref $_[0] and $_[0] =~ m/^[^\W\d]\w*(?:::\w+)*$/s) ? $_[0] : undef;
 }
 
 sub _CODELIKE {
-        (Scalar::Util::reftype($_[0])||'') eq 'CODE'
-        or
-        Scalar::Util::blessed($_[0]) and overload::Method($_[0],'&{}')
-        ? $_[0] : undef;
+	(Scalar::Util::reftype($_[0])||'') eq 'CODE'
+	or
+	Scalar::Util::blessed($_[0]) and overload::Method($_[0],'&{}')
+	? $_[0] : undef;
 }
 
 1;

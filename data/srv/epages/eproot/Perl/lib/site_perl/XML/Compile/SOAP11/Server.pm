@@ -86,7 +86,7 @@ sub faultNotImplemented($)
 
 sub faultNoAnswerProduced($)
 {   my ($self, $name) = @_;
-
+ 
     my $message = __x"callback {name} did not return an answer", name => $name;
     $self->makeError
       ( faultcode   => pack_type(SOAP11ENV, 'Server.noAnswer')

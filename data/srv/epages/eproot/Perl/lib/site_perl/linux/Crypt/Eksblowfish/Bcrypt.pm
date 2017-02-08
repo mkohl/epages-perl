@@ -4,22 +4,22 @@ Crypt::Eksblowfish::Bcrypt - Blowfish-based Unix crypt() password hash
 
 =head1 SYNOPSIS
 
-        use Crypt::Eksblowfish::Bcrypt qw(bcrypt_hash);
+	use Crypt::Eksblowfish::Bcrypt qw(bcrypt_hash);
 
-        $hash = bcrypt_hash({
-                        key_nul => 1,
-                        cost => 8,
-                        salt => $salt,
-                }, $password);
+	$hash = bcrypt_hash({
+			key_nul => 1,
+			cost => 8,
+			salt => $salt,
+		}, $password);
 
-        use Crypt::Eksblowfish::Bcrypt qw(en_base64 de_base64);
+	use Crypt::Eksblowfish::Bcrypt qw(en_base64 de_base64);
 
-        $text = en_base64($octets);
-        $octets = de_base64($text);
+	$text = en_base64($octets);
+	$octets = de_base64($text);
 
-        use Crypt::Eksblowfish::Bcrypt qw(bcrypt);
+	use Crypt::Eksblowfish::Bcrypt qw(bcrypt);
 
-        $hashed_password = bcrypt($password, $settings);
+	$hashed_password = bcrypt($password, $settings);
 
 =head1 DESCRIPTION
 
@@ -79,19 +79,19 @@ Exactly sixteen octets of salt.
 =cut
 
 sub bcrypt_hash($$) {
-        my($settings, $password) = @_;
-        $password .= "\0" if $settings->{key_nul} || $password eq "";
-        my $cipher = Crypt::Eksblowfish->new($settings->{cost},
-                        $settings->{salt}, substr($password, 0, 72));
-        my $hash = join("", map {
-                                my $blk = $_;
-                                for(my $i = 64; $i--; ) {
-                                        $blk = $cipher->encrypt($blk);
-                                }
-                                $blk;
-                            } qw(OrpheanB eholderS cryDoubt));
-        chop $hash;
-        return $hash;
+	my($settings, $password) = @_;
+	$password .= "\0" if $settings->{key_nul} || $password eq "";
+	my $cipher = Crypt::Eksblowfish->new($settings->{cost},
+			$settings->{salt}, substr($password, 0, 72));
+	my $hash = join("", map {
+				my $blk = $_;
+				for(my $i = 64; $i--; ) {
+					$blk = $cipher->encrypt($blk);
+				}
+				$blk;
+			    } qw(OrpheanB eholderS cryDoubt));
+	chop $hash;
+	return $hash;
 }
 
 =item en_base64(BYTES)
@@ -102,10 +102,10 @@ conventionally used with bcrypt.
 =cut
 
 sub en_base64($) {
-        my($octets) = @_;
-        my $text = encode_base64($octets, "");
-        $text =~ tr#A-Za-z0-9+/=#./A-Za-z0-9#d;
-        return $text;
+	my($octets) = @_;
+	my $text = encode_base64($octets, "");
+	$text =~ tr#A-Za-z0-9+/=#./A-Za-z0-9#d;
+	return $text;
 }
 
 =item de_base64(TEXT)
@@ -116,14 +116,14 @@ base 64 that is conventionally used with bcrypt.
 =cut
 
 sub de_base64($) {
-        my($text) = @_;
-        croak "bad base64 encoding"
-                unless $text =~ m#\A(?>(?:[./A-Za-z0-9]{4})*)
-                                  (?:|[./A-Za-z0-9]{2}[.CGKOSWaeimquy26]|
-                                      [./A-Za-z0-9][.Oeu])\z#x;
-        $text =~ tr#./A-Za-z0-9#A-Za-z0-9+/#;
-        $text .= "=" x (3 - (length($text) + 3) % 4);
-        return decode_base64($text);
+	my($text) = @_;
+	croak "bad base64 encoding"
+		unless $text =~ m#\A(?>(?:[./A-Za-z0-9]{4})*)
+				  (?:|[./A-Za-z0-9]{2}[.CGKOSWaeimquy26]|
+				      [./A-Za-z0-9][.Oeu])\z#x;
+	$text =~ tr#./A-Za-z0-9#A-Za-z0-9+/#;
+	$text .= "=" x (3 - (length($text) + 3) % 4);
+	return decode_base64($text);
 }
 
 =item bcrypt(PASSWORD, SETTINGS)
@@ -151,17 +151,17 @@ of the string is ignored on input.
 =cut
 
 sub bcrypt($$) {
-        my($password, $settings) = @_;
-        croak "bad bcrypt settings"
-                unless $settings =~ m#\A\$2(a?)\$([0-9]{2})\$
-                                        ([./A-Za-z0-9]{22})#x;
-        my($key_nul, $cost, $salt_base64) = ($1, $2, $3);
-        my $hash = bcrypt_hash({
-                        key_nul => $key_nul,
-                        cost => $cost,
-                        salt => de_base64($salt_base64),
-                   }, $password);
-        return "\$2${key_nul}\$${cost}\$${salt_base64}".en_base64($hash);
+	my($password, $settings) = @_;
+	croak "bad bcrypt settings"
+		unless $settings =~ m#\A\$2(a?)\$([0-9]{2})\$
+					([./A-Za-z0-9]{22})#x;
+	my($key_nul, $cost, $salt_base64) = ($1, $2, $3);
+	my $hash = bcrypt_hash({
+			key_nul => $key_nul,
+			cost => $cost,
+			salt => de_base64($salt_base64),
+		   }, $password);
+	return "\$2${key_nul}\$${cost}\$${salt_base64}".en_base64($hash);
 }
 
 =back

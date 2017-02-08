@@ -27,14 +27,14 @@ sub accept {
     my $package = ref($self);
     eval "\$type_name = \$${package}::type_name";
     if (!defined $type_name) {
-        return (); # no action
+	return (); # no action
     }
 
     my $method_name = 'visit_' . $type_name;
     if ($visitor->can($method_name)) {
-        return $visitor->$method_name ($self, @_);
+	return $visitor->$method_name ($self, @_);
     } else {
-        return (); # no action
+	return (); # no action
     }
 }
 
@@ -42,7 +42,7 @@ sub accept_name {
     my $self = shift;
 
     if (!defined $self->{Name}) {
-        return $self->accept (@_);
+	return $self->accept (@_);
     }
 
     my $visitor = shift;
@@ -52,9 +52,9 @@ sub accept_name {
     my $name_method = "visit_name_$name";
 
     if (!$self->{'has'}{$name_method}) {
-        return if (defined $self->{'has'}{$name_method});
-        $self->{'has'}{$name_method} = $visitor->can($name_method);
-        return $self->accept($visitor, @_) if (!$self->{'has'}{$name_method});
+	return if (defined $self->{'has'}{$name_method});
+	$self->{'has'}{$name_method} = $visitor->can($name_method);
+	return $self->accept($visitor, @_) if (!$self->{'has'}{$name_method});
     }
 
     return $visitor->$name_method ($self, @_);
@@ -64,21 +64,21 @@ sub attr_accept {
     my $self = shift; my $attr = shift; my $visitor = shift;
 
     if (!defined $self->{Attributes}) {
-        return (); # no action
+	return (); # no action
     }
 
     my $attrs = $self->{Attributes}{$attr};
     if (ref($attrs) eq 'ARRAY') {
-        return $self->_children_accept ($attrs, $visitor, @_);
+	return $self->_children_accept ($attrs, $visitor, @_);
     } else {
 
-        if (!$self->{has_visit_characters}) {
-            return if (defined $self->{has_visit_characters});
-            $self->{has_visit_characters} = $visitor->can('visit_characters');
-            return if (!$self->{has_visit_characters});
-        }
-        # FIXME should be some other generic than XML::Grove::Characters
-        return $visitor->visit_characters (XML::Grove::Characters->new(Data => $attrs), @_);
+	if (!$self->{has_visit_characters}) {
+	    return if (defined $self->{has_visit_characters});
+	    $self->{has_visit_characters} = $visitor->can('visit_characters');
+	    return if (!$self->{has_visit_characters});
+	}
+	# FIXME should be some other generic than XML::Grove::Characters
+	return $visitor->visit_characters (XML::Grove::Characters->new(Data => $attrs), @_);
     }
 }
 
@@ -86,9 +86,9 @@ sub children_accept {
     my $self = shift;
 
     if (defined $self->{Contents}) {
-        return $self->_children_accept ($self->{Contents}, @_);
+	return $self->_children_accept ($self->{Contents}, @_);
     } else {
-        return (); # no action
+	return (); # no action
     }
 }
 
@@ -96,9 +96,9 @@ sub children_accept_name {
     my $self = shift;
 
     if (defined $self->{Contents}) {
-        return $self->_children_accept_name ($self->{Contents}, @_);
+	return $self->_children_accept_name ($self->{Contents}, @_);
     } else {
-        return (); # no action
+	return (); # no action
     }
 }
 
@@ -108,7 +108,7 @@ sub _children_accept {
     my @return;
     my $ii;
     for ($ii = 0; $ii <= $#$array; $ii ++) {
-        push @return, $array->[$ii]->accept ($visitor, @_);
+	push @return, $array->[$ii]->accept ($visitor, @_);
     }
 
     return @return;
@@ -120,7 +120,7 @@ sub _children_accept_name {
     my @return;
     my $ii;
     for ($ii = 0; $ii <= $#$array; $ii ++) {
-        push @return, $array->[$ii]->accept_name ($visitor, @_);
+	push @return, $array->[$ii]->accept_name ($visitor, @_);
     }
 
     return @return;

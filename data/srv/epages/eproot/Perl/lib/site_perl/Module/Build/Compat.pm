@@ -145,8 +145,8 @@ HERE
       my $base_dir = $build->base_dir;
 
       if ($build->dir_contains($base_dir, $subclass_dir)) {
-        $subclass_dir = File::Spec->abs2rel($subclass_dir, $base_dir);
-        $subclass_dir = $package->unixify_dir($subclass_dir);
+	$subclass_dir = File::Spec->abs2rel($subclass_dir, $base_dir);
+	$subclass_dir = $package->unixify_dir($subclass_dir);
         $subclass_load = "use lib '$subclass_dir';";
       }
       # Otherwise, leave it the empty string
@@ -174,10 +174,10 @@ EOF
 
       require ExtUtils::MakeMaker;
       my $yn = ExtUtils::MakeMaker::prompt
-        ('  Install Module::Build now from CPAN?', 'y');
+	('  Install Module::Build now from CPAN?', 'y');
 
       unless ($yn =~ /^y/i) {
-        die " *** Cannot install without Module::Build.  Exiting ...\n";
+	die " *** Cannot install without Module::Build.  Exiting ...\n";
       }
 
       require Cwd;
@@ -189,7 +189,7 @@ EOF
 
       CPAN::Shell->install('Module::Build::Compat');
       CPAN::Shell->expand("Module", "Module::Build::Compat")->uptodate
-        or die "Couldn't install Module::Build, giving up.\n";
+	or die "Couldn't install Module::Build, giving up.\n";
 
       chdir $cwd or die "Cannot chdir() back to $cwd: $!";
     }
@@ -212,13 +212,13 @@ EOF
     }
 
     my %name = ($build->module_name
-                ? (NAME => $build->module_name)
-                : (DISTNAME => $build->dist_name));
+		? (NAME => $build->module_name)
+		: (DISTNAME => $build->dist_name));
 
     my %version = ($build->dist_version_from
-                   ? (VERSION_FROM => $build->dist_version_from)
-                   : (VERSION      => $build->dist_version)
-                  );
+		   ? (VERSION_FROM => $build->dist_version_from)
+		   : (VERSION      => $build->dist_version)
+		  );
     %MM_Args = (%name, %version);
 
     %prereq = _merge_prereq( $build->requires, $build->build_requires );
@@ -260,7 +260,7 @@ sub subclass_dir {
   my ($self, $build) = @_;
 
   return (Module::Build::ModuleInfo->find_module_dir_by_name(ref $build)
-          || File::Spec->catdir($build->config_dir, 'lib'));
+	  || File::Spec->catdir($build->config_dir, 'lib'));
 }
 
 sub unixify_dir {
@@ -275,7 +275,7 @@ sub makefile_to_build_args {
     next if $arg eq '';
 
     my ($key, $val) = ($arg =~ /^(\w+)=(.+)/ ? ($1, $2) :
-                       die "Malformed argument '$arg'");
+		       die "Malformed argument '$arg'");
 
     # Do tilde-expansion if it looks like a tilde prefixed path
     ( $val ) = Module::Build->_detildefy( $val ) if $val =~ /^~/;
@@ -354,8 +354,8 @@ sub fake_makefile {
   $perl = 'MCR ' . $perl if $self->_is_vms_mms;
 
   my $noop = ($class->is_windowsish ? 'rem>nul'  :
-              $self->_is_vms_mms    ? 'Continue' :
-              'true');
+	      $self->_is_vms_mms    ? 'Continue' :
+	      'true');
 
   my $filetype = $class->is_vmsish ? '.COM' : '';
 
@@ -367,24 +367,24 @@ sub fake_makefile {
 
   $maketext .= <<"EOF";
 all : force_do_it
-        $perl $Build
+	$perl $Build
 realclean : force_do_it
-        $perl $Build realclean
-        $unlink
+	$perl $Build realclean
+	$unlink
 distclean : force_do_it
-        $perl $Build distclean
-        $unlink
+	$perl $Build distclean
+	$unlink
 
 
 force_do_it :
-        @ $noop
+	@ $noop
 EOF
 
   foreach my $action ($class->known_actions) {
     next if $action =~ /^(all|distclean|realclean|force_do_it)$/;  # Don't double-define
     $maketext .= <<"EOF";
 $action : force_do_it
-        $perl $Build $action
+	$perl $Build $action
 EOF
   }
 

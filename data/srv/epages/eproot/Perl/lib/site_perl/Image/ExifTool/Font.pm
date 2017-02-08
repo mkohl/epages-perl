@@ -474,7 +474,7 @@ sub ProcessOTF($$)
                     $tagInfo = $langInfo if $langInfo;
                 }
                 if ($verbose) {
-                        $langID > 0x400 and $langID = sprintf('0x%x', $langID);
+                	$langID > 0x400 and $langID = sprintf('0x%x', $langID);
                     $extra = ", Plat=$platform/" . ($sys || 'Unknown') . ', ' .
                                "Enc=$encoding/" . ($charset || 'Unknown') . ', ' .
                                "Lang=$langID/" . ($lang || 'Unknown');

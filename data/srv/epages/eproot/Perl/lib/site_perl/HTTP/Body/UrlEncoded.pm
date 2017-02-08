@@ -40,11 +40,11 @@ sub spin {
     my $self = shift;
 
     return unless $self->length == $self->content_length;
-
+    
     # I tested parsing this using APR::Request, but perl is faster
     # Pure-Perl    2560/s
     # APR::Request 2305/s
-
+    
     # Note: s/// appears faster than tr///
     $self->{buffer} =~ s/\+/ /g;
 
@@ -54,7 +54,7 @@ sub spin {
 
         next unless defined $name;
         next unless defined $value;
-
+        
         $name  =~ s/$DECODE/$hex_chr{$1}/gs;
         $value =~ s/$DECODE/$hex_chr{$1}/gs;
 
@@ -75,7 +75,7 @@ Andy Grundman, C<andy@hybridized.org>
 
 =head1 LICENSE
 
-This library is free software . You can redistribute it and/or modify
+This library is free software . You can redistribute it and/or modify 
 it under the same terms as perl itself.
 
 =cut

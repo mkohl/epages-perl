@@ -14,56 +14,56 @@ use CPAN::Meta::Requirements 2.120920;
 use Module::Metadata;
 
 sub _check_dep {
-        my ($reqs, $module, $dirs) = @_;
+	my ($reqs, $module, $dirs) = @_;
 
-        my $version = $module eq 'perl' ? $] : do {
-                my $metadata = Module::Metadata->new_from_module($module, inc => $dirs);
-                return "Module '$module' is not installed" if not defined $metadata;
-                eval { $metadata->version };
-        };
-        return "Missing version info for module '$module'" if $reqs->requirements_for_module($module) and not $version;
-        return sprintf 'Installed version (%s) of %s is not in range \'%s\'', $version, $module, $reqs->requirements_for_module($module) if not $reqs->accepts_module($module, $version || 0);
-        return;
+	my $version = $module eq 'perl' ? $] : do { 
+		my $metadata = Module::Metadata->new_from_module($module, inc => $dirs);
+		return "Module '$module' is not installed" if not defined $metadata;
+		eval { $metadata->version };
+	};
+	return "Missing version info for module '$module'" if $reqs->requirements_for_module($module) and not $version;
+	return sprintf 'Installed version (%s) of %s is not in range \'%s\'', $version, $module, $reqs->requirements_for_module($module) if not $reqs->accepts_module($module, $version || 0);
+	return;
 }
 
 sub _check_conflict {
-        my ($reqs, $module, $dirs) = @_;
-        my $metadata = Module::Metadata->new_from_module($module, inc => $dirs);
-        return if not defined $metadata;
-        my $version = eval { $metadata->version };
-        return "Missing version info for module '$module'" if not $version;
-        return sprintf 'Installed version (%s) of %s is in range \'%s\'', $version, $module, $reqs->requirements_for_module($module) if $reqs->accepts_module($module, $version);
-        return;
+	my ($reqs, $module, $dirs) = @_;
+	my $metadata = Module::Metadata->new_from_module($module, inc => $dirs);
+	return if not defined $metadata;
+	my $version = eval { $metadata->version };
+	return "Missing version info for module '$module'" if not $version;
+	return sprintf 'Installed version (%s) of %s is in range \'%s\'', $version, $module, $reqs->requirements_for_module($module) if $reqs->accepts_module($module, $version);
+	return;
 }
 
 sub requirements_for {
-        my ($meta, $phases, $type) = @_;
-        my $prereqs = ref($meta) eq 'CPAN::Meta' ? $meta->effective_prereqs : $meta;
-        return $prereqs->merged_requirements(ref($phases) ? $phases : [ $phases ], [ $type ]);
+	my ($meta, $phases, $type) = @_;
+	my $prereqs = ref($meta) eq 'CPAN::Meta' ? $meta->effective_prereqs : $meta;
+	return $prereqs->merged_requirements(ref($phases) ? $phases : [ $phases ], [ $type ]);
 }
 
 sub check_requirements {
-        my ($reqs, $type, $dirs) = @_;
+	my ($reqs, $type, $dirs) = @_;
 
-        my %ret;
-        if ($type ne 'conflicts') {
-                for my $module ($reqs->required_modules) {
-                        $ret{$module} = _check_dep($reqs, $module, $dirs);
-                }
-        }
-        else {
-                for my $module ($reqs->required_modules) {
-                        $ret{$module} = _check_conflict($reqs, $module, $dirs);
-                }
-        }
-        return \%ret;
+	my %ret;
+	if ($type ne 'conflicts') {
+		for my $module ($reqs->required_modules) {
+			$ret{$module} = _check_dep($reqs, $module, $dirs);
+		}
+	}
+	else {
+		for my $module ($reqs->required_modules) {
+			$ret{$module} = _check_conflict($reqs, $module, $dirs);
+		}
+	}
+	return \%ret;
 }
 
 sub verify_dependencies {
-        my ($meta, $phases, $type, $dirs) = @_;
-        my $reqs = requirements_for($meta, $phases, $type);
-        my $issues = check_requirements($reqs, $type, $dirs);
-        return grep { defined } values %{ $issues };
+	my ($meta, $phases, $type, $dirs) = @_;
+	my $reqs = requirements_for($meta, $phases, $type);
+	my $issues = check_requirements($reqs, $type, $dirs);
+	return grep { defined } values %{ $issues };
 }
 
 # vi:noet:sts=2:sw=2:ts=2

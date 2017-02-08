@@ -1,4 +1,4 @@
-#================================================================= -*-Perl-*-
+#================================================================= -*-Perl-*- 
 #
 # Template::Directive
 #
@@ -10,9 +10,9 @@
 #
 # WARNING
 #   Much of this module is hairy, even furry in places.  It needs
-#   a lot of tidying up and may even be moved into a different place
-#   altogether.  The generator code is often inefficient, particularly in
-#   being very anal about pretty-printing the Perl code all neatly, but
+#   a lot of tidying up and may even be moved into a different place 
+#   altogether.  The generator code is often inefficient, particularly in 
+#   being very anal about pretty-printing the Perl code all neatly, but 
 #   at the moment, that's still high priority for the sake of easier
 #   debugging.
 #
@@ -81,7 +81,7 @@ sub {
     my \$stash   = \$context->stash;
     my \$output  = '';
     my \$_tt_error;
-
+    
     eval { BLOCK: {
 $block
     } };
@@ -110,7 +110,7 @@ sub anon_block {
 $OUTPUT do {
     my \$output  = '';
     my \$_tt_error;
-
+    
     eval { BLOCK: {
 $block
     } };
@@ -184,13 +184,13 @@ sub ident {
     my $ns;
 
     # Careful!  Template::Parser always creates a Template::Directive object
-    # (as of v2.22_1) so $self is usually an object.  However, we used to
-    # allow Template::Directive methods to be called as class methods and
+    # (as of v2.22_1) so $self is usually an object.  However, we used to 
+    # allow Template::Directive methods to be called as class methods and 
     # Template::Namespace::Constants module takes advantage of this fact
     # by calling Template::Directive->ident() when it needs to generate an
     # identifier.  This hack guards against Mr Fuckup from coming to town
     # when that happens.
-
+    
     if (ref $self) {
         # trace variable usage
         if ($self->{ TRACE_VARS }) {
@@ -215,7 +215,7 @@ sub ident {
             }
         }
     }
-
+        
     if (scalar @$ident <= 2 && ! $ident->[1]) {
         $ident = $ident->[0];
     }
@@ -297,7 +297,7 @@ sub filenames {
 #------------------------------------------------------------------------
 
 sub get {
-    my ($self, $expr) = @_;
+    my ($self, $expr) = @_;  
     return "$OUTPUT $expr;";
 }
 
@@ -307,7 +307,7 @@ sub get {
 #------------------------------------------------------------------------
 
 sub call {
-    my ($self, $expr) = @_;
+    my ($self, $expr) = @_;  
     $expr .= ';';
     return $expr;
 }
@@ -333,7 +333,7 @@ sub set {
 #------------------------------------------------------------------------
 
 sub default {
-    my ($self, $setlist) = @_;
+    my ($self, $setlist) = @_;  
     my $output;
     while (my ($var, $val) = splice(@$setlist, 0, 2)) {
         $output .= &assign($self, $var, $val, 1) . ";\n";
@@ -344,7 +344,7 @@ sub default {
 
 
 #------------------------------------------------------------------------
-# insert(\@nameargs)                                    [% INSERT file %]
+# insert(\@nameargs)                                    [% INSERT file %] 
 #         # => [ [ $file, ... ], \@args ]
 #------------------------------------------------------------------------
 
@@ -352,13 +352,13 @@ sub insert {
     my ($self, $nameargs) = @_;
     my ($file, $args) = @$nameargs;
     $file = $self->filenames($file);
-    return "$OUTPUT \$context->insert($file);";
+    return "$OUTPUT \$context->insert($file);"; 
 }
 
 
 #------------------------------------------------------------------------
-# include(\@nameargs)                    [% INCLUDE template foo = bar %]
-#          # => [ [ $file, ... ], \@args ]
+# include(\@nameargs)                    [% INCLUDE template foo = bar %] 
+#          # => [ [ $file, ... ], \@args ]    
 #------------------------------------------------------------------------
 
 sub include {
@@ -367,12 +367,12 @@ sub include {
     my $hash = shift @$args;
     $file = $self->filenames($file);
     $file .= @$hash ? ', { ' . join(', ', @$hash) . ' }' : '';
-    return "$OUTPUT \$context->include($file);";
+    return "$OUTPUT \$context->include($file);"; 
 }
 
 
 #------------------------------------------------------------------------
-# process(\@nameargs)                    [% PROCESS template foo = bar %]
+# process(\@nameargs)                    [% PROCESS template foo = bar %] 
 #         # => [ [ $file, ... ], \@args ]
 #------------------------------------------------------------------------
 
@@ -382,7 +382,7 @@ sub process {
     my $hash = shift @$args;
     $file = $self->filenames($file);
     $file .= @$hash ? ', { ' . join(', ', @$hash) . ' }' : '';
-    return "$OUTPUT \$context->process($file);";
+    return "$OUTPUT \$context->process($file);"; 
 }
 
 
@@ -446,14 +446,14 @@ sub foreach {
 
     return <<EOF;
 
-# FOREACH
+# FOREACH 
 do {
     my (\$_tt_value, \$_tt_error, \$_tt_oldloop);
     my \$_tt_list = $list;
-
+    
     unless (UNIVERSAL::isa(\$_tt_list, 'Template::Iterator')) {
         \$_tt_list = Template::Config->iterator(\$_tt_list)
-            || die \$Template::Config::ERROR, "\\n";
+            || die \$Template::Config::ERROR, "\\n"; 
     }
 
     (\$_tt_value, \$_tt_error) = \$_tt_list->get_first();
@@ -491,8 +491,8 @@ EOF
 
 
 #------------------------------------------------------------------------
-# wrapper(\@nameargs, $block)            [% WRAPPER template foo = bar %]
-#          # => [ [$file,...], \@args ]
+# wrapper(\@nameargs, $block)            [% WRAPPER template foo = bar %] 
+#          # => [ [$file,...], \@args ]    
 #------------------------------------------------------------------------
 
 sub wrapper {
@@ -517,7 +517,7 @@ sub wrapper {
 $OUTPUT do {
     my \$output = '';
 $block
-    \$context->include($file);
+    \$context->include($file); 
 };
 EOF
 }
@@ -540,7 +540,7 @@ $OUTPUT do {
     my \$output = '';
 $block
     foreach ($file) {
-        \$output = \$context->include(\$_$hash);
+        \$output = \$context->include(\$_$hash); 
     }
     \$output;
 };
@@ -625,7 +625,7 @@ EOF
 #------------------------------------------------------------------------
 # try($block, \@catch)                                        [% TRY %]
 #                                                                ...
-#                                                             [% CATCH %]
+#                                                             [% CATCH %] 
 #                                                                ...
 #                                                             [% END %]
 #------------------------------------------------------------------------
@@ -652,8 +652,8 @@ sub try {
         $mblock = $catch->[1];
         $mblock = pad($mblock, 1) if $PRETTY;
         push(@$handlers, "'$match'");
-        $catchblock .= $n++
-            ? "elsif (\$_tt_handler eq '$match') {\n$mblock\n}\n"
+        $catchblock .= $n++ 
+            ? "elsif (\$_tt_handler eq '$match') {\n$mblock\n}\n" 
                : "if (\$_tt_handler eq '$match') {\n$mblock\n}\n";
     }
     $catchblock .= "\$_tt_error = 0;";
@@ -713,10 +713,10 @@ sub throw {
     elsif (@$hash || @$args) {
         local $" = ', ';
         my $i = 0;
-        $args = "$type, { args => [ "
-              . join(', ', $info, @$args)
+        $args = "$type, { args => [ " 
+              . join(', ', $info, @$args) 
               . ' ], '
-              . join(', ',
+              . join(', ', 
                      (map { "'" . $i++ . "' => $_" } ($info, @$args)),
                      @$hash)
               . ' }';
@@ -724,7 +724,7 @@ sub throw {
     else {
         $args = "$type, $info";
     }
-
+    
     return "\$context->throw($args, \\\$output);";
 }
 
@@ -778,7 +778,7 @@ sub use {
     $alias ||= $file;
     $args = &args($self, $args);
     $file .= ", $args" if $args;
-#    my $set = &assign($self, $alias, '$plugin');
+#    my $set = &assign($self, $alias, '$plugin'); 
     return "# USE\n"
          . "\$stash->set($alias,\n"
          . "            \$context->plugin($file));";
@@ -907,7 +907,7 @@ sub filter {
         if $alias;
     $name .= ", $args" if $args;
     $block = pad($block, 1) if $PRETTY;
-
+ 
     return <<EOF;
 
 # FILTER
@@ -917,7 +917,7 @@ $OUTPUT do {
               || \$context->throw(\$context->error);
 
 $block
-
+    
     &\$_tt_filter(\$output);
 };
 EOF
@@ -965,7 +965,7 @@ sub macro {
     if ($args) {
         my $nargs = scalar @$args;
         $args = join(', ', map { "'$_'" } @$args);
-        $args = $nargs > 1
+        $args = $nargs > 1 
             ? "\@_tt_args{ $args } = splice(\@_, 0, $nargs)"
             : "\$_tt_args{ $args } = shift";
 
@@ -1018,7 +1018,7 @@ sub debug {
     my $hash = shift @$args;
     $args  = join(', ', @$file, @$args);
     $args .= @$hash ? ', { ' . join(', ', @$hash) . ' }' : '';
-    return "$OUTPUT \$context->debugging($args); ## DEBUG ##";
+    return "$OUTPUT \$context->debugging($args); ## DEBUG ##"; 
 }
 
 
@@ -1037,7 +1037,7 @@ Template::Directive - Perl code generator for template directives
 =head1 DESCRIPTION
 
 The C<Template::Directive> module defines a number of methods that
-generate Perl code for the runtime representation of the various
+generate Perl code for the runtime representation of the various 
 Template Toolkit directives.
 
 It is used internally by the L<Template::Parser> module.

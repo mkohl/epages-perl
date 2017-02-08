@@ -5,41 +5,41 @@ crypt()
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::DESCrypt;
+	use Authen::Passphrase::DESCrypt;
 
-        $ppr = Authen::Passphrase::DESCrypt->new(
-                        salt_base64 => "my",
-                        hash_base64 => "TYK.j.88/9s");
+	$ppr = Authen::Passphrase::DESCrypt->new(
+			salt_base64 => "my",
+			hash_base64 => "TYK.j.88/9s");
 
-        $ppr = Authen::Passphrase::DESCrypt->new(
-                        salt_random => 12,
-                        passphrase => "passphrase");
+	$ppr = Authen::Passphrase::DESCrypt->new(
+			salt_random => 12,
+			passphrase => "passphrase");
 
-        $ppr = Authen::Passphrase::DESCrypt
-                ->from_crypt('myTYK.j.88/9s');
+	$ppr = Authen::Passphrase::DESCrypt
+		->from_crypt('myTYK.j.88/9s');
 
-        $ppr = Authen::Passphrase::DESCrypt->new(
-                        fold => 1,
-                        initial => "xyzzy!!!",
-                        nrounds => 500,
-                        salt_base64 => "quux",
-                        hash_base64 => "QCKcHlgVsRY");
+	$ppr = Authen::Passphrase::DESCrypt->new(
+			fold => 1,
+			initial => "xyzzy!!!",
+			nrounds => 500,
+			salt_base64 => "quux",
+			hash_base64 => "QCKcHlgVsRY");
 
-        $fold = $ppr->fold;
-        $initial = $ppr->initial;
-        $initial_base64 = $ppr->initial_base64;
-        $nrounds = $ppr->nrounds;
-        $nrounds_base64 = $ppr->nrounds_base64_4;
-        $salt = $ppr->salt;
-        $salt_base64 = $ppr->salt_base64_2;
-        $salt_base64 = $ppr->salt_base64_4;
-        $hash = $ppr->hash;
-        $hash_base64 = $ppr->hash_base64;
+	$fold = $ppr->fold;
+	$initial = $ppr->initial;
+	$initial_base64 = $ppr->initial_base64;
+	$nrounds = $ppr->nrounds;
+	$nrounds_base64 = $ppr->nrounds_base64_4;
+	$salt = $ppr->salt;
+	$salt_base64 = $ppr->salt_base64_2;
+	$salt_base64 = $ppr->salt_base64_4;
+	$hash = $ppr->hash;
+	$hash_base64 = $ppr->hash_base64;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $passwd = $ppr->as_crypt;
-        $userPassword = $ppr->as_rfc2307;
+	$passwd = $ppr->as_crypt;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -122,10 +122,10 @@ use strict;
 use Authen::Passphrase 0.003;
 use Carp qw(croak);
 use Crypt::UnixCrypt_XS 0.08 qw(
-        fold_password crypt_rounds
-        base64_to_block block_to_base64
-        base64_to_int24 int24_to_base64
-        base64_to_int12 int12_to_base64
+	fold_password crypt_rounds
+	base64_to_block block_to_base64
+	base64_to_int24 int24_to_base64
+	base64_to_int12 int12_to_base64
 );
 use Data::Entropy::Algorithms 0.000 qw(rand_int);
 
@@ -205,93 +205,93 @@ parameters default to those used in the original DES-based crypt().
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "fold") {
-                        croak "foldness specified redundantly"
-                                if exists $self->{fold};
-                        $self->{fold} = !!$value;
-                } elsif($attr eq "initial") {
-                        croak "initial block specified redundantly"
-                                if exists $self->{initial};
-                        $value =~ m#\A[\x00-\xff]{8}\z#
-                                or croak "not a valid raw block";
-                        $self->{initial} = "$value";
-                } elsif($attr eq "initial_base64") {
-                        croak "initial block specified redundantly"
-                                if exists $self->{initial};
-                        $value =~ m#\A[./0-9A-Za-z]{10}[.26AEIMQUYcgkosw]\z#
-                                or croak "\"$value\" is not a valid ".
-                                        "encoded block";
-                        $self->{initial} = base64_to_block($value);
-                } elsif($attr eq "nrounds") {
-                        croak "number of rounds specified redundantly"
-                                if exists $self->{nrounds};
-                        croak "\"$value\" is not a valid number of rounds"
-                                unless $value == int($value) && $value >= 0;
-                        $self->{nrounds} = 0+$value;
-                } elsif($attr eq "nrounds_base64") {
-                        croak "number of rounds specified redundantly"
-                                if exists $self->{nrounds};
-                        croak "\"$value\" is not a valid number of rounds"
-                                unless $value =~ m#\A[./0-9A-Za-z]{4}\z#;
-                        $self->{nrounds} = base64_to_int24($value);
-                } elsif($attr eq "salt") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        croak "\"$value\" is not a valid salt"
-                                unless $value == int($value) &&
-                                        $value >= 0 && $value < 16777216;
-                        $self->{salt} = 0+$value;
-                } elsif($attr eq "salt_base64") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $value =~ m#\A(?:[./0-9A-Za-z]{2}|[./0-9A-Za-z]{4})\z#
-                                or croak "\"$value\" is not a valid salt";
-                        $self->{salt} = length($value) == 2 ?
-                                base64_to_int12($value) :
-                                base64_to_int24($value);
-                } elsif($attr eq "salt_random") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        croak "\"$value\" is not a valid salt size"
-                                unless $value == 12 || $value == 24;
-                        $self->{salt} = rand_int(1 << $value);
-                } elsif($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[\x00-\xff]{8}\z#
-                                or croak "not a valid raw hash";
-                        $self->{hash} = "$value";
-                } elsif($attr eq "hash_base64") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[./0-9A-Za-z]{10}[.26AEIMQUYcgkosw]\z#
-                                or croak "\"$value\" is not a valid ".
-                                        "encoded hash";
-                        $self->{hash} = base64_to_block($value);
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        $self->{fold} = !!0 unless exists $self->{fold};
-        $self->{initial} = "\0\0\0\0\0\0\0\0" unless exists $self->{initial};
-        $self->{nrounds} = 25 unless exists $self->{nrounds};
-        croak "salt not specified" unless exists $self->{salt};
-        $self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
-        croak "hash not specified" unless exists $self->{hash};
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "fold") {
+			croak "foldness specified redundantly"
+				if exists $self->{fold};
+			$self->{fold} = !!$value;
+		} elsif($attr eq "initial") {
+			croak "initial block specified redundantly"
+				if exists $self->{initial};
+			$value =~ m#\A[\x00-\xff]{8}\z#
+				or croak "not a valid raw block";
+			$self->{initial} = "$value";
+		} elsif($attr eq "initial_base64") {
+			croak "initial block specified redundantly"
+				if exists $self->{initial};
+			$value =~ m#\A[./0-9A-Za-z]{10}[.26AEIMQUYcgkosw]\z#
+				or croak "\"$value\" is not a valid ".
+					"encoded block";
+			$self->{initial} = base64_to_block($value);
+		} elsif($attr eq "nrounds") {
+			croak "number of rounds specified redundantly"
+				if exists $self->{nrounds};
+			croak "\"$value\" is not a valid number of rounds"
+				unless $value == int($value) && $value >= 0;
+			$self->{nrounds} = 0+$value;
+		} elsif($attr eq "nrounds_base64") {
+			croak "number of rounds specified redundantly"
+				if exists $self->{nrounds};
+			croak "\"$value\" is not a valid number of rounds"
+				unless $value =~ m#\A[./0-9A-Za-z]{4}\z#;
+			$self->{nrounds} = base64_to_int24($value);
+		} elsif($attr eq "salt") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			croak "\"$value\" is not a valid salt"
+				unless $value == int($value) &&
+					$value >= 0 && $value < 16777216;
+			$self->{salt} = 0+$value;
+		} elsif($attr eq "salt_base64") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$value =~ m#\A(?:[./0-9A-Za-z]{2}|[./0-9A-Za-z]{4})\z#
+				or croak "\"$value\" is not a valid salt";
+			$self->{salt} = length($value) == 2 ?
+				base64_to_int12($value) :
+				base64_to_int24($value);
+		} elsif($attr eq "salt_random") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			croak "\"$value\" is not a valid salt size"
+				unless $value == 12 || $value == 24;
+			$self->{salt} = rand_int(1 << $value);
+		} elsif($attr eq "hash") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[\x00-\xff]{8}\z#
+				or croak "not a valid raw hash";
+			$self->{hash} = "$value";
+		} elsif($attr eq "hash_base64") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[./0-9A-Za-z]{10}[.26AEIMQUYcgkosw]\z#
+				or croak "\"$value\" is not a valid ".
+					"encoded hash";
+			$self->{hash} = base64_to_block($value);
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	$self->{fold} = !!0 unless exists $self->{fold};
+	$self->{initial} = "\0\0\0\0\0\0\0\0" unless exists $self->{initial};
+	$self->{nrounds} = 25 unless exists $self->{nrounds};
+	croak "salt not specified" unless exists $self->{salt};
+	$self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
+	croak "hash not specified" unless exists $self->{hash};
+	return $self;
 }
 
 =item Authen::Passphrase::DESCrypt->from_crypt(PASSWD)
@@ -312,21 +312,21 @@ Long passphrases are folded, and the initial block is all bits zero.
 =cut
 
 sub from_crypt {
-        my($class, $passwd) = @_;
-        if($passwd =~ /\A[^\$].{12}\z/s) {
-                $passwd =~ m#\A([./0-9A-Za-z]{2})([./0-9A-Za-z]{11})\z#
-                        or croak "malformed DES crypt data";
-                my($salt, $hash) = ($1, $2);
-                return $class->new(salt_base64 => $salt, hash_base64 => $hash);
-        } elsif($passwd =~ /\A_.{19}\z/s) {
-                $passwd =~ m#\A_([./0-9A-Za-z]{4})([./0-9A-Za-z]{4})
-                                ([./0-9A-Za-z]{11})\z#x
-                        or croak "malformed _ data";
-                my($nr, $salt, $hash) = ($1, $2, $3);
-                return $class->new(fold => 1, nrounds_base64 => $nr,
-                                   salt_base64 => $salt, hash_base64 => $hash);
-        }
-        return $class->SUPER::from_crypt($passwd);
+	my($class, $passwd) = @_;
+	if($passwd =~ /\A[^\$].{12}\z/s) {
+		$passwd =~ m#\A([./0-9A-Za-z]{2})([./0-9A-Za-z]{11})\z#
+			or croak "malformed DES crypt data";
+		my($salt, $hash) = ($1, $2);
+		return $class->new(salt_base64 => $salt, hash_base64 => $hash);
+	} elsif($passwd =~ /\A_.{19}\z/s) {
+		$passwd =~ m#\A_([./0-9A-Za-z]{4})([./0-9A-Za-z]{4})
+				([./0-9A-Za-z]{11})\z#x
+			or croak "malformed _ data";
+		my($nr, $salt, $hash) = ($1, $2, $3);
+		return $class->new(fold => 1, nrounds_base64 => $nr,
+				   salt_base64 => $salt, hash_base64 => $hash);
+	}
+	return $class->SUPER::from_crypt($passwd);
 }
 
 =item Authen::Passphrase::DESCrypt->from_rfc2307(USERPASSWORD)
@@ -348,8 +348,8 @@ Returns a truth value indicating whether passphrase folding is used.
 =cut
 
 sub fold {
-        my($self) = @_;
-        return $self->{fold};
+	my($self) = @_;
+	return $self->{fold};
 }
 
 =item $ppr->initial
@@ -359,8 +359,8 @@ Returns the initial block, as a string of eight bytes.
 =cut
 
 sub initial {
-        my($self) = @_;
-        return $self->{initial};
+	my($self) = @_;
+	return $self->{initial};
 }
 
 =item $ppr->initial_base64
@@ -370,8 +370,8 @@ Returns the initial block, as a string of eleven base 64 digits.
 =cut
 
 sub initial_base64 {
-        my($self) = @_;
-        return block_to_base64($self->{initial});
+	my($self) = @_;
+	return block_to_base64($self->{initial});
 }
 
 =item $ppr->nrounds
@@ -381,8 +381,8 @@ Returns the number of encryption rounds, as a Perl integer.
 =cut
 
 sub nrounds {
-        my($self) = @_;
-        return $self->{nrounds};
+	my($self) = @_;
+	return $self->{nrounds};
 }
 
 =item $ppr->nrounds_base64_4
@@ -393,8 +393,8 @@ Returns the number of encryption rounds, as a string of four base
 =cut
 
 sub nrounds_base64_4 {
-        my($self) = @_;
-        return int24_to_base64($self->{nrounds});
+	my($self) = @_;
+	return int24_to_base64($self->{nrounds});
 }
 
 =item $ppr->salt
@@ -404,8 +404,8 @@ Returns the salt, as a Perl integer.
 =cut
 
 sub salt {
-        my($self) = @_;
-        return $self->{salt};
+	my($self) = @_;
+	return $self->{salt};
 }
 
 =item $ppr->salt_base64_2
@@ -416,10 +416,10 @@ doesn't fit into two digits.
 =cut
 
 sub salt_base64_2 {
-        my($self) = @_;
-        my $salt = $self->{salt};
-        croak "salt $salt doesn't fit into two digits" if $salt >= 4096;
-        return int12_to_base64($salt);
+	my($self) = @_;
+	my $salt = $self->{salt};
+	croak "salt $salt doesn't fit into two digits" if $salt >= 4096;
+	return int12_to_base64($salt);
 }
 
 =item $ppr->salt_base64_4
@@ -429,8 +429,8 @@ Returns the salt, as a string of four base 64 digits.
 =cut
 
 sub salt_base64_4 {
-        my($self) = @_;
-        return int24_to_base64($self->{salt});
+	my($self) = @_;
+	return int24_to_base64($self->{salt});
 }
 
 =item $ppr->hash
@@ -440,8 +440,8 @@ Returns the hash value, as a string of eight bytes.
 =cut
 
 sub hash {
-        my($self) = @_;
-        return $self->{hash};
+	my($self) = @_;
+	return $self->{hash};
 }
 
 =item $ppr->hash_base64
@@ -451,8 +451,8 @@ Returns the hash value, as a string of eleven base 64 digits.
 =cut
 
 sub hash_base64 {
-        my($self) = @_;
-        return block_to_base64($self->{hash});
+	my($self) = @_;
+	return block_to_base64($self->{hash});
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -468,28 +468,28 @@ These methods are part of the standard L<Authen::Passphrase> interface.
 
 
 sub _hash_of {
-        my($self, $passphrase) = @_;
-        $passphrase = fold_password($passphrase) if $self->{fold};
-        return crypt_rounds($passphrase, $self->{nrounds}, $self->{salt},
-                            $self->{initial});
+	my($self, $passphrase) = @_;
+	$passphrase = fold_password($passphrase) if $self->{fold};
+	return crypt_rounds($passphrase, $self->{nrounds}, $self->{salt},
+			    $self->{initial});
 }
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $self->_hash_of($passphrase) eq $self->{hash};
+	my($self, $passphrase) = @_;
+	return $self->_hash_of($passphrase) eq $self->{hash};
 }
 
 sub as_crypt {
-        my($self) = @_;
-        if(!$self->{fold} && $self->{initial} eq "\0\0\0\0\0\0\0\0" &&
-                        $self->{nrounds} == 25 && $self->{salt} < 4096) {
-                return $self->salt_base64_2.$self->hash_base64;
-        } elsif($self->{fold} && $self->{initial} eq "\0\0\0\0\0\0\0\0") {
-                return "_".$self->nrounds_base64_4.$self->salt_base64_4.
-                        $self->hash_base64;
-        } else {
-                croak "passphrase can't be expressed as a crypt string";
-        }
+	my($self) = @_;
+	if(!$self->{fold} && $self->{initial} eq "\0\0\0\0\0\0\0\0" &&
+			$self->{nrounds} == 25 && $self->{salt} < 4096) {
+		return $self->salt_base64_2.$self->hash_base64;
+	} elsif($self->{fold} && $self->{initial} eq "\0\0\0\0\0\0\0\0") {
+		return "_".$self->nrounds_base64_4.$self->salt_base64_4.
+			$self->hash_base64;
+	} else {
+		croak "passphrase can't be expressed as a crypt string";
+	}
 }
 
 =back

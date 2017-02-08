@@ -112,7 +112,7 @@ sub out
 
     return $self->SUPER::out($fh) unless $self->{' read'};
     $fh->print(TTF_Pack("v", $self->{'version'}));
-
+    
     if ($self->{'version'} == 0.5)
     { $fh->print(pack("n", $self->{'numGlyphs'})); }
     else
@@ -154,7 +154,7 @@ sub update
 
     foreach ('prep', 'fpgm')
     { $m[4] = length($self->{' PARENT'}{$_}{' dat'})
-            if (defined $self->{' PARENT'}{$_}
+            if (defined $self->{' PARENT'}{$_} 
                 && length($self->{' PARENT'}{$_}{' dat'}) > $m[4]);
     }
 

@@ -53,11 +53,11 @@ sub perl_version_introduced {
 # the string.
 sub __PPIX_TOKEN__recognize {
     return (
-        [ qr{ \A \( \? (?: ( [-+]? \d+ )) \) }smx, { is_named => 0 } ],
-        [ qr{ \A \( \? (?: R) \) }smx,
-            { is_named => 0, capture => '0' } ],
-        [ qr{ \A \( \?  (?: & | P> ) ( @{[ RE_CAPTURE_NAME ]} ) \) }smxo,
-            { is_named => 1 } ],
+	[ qr{ \A \( \? (?: ( [-+]? \d+ )) \) }smx, { is_named => 0 } ],
+	[ qr{ \A \( \? (?: R) \) }smx,
+	    { is_named => 0, capture => '0' } ],
+	[ qr{ \A \( \?  (?: & | P> ) ( @{[ RE_CAPTURE_NAME ]} ) \) }smxo,
+	    { is_named => 1 } ],
     );
 }
 

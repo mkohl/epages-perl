@@ -4,16 +4,16 @@ package Net::AMQP::Protocol::v0_8;
 
 =head1 NAME
 
-Net::AMQP::Protocol::v0_8 - AMQP v0.8 (de)serialization and representation
+Net::AMQP::Protocol::v0_8 - AMQP v0.8 (de)serialization and representation 
 
 =head1 SYNOPSIS
 
   use Net::AMQP::Protocol::v0_8;
-
+  
   ...
 
   my @frames = Net::AMQP->parse_raw_frames(\$input);
-
+  
   ...
 
   my $frame = Net::AMQP::Frame::Method->new(
@@ -33,7 +33,7 @@ Net::AMQP::Protocol::v0_8 - AMQP v0.8 (de)serialization and representation
 
 =head1 DESCRIPTION
 
-This module implements the frame (de)serialization and representation of the Advanced Message Queue Protocol (http://www.amqp.org/) version 0.8.
+This module implements the frame (de)serialization and representation of the Advanced Message Queue Protocol (http://www.amqp.org/) version 0.8.   
 
 It is to be used in conjunction with client or server software that does the actual TCP/IP communication.
 
@@ -70,7 +70,7 @@ sub as_string_ref {
 
 This class implements the class B<Connection> method B<Start>, which is a synchronous method.
 
-This method starts the connection negotiation process by telling the client the protocol version that the server proposes, along with a list of security mechanisms which the client can use for authentication.
+This method starts the connection negotiation process by telling the client the protocol version that the server proposes, along with a list of security mechanisms which the client can use for authentication. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -78,31 +78,31 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<version_major> (type: octet)
 
-Protocol major version
+Protocol major version 
 
-The protocol major version that the server agrees to use, which cannot be higher than the client's major version.
+The protocol major version that the server agrees to use, which cannot be higher than the client's major version. 
 
 =item I<version_minor> (type: octet)
 
-Protocol major version
+Protocol major version 
 
-The protocol minor version that the server agrees to use, which cannot be higher than the client's minor version.
+The protocol minor version that the server agrees to use, which cannot be higher than the client's minor version. 
 
 =item I<server_properties> (type: table)
 
-Server properties
+Server properties 
 
 =item I<mechanisms> (type: longstr)
 
-Available security mechanisms
+Available security mechanisms 
 
-A list of the security mechanisms that the server supports, delimited by spaces. Currently ASL supports these mechanisms: PLAIN.
+A list of the security mechanisms that the server supports, delimited by spaces. Currently ASL supports these mechanisms: PLAIN. 
 
 =item I<locales> (type: longstr)
 
-Available message locales
+Available message locales 
 
-A list of the message locales that the server supports, delimited by spaces. The locale defines the language in which the server will send reply texts.
+A list of the message locales that the server supports, delimited by spaces. The locale defines the language in which the server will send reply texts. 
 
 =back
 
@@ -110,7 +110,7 @@ A list of the message locales that the server supports, delimited by spaces. The
 
 This class implements the class B<Connection> method B<StartOk>, which is a synchronous method.
 
-This method selects a SASL security mechanism. ASL uses SASL (RFC2222) to negotiate authentication and encryption.
+This method selects a SASL security mechanism. ASL uses SASL (RFC2222) to negotiate authentication and encryption. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -118,25 +118,25 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<client_properties> (type: table)
 
-Client properties
+Client properties 
 
 =item I<mechanism> (type: shortstr)
 
-Selected security mechanism
+Selected security mechanism 
 
-A single security mechanisms selected by the client, which must be one of those specified by the server.
+A single security mechanisms selected by the client, which must be one of those specified by the server. 
 
 =item I<response> (type: longstr)
 
-Security response data
+Security response data 
 
-A block of opaque data passed to the security mechanism. The contents of this data are defined by the SASL security mechanism. For the PLAIN security mechanism this is defined as a field table holding two fields, LOGIN and PASSWORD.
+A block of opaque data passed to the security mechanism. The contents of this data are defined by the SASL security mechanism. For the PLAIN security mechanism this is defined as a field table holding two fields, LOGIN and PASSWORD. 
 
 =item I<locale> (type: shortstr)
 
-Selected message locale
+Selected message locale 
 
-A single message local selected by the client, which must be one of those specified by the server.
+A single message local selected by the client, which must be one of those specified by the server. 
 
 =back
 
@@ -144,7 +144,7 @@ A single message local selected by the client, which must be one of those specif
 
 This class implements the class B<Connection> method B<Secure>, which is a synchronous method.
 
-The SASL protocol works by exchanging challenges and responses until both peers have received sufficient information to authenticate each other. This method challenges the client to provide more information.
+The SASL protocol works by exchanging challenges and responses until both peers have received sufficient information to authenticate each other. This method challenges the client to provide more information. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -152,9 +152,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<challenge> (type: longstr)
 
-Security challenge data
+Security challenge data 
 
-Challenge information, a block of opaque binary data passed to the security mechanism.
+Challenge information, a block of opaque binary data passed to the security mechanism. 
 
 =back
 
@@ -162,7 +162,7 @@ Challenge information, a block of opaque binary data passed to the security mech
 
 This class implements the class B<Connection> method B<SecureOk>, which is a synchronous method.
 
-This method attempts to authenticate, passing a block of SASL data for the security mechanism at the server side.
+This method attempts to authenticate, passing a block of SASL data for the security mechanism at the server side. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -170,9 +170,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<response> (type: longstr)
 
-Security response data
+Security response data 
 
-A block of opaque data passed to the security mechanism. The contents of this data are defined by the SASL security mechanism.
+A block of opaque data passed to the security mechanism. The contents of this data are defined by the SASL security mechanism. 
 
 =back
 
@@ -180,7 +180,7 @@ A block of opaque data passed to the security mechanism. The contents of this da
 
 This class implements the class B<Connection> method B<Tune>, which is a synchronous method.
 
-This method proposes a set of connection configuration values to the client. The client can accept and/or adjust these.
+This method proposes a set of connection configuration values to the client. The client can accept and/or adjust these. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -188,21 +188,21 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<channel_max> (type: short)
 
-Proposed maximum channels
+Proposed maximum channels 
 
-The maximum total number of channels that the server allows per connection. Zero means that the server does not impose a fixed limit, but the number of allowed channels may be limited by available server resources.
+The maximum total number of channels that the server allows per connection. Zero means that the server does not impose a fixed limit, but the number of allowed channels may be limited by available server resources. 
 
 =item I<frame_max> (type: long)
 
-Proposed maximum frame size
+Proposed maximum frame size 
 
-The largest frame size that the server proposes for the connection. The client can negotiate a lower value. Zero means that the server does not impose any specific limit but may reject very large frames if it cannot allocate resources for them.
+The largest frame size that the server proposes for the connection. The client can negotiate a lower value. Zero means that the server does not impose any specific limit but may reject very large frames if it cannot allocate resources for them. 
 
 =item I<heartbeat> (type: short)
 
-Desired heartbeat delay
+Desired heartbeat delay 
 
-The delay, in seconds, of the connection heartbeat that the server wants. Zero means the server does not want a heartbeat.
+The delay, in seconds, of the connection heartbeat that the server wants. Zero means the server does not want a heartbeat. 
 
 =back
 
@@ -210,7 +210,7 @@ The delay, in seconds, of the connection heartbeat that the server wants. Zero m
 
 This class implements the class B<Connection> method B<TuneOk>, which is a synchronous method.
 
-This method sends the client's connection tuning parameters to the server. Certain fields are negotiated, others provide capability information.
+This method sends the client's connection tuning parameters to the server. Certain fields are negotiated, others provide capability information. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -218,21 +218,21 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<channel_max> (type: short)
 
-Negotiated maximum channels
+Negotiated maximum channels 
 
-The maximum total number of channels that the client will use per connection. May not be higher than the value specified by the server.
+The maximum total number of channels that the client will use per connection. May not be higher than the value specified by the server. 
 
 =item I<frame_max> (type: long)
 
-Negotiated maximum frame size
+Negotiated maximum frame size 
 
-The largest frame size that the client and server will use for the connection. Zero means that the client does not impose any specific limit but may reject very large frames if it cannot allocate resources for them. Note that the frame-max limit applies principally to content frames, where large contents can be broken into frames of arbitrary size.
+The largest frame size that the client and server will use for the connection. Zero means that the client does not impose any specific limit but may reject very large frames if it cannot allocate resources for them. Note that the frame-max limit applies principally to content frames, where large contents can be broken into frames of arbitrary size. 
 
 =item I<heartbeat> (type: short)
 
-Desired heartbeat delay
+Desired heartbeat delay 
 
-The delay, in seconds, of the connection heartbeat that the client wants. Zero means the client does not want a heartbeat.
+The delay, in seconds, of the connection heartbeat that the client wants. Zero means the client does not want a heartbeat. 
 
 =back
 
@@ -240,7 +240,7 @@ The delay, in seconds, of the connection heartbeat that the client wants. Zero m
 
 This class implements the class B<Connection> method B<Open>, which is a synchronous method.
 
-This method opens a connection to a virtual host, which is a collection of resources, and acts to separate multiple application domains within a server.
+This method opens a connection to a virtual host, which is a collection of resources, and acts to separate multiple application domains within a server. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -248,21 +248,21 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<virtual_host> (type: shortstr)
 
-Virtual host name
+Virtual host name 
 
-The name of the virtual host to work with.
+The name of the virtual host to work with. 
 
 =item I<capabilities> (type: shortstr)
 
-Required capabilities
+Required capabilities 
 
-The client may specify a number of capability names, delimited by spaces. The server can use this string to how to process the client's connection request.
+The client may specify a number of capability names, delimited by spaces. The server can use this string to how to process the client's connection request. 
 
 =item I<insist> (type: bit)
 
-Insist on connecting to server
+Insist on connecting to server 
 
-In a configuration with multiple load-sharing servers, the server may respond to a Connection.Open method with a Connection.Redirect. The insist option tells the server that the client is insisting on a connection to the specified server.
+In a configuration with multiple load-sharing servers, the server may respond to a Connection.Open method with a Connection.Redirect. The insist option tells the server that the client is insisting on a connection to the specified server. 
 
 =back
 
@@ -270,7 +270,7 @@ In a configuration with multiple load-sharing servers, the server may respond to
 
 This class implements the class B<Connection> method B<OpenOk>, which is a synchronous method.
 
-This method signals to the client that the connection is ready for use.
+This method signals to the client that the connection is ready for use. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -284,7 +284,7 @@ Each of the following represents a field in the specification. These are the opt
 
 This class implements the class B<Connection> method B<Redirect>, which is a synchronous method.
 
-This method redirects the client to another server, based on the requested virtual host and/or capabilities.
+This method redirects the client to another server, based on the requested virtual host and/or capabilities. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -292,9 +292,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<host> (type: shortstr)
 
-Server to connect to
+Server to connect to 
 
-Specifies the server to connect to. This is an IP address or a DNS name, optionally followed by a colon and a port number. If no port number is specified, the client should use the default port number for the protocol.
+Specifies the server to connect to. This is an IP address or a DNS name, optionally followed by a colon and a port number. If no port number is specified, the client should use the default port number for the protocol. 
 
 =item I<known_hosts> (type: shortstr)
 
@@ -304,7 +304,7 @@ Specifies the server to connect to. This is an IP address or a DNS name, optiona
 
 This class implements the class B<Connection> method B<Close>, which is a synchronous method.
 
-This method indicates that the sender wants to close the connection. This may be due to internal conditions (e.g. a forced shut-down) or due to an error handling a specific method, i.e. an exception. When a close is due to an exception, the sender provides the class and method id of the method which caused the exception.
+This method indicates that the sender wants to close the connection. This may be due to internal conditions (e.g. a forced shut-down) or due to an error handling a specific method, i.e. an exception. When a close is due to an exception, the sender provides the class and method id of the method which caused the exception. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -316,15 +316,15 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<class_id> (type: short)
 
-Failing method class
+Failing method class 
 
-When the close is provoked by a method exception, this is the class of the method.
+When the close is provoked by a method exception, this is the class of the method. 
 
 =item I<method_id> (type: short)
 
-Failing method ID
+Failing method ID 
 
-When the close is provoked by a method exception, this is the ID of the method.
+When the close is provoked by a method exception, this is the ID of the method. 
 
 =back
 
@@ -332,7 +332,7 @@ When the close is provoked by a method exception, this is the ID of the method.
 
 This class implements the class B<Connection> method B<CloseOk>, which is a synchronous method.
 
-This method confirms a Connection.Close method and tells the recipient that it is safe to release resources for the connection and close the socket.
+This method confirms a Connection.Close method and tells the recipient that it is safe to release resources for the connection and close the socket. 
 
 This class has no fields nor accessors.
 
@@ -340,7 +340,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Channel> method B<Open>, which is a synchronous method.
 
-This method opens a virtual connection (a channel).
+This method opens a virtual connection (a channel). 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -348,9 +348,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<out_of_band> (type: shortstr)
 
-Out-of-band settings
+Out-of-band settings 
 
-Configures out-of-band transfers on this channel. The syntax and meaning of this field will be formally defined at a later date.
+Configures out-of-band transfers on this channel. The syntax and meaning of this field will be formally defined at a later date. 
 
 =back
 
@@ -358,7 +358,7 @@ Configures out-of-band transfers on this channel. The syntax and meaning of this
 
 This class implements the class B<Channel> method B<OpenOk>, which is a synchronous method.
 
-This method signals to the client that the channel is ready for use.
+This method signals to the client that the channel is ready for use. 
 
 This class has no fields nor accessors.
 
@@ -366,7 +366,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Channel> method B<Flow>, which is a synchronous method.
 
-This method asks the peer to pause or restart the flow of content data. This is a simple flow-control mechanism that a peer can use to avoid oveflowing its queues or otherwise finding itself receiving more messages than it can process. Note that this method is not intended for window control. The peer that receives a request to stop sending content should finish sending the current content, if any, and then wait until it receives a Flow restart method.
+This method asks the peer to pause or restart the flow of content data. This is a simple flow-control mechanism that a peer can use to avoid oveflowing its queues or otherwise finding itself receiving more messages than it can process. Note that this method is not intended for window control. The peer that receives a request to stop sending content should finish sending the current content, if any, and then wait until it receives a Flow restart method. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -374,9 +374,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<active> (type: bit)
 
-Start/stop content frames
+Start/stop content frames 
 
-If 1, the peer starts sending content frames. If 0, the peer stops sending content frames.
+If 1, the peer starts sending content frames. If 0, the peer stops sending content frames. 
 
 =back
 
@@ -384,7 +384,7 @@ If 1, the peer starts sending content frames. If 0, the peer stops sending conte
 
 This class implements the class B<Channel> method B<FlowOk>, which is an asynchronous method.
 
-Confirms to the peer that a flow command was received and processed.
+Confirms to the peer that a flow command was received and processed. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -392,9 +392,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<active> (type: bit)
 
-Current flow setting
+Current flow setting 
 
-Confirms the setting of the processed flow method: 1 means the peer will start sending or continue to send content frames; 0 means it will not.
+Confirms the setting of the processed flow method: 1 means the peer will start sending or continue to send content frames; 0 means it will not. 
 
 =back
 
@@ -402,7 +402,7 @@ Confirms the setting of the processed flow method: 1 means the peer will start s
 
 This class implements the class B<Channel> method B<Alert>, which is an asynchronous method.
 
-This method allows the server to send a non-fatal warning to the client. This is used for methods that are normally asynchronous and thus do not have confirmations, and for which the server may detect errors that need to be reported. Fatal errors are handled as channel or connection exceptions; non-fatal errors are sent through this method.
+This method allows the server to send a non-fatal warning to the client. This is used for methods that are normally asynchronous and thus do not have confirmations, and for which the server may detect errors that need to be reported. Fatal errors are handled as channel or connection exceptions; non-fatal errors are sent through this method. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -414,9 +414,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<details> (type: table)
 
-Detailed information for warning
+Detailed information for warning 
 
-A set of fields that provide more information about the problem. The meaning of these fields are defined on a per-reply-code basis (TO BE DEFINED).
+A set of fields that provide more information about the problem. The meaning of these fields are defined on a per-reply-code basis (TO BE DEFINED). 
 
 =back
 
@@ -424,7 +424,7 @@ A set of fields that provide more information about the problem. The meaning of 
 
 This class implements the class B<Channel> method B<Close>, which is a synchronous method.
 
-This method indicates that the sender wants to close the channel. This may be due to internal conditions (e.g. a forced shut-down) or due to an error handling a specific method, i.e. an exception. When a close is due to an exception, the sender provides the class and method id of the method which caused the exception.
+This method indicates that the sender wants to close the channel. This may be due to internal conditions (e.g. a forced shut-down) or due to an error handling a specific method, i.e. an exception. When a close is due to an exception, the sender provides the class and method id of the method which caused the exception. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -436,15 +436,15 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<class_id> (type: short)
 
-Failing method class
+Failing method class 
 
-When the close is provoked by a method exception, this is the class of the method.
+When the close is provoked by a method exception, this is the class of the method. 
 
 =item I<method_id> (type: short)
 
-Failing method ID
+Failing method ID 
 
-When the close is provoked by a method exception, this is the ID of the method.
+When the close is provoked by a method exception, this is the ID of the method. 
 
 =back
 
@@ -452,7 +452,7 @@ When the close is provoked by a method exception, this is the ID of the method.
 
 This class implements the class B<Channel> method B<CloseOk>, which is a synchronous method.
 
-This method confirms a Channel.Close method and tells the recipient that it is safe to release resources for the channel and close the socket.
+This method confirms a Channel.Close method and tells the recipient that it is safe to release resources for the channel and close the socket. 
 
 This class has no fields nor accessors.
 
@@ -460,7 +460,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Access> method B<Request>, which is a synchronous method.
 
-This method requests an access ticket for an access realm. The server responds by granting the access ticket. If the client does not have access rights to the requested realm this causes a connection exception. Access tickets are a per-channel resource.
+This method requests an access ticket for an access realm. The server responds by granting the access ticket. If the client does not have access rights to the requested realm this causes a connection exception. Access tickets are a per-channel resource. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -468,37 +468,37 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<realm> (type: shortstr)
 
-Name of requested realm
+Name of requested realm 
 
 =item I<exclusive> (type: bit)
 
-Request exclusive access
+Request exclusive access 
 
-Request exclusive access to the realm. If the server cannot grant this - because there are other active tickets for the realm - it raises a channel exception.
+Request exclusive access to the realm. If the server cannot grant this - because there are other active tickets for the realm - it raises a channel exception. 
 
 =item I<passive> (type: bit)
 
-Request passive access
+Request passive access 
 
-Request message passive access to the specified access realm. Passive access lets a client get information about resources in the realm but not to make any changes to them.
+Request message passive access to the specified access realm. Passive access lets a client get information about resources in the realm but not to make any changes to them. 
 
 =item I<active> (type: bit)
 
-Request active access
+Request active access 
 
-Request message active access to the specified access realm. Acvtive access lets a client get create and delete resources in the realm.
+Request message active access to the specified access realm. Acvtive access lets a client get create and delete resources in the realm. 
 
 =item I<write> (type: bit)
 
-Request write access
+Request write access 
 
-Request write access to the specified access realm. Write access lets a client publish messages to all exchanges in the realm.
+Request write access to the specified access realm. Write access lets a client publish messages to all exchanges in the realm. 
 
 =item I<read> (type: bit)
 
-Request read access
+Request read access 
 
-Request read access to the specified access realm. Read access lets a client consume messages from queues in the realm.
+Request read access to the specified access realm. Read access lets a client consume messages from queues in the realm. 
 
 =back
 
@@ -506,7 +506,7 @@ Request read access to the specified access realm. Read access lets a client con
 
 This class implements the class B<Access> method B<RequestOk>, which is a synchronous method.
 
-This method provides the client with an access ticket. The access ticket is valid within the current channel and for the lifespan of the channel.
+This method provides the client with an access ticket. The access ticket is valid within the current channel and for the lifespan of the channel. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -520,7 +520,7 @@ Each of the following represents a field in the specification. These are the opt
 
 This class implements the class B<Exchange> method B<Declare>, which is a synchronous method.
 
-This method creates an exchange if it does not already exist, and if the exchange exists, verifies that it is of the correct and expected class.
+This method creates an exchange if it does not already exist, and if the exchange exists, verifies that it is of the correct and expected class. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -528,51 +528,51 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<ticket> (type: short)
 
-When a client defines a new exchange, this belongs to the access realm of the ticket used. All further work done with that exchange must be done with an access ticket for the same realm.
+When a client defines a new exchange, this belongs to the access realm of the ticket used. All further work done with that exchange must be done with an access ticket for the same realm. 
 
 =item I<exchange> (type: shortstr)
 
 =item I<type> (type: shortstr)
 
-Exchange type
+Exchange type 
 
-Each exchange belongs to one of a set of exchange types implemented by the server. The exchange types define the functionality of the exchange - i.e. how messages are routed through it. It is not valid or meaningful to attempt to change the type of an existing exchange.
+Each exchange belongs to one of a set of exchange types implemented by the server. The exchange types define the functionality of the exchange - i.e. how messages are routed through it. It is not valid or meaningful to attempt to change the type of an existing exchange. 
 
 =item I<passive> (type: bit)
 
-Do not create exchange
+Do not create exchange 
 
-If set, the server will not create the exchange. The client can use this to check whether an exchange exists without modifying the server state.
+If set, the server will not create the exchange. The client can use this to check whether an exchange exists without modifying the server state. 
 
 =item I<durable> (type: bit)
 
-Request a durable exchange
+Request a durable exchange 
 
-If set when creating a new exchange, the exchange will be marked as durable. Durable exchanges remain active when a server restarts. Non-durable exchanges (transient exchanges) are purged if/when a server restarts.
+If set when creating a new exchange, the exchange will be marked as durable. Durable exchanges remain active when a server restarts. Non-durable exchanges (transient exchanges) are purged if/when a server restarts. 
 
 =item I<auto_delete> (type: bit)
 
-Auto-delete when unused
+Auto-delete when unused 
 
-If set, the exchange is deleted when all queues have finished using it.
+If set, the exchange is deleted when all queues have finished using it. 
 
 =item I<internal> (type: bit)
 
-Create internal exchange
+Create internal exchange 
 
-If set, the exchange may not be used directly by publishers, but only when bound to other exchanges. Internal exchanges are used to construct wiring that is not visible to applications.
+If set, the exchange may not be used directly by publishers, but only when bound to other exchanges. Internal exchanges are used to construct wiring that is not visible to applications. 
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =item I<arguments> (type: table)
 
-Arguments for declaration
+Arguments for declaration 
 
-A set of arguments for the declaration. The syntax and semantics of these arguments depends on the server implementation. This field is ignored if passive is 1.
+A set of arguments for the declaration. The syntax and semantics of these arguments depends on the server implementation. This field is ignored if passive is 1. 
 
 =back
 
@@ -580,7 +580,7 @@ A set of arguments for the declaration. The syntax and semantics of these argume
 
 This class implements the class B<Exchange> method B<DeclareOk>, which is a synchronous method.
 
-This method confirms a Declare method and confirms the name of the exchange, essential for automatically-named exchanges.
+This method confirms a Declare method and confirms the name of the exchange, essential for automatically-named exchanges. 
 
 This class has no fields nor accessors.
 
@@ -588,7 +588,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Exchange> method B<Delete>, which is a synchronous method.
 
-This method deletes an exchange. When an exchange is deleted all queue bindings on the exchange are cancelled.
+This method deletes an exchange. When an exchange is deleted all queue bindings on the exchange are cancelled. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -600,15 +600,15 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<if_unused> (type: bit)
 
-Delete only if unused
+Delete only if unused 
 
-If set, the server will only delete the exchange if it has no queue bindings. If the exchange has queue bindings the server does not delete it but raises a channel exception instead.
+If set, the server will only delete the exchange if it has no queue bindings. If the exchange has queue bindings the server does not delete it but raises a channel exception instead. 
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =back
 
@@ -616,7 +616,7 @@ If set, the server will not respond to the method. The client should not wait fo
 
 This class implements the class B<Exchange> method B<DeleteOk>, which is a synchronous method.
 
-This method confirms the deletion of an exchange.
+This method confirms the deletion of an exchange. 
 
 This class has no fields nor accessors.
 
@@ -624,7 +624,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Queue> method B<Declare>, which is a synchronous method.
 
-This method creates or checks a queue. When creating a new queue the client can specify various properties that control the durability of the queue and its contents, and the level of sharing for the queue.
+This method creates or checks a queue. When creating a new queue the client can specify various properties that control the durability of the queue and its contents, and the level of sharing for the queue. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -632,47 +632,47 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<ticket> (type: short)
 
-When a client defines a new queue, this belongs to the access realm of the ticket used. All further work done with that queue must be done with an access ticket for the same realm.
+When a client defines a new queue, this belongs to the access realm of the ticket used. All further work done with that queue must be done with an access ticket for the same realm. 
 
-The client provides a valid access ticket giving "active" access to the realm in which the queue exists or will be created, or "passive" access if the if-exists flag is set.
+The client provides a valid access ticket giving "active" access to the realm in which the queue exists or will be created, or "passive" access if the if-exists flag is set. 
 
 =item I<queue> (type: shortstr)
 
 =item I<passive> (type: bit)
 
-Do not create queue
+Do not create queue 
 
-If set, the server will not create the queue. The client can use this to check whether a queue exists without modifying the server state.
+If set, the server will not create the queue. The client can use this to check whether a queue exists without modifying the server state. 
 
 =item I<durable> (type: bit)
 
-Request a durable queue
+Request a durable queue 
 
-If set when creating a new queue, the queue will be marked as durable. Durable queues remain active when a server restarts. Non-durable queues (transient queues) are purged if/when a server restarts. Note that durable queues do not necessarily hold persistent messages, although it does not make sense to send persistent messages to a transient queue.
+If set when creating a new queue, the queue will be marked as durable. Durable queues remain active when a server restarts. Non-durable queues (transient queues) are purged if/when a server restarts. Note that durable queues do not necessarily hold persistent messages, although it does not make sense to send persistent messages to a transient queue. 
 
 =item I<exclusive> (type: bit)
 
-Request an exclusive queue
+Request an exclusive queue 
 
-Exclusive queues may only be consumed from by the current connection. Setting the 'exclusive' flag always implies 'auto-delete'.
+Exclusive queues may only be consumed from by the current connection. Setting the 'exclusive' flag always implies 'auto-delete'. 
 
 =item I<auto_delete> (type: bit)
 
-Auto-delete queue when unused
+Auto-delete queue when unused 
 
-If set, the queue is deleted when all consumers have finished using it. Last consumer can be cancelled either explicitly or because its channel is closed. If there was no consumer ever on the queue, it won't be deleted.
+If set, the queue is deleted when all consumers have finished using it. Last consumer can be cancelled either explicitly or because its channel is closed. If there was no consumer ever on the queue, it won't be deleted. 
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =item I<arguments> (type: table)
 
-Arguments for declaration
+Arguments for declaration 
 
-A set of arguments for the declaration. The syntax and semantics of these arguments depends on the server implementation. This field is ignored if passive is 1.
+A set of arguments for the declaration. The syntax and semantics of these arguments depends on the server implementation. This field is ignored if passive is 1. 
 
 =back
 
@@ -680,7 +680,7 @@ A set of arguments for the declaration. The syntax and semantics of these argume
 
 This class implements the class B<Queue> method B<DeclareOk>, which is a synchronous method.
 
-This method confirms a Declare method and confirms the name of the queue, essential for automatically-named queues.
+This method confirms a Declare method and confirms the name of the queue, essential for automatically-named queues. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -688,19 +688,19 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<queue> (type: shortstr)
 
-Reports the name of the queue. If the server generated a queue name, this field contains that name.
+Reports the name of the queue. If the server generated a queue name, this field contains that name. 
 
 =item I<message_count> (type: long)
 
-Number of messages in queue
+Number of messages in queue 
 
-Reports the number of messages in the queue, which will be zero for newly-created queues.
+Reports the number of messages in the queue, which will be zero for newly-created queues. 
 
 =item I<consumer_count> (type: long)
 
-Number of consumers
+Number of consumers 
 
-Reports the number of active consumers for the queue. Note that consumers can suspend activity (Channel.Flow) in which case they do not appear in this count.
+Reports the number of active consumers for the queue. Note that consumers can suspend activity (Channel.Flow) in which case they do not appear in this count. 
 
 =back
 
@@ -708,7 +708,7 @@ Reports the number of active consumers for the queue. Note that consumers can su
 
 This class implements the class B<Queue> method B<Bind>, which is a synchronous method.
 
-This method binds a queue to an exchange. Until a queue is bound it will not receive any messages. In a classic messaging model, store-and-forward queues are bound to a dest exchange and subscription queues are bound to a dest_wild exchange.
+This method binds a queue to an exchange. Until a queue is bound it will not receive any messages. In a classic messaging model, store-and-forward queues are bound to a dest exchange and subscription queues are bound to a dest_wild exchange. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -716,33 +716,33 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<ticket> (type: short)
 
-The client provides a valid access ticket giving "active" access rights to the queue's access realm.
+The client provides a valid access ticket giving "active" access rights to the queue's access realm. 
 
 =item I<queue> (type: shortstr)
 
-Specifies the name of the queue to bind. If the queue name is empty, refers to the current queue for the channel, which is the last declared queue.
+Specifies the name of the queue to bind. If the queue name is empty, refers to the current queue for the channel, which is the last declared queue. 
 
 =item I<exchange> (type: shortstr)
 
-The name of the exchange to bind to.
+The name of the exchange to bind to. 
 
 =item I<routing_key> (type: shortstr)
 
-Message routing key
+Message routing key 
 
-Specifies the routing key for the binding. The routing key is used for routing messages depending on the exchange configuration. Not all exchanges use a routing key - refer to the specific exchange documentation. If the routing key is empty and the queue name is empty, the routing key will be the current queue for the channel, which is the last declared queue.
+Specifies the routing key for the binding. The routing key is used for routing messages depending on the exchange configuration. Not all exchanges use a routing key - refer to the specific exchange documentation. If the routing key is empty and the queue name is empty, the routing key will be the current queue for the channel, which is the last declared queue. 
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =item I<arguments> (type: table)
 
-Arguments for binding
+Arguments for binding 
 
-A set of arguments for the binding. The syntax and semantics of these arguments depends on the exchange class.
+A set of arguments for the binding. The syntax and semantics of these arguments depends on the exchange class. 
 
 =back
 
@@ -750,7 +750,7 @@ A set of arguments for the binding. The syntax and semantics of these arguments 
 
 This class implements the class B<Queue> method B<BindOk>, which is a synchronous method.
 
-This method confirms that the bind was successful.
+This method confirms that the bind was successful. 
 
 This class has no fields nor accessors.
 
@@ -758,7 +758,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Queue> method B<Purge>, which is a synchronous method.
 
-This method removes all messages from a queue. It does not cancel consumers. Purged messages are deleted without any formal "undo" mechanism.
+This method removes all messages from a queue. It does not cancel consumers. Purged messages are deleted without any formal "undo" mechanism. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -766,17 +766,17 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<ticket> (type: short)
 
-The access ticket must be for the access realm that holds the queue.
+The access ticket must be for the access realm that holds the queue. 
 
 =item I<queue> (type: shortstr)
 
-Specifies the name of the queue to purge. If the queue name is empty, refers to the current queue for the channel, which is the last declared queue.
+Specifies the name of the queue to purge. If the queue name is empty, refers to the current queue for the channel, which is the last declared queue. 
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =back
 
@@ -784,7 +784,7 @@ If set, the server will not respond to the method. The client should not wait fo
 
 This class implements the class B<Queue> method B<PurgeOk>, which is a synchronous method.
 
-This method confirms the purge of a queue.
+This method confirms the purge of a queue. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -792,9 +792,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<message_count> (type: long)
 
-Number of messages purged
+Number of messages purged 
 
-Reports the number of messages purged.
+Reports the number of messages purged. 
 
 =back
 
@@ -802,7 +802,7 @@ Reports the number of messages purged.
 
 This class implements the class B<Queue> method B<Delete>, which is a synchronous method.
 
-This method deletes a queue. When a queue is deleted any pending messages are sent to a dead-letter queue if this is defined in the server configuration, and all consumers on the queue are cancelled.
+This method deletes a queue. When a queue is deleted any pending messages are sent to a dead-letter queue if this is defined in the server configuration, and all consumers on the queue are cancelled. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -810,29 +810,29 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<ticket> (type: short)
 
-The client provides a valid access ticket giving "active" access rights to the queue's access realm.
+The client provides a valid access ticket giving "active" access rights to the queue's access realm. 
 
 =item I<queue> (type: shortstr)
 
-Specifies the name of the queue to delete. If the queue name is empty, refers to the current queue for the channel, which is the last declared queue.
+Specifies the name of the queue to delete. If the queue name is empty, refers to the current queue for the channel, which is the last declared queue. 
 
 =item I<if_unused> (type: bit)
 
-Delete only if unused
+Delete only if unused 
 
-If set, the server will only delete the queue if it has no consumers. If the queue has consumers the server does does not delete it but raises a channel exception instead.
+If set, the server will only delete the queue if it has no consumers. If the queue has consumers the server does does not delete it but raises a channel exception instead. 
 
 =item I<if_empty> (type: bit)
 
-Delete only if empty
+Delete only if empty 
 
-If set, the server will only delete the queue if it has no messages. If the queue is not empty the server raises a channel exception.
+If set, the server will only delete the queue if it has no messages. If the queue is not empty the server raises a channel exception. 
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =back
 
@@ -840,7 +840,7 @@ If set, the server will not respond to the method. The client should not wait fo
 
 This class implements the class B<Queue> method B<DeleteOk>, which is a synchronous method.
 
-This method confirms the deletion of a queue.
+This method confirms the deletion of a queue. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -848,9 +848,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<message_count> (type: long)
 
-Number of messages purged
+Number of messages purged 
 
-Reports the number of messages purged.
+Reports the number of messages purged. 
 
 =back
 
@@ -858,7 +858,7 @@ Reports the number of messages purged.
 
 This class implements the class B<Basic> method B<Qos>, which is a synchronous method.
 
-This method requests a specific quality of service. The QoS can be specified for the current channel or for all channels on the connection. The particular properties and semantics of a qos method always depend on the content class semantics. Though the qos method could in principle apply to both peers, it is currently meaningful only for the server.
+This method requests a specific quality of service. The QoS can be specified for the current channel or for all channels on the connection. The particular properties and semantics of a qos method always depend on the content class semantics. Though the qos method could in principle apply to both peers, it is currently meaningful only for the server. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -866,21 +866,21 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<prefetch_size> (type: long)
 
-Prefetch window in octets
+Prefetch window in octets 
 
-The client can request that messages be sent in advance so that when the client finishes processing a message, the following message is already held locally, rather than needing to be sent down the channel. Prefetching gives a performance improvement. This field specifies the prefetch window size in octets. The server will send a message in advance if it is equal to or smaller in size than the available prefetch size (and also falls into other prefetch limits). May be set to zero, meaning "no specific limit", although other prefetch limits may still apply. The prefetch-size is ignored if the no-ack option is set.
+The client can request that messages be sent in advance so that when the client finishes processing a message, the following message is already held locally, rather than needing to be sent down the channel. Prefetching gives a performance improvement. This field specifies the prefetch window size in octets. The server will send a message in advance if it is equal to or smaller in size than the available prefetch size (and also falls into other prefetch limits). May be set to zero, meaning "no specific limit", although other prefetch limits may still apply. The prefetch-size is ignored if the no-ack option is set. 
 
 =item I<prefetch_count> (type: short)
 
-Prefetch window in messages
+Prefetch window in messages 
 
-Specifies a prefetch window in terms of whole messages. This field may be used in combination with the prefetch-size field; a message will only be sent in advance if both prefetch windows (and those at the channel and connection level) allow it. The prefetch-count is ignored if the no-ack option is set.
+Specifies a prefetch window in terms of whole messages. This field may be used in combination with the prefetch-size field; a message will only be sent in advance if both prefetch windows (and those at the channel and connection level) allow it. The prefetch-count is ignored if the no-ack option is set. 
 
 =item I<global> (type: bit)
 
-Apply to entire connection
+Apply to entire connection 
 
-By default the QoS settings apply to the current channel only. If this field is set, they are applied to the entire connection.
+By default the QoS settings apply to the current channel only. If this field is set, they are applied to the entire connection. 
 
 =back
 
@@ -888,7 +888,7 @@ By default the QoS settings apply to the current channel only. If this field is 
 
 This class implements the class B<Basic> method B<QosOk>, which is a synchronous method.
 
-This method tells the client that the requested QoS levels could be handled by the server. The requested QoS applies to all active consumers until a new QoS is defined.
+This method tells the client that the requested QoS levels could be handled by the server. The requested QoS applies to all active consumers until a new QoS is defined. 
 
 This class has no fields nor accessors.
 
@@ -896,7 +896,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Basic> method B<Consume>, which is a synchronous method.
 
-This method asks the server to start a "consumer", which is a transient request for messages from a specific queue. Consumers last as long as the channel they were created on, or until the client cancels them.
+This method asks the server to start a "consumer", which is a transient request for messages from a specific queue. Consumers last as long as the channel they were created on, or until the client cancels them. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -906,11 +906,11 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<queue> (type: shortstr)
 
-Specifies the name of the queue to consume from. If the queue name is null, refers to the current queue for the channel, which is the last declared queue.
+Specifies the name of the queue to consume from. If the queue name is null, refers to the current queue for the channel, which is the last declared queue. 
 
 =item I<consumer_tag> (type: shortstr)
 
-Specifies the identifier for the consumer. The consumer tag is local to a connection, so two clients can use the same consumer tags. If this field is empty the server will generate a unique tag.
+Specifies the identifier for the consumer. The consumer tag is local to a connection, so two clients can use the same consumer tags. If this field is empty the server will generate a unique tag. 
 
 =item I<no_local> (type: bit)
 
@@ -918,15 +918,15 @@ Specifies the identifier for the consumer. The consumer tag is local to a connec
 
 =item I<exclusive> (type: bit)
 
-Request exclusive access
+Request exclusive access 
 
-Request exclusive consumer access, meaning only this consumer can access the queue.
+Request exclusive consumer access, meaning only this consumer can access the queue. 
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =back
 
@@ -934,7 +934,7 @@ If set, the server will not respond to the method. The client should not wait fo
 
 This class implements the class B<Basic> method B<ConsumeOk>, which is a synchronous method.
 
-The server provides the client with a consumer tag, which is used by the client for methods called on the consumer at a later stage.
+The server provides the client with a consumer tag, which is used by the client for methods called on the consumer at a later stage. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -942,7 +942,7 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<consumer_tag> (type: shortstr)
 
-Holds the consumer tag specified by the client or provided by the server.
+Holds the consumer tag specified by the client or provided by the server. 
 
 =back
 
@@ -950,7 +950,7 @@ Holds the consumer tag specified by the client or provided by the server.
 
 This class implements the class B<Basic> method B<Cancel>, which is a synchronous method.
 
-This method cancels a consumer. This does not affect already delivered messages, but it does mean the server will not send any more messages for that consumer. The client may receive an abitrary number of messages in between sending the cancel method and receiving the cancel-ok reply.
+This method cancels a consumer. This does not affect already delivered messages, but it does mean the server will not send any more messages for that consumer. The client may receive an abitrary number of messages in between sending the cancel method and receiving the cancel-ok reply. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -960,9 +960,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =back
 
@@ -970,7 +970,7 @@ If set, the server will not respond to the method. The client should not wait fo
 
 This class implements the class B<Basic> method B<CancelOk>, which is a synchronous method.
 
-This method confirms that the cancellation was completed.
+This method confirms that the cancellation was completed. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -984,7 +984,7 @@ Each of the following represents a field in the specification. These are the opt
 
 This class implements the class B<Basic> method B<Publish>, which is an asynchronous method.
 
-This method publishes a message to a specific exchange. The message will be routed to queues as defined by the exchange configuration and distributed to any active consumers when the transaction, if any, is committed.
+This method publishes a message to a specific exchange. The message will be routed to queues as defined by the exchange configuration and distributed to any active consumers when the transaction, if any, is committed. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -994,25 +994,25 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<exchange> (type: shortstr)
 
-Specifies the name of the exchange to publish to. The exchange name can be empty, meaning the default exchange. If the exchange name is specified, and that exchange does not exist, the server will raise a channel exception.
+Specifies the name of the exchange to publish to. The exchange name can be empty, meaning the default exchange. If the exchange name is specified, and that exchange does not exist, the server will raise a channel exception. 
 
 =item I<routing_key> (type: shortstr)
 
-Message routing key
+Message routing key 
 
-Specifies the routing key for the message. The routing key is used for routing messages depending on the exchange configuration.
+Specifies the routing key for the message. The routing key is used for routing messages depending on the exchange configuration. 
 
 =item I<mandatory> (type: bit)
 
-Indicate mandatory routing
+Indicate mandatory routing 
 
-This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message.
+This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. 
 
 =item I<immediate> (type: bit)
 
-Request immediate delivery
+Request immediate delivery 
 
-This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed.
+This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed. 
 
 =back
 
@@ -1020,7 +1020,7 @@ This flag tells the server how to react if the message cannot be routed to a que
 
 This class implements the class B<Basic> method B<Return>, which is an asynchronous method.
 
-This method returns an undeliverable message that was published with the "immediate" flag set, or an unroutable message published with the "mandatory" flag set. The reply code and text provide information about the reason that the message was undeliverable.
+This method returns an undeliverable message that was published with the "immediate" flag set, or an unroutable message published with the "mandatory" flag set. The reply code and text provide information about the reason that the message was undeliverable. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1032,13 +1032,13 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<exchange> (type: shortstr)
 
-Specifies the name of the exchange that the message was originally published to.
+Specifies the name of the exchange that the message was originally published to. 
 
 =item I<routing_key> (type: shortstr)
 
-Message routing key
+Message routing key 
 
-Specifies the routing key name specified when the message was published.
+Specifies the routing key name specified when the message was published. 
 
 =back
 
@@ -1046,7 +1046,7 @@ Specifies the routing key name specified when the message was published.
 
 This class implements the class B<Basic> method B<Deliver>, which is an asynchronous method.
 
-This method delivers a message to the client, via a consumer. In the asynchronous message delivery model, the client starts a consumer using the Consume method, then the server responds with Deliver methods as and when messages arrive for that consumer.
+This method delivers a message to the client, via a consumer. In the asynchronous message delivery model, the client starts a consumer using the Consume method, then the server responds with Deliver methods as and when messages arrive for that consumer. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1060,13 +1060,13 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<exchange> (type: shortstr)
 
-Specifies the name of the exchange that the message was originally published to.
+Specifies the name of the exchange that the message was originally published to. 
 
 =item I<routing_key> (type: shortstr)
 
-Message routing key
+Message routing key 
 
-Specifies the routing key name specified when the message was published.
+Specifies the routing key name specified when the message was published. 
 
 =back
 
@@ -1074,7 +1074,7 @@ Specifies the routing key name specified when the message was published.
 
 This class implements the class B<Basic> method B<Get>, which is a synchronous method.
 
-This method provides a direct access to the messages in a queue using a synchronous dialogue that is designed for specific types of application where synchronous functionality is more important than performance.
+This method provides a direct access to the messages in a queue using a synchronous dialogue that is designed for specific types of application where synchronous functionality is more important than performance. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1084,7 +1084,7 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<queue> (type: shortstr)
 
-Specifies the name of the queue to consume from. If the queue name is null, refers to the current queue for the channel, which is the last declared queue.
+Specifies the name of the queue to consume from. If the queue name is null, refers to the current queue for the channel, which is the last declared queue. 
 
 =item I<no_ack> (type: bit)
 
@@ -1094,7 +1094,7 @@ Specifies the name of the queue to consume from. If the queue name is null, refe
 
 This class implements the class B<Basic> method B<GetOk>, which is a synchronous method.
 
-This method delivers a message to the client following a get method. A message delivered by 'get-ok' must be acknowledged unless the no-ack option was set in the get method.
+This method delivers a message to the client following a get method. A message delivered by 'get-ok' must be acknowledged unless the no-ack option was set in the get method. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1106,19 +1106,19 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<exchange> (type: shortstr)
 
-Specifies the name of the exchange that the message was originally published to. If empty, the message was published to the default exchange.
+Specifies the name of the exchange that the message was originally published to. If empty, the message was published to the default exchange. 
 
 =item I<routing_key> (type: shortstr)
 
-Message routing key
+Message routing key 
 
-Specifies the routing key name specified when the message was published.
+Specifies the routing key name specified when the message was published. 
 
 =item I<message_count> (type: long)
 
-Number of messages pending
+Number of messages pending 
 
-This field reports the number of messages pending on the queue, excluding the message being delivered. Note that this figure is indicative, not reliable, and can change arbitrarily as messages are added to the queue and removed by other clients.
+This field reports the number of messages pending on the queue, excluding the message being delivered. Note that this figure is indicative, not reliable, and can change arbitrarily as messages are added to the queue and removed by other clients. 
 
 =back
 
@@ -1126,7 +1126,7 @@ This field reports the number of messages pending on the queue, excluding the me
 
 This class implements the class B<Basic> method B<GetEmpty>, which is a synchronous method.
 
-This method tells the client that the queue has no messages available for the client.
+This method tells the client that the queue has no messages available for the client. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1134,9 +1134,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<cluster_id> (type: shortstr)
 
-Cluster id
+Cluster id 
 
-For use by cluster applications, should not be used by client applications.
+For use by cluster applications, should not be used by client applications. 
 
 =back
 
@@ -1144,7 +1144,7 @@ For use by cluster applications, should not be used by client applications.
 
 This class implements the class B<Basic> method B<Ack>, which is an asynchronous method.
 
-This method acknowledges one or more messages delivered via the Deliver or Get-Ok methods. The client can ask to confirm a single message or a set of messages up to and including a specific message.
+This method acknowledges one or more messages delivered via the Deliver or Get-Ok methods. The client can ask to confirm a single message or a set of messages up to and including a specific message. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1154,9 +1154,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<multiple> (type: bit)
 
-Acknowledge multiple messages
+Acknowledge multiple messages 
 
-If set to 1, the delivery tag is treated as "up to and including", so that the client can acknowledge multiple messages with a single method. If set to zero, the delivery tag refers to a single message. If the multiple field is 1, and the delivery tag is zero, tells the server to acknowledge all outstanding mesages.
+If set to 1, the delivery tag is treated as "up to and including", so that the client can acknowledge multiple messages with a single method. If set to zero, the delivery tag refers to a single message. If the multiple field is 1, and the delivery tag is zero, tells the server to acknowledge all outstanding mesages. 
 
 =back
 
@@ -1164,7 +1164,7 @@ If set to 1, the delivery tag is treated as "up to and including", so that the c
 
 This class implements the class B<Basic> method B<Reject>, which is an asynchronous method.
 
-This method allows a client to reject a message. It can be used to interrupt and cancel large incoming messages, or return untreatable messages to their original queue.
+This method allows a client to reject a message. It can be used to interrupt and cancel large incoming messages, or return untreatable messages to their original queue. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1174,9 +1174,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<requeue> (type: bit)
 
-Requeue the message
+Requeue the message 
 
-If this field is zero, the message will be discarded. If this bit is 1, the server will attempt to requeue the message.
+If this field is zero, the message will be discarded. If this bit is 1, the server will attempt to requeue the message. 
 
 =back
 
@@ -1184,7 +1184,7 @@ If this field is zero, the message will be discarded. If this bit is 1, the serv
 
 This class implements the class B<Basic> method B<Recover>, which is an asynchronous method.
 
-This method asks the broker to redeliver all unacknowledged messages on a specifieid channel. Zero or more messages may be redelivered.
+This method asks the broker to redeliver all unacknowledged messages on a specifieid channel. Zero or more messages may be redelivered. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1192,9 +1192,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<requeue> (type: bit)
 
-Requeue the message
+Requeue the message 
 
-If this field is zero, the message will be redelivered to the original recipient. If this bit is 1, the server will attempt to requeue the message, potentially then delivering it to an alternative subscriber.
+If this field is zero, the message will be redelivered to the original recipient. If this bit is 1, the server will attempt to requeue the message, potentially then delivering it to an alternative subscriber. 
 
 =back
 
@@ -1240,7 +1240,7 @@ Each of the following represents a field in the specification. These are the opt
 
 This class implements the class B<File> method B<Qos>, which is a synchronous method.
 
-This method requests a specific quality of service. The QoS can be specified for the current channel or for all channels on the connection. The particular properties and semantics of a qos method always depend on the content class semantics. Though the qos method could in principle apply to both peers, it is currently meaningful only for the server.
+This method requests a specific quality of service. The QoS can be specified for the current channel or for all channels on the connection. The particular properties and semantics of a qos method always depend on the content class semantics. Though the qos method could in principle apply to both peers, it is currently meaningful only for the server. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1248,21 +1248,21 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<prefetch_size> (type: long)
 
-Prefetch window in octets
+Prefetch window in octets 
 
-The client can request that messages be sent in advance so that when the client finishes processing a message, the following message is already held locally, rather than needing to be sent down the channel. Prefetching gives a performance improvement. This field specifies the prefetch window size in octets. May be set to zero, meaning "no specific limit". Note that other prefetch limits may still apply. The prefetch-size is ignored if the no-ack option is set.
+The client can request that messages be sent in advance so that when the client finishes processing a message, the following message is already held locally, rather than needing to be sent down the channel. Prefetching gives a performance improvement. This field specifies the prefetch window size in octets. May be set to zero, meaning "no specific limit". Note that other prefetch limits may still apply. The prefetch-size is ignored if the no-ack option is set. 
 
 =item I<prefetch_count> (type: short)
 
-Prefetch window in messages
+Prefetch window in messages 
 
-Specifies a prefetch window in terms of whole messages. This is compatible with some file API implementations. This field may be used in combination with the prefetch-size field; a message will only be sent in advance if both prefetch windows (and those at the channel and connection level) allow it. The prefetch-count is ignored if the no-ack option is set.
+Specifies a prefetch window in terms of whole messages. This is compatible with some file API implementations. This field may be used in combination with the prefetch-size field; a message will only be sent in advance if both prefetch windows (and those at the channel and connection level) allow it. The prefetch-count is ignored if the no-ack option is set. 
 
 =item I<global> (type: bit)
 
-Apply to entire connection
+Apply to entire connection 
 
-By default the QoS settings apply to the current channel only. If this field is set, they are applied to the entire connection.
+By default the QoS settings apply to the current channel only. If this field is set, they are applied to the entire connection. 
 
 =back
 
@@ -1270,7 +1270,7 @@ By default the QoS settings apply to the current channel only. If this field is 
 
 This class implements the class B<File> method B<QosOk>, which is a synchronous method.
 
-This method tells the client that the requested QoS levels could be handled by the server. The requested QoS applies to all active consumers until a new QoS is defined.
+This method tells the client that the requested QoS levels could be handled by the server. The requested QoS applies to all active consumers until a new QoS is defined. 
 
 This class has no fields nor accessors.
 
@@ -1278,7 +1278,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<File> method B<Consume>, which is a synchronous method.
 
-This method asks the server to start a "consumer", which is a transient request for messages from a specific queue. Consumers last as long as the channel they were created on, or until the client cancels them.
+This method asks the server to start a "consumer", which is a transient request for messages from a specific queue. Consumers last as long as the channel they were created on, or until the client cancels them. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1288,11 +1288,11 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<queue> (type: shortstr)
 
-Specifies the name of the queue to consume from. If the queue name is null, refers to the current queue for the channel, which is the last declared queue.
+Specifies the name of the queue to consume from. If the queue name is null, refers to the current queue for the channel, which is the last declared queue. 
 
 =item I<consumer_tag> (type: shortstr)
 
-Specifies the identifier for the consumer. The consumer tag is local to a connection, so two clients can use the same consumer tags. If this field is empty the server will generate a unique tag.
+Specifies the identifier for the consumer. The consumer tag is local to a connection, so two clients can use the same consumer tags. If this field is empty the server will generate a unique tag. 
 
 =item I<no_local> (type: bit)
 
@@ -1300,15 +1300,15 @@ Specifies the identifier for the consumer. The consumer tag is local to a connec
 
 =item I<exclusive> (type: bit)
 
-Request exclusive access
+Request exclusive access 
 
-Request exclusive consumer access, meaning only this consumer can access the queue.
+Request exclusive consumer access, meaning only this consumer can access the queue. 
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =back
 
@@ -1316,7 +1316,7 @@ If set, the server will not respond to the method. The client should not wait fo
 
 This class implements the class B<File> method B<ConsumeOk>, which is a synchronous method.
 
-This method provides the client with a consumer tag which it MUST use in methods that work with the consumer.
+This method provides the client with a consumer tag which it MUST use in methods that work with the consumer. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1324,7 +1324,7 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<consumer_tag> (type: shortstr)
 
-Holds the consumer tag specified by the client or provided by the server.
+Holds the consumer tag specified by the client or provided by the server. 
 
 =back
 
@@ -1332,7 +1332,7 @@ Holds the consumer tag specified by the client or provided by the server.
 
 This class implements the class B<File> method B<Cancel>, which is a synchronous method.
 
-This method cancels a consumer. This does not affect already delivered messages, but it does mean the server will not send any more messages for that consumer.
+This method cancels a consumer. This does not affect already delivered messages, but it does mean the server will not send any more messages for that consumer. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1342,9 +1342,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =back
 
@@ -1352,7 +1352,7 @@ If set, the server will not respond to the method. The client should not wait fo
 
 This class implements the class B<File> method B<CancelOk>, which is a synchronous method.
 
-This method confirms that the cancellation was completed.
+This method confirms that the cancellation was completed. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1366,7 +1366,7 @@ Each of the following represents a field in the specification. These are the opt
 
 This class implements the class B<File> method B<Open>, which is a synchronous method.
 
-This method requests permission to start staging a message. Staging means sending the message into a temporary area at the recipient end and then delivering the message by referring to this temporary area. Staging is how the protocol handles partial file transfers - if a message is partially staged and the connection breaks, the next time the sender starts to stage it, it can restart from where it left off.
+This method requests permission to start staging a message. Staging means sending the message into a temporary area at the recipient end and then delivering the message by referring to this temporary area. Staging is how the protocol handles partial file transfers - if a message is partially staged and the connection breaks, the next time the sender starts to stage it, it can restart from where it left off. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1374,15 +1374,15 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<identifier> (type: shortstr)
 
-Staging identifier
+Staging identifier 
 
-This is the staging identifier. This is an arbitrary string chosen by the sender. For staging to work correctly the sender must use the same staging identifier when staging the same message a second time after recovery from a failure. A good choice for the staging identifier would be the SHA1 hash of the message properties data (including the original filename, revised time, etc.).
+This is the staging identifier. This is an arbitrary string chosen by the sender. For staging to work correctly the sender must use the same staging identifier when staging the same message a second time after recovery from a failure. A good choice for the staging identifier would be the SHA1 hash of the message properties data (including the original filename, revised time, etc.). 
 
 =item I<content_size> (type: longlong)
 
-Message content size
+Message content size 
 
-The size of the content in octets. The recipient may use this information to allocate or check available space in advance, to avoid "disk full" errors during staging of very large messages.
+The size of the content in octets. The recipient may use this information to allocate or check available space in advance, to avoid "disk full" errors during staging of very large messages. 
 
 =back
 
@@ -1390,7 +1390,7 @@ The size of the content in octets. The recipient may use this information to all
 
 This class implements the class B<File> method B<OpenOk>, which is a synchronous method.
 
-This method confirms that the recipient is ready to accept staged data. If the message was already partially-staged at a previous time the recipient will report the number of octets already staged.
+This method confirms that the recipient is ready to accept staged data. If the message was already partially-staged at a previous time the recipient will report the number of octets already staged. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1398,9 +1398,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<staged_size> (type: longlong)
 
-Already staged amount
+Already staged amount 
 
-The amount of previously-staged content in octets. For a new message this will be zero.
+The amount of previously-staged content in octets. For a new message this will be zero. 
 
 =back
 
@@ -1408,7 +1408,7 @@ The amount of previously-staged content in octets. For a new message this will b
 
 This class implements the class B<File> method B<Stage>, which is an asynchronous method.
 
-This method stages the message, sending the message content to the recipient from the octet offset specified in the Open-Ok method.
+This method stages the message, sending the message content to the recipient from the octet offset specified in the Open-Ok method. 
 
 This class has no fields nor accessors.
 
@@ -1416,7 +1416,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<File> method B<Publish>, which is an asynchronous method.
 
-This method publishes a staged file message to a specific exchange. The file message will be routed to queues as defined by the exchange configuration and distributed to any active consumers when the transaction, if any, is committed.
+This method publishes a staged file message to a specific exchange. The file message will be routed to queues as defined by the exchange configuration and distributed to any active consumers when the transaction, if any, is committed. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1426,31 +1426,31 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<exchange> (type: shortstr)
 
-Specifies the name of the exchange to publish to. The exchange name can be empty, meaning the default exchange. If the exchange name is specified, and that exchange does not exist, the server will raise a channel exception.
+Specifies the name of the exchange to publish to. The exchange name can be empty, meaning the default exchange. If the exchange name is specified, and that exchange does not exist, the server will raise a channel exception. 
 
 =item I<routing_key> (type: shortstr)
 
-Message routing key
+Message routing key 
 
-Specifies the routing key for the message. The routing key is used for routing messages depending on the exchange configuration.
+Specifies the routing key for the message. The routing key is used for routing messages depending on the exchange configuration. 
 
 =item I<mandatory> (type: bit)
 
-Indicate mandatory routing
+Indicate mandatory routing 
 
-This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message.
+This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. 
 
 =item I<immediate> (type: bit)
 
-Request immediate delivery
+Request immediate delivery 
 
-This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed.
+This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed. 
 
 =item I<identifier> (type: shortstr)
 
-Staging identifier
+Staging identifier 
 
-This is the staging identifier of the message to publish. The message must have been staged. Note that a client can send the Publish method asynchronously without waiting for staging to finish.
+This is the staging identifier of the message to publish. The message must have been staged. Note that a client can send the Publish method asynchronously without waiting for staging to finish. 
 
 =back
 
@@ -1458,7 +1458,7 @@ This is the staging identifier of the message to publish. The message must have 
 
 This class implements the class B<File> method B<Return>, which is an asynchronous method.
 
-This method returns an undeliverable message that was published with the "immediate" flag set, or an unroutable message published with the "mandatory" flag set. The reply code and text provide information about the reason that the message was undeliverable.
+This method returns an undeliverable message that was published with the "immediate" flag set, or an unroutable message published with the "mandatory" flag set. The reply code and text provide information about the reason that the message was undeliverable. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1470,13 +1470,13 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<exchange> (type: shortstr)
 
-Specifies the name of the exchange that the message was originally published to.
+Specifies the name of the exchange that the message was originally published to. 
 
 =item I<routing_key> (type: shortstr)
 
-Message routing key
+Message routing key 
 
-Specifies the routing key name specified when the message was published.
+Specifies the routing key name specified when the message was published. 
 
 =back
 
@@ -1484,7 +1484,7 @@ Specifies the routing key name specified when the message was published.
 
 This class implements the class B<File> method B<Deliver>, which is an asynchronous method.
 
-This method delivers a staged file message to the client, via a consumer. In the asynchronous message delivery model, the client starts a consumer using the Consume method, then the server responds with Deliver methods as and when messages arrive for that consumer.
+This method delivers a staged file message to the client, via a consumer. In the asynchronous message delivery model, the client starts a consumer using the Consume method, then the server responds with Deliver methods as and when messages arrive for that consumer. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1498,19 +1498,19 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<exchange> (type: shortstr)
 
-Specifies the name of the exchange that the message was originally published to.
+Specifies the name of the exchange that the message was originally published to. 
 
 =item I<routing_key> (type: shortstr)
 
-Message routing key
+Message routing key 
 
-Specifies the routing key name specified when the message was published.
+Specifies the routing key name specified when the message was published. 
 
 =item I<identifier> (type: shortstr)
 
-Staging identifier
+Staging identifier 
 
-This is the staging identifier of the message to deliver. The message must have been staged. Note that a server can send the Deliver method asynchronously without waiting for staging to finish.
+This is the staging identifier of the message to deliver. The message must have been staged. Note that a server can send the Deliver method asynchronously without waiting for staging to finish. 
 
 =back
 
@@ -1518,7 +1518,7 @@ This is the staging identifier of the message to deliver. The message must have 
 
 This class implements the class B<File> method B<Ack>, which is an asynchronous method.
 
-This method acknowledges one or more messages delivered via the Deliver method. The client can ask to confirm a single message or a set of messages up to and including a specific message.
+This method acknowledges one or more messages delivered via the Deliver method. The client can ask to confirm a single message or a set of messages up to and including a specific message. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1528,9 +1528,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<multiple> (type: bit)
 
-Acknowledge multiple messages
+Acknowledge multiple messages 
 
-If set to 1, the delivery tag is treated as "up to and including", so that the client can acknowledge multiple messages with a single method. If set to zero, the delivery tag refers to a single message. If the multiple field is 1, and the delivery tag is zero, tells the server to acknowledge all outstanding mesages.
+If set to 1, the delivery tag is treated as "up to and including", so that the client can acknowledge multiple messages with a single method. If set to zero, the delivery tag refers to a single message. If the multiple field is 1, and the delivery tag is zero, tells the server to acknowledge all outstanding mesages. 
 
 =back
 
@@ -1538,7 +1538,7 @@ If set to 1, the delivery tag is treated as "up to and including", so that the c
 
 This class implements the class B<File> method B<Reject>, which is an asynchronous method.
 
-This method allows a client to reject a message. It can be used to return untreatable messages to their original queue. Note that file content is staged before delivery, so the client will not use this method to interrupt delivery of a large message.
+This method allows a client to reject a message. It can be used to return untreatable messages to their original queue. Note that file content is staged before delivery, so the client will not use this method to interrupt delivery of a large message. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1548,9 +1548,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<requeue> (type: bit)
 
-Requeue the message
+Requeue the message 
 
-If this field is zero, the message will be discarded. If this bit is 1, the server will attempt to requeue the message.
+If this field is zero, the message will be discarded. If this bit is 1, the server will attempt to requeue the message. 
 
 =back
 
@@ -1586,7 +1586,7 @@ Each of the following represents a field in the specification. These are the opt
 
 This class implements the class B<Stream> method B<Qos>, which is a synchronous method.
 
-This method requests a specific quality of service. The QoS can be specified for the current channel or for all channels on the connection. The particular properties and semantics of a qos method always depend on the content class semantics. Though the qos method could in principle apply to both peers, it is currently meaningful only for the server.
+This method requests a specific quality of service. The QoS can be specified for the current channel or for all channels on the connection. The particular properties and semantics of a qos method always depend on the content class semantics. Though the qos method could in principle apply to both peers, it is currently meaningful only for the server. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1594,27 +1594,27 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<prefetch_size> (type: long)
 
-Prefetch window in octets
+Prefetch window in octets 
 
-The client can request that messages be sent in advance so that when the client finishes processing a message, the following message is already held locally, rather than needing to be sent down the channel. Prefetching gives a performance improvement. This field specifies the prefetch window size in octets. May be set to zero, meaning "no specific limit". Note that other prefetch limits may still apply.
+The client can request that messages be sent in advance so that when the client finishes processing a message, the following message is already held locally, rather than needing to be sent down the channel. Prefetching gives a performance improvement. This field specifies the prefetch window size in octets. May be set to zero, meaning "no specific limit". Note that other prefetch limits may still apply. 
 
 =item I<prefetch_count> (type: short)
 
-Prefetch window in messages
+Prefetch window in messages 
 
-Specifies a prefetch window in terms of whole messages. This field may be used in combination with the prefetch-size field; a message will only be sent in advance if both prefetch windows (and those at the channel and connection level) allow it.
+Specifies a prefetch window in terms of whole messages. This field may be used in combination with the prefetch-size field; a message will only be sent in advance if both prefetch windows (and those at the channel and connection level) allow it. 
 
 =item I<consume_rate> (type: long)
 
-Transfer rate in octets/second
+Transfer rate in octets/second 
 
-Specifies a desired transfer rate in octets per second. This is usually determined by the application that uses the streaming data. A value of zero means "no limit", i.e. as rapidly as possible.
+Specifies a desired transfer rate in octets per second. This is usually determined by the application that uses the streaming data. A value of zero means "no limit", i.e. as rapidly as possible. 
 
 =item I<global> (type: bit)
 
-Apply to entire connection
+Apply to entire connection 
 
-By default the QoS settings apply to the current channel only. If this field is set, they are applied to the entire connection.
+By default the QoS settings apply to the current channel only. If this field is set, they are applied to the entire connection. 
 
 =back
 
@@ -1622,7 +1622,7 @@ By default the QoS settings apply to the current channel only. If this field is 
 
 This class implements the class B<Stream> method B<QosOk>, which is a synchronous method.
 
-This method tells the client that the requested QoS levels could be handled by the server. The requested QoS applies to all active consumers until a new QoS is defined.
+This method tells the client that the requested QoS levels could be handled by the server. The requested QoS applies to all active consumers until a new QoS is defined. 
 
 This class has no fields nor accessors.
 
@@ -1630,7 +1630,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Stream> method B<Consume>, which is a synchronous method.
 
-This method asks the server to start a "consumer", which is a transient request for messages from a specific queue. Consumers last as long as the channel they were created on, or until the client cancels them.
+This method asks the server to start a "consumer", which is a transient request for messages from a specific queue. Consumers last as long as the channel they were created on, or until the client cancels them. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1640,25 +1640,25 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<queue> (type: shortstr)
 
-Specifies the name of the queue to consume from. If the queue name is null, refers to the current queue for the channel, which is the last declared queue.
+Specifies the name of the queue to consume from. If the queue name is null, refers to the current queue for the channel, which is the last declared queue. 
 
 =item I<consumer_tag> (type: shortstr)
 
-Specifies the identifier for the consumer. The consumer tag is local to a connection, so two clients can use the same consumer tags. If this field is empty the server will generate a unique tag.
+Specifies the identifier for the consumer. The consumer tag is local to a connection, so two clients can use the same consumer tags. If this field is empty the server will generate a unique tag. 
 
 =item I<no_local> (type: bit)
 
 =item I<exclusive> (type: bit)
 
-Request exclusive access
+Request exclusive access 
 
-Request exclusive consumer access, meaning only this consumer can access the queue.
+Request exclusive consumer access, meaning only this consumer can access the queue. 
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =back
 
@@ -1666,7 +1666,7 @@ If set, the server will not respond to the method. The client should not wait fo
 
 This class implements the class B<Stream> method B<ConsumeOk>, which is a synchronous method.
 
-This method provides the client with a consumer tag which it may use in methods that work with the consumer.
+This method provides the client with a consumer tag which it may use in methods that work with the consumer. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1674,7 +1674,7 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<consumer_tag> (type: shortstr)
 
-Holds the consumer tag specified by the client or provided by the server.
+Holds the consumer tag specified by the client or provided by the server. 
 
 =back
 
@@ -1682,7 +1682,7 @@ Holds the consumer tag specified by the client or provided by the server.
 
 This class implements the class B<Stream> method B<Cancel>, which is a synchronous method.
 
-This method cancels a consumer. Since message delivery is asynchronous the client may continue to receive messages for a short while after canceling a consumer. It may process or discard these as appropriate.
+This method cancels a consumer. Since message delivery is asynchronous the client may continue to receive messages for a short while after canceling a consumer. It may process or discard these as appropriate. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1692,9 +1692,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<nowait> (type: bit)
 
-Do not send a reply method
+Do not send a reply method 
 
-If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception.
+If set, the server will not respond to the method. The client should not wait for a reply method. If the server could not complete the method it will raise a channel or connection exception. 
 
 =back
 
@@ -1702,7 +1702,7 @@ If set, the server will not respond to the method. The client should not wait fo
 
 This class implements the class B<Stream> method B<CancelOk>, which is a synchronous method.
 
-This method confirms that the cancellation was completed.
+This method confirms that the cancellation was completed. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1716,7 +1716,7 @@ Each of the following represents a field in the specification. These are the opt
 
 This class implements the class B<Stream> method B<Publish>, which is an asynchronous method.
 
-This method publishes a message to a specific exchange. The message will be routed to queues as defined by the exchange configuration and distributed to any active consumers as appropriate.
+This method publishes a message to a specific exchange. The message will be routed to queues as defined by the exchange configuration and distributed to any active consumers as appropriate. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1726,25 +1726,25 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<exchange> (type: shortstr)
 
-Specifies the name of the exchange to publish to. The exchange name can be empty, meaning the default exchange. If the exchange name is specified, and that exchange does not exist, the server will raise a channel exception.
+Specifies the name of the exchange to publish to. The exchange name can be empty, meaning the default exchange. If the exchange name is specified, and that exchange does not exist, the server will raise a channel exception. 
 
 =item I<routing_key> (type: shortstr)
 
-Message routing key
+Message routing key 
 
-Specifies the routing key for the message. The routing key is used for routing messages depending on the exchange configuration.
+Specifies the routing key for the message. The routing key is used for routing messages depending on the exchange configuration. 
 
 =item I<mandatory> (type: bit)
 
-Indicate mandatory routing
+Indicate mandatory routing 
 
-This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message.
+This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. 
 
 =item I<immediate> (type: bit)
 
-Request immediate delivery
+Request immediate delivery 
 
-This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed.
+This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed. 
 
 =back
 
@@ -1752,7 +1752,7 @@ This flag tells the server how to react if the message cannot be routed to a que
 
 This class implements the class B<Stream> method B<Return>, which is an asynchronous method.
 
-This method returns an undeliverable message that was published with the "immediate" flag set, or an unroutable message published with the "mandatory" flag set. The reply code and text provide information about the reason that the message was undeliverable.
+This method returns an undeliverable message that was published with the "immediate" flag set, or an unroutable message published with the "mandatory" flag set. The reply code and text provide information about the reason that the message was undeliverable. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1764,13 +1764,13 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<exchange> (type: shortstr)
 
-Specifies the name of the exchange that the message was originally published to.
+Specifies the name of the exchange that the message was originally published to. 
 
 =item I<routing_key> (type: shortstr)
 
-Message routing key
+Message routing key 
 
-Specifies the routing key name specified when the message was published.
+Specifies the routing key name specified when the message was published. 
 
 =back
 
@@ -1778,7 +1778,7 @@ Specifies the routing key name specified when the message was published.
 
 This class implements the class B<Stream> method B<Deliver>, which is an asynchronous method.
 
-This method delivers a message to the client, via a consumer. In the asynchronous message delivery model, the client starts a consumer using the Consume method, then the server responds with Deliver methods as and when messages arrive for that consumer.
+This method delivers a message to the client, via a consumer. In the asynchronous message delivery model, the client starts a consumer using the Consume method, then the server responds with Deliver methods as and when messages arrive for that consumer. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1790,11 +1790,11 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<exchange> (type: shortstr)
 
-Specifies the name of the exchange that the message was originally published to.
+Specifies the name of the exchange that the message was originally published to. 
 
 =item I<queue> (type: shortstr)
 
-Specifies the name of the queue that the message came from. Note that a single channel can start many consumers on different queues.
+Specifies the name of the queue that the message came from. Note that a single channel can start many consumers on different queues. 
 
 =back
 
@@ -1822,7 +1822,7 @@ Each of the following represents a field in the specification. These are the opt
 
 This class implements the class B<Tx> method B<Select>, which is a synchronous method.
 
-This method sets the channel to use standard transactions. The client must use this method at least once on a channel before using the Commit or Rollback methods.
+This method sets the channel to use standard transactions. The client must use this method at least once on a channel before using the Commit or Rollback methods. 
 
 This class has no fields nor accessors.
 
@@ -1830,7 +1830,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Tx> method B<SelectOk>, which is a synchronous method.
 
-This method confirms to the client that the channel was successfully set to use standard transactions.
+This method confirms to the client that the channel was successfully set to use standard transactions. 
 
 This class has no fields nor accessors.
 
@@ -1838,7 +1838,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Tx> method B<Commit>, which is a synchronous method.
 
-This method commits all messages published and acknowledged in the current transaction. A new transaction starts immediately after a commit.
+This method commits all messages published and acknowledged in the current transaction. A new transaction starts immediately after a commit. 
 
 This class has no fields nor accessors.
 
@@ -1846,7 +1846,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Tx> method B<CommitOk>, which is a synchronous method.
 
-This method confirms to the client that the commit succeeded. Note that if a commit fails, the server raises a channel exception.
+This method confirms to the client that the commit succeeded. Note that if a commit fails, the server raises a channel exception. 
 
 This class has no fields nor accessors.
 
@@ -1854,7 +1854,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Tx> method B<Rollback>, which is a synchronous method.
 
-This method abandons all messages published and acknowledged in the current transaction. A new transaction starts immediately after a rollback.
+This method abandons all messages published and acknowledged in the current transaction. A new transaction starts immediately after a rollback. 
 
 This class has no fields nor accessors.
 
@@ -1862,7 +1862,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Tx> method B<RollbackOk>, which is a synchronous method.
 
-This method confirms to the client that the rollback succeeded. Note that if an rollback fails, the server raises a channel exception.
+This method confirms to the client that the rollback succeeded. Note that if an rollback fails, the server raises a channel exception. 
 
 This class has no fields nor accessors.
 
@@ -1870,7 +1870,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Dtx> method B<Select>, which is a synchronous method.
 
-This method sets the channel to use distributed transactions. The client must use this method at least once on a channel before using the Start method.
+This method sets the channel to use distributed transactions. The client must use this method at least once on a channel before using the Start method. 
 
 This class has no fields nor accessors.
 
@@ -1878,7 +1878,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Dtx> method B<SelectOk>, which is a synchronous method.
 
-This method confirms to the client that the channel was successfully set to use distributed transactions.
+This method confirms to the client that the channel was successfully set to use distributed transactions. 
 
 This class has no fields nor accessors.
 
@@ -1886,7 +1886,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Dtx> method B<Start>, which is a synchronous method.
 
-This method starts a new distributed transaction. This must be the first method on a new channel that uses the distributed transaction mode, before any methods that publish or consume messages.
+This method starts a new distributed transaction. This must be the first method on a new channel that uses the distributed transaction mode, before any methods that publish or consume messages. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1894,9 +1894,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<dtx_identifier> (type: shortstr)
 
-Transaction identifier
+Transaction identifier 
 
-The distributed transaction key. This identifies the transaction so that the AMQP server can coordinate with the distributed transaction coordinator.
+The distributed transaction key. This identifies the transaction so that the AMQP server can coordinate with the distributed transaction coordinator. 
 
 =back
 
@@ -1904,7 +1904,7 @@ The distributed transaction key. This identifies the transaction so that the AMQ
 
 This class implements the class B<Dtx> method B<StartOk>, which is a synchronous method.
 
-This method confirms to the client that the transaction started. Note that if a start fails, the server raises a channel exception.
+This method confirms to the client that the transaction started. Note that if a start fails, the server raises a channel exception. 
 
 This class has no fields nor accessors.
 
@@ -1912,7 +1912,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Tunnel> method B<Request>, which is an asynchronous method.
 
-This method tunnels a block of binary data, which can be an encoded AMQP method or other data. The binary data is sent as the content for the Tunnel.Request method.
+This method tunnels a block of binary data, which can be an encoded AMQP method or other data. The binary data is sent as the content for the Tunnel.Request method. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1920,9 +1920,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<meta_data> (type: table)
 
-Meta data for the tunnelled block
+Meta data for the tunnelled block 
 
-This field table holds arbitrary meta-data that the sender needs to pass to the recipient.
+This field table holds arbitrary meta-data that the sender needs to pass to the recipient. 
 
 =back
 
@@ -1950,7 +1950,7 @@ Each of the following represents a field in the specification. These are the opt
 
 This class implements the class B<Test> method B<Integer>, which is a synchronous method.
 
-This method tests the peer's capability to correctly marshal integer data.
+This method tests the peer's capability to correctly marshal integer data. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -1958,33 +1958,33 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<integer_1> (type: octet)
 
-Octet test value
+Octet test value 
 
-An octet integer test value.
+An octet integer test value. 
 
 =item I<integer_2> (type: short)
 
-Short test value
+Short test value 
 
-A short integer test value.
+A short integer test value. 
 
 =item I<integer_3> (type: long)
 
-Long test value
+Long test value 
 
-A long integer test value.
+A long integer test value. 
 
 =item I<integer_4> (type: longlong)
 
-Long-long test value
+Long-long test value 
 
-A long long integer test value.
+A long long integer test value. 
 
 =item I<operation> (type: octet)
 
-Operation to test
+Operation to test 
 
-The client must execute this operation on the provided integer test fields and return the result.
+The client must execute this operation on the provided integer test fields and return the result. 
 
 =back
 
@@ -1992,7 +1992,7 @@ The client must execute this operation on the provided integer test fields and r
 
 This class implements the class B<Test> method B<IntegerOk>, which is a synchronous method.
 
-This method reports the result of an Integer method.
+This method reports the result of an Integer method. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -2000,9 +2000,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<result> (type: longlong)
 
-Result value
+Result value 
 
-The result of the tested operation.
+The result of the tested operation. 
 
 =back
 
@@ -2010,7 +2010,7 @@ The result of the tested operation.
 
 This class implements the class B<Test> method B<String>, which is a synchronous method.
 
-This method tests the peer's capability to correctly marshal string data.
+This method tests the peer's capability to correctly marshal string data. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -2018,21 +2018,21 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<string_1> (type: shortstr)
 
-Short string test value
+Short string test value 
 
-An short string test value.
+An short string test value. 
 
 =item I<string_2> (type: longstr)
 
-Long string test value
+Long string test value 
 
-A long string test value.
+A long string test value. 
 
 =item I<operation> (type: octet)
 
-Operation to test
+Operation to test 
 
-The client must execute this operation on the provided string test fields and return the result.
+The client must execute this operation on the provided string test fields and return the result. 
 
 =back
 
@@ -2040,7 +2040,7 @@ The client must execute this operation on the provided string test fields and re
 
 This class implements the class B<Test> method B<StringOk>, which is a synchronous method.
 
-This method reports the result of a String method.
+This method reports the result of a String method. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -2048,9 +2048,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<result> (type: longstr)
 
-Result value
+Result value 
 
-The result of the tested operation.
+The result of the tested operation. 
 
 =back
 
@@ -2058,7 +2058,7 @@ The result of the tested operation.
 
 This class implements the class B<Test> method B<Table>, which is a synchronous method.
 
-This method tests the peer's capability to correctly marshal field table data.
+This method tests the peer's capability to correctly marshal field table data. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -2066,21 +2066,21 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<table> (type: table)
 
-Field table of test values
+Field table of test values 
 
-A field table of test values.
+A field table of test values. 
 
 =item I<integer_op> (type: octet)
 
-Operation to test on integers
+Operation to test on integers 
 
-The client must execute this operation on the provided field table integer values and return the result.
+The client must execute this operation on the provided field table integer values and return the result. 
 
 =item I<string_op> (type: octet)
 
-Operation to test on strings
+Operation to test on strings 
 
-The client must execute this operation on the provided field table string values and return the result.
+The client must execute this operation on the provided field table string values and return the result. 
 
 =back
 
@@ -2088,7 +2088,7 @@ The client must execute this operation on the provided field table string values
 
 This class implements the class B<Test> method B<TableOk>, which is a synchronous method.
 
-This method reports the result of a Table method.
+This method reports the result of a Table method. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -2096,15 +2096,15 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<integer_result> (type: longlong)
 
-Integer result value
+Integer result value 
 
-The result of the tested integer operation.
+The result of the tested integer operation. 
 
 =item I<string_result> (type: longstr)
 
-String result value
+String result value 
 
-The result of the tested string operation.
+The result of the tested string operation. 
 
 =back
 
@@ -2112,7 +2112,7 @@ The result of the tested string operation.
 
 This class implements the class B<Test> method B<Content>, which is a synchronous method.
 
-This method tests the peer's capability to correctly marshal content.
+This method tests the peer's capability to correctly marshal content. 
 
 This class has no fields nor accessors.
 
@@ -2120,7 +2120,7 @@ This class has no fields nor accessors.
 
 This class implements the class B<Test> method B<ContentOk>, which is a synchronous method.
 
-This method reports the result of a Content method. It contains the content checksum and echoes the original content as provided.
+This method reports the result of a Content method. It contains the content checksum and echoes the original content as provided. 
 
 Each of the following represents a field in the specification. These are the optional arguments to B<new()> and are also read/write accessors:
 
@@ -2128,9 +2128,9 @@ Each of the following represents a field in the specification. These are the opt
 
 =item I<content_checksum> (type: long)
 
-Content hash
+Content hash 
 
-The 32-bit checksum of the content, calculated by adding the content into a 32-bit accumulator.
+The 32-bit checksum of the content, calculated by adding the content into a 32-bit accumulator. 
 
 =back
 
@@ -2149,8 +2149,8 @@ TWIST Process Innovations, and 29West Inc. 2006. All rights reserved.
 
 License
 =======
-JPMorgan Chase Bank, Cisco Systems, Inc., Envoy Technologies Inc., iMatix
-Corporation, IONA� Technologies, Red Hat, Inc., TWIST Process Innovations, and
+JPMorgan Chase Bank, Cisco Systems, Inc., Envoy Technologies Inc., iMatix 
+Corporation, IONA� Technologies, Red Hat, Inc., TWIST Process Innovations, and 
 29West Inc. (collectively, the "Authors") each hereby grants to you a worldwide,
 perpetual, royalty-free, nontransferable, nonexclusive license to
 (i) copy, display, and implement the Advanced Messaging Queue Protocol
@@ -2212,7 +2212,7 @@ IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE
 CONTENTS OF THE ADVANCED MESSAGING QUEUE PROTOCOL SPECIFICATION ARE
 SUITABLE FOR ANY PURPOSE; NOR THAT THE IMPLEMENTATION OF THE ADVANCED
-MESSAGING QUEUE PROTOCOL SPECIFICATION WILL NOT INFRINGE ANY THIRD PARTY
+MESSAGING QUEUE PROTOCOL SPECIFICATION WILL NOT INFRINGE ANY THIRD PARTY 
 PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
 
 THE AUTHORS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL,
@@ -4535,9 +4535,9 @@ localised reply text
     A client MUST NOT use this method as a means of selecting messages
     to process.  A rejected message MAY be discarded or dead-lettered,
     not necessarily passed to another client.
-  </doc>
+  </doc>      
   <chassis name = "server" implement = "MUST" />
-
+    
   <field name = "delivery tag" domain = "delivery tag" />
 
   <field name = "requeue" type = "bit">
@@ -4881,7 +4881,7 @@ localised reply text
   <response name = "open-ok" />
   <chassis name = "server" implement = "MUST" />
   <chassis name = "client" implement = "MUST" />
-
+  
   <field name = "identifier" type = "shortstr">
     staging identifier
     <doc>
@@ -4918,7 +4918,7 @@ localised reply text
   <response name = "stage" />
   <chassis name = "server" implement = "MUST" />
   <chassis name = "client" implement = "MUST" />
-
+  
   <field name = "staged size" type = "longlong">
     already staged amount
     <doc>
@@ -5134,7 +5134,7 @@ localised reply text
   </doc>
   <chassis name = "server" implement = "MUST" />
   <field name = "delivery tag" domain = "delivery tag" />
-
+      
   <field name = "multiple" type = "bit">
     acknowledge multiple messages
     <doc>
@@ -5173,7 +5173,7 @@ localised reply text
     not necessarily passed to another client.
   </doc>
   <chassis name = "server" implement = "MUST" />
-
+    
   <field name = "delivery tag" domain = "delivery tag" />
 
   <field name = "requeue" type = "bit">
@@ -5572,7 +5572,7 @@ localised reply text
     <doc>
       Specifies the routing key name specified when the message was
       published.
-    </doc>
+    </doc>     
   </field>
 </method>
 

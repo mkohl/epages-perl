@@ -5,18 +5,18 @@ blowfish.mod
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::EggdropBlowfish;
+	use Authen::Passphrase::EggdropBlowfish;
 
-        $ppr = Authen::Passphrase::EggdropBlowfish->new(
-                hash_base64 => "9tpsG/61YqX/");
+	$ppr = Authen::Passphrase::EggdropBlowfish->new(
+		hash_base64 => "9tpsG/61YqX/");
 
-        $ppr = Authen::Passphrase::EggdropBlowfish->new(
-                passphrase => "passphrase");
+	$ppr = Authen::Passphrase::EggdropBlowfish->new(
+		passphrase => "passphrase");
 
-        $hash = $ppr->hash;
-        $hash_base64 = $ppr->hash_base64;
+	$hash = $ppr->hash;
+	$hash_base64 = $ppr->hash_base64;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
 =head1 DESCRIPTION
 
@@ -59,32 +59,32 @@ our $VERSION = "0.008";
 use parent "Authen::Passphrase";
 
 my $b64_digits =
-        "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	"./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 sub _en_base64($) {
-        my($bytes) = @_;
-        my $digits = "";
-        foreach my $word (reverse unpack("N*", $bytes)) {
-                for(my $i = 6; $i--; $word >>= 6) {
-                        $digits .= substr($b64_digits, $word & 0x3f, 1);
-                }
-        }
-        return $digits;
+	my($bytes) = @_;
+	my $digits = "";
+	foreach my $word (reverse unpack("N*", $bytes)) {
+		for(my $i = 6; $i--; $word >>= 6) {
+			$digits .= substr($b64_digits, $word & 0x3f, 1);
+		}
+	}
+	return $digits;
 }
 
 sub _de_base64($) {
-        my($digits) = @_;
-        my @words;
-        while($digits =~ /(......)/sg) {
-                my $wdig = $1;
-                my $word = 0;
-                for(my $i = 6; $i--; ) {
-                        $word <<= 6;
-                        $word |= index($b64_digits, substr($wdig, $i, 1));
-                }
-                push @words, $word;
-        }
-        return pack("N*", reverse @words);
+	my($digits) = @_;
+	my @words;
+	while($digits =~ /(......)/sg) {
+		my $wdig = $1;
+		my $word = 0;
+		for(my $i = 6; $i--; ) {
+			$word <<= 6;
+			$word |= index($b64_digits, substr($wdig, $i, 1));
+		}
+		push @words, $word;
+	}
+	return pack("N*", reverse @words);
 }
 
 =head1 CONSTRUCTOR
@@ -117,40 +117,40 @@ Either the hash or the passphrase must be given.
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[\x00-\xff]{8}\z#
-                                or croak "not a valid hash";
-                        $self->{hash} = "$value";
-                } elsif($attr eq "hash_base64") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A(?:[./0-9a-zA-Z]{5}[./01]){2}\z#
-                                or croak "\"$value\" is not a valid ".
-                                                "base 64 hash";
-                        $self->{hash} = _de_base64($value);
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value ne "" or croak "can't accept null passphrase";
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        $self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
-        croak "hash not specified" unless exists $self->{hash};
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "hash") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[\x00-\xff]{8}\z#
+				or croak "not a valid hash";
+			$self->{hash} = "$value";
+		} elsif($attr eq "hash_base64") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A(?:[./0-9a-zA-Z]{5}[./01]){2}\z#
+				or croak "\"$value\" is not a valid ".
+						"base 64 hash";
+			$self->{hash} = _de_base64($value);
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value ne "" or croak "can't accept null passphrase";
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	$self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
+	croak "hash not specified" unless exists $self->{hash};
+	return $self;
 }
 
 =back
@@ -166,8 +166,8 @@ Returns the hash value, as a string of eight bytes.
 =cut
 
 sub hash {
-        my($self) = @_;
-        return $self->{hash};
+	my($self) = @_;
+	return $self->{hash};
 }
 
 =item $ppr->hash_base64
@@ -177,8 +177,8 @@ Returns the hash value, as a string of twelve base 64 digits.
 =cut
 
 sub hash_base64 {
-        my($self) = @_;
-        return _en_base64($self->{hash});
+	my($self) = @_;
+	return _en_base64($self->{hash});
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -188,16 +188,16 @@ This method is part of the standard L<Authen::Passphrase> interface.
 =cut
 
 sub _hash_of {
-        my($self, $passphrase) = @_;
-        $passphrase = substr($passphrase, 0, 72);
-        my $cipher = Crypt::Eksblowfish::Uklblowfish->new($passphrase);
-        return $cipher->encrypt("\xde\xad\xd0\x61\x23\xf6\xb0\x95");
+	my($self, $passphrase) = @_;
+	$passphrase = substr($passphrase, 0, 72);
+	my $cipher = Crypt::Eksblowfish::Uklblowfish->new($passphrase);
+	return $cipher->encrypt("\xde\xad\xd0\x61\x23\xf6\xb0\x95");
 }
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $passphrase ne "" &&
-                $self->_hash_of($passphrase) eq $self->{hash};
+	my($self, $passphrase) = @_;
+	return $passphrase ne "" &&
+		$self->_hash_of($passphrase) eq $self->{hash};
 }
 
 =back

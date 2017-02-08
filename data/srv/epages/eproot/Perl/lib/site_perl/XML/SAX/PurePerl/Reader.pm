@@ -39,7 +39,7 @@ else {
 sub new {
     my $class = shift;
     my $thing = shift;
-
+    
     # try to figure if this $thing is a handle of some sort
     if (ref($thing) && UNIVERSAL::isa($thing, 'IO::Handle')) {
         return XML::SAX::PurePerl::Reader::Stream->new($thing)->init;
@@ -59,12 +59,12 @@ sub new {
     if ($ioref) {
         return XML::SAX::PurePerl::Reader::Stream->new($thing)->init;
     }
-
+    
     if ($thing =~ /</) {
         # assume it's a string
         return XML::SAX::PurePerl::Reader::String->new($thing)->init;
     }
-
+    
     # assume it is a    uri
     return XML::SAX::PurePerl::Reader::URI->new($thing)->init;
 }

@@ -46,12 +46,12 @@ my %extractor_for = (
     regex      => [ $ws,  $pod_or_DATA, $id, $exql           ],
     string     => [ $ws,  $pod_or_DATA, $id, $exql           ],
     code       => [ $ws, { DONT_MATCH => $pod_or_DATA },
-                        \&extract_variable,
+    		        \&extract_variable,
                     $id, { DONT_MATCH => \&extract_quotelike }   ],
     code_no_comments
                => [ { DONT_MATCH => $comment },
                     $ncws, { DONT_MATCH => $pod_or_DATA },
-                        \&extract_variable,
+    		        \&extract_variable,
                     $id, { DONT_MATCH => \&extract_quotelike }   ],
     executable => [ $ws, { DONT_MATCH => $pod_or_DATA }      ],
     executable_no_comments
@@ -62,7 +62,7 @@ my %extractor_for = (
 
 my %selector_for = (
     all   => sub { my ($t)=@_; sub{ $_=$$_; $t->(@_); $_} },
-    executable=> sub { my ($t)=@_; sub{ref() ? $_=$$_ : $t->(@_); $_} },
+    executable=> sub { my ($t)=@_; sub{ref() ? $_=$$_ : $t->(@_); $_} }, 
     quotelike => sub { my ($t)=@_; sub{ref() && do{$_=$$_; $t->(@_)}; $_} },
     regex     => sub { my ($t)=@_;
                sub{ref() or return $_;
@@ -103,7 +103,7 @@ sub gen_std_filter_for {
     return sub {
         my $instr;
         local @components;
-                for (extract_multiple($_,$extractor_for{$type})) {
+		for (extract_multiple($_,$extractor_for{$type})) {
             if (ref())     { push @components, $_; $instr=0 }
             elsif ($instr) { $components[-1] .= $_ }
             else           { push @components, $_; $instr=1 }
@@ -242,7 +242,7 @@ Filter::Simple - Simplified source filtering
      package MyFilter;
 
      use Filter::Simple;
-
+     
      FILTER { ... };
 
      # or just:
@@ -265,7 +265,7 @@ Filter::Simple - Simplified source filtering
 =head2 The Problem
 
 Source filtering is an immensely powerful feature of recent versions of Perl.
-It allows one to extend the language itself (e.g. the Switch module), to
+It allows one to extend the language itself (e.g. the Switch module), to 
 simplify the language (e.g. Language::Pythonesque), or to completely recast the
 language (e.g. Lingua::Romana::Perligata). Effectively, it allows one to use
 the full power of Perl as its own, recursively applied, macro language.
@@ -329,7 +329,7 @@ to the sequence C<die 'BANG' if $BANG> in any piece of code following a
 C<use BANG;> statement (until the next C<no BANG;> statement, if any):
 
     package BANG;
-
+ 
     use Filter::Util::Call ;
 
     sub import {
@@ -394,7 +394,7 @@ In other words, the previous example, would become:
 
     package BANG;
     use Filter::Simple;
-
+    
     FILTER {
         s/BANG\s+BANG/die 'BANG' if \$BANG/g;
     };
@@ -438,7 +438,7 @@ you would write:
 
     package BANG;
     use Filter::Simple;
-
+    
     FILTER {
         s/BANG\s+BANG/die 'BANG' if \$BANG/g;
     }
@@ -455,7 +455,7 @@ and to prevent the filter's being turned off in any way:
 
     package BANG;
     use Filter::Simple;
-
+    
     FILTER {
         s/BANG\s+BANG/die 'BANG' if \$BANG/g;
     }
@@ -575,13 +575,13 @@ C<&Text::Balanced::extract_quotelike>).
 
 =item C<"string">
 
-Filters only the string literal parts of a Perl quotelike (i.e. the
+Filters only the string literal parts of a Perl quotelike (i.e. the 
 contents of a string literal, either half of a C<tr///>, the second
 half of an C<s///>).
 
 =item C<"regex">
 
-Filters only the pattern literal parts of a Perl quotelike (i.e. the
+Filters only the pattern literal parts of a Perl quotelike (i.e. the 
 contents of a C<qr//> or an C<m//>, the first half of an C<s///>).
 
 =item C<"all">
@@ -595,7 +595,7 @@ the component filters is called repeatedly, once for each component
 found in the source code.
 
 Note that you can also apply two or more of the same type of filter in
-a single C<FILTER_ONLY>. For example, here's a simple
+a single C<FILTER_ONLY>. For example, here's a simple 
 macro-preprocessor that is only applied within regexes,
 with a final debugging pass that prints the resulting source code:
 
@@ -609,7 +609,7 @@ with a final debugging pass that prints the resulting source code:
 
 
 =head2 Filtering only the code parts of source code
-
+ 
 Most source code ceases to be grammatically correct when it is broken up
 into the pieces between string literals and regexes. So the C<'code'>
 and C<'code_no_comments'> component filter behave slightly differently
@@ -702,7 +702,7 @@ to install the filter:
     use Filter::Simple;
 
     FILTER { s/(\w+)/\U$1/ };
-
+    
 that will almost never be a problem, but if you install a filtering
 subroutine by passing it directly to the C<use Filter::Simple>
 statement:
@@ -748,13 +748,13 @@ subroutines -- C<import> and C<unimport> -- which take care of all the
 nasty details.
 
 In addition, the generated C<import> subroutine passes its own argument
-list to the filtering subroutine, so the BANG.pm filter could easily
+list to the filtering subroutine, so the BANG.pm filter could easily 
 be made parametric:
 
     package BANG;
-
+ 
     use Filter::Simple;
-
+    
     FILTER {
         my ($die_msg, $var_name) = @_;
         s/BANG\s+BANG/die '$die_msg' if \${$var_name}/g;

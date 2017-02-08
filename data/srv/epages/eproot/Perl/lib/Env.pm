@@ -28,7 +28,7 @@ or '@'. Arrays are implemented in terms of C<split> and C<join>, using
 C<$Config::Config{path_sep}> as the delimiter.
 
 After an environment variable is tied, merely use it like a normal variable.
-You may access its value
+You may access its value 
 
     @path = split(/:/, $PATH);
     print join("\n", @LD_LIBRARY_PATH), "\n";
@@ -84,16 +84,16 @@ sub import {
     eval "package $callpack; use vars qw(" . join(' ', @vars) . ")";
     die $@ if $@;
     foreach (@vars) {
-        my ($type, $name) = m/^([\$\@])(.*)$/;
-        if ($type eq '$') {
-            tie ${"${callpack}::$name"}, Env, $name;
-        } else {
-            if ($^O eq 'VMS') {
-                tie @{"${callpack}::$name"}, Env::Array::VMS, $name;
-            } else {
-                tie @{"${callpack}::$name"}, Env::Array, $name;
-            }
-        }
+	my ($type, $name) = m/^([\$\@])(.*)$/;
+	if ($type eq '$') {
+	    tie ${"${callpack}::$name"}, Env, $name;
+	} else {
+	    if ($^O eq 'VMS') {
+		tie @{"${callpack}::$name"}, Env::Array::VMS, $name;
+	    } else {
+		tie @{"${callpack}::$name"}, Env::Array, $name;
+	    }
+	}
     }
 }
 
@@ -109,16 +109,16 @@ sub FETCH {
 sub STORE {
     my ($self, $value) = @_;
     if (defined($value)) {
-        $ENV{$$self} = $value;
+	$ENV{$$self} = $value;
     } else {
-        delete $ENV{$$self};
+	delete $ENV{$$self};
     }
 }
 
 ######################################################################
 
 package Env::Array;
-
+ 
 use Config;
 use Tie::Array;
 
@@ -211,13 +211,13 @@ sub SPLICE {
     my $length = shift;
     my @temp = split($sep, $ENV{$$self});
     if (wantarray) {
-        my @result = splice @temp, $self, $offset, $length, @_;
-        $ENV{$$self} = join($sep, @temp);
-        return @result;
+	my @result = splice @temp, $self, $offset, $length, @_;
+	$ENV{$$self} = join($sep, @temp);
+	return @result;
     } else {
-        my $result = scalar splice @temp, $offset, $length, @_;
-        $ENV{$$self} = join($sep, @temp);
-        return $result;
+	my $result = scalar splice @temp, $offset, $length, @_;
+	$ENV{$$self} = join($sep, @temp);
+	return $result;
     }
 }
 
@@ -227,7 +227,7 @@ package Env::Array::VMS;
 use Tie::Array;
 
 @ISA = qw(Tie::Array);
-
+ 
 sub TIEARRAY {
     bless \($_[1]);
 }

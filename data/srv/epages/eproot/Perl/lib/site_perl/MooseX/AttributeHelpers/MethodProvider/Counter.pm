@@ -35,10 +35,10 @@ __END__
 =head1 NAME
 
 MooseX::AttributeHelpers::MethodProvider::Counter
-
+  
 =head1 DESCRIPTION
 
-This is a role which provides the method generators for
+This is a role which provides the method generators for 
 L<MooseX::AttributeHelpers::Counter>.
 
 =head1 METHODS
@@ -65,7 +65,7 @@ L<MooseX::AttributeHelpers::Counter>.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

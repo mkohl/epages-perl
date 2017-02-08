@@ -23,53 +23,53 @@ $VERSION = '2.46';
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
-        gdBrushed
-        gdDashSize
-        gdMaxColors
-        gdStyled
-        gdStyledBrushed
-        gdTiled
-        gdTransparent
-        gdAntiAliased
+	gdBrushed
+	gdDashSize
+	gdMaxColors
+	gdStyled
+	gdStyledBrushed
+	gdTiled
+	gdTransparent
+	gdAntiAliased
         gdArc
         gdChord
         gdPie
         gdNoFill
         gdEdged
-        gdTinyFont
-        gdSmallFont
-        gdMediumBoldFont
-        gdLargeFont
-        gdGiantFont
-        gdAlphaMax
-        gdAlphaOpaque
-        gdAlphaTransparent
+	gdTinyFont
+	gdSmallFont
+	gdMediumBoldFont
+	gdLargeFont
+	gdGiantFont
+	gdAlphaMax
+	gdAlphaOpaque
+	gdAlphaTransparent
 );
 
 @EXPORT_OK = qw (
-        GD_CMP_IMAGE
+	GD_CMP_IMAGE 
         GD_CMP_NUM_COLORS
-        GD_CMP_COLOR
-        GD_CMP_SIZE_X
-        GD_CMP_SIZE_Y
+	GD_CMP_COLOR
+	GD_CMP_SIZE_X
+	GD_CMP_SIZE_Y
         GD_CMP_TRANSPARENT
-        GD_CMP_BACKGROUND
-        GD_CMP_INTERLACE
-        GD_CMP_TRUECOLOR
+	GD_CMP_BACKGROUND
+	GD_CMP_INTERLACE
+	GD_CMP_TRUECOLOR
 );
 
-%EXPORT_TAGS = ('cmp'  => [qw(GD_CMP_IMAGE
-                              GD_CMP_NUM_COLORS
-                              GD_CMP_COLOR
-                              GD_CMP_SIZE_X
-                              GD_CMP_SIZE_Y
-                              GD_CMP_TRANSPARENT
-                              GD_CMP_BACKGROUND
-                              GD_CMP_INTERLACE
-                              GD_CMP_TRUECOLOR
-                             )
-                          ]
-               );
+%EXPORT_TAGS = ('cmp'  => [qw(GD_CMP_IMAGE 
+			      GD_CMP_NUM_COLORS
+			      GD_CMP_COLOR
+			      GD_CMP_SIZE_X
+			      GD_CMP_SIZE_Y
+			      GD_CMP_TRANSPARENT
+			      GD_CMP_BACKGROUND
+			      GD_CMP_INTERLACE
+			      GD_CMP_TRUECOLOR
+			     )
+			  ]
+	       );
 
 # documentation error
 *GD::Polygon::delete = \&GD::Polygon::deletePt;
@@ -83,14 +83,14 @@ sub AUTOLOAD {
     ($constname = $AUTOLOAD) =~ s/.*:://;
     my $val = constant($constname);
     if ($! != 0) {
-        if ($! =~ /Invalid/) {
-            $AutoLoader::AUTOLOAD = $AUTOLOAD;
-            goto &AutoLoader::AUTOLOAD;
-        }
-        else {
-            my($pack,$file,$line) = caller;
-            die "Your vendor has not defined GD macro $pack\:\:$constname, used at $file line $line.\n";
-        }
+	if ($! =~ /Invalid/) {
+	    $AutoLoader::AUTOLOAD = $AUTOLOAD;
+	    goto &AutoLoader::AUTOLOAD;
+	}
+	else {
+	    my($pack,$file,$line) = caller;
+	    die "Your vendor has not defined GD macro $pack\:\:$constname, used at $file line $line.\n";
+	}
     }
     eval "sub $AUTOLOAD { $val }";
     goto &$AUTOLOAD;
@@ -140,8 +140,8 @@ GD.pm - Interface to Gd Graphics Library
 
     # allocate some colors
     $white = $im->colorAllocate(255,255,255);
-    $black = $im->colorAllocate(0,0,0);
-    $red = $im->colorAllocate(255,0,0);
+    $black = $im->colorAllocate(0,0,0);       
+    $red = $im->colorAllocate(255,0,0);      
     $blue = $im->colorAllocate(0,0,255);
 
     # make the background transparent and interlaced
@@ -202,37 +202,37 @@ L<GD::Simple> for a description of these methods.
 
 A Simple Example:
 
-        #!/usr/local/bin/perl
+	#!/usr/local/bin/perl
 
-        use GD;
+	use GD;
 
-        # create a new image
-        $im = new GD::Image(100,100);
+	# create a new image
+	$im = new GD::Image(100,100);
 
-        # allocate some colors
-        $white = $im->colorAllocate(255,255,255);
-        $black = $im->colorAllocate(0,0,0);
-        $red = $im->colorAllocate(255,0,0);
-        $blue = $im->colorAllocate(0,0,255);
+	# allocate some colors
+	$white = $im->colorAllocate(255,255,255);
+	$black = $im->colorAllocate(0,0,0);       
+	$red = $im->colorAllocate(255,0,0);      
+	$blue = $im->colorAllocate(0,0,255);
 
-        # make the background transparent and interlaced
-        $im->transparent($white);
-        $im->interlaced('true');
+	# make the background transparent and interlaced
+	$im->transparent($white);
+	$im->interlaced('true');
 
-        # Put a black frame around the picture
-        $im->rectangle(0,0,99,99,$black);
+	# Put a black frame around the picture
+	$im->rectangle(0,0,99,99,$black);
 
-        # Draw a blue oval
-        $im->arc(50,50,95,75,0,360,$blue);
+	# Draw a blue oval
+	$im->arc(50,50,95,75,0,360,$blue);
 
-        # And fill it with red
-        $im->fill(50,50,$red);
+	# And fill it with red
+	$im->fill(50,50,$red);
 
-        # make sure we are writing to a binary stream
-        binmode STDOUT;
+	# make sure we are writing to a binary stream
+	binmode STDOUT;
 
-        # Convert the image to PNG and print it on standard output
-        print $im->png;
+	# Convert the image to PNG and print it on standard output
+	print $im->png;
 
 Notes:
 
@@ -290,7 +290,7 @@ The new() method is the main constructor for the GD::Image class.
 Called with two integer arguments, it creates a new blank image of the
 specified width and height. For example:
 
-        $myImage = new GD::Image(100,100) || die;
+	$myImage = new GD::Image(100,100) || die;
 
 This will create an image that is 100 x 100 pixels wide.  If you don't
 specify the dimensions, a default of 64 x 64 will be chosen.
@@ -317,12 +317,12 @@ For backwards compatibility with scripts previous versions of GD,
 new images created from scratch (width, height) are palette based
 by default.  To change this default to create true color images use:
 
-        GD::Image->trueColor(1);
+	GD::Image->trueColor(1);
 
 somewhere before creating new images.  To switch back to palette
 based by default, use:
 
-        GD::Image->trueColor(0);
+	GD::Image->trueColor(0);
 
 =item B<$image = GD::Image-E<gt>newPalette([$width,$height])>
 
@@ -373,7 +373,7 @@ truecolor. To force the image to be palette-based, pass a value of 0
 in the optional $truecolor argument.
 
 The newFromPngData() method will create a new GD::Image initialized
-with the PNG format B<data> contained in C<$data>.
+with the PNG format B<data> contained in C<$data>. 
 
 =item B<$image = GD::Image-E<gt>newFromJpeg($file, [$truecolor])>
 
@@ -404,9 +404,9 @@ copy.
 This works in exactly the same way as C<newFromPng>, but reads the
 contents of an X Bitmap (black & white) file:
 
-        open (XBM,"coredump.xbm") || die;
-        $myImage = newFromXbm GD::Image(\*XBM) || die;
-        close XBM;
+	open (XBM,"coredump.xbm") || die;
+	$myImage = newFromXbm GD::Image(\*XBM) || die;
+	close XBM;
 
 There is no newFromXbmData() function, because there is no
 corresponding function in the gd library.
@@ -421,8 +421,8 @@ rare case when you need to read and write the image to disk quickly.
 It's not intended for regular use, because, unlike PNG or JPEG, no
 image compression is performed and these files can become B<BIG>.
 
-        $myImage = newFromGd GD::Image("godzilla.gd") || die;
-        close GDF;
+	$myImage = newFromGd GD::Image("godzilla.gd") || die;
+	close GDF;
 
 =item B<$image = GD::Image-E<gt>newFromGd2($file)>
 
@@ -438,9 +438,9 @@ file.  In addition to a filehandle, it accepts the top-left corner and
 dimensions (width,height) of the region of the image to read.  For
 example:
 
-        open (GDF,"godzilla.gd2") || die;
-        $myImage = GD::Image->newFromGd2Part(\*GDF,10,20,100,100) || die;
-        close GDF;
+	open (GDF,"godzilla.gd2") || die;
+	$myImage = GD::Image->newFromGd2Part(\*GDF,10,20,100,100) || die;
+	close GDF;
 
 This reads a 100x100 square portion of the image starting from
 position (10,20).
@@ -452,10 +452,10 @@ is unlike the other newFrom() functions because it does not take a
 filehandle.  This difference comes from an inconsistency in the
 underlying gd library.
 
-        $myImage = newFromXpm GD::Image('earth.xpm') || die;
+	$myImage = newFromXpm GD::Image('earth.xpm') || die;
 
 This function is only available if libgd was compiled with XPM
-support.
+support.  
 
 NOTE: The libgd library is unable to read certain XPM files, returning
 an all-black image instead.
@@ -477,11 +477,11 @@ standard output file formats.
 This returns the image data in PNG format.  You can then print it,
 pipe it to a display program, or write it to a file.  Example:
 
-        $png_data = $myImage->png;
-        open (DISPLAY,"| display -") || die;
-        binmode DISPLAY;
-        print DISPLAY $png_data;
-        close DISPLAY;
+	$png_data = $myImage->png;
+	open (DISPLAY,"| display -") || die;
+	binmode DISPLAY;
+	print DISPLAY $png_data;
+	close DISPLAY;
 
 Note the use of C<binmode()>.  This is crucial for portability to
 DOSish platforms.
@@ -566,8 +566,8 @@ pipe it to a display program, or write it to a file.
 This returns the image data in GD format.  You can then print it,
 pipe it to a display program, or write it to a file.  Example:
 
-        binmode MYOUTFILE;
-        print MYOUTFILE $myImage->gd;
+	binmode MYOUTFILE;
+	print MYOUTFILE $myImage->gd;
 
 =item B<$gd2data = $image-E<gt>gd2>
 
@@ -602,9 +602,9 @@ If no colors are allocated, then this function returns -1.
 
 Example:
 
-        $white = $myImage->colorAllocate(0,0,0); #background color
-        $black = $myImage->colorAllocate(255,255,255);
-        $peachpuff = $myImage->colorAllocate(255,218,185);
+	$white = $myImage->colorAllocate(0,0,0); #background color
+	$black = $myImage->colorAllocate(255,255,255);
+	$peachpuff = $myImage->colorAllocate(255,218,185);
 
 =item B<$index = $image-E<gt>colorAllocateAlpha(reg,green,blue,alpha)>
 
@@ -622,8 +622,8 @@ multiple colors.  There's no function result from this call.
 
 Example:
 
-        $myImage->colorDeallocate($peachpuff);
-        $peachy = $myImage->colorAllocate(255,210,185);
+	$myImage->colorDeallocate($peachpuff);
+	$peachy = $myImage->colorAllocate(255,210,185);
 
 =item B<$index = $image-E<gt>colorClosest(red,green,blue)>
 
@@ -633,12 +633,12 @@ allocated, then this call returns -1.
 
 Example:
 
-        $apricot = $myImage->colorClosest(255,200,180);
+	$apricot = $myImage->colorClosest(255,200,180);
 
 =item B<$index = $image-E<gt>colorClosestHWB(red,green,blue)>
 
 This also attempts to return the color closest in the color table to the
-red green and blue components specified. It uses a Hue/White/Black
+red green and blue components specified. It uses a Hue/White/Black 
 color representation to make the selected color more likely to match
 human perceptions of similar colors.
 
@@ -647,7 +647,7 @@ allocated, then this call returns -1.
 
 Example:
 
-        $mostred = $myImage->colorClosestHWB(255,0,0);
+	$mostred = $myImage->colorClosestHWB(255,0,0);
 
 =item B<$index = $image-E<gt>colorExact(red,green,blue)>
 
@@ -655,8 +655,8 @@ This returns the index of a color that exactly matches the specified
 red green and blue components.  If such a color is not in the color
 table, this call returns -1.
 
-        $rosey = $myImage->colorExact(255,100,80);
-        warn "Everything's coming up roses.\n" if $rosey >= 0;
+	$rosey = $myImage->colorExact(255,100,80);
+	warn "Everything's coming up roses.\n" if $rosey >= 0;
 
 =item B<$index = $image-E<gt>colorResolve(red,green,blue)>
 
@@ -665,14 +665,14 @@ red green and blue components.  If such a color is not in the color
 table and there is room, then this method allocates the color in the
 color table and returns its index.
 
-        $rosey = $myImage->colorResolve(255,100,80);
-        warn "Everything's coming up roses.\n" if $rosey >= 0;
+	$rosey = $myImage->colorResolve(255,100,80);
+	warn "Everything's coming up roses.\n" if $rosey >= 0;
 
 =item B<$colorsTotal = $image-E<gt>colorsTotal> I<object method>
 
 This returns the total number of colors allocated in the object.
 
-        $maxColors = $myImage->colorsTotal;
+	$maxColors = $myImage->colorsTotal;
 
 In the case of a TrueColor image, this call will return undef.
 
@@ -694,7 +694,7 @@ the specified color index.
 
 Example:
 
-        @RGB = $myImage->rgb($peachy);
+	@RGB = $myImage->rgb($peachy);
 
 =item B<$image-E<gt>transparent($colorIndex)>
 
@@ -702,20 +702,20 @@ This marks the color at the specified index as being transparent.
 Portions of the image drawn in this color will be invisible.  This is
 useful for creating paintbrushes of odd shapes, as well as for
 making PNG backgrounds transparent for displaying on the Web.  Only
-one color can be transparent at any time. To disable transparency,
-specify -1 for the index.
+one color can be transparent at any time. To disable transparency, 
+specify -1 for the index.  
 
 If you call this method without any parameters, it will return the
 current index of the transparent color, or -1 if none.
 
 Example:
 
-        open(PNG,"test.png");
-        $im = newFromPng GD::Image(PNG);
-        $white = $im->colorClosest(255,255,255); # find white
-        $im->transparent($white);
-        binmode STDOUT;
-        print $im->png;
+	open(PNG,"test.png");
+	$im = newFromPng GD::Image(PNG);
+	$white = $im->colorClosest(255,255,255); # find white
+	$im->transparent($white);
+	binmode STDOUT;
+	print $im->png;
 
 =back
 
@@ -743,18 +743,18 @@ non-colored parts don't overwrite other parts of your image.
 
 Example:
 
-        # Create a brush at an angle
-        $diagonal_brush = new GD::Image(5,5);
-        $white = $diagonal_brush->colorAllocate(255,255,255);
-        $black = $diagonal_brush->colorAllocate(0,0,0);
-        $diagonal_brush->transparent($white);
-        $diagonal_brush->line(0,4,4,0,$black); # NE diagonal
+	# Create a brush at an angle
+	$diagonal_brush = new GD::Image(5,5);
+	$white = $diagonal_brush->colorAllocate(255,255,255);
+	$black = $diagonal_brush->colorAllocate(0,0,0);
+	$diagonal_brush->transparent($white);
+	$diagonal_brush->line(0,4,4,0,$black); # NE diagonal
 
-        # Set the brush
-        $myImage->setBrush($diagonal_brush);
-
-        # Draw a circle using the brush
-        $myImage->arc(50,50,25,25,0,360,gdBrushed);
+	# Set the brush
+	$myImage->setBrush($diagonal_brush);
+	
+	# Draw a circle using the brush
+	$myImage->arc(50,50,25,25,0,360,gdBrushed);
 
 =item B<$image-E<gt>setThickness($thickness)>
 
@@ -774,12 +774,12 @@ example shows.
 
 Example:
 
-        # Set a style consisting of 4 pixels of yellow,
-        # 4 pixels of blue, and a 2 pixel gap
-        $myImage->setStyle($yellow,$yellow,$yellow,$yellow,
-                           $blue,$blue,$blue,$blue,
-                           gdTransparent,gdTransparent);
-        $myImage->arc(50,50,25,25,0,360,gdStyled);
+	# Set a style consisting of 4 pixels of yellow,
+	# 4 pixels of blue, and a 2 pixel gap
+	$myImage->setStyle($yellow,$yellow,$yellow,$yellow,
+			   $blue,$blue,$blue,$blue,
+			   gdTransparent,gdTransparent);
+	$myImage->arc(50,50,25,25,0,360,gdStyled);
 
 To combine the C<gdStyled> and C<gdBrushed> behaviors, you can specify
 C<gdStyledBrushed>.  In this case, a pixel from the current brush
@@ -861,25 +861,25 @@ well as to perform various special operations like flood-fill.
 This sets the pixel at (x,y) to the specified color index.  No value
 is returned from this method.  The coordinate system starts at the
 upper left at (0,0) and gets larger as you go down and to the right.
-You can use a real color, or one of the special colors gdBrushed,
+You can use a real color, or one of the special colors gdBrushed, 
 gdStyled and gdStyledBrushed can be specified.
 
 Example:
 
-        # This assumes $peach already allocated
-        $myImage->setPixel(50,50,$peach);
+	# This assumes $peach already allocated
+	$myImage->setPixel(50,50,$peach);
 
 =item B<$image-E<gt>line($x1,$y1,$x2,$y2,$color)>
 
 This draws a line from (x1,y1) to (x2,y2) of the specified color.  You
-can use a real color, or one of the special colors gdBrushed,
+can use a real color, or one of the special colors gdBrushed, 
 gdStyled and gdStyledBrushed.
 
 Example:
 
-        # Draw a diagonal line using the currently defined
-        # paintbrush pattern.
-        $myImage->line(0,0,150,150,gdBrushed);
+	# Draw a diagonal line using the currently defined
+	# paintbrush pattern.
+	$myImage->line(0,0,150,150,gdBrushed);
 
 =item B<$image-E<gt>dashedLine($x1,$y1,$x2,$y2,$color)>
 
@@ -895,7 +895,7 @@ the special color gdStyled.
 
 Example:
 
-        $myImage->dashedLine(0,0,150,150,$blue);
+	$myImage->dashedLine(0,0,150,150,$blue);
 
 =item B<$image-E<gt>rectangle($x1,$y1,$x2,$y2,$color)>
 
@@ -906,7 +906,7 @@ gdStyledBrushed are accepted.
 
 Example:
 
-        $myImage->rectangle(10,10,100,100,$rose);
+	$myImage->rectangle(10,10,100,100,$rose);
 
 =item B<$image-E<gt>filledRectangle($x1,$y1,$x2,$y2,$color)>
 
@@ -916,28 +916,28 @@ with a pattern.
 
 Example:
 
-        # read in a fill pattern and set it
-        $tile = newFromPng GD::Image('happyface.png');
-        $myImage->setTile($tile);
+	# read in a fill pattern and set it
+	$tile = newFromPng GD::Image('happyface.png');
+	$myImage->setTile($tile); 
 
-        # draw the rectangle, filling it with the pattern
-        $myImage->filledRectangle(10,10,150,200,gdTiled);
+	# draw the rectangle, filling it with the pattern
+	$myImage->filledRectangle(10,10,150,200,gdTiled);
 
 =item B<$image-E<gt>openPolygon($polygon,$color)>
 
 This draws a polygon with the specified color.  The polygon must be
 created first (see below).  The polygon must have at least three
 vertices.  If the last vertex doesn't close the polygon, the method
-will close it for you.  Both real color indexes and the special
+will close it for you.  Both real color indexes and the special 
 colors gdBrushed, gdStyled and gdStyledBrushed can be specified.
 
 Example:
 
-        $poly = new GD::Polygon;
-        $poly->addPt(50,0);
-        $poly->addPt(99,99);
-        $poly->addPt(0,99);
-        $myImage->openPolygon($poly,$blue);
+	$poly = new GD::Polygon;
+	$poly->addPt(50,0);
+	$poly->addPt(99,99);
+	$poly->addPt(0,99);
+	$myImage->openPolygon($poly,$blue);
 
 =item B<$image-E<gt>unclosedPolygon($polygon,$color)>
 
@@ -951,11 +951,11 @@ You need libgd 2.0.33 or higher to use this feature.
 
 Example:
 
-        $poly = new GD::Polygon;
-        $poly->addPt(50,0);
-        $poly->addPt(99,99);
-        $poly->addPt(0,99);
-        $myImage->unclosedPolygon($poly,$blue);
+	$poly = new GD::Polygon;
+	$poly->addPt(50,0);
+	$poly->addPt(99,99);
+	$poly->addPt(0,99);
+	$myImage->unclosedPolygon($poly,$blue);
 
 =item B<$image-E<gt>filledPolygon($poly,$color)>
 
@@ -965,14 +965,14 @@ with a pattern.
 
 Example:
 
-        # make a polygon
-        $poly = new GD::Polygon;
-        $poly->addPt(50,0);
-        $poly->addPt(99,99);
-        $poly->addPt(0,99);
+	# make a polygon
+	$poly = new GD::Polygon;
+	$poly->addPt(50,0);
+	$poly->addPt(99,99);
+	$poly->addPt(0,99);
 
-        # draw the polygon, filling it with a color
-        $myImage->filledPolygon($poly,$peachpuff);
+	# draw the polygon, filling it with a color
+	$myImage->filledPolygon($poly,$peachpuff);
 
 =item B<$image-E<gt>ellipse($cx,$cy,$width,$height,$color)>
 
@@ -998,8 +998,8 @@ B<gdBrushed>, B<gdStyled>, or B<gdStyledBrushed>.
 
 Example:
 
-        # draw a semicircle centered at 100,100
-        $myImage->arc(100,100,50,50,0,180,$blue);
+	# draw a semicircle centered at 100,100
+	$myImage->arc(100,100,50,50,0,180,$blue);
 
 =item B<$image-E<gt>filledArc($cx,$cy,$width,$height,$start,$end,$color [,$arc_style])>
 
@@ -1036,9 +1036,9 @@ with patterns.
 
 Example:
 
-        # Draw a rectangle, and then make its interior blue
-        $myImage->rectangle(10,10,100,100,$black);
-        $myImage->fill(50,50,$blue);
+	# Draw a rectangle, and then make its interior blue
+	$myImage->rectangle(10,10,100,100,$black);
+	$myImage->fill(50,50,$blue);
 
 =item B<$image-E<gt>fillToBorder($x,$y,$bordercolor,$color)>
 
@@ -1051,9 +1051,9 @@ are free to use the gdTiled color for the fill.
 
 Example:
 
-        # This has the same effect as the previous example
-        $myImage->rectangle(10,10,100,100,$black);
-        $myImage->fillToBorder(50,50,$black,$blue);
+	# This has the same effect as the previous example
+	$myImage->rectangle(10,10,100,100,$black);
+	$myImage->fillToBorder(50,50,$black,$blue);
 
 =back
 
@@ -1075,7 +1075,7 @@ attempt to find the best match, with varying results.
 
 =item B<$image-E<gt>copy($sourceImage,$dstX,$dstY,>
 
-B<                              $srcX,$srcY,$width,$height)>
+B<				$srcX,$srcY,$width,$height)>
 
 This is the simplest of the several copy operations, copying the
 specified region from the source image to the destination image (the
@@ -1088,13 +1088,13 @@ destination regions must not overlap or strange things will happen.
 
 Example:
 
-        $myImage = new GD::Image(100,100);
-        ... various drawing stuff ...
-        $srcImage = new GD::Image(50,50);
-        ... more drawing stuff ...
-        # copy a 25x25 pixel region from $srcImage to
-        # the rectangle starting at (10,10) in $myImage
-        $myImage->copy($srcImage,10,10,0,0,25,25);
+	$myImage = new GD::Image(100,100);
+	... various drawing stuff ...
+	$srcImage = new GD::Image(50,50);
+	... more drawing stuff ...
+	# copy a 25x25 pixel region from $srcImage to
+	# the rectangle starting at (10,10) in $myImage
+	$myImage->copy($srcImage,10,10,0,0,25,25);
 
 =item B<$image-E<gt>clone()>
 
@@ -1104,13 +1104,13 @@ palette and other nonessential details.
 
 Example:
 
-        $myImage = new GD::Image(100,100);
-        ... various drawing stuff ...
+	$myImage = new GD::Image(100,100);
+	... various drawing stuff ...
         $copy = $myImage->clone;
 
 =item B<$image-E<gt>copyMerge($sourceImage,$dstX,$dstY,>
 
-B<                              $srcX,$srcY,$width,$height,$percent)>
+B<				$srcX,$srcY,$width,$height,$percent)>
 
 This copies the indicated rectangle from the source image to the
 destination image, merging the colors to the extent specified by
@@ -1121,17 +1121,17 @@ solid rectangle.
 
 Example:
 
-        $myImage = new GD::Image(100,100);
-        ... various drawing stuff ...
-        $redImage = new GD::Image(50,50);
-        ... more drawing stuff ...
-        # copy a 25x25 pixel region from $srcImage to
-        # the rectangle starting at (10,10) in $myImage, merging 50%
-        $myImage->copyMerge($srcImage,10,10,0,0,25,25,50);
+	$myImage = new GD::Image(100,100);
+	... various drawing stuff ...
+	$redImage = new GD::Image(50,50);
+	... more drawing stuff ...
+	# copy a 25x25 pixel region from $srcImage to
+	# the rectangle starting at (10,10) in $myImage, merging 50%
+	$myImage->copyMerge($srcImage,10,10,0,0,25,25,50);
 
 =item B<$image-E<gt>copyMergeGray($sourceImage,$dstX,$dstY,>
 
-B<                              $srcX,$srcY,$width,$height,$percent)>
+B<				$srcX,$srcY,$width,$height,$percent)>
 
 This is identical to copyMerge() except that it preserves the hue of
 the source by converting all the pixels of the destination rectangle
@@ -1139,7 +1139,7 @@ to grayscale before merging.
 
 =item B<$image-E<gt>copyResized($sourceImage,$dstX,$dstY,>
 
-B<                              $srcX,$srcY,$destW,$destH,$srcW,$srcH)>
+B<				$srcX,$srcY,$destW,$destH,$srcW,$srcH)>
 
 This method is similar to copy() but allows you to choose different
 sizes for the source and destination rectangles.  The source and
@@ -1149,17 +1149,17 @@ image to accommodate the size requirements.
 
 Example:
 
-        $myImage = new GD::Image(100,100);
-        ... various drawing stuff ...
-        $srcImage = new GD::Image(50,50);
-        ... more drawing stuff ...
-        # copy a 25x25 pixel region from $srcImage to
-        # a larger rectangle starting at (10,10) in $myImage
-        $myImage->copyResized($srcImage,10,10,0,0,50,50,25,25);
+	$myImage = new GD::Image(100,100);
+	... various drawing stuff ...
+	$srcImage = new GD::Image(50,50);
+	... more drawing stuff ...
+	# copy a 25x25 pixel region from $srcImage to
+	# a larger rectangle starting at (10,10) in $myImage
+	$myImage->copyResized($srcImage,10,10,0,0,50,50,25,25);
 
 =item B<$image-E<gt>copyResampled($sourceImage,$dstX,$dstY,>
 
-B<                              $srcX,$srcY,$destW,$destH,$srcW,$srcH)>
+B<				$srcX,$srcY,$destW,$destH,$srcW,$srcH)>
 
 This method is similar to copyResized() but provides "smooth" copying
 from a large image to a smaller one, using a weighted average of the
@@ -1169,7 +1169,7 @@ image is a palette image.
 
 =item B<$image-E<gt>copyRotated($sourceImage,$dstX,$dstY,>
 
-B<                              $srcX,$srcY,$width,$height,$angle)>
+B<				$srcX,$srcY,$width,$height,$angle)>
 
 Like copyResized() but the $angle argument specifies an arbitrary
 amount to rotate the image clockwise (in degrees).  In addition, $dstX
@@ -1254,7 +1254,7 @@ gdTinyFont, gdLargeFont and gdGiantFont.
 
 Example:
 
-        $myImage->string(gdSmallFont,2,10,"Peachy Keen",$peach);
+	$myImage->string(gdSmallFont,2,10,"Peachy Keen",$peach);
 
 =item B<$image-E<gt>stringUp($font,$x,$y,$string,$color)>
 
@@ -1312,7 +1312,7 @@ In case of an error (such as the font not being available, or FT
 support not being available), the method returns an empty list and
 sets $@ to the error message.
 
-The string may contain UTF-8 sequences like: "&#192;"
+The string may contain UTF-8 sequences like: "&#192;" 
 
 You may also call this method from the GD::Image class name, in which
 case it doesn't do any actual drawing, but returns the bounding box
@@ -1325,7 +1325,7 @@ L<http://www.boutell.com/gd/manual2.0.9.html#gdImageStringFT>.
 
 An optional 8th argument allows you to pass a hashref of options to
 stringFT().  Several hashkeys are recognized: B<linespacing>,
-B<charmap>, B<resolution>, and B<kerning>.
+B<charmap>, B<resolution>, and B<kerning>. 
 
 The value of B<linespacing> is supposed to be a multiple of the
 character height, so setting linespacing to 2.0 will result in
@@ -1353,9 +1353,9 @@ Example:
 
  $gd->stringFT($black,'/dosc/windows/Fonts/pala.ttf',40,0,20,90,
               "hi there\r\nbye now",
-              {linespacing=>0.6,
-               charmap  => 'Unicode',
-              });
+	      {linespacing=>0.6,
+	       charmap  => 'Unicode',
+	      });
 
 If GD was compiled with fontconfig support, and the fontconfig library
 is available on your system, then you can use a font name pattern
@@ -1566,35 +1566,35 @@ Quickdraw library).  Also see L<GD::Polyline>.
 
 Create an empty polygon with no vertices.
 
-        $poly = new GD::Polygon;
+	$poly = new GD::Polygon;
 
 =item B<$poly-E<gt>addPt($x,$y)>
 
 Add point (x,y) to the polygon.
 
-        $poly->addPt(0,0);
-        $poly->addPt(0,50);
-        $poly->addPt(25,25);
-        $myImage->fillPoly($poly,$blue);
+	$poly->addPt(0,0);
+	$poly->addPt(0,50);
+	$poly->addPt(25,25);
+	$myImage->fillPoly($poly,$blue);
 
 =item B<($x,$y) = $poly-E<gt>getPt($index)>
 
 Retrieve the point at the specified vertex.
 
-        ($x,$y) = $poly->getPt(2);
+	($x,$y) = $poly->getPt(2);
 
 =item B<$poly-E<gt>setPt($index,$x,$y)>
 
 Change the value of an already existing vertex.  It is an error to set
 a vertex that isn't already defined.
 
-        $poly->setPt(2,100,100);
+	$poly->setPt(2,100,100);
 
 =item B<($x,$y) = $poly-E<gt>deletePt($index)>
 
 Delete the specified vertex, returning its value.
 
-        ($x,$y) = $poly->deletePt(1);
+	($x,$y) = $poly->deletePt(1);
 
 
 =item B<$poly-E<gt>clear()>
@@ -1606,26 +1606,26 @@ Delete all vertices, restoring the polygon to its initial empty state.
 Draw from current vertex to a new vertex, using relative (dx,dy)
 coordinates.  If this is the first point, act like addPt().
 
-        $poly->addPt(0,0);
-        $poly->toPt(0,50);
-        $poly->toPt(25,-25);
-        $myImage->fillPoly($poly,$blue);
+	$poly->addPt(0,0);
+	$poly->toPt(0,50);
+	$poly->toPt(25,-25);
+	$myImage->fillPoly($poly,$blue);
 
 =item B<$vertex_count = $poly-E<gt>length>
 
 Return the number of vertices in the polygon.
 
-        $points = $poly->length;
+	$points = $poly->length;
 
 =item B<@vertices = $poly-E<gt>vertices>
 
 Return a list of all the vertices in the polygon object.  Each member
 of the list is a reference to an (x,y) array.
 
-        @vertices = $poly->vertices;
-        foreach $v (@vertices)
-           print join(",",@$v),"\n";
-        }
+	@vertices = $poly->vertices;
+	foreach $v (@vertices)
+	   print join(",",@$v),"\n";
+	}
 
 =item B<@rect = $poly-E<gt>bounds>
 
@@ -1633,7 +1633,7 @@ Return the smallest rectangle that completely encloses the polygon.
 The return value is an array containing the (left,top,right,bottom) of
 the rectangle.
 
-        ($left,$top,$right,$bottom) = $poly->bounds;
+	($left,$top,$right,$bottom) = $poly->bounds;
 
 =item B<$poly-E<gt>offset($dx,$dy)>
 
@@ -1641,7 +1641,7 @@ Offset all the vertices of the polygon by the specified horizontal
 (dh) and vertical (dy) amounts.  Positive numbers move the polygon
 down and to the right.
 
-        $poly->offset(10,30);
+	$poly->offset(10,30);
 
 =item B<$poly-E<gt>map($srcL,$srcT,$srcR,$srcB,$destL,$dstT,$dstR,$dstB)>
 
@@ -1652,8 +1652,8 @@ destination rectangles are given in (left,top,right,bottom)
 coordinates.  For convenience, you can use the polygon's own bounding
 box as the source rectangle.
 
-        # Make the polygon really tall
-        $poly->map($poly->bounds,0,0,50,200);
+	# Make the polygon really tall
+	$poly->map($poly->bounds,0,0,50,200);
 
 =item B<$poly-E<gt>scale($sx,$sy)>
 
@@ -1736,7 +1736,7 @@ X11 font.
 
 This returns the number of characters in the font.
 
-        print "The large font contains ",gdLargeFont->nchars," characters\n";
+	print "The large font contains ",gdLargeFont->nchars," characters\n";
 
 =item B<$font-E<gt>offset>
 

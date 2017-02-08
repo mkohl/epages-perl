@@ -11,7 +11,7 @@ with 'MooseX::AttributeHelpers::Trait::Base';
 sub helper_type { 'Bool' }
 
 # NOTE:
-# we don't use the method provider for this
+# we don't use the method provider for this 
 # module since many of the names of the provied
 # methods would conflict with keywords
 # - SL
@@ -43,11 +43,11 @@ no Moose::Role;
 MooseX::AttributeHelpers::Bool
 
 =head1 SYNOPSIS
-
+  
   package Room;
   use Moose;
   use MooseX::AttributeHelpers;
-
+  
   has 'is_lit' => (
       metaclass => 'Bool',
       is        => 'rw',
@@ -66,7 +66,7 @@ MooseX::AttributeHelpers::Bool
   $room->darken;         # same as $room->is_lit(0);
   $room->flip_switch;    # same as $room->is_lit(not $room->is_lit);
   return $room->is_dark; # same as !$room->is_lit
-
+  
 =head1 DESCRIPTION
 
 This provides a simple boolean attribute, which supports most of the
@@ -115,7 +115,7 @@ Equivalent of 'not C<$value>'.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

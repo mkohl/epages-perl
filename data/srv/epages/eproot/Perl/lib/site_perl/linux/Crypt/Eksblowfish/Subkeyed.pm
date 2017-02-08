@@ -4,21 +4,21 @@ Crypt::Eksblowfish::Subkeyed - Blowfish/Eksblowfish with access to subkeys
 
 =head1 SYNOPSIS
 
-        use Crypt::Eksblowfish::Subkeyed;
+	use Crypt::Eksblowfish::Subkeyed;
 
-        $block_size = Crypt::Eksblowfish::Subkeyed->blocksize;
+	$block_size = Crypt::Eksblowfish::Subkeyed->blocksize;
 
-        $cipher = Crypt::Eksblowfish::Subkeyed
-                        ->new_from_subkeys(\@p_array, \@s_boxes);
-        $cipher = Crypt::Eksblowfish::Subkeyed->new_initial;
+	$cipher = Crypt::Eksblowfish::Subkeyed
+			->new_from_subkeys(\@p_array, \@s_boxes);
+	$cipher = Crypt::Eksblowfish::Subkeyed->new_initial;
 
-        $block_size = $cipher->blocksize;
-        $ciphertext = $cipher->encrypt($plaintext);
-        $plaintext = $cipher->decrypt($ciphertext);
+	$block_size = $cipher->blocksize;
+	$ciphertext = $cipher->encrypt($plaintext);
+	$plaintext = $cipher->decrypt($ciphertext);
 
-        $p_array = $cipher->p_array;
-        $s_boxes = $cipher->s_boxes;
-        if($cipher->is_weak) { ...
+	$p_array = $cipher->p_array;
+	$s_boxes = $cipher->s_boxes;
+	if($cipher->is_weak) { ...
 
 =head1 DESCRIPTION
 

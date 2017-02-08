@@ -22,9 +22,9 @@ my $EINVAL = exists(&Errno::EINVAL) ? Errno::EINVAL() : 1;
 IO::Socket::INET->register_domain( AF_INET );
 
 my %socket_type = ( tcp  => SOCK_STREAM,
-                    udp  => SOCK_DGRAM,
-                    icmp => SOCK_RAW
-                  );
+		    udp  => SOCK_DGRAM,
+		    icmp => SOCK_RAW
+		  );
 my %proto_number;
 $proto_number{tcp}  = Socket::IPPROTO_TCP()  if defined &Socket::IPPROTO_TCP;
 $proto_number{udp}  = Socket::IPPROTO_UDP()  if defined &Socket::IPPROTO_UDP;
@@ -40,7 +40,7 @@ sub new {
 sub _cache_proto {
     my @proto = @_;
     for (map lc($_), $proto[0], split(' ', $proto[1])) {
-        $proto_number{$_} = $proto[2];
+	$proto_number{$_} = $proto[2];
     }
     $proto_name{$proto[2]} = $proto[0];
 }
@@ -75,7 +75,7 @@ sub _sock_info {
   my @serv = ();
 
   $port = $1
-        if(defined $addr && $addr =~ s,:([\w\(\)/]+)$,,);
+	if(defined $addr && $addr =~ s,:([\w\(\)/]+)$,,);
 
   if(defined $proto  && $proto =~ /\D/) {
     my $num = _get_proto_number($proto);
@@ -91,21 +91,21 @@ sub _sock_info {
     my $pnum = ($port =~ m,^(\d+)$,)[0];
 
     @serv = getservbyname($port, _get_proto_name($proto) || "")
-        if ($port =~ m,\D,);
+	if ($port =~ m,\D,);
 
     $port = $serv[2] || $defport || $pnum;
     unless (defined $port) {
-        $@ = "Bad service '$origport'";
-        return;
+	$@ = "Bad service '$origport'";
+	return;
     }
 
     $proto = _get_proto_number($serv[3]) if @serv && !$proto;
   }
 
  return ($addr || undef,
-         $port || undef,
-         $proto || undef
-        );
+	 $port || undef,
+	 $proto || undef
+	);
 }
 
 sub _error {
@@ -116,7 +116,7 @@ sub _error {
       my $title = ref($sock).": ";
       $@ = join("", $_[0] =~ /^$title/ ? "" : $title, @_);
       $sock->close()
-        if(defined fileno($sock));
+	if(defined fileno($sock));
     }
     $! = $err;
     return undef;
@@ -126,10 +126,10 @@ sub _get_addr {
     my($sock,$addr_str, $multi) = @_;
     my @addr;
     if ($multi && $addr_str !~ /^\d+(?:\.\d+){3}$/) {
-        (undef, undef, undef, undef, @addr) = gethostbyname($addr_str);
+	(undef, undef, undef, undef, @addr) = gethostbyname($addr_str);
     } else {
-        my $h = inet_aton($addr_str);
-        push(@addr, $h) if defined $h;
+	my $h = inet_aton($addr_str);
+	push(@addr, $h) if defined $h;
     }
     @addr;
 }
@@ -140,27 +140,27 @@ sub configure {
 
 
     $arg->{LocalAddr} = $arg->{LocalHost}
-        if exists $arg->{LocalHost} && !exists $arg->{LocalAddr};
+	if exists $arg->{LocalHost} && !exists $arg->{LocalAddr};
 
     ($laddr,$lport,$proto) = _sock_info($arg->{LocalAddr},
-                                        $arg->{LocalPort},
-                                        $arg->{Proto})
-                        or return _error($sock, $!, $@);
+					$arg->{LocalPort},
+					$arg->{Proto})
+			or return _error($sock, $!, $@);
 
     $laddr = defined $laddr ? inet_aton($laddr)
-                            : INADDR_ANY;
+			    : INADDR_ANY;
 
     return _error($sock, $EINVAL, "Bad hostname '",$arg->{LocalAddr},"'")
-        unless(defined $laddr);
+	unless(defined $laddr);
 
     $arg->{PeerAddr} = $arg->{PeerHost}
-        if exists $arg->{PeerHost} && !exists $arg->{PeerAddr};
+	if exists $arg->{PeerHost} && !exists $arg->{PeerAddr};
 
     unless(exists $arg->{Listen}) {
-        ($raddr,$rport,$proto) = _sock_info($arg->{PeerAddr},
-                                            $arg->{PeerPort},
-                                            $proto)
-                        or return _error($sock, $!, $@);
+	($raddr,$rport,$proto) = _sock_info($arg->{PeerAddr},
+					    $arg->{PeerPort},
+					    $proto)
+			or return _error($sock, $!, $@);
     }
 
     $proto ||= _get_proto_number('tcp');
@@ -170,79 +170,79 @@ sub configure {
     my @raddr = ();
 
     if(defined $raddr) {
-        @raddr = $sock->_get_addr($raddr, $arg->{MultiHomed});
-        return _error($sock, $EINVAL, "Bad hostname '",$arg->{PeerAddr},"'")
-            unless @raddr;
+	@raddr = $sock->_get_addr($raddr, $arg->{MultiHomed});
+	return _error($sock, $EINVAL, "Bad hostname '",$arg->{PeerAddr},"'")
+	    unless @raddr;
     }
 
     while(1) {
 
-        $sock->socket(AF_INET, $type, $proto) or
-            return _error($sock, $!, "$!");
+	$sock->socket(AF_INET, $type, $proto) or
+	    return _error($sock, $!, "$!");
 
         if (defined $arg->{Blocking}) {
-            defined $sock->blocking($arg->{Blocking})
-                or return _error($sock, $!, "$!");
-        }
+	    defined $sock->blocking($arg->{Blocking})
+		or return _error($sock, $!, "$!");
+	}
 
-        if ($arg->{Reuse} || $arg->{ReuseAddr}) {
-            $sock->sockopt(SO_REUSEADDR,1) or
-                    return _error($sock, $!, "$!");
-        }
+	if ($arg->{Reuse} || $arg->{ReuseAddr}) {
+	    $sock->sockopt(SO_REUSEADDR,1) or
+		    return _error($sock, $!, "$!");
+	}
 
-        if ($arg->{ReusePort}) {
-            $sock->sockopt(SO_REUSEPORT,1) or
-                    return _error($sock, $!, "$!");
-        }
+	if ($arg->{ReusePort}) {
+	    $sock->sockopt(SO_REUSEPORT,1) or
+		    return _error($sock, $!, "$!");
+	}
 
-        if ($arg->{Broadcast}) {
-                $sock->sockopt(SO_BROADCAST,1) or
-                    return _error($sock, $!, "$!");
-        }
+	if ($arg->{Broadcast}) {
+		$sock->sockopt(SO_BROADCAST,1) or
+		    return _error($sock, $!, "$!");
+	}
 
-        if($lport || ($laddr ne INADDR_ANY) || exists $arg->{Listen}) {
-            $sock->bind($lport || 0, $laddr) or
-                    return _error($sock, $!, "$!");
-        }
+	if($lport || ($laddr ne INADDR_ANY) || exists $arg->{Listen}) {
+	    $sock->bind($lport || 0, $laddr) or
+		    return _error($sock, $!, "$!");
+	}
 
-        if(exists $arg->{Listen}) {
-            $sock->listen($arg->{Listen} || 5) or
-                return _error($sock, $!, "$!");
-            last;
-        }
+	if(exists $arg->{Listen}) {
+	    $sock->listen($arg->{Listen} || 5) or
+		return _error($sock, $!, "$!");
+	    last;
+	}
 
-        # don't try to connect unless we're given a PeerAddr
-        last unless exists($arg->{PeerAddr});
-
+ 	# don't try to connect unless we're given a PeerAddr
+ 	last unless exists($arg->{PeerAddr});
+ 
         $raddr = shift @raddr;
 
-        return _error($sock, $EINVAL, 'Cannot determine remote port')
-                unless($rport || $type == SOCK_DGRAM || $type == SOCK_RAW);
+	return _error($sock, $EINVAL, 'Cannot determine remote port')
+		unless($rport || $type == SOCK_DGRAM || $type == SOCK_RAW);
 
-        last
-            unless($type == SOCK_STREAM || defined $raddr);
+	last
+	    unless($type == SOCK_STREAM || defined $raddr);
 
-        return _error($sock, $EINVAL, "Bad hostname '",$arg->{PeerAddr},"'")
-            unless defined $raddr;
+	return _error($sock, $EINVAL, "Bad hostname '",$arg->{PeerAddr},"'")
+	    unless defined $raddr;
 
 #        my $timeout = ${*$sock}{'io_socket_timeout'};
 #        my $before = time() if $timeout;
 
-        undef $@;
+	undef $@;
         if ($sock->connect(pack_sockaddr_in($rport, $raddr))) {
 #            ${*$sock}{'io_socket_timeout'} = $timeout;
             return $sock;
         }
 
-        return _error($sock, $!, $@ || "Timeout")
-            unless @raddr;
+	return _error($sock, $!, $@ || "Timeout")
+	    unless @raddr;
 
-#       if ($timeout) {
-#           my $new_timeout = $timeout - (time() - $before);
-#           return _error($sock,
+#	if ($timeout) {
+#	    my $new_timeout = $timeout - (time() - $before);
+#	    return _error($sock,
 #                         (exists(&Errno::ETIMEDOUT) ? Errno::ETIMEDOUT() : $EINVAL),
 #                         "Timeout") if $new_timeout <= 0;
-#           ${*$sock}{'io_socket_timeout'} = $new_timeout;
+#	    ${*$sock}{'io_socket_timeout'} = $new_timeout;
 #        }
 
     }
@@ -338,20 +338,20 @@ In addition to the key-value pairs accepted by L<IO::Socket>,
 C<IO::Socket::INET> provides.
 
 
-    PeerAddr    Remote host address          <hostname>[:<port>]
-    PeerHost    Synonym for PeerAddr
-    PeerPort    Remote port or service       <service>[(<no>)] | <no>
-    LocalAddr   Local host bind address      hostname[:port]
-    LocalHost   Synonym for LocalAddr
-    LocalPort   Local host bind port         <service>[(<no>)] | <no>
-    Proto       Protocol name (or number)    "tcp" | "udp" | ...
-    Type        Socket type                  SOCK_STREAM | SOCK_DGRAM | ...
-    Listen      Queue size for listen
-    ReuseAddr   Set SO_REUSEADDR before binding
-    Reuse       Set SO_REUSEADDR before binding (deprecated, prefer ReuseAddr)
-    ReusePort   Set SO_REUSEPORT before binding
-    Broadcast   Set SO_BROADCAST before binding
-    Timeout     Timeout value for various operations
+    PeerAddr	Remote host address          <hostname>[:<port>]
+    PeerHost	Synonym for PeerAddr
+    PeerPort	Remote port or service       <service>[(<no>)] | <no>
+    LocalAddr	Local host bind	address      hostname[:port]
+    LocalHost	Synonym for LocalAddr
+    LocalPort	Local host bind	port         <service>[(<no>)] | <no>
+    Proto	Protocol name (or number)    "tcp" | "udp" | ...
+    Type	Socket type                  SOCK_STREAM | SOCK_DGRAM | ...
+    Listen	Queue size for listen
+    ReuseAddr	Set SO_REUSEADDR before binding
+    Reuse	Set SO_REUSEADDR before binding (deprecated, prefer ReuseAddr)
+    ReusePort	Set SO_REUSEPORT before binding
+    Broadcast	Set SO_BROADCAST before binding
+    Timeout	Timeout	value for various operations
     MultiHomed  Try all addresses for multi-homed hosts
     Blocking    Determine if connection will be blocking mode
 
@@ -399,9 +399,9 @@ Examples:
 
    $sock = IO::Socket::INET->new(PeerPort  => 9999,
                                  PeerAddr  => inet_ntoa(INADDR_BROADCAST),
-                                 Proto     => udp,
+                                 Proto     => udp,    
                                  LocalAddr => 'localhost',
-                                 Broadcast => 1 )
+                                 Broadcast => 1 ) 
                              or die "Can't bind : $@\n";
 
  NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE

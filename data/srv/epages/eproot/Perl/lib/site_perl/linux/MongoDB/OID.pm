@@ -91,12 +91,12 @@ version 0.702.2
 
 =head1 SYNOPSIS
 
-If no C<_id> field is provided when a document is inserted into the database, an
+If no C<_id> field is provided when a document is inserted into the database, an 
 C<_id> field will be added with a new C<MongoDB::OID> as its value.
 
     my $id = $collection->insert({'name' => 'Alice', age => 20});
 
-C<$id> will be a C<MongoDB::OID> that can be used to retreive or update the
+C<$id> will be a C<MongoDB::OID> that can be used to retreive or update the 
 saved document:
 
     $collection->update({_id => $id}, {'age' => {'$inc' => 1}});
@@ -127,7 +127,7 @@ Core documentation on object ids: L<http://dochub.mongodb.org/core/objectids>.
 =head2 value
 
 The OID value. A random value will be generated if none exists already.
-It is a 24-character hexidecimal string (12 bytes).
+It is a 24-character hexidecimal string (12 bytes).  
 
 Its string representation is the 24-character string.
 
@@ -144,7 +144,7 @@ Gets the value of this OID as a 24-digit hexidecimal string.
     my $date = DateTime->from_epoch(epoch => $id->get_time);
 
 Each OID contains a 4 bytes timestamp from when it was created.  This method
-extracts the timestamp.
+extracts the timestamp.  
 
 =head2 TO_JSON
 
@@ -155,8 +155,8 @@ extracts the timestamp.
     $json->encode(MongoDB::OID->new);
 
 Returns a JSON string for this OID.  This is compatible with the strict JSON
-representation used by MongoDB, that is, an OID with the value
-"012345678901234567890123" will be represented as
+representation used by MongoDB, that is, an OID with the value 
+"012345678901234567890123" will be represented as 
 C<{"$oid" : "012345678901234567890123"}>.
 
 =head1 AUTHOR

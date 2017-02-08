@@ -1,19 +1,19 @@
-# Loaded.pm -- show what files were loaded
+# Loaded.pm -- show what files were loaded 
 # tchrist@perl.com
 
 package Devel::Loaded;
 
 $VERSION = '1.10';
 
-BEGIN { %Seen = %INC }
+BEGIN { %Seen = %INC } 
 
-END {
+END { 
 
     delete $INC{"Loaded.pm"};
 
     for my $path (values %INC) {
-        print "$path\n" unless $Seen{$path};
-    }
+	print "$path\n" unless $Seen{$path};
+    } 
 
 }
 

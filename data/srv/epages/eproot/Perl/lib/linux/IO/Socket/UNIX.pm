@@ -30,21 +30,21 @@ sub configure {
     my $type = $arg->{Type} || SOCK_STREAM;
 
     $sock->socket(AF_UNIX, $type, 0) or
-        return undef;
+	return undef;
 
     if(exists $arg->{Local}) {
-        my $addr = sockaddr_un($arg->{Local});
-        $sock->bind($addr) or
-            return undef;
+	my $addr = sockaddr_un($arg->{Local});
+	$sock->bind($addr) or
+	    return undef;
     }
     if(exists $arg->{Listen} && $type != SOCK_DGRAM) {
-        $sock->listen($arg->{Listen} || 5) or
-            return undef;
+	$sock->listen($arg->{Listen} || 5) or
+	    return undef;
     }
     elsif(exists $arg->{Peer}) {
-        my $addr = sockaddr_un($arg->{Peer});
-        $sock->connect($addr) or
-            return undef;
+	my $addr = sockaddr_un($arg->{Peer});
+	$sock->connect($addr) or
+	    return undef;
     }
 
     $sock;
@@ -93,10 +93,10 @@ optionally takes arguments, these arguments are in key-value pairs.
 In addition to the key-value pairs accepted by L<IO::Socket>,
 C<IO::Socket::UNIX> provides.
 
-    Type        Type of socket (eg SOCK_STREAM or SOCK_DGRAM)
-    Local       Path to local fifo
-    Peer        Path to peer fifo
-    Listen      Create a listen socket
+    Type    	Type of socket (eg SOCK_STREAM or SOCK_DGRAM)
+    Local   	Path to local fifo
+    Peer    	Path to peer fifo
+    Listen  	Create a listen socket
 
 If the constructor is only passed a single argument, it is assumed to
 be a C<Peer> specification.

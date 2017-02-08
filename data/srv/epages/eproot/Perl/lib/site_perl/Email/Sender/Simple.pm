@@ -32,7 +32,7 @@ use Try::Tiny;
   sub default_transport {
     return $DEFAULT_TRANSPORT if $DEFAULT_TRANSPORT;
     my ($self) = @_;
-
+    
     if ($ENV{EMAIL_SENDER_TRANSPORT}) {
       my $transport_class = $ENV{EMAIL_SENDER_TRANSPORT};
 

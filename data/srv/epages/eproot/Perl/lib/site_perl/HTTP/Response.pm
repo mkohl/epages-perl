@@ -24,11 +24,11 @@ sub parse
     my($class, $str) = @_;
     my $status_line;
     if ($str =~ s/^(.*)\n//) {
-        $status_line = $1;
+	$status_line = $1;
     }
     else {
-        $status_line = $str;
-        $str = "";
+	$status_line = $str;
+	$str = "";
     }
 
     my $self = $class->SUPER::parse($str);
@@ -77,13 +77,13 @@ sub base
 {
     my $self = shift;
     my $base = (
-        $self->header('Content-Base'),        # used to be HTTP/1.1
-        $self->header('Content-Location'),    # HTTP/1.1
-        $self->header('Base'),                # HTTP/1.0
+	$self->header('Content-Base'),        # used to be HTTP/1.1
+	$self->header('Content-Location'),    # HTTP/1.1
+	$self->header('Base'),                # HTTP/1.0
     )[0];
     if ($base && $base =~ /^$URI::scheme_re:/o) {
-        # already absolute
-        return $HTTP::URI_CLASS->new($base);
+	# already absolute
+	return $HTTP::URI_CLASS->new($base);
     }
 
     my $req = $self->request;
@@ -118,61 +118,61 @@ sub filename
 
     my $cd = $self->header('Content-Disposition');
     if ($cd) {
-        require HTTP::Headers::Util;
-        if (my @cd = HTTP::Headers::Util::split_header_words($cd)) {
-            my ($disposition, undef, %cd_param) = @{$cd[-1]};
-            $file = $cd_param{filename};
+	require HTTP::Headers::Util;
+	if (my @cd = HTTP::Headers::Util::split_header_words($cd)) {
+	    my ($disposition, undef, %cd_param) = @{$cd[-1]};
+	    $file = $cd_param{filename};
 
-            # RFC 2047 encoded?
-            if ($file && $file =~ /^=\?(.+?)\?(.+?)\?(.+)\?=$/) {
-                my $charset = $1;
-                my $encoding = uc($2);
-                my $encfile = $3;
+	    # RFC 2047 encoded?
+	    if ($file && $file =~ /^=\?(.+?)\?(.+?)\?(.+)\?=$/) {
+		my $charset = $1;
+		my $encoding = uc($2);
+		my $encfile = $3;
 
-                if ($encoding eq 'Q' || $encoding eq 'B') {
-                    local($SIG{__DIE__});
-                    eval {
-                        if ($encoding eq 'Q') {
-                            $encfile =~ s/_/ /g;
-                            require MIME::QuotedPrint;
-                            $encfile = MIME::QuotedPrint::decode($encfile);
-                        }
-                        else { # $encoding eq 'B'
-                            require MIME::Base64;
-                            $encfile = MIME::Base64::decode($encfile);
-                        }
+		if ($encoding eq 'Q' || $encoding eq 'B') {
+		    local($SIG{__DIE__});
+		    eval {
+			if ($encoding eq 'Q') {
+			    $encfile =~ s/_/ /g;
+			    require MIME::QuotedPrint;
+			    $encfile = MIME::QuotedPrint::decode($encfile);
+			}
+			else { # $encoding eq 'B'
+			    require MIME::Base64;
+			    $encfile = MIME::Base64::decode($encfile);
+			}
 
-                        require Encode;
-                        require Encode::Locale;
-                        Encode::from_to($encfile, $charset, "locale_fs");
-                    };
+			require Encode;
+			require Encode::Locale;
+			Encode::from_to($encfile, $charset, "locale_fs");
+		    };
 
-                    $file = $encfile unless $@;
-                }
-            }
-        }
+		    $file = $encfile unless $@;
+		}
+	    }
+	}
     }
 
     unless (defined($file) && length($file)) {
-        my $uri;
-        if (my $cl = $self->header('Content-Location')) {
-            $uri = URI->new($cl);
-        }
-        elsif (my $request = $self->request) {
-            $uri = $request->uri;
-        }
+	my $uri;
+	if (my $cl = $self->header('Content-Location')) {
+	    $uri = URI->new($cl);
+	}
+	elsif (my $request = $self->request) {
+	    $uri = $request->uri;
+	}
 
-        if ($uri) {
-            $file = ($uri->path_segments)[-1];
-        }
+	if ($uri) {
+	    $file = ($uri->path_segments)[-1];
+	}
     }
 
     if ($file) {
-        $file =~ s,.*[\\/],,;  # basename
+	$file =~ s,.*[\\/],,;  # basename
     }
 
     if ($file && !length($file)) {
-        $file = undef;
+	$file = undef;
     }
 
     $file;
@@ -203,7 +203,7 @@ sub dump
     $status_line = "$proto $status_line" if $proto;
 
     return $self->SUPER::dump(
-        preheader => $status_line,
+	preheader => $status_line,
         @_,
     );
 }
@@ -246,25 +246,25 @@ sub current_age
 
     my $age = 0;
     if ($response_time && $date) {
-        $age = $response_time - $date;  # apparent_age
-        $age = 0 if $age < 0;
+	$age = $response_time - $date;  # apparent_age
+	$age = 0 if $age < 0;
     }
 
     my $age_v = $self->header('Age');
     if ($age_v && $age_v > $age) {
-        $age = $age_v;   # corrected_received_age
+	$age = $age_v;   # corrected_received_age
     }
 
     if ($response_time) {
-        my $request = $self->request;
-        if ($request) {
-            my $request_time = $request->date;
-            if ($request_time && $request_time < $response_time) {
-                # Add response_delay to age to get 'corrected_initial_age'
-                $age += $response_time - $request_time;
-            }
-        }
-        $age += ($time || time) - $response_time;
+	my $request = $self->request;
+	if ($request) {
+	    my $request_time = $request->date;
+	    if ($request_time && $request_time < $response_time) {
+		# Add response_delay to age to get 'corrected_initial_age'
+		$age += $response_time - $request_time;
+	    }
+	}
+	$age += ($time || time) - $response_time;
     }
     return $age;
 }
@@ -276,15 +276,15 @@ sub freshness_lifetime
 
     # First look for the Cache-Control: max-age=n header
     for my $cc ($self->header('Cache-Control')) {
-        for my $cc_dir (split(/\s*,\s*/, $cc)) {
-            return $1 if $cc_dir =~ /^max-age\s*=\s*(\d+)/i;
-        }
+	for my $cc_dir (split(/\s*,\s*/, $cc)) {
+	    return $1 if $cc_dir =~ /^max-age\s*=\s*(\d+)/i;
+	}
     }
 
     # Next possibility is to look at the "Expires" header
     my $date = $self->date || $self->client_date || $opt{time} || time;
     if (my $expires = $self->expires) {
-        return $expires - $date;
+	return $expires - $date;
     }
 
     # Must apply heuristic expiration
@@ -301,10 +301,10 @@ sub freshness_lifetime
     # maximum value.
 
     if (my $last_modified = $self->last_modified) {
-        my $h_exp = ($date - $last_modified) * $opt{h_lastmod_fraction};
-        return $opt{h_min} if $h_exp < $opt{h_min};
-        return $opt{h_max} if $h_exp > $opt{h_max};
-        return $h_exp;
+	my $h_exp = ($date - $last_modified) * $opt{h_lastmod_fraction};
+	return $opt{h_min} if $h_exp < $opt{h_min};
+	return $opt{h_max} if $h_exp > $opt{h_max};
+	return $h_exp;
     }
 
     # default when all else fails

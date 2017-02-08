@@ -9,8 +9,8 @@ use vars qw(@ISA @DoW @DoWs @MoY @MoYs @AMPM @Dsuf %MoY %DoW $VERSION);
 @ISA = qw(Date::Language);
 $VERSION = "1.01";
 
-@MoY  = qw(ianuarie februarie martie aprilie mai iunie
-                iulie august septembrie octombrie noembrie decembrie);
+@MoY  = qw(ianuarie februarie martie aprilie mai iunie 
+		iulie august septembrie octombrie noembrie decembrie);
 @DoW  = qw(duminica luni marti miercuri joi vineri sambata);
 @DoWs = map { substr($_,0,3) } @DoW;
 @MoYs = map { substr($_,0,3) } @MoY;

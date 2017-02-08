@@ -11,7 +11,7 @@ use vars qw /$VERSION/;
 $VERSION = '2010010201';
 
 
-my $telnet_uri = "(?k:(?k:telnet)://(?:(?k:(?k:$user)(?::(?k:$password))?)\@)?"
+my $telnet_uri = "(?k:(?k:telnet)://(?:(?k:(?k:$user)(?::(?k:$password))?)\@)?" 
                . "(?k:(?k:$host)(?::(?k:$port))?)(?k:/)?)";
 
 register_uri telnet => $telnet_uri;

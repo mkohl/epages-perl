@@ -58,29 +58,29 @@ sub generate {
     {
       # precompute some DocumentLocator values
       my %locator = (
-        PublicId => undef,
-        SystemId => undef,
-        Encoding => undef,
-        XMLVersion => undef,
+	PublicId => undef,
+	SystemId => undef,
+	Encoding => undef,
+	XMLVersion => undef,
        );
       my $dtd = defined $doc ? $doc->externalSubset() : undef;
       if (defined $dtd) {
-        $locator{PublicId} = $dtd->publicId();
-        $locator{SystemId} = $dtd->systemId();
+	$locator{PublicId} = $dtd->publicId();
+	$locator{SystemId} = $dtd->systemId();
       }
       if (defined $doc) {
-        $locator{Encoding} = $doc->encoding();
-        $locator{XMLVersion} = $doc->version();
+	$locator{Encoding} = $doc->encoding();
+	$locator{XMLVersion} = $doc->version();
       }
       $self->set_document_locator(
-        XML::SAX::DocumentLocator->new(
-          sub { $locator{PublicId} },
-          sub { $locator{SystemId} },
-          sub { defined($self->{current_node}) ? $self->{current_node}->line_number() : undef },
-          sub { 1 },
-          sub { $locator{Encoding} },
-          sub { $locator{XMLVersion} },
-         ),
+	XML::SAX::DocumentLocator->new(
+	  sub { $locator{PublicId} },
+	  sub { $locator{SystemId} },
+	  sub { defined($self->{current_node}) ? $self->{current_node}->line_number() : undef },
+	  sub { 1 },
+	  sub { $locator{Encoding} },
+	  sub { $locator{XMLVersion} },
+	 ),
        );
     }
 
@@ -173,10 +173,10 @@ sub process_element {
             unless ( defined $attr->name ) {
                 ## It's an atter like "xmlns='foo'"
                 $attribs->{"{}xmlns"} =
-                  {
+                  {     
                    Name         => "xmlns",
                    LocalName    => "xmlns",
-                   Prefix       => "",
+                   Prefix       => "",     
                    Value        => $attr->href,
                    NamespaceURI => "",
                   };

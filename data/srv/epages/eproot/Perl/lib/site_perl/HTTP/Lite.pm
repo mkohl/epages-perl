@@ -8,7 +8,7 @@ use Errno qw(EAGAIN);
 
 use vars qw($VERSION);
 BEGIN {
-        $VERSION = "2.42";
+	$VERSION = "2.42";
 }
 
 my $BLOCKSIZE = 65536;
@@ -33,7 +33,7 @@ for (my $n=0;$n<256;$n++) {
   }
 }
 
-sub new
+sub new 
 {
   my $self = {};
   bless $self;
@@ -48,8 +48,8 @@ sub initialize
   $self->{timeout} = 120;
   $self->{HTTP11} = 0;
   $self->{DEBUG} = 0;
-  $self->{header_at_once} = 0;
-  $self->{holdback} = 0;       # needed for http_write
+  $self->{header_at_once} = 0; 
+  $self->{holdback} = 0;       # needed for http_write 
 }
 
 sub header_at_once
@@ -100,7 +100,7 @@ sub reset
 {
   my $self = shift;
   foreach my $var ("body", "request", "content", "status", "proxy",
-    "proxyport", "resp-protocol", "error-message",
+    "proxyport", "resp-protocol", "error-message",  
     "resp-headers", "CBARGS", "callback_function", "callback_params")
   {
     $self->{$var} = undef;
@@ -115,7 +115,7 @@ sub reset
 # URL-encode data
 sub escape {
   my $toencode = shift;
-  return join('',
+  return join('', 
     map { $urlencode_valid[ord $_] } split('', $toencode));
 }
 
@@ -128,7 +128,7 @@ sub set_callback {
 sub request
 {
   my ($self, $url, $data_callback, $cbargs) = @_;
-
+  
   my $method = $self->{method};
   if (defined($cbargs)) {
     $self->{CBARGS} = $cbargs;
@@ -137,8 +137,8 @@ sub request
   my $callback_func = $self->{'callback_function'};
   my $callback_params = $self->{'callback_params'};
 
-  # Parse URL
-  my ($protocol,$host,$junk,$port,$object) =
+  # Parse URL 
+  my ($protocol,$host,$junk,$port,$object) = 
     $url =~ m{^([^:/]+)://([^/:]*)(:(\d+))?(/?.*)$};
 
   # Only HTTP is supported here
@@ -147,7 +147,7 @@ sub request
     warn "Only http is supported by HTTP::Lite";
     return undef;
   }
-
+  
   # Setup the connection
   my $proto = getprotobyname('tcp');
   local *FH;
@@ -170,7 +170,7 @@ sub request
   }
 
   # choose local port and address
-  my $local_addr = INADDR_ANY;
+  my $local_addr = INADDR_ANY; 
   my $local_port = "0";
   if (defined($self->{'local_addr'})) {
     $local_addr = $self->{'local_addr'};
@@ -183,7 +183,7 @@ sub request
   if (defined($self->{'local_port'})) {
     $local_port = $self->{'local_port'};
   }
-  my $paddr = pack_sockaddr_in($local_port, $local_addr);
+  my $paddr = pack_sockaddr_in($local_port, $local_addr); 
   bind(FH, $paddr) || return undef;  # Failing to bind is fatal.
 
   my $sin = sockaddr_in($connectport,$addr);
@@ -195,7 +195,7 @@ sub request
 
   if (defined($callback_func)) {
     &$callback_func($self, "connect", undef, @$callback_params);
-  }
+  }  
 
   if ($self->{header_at_once}) {
     $self->{holdback} = 1;    # http_write should buffer only, no sending yet
@@ -210,7 +210,7 @@ sub request
 
   # Add some required headers
   # we only support a single transaction per request in this version.
-  $self->add_req_header("Connection", "close");
+  $self->add_req_header("Connection", "close");    
   if ($port != 80) {
     $self->add_req_header("Host", "$host:$port");
   } else {
@@ -223,18 +223,18 @@ sub request
   if ($method eq 'POST') {
     $self->http_write(*FH, "Content-Type: application/x-www-form-urlencoded$CRLF");
   }
-
+  
   # Purge a couple others
   $self->delete_req_header("Content-Type");
   $self->delete_req_header("Content-Length");
-
+  
   # Output headers
   foreach my $header ($self->enum_req_headers())
   {
     my $value = $self->get_req_header($header);
     $self->http_write(*FH, $self->{headermap}{$header}.": ".$value."$CRLF");
   }
-
+  
   my $content_length;
   if (defined($self->{content}))
   {
@@ -245,40 +245,40 @@ sub request
     if (defined($ncontent_length)) {
       $content_length = $ncontent_length;
     }
-  }
+  }  
 
   if ($content_length) {
     $self->http_write(*FH, "Content-Length: $content_length$CRLF");
   }
-
+  
   if (defined($callback_func)) {
     &$callback_func($self, "done-headers", undef, @$callback_params);
-  }
+  }  
   # End of headers
   $self->http_write(*FH, "$CRLF");
-
+  
   if ($self->{header_at_once}) {
-    $self->{holdback} = 0;
+    $self->{holdback} = 0; 
     $self->http_write(*FH, ""); # pseudocall to get http_write going
-  }
-
+  }  
+  
   my $content_out = 0;
   if (defined($callback_func)) {
     while (my $content = &$callback_func($self, "content", undef, @$callback_params)) {
       $self->http_write(*FH, $content);
       $content_out++;
     }
-  }
-
+  } 
+  
   # Output content, if any
   if (!$content_out && defined($self->{content}))
   {
     $self->http_write(*FH, $self->{content});
   }
-
+  
   if (defined($callback_func)) {
     &$callback_func($self, "content-done", undef, @$callback_params);
-  }
+  }  
 
 
   # Read response from server
@@ -295,8 +295,8 @@ sub request
         length($self->{'body'}));
     if ($self->{DEBUG}) {
       foreach my $var ("body", "request", "content", "status", "proxy",
-        "proxyport", "resp-protocol", "error-message",
-        "resp-headers", "CBARGS", "HTTPReadBuffer")
+        "proxyport", "resp-protocol", "error-message", 
+        "resp-headers", "CBARGS", "HTTPReadBuffer") 
       {
         $self->DEBUG("state $var ".length($self->{$var}));
       }
@@ -310,7 +310,7 @@ sub request
       $self->{'resp-protocol'}=$proto;
       $self->{'error-message'}=$message;
       next;
-    }
+    } 
     if (($headmode || $chunkmode eq "entity-header") && $$data =~ /^[\r\n]*$/)
     {
       if ($chunkmode)
@@ -318,7 +318,7 @@ sub request
         $chunkmode = 0;
       }
       $headmode = 0;
-
+      
       # Check for Transfer-Encoding
       my $te = $self->get_header("Transfer-Encoding");
       if (defined($te)) {
@@ -344,7 +344,7 @@ sub request
         {
           $hr = [ $datastr ];
         }
-        else
+        else 
         {
           push @{ $hr }, $datastr;
         }
@@ -385,8 +385,8 @@ sub request
           if ($chunklength > $chunksize)
           {
             $chunk = substr($chunk,0,$chunksize);
-          }
-          elsif ($chunklength == $chunksize && $chunk !~ /$CRLF$/)
+          } 
+          elsif ($chunklength == $chunksize && $chunk !~ /$CRLF$/) 
           {
             # chunk data is exactly chunksize -- need CRLF still
             $chunkmode = "ignorecrlf";
@@ -395,7 +395,7 @@ sub request
           $chunk="";
           $chunklength = 0;
           $chunksize = "";
-        }
+        } 
       } elsif ($chunkmode eq "ignorecrlf")
       {
         $chunkmode = "chunksize";
@@ -415,7 +415,7 @@ sub add_to_body
 {
   my $self = shift;
   my ($dataref, $data_callback) = @_;
-
+  
   my $callback_func = $self->{'callback_function'};
   my $callback_params = $self->{'callback_params'};
 
@@ -445,7 +445,7 @@ sub add_req_header
 {
   my $self = shift;
   my ($header, $value) = @_;
-
+  
   return unless defined($value);
   my $lcheader = lc($header);
   $self->{DEBUG} && $self->DEBUG("add_req_header $header $value");
@@ -457,7 +457,7 @@ sub get_req_header
 {
   my $self = shift;
   my ($header) = @_;
-
+  
   return $self->{headers}{lc($header)};
 }
 
@@ -465,7 +465,7 @@ sub delete_req_header
 {
   my $self = shift;
   my ($header) = @_;
-
+  
   my $exists;
   if ($exists=defined(${$self->{headers}}{lc($header)}))
   {
@@ -479,7 +479,7 @@ sub enum_req_headers
 {
   my $self = shift;
   my ($header) = @_;
-
+  
   my $exists;
   return keys %{$self->{headermap}};
 }
@@ -512,9 +512,9 @@ sub proxy
 {
   my $self = shift;
   my ($value) = @_;
-
-  # Parse URL
-  my ($protocol,$host,$junk,$port,$object) =
+  
+  # Parse URL 
+  my ($protocol,$host,$junk,$port,$object) = 
     $value =~ m{^(\S+)://([^/:]*)(:(\d+))?(/.*)$};
   if (!$host)
   {
@@ -528,9 +528,9 @@ sub proxy
 sub headers_array
 {
   my $self = shift;
-
+  
   my @array = ();
-
+  
   foreach my $header (keys %{$self->{'resp-headers'}})
   {
     my $aref = ${$self->{'resp-headers'}}{$header};
@@ -545,9 +545,9 @@ sub headers_array
 sub headers_string
 {
   my $self = shift;
-
+  
   my $string = "";
-
+  
   foreach my $header (keys %{$self->{'resp-headers'}})
   {
     my $aref = ${$self->{'resp-headers'}}{$header};
@@ -579,7 +579,7 @@ sub prepare_post
 {
   my $self = shift;
   my $varref = shift;
-
+  
   my $body = "";
   while (my ($var,$value) = map { escape($_) } each %$varref)
   {
@@ -592,7 +592,7 @@ sub prepare_post
   }
   $self->{content} = $body;
   $self->{headers}{'Content-Type'} = "application/x-www-form-urlencoded"
-    unless defined ($self->{headers}{'Content-Type'}) and
+    unless defined ($self->{headers}{'Content-Type'}) and 
     $self->{headers}{'Content-Type'};
   $self->{method} = "POST";
 }
@@ -616,11 +616,11 @@ sub http_write
   my $nbytes;
   do {
     $nbytes = syswrite($fh, $line, $size - $total_sent, $total_sent );
-    die $! unless(defined($nbytes) || $!{EAGAIN}); # non-recoverable error occurred!
+    die $! unless(defined($nbytes) || $!{EAGAIN}); # non-recoverable error occurred! 
     $total_sent += $nbytes;
   } while ($total_sent < $size);
 }
-
+ 
 sub http_read
 {
   my $self = shift;
@@ -634,8 +634,8 @@ sub http_read
         ($chunksize < $BLOCKSIZE ? $chunksize : $BLOCKSIZE) :
         $BLOCKSIZE;
     $res = $self->http_readbytes($fh,$self->{timeout},$bytes_to_read);
-  } else {
-    $res = $self->http_readline($fh,$self->{timeout});
+  } else { 
+    $res = $self->http_readline($fh,$self->{timeout});  
   }
   if ($res) {
     if ($self->{DEBUG}) {
@@ -655,7 +655,7 @@ sub http_readline
   my $EOL = "\n";
 
   $self->{DEBUG} && $self->DEBUG("readline handle=$fh, timeout=$timeout");
-
+  
   # is there a line in the buffer yet?
   while ($self->{HTTPReadBuffer} !~ /$EOL/)
   {
@@ -704,7 +704,7 @@ sub http_readbytes
   my $EOL = "\n";
 
   $self->{DEBUG} && $self->DEBUG("readbytes handle=$fh, timeout=$timeout, bytes=$bytes");
-
+  
   # is there enough data in the buffer yet?
   while (length($self->{HTTPReadBuffer}) < $bytes)
   {
@@ -770,7 +770,7 @@ HTTP::Lite - Lightweight HTTP implementation
 
     use HTTP::Lite;
     $http = HTTP::Lite->new;
-    $req = $http->request("http://www.cpan.org/")
+    $req = $http->request("http://www.cpan.org/") 
         or die "Unable to get document: $!";
     print $http->body();
 
@@ -840,7 +840,7 @@ either a reference to the data to add to the body of the document, or undef.
 If set_callback is used, $data_callback and $cbargs are not used.  $cbargs
 may be either a scalar or a reference.
 
-The data_callback is called as:
+The data_callback is called as: 
   &$data_callback( $self, $dataref, $cbargs )
 
 An example use to save a document to file is:
@@ -864,7 +864,7 @@ behaviour or to monitor the status of the request.  These work like the
 $data_callback parameter to request(), but are more versatile.  Using
 set_callback disables $data_callback in request()
 
-The callbacks are called as:
+The callbacks are called as: 
   callback ( $self, $phase, $dataref, $cbargs )
 
 The current phases are:
@@ -894,7 +894,7 @@ The current phases are:
 
 =item prepare_post ( $hashref )
 
-Takes a reference to a hashed array of post form variables to upload.
+Takes a reference to a hashed array of post form variables to upload. 
 Create the HTTP body and sets the method to POST.
 
 =item http11_mode ( 0 | 1 )
@@ -943,7 +943,7 @@ the remote server.
 
 =item get_header ( $header )
 
-Returns an array of values for the requested header.
+Returns an array of values for the requested header.  
 
 B<NOTE>: HTTP requests are not limited to a single instance of
 each header.  As a result, there may be more than one entry for
@@ -1027,7 +1027,7 @@ setting.  Usual choices are GET, POST, PUT, HEAD
 
 =head1 UNIMPLEMENTED
 
-    - FTP
+    - FTP 
     - HTTPS (SSL)
     - Authenitcation/Authorizaton/Proxy-Authorization
       are not directly supported, and require MIME::Base64.

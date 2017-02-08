@@ -214,14 +214,14 @@ sub new {
   if (@_ == 1) { # initialize from existing image
     my $gd   = shift;
     my $self = bless {
-                      gd             => $gd,
-                      xy             => [0,0],
-                      font           => gdSmallFont,
-                      fontsize       => 9,
-                      turningangle   => 0,
-                      angle          => 0,
-                      pensize        => 1,
-                     },$pack;
+		      gd             => $gd,
+		      xy             => [0,0],
+		      font           => gdSmallFont,
+		      fontsize       => 9,
+		      turningangle   => 0,
+		      angle          => 0,
+		      pensize        => 1,
+		     },$pack;
     $self->{bgcolor} = $self->translate_color(255,255,255);
     $self->{fgcolor} = $self->translate_color(0,0,0);
     return $self;
@@ -245,7 +245,7 @@ sub class {
   if (@_) {
     $IMAGECLASS = shift;
     eval "require $IMAGECLASS; 1" or die $@;
-    $IMAGECLASS = "$IMAGECLASS\:\:Image"
+    $IMAGECLASS = "$IMAGECLASS\:\:Image" 
       if $IMAGECLASS eq 'GD::SVG';
   }
   $IMAGECLASS;
@@ -507,8 +507,8 @@ sub string {
   else {
     $self->useFontConfig(1);
     @bounds   = $self->stringFT($self->fgcolor,$font,
-                                $self->fontsize,-deg2rad($self->angle), # -pi * $self->angle/180,
-                                $self->curPos,$string);
+				$self->fontsize,-deg2rad($self->angle), # -pi * $self->angle/180,
+				$self->curPos,$string);
     return unless @bounds;
     my ($delta_x,$delta_y) = $self->_string_width(@bounds);
     $self->{xy}[0] += $delta_x;
@@ -566,34 +566,34 @@ sub fontMetrics {
   if (ref $font && $font->isa('GD::Font')) {
     my $height = $font->height;
     $metrics = {ascent     => 0,
-                descent    => 0,
-                lineheight => $height,
-                xheight    => $height,
-                leading    => 0};
+		descent    => 0,
+		lineheight => $height,
+		xheight    => $height,
+		leading    => 0};
   }
   else {
     $self->useFontConfig(1);
     my @mbounds   = GD::Image->stringFT($self->fgcolor,$font,
-                                        $self->fontsize,0,
-                                        0,0,'m');
+					$self->fontsize,0,
+					0,0,'m');
     my $xheight   = $mbounds[3]-$mbounds[5];
     my @jbounds   = GD::Image->stringFT($self->fgcolor,$font,
-                                        $self->fontsize,0,
-                                        0,0,'j');
+					$self->fontsize,0,
+					0,0,'j');
     my $ascent    = $mbounds[7]-$jbounds[7];
     my $descent   = $jbounds[3]-$mbounds[3];
 
     my @mmbounds  = GD::Image->stringFT($self->fgcolor,$font,
-                                        $self->fontsize,0,
-                                        0,0,"m\nm");
+					$self->fontsize,0,
+					0,0,"m\nm");
     my $twolines  = $mmbounds[3]-$mmbounds[5];
     my $lineheight  = $twolines - 2*$xheight;
     my $leading     = $lineheight - $ascent - $descent;
     $metrics     = {ascent     => $ascent,
-                    descent    => $descent,
-                    lineheight => $lineheight,
-                    xheight    => $xheight,
-                    leading    => $leading};
+		    descent    => $descent,
+		    lineheight => $lineheight,
+		    xheight    => $xheight,
+		    leading    => $leading};
   }
 
   if ((my $string = shift) && wantarray) {
@@ -626,8 +626,8 @@ sub stringBounds {
   else {
     $self->useFontConfig(1);
     my @bounds   = GD::Image->stringFT($self->fgcolor,$font,
-                                       $self->fontsize,-deg2rad($self->angle),
-                                       $self->curPos,$string);
+				       $self->fontsize,-deg2rad($self->angle),
+				       $self->curPos,$string);
     return $self->_string_width(@bounds);
   }
 }
@@ -726,7 +726,7 @@ sub penSize {
 =item $angle = $img->angle([$newangle])
 
 Set the current angle for use when calling line() or move() with a
-single argument.
+single argument. 
 
 Here is an example of using turn() and angle() together to draw an
 octagon.  The first line drawn is the downward-slanting top right
@@ -817,7 +817,7 @@ sub translate_color {
   }
   elsif (lc $_[0] eq 'transparent') {
       return $TRANSPARENT ||= $self->alphaColor('white',127);
-  }
+  } 
   else {
     $self->read_color_table unless %COLORS;
     die "unknown color" unless exists $COLORS{lc $_[0]};
@@ -1147,56 +1147,56 @@ wheat                F5           DE            B3
 whitesmoke           F5           F5            F5
 yellow               FF           FF            00
 yellowgreen          9A           CD            32
-gradient1       00 ff 00
-gradient2       0a ff 00
-gradient3       14 ff 00
-gradient4       1e ff 00
-gradient5       28 ff 00
-gradient6       32 ff 00
-gradient7       3d ff 00
-gradient8       47 ff 00
-gradient9       51 ff 00
-gradient10      5b ff 00
-gradient11      65 ff 00
-gradient12      70 ff 00
-gradient13      7a ff 00
-gradient14      84 ff 00
-gradient15      8e ff 00
-gradient16      99 ff 00
-gradient17      a3 ff 00
-gradient18      ad ff 00
-gradient19      b7 ff 00
-gradient20      c1 ff 00
-gradient21      cc ff 00
-gradient22      d6 ff 00
-gradient23      e0 ff 00
-gradient24      ea ff 00
-gradient25      f4 ff 00
-gradient26      ff ff 00
-gradient27      ff f4 00
-gradient28      ff ea 00
-gradient29      ff e0 00
-gradient30      ff d6 00
-gradient31      ff cc 00
-gradient32      ff c1 00
-gradient33      ff b7 00
-gradient34      ff ad 00
-gradient35      ff a3 00
-gradient36      ff 99 00
-gradient37      ff 8e 00
-gradient38      ff 84 00
-gradient39      ff 7a 00
-gradient40      ff 70 00
-gradient41      ff 65 00
-gradient42      ff 5b 00
-gradient43      ff 51 00
-gradient44      ff 47 00
-gradient45      ff 3d 00
-gradient46      ff 32 00
-gradient47      ff 28 00
-gradient48      ff 1e 00
-gradient49      ff 14 00
-gradient50      ff 0a 00
+gradient1	00 ff 00
+gradient2	0a ff 00
+gradient3	14 ff 00
+gradient4	1e ff 00
+gradient5	28 ff 00
+gradient6	32 ff 00
+gradient7	3d ff 00
+gradient8	47 ff 00
+gradient9	51 ff 00
+gradient10	5b ff 00
+gradient11	65 ff 00
+gradient12	70 ff 00
+gradient13	7a ff 00
+gradient14	84 ff 00
+gradient15	8e ff 00
+gradient16	99 ff 00
+gradient17	a3 ff 00
+gradient18	ad ff 00
+gradient19	b7 ff 00
+gradient20	c1 ff 00
+gradient21	cc ff 00
+gradient22	d6 ff 00
+gradient23	e0 ff 00
+gradient24	ea ff 00
+gradient25	f4 ff 00
+gradient26	ff ff 00
+gradient27	ff f4 00
+gradient28	ff ea 00
+gradient29	ff e0 00
+gradient30	ff d6 00
+gradient31	ff cc 00
+gradient32	ff c1 00
+gradient33	ff b7 00
+gradient34	ff ad 00
+gradient35	ff a3 00
+gradient36	ff 99 00
+gradient37	ff 8e 00
+gradient38	ff 84 00
+gradient39	ff 7a 00
+gradient40	ff 70 00
+gradient41	ff 65 00
+gradient42	ff 5b 00
+gradient43	ff 51 00
+gradient44	ff 47 00
+gradient45	ff 3d 00
+gradient46	ff 32 00
+gradient47	ff 28 00
+gradient48	ff 1e 00
+gradient49	ff 14 00
+gradient50	ff 0a 00
 __END__
 
 =head1 COLORS

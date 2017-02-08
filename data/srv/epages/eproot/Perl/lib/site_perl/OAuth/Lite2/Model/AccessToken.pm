@@ -20,7 +20,7 @@ sub new {
     my $class = shift;
     my @args = @_ == 1 ? %{$_[0]} : @_;
     my %params = Params::Validate::validate_with(
-        params => \@args,
+        params => \@args, 
         spec => {
             auth_id     => 1,
             token       => 1,

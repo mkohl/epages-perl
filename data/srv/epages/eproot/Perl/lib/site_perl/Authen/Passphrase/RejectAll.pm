@@ -4,20 +4,20 @@ Authen::Passphrase::RejectAll - reject all passphrases
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::RejectAll;
+	use Authen::Passphrase::RejectAll;
 
-        $ppr = Authen::Passphrase::RejectAll->new;
+	$ppr = Authen::Passphrase::RejectAll->new;
 
-        $ppr = Authen::Passphrase::RejectAll
-                ->from_crypt("*");
+	$ppr = Authen::Passphrase::RejectAll
+		->from_crypt("*");
 
-        $ppr = Authen::Passphrase::RejectAll
-                ->from_rfc2307("{CRYPT}*");
+	$ppr = Authen::Passphrase::RejectAll
+		->from_rfc2307("{CRYPT}*");
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $passwd = $ppr->as_crypt;
-        $userPassword = $ppr->as_rfc2307;
+	$passwd = $ppr->as_crypt;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -61,8 +61,8 @@ returned from each call.
 =cut
 
 {
-        my $singleton = bless({});
-        sub new { $singleton }
+	my $singleton = bless({});
+	sub new { $singleton }
 }
 
 =item Authen::Passphrase::RejectAll->from_crypt(PASSWD)
@@ -74,13 +74,13 @@ one and twelve (inclusive) characters long and must not start with "B<$>".
 =cut
 
 sub from_crypt {
-        my($class, $passwd) = @_;
-        if($passwd =~ /\A[^\$].{0,11}\z/s) {
-                $passwd =~ /\A[!-#\%-9;-~][!-9;-~]{0,11}\z/
-                        or croak "malformed reject-all crypt data";
-                return $class->new;
-        }
-        return $class->SUPER::from_crypt($passwd);
+	my($class, $passwd) = @_;
+	if($passwd =~ /\A[^\$].{0,11}\z/s) {
+		$passwd =~ /\A[!-#\%-9;-~][!-9;-~]{0,11}\z/
+			or croak "malformed reject-all crypt data";
+		return $class->new;
+	}
+	return $class->SUPER::from_crypt($passwd);
 }
 
 =item Authen::Passphrase::RejectAll->from_rfc2307(USERPASSWORD)

@@ -91,8 +91,8 @@ BEGIN {
 sub encode_qp_really {
     my $enc = encode_qp_threearg(shift, undef, not shift);
     if (length($enc) < 74) {
-        $enc =~ s/^\.\n/=2E\n/g;      # force encoding of /^\.$/
-        $enc =~ s/^From /=46rom /g;   # force encoding of /^From /
+	$enc =~ s/^\.\n/=2E\n/g;      # force encoding of /^\.$/
+	$enc =~ s/^From /=46rom /g;   # force encoding of /^From /
     }
     $enc;
 }
@@ -108,33 +108,33 @@ sub decode_it {
 
     local $_;
     while (defined($_ = $in->getline)) {
-        #
-        # Dirty hack to fix QP-Encoded PDFs from MS-Outlook.
-        #
-        # Check if we have a PDF file and if it has been encoded
-        # on Windows. Unix encoded files are fine. If we have
-        # one encoded CR after the PDF init string but are missing
-        # an encoded CR before the newline this means the PDF is broken.
-        #
-        if (!$init) {
-            $init = 1;
-            if ($_ =~ /^%PDF-[0-9\.]+=0D/ && $_ !~ /=0D\n$/) {
-                $badpdf = 1;
-            }
-        }
-        #
-        # Decode everything with decode_qp() except corrupted PDFs.
-        #
-        if ($badpdf) {
-            my $output = $_;
-            $output =~ s/[ \t]+?(\r?\n)/$1/g;
-            $output =~ s/=\r?\n//g;
-            $output =~ s/(^|[^\r])\n\Z/$1\r\n/;
-            $output =~ s/=([\da-fA-F]{2})/pack("C", hex($1))/ge;
-            $out->print($output);
-        } else {
-            $out->print(decode_qp($_));
-        }
+	#
+	# Dirty hack to fix QP-Encoded PDFs from MS-Outlook.
+	#
+	# Check if we have a PDF file and if it has been encoded
+	# on Windows. Unix encoded files are fine. If we have
+	# one encoded CR after the PDF init string but are missing
+	# an encoded CR before the newline this means the PDF is broken.
+	#
+	if (!$init) {
+	    $init = 1;
+	    if ($_ =~ /^%PDF-[0-9\.]+=0D/ && $_ !~ /=0D\n$/) {
+		$badpdf = 1;
+	    }
+	}
+	#
+	# Decode everything with decode_qp() except corrupted PDFs.
+	#
+	if ($badpdf) {
+	    my $output = $_;
+	    $output =~ s/[ \t]+?(\r?\n)/$1/g;
+	    $output =~ s/=\r?\n//g;
+	    $output =~ s/(^|[^\r])\n\Z/$1\r\n/;
+	    $output =~ s/=([\da-fA-F]{2})/pack("C", hex($1))/ge;
+	    $out->print($output);
+	} else {
+	    $out->print(decode_qp($_));
+	}
     }
     1;
 }
@@ -148,7 +148,7 @@ sub encode_it {
 
     local $_;
     while (defined($_ = $in->getline)) {
-        $out->print(encode_qp_really($_, $textual_type));
+	$out->print(encode_qp_really($_, $textual_type));
     }
     1;
 }

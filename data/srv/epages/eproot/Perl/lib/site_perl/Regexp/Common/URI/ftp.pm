@@ -60,7 +60,7 @@ Regexp::Common::URI::ftp -- Returns a pattern for FTP URIs.
 
 Returns a regex for FTP URIs. Note: FTP URIs are not formally defined.
 RFC 1738 defines FTP URLs, but parts of that RFC have been obsoleted
-by RFC 2396. However, the differences between RFC 1738 and RFC 2396
+by RFC 2396. However, the differences between RFC 1738 and RFC 2396 
 are such that they aren't applicable straightforwardly to FTP URIs.
 
 There are two main problems:
@@ -83,7 +83,7 @@ password, separated by a colon.
 RFC 1738 does not allow semi-colons in FTP path names, because a semi-colon
 is a reserved character for FTP URIs. The semi-colon is used to separate
 the path from the option I<type> specifier. However, in RFC 2396, paths
-consist of slash separated segments, and each segment is a semi-colon
+consist of slash separated segments, and each segment is a semi-colon 
 separated group of parameters. Straigthforward application of RFC 2396
 would mean that a trailing I<type> specifier couldn't be distinguished
 from the last segment of the path having a two parameters, the last one

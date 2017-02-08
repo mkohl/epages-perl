@@ -13,10 +13,10 @@ our ($VERSION, @ISA, @EXPORT, %EXPORT_TAGS, $HAS_ENCODE);
 @ISA = qw(Exporter);
 $VERSION = '2.024';
 
-@EXPORT = qw( isaFilehandle isaFilename whatIsInput whatIsOutput
+@EXPORT = qw( isaFilehandle isaFilename whatIsInput whatIsOutput 
               isaFileGlobString cleanFileGlobString oneTarget
               setBinModeInput setBinModeOutput
-              ckInOutParams
+              ckInOutParams 
               createSelfTiedObject
               getEncoding
 
@@ -29,7 +29,7 @@ $VERSION = '2.024';
               STATUS_ENDSTREAM
               STATUS_EOF
               STATUS_ERROR
-          );
+          );  
 
 %EXPORT_TAGS = ( Status => [qw( STATUS_OK
                                  STATUS_ENDSTREAM
@@ -37,12 +37,12 @@ $VERSION = '2.024';
                                  STATUS_ERROR
                            )]);
 
-
+                       
 use constant STATUS_OK        => 0;
 use constant STATUS_ENDSTREAM => 1;
 use constant STATUS_EOF       => 2;
 use constant STATUS_ERROR     => -1;
-
+          
 sub hasEncode()
 {
     if (! defined $HAS_ENCODE) {
@@ -76,7 +76,7 @@ sub getEncoding($$$)
 }
 
 our ($needBinmode);
-$needBinmode = ($^O eq 'MSWin32' ||
+$needBinmode = ($^O eq 'MSWin32' || 
                     ($] >= 5.006 && eval ' ${^UNICODE} || ${^UTF8LOCALE} '))
                     ? 1 : 1 ;
 
@@ -84,7 +84,7 @@ sub setBinModeInput($)
 {
     my $handle = shift ;
 
-    binmode $handle
+    binmode $handle 
         if  $needBinmode;
 }
 
@@ -92,24 +92,24 @@ sub setBinModeOutput($)
 {
     my $handle = shift ;
 
-    binmode $handle
+    binmode $handle 
         if  $needBinmode;
 }
 
 sub isaFilehandle($)
 {
     use utf8; # Pragma needed to keep Perl 5.6.0 happy
-    return (defined $_[0] and
-             (UNIVERSAL::isa($_[0],'GLOB') or
+    return (defined $_[0] and 
+             (UNIVERSAL::isa($_[0],'GLOB') or 
               UNIVERSAL::isa($_[0],'IO::Handle') or
-              UNIVERSAL::isa(\$_[0],'GLOB'))
+              UNIVERSAL::isa(\$_[0],'GLOB')) 
           )
 }
 
 sub isaFilename($)
 {
-    return (defined $_[0] and
-           ! ref $_[0]    and
+    return (defined $_[0] and 
+           ! ref $_[0]    and 
            UNIVERSAL::isa(\$_[0], 'SCALAR'));
 }
 
@@ -136,7 +136,7 @@ use constant WANT_HASH  => 0 ;
 sub whatIsInput($;$)
 {
     my $got = whatIs(@_);
-
+    
     if (defined $got && $got eq 'filename' && defined $_[0] && $_[0] eq '-')
     {
         #use IO::File;
@@ -151,14 +151,14 @@ sub whatIsInput($;$)
 sub whatIsOutput($;$)
 {
     my $got = whatIs(@_);
-
+    
     if (defined $got && $got eq 'filename' && defined $_[0] && $_[0] eq '-')
     {
         $got = 'handle';
         $_[0] = *STDOUT;
         #$_[0] = new IO::File(">-");
     }
-
+    
     return $got;
 }
 
@@ -200,9 +200,9 @@ sub IO::Compress::Base::Validator::new
     my $error_ref = shift ;
     my $reportClass = shift ;
 
-    my %data = (Class       => $Class,
+    my %data = (Class       => $Class, 
                 Error       => $error_ref,
-                reportClass => $reportClass,
+                reportClass => $reportClass, 
                ) ;
 
     my $obj = bless \%data, $class ;
@@ -219,7 +219,7 @@ sub IO::Compress::Base::Validator::new
     {
         $obj->croakError("$reportClass: illegal input parameter") ;
         #return undef ;
-    }
+    }    
 
 #    if ($inType eq 'hash')
 #    {
@@ -232,18 +232,18 @@ sub IO::Compress::Base::Validator::new
     {
         $obj->croakError("$reportClass: illegal output parameter") ;
         #return undef ;
-    }
+    }    
 
 
     if ($inType ne 'fileglob' && $outType eq 'fileglob')
     {
         $obj->croakError("Need input fileglob for outout fileglob");
-    }
+    }    
 
 #    if ($inType ne 'fileglob' && $outType eq 'hash' && $inType ne 'filename' )
 #    {
 #        $obj->croakError("input must ne filename or fileglob when output is a hash");
-#    }
+#    }    
 
     if ($inType eq 'fileglob' && $outType eq 'fileglob')
     {
@@ -258,7 +258,7 @@ sub IO::Compress::Base::Validator::new
 
         return $obj;
     }
-
+    
     $obj->croakError("$reportClass: input and output $inType are identical")
         if $inType eq $outType && $_[0] eq $_[1] && $_[0] ne '-' ;
 
@@ -316,7 +316,7 @@ sub IO::Compress::Base::Validator::new
             }
         }
     }
-
+    
     return $obj ;
 }
 
@@ -325,7 +325,7 @@ sub IO::Compress::Base::Validator::saveErrorString
     my $self   = shift ;
     ${ $self->{Error} } = shift ;
     return undef;
-
+    
 }
 
 sub IO::Compress::Base::Validator::croakError
@@ -374,16 +374,16 @@ sub IO::Compress::Base::Validator::validateInputArray
     if ( @{ $_[0] } == 0 )
     {
         return $self->saveErrorString("empty array reference") ;
-    }
+    }    
 
     foreach my $element ( @{ $_[0] } )
     {
         my $inType  = whatIsInput($element);
-
+    
         if (! $inType)
         {
             $self->croakError("unknown input parameter") ;
-        }
+        }    
         elsif($inType eq 'filename')
         {
             $self->validateInputFilenames($element)
@@ -411,13 +411,13 @@ sub IO::Compress::Base::Validator::validateInputArray
 #        if ($ktype ne 'filename')
 #        {
 #            return $self->saveErrorString("hash key not filename") ;
-#        }
+#        }    
 #
 #        my %valid = map { $_ => 1 } qw(filename buffer array undef handle) ;
 #        if (! $valid{$vtype})
 #        {
 #            return $self->saveErrorString("hash value not ok") ;
-#        }
+#        }    
 #    }
 #
 #    return $self ;
@@ -449,12 +449,12 @@ sub createSelfTiedObject
 #$VERSION = '2.000_08';
 #@ISA = qw(Exporter);
 
-$EXPORT_TAGS{Parse} = [qw( ParseParameters
-                           Parse_any Parse_unsigned Parse_signed
+$EXPORT_TAGS{Parse} = [qw( ParseParameters 
+                           Parse_any Parse_unsigned Parse_signed 
                            Parse_boolean Parse_custom Parse_string
                            Parse_multiple Parse_writable_scalar
                          )
-                      ];
+                      ];              
 
 push @EXPORT, @{ $EXPORT_TAGS{Parse} } ;
 
@@ -481,15 +481,15 @@ use constant OFF_STICKY     => 5 ;
 
 sub ParseParameters
 {
-    my $level = shift || 0 ;
+    my $level = shift || 0 ; 
 
     my $sub = (caller($level + 1))[3] ;
     local $Carp::CarpLevel = 1 ;
-
+    
     return $_[1]
         if @_ == 2 && defined $_[1] && UNIVERSAL::isa($_[1], "IO::Compress::Base::Parameters");
-
-    my $p = new IO::Compress::Base::Parameters() ;
+    
+    my $p = new IO::Compress::Base::Parameters() ;            
     $p->parse(@_)
         or croak "$sub: $p->{Error}" ;
 
@@ -523,13 +523,13 @@ sub IO::Compress::Base::Parameters::setError
     $self->{Error} = $error ;
     return $retval;
 }
-
+          
 #sub getError
 #{
 #    my $self = shift ;
 #    return $self->{Error} ;
 #}
-
+          
 sub IO::Compress::Base::Parameters::parse
 {
     my $self = shift ;
@@ -550,10 +550,10 @@ sub IO::Compress::Base::Parameters::parse
     }
     elsif (@_ == 1) {
         my $href = $_[0] ;
-
+    
         return $self->setError("Expected even number of parameters, got 1")
             if ! defined $href or ! ref $href or ref $href ne "HASH" ;
-
+ 
         foreach my $key (keys %$href) {
             push @entered, $key ;
             push @entered, \$href->{$key} ;
@@ -563,7 +563,7 @@ sub IO::Compress::Base::Parameters::parse
         my $count = @_;
         return $self->setError("Expected even number of parameters, got $count")
             if $count % 2 != 0 ;
-
+        
         for my $i (0.. $count / 2 - 1) {
             if ($_[2 * $i] eq '__xxx__') {
                 $other = $_[2 * $i + 1] ;
@@ -583,7 +583,7 @@ sub IO::Compress::Base::Parameters::parse
 
         my ($first_only, $sticky, $type, $value) = @$v ;
         my $x ;
-        $self->_checkType($key, \$value, $type, 0, \$x)
+        $self->_checkType($key, \$value, $type, 0, \$x) 
             or return undef ;
 
         $key = lc $key;
@@ -599,10 +599,10 @@ sub IO::Compress::Base::Parameters::parse
     }
 
     my %parsed = ();
-
-    if ($other)
+    
+    if ($other) 
     {
-        for my $key (keys %$default)
+        for my $key (keys %$default)  
         {
             my $canonkey = lc $key;
             if ($other->parsed($canonkey))
@@ -616,7 +616,7 @@ sub IO::Compress::Base::Parameters::parse
             }
         }
     }
-
+    
     for my $i (0.. @entered / 2 - 1) {
         my $key = $entered[2* $i] ;
         my $value = $entered[2* $i+1] ;
@@ -626,7 +626,7 @@ sub IO::Compress::Base::Parameters::parse
 
         $key =~ s/^-// ;
         my $canonkey = lc $key;
-
+ 
         if ($got->{$canonkey} && ($firstTime ||
                                   ! $got->{$canonkey}[OFF_FIRST_ONLY]  ))
         {
@@ -634,7 +634,7 @@ sub IO::Compress::Base::Parameters::parse
             my $parsed = $parsed{$canonkey};
             ++ $parsed{$canonkey};
 
-            return $self->setError("Muliple instances of '$key' found")
+            return $self->setError("Muliple instances of '$key' found") 
                 if $parsed && $type & Parse_multiple == 0 ;
 
             my $s ;
@@ -653,7 +653,7 @@ sub IO::Compress::Base::Parameters::parse
         else
           { push (@Bad, $key) }
     }
-
+ 
     if (@Bad) {
         my ($bad) = join(", ", @Bad) ;
         return $self->setError("unknown key value(s) $bad") ;
@@ -680,14 +680,14 @@ sub IO::Compress::Base::Parameters::_checkType
         return $self->setError("Parameter '$key' not writable")
             if $validate &&  readonly $$value ;
 
-        if (ref $$value)
+        if (ref $$value) 
         {
             return $self->setError("Parameter '$key' not a scalar reference")
                 if $validate &&  ref $$value ne 'SCALAR' ;
 
             $$output = $$value ;
         }
-        else
+        else  
         {
             return $self->setError("Parameter '$key' not a scalar")
                 if $validate &&  ref $value ne 'SCALAR' ;
@@ -721,7 +721,7 @@ sub IO::Compress::Base::Parameters::_checkType
         return $self->setError("Parameter '$key' must be an unsigned int, got '$value'")
             if $validate && $value !~ /^\d+$/;
 
-        $$output = defined $value ? $value : 0 ;
+        $$output = defined $value ? $value : 0 ;    
         return 1;
     }
     elsif ($type & Parse_signed)
@@ -731,19 +731,19 @@ sub IO::Compress::Base::Parameters::_checkType
         return $self->setError("Parameter '$key' must be a signed int, got '$value'")
             if $validate && $value !~ /^-?\d+$/;
 
-        $$output = defined $value ? $value : 0 ;
+        $$output = defined $value ? $value : 0 ;    
         return 1 ;
     }
     elsif ($type & Parse_boolean)
     {
         return $self->setError("Parameter '$key' must be an int, got '$value'")
             if $validate && defined $value && $value !~ /^\d*$/;
-        $$output =  defined $value ? $value != 0 : 0 ;
+        $$output =  defined $value ? $value != 0 : 0 ;    
         return 1;
     }
     elsif ($type & Parse_string)
     {
-        $$output = defined $value ? $value : "" ;
+        $$output = defined $value ? $value : "" ;    
         return 1;
     }
 
@@ -901,7 +901,7 @@ sub add
         $self->[HIGH] += $value->[HIGH] ;
         $value = $value->[LOW];
     }
-
+     
     my $available = MAX32 - $self->[LOW] ;
 
     if ($value > $available) {

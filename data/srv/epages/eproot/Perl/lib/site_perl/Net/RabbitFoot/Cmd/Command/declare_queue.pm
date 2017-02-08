@@ -76,7 +76,7 @@ sub _run {
         print $method, ': ', $method_frame->$method, "\n";
     }
     return;
-}
+} 
 
 1;
 

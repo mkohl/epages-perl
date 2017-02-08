@@ -277,7 +277,7 @@ XML::SAX::ExpatXS::Preload - Helper class for XML-SAX-ExpatXS
 
 =head1 AUTHOR
 
-Petr Cimprich (petr@gingerall.cz) based on an original code of XML::SAX::Base
+Petr Cimprich (petr@gingerall.cz) based on an original code of XML::SAX::Base 
 by Kip Hampton (khampton@totalcinema.com).
 
 =head1 SEE ALSO

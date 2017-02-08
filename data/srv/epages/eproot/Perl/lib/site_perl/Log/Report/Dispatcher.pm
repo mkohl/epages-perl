@@ -48,7 +48,7 @@ sub new(@)
        ->init(\%args);
 }
 
-my %format_reason =
+my %format_reason = 
   ( LOWERCASE => sub { lc $_[0] }
   , UPPERCASE => sub { uc $_[0] }
   , UCFIRST   => sub { ucfirst lc $_[0] }

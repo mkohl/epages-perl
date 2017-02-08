@@ -16,7 +16,7 @@ C<Business::CreditCard> - Validate/generate credit card checksums/names
 =head1 SYNOPSIS
 
     use Business::CreditCard;
-
+ 
     print validate("5276 4400 6542 1319");
     print cardtype("5276 4400 6542 1319");
     print generate_last_digit("5276 4400 6542 131");
@@ -27,7 +27,7 @@ Business::CreditCard is available at a CPAN site near you.
 
 These subroutines tell you whether a credit card number is
 self-consistent -- whether the last digit of the number is a valid
-checksum for the preceding digits.
+checksum for the preceding digits.  
 
 The validate() subroutine returns 1 if the card number provided passes
 the checksum test, and 0 otherwise.
@@ -74,7 +74,7 @@ whether a card is real, or whether it's been stolen, or to actually process
 charges, you need a Merchant account.  See L<Business::OnlinePayment>.
 
 These subroutines will also work if you provide the arguments
-as numbers instead of strings, e.g. C<validate(5276440065421319)>.
+as numbers instead of strings, e.g. C<validate(5276440065421319)>.  
 
 =head1 PROCESSING AGREEMENTS
 
@@ -215,8 +215,8 @@ sub generate_last_digit {
     $number =~ s/\D//g;
 
     for ($i = 0; $i < length($number); $i++) {
-        $weight = substr($number, -1 * ($i + 1), 1) * (2 - ($i % 2));
-        $sum += (($weight < 10) ? $weight : ($weight - 9));
+	$weight = substr($number, -1 * ($i + 1), 1) * (2 - ($i % 2));
+	$sum += (($weight < 10) ? $weight : ($weight - 9));
     }
 
     return (10 - $sum % 10) % 10;
@@ -225,7 +225,7 @@ sub generate_last_digit {
 sub validate {
     my ($number) = @_;
     my ($i, $sum, $weight);
-
+    
     return 0 if $number =~ /[^\d\s]/;
 
     $number =~ s/\D//g;
@@ -233,8 +233,8 @@ sub validate {
     return 0 unless length($number) >= 13 && 0+$number;
 
     for ($i = 0; $i < length($number) - 1; $i++) {
-        $weight = substr($number, -1 * ($i + 2), 1) * (2 - ($i % 2));
-        $sum += (($weight < 10) ? $weight : ($weight - 9));
+	$weight = substr($number, -1 * ($i + 2), 1) * (2 - ($i % 2));
+	$sum += (($weight < 10) ? $weight : ($weight - 9));
     }
 
     return 1 if substr($number, -1) == (10 - $sum % 10) % 10;

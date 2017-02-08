@@ -31,11 +31,11 @@ BEGIN {
     debug => [qw(asn_dump asn_hexdump)],
 
     const => [qw(ASN_BOOLEAN     ASN_INTEGER      ASN_BIT_STR      ASN_OCTET_STR
-                 ASN_NULL        ASN_OBJECT_ID    ASN_REAL         ASN_ENUMERATED
-                 ASN_SEQUENCE    ASN_SET          ASN_PRINT_STR    ASN_IA5_STR
-                 ASN_UTC_TIME    ASN_GENERAL_TIME ASN_RELATIVE_OID
-                 ASN_UNIVERSAL   ASN_APPLICATION  ASN_CONTEXT      ASN_PRIVATE
-                 ASN_PRIMITIVE   ASN_CONSTRUCTOR  ASN_LONG_LEN     ASN_EXTENSION_ID ASN_BIT)],
+		 ASN_NULL        ASN_OBJECT_ID    ASN_REAL         ASN_ENUMERATED
+		 ASN_SEQUENCE    ASN_SET          ASN_PRINT_STR    ASN_IA5_STR
+		 ASN_UTC_TIME    ASN_GENERAL_TIME ASN_RELATIVE_OID
+		 ASN_UNIVERSAL   ASN_APPLICATION  ASN_CONTEXT      ASN_PRIVATE
+		 ASN_PRIMITIVE   ASN_CONSTRUCTOR  ASN_LONG_LEN     ASN_EXTENSION_ID ASN_BIT)],
 
     tag   => [qw(asn_tag asn_decode_tag2 asn_decode_tag asn_encode_tag asn_decode_length asn_encode_length)]
   );
@@ -70,33 +70,33 @@ sub _internal_syms {
   }
 }
 
-sub ASN_BOOLEAN         () { 0x01 }
-sub ASN_INTEGER         () { 0x02 }
-sub ASN_BIT_STR         () { 0x03 }
-sub ASN_OCTET_STR       () { 0x04 }
-sub ASN_NULL            () { 0x05 }
-sub ASN_OBJECT_ID       () { 0x06 }
-sub ASN_REAL            () { 0x09 }
-sub ASN_ENUMERATED      () { 0x0A }
-sub ASN_RELATIVE_OID    () { 0x0D }
-sub ASN_SEQUENCE        () { 0x10 }
-sub ASN_SET             () { 0x11 }
-sub ASN_PRINT_STR       () { 0x13 }
-sub ASN_IA5_STR         () { 0x16 }
-sub ASN_UTC_TIME        () { 0x17 }
-sub ASN_GENERAL_TIME    () { 0x18 }
+sub ASN_BOOLEAN 	() { 0x01 }
+sub ASN_INTEGER 	() { 0x02 }
+sub ASN_BIT_STR 	() { 0x03 }
+sub ASN_OCTET_STR 	() { 0x04 }
+sub ASN_NULL 		() { 0x05 }
+sub ASN_OBJECT_ID 	() { 0x06 }
+sub ASN_REAL 		() { 0x09 }
+sub ASN_ENUMERATED	() { 0x0A }
+sub ASN_RELATIVE_OID	() { 0x0D }
+sub ASN_SEQUENCE 	() { 0x10 }
+sub ASN_SET 		() { 0x11 }
+sub ASN_PRINT_STR	() { 0x13 }
+sub ASN_IA5_STR		() { 0x16 }
+sub ASN_UTC_TIME	() { 0x17 }
+sub ASN_GENERAL_TIME	() { 0x18 }
 
-sub ASN_UNIVERSAL       () { 0x00 }
-sub ASN_APPLICATION     () { 0x40 }
-sub ASN_CONTEXT         () { 0x80 }
-sub ASN_PRIVATE         () { 0xC0 }
+sub ASN_UNIVERSAL 	() { 0x00 }
+sub ASN_APPLICATION 	() { 0x40 }
+sub ASN_CONTEXT 	() { 0x80 }
+sub ASN_PRIVATE		() { 0xC0 }
 
-sub ASN_PRIMITIVE       () { 0x00 }
-sub ASN_CONSTRUCTOR     () { 0x20 }
+sub ASN_PRIMITIVE	() { 0x00 }
+sub ASN_CONSTRUCTOR	() { 0x20 }
 
-sub ASN_LONG_LEN        () { 0x80 }
-sub ASN_EXTENSION_ID    () { 0x1F }
-sub ASN_BIT             () { 0x80 }
+sub ASN_LONG_LEN	() { 0x80 }
+sub ASN_EXTENSION_ID	() { 0x1F }
+sub ASN_BIT 		() { 0x80 }
 
 
 sub new {
@@ -122,7 +122,7 @@ sub configure {
   for my $type (qw(encode decode)) {
     if (exists $opt{$type}) {
       while(my($what,$value) = each %{$opt{$type}}) {
-        $self->{options}{"${type}_${what}"} = $value;
+	$self->{options}{"${type}_${what}"} = $value;
       }
     }
   }
@@ -224,8 +224,8 @@ sub asn_encode_tag {
   $_[0] >> 8
     ? $_[0] & 0x8000
       ? $_[0] & 0x800000
-        ? pack("V",$_[0])
-        : substr(pack("V",$_[0]),0,3)
+	? pack("V",$_[0])
+	: substr(pack("V",$_[0]),0,3)
       : pack("v", $_[0])
     : chr($_[0]);
 }
@@ -255,20 +255,20 @@ sub decode {
   my $self  = shift;
 
   local $SIG{__DIE__};
-  my $ret = eval {
+  my $ret = eval { 
     my (%stash, $result);
     my $script = $self->{script};
     my $stash = (1 == @$script && !$self->{script}[0][cVAR]) ? \$result : ($result=\%stash);
 
     _decode(
-        $self->{options},
-        $script,
-        $stash,
-        0,
-        length $_[0],
-        undef,
-        {},
-        $_[0]);
+	$self->{options},
+	$script,
+	$stash,
+	0,
+	length $_[0], 
+	undef,
+	{},
+	$_[0]);
 
     $result;
   };
@@ -338,14 +338,14 @@ sub asn_decode_tag2 {
 ## Utilities
 ##
 
-# How many bytes are needed to encode a number
+# How many bytes are needed to encode a number 
 
 sub num_length {
   $_[0] >> 8
     ? $_[0] >> 16
       ? $_[0] >> 24
-        ? 4
-        : 3
+	? 4
+	: 3
       : 2
     : 1
 }
@@ -414,7 +414,7 @@ sub asn_tag {
 
 BEGIN {
   # When we have XS &_encode will be defined by the XS code
-  # so will all the subs in these required packages
+  # so will all the subs in these required packages 
   unless (defined &_encode) {
     require Convert::ASN1::_decode;
     require Convert::ASN1::_encode;

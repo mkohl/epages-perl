@@ -37,10 +37,10 @@ sub new {
 sub make_formatter {
     my $format = shift;
     $format = '%s' unless defined $format;
-    return sub {
+    return sub { 
         my @args = @_;
         push(@args, '') unless @args;
-        return sprintf($format, @args);
+        return sprintf($format, @args); 
     }
 }
 
@@ -58,7 +58,7 @@ Template::Plugin::Format - Plugin to create formatting functions
     [% USE format %]
     [% commented = format('# %s') %]
     [% commented('The cat sat on the mat') %]
-
+    
     [% USE bold = format('<b>%s</b>') %]
     [% bold('Hello') %]
 

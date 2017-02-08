@@ -26,28 +26,28 @@ $LWP_load_failed = 0;
 sub new {
   my ($class, %args) = @_;
   my $style = $args{Style};
-
+  
   my $nonexopt = $args{Non_Expat_Options} ||= {};
-
+  
   $nonexopt->{Style}             = 1;
   $nonexopt->{Non_Expat_Options} = 1;
   $nonexopt->{Handlers}          = 1;
   $nonexopt->{_HNDL_TYPES}       = 1;
   $nonexopt->{NoLWP}             = 1;
-
+  
   $args{_HNDL_TYPES} = {%XML::Parser::Expat::Handler_Setters};
   $args{_HNDL_TYPES}->{Init} = 1;
   $args{_HNDL_TYPES}->{Final} = 1;
-
+  
   $args{Handlers} ||= {};
   my $handlers = $args{Handlers};
-
+  
   if (defined($style)) {
     my $stylepkg = $style;
-
+    
     if ($stylepkg !~ /::/) {
       $stylepkg = "\u$style";
-
+      
       eval {
           my $fullpkg = 'XML::Parser::Style::' . $stylepkg;
           my $stylefile = $fullpkg;
@@ -60,23 +60,23 @@ sub new {
           $stylepkg = 'XML::Parser::' . $stylepkg;
       }
     }
-
+    
     my $htype;
     foreach $htype (keys %{$args{_HNDL_TYPES}}) {
       # Handlers explicity given override
       # handlers from the Style package
       unless (defined($handlers->{$htype})) {
-
+        
         # A handler in the style package must either have
         # exactly the right case as the type name or a
         # completely lower case version of it.
-
+        
         my $hname = "${stylepkg}::$htype";
         if (defined(&$hname)) {
           $handlers->{$htype} = \&$hname;
           next;
         }
-
+        
         $hname = "${stylepkg}::\L$htype";
         if (defined(&$hname)) {
           $handlers->{$htype} = \&$hname;
@@ -85,10 +85,10 @@ sub new {
       }
     }
   }
-
+  
   unless (defined($handlers->{ExternEnt})
           or defined ($handlers->{ExternEntFin})) {
-
+    
     if ($args{NoLWP} or $LWP_load_failed) {
       $handlers->{ExternEnt} = \&file_ext_ent_handler;
       $handlers->{ExternEntFin} = \&file_ext_ent_cleanup;
@@ -109,17 +109,17 @@ sub new {
 
 sub setHandlers {
   my ($self, @handler_pairs) = @_;
-
+  
   croak("Uneven number of arguments to setHandlers method")
     if (int(@handler_pairs) & 1);
-
+  
   my @ret;
   while (@handler_pairs) {
     my $type = shift @handler_pairs;
     my $handler = shift @handler_pairs;
     unless (defined($self->{_HNDL_TYPES}->{$type})) {
       my @types = sort keys %{$self->{_HNDL_TYPES}};
-
+      
       croak("Unknown Parser handler type: $type\n Valid types: @types");
     }
     push(@ret, $type, $self->{Handlers}->{$type});
@@ -166,21 +166,21 @@ sub parse {
     push(@expat_options, $key, $val)
       unless exists $self->{Non_Expat_Options}->{$key};
   }
-
+  
   my $expat = XML::Parser::Expat->new(@expat_options, @_);
   my %handlers = %{$self->{Handlers}};
   my $init = delete $handlers{Init};
   my $final = delete $handlers{Final};
-
+  
   $expat->setHandlers(%handlers);
-
+  
   if ($self->{Base}) {
     $expat->base($self->{Base});
   }
 
   &$init($expat)
     if defined($init);
-
+  
   my @result = ();
   my $result;
   eval {
@@ -191,7 +191,7 @@ sub parse {
     $expat->release;
     die $err;
   }
-
+  
   if ($result and defined($final)) {
     if (wantarray) {
       @result = &$final($expat);
@@ -200,7 +200,7 @@ sub parse {
       $result = &$final($expat);
     }
   }
-
+  
   $expat->release;
 
   return unless defined wantarray;
@@ -236,7 +236,7 @@ sub parsefile {
   my $err = $@;
   close(FILE);
   die $err if $err;
-
+  
   return unless defined wantarray;
   return wantarray ? @ret : $ret;
 }
@@ -252,11 +252,11 @@ sub initial_ext_ent_handler {
       eval {
         require('XML/Parser/LWPExternEnt.pl');
       };
-
+      
     if ($stat) {
       $_[0]->setHandlers(ExternEnt    => \&lwp_ext_ent_handler,
                          ExternEntFin => \&lwp_ext_ent_cleanup);
-
+                       
       goto &lwp_ext_ent_handler;
     }
 
@@ -311,7 +311,7 @@ sub file_ext_ent_handler {
   push(@{$xp->{_FhStack}}, $fh);
 
   $xp->base($path);
-
+  
   return $fh;
 }
 

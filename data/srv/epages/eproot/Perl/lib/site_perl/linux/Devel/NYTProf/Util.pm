@@ -154,13 +154,13 @@ sub fmt_float {
     my ($val, $precision) = @_;
     $precision ||= 5;
     if ($val < 10 ** -($precision - 1) and $val > 0) {
-        # Give the same width as a larger value formatted with the %f below.
-        # This gives us 2 digits of precision for $precision == 5
+	# Give the same width as a larger value formatted with the %f below.
+	# This gives us 2 digits of precision for $precision == 5
         $val = sprintf("%." . ($precision - 4) . "e", $val);
-        # But our exponents will always be e-05 to e-09, never e-10 or smaller
-        # so remove the leading zero to make these small numbers stand out less
-        # on the table.
-        $val =~ s/e-0/e-/;
+	# But our exponents will always be e-05 to e-09, never e-10 or smaller
+	# so remove the leading zero to make these small numbers stand out less
+	# on the table.
+	$val =~ s/e-0/e-/;
     }
     elsif ($val != int($val)) {
         $val = sprintf("%.${precision}f", $val);
@@ -194,14 +194,14 @@ sub fmt_incl_excl_time {
     return fmt_time($incl) unless $diff;
     $_ = fmt_time($_) for $incl, $excl, $diff;
     if ($incl =~ /(\D+)$/) {
-        # no need to repeat the unit if it's the same for all time stamps
-        my $unit = $1;
-        my $offset = -length($unit);
-        for ($excl, $diff) {
-            if (/(\D+)$/) {
-                substr($_, $offset) = "" if $1 eq $unit
-            }
-        }
+	# no need to repeat the unit if it's the same for all time stamps
+	my $unit = $1;
+	my $offset = -length($unit);
+	for ($excl, $diff) {
+	    if (/(\D+)$/) {
+		substr($_, $offset) = "" if $1 eq $unit
+	    }
+	}
     }
     return sprintf "%s (%s+%s)", $incl, $excl, $diff;
 }
@@ -238,8 +238,8 @@ sub html_safe_filename {
     $fname =~ s{-$}{};
     if($^O eq 'VMS'){
         # ODS-2 is limited to 39.39 chars (39 filename, 39 extension)
-        # Reader.pm appends -LEVEL onto html safe filename so must
-        # subtract 1 + max length of (sub block line), so 6.
+	# Reader.pm appends -LEVEL onto html safe filename so must
+	# subtract 1 + max length of (sub block line), so 6.
         $fname = substr($fname,-33);
     }
     return $fname;

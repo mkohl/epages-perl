@@ -18,10 +18,10 @@ sub new
  $type =~ s/^(\w+)$/Date::Language::$1/;
 
  croak "Bad language"
-        unless $type =~ /^[\w:]+$/;
+	unless $type =~ /^[\w:]+$/;
 
  eval "require $type"
-        or croak $@;
+	or croak $@;
 
  bless [], $type;
 }
@@ -41,10 +41,10 @@ sub AUTOLOAD
 
    no strict 'refs';
    *{"${type}::strptime"} = Date::Parse::gen_parser(
-        \%{"${type}::DoW"},
-        \%{"${type}::MoY"},
-        \@{"${type}::Dsuf"},
-        1);
+	\%{"${type}::DoW"},
+	\%{"${type}::MoY"},
+	\@{"${type}::Dsuf"},
+	1);
 
    goto &{"${type}::strptime"};
   }
@@ -58,7 +58,7 @@ sub str2time
  my @t = $me->strptime(@_);
 
  return undef
-        unless @t;
+	unless @t;
 
  my($ss,$mm,$hh,$day,$month,$year,$zone) = @t;
  my @lt  = localtime(time);
@@ -68,16 +68,16 @@ sub str2time
  $ss    ||= 0;
 
  $month = $lt[4]
-        unless(defined $month);
+	unless(defined $month);
 
  $day  = $lt[3]
-        unless(defined $day);
+	unless(defined $day);
 
  $year = ($month > $lt[4]) ? ($lt[5] - 1) : $lt[5]
-        unless(defined $year);
+	unless(defined $year);
 
  return defined $zone ? timegm($ss,$mm,$hh,$day,$month,$year) - $zone
-                      : timelocal($ss,$mm,$hh,$day,$month,$year);
+    	    	      : timelocal($ss,$mm,$hh,$day,$month,$year);
 }
 
 1;

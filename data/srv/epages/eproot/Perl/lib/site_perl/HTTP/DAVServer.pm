@@ -1,4 +1,4 @@
-#!/Applications/Alloy/Library/bin/perl
+#!/Applications/Alloy/Library/bin/perl 
 
 use strict;
 use warnings;
@@ -23,7 +23,7 @@ handled by the CGI script:
 
       Script PROPFIND /cgi-bin/nph-webdav
       Script PUT      /cgi-bin/nph-webdav
-
+    
 See INSTALL for more details.  See INSTALL for important warning!
 
 =head1 MODULE STATUS
@@ -70,13 +70,13 @@ Litmus test results:
      0. init.................. pass
      1. begin................. pass
      2. copy_init............. pass
-     3. copy_simple........... FAIL
+     3. copy_simple........... FAIL 
      4. copy_overwrite........ WARNING: COPY-on-existing fails with 412
-        ...................... FAIL
+        ...................... FAIL 
      5. copy_cleanup.......... pass
-     6. copy_coll............. FAIL
-     7. move.................. FAIL
-     8. move_coll............. FAIL
+     6. copy_coll............. FAIL 
+     7. move.................. FAIL 
+     8. move_coll............. FAIL 
      9. move_cleanup.......... pass
     10. finish................ pass
     <- summary for `copymove': of 11 tests run: 6 passed, 5 failed. 54.5%
@@ -124,7 +124,7 @@ This code requires:
 
 use CGI         qw();
 
-use XML::Simple qw();
+use XML::Simple qw(); 
 use DateTime    qw();
 
 sub dateEpoch { DateTime->from_epoch( epoch =>$_[0] )->iso8601 }
@@ -168,9 +168,9 @@ sub handle {
         $responder->badRequest($r, "HASCONT" );
     }
 
-    $responder->challenge($r)  unless $PUBLIC
-                                      || $ENV{'REMOTE_USER'}
-                                      || HTTP::DAVServer::AuthDigest::authenticate( sub { return $_[0] } );
+    $responder->challenge($r)  unless $PUBLIC 
+                                      || $ENV{'REMOTE_USER'} 
+                                      || HTTP::DAVServer::AuthDigest::authenticate( sub { return $_[0] } ); 
 
     my $request={};
     if ($contLen && $method ne "PUT") {
@@ -202,13 +202,13 @@ sub handle {
 
     eval "use ${self}::$method";
     $responder->serverError( $r, "LOAD$method", $@ ) if $@;
-    "${self}::$method"->handle( $r, $url, $responder, $request );
+    "${self}::$method"->handle( $r, $url, $responder, $request ); 
 
 }
 
 =head1 SUPPORT
 
-For technical support please email to jlawrenc@cpan.org ...
+For technical support please email to jlawrenc@cpan.org ... 
 for faster service please include "HTTP::DAVServer" and "help" in your subject line.
 
 =head1 AUTHOR

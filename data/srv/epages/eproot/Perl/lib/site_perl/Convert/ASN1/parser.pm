@@ -19,19 +19,19 @@ my $yydebug=0;
 my %yystate;
 
 my %base_type = (
-  BOOLEAN           => [ asn_encode_tag(ASN_BOOLEAN),           opBOOLEAN ],
-  INTEGER           => [ asn_encode_tag(ASN_INTEGER),           opINTEGER ],
-  BIT_STRING        => [ asn_encode_tag(ASN_BIT_STR),           opBITSTR  ],
-  OCTET_STRING      => [ asn_encode_tag(ASN_OCTET_STR),         opSTRING  ],
-  STRING            => [ asn_encode_tag(ASN_OCTET_STR),         opSTRING  ],
-  NULL              => [ asn_encode_tag(ASN_NULL),              opNULL    ],
-  OBJECT_IDENTIFIER => [ asn_encode_tag(ASN_OBJECT_ID),         opOBJID   ],
-  REAL              => [ asn_encode_tag(ASN_REAL),              opREAL    ],
-  ENUMERATED        => [ asn_encode_tag(ASN_ENUMERATED),        opINTEGER ],
-  ENUM              => [ asn_encode_tag(ASN_ENUMERATED),        opINTEGER ],
-  'RELATIVE-OID'    => [ asn_encode_tag(ASN_RELATIVE_OID),      opROID    ],
+  BOOLEAN	    => [ asn_encode_tag(ASN_BOOLEAN),		opBOOLEAN ],
+  INTEGER	    => [ asn_encode_tag(ASN_INTEGER),		opINTEGER ],
+  BIT_STRING	    => [ asn_encode_tag(ASN_BIT_STR),		opBITSTR  ],
+  OCTET_STRING	    => [ asn_encode_tag(ASN_OCTET_STR),		opSTRING  ],
+  STRING	    => [ asn_encode_tag(ASN_OCTET_STR),		opSTRING  ],
+  NULL 		    => [ asn_encode_tag(ASN_NULL),		opNULL    ],
+  OBJECT_IDENTIFIER => [ asn_encode_tag(ASN_OBJECT_ID),		opOBJID   ],
+  REAL		    => [ asn_encode_tag(ASN_REAL),		opREAL    ],
+  ENUMERATED	    => [ asn_encode_tag(ASN_ENUMERATED),	opINTEGER ],
+  ENUM		    => [ asn_encode_tag(ASN_ENUMERATED),	opINTEGER ],
+  'RELATIVE-OID'    => [ asn_encode_tag(ASN_RELATIVE_OID),	opROID	  ],
 
-  SEQUENCE          => [ asn_encode_tag(ASN_SEQUENCE | ASN_CONSTRUCTOR), opSEQUENCE ],
+  SEQUENCE	    => [ asn_encode_tag(ASN_SEQUENCE | ASN_CONSTRUCTOR), opSEQUENCE ],
   SET               => [ asn_encode_tag(ASN_SET      | ASN_CONSTRUCTOR), opSET ],
 
   ObjectDescriptor  => [ asn_encode_tag(ASN_UNIVERSAL |  7), opSTRING ],
@@ -208,8 +208,8 @@ sub yy_err_recover
     $yyerrflag = 3;
     while (1)
     {
-      if (($yyn = $yysindex[$yyss[$yyssp]]) &&
-          ($yyn += constYYERRCODE()) >= 0 &&
+      if (($yyn = $yysindex[$yyss[$yyssp]]) && 
+          ($yyn += constYYERRCODE()) >= 0 && 
           $yyn <= $#yycheck && $yycheck[$yyn] == constYYERRCODE())
       {
 
@@ -304,240 +304,240 @@ goto $label if exists $yystate{$label};
 last switch;
 State1: {
 # 96 "parser.y"
-{ $yyval = { '' => $yyvs[$yyvsp-0] };
+{ $yyval = { '' => $yyvs[$yyvsp-0] }; 
 last switch;
 } }
 State3: {
 # 101 "parser.y"
 {
-                  $yyval = { $yyvs[$yyvsp-2], [$yyvs[$yyvsp-0]] };
-
+		  $yyval = { $yyvs[$yyvsp-2], [$yyvs[$yyvsp-0]] };
+		
 last switch;
 } }
 State4: {
 # 105 "parser.y"
 {
-                  $yyval=$yyvs[$yyvsp-3];
-                  $yyval->{$yyvs[$yyvsp-2]} = [$yyvs[$yyvsp-0]];
-
+		  $yyval=$yyvs[$yyvsp-3];
+		  $yyval->{$yyvs[$yyvsp-2]} = [$yyvs[$yyvsp-0]];
+		
 last switch;
 } }
 State5: {
 # 112 "parser.y"
 {
-                  $yyvs[$yyvsp-1]->[cTAG] = $yyvs[$yyvsp-3];
-                  $yyval = $yyvs[$yyvsp-2] ? explicit($yyvs[$yyvsp-1]) : $yyvs[$yyvsp-1];
-
+		  $yyvs[$yyvsp-1]->[cTAG] = $yyvs[$yyvsp-3];
+		  $yyval = $yyvs[$yyvsp-2] ? explicit($yyvs[$yyvsp-1]) : $yyvs[$yyvsp-1];
+		
 last switch;
 } }
 State11: {
 # 126 "parser.y"
 {
-                  @{$yyval = []}[cTYPE,cCHILD] = ('COMPONENTS', $yyvs[$yyvsp-0]);
-
+		  @{$yyval = []}[cTYPE,cCHILD] = ('COMPONENTS', $yyvs[$yyvsp-0]);
+		
 last switch;
 } }
 State14: {
 # 136 "parser.y"
 {
-                  $yyvs[$yyvsp-1]->[cTAG] = $yyvs[$yyvsp-3];
-                  @{$yyval = []}[cTYPE,cCHILD,cLOOP,cOPT] = ($yyvs[$yyvsp-5], [$yyvs[$yyvsp-1]], 1, $yyvs[$yyvsp-0]);
-                  $yyval = explicit($yyval) if $yyvs[$yyvsp-2];
-
+		  $yyvs[$yyvsp-1]->[cTAG] = $yyvs[$yyvsp-3];
+		  @{$yyval = []}[cTYPE,cCHILD,cLOOP,cOPT] = ($yyvs[$yyvsp-5], [$yyvs[$yyvsp-1]], 1, $yyvs[$yyvsp-0]);
+		  $yyval = explicit($yyval) if $yyvs[$yyvsp-2];
+		
 last switch;
 } }
 State18: {
 # 149 "parser.y"
 {
-                  @{$yyval = []}[cTYPE,cCHILD] = ('SEQUENCE', $yyvs[$yyvsp-1]);
-
+		  @{$yyval = []}[cTYPE,cCHILD] = ('SEQUENCE', $yyvs[$yyvsp-1]);
+		
 last switch;
 } }
 State19: {
 # 153 "parser.y"
 {
-                  @{$yyval = []}[cTYPE,cCHILD] = ('SET', $yyvs[$yyvsp-1]);
-
+		  @{$yyval = []}[cTYPE,cCHILD] = ('SET', $yyvs[$yyvsp-1]);
+		
 last switch;
 } }
 State20: {
 # 157 "parser.y"
 {
-                  @{$yyval = []}[cTYPE,cCHILD] = ('CHOICE', $yyvs[$yyvsp-1]);
-
+		  @{$yyval = []}[cTYPE,cCHILD] = ('CHOICE', $yyvs[$yyvsp-1]);
+		
 last switch;
 } }
 State21: {
 # 163 "parser.y"
 {
-                  @{$yyval = []}[cTYPE] = ('ENUM');
-
+		  @{$yyval = []}[cTYPE] = ('ENUM');
+		
 last switch;
 } }
 State22: {
 # 168 "parser.y"
-{ @{$yyval = []}[cTYPE] = $yyvs[$yyvsp-0];
+{ @{$yyval = []}[cTYPE] = $yyvs[$yyvsp-0]; 
 last switch;
 } }
 State23: {
 # 169 "parser.y"
-{ @{$yyval = []}[cTYPE] = $yyvs[$yyvsp-0];
+{ @{$yyval = []}[cTYPE] = $yyvs[$yyvsp-0]; 
 last switch;
 } }
 State24: {
 # 170 "parser.y"
-{ @{$yyval = []}[cTYPE] = $yyvs[$yyvsp-0];
+{ @{$yyval = []}[cTYPE] = $yyvs[$yyvsp-0]; 
 last switch;
 } }
 State25: {
 # 172 "parser.y"
 {
-                  @{$yyval = []}[cTYPE,cCHILD,cDEFINE] = ('ANY',undef,$yyvs[$yyvsp-0]);
-
+		  @{$yyval = []}[cTYPE,cCHILD,cDEFINE] = ('ANY',undef,$yyvs[$yyvsp-0]);
+		
 last switch;
 } }
 State26: {
 # 175 "parser.y"
-{ @{$yyval = []}[cTYPE] = $yyvs[$yyvsp-0];
+{ @{$yyval = []}[cTYPE] = $yyvs[$yyvsp-0]; 
 last switch;
 } }
 State27: {
 # 178 "parser.y"
-{ $yyval=undef;
+{ $yyval=undef; 
 last switch;
 } }
 State28: {
 # 179 "parser.y"
-{ $yyval=$yyvs[$yyvsp-0];
+{ $yyval=$yyvs[$yyvsp-0]; 
 last switch;
 } }
 State30: {
 # 185 "parser.y"
-{ $yyval = $yyvs[$yyvsp-0];
+{ $yyval = $yyvs[$yyvsp-0]; 
 last switch;
 } }
 State31: {
 # 186 "parser.y"
-{ $yyval = $yyvs[$yyvsp-1];
+{ $yyval = $yyvs[$yyvsp-1]; 
 last switch;
 } }
 State32: {
 # 190 "parser.y"
 {
-                  $yyval = [ $yyvs[$yyvsp-0] ];
-
+		  $yyval = [ $yyvs[$yyvsp-0] ];
+		
 last switch;
 } }
 State33: {
 # 194 "parser.y"
 {
-                  push @{$yyval=$yyvs[$yyvsp-2]}, $yyvs[$yyvsp-0];
-
+		  push @{$yyval=$yyvs[$yyvsp-2]}, $yyvs[$yyvsp-0];
+		
 last switch;
 } }
 State34: {
 # 198 "parser.y"
 {
-                  push @{$yyval=$yyvs[$yyvsp-2]}, $yyvs[$yyvsp-0];
-
+		  push @{$yyval=$yyvs[$yyvsp-2]}, $yyvs[$yyvsp-0];
+		
 last switch;
 } }
 State35: {
 # 204 "parser.y"
 {
-                  @{$yyval=$yyvs[$yyvsp-0]}[cVAR,cTAG] = ($yyvs[$yyvsp-3],$yyvs[$yyvsp-2]);
-                  $yyval = explicit($yyval) if $yyvs[$yyvsp-1];
-
+		  @{$yyval=$yyvs[$yyvsp-0]}[cVAR,cTAG] = ($yyvs[$yyvsp-3],$yyvs[$yyvsp-2]);
+		  $yyval = explicit($yyval) if $yyvs[$yyvsp-1];
+		
 last switch;
 } }
 State36: {
 # 211 "parser.y"
-{ $yyval = [];
+{ $yyval = []; 
 last switch;
 } }
 State37: {
 # 212 "parser.y"
-{ $yyval = $yyvs[$yyvsp-0];
+{ $yyval = $yyvs[$yyvsp-0]; 
 last switch;
 } }
 State38: {
 # 213 "parser.y"
-{ $yyval = $yyvs[$yyvsp-1];
+{ $yyval = $yyvs[$yyvsp-1]; 
 last switch;
 } }
 State39: {
 # 217 "parser.y"
 {
-                  $yyval = [ $yyvs[$yyvsp-0] ];
-
+		  $yyval = [ $yyvs[$yyvsp-0] ];
+		
 last switch;
 } }
 State40: {
 # 221 "parser.y"
 {
-                  push @{$yyval=$yyvs[$yyvsp-2]}, $yyvs[$yyvsp-0];
-
+		  push @{$yyval=$yyvs[$yyvsp-2]}, $yyvs[$yyvsp-0];
+		
 last switch;
 } }
 State41: {
 # 225 "parser.y"
 {
-                  push @{$yyval=$yyvs[$yyvsp-2]}, $yyvs[$yyvsp-0];
-
+		  push @{$yyval=$yyvs[$yyvsp-2]}, $yyvs[$yyvsp-0];
+		
 last switch;
 } }
 State42: {
 # 231 "parser.y"
 {
-                  @{$yyval=$yyvs[$yyvsp-1]}[cOPT] = ($yyvs[$yyvsp-0]);
-
+		  @{$yyval=$yyvs[$yyvsp-1]}[cOPT] = ($yyvs[$yyvsp-0]);
+		
 last switch;
 } }
 State46: {
 # 240 "parser.y"
 {
-                  @{$yyval=$yyvs[$yyvsp-0]}[cVAR,cTAG] = ($yyvs[$yyvsp-3],$yyvs[$yyvsp-2]);
-                  $yyval->[cOPT] = $yyvs[$yyvsp-3] if $yyval->[cOPT];
-                  $yyval = explicit($yyval) if $yyvs[$yyvsp-1];
-
+		  @{$yyval=$yyvs[$yyvsp-0]}[cVAR,cTAG] = ($yyvs[$yyvsp-3],$yyvs[$yyvsp-2]);
+		  $yyval->[cOPT] = $yyvs[$yyvsp-3] if $yyval->[cOPT];
+		  $yyval = explicit($yyval) if $yyvs[$yyvsp-1];
+		
 last switch;
 } }
 State48: {
 # 247 "parser.y"
 {
-                  @{$yyval=$yyvs[$yyvsp-0]}[cTAG] = ($yyvs[$yyvsp-2]);
-                  $yyval = explicit($yyval) if $yyvs[$yyvsp-1];
-
+		  @{$yyval=$yyvs[$yyvsp-0]}[cTAG] = ($yyvs[$yyvsp-2]);
+		  $yyval = explicit($yyval) if $yyvs[$yyvsp-1];
+		
 last switch;
 } }
 State49: {
 # 253 "parser.y"
-{ $yyval = undef;
+{ $yyval = undef; 
 last switch;
 } }
 State50: {
 # 254 "parser.y"
-{ $yyval = 1;
+{ $yyval = 1;     
 last switch;
 } }
 State51: {
 # 258 "parser.y"
-{ $yyval = undef;
+{ $yyval = undef; 
 last switch;
 } }
 State53: {
 # 262 "parser.y"
-{ $yyval = undef;
+{ $yyval = undef; 
 last switch;
 } }
 State54: {
 # 263 "parser.y"
-{ $yyval = 1;
+{ $yyval = 1;     
 last switch;
 } }
 State55: {
 # 264 "parser.y"
-{ $yyval = 0;
+{ $yyval = 0;     
 last switch;
 } }
 State56: {
@@ -604,23 +604,23 @@ last switch;
 # 279 "parser.y"
 
 my %reserved = (
-  'OPTIONAL'    => constOPTIONAL(),
-  'CHOICE'      => constCHOICE(),
-  'OF'          => constOF(),
-  'IMPLICIT'    => constIMPLICIT(),
-  'EXPLICIT'    => constEXPLICIT(),
+  'OPTIONAL' 	=> constOPTIONAL(),
+  'CHOICE' 	=> constCHOICE(),
+  'OF' 		=> constOF(),
+  'IMPLICIT' 	=> constIMPLICIT(),
+  'EXPLICIT' 	=> constEXPLICIT(),
   'SEQUENCE'    => constSEQUENCE(),
   'SET'         => constSET(),
   'ANY'         => constANY(),
   'ENUM'        => constENUM(),
   'ENUMERATED'  => constENUM(),
   'COMPONENTS'  => constCOMPONENTS(),
-  '{'           => constLBRACE(),
-  '}'           => constRBRACE(),
-  ','           => constCOMMA(),
+  '{'		=> constLBRACE(),
+  '}'		=> constRBRACE(),
+  ','		=> constCOMMA(),
   '::='         => constASSIGN(),
   'DEFINED'     => constDEFINED(),
-  'BY'          => constBY()
+  'BY'		=> constBY()
 );
 
 my $reserved = join("|", reverse sort grep { /\w/ } keys %reserved);
@@ -630,7 +630,7 @@ my %tag_class = (
   UNIVERSAL   => ASN_UNIVERSAL,
   PRIVATE     => ASN_PRIVATE,
   CONTEXT     => ASN_CONTEXT,
-  ''          => ASN_CONTEXT # if not specified, its CONTEXT
+  ''	      => ASN_CONTEXT # if not specified, its CONTEXT
 );
 
 ;##
@@ -666,10 +666,10 @@ sub compile_one {
     else {
       die "Unknown type '$type'\n" unless exists $tree->{$type};
       my $ref = compile_one(
-                  $tree,
-                  $tree->{$type},
-                  defined($op->[cVAR]) ? $name . "." . $op->[cVAR] : $name
-                );
+		  $tree,
+		  $tree->{$type},
+		  defined($op->[cVAR]) ? $name . "." . $op->[cVAR] : $name
+		);
       if (defined($op->[cTAG]) && $ref->[0][cTYPE] == opCHOICE) {
         @{$op}[cTYPE,cCHILD] = (opSEQUENCE,$ref);
       }
@@ -689,8 +689,8 @@ sub compile_one {
 
       ;# If a CHOICE is given a tag, then it must be EXPLICIT
       if ($op->[cTYPE] == opCHOICE && defined($op->[cTAG]) && length($op->[cTAG])) {
-        $op = bless explicit($op);
-        $op->[cTYPE] = opSEQUENCE;
+	$op = bless explicit($op);
+	$op->[cTYPE] = opSEQUENCE;
       }
 
       if ( @{$op->[cCHILD]} > 1) {
@@ -698,21 +698,21 @@ sub compile_one {
         ;# Here we need to flatten CHOICEs and check that SET and CHOICE
         ;# do not contain duplicate tags
         ;#}
-        if ($op->[cTYPE] == opSET) {
-          ;# In case we do CER encoding we order the SET elements by thier tags
-          my @tags = map {
-            length($_->[cTAG])
-                ? $_->[cTAG]
-                : $_->[cTYPE] == opCHOICE
-                        ? (sort map { $_->[cTAG] } $_->[cCHILD])[0]
-                        : ''
-          } @{$op->[cCHILD]};
-          @{$op->[cCHILD]} = @{$op->[cCHILD]}[sort { $tags[$a] cmp $tags[$b] } 0..$#tags];
-        }
+	if ($op->[cTYPE] == opSET) {
+	  ;# In case we do CER encoding we order the SET elements by thier tags
+	  my @tags = map { 
+	    length($_->[cTAG])
+		? $_->[cTAG]
+		: $_->[cTYPE] == opCHOICE
+			? (sort map { $_->[cTAG] } $_->[cCHILD])[0]
+			: ''
+	  } @{$op->[cCHILD]};
+	  @{$op->[cCHILD]} = @{$op->[cCHILD]}[sort { $tags[$a] cmp $tags[$b] } 0..$#tags];
+	}
       }
       else {
-        ;# A SET of one element can be treated the same as a SEQUENCE
-        $op->[cTYPE] = opSEQUENCE if $op->[cTYPE] == opSET;
+	;# A SET of one element can be treated the same as a SEQUENCE
+	$op->[cTYPE] = opSEQUENCE if $op->[cTYPE] == opSET;
       }
     }
   }
@@ -757,36 +757,36 @@ sub verify {
 
     while($ops) {
       if ($idx < @$ops) {
-        my $op = $ops->[$idx++];
-        my $var;
-        if (defined ($var = $op->[cVAR])) {
+	my $op = $ops->[$idx++];
+	my $var;
+	if (defined ($var = $op->[cVAR])) {
+	  
+	  $err .= "$name: $path.$var used multiple times\n"
+	    if $stash->{$var}++;
 
-          $err .= "$name: $path.$var used multiple times\n"
-            if $stash->{$var}++;
-
-        }
-        if (defined $op->[cCHILD]) {
-          if (ref $op->[cCHILD]) {
-            push @scope, [$stash, $path, $ops, $idx];
-            if (defined $var) {
-              $stash = {};
-              $path .= "." . $var;
-            }
-            $idx = 0;
-            $ops = $op->[cCHILD];
-          }
-          elsif ($op->[cTYPE] eq 'COMPONENTS') {
-            splice(@$ops,--$idx,1,expand_ops($tree, $op->[cCHILD]));
-          }
+	}
+	if (defined $op->[cCHILD]) {
+	  if (ref $op->[cCHILD]) {
+	    push @scope, [$stash, $path, $ops, $idx];
+	    if (defined $var) {
+	      $stash = {};
+	      $path .= "." . $var;
+	    }
+	    $idx = 0;
+	    $ops = $op->[cCHILD];
+	  }
+	  elsif ($op->[cTYPE] eq 'COMPONENTS') {
+	    splice(@$ops,--$idx,1,expand_ops($tree, $op->[cCHILD]));
+	  }
           else {
-            die "Internal error\n";
+	    die "Internal error\n";
           }
-        }
+	}
       }
       else {
-        my $s = pop @scope
-          or last;
-        ($stash,$path,$ops,$idx) = @$s;
+	my $s = pop @scope
+	  or last;
+	($stash,$path,$ops,$idx) = @$s;
       }
     }
   }
@@ -798,7 +798,7 @@ sub expand_ops {
   my $tree = shift;
   my $want = shift;
   my $seen = shift || { };
-
+  
   die "COMPONENTS OF loop $want\n" if $seen->{$want}++;
   die "Undefined macro $want\n" unless exists $tree->{$want};
   my $ops = $tree->{$want};
@@ -827,31 +827,31 @@ sub yylex {
   return shift @stacked if @stacked;
 
   while ($asn =~ /\G(?:
-          (\s+|--[^\n]*)
-        |
-          ([,{}]|::=)
-        |
-          ($reserved)\b
-        |
-          (
-            (?:OCTET|BIT)\s+STRING
-           |
-            OBJECT\s+IDENTIFIER
-           |
-            RELATIVE-OID
-          )\b
-        |
-          (\w+(?:-\w+)*)
-        |
-            \[\s*
-          (
-           (?:(?:APPLICATION|PRIVATE|UNIVERSAL|CONTEXT)\s+)?
-           \d+
+	  (\s+|--[^\n]*)
+	|
+	  ([,{}]|::=)
+	|
+	  ($reserved)\b
+	|
+	  (
+	    (?:OCTET|BIT)\s+STRING
+	   |
+	    OBJECT\s+IDENTIFIER
+	   |
+	    RELATIVE-OID
+	  )\b
+	|
+	  (\w+(?:-\w+)*)
+	|
+	    \[\s*
+	  (
+	   (?:(?:APPLICATION|PRIVATE|UNIVERSAL|CONTEXT)\s+)?
+	   \d+
           )
-            \s*\]
-        |
-          \((\d+)\)
-        )/sxgo
+	    \s*\]
+	|
+	  \((\d+)\)
+	)/sxgo
   ) {
 
     ($last_pos,$pos) = ($pos,pos($asn));
@@ -878,7 +878,7 @@ sub yylex {
 
     if (defined $6) {
       my($class,$num) = ($+ =~ /^([A-Z]*)\s*(\d+)$/);
-      $yylval = asn_tag($tag_class{$class}, $num);
+      $yylval = asn_tag($tag_class{$class}, $num); 
       return constCLASS();
     }
 

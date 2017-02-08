@@ -55,21 +55,21 @@ sub __PPIX_LEXER__finalize {
 
     foreach my $kid ( $self->children() ) {
 
-        $kid->isa( 'PPIx::Regexp::Token::Code' )
-            and not $count++
-            and next;
+	$kid->isa( 'PPIx::Regexp::Token::Code' )
+	    and not $count++
+	    and next;
 
-        $errors++;
+	$errors++;
 
-        if ( $kid->isa( 'PPIx::Regexp::Token' ) ) {
-            bless $kid, TOKEN_UNKNOWN;
-        } elsif ( $kid->isa( 'PPIx::Regexp::Structure' ) ) {
-            bless $kid, STRUCTURE_UNKNOWN;
-        } else {
-            cluck( 'Programming error - unexpected element of class ',
-                ref $kid, ' found in a PPIx::Regexp::Structure::Code. ',
-                'Please contact the author' );
-        }
+	if ( $kid->isa( 'PPIx::Regexp::Token' ) ) {
+	    bless $kid, TOKEN_UNKNOWN;
+	} elsif ( $kid->isa( 'PPIx::Regexp::Structure' ) ) {
+	    bless $kid, STRUCTURE_UNKNOWN;
+	} else {
+	    cluck( 'Programming error - unexpected element of class ',
+		ref $kid, ' found in a PPIx::Regexp::Structure::Code. ',
+		'Please contact the author' );
+	}
 
     }
     return $errors;

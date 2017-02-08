@@ -581,7 +581,7 @@ scalar => scalar
 
 Prepend the string:
 
-    use strict;
+    use strict; 
     use warnings;
 
 to the block's text.

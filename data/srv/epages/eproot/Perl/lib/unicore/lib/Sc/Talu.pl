@@ -9,39 +9,39 @@
 
 # This file returns the 83 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{Script=New_Tai_Lue}
 #         \p{Sc=Talu}
 #         \p{Is_Script=New_Tai_Lue}
 #         \p{Is_Sc=Talu}
-#
+# 
 #         \p{New_Tai_Lue}
 #         \p{Is_New_Tai_Lue}
 #         \p{Talu}
 #         \p{Is_Talu}
-#
+# 
 #     Note that contrary to what you might expect, the above is NOT the same
 #     as \p{Block=New_Tai_Lue}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Sc: New_Tai_Lue}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-1980    19AB     # [44]
-19B0    19C9     # [26]
-19D0    19DA     # [11]
-19DE    19DF     # [2]
+1980	19AB	 # [44]
+19B0	19C9	 # [26]
+19D0	19DA	 # [11]
+19DE	19DF	 # [2]
 END

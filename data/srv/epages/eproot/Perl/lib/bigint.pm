@@ -3,19 +3,19 @@ use 5.006;
 
 $VERSION = '0.23';
 use Exporter;
-@ISA            = qw( Exporter );
-@EXPORT_OK      = qw( PI e bpi bexp );
-@EXPORT         = qw( inf NaN );
+@ISA		= qw( Exporter );
+@EXPORT_OK	= qw( PI e bpi bexp );
+@EXPORT		= qw( inf NaN );
 
 use strict;
 use overload;
 
-##############################################################################
+############################################################################## 
 
 # These are all alike, and thus faked by AUTOLOAD
 
 my @faked = qw/round_mode accuracy precision div_scale/;
-use vars qw/$VERSION $AUTOLOAD $_lite/;         # _lite for testsuite
+use vars qw/$VERSION $AUTOLOAD $_lite/;		# _lite for testsuite
 
 sub AUTOLOAD
   {
@@ -27,7 +27,7 @@ sub AUTOLOAD
     {
     if ($n eq $name)
       {
-      *{"bigint::$name"} = sub
+      *{"bigint::$name"} = sub 
         {
         my $self = shift;
         no strict 'refs';
@@ -40,7 +40,7 @@ sub AUTOLOAD
       return &$name;
       }
     }
-
+ 
   # delayed load of Carp and avoid recursion
   require Carp;
   Carp::croak ("Can't call bigint\-\>$name, not a valid method");
@@ -71,42 +71,42 @@ sub _float_constant
   my $float = shift;
 
   # some simple cases first
-  return $float if ($float =~ /^[+-]?[0-9]+$/);         # '+123','-1','0' etc
-  return $float
-    if ($float =~ /^[+-]?[0-9]+\.?[eE]\+?[0-9]+$/);     # 123e2, 123.e+2
-  return '0' if ($float =~ /^[+-]?[0]*\.[0-9]+$/);      # .2, 0.2, -.1
-  if ($float =~ /^[+-]?[0-9]+\.[0-9]*$/)                # 1., 1.23, -1.2 etc
+  return $float if ($float =~ /^[+-]?[0-9]+$/);		# '+123','-1','0' etc
+  return $float 
+    if ($float =~ /^[+-]?[0-9]+\.?[eE]\+?[0-9]+$/);	# 123e2, 123.e+2
+  return '0' if ($float =~ /^[+-]?[0]*\.[0-9]+$/);	# .2, 0.2, -.1
+  if ($float =~ /^[+-]?[0-9]+\.[0-9]*$/)		# 1., 1.23, -1.2 etc
     {
     $float =~ s/\..*//;
     return $float;
     }
   my ($mis,$miv,$mfv,$es,$ev) = Math::BigInt::_split($float);
-  return $float if !defined $mis;       # doesn't look like a number to me
+  return $float if !defined $mis; 	# doesn't look like a number to me
   my $ec = int($$ev);
   my $sign = $$mis; $sign = '' if $sign eq '+';
   if ($$es eq '-')
     {
     # ignore fraction part entirely
-    if ($ec >= length($$miv))                   # 123.23E-4
+    if ($ec >= length($$miv))			# 123.23E-4
       {
       return '0';
       }
-    return $sign . substr ($$miv,0,length($$miv)-$ec);  # 1234.45E-2 = 12
+    return $sign . substr ($$miv,0,length($$miv)-$ec);	# 1234.45E-2 = 12
     }
   # xE+y
   if ($ec >= length($$mfv))
     {
-    $ec -= length($$mfv);
-    return $sign.$$miv.$$mfv if $ec == 0;       # 123.45E+2 => 12345
-    return $sign.$$miv.$$mfv.'E'.$ec;           # 123.45e+3 => 12345e1
+    $ec -= length($$mfv);			
+    return $sign.$$miv.$$mfv if $ec == 0;	# 123.45E+2 => 12345
+    return $sign.$$miv.$$mfv.'E'.$ec; 		# 123.45e+3 => 12345e1
     }
   $mfv = substr($$mfv,0,$ec);
-  $sign.$$miv.$mfv;                             # 123.45e+1 => 1234
+  $sign.$$miv.$mfv; 				# 123.45e+1 => 1234
   }
 
 sub unimport
   {
-  $^H{bigint} = undef;                                  # no longer in effect
+  $^H{bigint} = undef;					# no longer in effect
   overload::remove_constant('binary','','float','','integer');
   }
 
@@ -153,11 +153,11 @@ sub _oct
   Math::BigInt->new($i);
   }
 
-sub import
+sub import 
   {
   my $self = shift;
 
-  $^H{bigint} = 1;                                      # we are in effect
+  $^H{bigint} = 1;					# we are in effect
 
   my ($hex,$oct);
   # for newer Perls always override hex() and oct() with a lexical version:
@@ -169,10 +169,10 @@ sub import
   # some defaults
   my $lib = ''; my $lib_kind = 'try';
 
-  my @import = ( ':constant' );                         # drive it w/ constant
+  my @import = ( ':constant' );				# drive it w/ constant
   my @a = @_; my $l = scalar @_; my $j = 0;
-  my ($ver,$trace);                                     # version? trace?
-  my ($a,$p);                                           # accuracy, precision
+  my ($ver,$trace);					# version? trace?
+  my ($a,$p);						# accuracy, precision
   for ( my $i = 0; $i < $l ; $i++,$j++ )
     {
     if ($_[$i] =~ /^(l|lib|try|only)$/)
@@ -180,19 +180,19 @@ sub import
       # this causes a different low lib to take care...
       $lib_kind = $1; $lib_kind = 'lib' if $lib_kind eq 'l';
       $lib = $_[$i+1] || '';
-      my $s = 2; $s = 1 if @a-$j < 2;   # avoid "can not modify non-existant..."
+      my $s = 2; $s = 1 if @a-$j < 2;	# avoid "can not modify non-existant..."
       splice @a, $j, $s; $j -= $s; $i++;
       }
     elsif ($_[$i] =~ /^(a|accuracy)$/)
       {
       $a = $_[$i+1];
-      my $s = 2; $s = 1 if @a-$j < 2;   # avoid "can not modify non-existant..."
+      my $s = 2; $s = 1 if @a-$j < 2;	# avoid "can not modify non-existant..."
       splice @a, $j, $s; $j -= $s; $i++;
       }
     elsif ($_[$i] =~ /^(p|precision)$/)
       {
       $p = $_[$i+1];
-      my $s = 2; $s = 1 if @a-$j < 2;   # avoid "can not modify non-existant..."
+      my $s = 2; $s = 1 if @a-$j < 2;	# avoid "can not modify non-existant..."
       splice @a, $j, $s; $j -= $s; $i++;
       }
     elsif ($_[$i] =~ /^(v|version)$/)
@@ -221,7 +221,7 @@ sub import
       }
     }
   my $class;
-  $_lite = 0;                                   # using M::BI::L ?
+  $_lite = 0;					# using M::BI::L ?
   if ($trace)
     {
     require Math::BigInt::Trace; $class = 'Math::BigInt::Trace';
@@ -229,18 +229,18 @@ sub import
   else
     {
     # see if we can find Math::BigInt::Lite
-    if (!defined $a && !defined $p)             # rounding won't work to well
+    if (!defined $a && !defined $p)		# rounding won't work to well
       {
       eval 'require Math::BigInt::Lite;';
       if ($@ eq '')
         {
-        @import = ( );                          # :constant in Lite, not MBI
+        @import = ( );				# :constant in Lite, not MBI
         Math::BigInt::Lite->import( ':constant' );
-        $_lite= 1;                              # signal okay
+        $_lite= 1;				# signal okay
         }
       }
-    require Math::BigInt if $_lite == 0;        # not already loaded?
-    $class = 'Math::BigInt';                    # regardless of MBIL or not
+    require Math::BigInt if $_lite == 0;	# not already loaded?
+    $class = 'Math::BigInt';			# regardless of MBIL or not
     }
   push @import, $lib_kind => $lib if $lib ne '';
   # Math::BigInt::Trace or plain Math::BigInt
@@ -298,15 +298,15 @@ bigint - Transparent BigInteger support for Perl
 
   use bigint;
 
-  $x = 2 + 4.5,"\n";                    # BigInt 6
-  print 2 ** 512,"\n";                  # really is what you think it is
-  print inf + 42,"\n";                  # inf
-  print NaN * 7,"\n";                   # NaN
-  print hex("0x1234567890123490"),"\n"; # Perl v5.9.4 or later
+  $x = 2 + 4.5,"\n";			# BigInt 6
+  print 2 ** 512,"\n";			# really is what you think it is
+  print inf + 42,"\n";			# inf
+  print NaN * 7,"\n";			# NaN
+  print hex("0x1234567890123490"),"\n";	# Perl v5.9.4 or later
 
   {
     no bigint;
-    print 2 ** 256,"\n";                # a normal Perl scalar now
+    print 2 ** 256,"\n";		# a normal Perl scalar now
   }
 
   # Note that this will be global:
@@ -331,32 +331,32 @@ There is one small difference between C<use integer> and C<use bigint>: the
 former will not affect assignments to variables and the return value of
 some functions. C<bigint> truncates these results to integer too:
 
-        # perl -Minteger -wle 'print 3.2'
-        3.2
-        # perl -Minteger -wle 'print 3.2 + 0'
-        3
-        # perl -Mbigint -wle 'print 3.2'
-        3
-        # perl -Mbigint -wle 'print 3.2 + 0'
-        3
+	# perl -Minteger -wle 'print 3.2'
+	3.2
+	# perl -Minteger -wle 'print 3.2 + 0'
+	3
+	# perl -Mbigint -wle 'print 3.2'
+	3
+	# perl -Mbigint -wle 'print 3.2 + 0'
+	3
 
-        # perl -Mbigint -wle 'print exp(1) + 0'
-        2
-        # perl -Mbigint -wle 'print exp(1)'
-        2
-        # perl -Minteger -wle 'print exp(1)'
-        2.71828182845905
-        # perl -Minteger -wle 'print exp(1) + 0'
-        2
+	# perl -Mbigint -wle 'print exp(1) + 0'
+	2
+	# perl -Mbigint -wle 'print exp(1)'
+	2
+	# perl -Minteger -wle 'print exp(1)'
+	2.71828182845905
+	# perl -Minteger -wle 'print exp(1) + 0'
+	2
 
 In practice this makes seldom a difference as B<parts and results> of
 expressions will be truncated anyway, but this can, for instance, affect the
 return value of subroutines:
 
-        sub three_integer { use integer; return 3.2; }
-        sub three_bigint { use bigint; return 3.2; }
-
-        print three_integer(), " ", three_bigint(),"\n";        # prints "3.2 3"
+	sub three_integer { use integer; return 3.2; } 
+	sub three_bigint { use bigint; return 3.2; }
+ 
+	print three_integer(), " ", three_bigint(),"\n";	# prints "3.2 3"
 
 =head2 Options
 
@@ -371,7 +371,7 @@ The following options exist:
 This sets the accuracy for all math operations. The argument must be greater
 than or equal to zero. See Math::BigInt's bround() function for details.
 
-        perl -Mbigint=a,2 -le 'print 12345+1'
+	perl -Mbigint=a,2 -le 'print 12345+1'
 
 Note that setting precision and accurary at the same time is not possible.
 
@@ -385,7 +385,7 @@ integer and are ignore like negative values.
 
 See Math::BigInt's bfround() function for details.
 
-        perl -Mbignum=p,5 -le 'print 123456789+123'
+	perl -Mbignum=p,5 -le 'print 123456789+123'
 
 Note that setting precision and accurary at the same time is not possible.
 
@@ -410,14 +410,14 @@ and cannot be disabled with "no bigint;".
 
 Load a different math lib, see L<Math Library>.
 
-        perl -Mbigint=lib,GMP -e 'print 2 ** 512'
-        perl -Mbigint=try,GMP -e 'print 2 ** 512'
-        perl -Mbigint=only,GMP -e 'print 2 ** 512'
+	perl -Mbigint=lib,GMP -e 'print 2 ** 512'
+	perl -Mbigint=try,GMP -e 'print 2 ** 512'
+	perl -Mbigint=only,GMP -e 'print 2 ** 512'
 
 Currently there is no way to specify more than one library on the command
 line. This means the following does not work:
 
-        perl -Mbignum=l,GMP,Pari -e 'print 2 ** 512'
+	perl -Mbignum=l,GMP,Pari -e 'print 2 ** 512'
 
 This will be hopefully fixed soon ;)
 
@@ -425,7 +425,7 @@ This will be hopefully fixed soon ;)
 
 This prints out the name and version of all modules used and then exits.
 
-        perl -Mbigint=v
+	perl -Mbigint=v
 
 =back
 
@@ -434,16 +434,16 @@ This prints out the name and version of all modules used and then exits.
 Math with the numbers is done (by default) by a module called
 Math::BigInt::Calc. This is equivalent to saying:
 
-        use bigint lib => 'Calc';
+	use bigint lib => 'Calc';
 
 You can change this by using:
 
-        use bignum lib => 'GMP';
+	use bignum lib => 'GMP';
 
 The following would first try to find Math::BigInt::Foo, then
 Math::BigInt::Bar, and when this also fails, revert to Math::BigInt::Calc:
 
-        use bigint lib => 'Foo,Math::BigInt::Bar';
+	use bigint lib => 'Foo,Math::BigInt::Bar';
 
 Using C<lib> warns if none of the specified libraries can be found and
 L<Math::BigInt> did fall back to one of the default libraries.
@@ -483,7 +483,7 @@ minus infinity. You will get '+inf' when dividing a positive number by 0, and
 
 Since all numbers are now objects, you can use all functions that are part of
 the BigInt API. You can only use the bxxx() notation, and not the fxxx()
-notation, though.
+notation, though. 
 
 =over 2
 
@@ -499,21 +499,21 @@ handle bareword C<NaN> properly.
 
 =item e
 
-        # perl -Mbigint=e -wle 'print e'
+	# perl -Mbigint=e -wle 'print e'
 
 Returns Euler's number C<e>, aka exp(1). Note that under bigint, this is
 truncated to an integer, and hence simple '2'.
 
 =item PI
 
-        # perl -Mbigint=PI -wle 'print PI'
+	# perl -Mbigint=PI -wle 'print PI'
 
 Returns PI. Note that under bigint, this is truncated to an integer, and hence
 simple '3'.
 
 =item bexp()
 
-        bexp($power,$accuracy);
+	bexp($power,$accuracy);
 
 Returns Euler's number C<e> raised to the appropriate power, to
 the wanted accuracy.
@@ -522,18 +522,18 @@ Note that under bigint, the result is truncated to an integer.
 
 Example:
 
-        # perl -Mbigint=bexp -wle 'print bexp(1,80)'
+	# perl -Mbigint=bexp -wle 'print bexp(1,80)'
 
 =item bpi()
 
-        bpi($accuracy);
+	bpi($accuracy);
 
 Returns PI to the wanted accuracy. Note that under bigint, this is truncated
 to an integer, and hence simple '3'.
 
 Example:
 
-        # perl -Mbigint=bpi -wle 'print bpi(80)'
+	# perl -Mbigint=bpi -wle 'print bpi(80)'
 
 =item upgrade()
 
@@ -542,13 +542,13 @@ C<$Math::BigInt::upgrade>.
 
 =item in_effect()
 
-        use bigint;
+	use bigint;
 
-        print "in effect\n" if bigint::in_effect;       # true
-        {
-          no bigint;
-          print "in effect\n" if bigint::in_effect;     # false
-        }
+	print "in effect\n" if bigint::in_effect;	# true
+	{
+	  no bigint;
+	  print "in effect\n" if bigint::in_effect;	# false
+	}
 
 Returns true or false if C<bigint> is in effect in the current scope.
 
@@ -565,31 +565,31 @@ Math with the numbers is done (by default) by a module called
 But a warning is in order. When using the following to make a copy of a number,
 only a shallow copy will be made.
 
-        $x = 9; $y = $x;
-        $x = $y = 7;
+	$x = 9; $y = $x;
+	$x = $y = 7;
 
 Using the copy or the original with overloaded math is okay, e.g. the
 following work:
 
-        $x = 9; $y = $x;
-        print $x + 1, " ", $y,"\n";     # prints 10 9
+	$x = 9; $y = $x;
+	print $x + 1, " ", $y,"\n";	# prints 10 9
 
 but calling any method that modifies the number directly will result in
 B<both> the original and the copy being destroyed:
-
+	
+	$x = 9; $y = $x;
+	print $x->badd(1), " ", $y,"\n";	# prints 10 10
+	
         $x = 9; $y = $x;
-        print $x->badd(1), " ", $y,"\n";        # prints 10 10
-
-        $x = 9; $y = $x;
-        print $x->binc(1), " ", $y,"\n";        # prints 10 10
-
-        $x = 9; $y = $x;
-        print $x->bmul(2), " ", $y,"\n";        # prints 18 18
-
+	print $x->binc(1), " ", $y,"\n";	# prints 10 10
+        
+	$x = 9; $y = $x;
+	print $x->bmul(2), " ", $y,"\n";	# prints 18 18
+	
 Using methods that do not modify, but testthe contents works:
 
-        $x = 9; $y = $x;
-        $z = 9 if $x->is_zero();                # works fine
+	$x = 9; $y = $x;
+	$z = 9 if $x->is_zero();		# works fine
 
 See the documentation about the copy constructor and C<=> in overload, as
 well as the documentation in BigInt for further details.
@@ -610,22 +610,22 @@ will not happen unless you specifically ask for it with the two
 import tags "hex" and "oct" - and then it will be global and cannot be
 disabled inside a scope with "no bigint":
 
-        use bigint qw/hex oct/;
+	use bigint qw/hex oct/;
 
-        print hex("0x1234567890123456");
-        {
-                no bigint;
-                print hex("0x1234567890123456");
-        }
+	print hex("0x1234567890123456");
+	{
+		no bigint;
+		print hex("0x1234567890123456");
+	}
 
 The second call to hex() will warn about a non-portable constant.
 
 Compare this to:
 
-        use bigint;
+	use bigint;
 
-        # will warn only under Perl older than v5.9.4
-        print hex("0x1234567890123456");
+	# will warn only under Perl older than v5.9.4
+	print hex("0x1234567890123456");
 
 =back
 
@@ -637,23 +637,23 @@ the others to do the work.
 
 The following modules are currently used by bigint:
 
-        Math::BigInt::Lite      (for speed, and only if it is loadable)
-        Math::BigInt
+	Math::BigInt::Lite	(for speed, and only if it is loadable)
+	Math::BigInt
 
 =head1 EXAMPLES
 
 Some cool command line examples to impress the Python crowd ;) You might want
 to compare them to the results under -Mbignum or -Mbigrat:
-
-        perl -Mbigint -le 'print sqrt(33)'
-        perl -Mbigint -le 'print 2*255'
-        perl -Mbigint -le 'print 4.5+2*255'
-        perl -Mbigint -le 'print 3/7 + 5/7 + 8/3'
-        perl -Mbigint -le 'print 123->is_odd()'
-        perl -Mbigint -le 'print log(2)'
-        perl -Mbigint -le 'print 2 ** 0.5'
-        perl -Mbigint=a,65 -le 'print 2 ** 0.2'
-        perl -Mbignum=a,65,l,GMP -le 'print 7 ** 7777'
+ 
+	perl -Mbigint -le 'print sqrt(33)'
+	perl -Mbigint -le 'print 2*255'
+	perl -Mbigint -le 'print 4.5+2*255'
+	perl -Mbigint -le 'print 3/7 + 5/7 + 8/3'
+	perl -Mbigint -le 'print 123->is_odd()'
+	perl -Mbigint -le 'print log(2)'
+	perl -Mbigint -le 'print 2 ** 0.5'
+	perl -Mbigint=a,65 -le 'print 2 ** 0.2'
+	perl -Mbignum=a,65,l,GMP -le 'print 7 ** 7777'
 
 =head1 LICENSE
 

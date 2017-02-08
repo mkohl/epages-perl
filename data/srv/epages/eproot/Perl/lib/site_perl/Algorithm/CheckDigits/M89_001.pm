@@ -10,60 +10,60 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 my @keytable = (
-        'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F',
-        'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S',
-        'Q', 'V', 'H', 'L', 'C', 'K', 'E',
+	'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F',
+	'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S',
+	'Q', 'V', 'H', 'L', 'C', 'K', 'E',
 );
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{6})?(\d\d)$/i) {
-                return $2 eq $self->_compute_checkdigit($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{6})?(\d\d)$/i) {
+		return $2 eq $self->_compute_checkdigit($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{6})$/i) {
-                return $number . $self->_compute_checkdigit($1);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{6})$/i) {
+		return $number . $self->_compute_checkdigit($1);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{6})(\d\d)$/i) {
-                return $1 if ($2 eq $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{6})(\d\d)$/i) {
+		return $1 if ($2 eq $self->_compute_checkdigit($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{6})(\d\d)$/i) {
-                return $2 if (uc($2) eq $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{6})(\d\d)$/i) {
+		return $2 if (uc($2) eq $self->_compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        if ($number =~ /^\d{6}$/i) {
-                return sprintf("%2.2d",($number % 89));
-        }
-        return -1;
+	if ($number =~ /^\d{6}$/i) {
+		return sprintf("%2.2d",($number % 89));
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -82,7 +82,7 @@ CheckDigits::M89_001 - compute check digits for VAT Registration Number (LU)
   $ustid = CheckDigits('ustid_lu');
 
   if ($ustid->is_valid('13669580')) {
-        # do something
+	# do something
   }
 
   $cn = $ustid->complete('136695');
@@ -93,7 +93,7 @@ CheckDigits::M89_001 - compute check digits for VAT Registration Number (LU)
 
   $bn = $ustid->basenumber('13669580');
   # $bn = '136695'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

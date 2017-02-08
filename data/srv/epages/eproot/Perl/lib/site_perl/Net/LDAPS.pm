@@ -27,16 +27,16 @@ Net::LDAPS - use LDAP over an SSL connection
  use Net::LDAPS;
 
  $ldaps = Net::LDAPS->new('myhost.example.com',
-                          port => '10000',
-                          verify => 'require',
-                          capath => '/usr/local/cacerts/');
+			  port => '10000',
+			  verify => 'require',
+			  capath => '/usr/local/cacerts/');
 
  # alternate way
  use Net::LDAP;
 
  $ldaps = Net::LDAP->new('ldaps://myhost.example.com:10000',
-                         verify => 'require',
-                         capath => '/usr/local/cacerts/');
+			 verify => 'require',
+			 capath => '/usr/local/cacerts/');
 
 =head1 DESCRIPTION
 

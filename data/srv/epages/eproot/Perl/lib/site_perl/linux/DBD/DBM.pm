@@ -401,7 +401,7 @@ sub open_file
         my $tie_class = $meta->{dbm_tietype};
         eval { tie %{ $meta->{hash} }, $tie_class, @tie_args };
         $@ and croak "Cannot tie(\%h $tie_class @tie_args): $@";
-        -f $meta->{f_fqfn} or croak( "No such file: '" . $meta->{f_fqfn} . "'" );
+	-f $meta->{f_fqfn} or croak( "No such file: '" . $meta->{f_fqfn} . "'" );
     }
 
     unless ( $flags->{createMode} )
@@ -652,7 +652,7 @@ DBD::DBM - a DBI driver for DBM & MLDBM files
      dbm_mldbm          => 'FreezeThaw',
      dbm_store_metadata => 1,
      dbm_berkeley_flags => {
-         '-Cachesize' => 1000, # set a ::Hash flag
+	 '-Cachesize' => 1000, # set a ::Hash flag
      },
  });
 
@@ -960,10 +960,10 @@ your script like this:
      dbm_type  => 'BerkeleyDB',
      dbm_mldbm => 'Storable',
      dbm_berkeley_flags => {
-         'DB_CREATE'  => DB_CREATE,  # pass in constants
-         'DB_RDONLY'  => DB_RDONLY,  # pass in constants
-         '-Cachesize' => 1000,       # set a ::Hash flag
-         '-Env'       => $env,       # pass in an environment
+	 'DB_CREATE'  => DB_CREATE,  # pass in constants
+	 'DB_RDONLY'  => DB_RDONLY,  # pass in constants
+	 '-Cachesize' => 1000,       # set a ::Hash flag
+	 '-Env'       => $env,       # pass in an environment
      },
  });
 

@@ -4,21 +4,21 @@ Scalar::String - string aspects of scalars
 
 =head1 SYNOPSIS
 
-        use Scalar::String
-                qw(sclstr_is_upgraded sclstr_is_downgraded);
+	use Scalar::String
+		qw(sclstr_is_upgraded sclstr_is_downgraded);
 
-        if(sclstr_is_upgraded($value)) { ...
-        if(sclstr_is_downgraded($value)) { ...
+	if(sclstr_is_upgraded($value)) { ...
+	if(sclstr_is_downgraded($value)) { ...
 
-        use Scalar::String qw(
-                sclstr_upgrade_inplace sclstr_upgraded
-                sclstr_downgrade_inplace sclstr_downgraded
-        );
+	use Scalar::String qw(
+		sclstr_upgrade_inplace sclstr_upgraded
+		sclstr_downgrade_inplace sclstr_downgraded
+	);
 
-        sclstr_upgrade_inplace($value);
-        $value = sclstr_upgraded($value);
-        sclstr_downgrade_inplace($value);
-        $value = sclstr_downgraded($value);
+	sclstr_upgrade_inplace($value);
+	$value = sclstr_upgraded($value);
+	sclstr_downgrade_inplace($value);
+	$value = sclstr_downgraded($value);
 
 =head1 DESCRIPTION
 
@@ -102,28 +102,28 @@ our $VERSION = "0.002";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
-        sclstr_is_upgraded sclstr_is_downgraded
-        sclstr_upgrade_inplace sclstr_upgraded
-        sclstr_downgrade_inplace sclstr_downgraded
+	sclstr_is_upgraded sclstr_is_downgraded
+	sclstr_upgrade_inplace sclstr_upgraded
+	sclstr_downgrade_inplace sclstr_downgraded
 );
 
 eval { local $SIG{__DIE__};
-        require XSLoader;
-        XSLoader::load(__PACKAGE__, $VERSION);
+	require XSLoader;
+	XSLoader::load(__PACKAGE__, $VERSION);
 };
 
 if($@ eq "") {
-        close(DATA);
+	close(DATA);
 } else {
-        (my $filename = __FILE__) =~ tr# -~##cd;
-        local $/ = undef;
-        my $pp_code = "#line 128 \"$filename\"\n".<DATA>;
-        close(DATA);
-        {
-                local $SIG{__DIE__};
-                eval $pp_code;
-        }
-        die $@ if $@ ne "";
+	(my $filename = __FILE__) =~ tr# -~##cd;
+	local $/ = undef;
+	my $pp_code = "#line 128 \"$filename\"\n".<DATA>;
+	close(DATA);
+	{
+		local $SIG{__DIE__};
+		eval $pp_code;
+	}
+	die $@ if $@ ne "";
 }
 
 1;
@@ -155,17 +155,17 @@ is in upgraded form.
 sub sclstr_is_upgraded($);
 
 if(defined &utf8::is_utf8) {
-        *sclstr_is_upgraded = sub($) { &utf8::is_utf8 };
+	*sclstr_is_upgraded = sub($) { &utf8::is_utf8 };
 } else {
-        *sclstr_is_upgraded = sub($) {
-                # In perl 5.6, an upgraded string can be detected
-                # (even if it contains no non-ASCII characters) by the
-                # fact that concatenation with it will upgrade another
-                # string.  If the probe string contains a non-ASCII
-                # character, its upgrading can be consistently detected
-                # by examining the resulting byte sequence.
-                return unpack("C", "\xaa".$_[0]) != 170;
-        };
+	*sclstr_is_upgraded = sub($) {
+		# In perl 5.6, an upgraded string can be detected
+		# (even if it contains no non-ASCII characters) by the
+		# fact that concatenation with it will upgrade another
+		# string.  If the probe string contains a non-ASCII
+		# character, its upgrading can be consistently detected
+		# by examining the resulting byte sequence.
+		return unpack("C", "\xaa".$_[0]) != 170;
+	};
 }
 
 =item sclstr_is_downgraded(VALUE)
@@ -197,12 +197,12 @@ L</sclstr_upgraded>.
 sub sclstr_upgrade_inplace($);
 
 if("$]" >= 5.008) {
-        *sclstr_upgrade_inplace = sub($) { &utf8::upgrade };
+	*sclstr_upgrade_inplace = sub($) { &utf8::upgrade };
 } else {
-        # In perl 5.6, upgrade of a string can be forced by
-        # concatenation with an upgraded string.
-        chop(my $upgraded_empty_string = "\x{100}");
-        *sclstr_upgrade_inplace = sub($) { $_[0] .= $upgraded_empty_string; };
+	# In perl 5.6, upgrade of a string can be forced by
+	# concatenation with an upgraded string.
+	chop(my $upgraded_empty_string = "\x{100}");
+	*sclstr_upgrade_inplace = sub($) { $_[0] .= $upgraded_empty_string; };
 }
 
 =item sclstr_upgraded(VALUE)
@@ -213,9 +213,9 @@ I<VALUE>, and is in upgraded form (regardless of how I<VALUE> is encoded).
 =cut
 
 sub sclstr_upgraded($) {
-        my($str) = @_;
-        sclstr_upgrade_inplace($str);
-        return $str;
+	my($str) = @_;
+	sclstr_upgrade_inplace($str);
+	return $str;
 }
 
 =item sclstr_downgrade_inplace(VALUE[, FAIL_OK])
@@ -235,31 +235,31 @@ L</sclstr_downgraded>.
 sub sclstr_downgrade_inplace($;$);
 
 if("$]" >= 5.008) {
-        *sclstr_downgrade_inplace = sub($;$) {
-                utf8::downgrade($_[0], $_[1] || 0);
-        };
+	*sclstr_downgrade_inplace = sub($;$) {
+		utf8::downgrade($_[0], $_[1] || 0);
+	};
 } else {
-        # In perl 5.6, there are very few operations that will
-        # downgrade a string.  One of the few is regexp submatch
-        # capturing, with the match operator in array context.
-        # Note: retrieving the submatch with $1 will *not*
-        # downgrade.
-        *sclstr_downgrade_inplace = sub($;$) {
-                return unless sclstr_is_upgraded($_[0]);
-                my ($down) = do {
-                        use if "$]" < 5.008, "bytes";
-                        $_[0] =~ /\A[\x00-\x7f\x80-\xbf\xc2\xc3]*\z/;
-                } ? do {
-                        use if "$]" < 5.008, "utf8";
-                        ($_[0] =~ /\A([\x00-\xff]*)\z/);
-                } : (undef);
-                if(defined $down) {
-                        $_[0] = $down;
-                } else {
-                        croak "Wide character prevents downgrading"
-                                unless $_[1];
-                }
-        };
+	# In perl 5.6, there are very few operations that will
+	# downgrade a string.  One of the few is regexp submatch
+	# capturing, with the match operator in array context.
+	# Note: retrieving the submatch with $1 will *not*
+	# downgrade.
+	*sclstr_downgrade_inplace = sub($;$) {
+		return unless sclstr_is_upgraded($_[0]);
+		my ($down) = do {
+			use if "$]" < 5.008, "bytes";
+			$_[0] =~ /\A[\x00-\x7f\x80-\xbf\xc2\xc3]*\z/;
+		} ? do {
+			use if "$]" < 5.008, "utf8";
+			($_[0] =~ /\A([\x00-\xff]*)\z/);
+		} : (undef);
+		if(defined $down) {
+			$_[0] = $down;
+		} else {
+			croak "Wide character prevents downgrading"
+				unless $_[1];
+		}
+	};
 }
 
 =item sclstr_downgraded(VALUE[, FAIL_OK])
@@ -274,9 +274,9 @@ return I<VALUE> in its original upgraded form.
 =cut
 
 sub sclstr_downgraded($;$) {
-        my($str, $fail_ok) = @_;
-        sclstr_downgrade_inplace($str, $fail_ok);
-        return $str;
+	my($str, $fail_ok) = @_;
+	sclstr_downgrade_inplace($str, $fail_ok);
+	return $str;
 }
 
 =back

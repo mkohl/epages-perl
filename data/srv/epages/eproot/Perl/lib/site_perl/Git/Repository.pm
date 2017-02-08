@@ -438,7 +438,7 @@ pointing to it, simply do it in two steps:
     # run a clone or init command without an instance,
     # using options like cwd
     Git::Repository->run( ... );
-
+    
     # obtain a Git::Repository instance
     # on the resulting repository
     $r = Git::Repository->new( ... );

@@ -17,12 +17,12 @@ sub import
     my @symbols = ();
     my @levels = ();
     for (@_) {
-        if (/^[-+]/) {
-            push(@levels, $_);
-        }
-        else {
-            push(@symbols, $_);
-        }
+	if (/^[-+]/) {
+	    push(@levels, $_);
+	}
+	else {
+	    push(@symbols, $_);
+	}
     }
     Exporter::export($pack, $callpkg, @symbols);
     level(@levels);
@@ -32,19 +32,19 @@ sub import
 sub level
 {
     for (@_) {
-        if ($_ eq '+') {              # all on
-            # switch on all levels
-            %current_level = map { $_ => 1 } @levels;
-        }
-        elsif ($_ eq '-') {           # all off
-            %current_level = ();
-        }
-        elsif (/^([-+])(\w+)$/) {
-            $current_level{$2} = $1 eq '+';
-        }
-        else {
-            Carp::croak("Illegal level format $_");
-        }
+	if ($_ eq '+') {              # all on
+	    # switch on all levels
+	    %current_level = map { $_ => 1 } @levels;
+	}
+	elsif ($_ eq '-') {           # all off
+	    %current_level = ();
+	}
+	elsif (/^([-+])(\w+)$/) {
+	    $current_level{$2} = $1 eq '+';
+	}
+	else {
+	    Carp::croak("Illegal level format $_");
+	}
     }
 }
 

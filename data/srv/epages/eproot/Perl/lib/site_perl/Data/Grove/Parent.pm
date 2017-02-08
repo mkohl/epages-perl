@@ -67,15 +67,15 @@ sub STORE    {
     my $value = shift;
 
     if (exists $self->{$key}) {
-        $self->{$key} = $value;
+	$self->{$key} = $value;
     } else {
-        # VALIDATE
-        if (UNIVERSAL::isa($value, 'Data::Grove::Parent')) {
-            $value = $value->{Raw};
-        } elsif (UNIVERSAL::isa($value, 'Data::Grove::ParentList')) {
-            $value = $value->[0];
-        }
-        $self->{Raw}{$key} = $value;
+	# VALIDATE
+	if (UNIVERSAL::isa($value, 'Data::Grove::Parent')) {
+	    $value = $value->{Raw};
+	} elsif (UNIVERSAL::isa($value, 'Data::Grove::ParentList')) {
+	    $value = $value->[0];
+	}
+	$self->{Raw}{$key} = $value;
     }
 }
 
@@ -84,13 +84,13 @@ sub FETCH {
     my $key = shift;
 
     if (exists $self->{$key}) {
-        return $self->{$key};
+	return $self->{$key};
     } else {
-        my $value = $self->{Raw}{$key};
-        if (ref($value) eq 'ARRAY') {
-            $value = Data::Grove::ParentList->new($value, $self);
-        }
-        return $value;
+	my $value = $self->{Raw}{$key};
+	if (ref($value) eq 'ARRAY') {
+	    $value = Data::Grove::ParentList->new($value, $self);
+	}
+	return $value;
     }
 }
 
@@ -109,11 +109,11 @@ sub NEXTKEY  {
 
     my ($key, $value);
     if ($self->{'__each_in_raw'}) {
-        if (($key, $value) = each %$raw) {
-            return $key;
-        }
-        delete $self->{'__each_in_raw'};
-        my $a = scalar keys %$self;
+	if (($key, $value) = each %$raw) {
+	    return $key;
+	}
+	delete $self->{'__each_in_raw'};
+	my $a = scalar keys %$self;
     }
 
     return each %$self;
@@ -124,7 +124,7 @@ sub EXISTS {
     my $key = shift;
 
     return (exists $self->{Raw}{$key})
-        || (exists $self->{$key});
+	|| (exists $self->{$key});
 }
 
 
@@ -133,11 +133,11 @@ sub DELETE {
     my $key = shift;
 
     if (exists $self->{$key}) {
-        croak "can't delete \`Parent' or \`Raw' properties\n"
-            if ($key eq 'Parent' || $key eq 'Raw');
-        delete $self->{$key};
+	croak "can't delete \`Parent' or \`Raw' properties\n"
+	    if ($key eq 'Parent' || $key eq 'Raw');
+	delete $self->{$key};
     } else {
-        delete $self->{'Raw'}{$key};
+	delete $self->{'Raw'}{$key};
     }
 }
 
@@ -190,9 +190,9 @@ sub STORE {
 
     # VALIDATE
     if (UNIVERSAL::isa($value, 'Data::Grove::Parent')) {
-        $value = $value->{Raw};
+	$value = $value->{Raw};
     } elsif (UNIVERSAL::isa($value, 'Data::Grove::ParentList')) {
-        $value = $value->[0];
+	$value = $value->[0];
     }
     $self->[0][$index] = $value;
 }
@@ -203,11 +203,11 @@ sub FETCH {
 
     my $value = $self->[0][$index];
     if (defined $value) {
-        if (ref($value)) {
-            return Data::Grove::Parent->new($value, $self->[1]);
-        } else {
-            return Data::Grove::Parent->new({ Data => $value }, $self->[1]);
-        }
+	if (ref($value)) {
+	    return Data::Grove::Parent->new($value, $self->[1]);
+	} else {
+	    return Data::Grove::Parent->new({ Data => $value }, $self->[1]);
+	}
     }
 
     return $value;
@@ -225,13 +225,13 @@ sub PUSH {
     my $o = shift;
 
     foreach my $value (@_) {
-        # VALIDATE
-        if (UNIVERSAL::isa($value, 'Data::Grove::Parent')) {
-            $value = $value->{Raw};
-        } elsif (UNIVERSAL::isa($value, 'Data::Grove::ParentList')) {
-            $value = $value->[0];
-        }
-    }
+	# VALIDATE
+	if (UNIVERSAL::isa($value, 'Data::Grove::Parent')) {
+	    $value = $value->{Raw};
+	} elsif (UNIVERSAL::isa($value, 'Data::Grove::ParentList')) {
+	    $value = $value->[0];
+	}
+    }	
     push(@{$o->[0]},@_);
 }
 
@@ -243,32 +243,32 @@ sub UNSHIFT {
     my $o = shift;
 
     foreach my $value (@_) {
-        # VALIDATE
-        if (UNIVERSAL::isa($value, 'Data::Grove::Parent')) {
-            $value = $value->{Raw};
-        } elsif (UNIVERSAL::isa($value, 'Data::Grove::ParentList')) {
-            $value = $value->[0];
-        }
-    }
+	# VALIDATE
+	if (UNIVERSAL::isa($value, 'Data::Grove::Parent')) {
+	    $value = $value->{Raw};
+	} elsif (UNIVERSAL::isa($value, 'Data::Grove::ParentList')) {
+	    $value = $value->[0];
+	}
+    }	
     unshift(@{$o->[0]},@_);
-}
+} 
 
 sub SPLICE
 {
-    my $ob  = shift;
+    my $ob  = shift;                    
     my $sz  = $ob->FETCHSIZE;
     my $off = @_ ? shift : 0;
     $off   += $sz if $off < 0;
     my $len = @_ ? shift : $sz-$off;
 
     foreach my $value (@_) {
-        # VALIDATE
-        if (UNIVERSAL::isa($value, 'Data::Grove::Parent')) {
-            $value = $value->{Raw};
-        } elsif (UNIVERSAL::isa($value, 'Data::Grove::ParentList')) {
-            $value = $value->[0];
-        }
-    }
+	# VALIDATE
+	if (UNIVERSAL::isa($value, 'Data::Grove::Parent')) {
+	    $value = $value->{Raw};
+	} elsif (UNIVERSAL::isa($value, 'Data::Grove::ParentList')) {
+	    $value = $value->[0];
+	}
+    }	
     return splice(@{$ob->[0]},$off,$len,@_);
 }
 
@@ -282,7 +282,7 @@ sub root {
     my $self = shift;
 
     return $self
-        if !defined $self->{Parent};
+	if !defined $self->{Parent};
 
     return $self->{Parent}->root(@_);
 }

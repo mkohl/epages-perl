@@ -9,44 +9,44 @@ Business::ISBN - work with International Standard Book Numbers
 
 =head1 SYNOPSIS
 
-        use Business::ISBN;
+	use Business::ISBN;
 
-        # 10 digit ISBNs
-        $isbn10 = Business::ISBN->new('1565922573');
-        $isbn10 = Business::ISBN->new('1-56592-257-3');
+	# 10 digit ISBNs
+	$isbn10 = Business::ISBN->new('1565922573');
+	$isbn10 = Business::ISBN->new('1-56592-257-3');
 
-        # 13 digit ISBNs
-        $isbn13 = Business::ISBN->new('978-0-596-52724-2');
+	# 13 digit ISBNs
+	$isbn13 = Business::ISBN->new('978-0-596-52724-2');
 
-        # convert
-        $isbn10 = $isbn13->as_isbn10;    # for the 978 prefixes
+	# convert
+	$isbn10 = $isbn13->as_isbn10;    # for the 978 prefixes
 
-        $isbn13 = $isbn10->as_isbn13;
+	$isbn13 = $isbn10->as_isbn13;
 
-        # maybe you don't care what it is as long as everything works
-        $isbn = Business::ISBN->new( $ARGV[0] );
+	# maybe you don't care what it is as long as everything works
+	$isbn = Business::ISBN->new( $ARGV[0] );
 
-        #print the ISBN with hyphens at usual positions
-        print $isbn->as_string;
+	#print the ISBN with hyphens at usual positions
+	print $isbn->as_string;
 
-        #print the ISBN with hyphens at specified positions.
-        #this not does affect the default positions
-        print $isbn->as_string([]);
+	#print the ISBN with hyphens at specified positions.
+	#this not does affect the default positions
+	print $isbn->as_string([]);
 
-        #print the group code or publisher code
-        print $isbn->group_code;
+	#print the group code or publisher code
+	print $isbn->group_code;
 
-        print $isbn->publisher_code;
+	print $isbn->publisher_code;
 
-        #check to see if the ISBN is valid
-        $isbn->is_valid;
+	#check to see if the ISBN is valid
+	$isbn->is_valid;
 
-        #fix the ISBN checksum.  BEWARE:  the error might not be
-        #in the checksum!
-        $isbn->fix_checksum;
+	#fix the ISBN checksum.  BEWARE:  the error might not be
+	#in the checksum!
+	$isbn->fix_checksum;
 
-        # create an EAN13 barcode in PNG format
-        $isbn->png_barcode;
+	# create an EAN13 barcode in PNG format
+	$isbn->png_barcode;
 
 =head1 DESCRIPTION
 
@@ -59,15 +59,15 @@ ISBN-10 and ISBN-13.
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # Boring set up stuff
 use subs qw(
-        _common_format
-        INVALID_GROUP_CODE
-        INVALID_PUBLISHER_CODE
-        BAD_CHECKSUM
-        GOOD_ISBN
-        BAD_ISBN
-        );
+	_common_format
+	INVALID_GROUP_CODE
+	INVALID_PUBLISHER_CODE
+	BAD_CHECKSUM
+	GOOD_ISBN
+	BAD_ISBN
+	);
 use vars qw( $VERSION @ISA @EXPORT_OK %EXPORT_TAGS $debug %group_data
-        $MAX_GROUP_CODE_LENGTH %ERROR_TEXT );
+	$MAX_GROUP_CODE_LENGTH %ERROR_TEXT );
 
 use Carp qw(carp croak cluck);
 use base qw(Exporter);
@@ -79,35 +79,35 @@ sub _group_data { $group_data{ $_[1] } }
 
 sub _max_group_code_length  { $Business::ISBN::MAX_COUNTRY_CODE_LENGTH };
 sub _max_publisher_code_length  {
-          $_[0]->_max_length
+	  $_[0]->_max_length
 
-        - $_[0]->_prefix_length     # prefix
+	- $_[0]->_prefix_length     # prefix
 
-        - $_[0]->_group_code_length # group
-        - 1                         # article
-        - 1;                        # checksum
-        };
+	- $_[0]->_group_code_length # group
+	- 1                         # article
+	- 1;                        # checksum
+	};
 
 sub _publisher_ranges {
-        my $self = shift;
-        [ @{ $self->_group_data( $self->group_code )->[1] } ];
-        }
+	my $self = shift;
+	[ @{ $self->_group_data( $self->group_code )->[1] } ];
+	}
 
 my $debug = 0;
 
 BEGIN {
-        @EXPORT_OK = qw(
-                INVALID_GROUP_CODE INVALID_PUBLISHER_CODE
-                BAD_CHECKSUM GOOD_ISBN BAD_ISBN
-                INVALID_PREFIX
-                %ERROR_TEXT
-                valid_isbn_checksum
-                );
+	@EXPORT_OK = qw(
+		INVALID_GROUP_CODE INVALID_PUBLISHER_CODE
+		BAD_CHECKSUM GOOD_ISBN BAD_ISBN
+		INVALID_PREFIX
+		%ERROR_TEXT
+		valid_isbn_checksum
+		);
 
-        %EXPORT_TAGS = (
-                'all' => \@EXPORT_OK,
-                );
-        };
+	%EXPORT_TAGS = (
+		'all' => \@EXPORT_OK,
+		);
+	};
 
 $VERSION = "2.07";
 
@@ -120,13 +120,13 @@ sub BAD_ISBN               () {  0 };
 
 
 %ERROR_TEXT = (
-         0 => "Bad ISBN",
-         1 => "Good ISBN",
-        -1 => "Bad ISBN checksum",
-        -2 => "Invalid group code",
-        -3 => "Invalid publisher code",
-        -4 => "Invalid prefix (must be 978 or 979)",
-        );
+	 0 => "Bad ISBN",
+	 1 => "Good ISBN",
+	-1 => "Bad ISBN checksum",
+	-2 => "Invalid group code",
+	-3 => "Invalid publisher code",
+	-4 => "Invalid prefix (must be 978 or 979)",
+	);
 
 use Business::ISBN10;
 use Business::ISBN13;
@@ -140,7 +140,7 @@ use Business::ISBN13;
 This function is exportable on demand, and works for either 10
 or 13 character ISBNs).
 
-        use Business::ISBN qw( valid_isbn_checksum );
+	use Business::ISBN qw( valid_isbn_checksum );
 
 Returns 1 if the ISBN is a valid ISBN with the right checksum.
 
@@ -154,15 +154,15 @@ Returns undef if the ISBN does not validate for any other reason.
 =cut
 
 sub valid_isbn_checksum {
-        my $isbn = shift;
+	my $isbn = shift;
 
-        my $obj =  Business::ISBN->new( $isbn );
-        return unless defined $obj;
+	my $obj =  Business::ISBN->new( $isbn );
+	return unless defined $obj;
 
-        return 1 if $obj->is_valid_checksum == GOOD_ISBN;
-        return 0 if $obj->is_valid_checksum == BAD_CHECKSUM;
-        return;
-        }
+	return 1 if $obj->is_valid_checksum == GOOD_ISBN;
+	return 0 if $obj->is_valid_checksum == BAD_CHECKSUM;
+	return;
+	}
 
 =head2 Object interface
 
@@ -187,17 +187,17 @@ values of these symbolic versions are the same as those from previous
 versions of this module which used literal values.
 
 
-        Business::ISBN::INVALID_PUBLISHER_CODE
-        Business::ISBN::INVALID_GROUP_CODE
-        Business::ISBN::BAD_CHECKSUM
-        Business::ISBN::GOOD_ISBN
-        Business::ISBN::BAD_ISBN
+	Business::ISBN::INVALID_PUBLISHER_CODE
+	Business::ISBN::INVALID_GROUP_CODE
+	Business::ISBN::BAD_CHECKSUM
+	Business::ISBN::GOOD_ISBN
+	Business::ISBN::BAD_ISBN
 
 If you have one of these values and want to turn it into a string, you
 can use the C<%Business::ISBN::ERROR_TEXT> hash, which is exportable
 by asking for it explicitly in the import list.
 
-        use Business::ISBN qw(%ERROR_TEXT);
+	use Business::ISBN qw(%ERROR_TEXT);
 
 The string passed as the ISBN need not be a valid ISBN as long as it
 superficially looks like one.  This allows one to use the
@@ -219,34 +219,34 @@ to looking like an ISBN.
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 sub new {
-        my $class       = shift;
-        my $input_data  = shift;
-        my $common_data = _common_format $input_data;
+	my $class       = shift;
+	my $input_data  = shift;
+	my $common_data = _common_format $input_data;
 
-        return unless $common_data;
+	return unless $common_data;
 
-        my $self = {
-                input_isbn  => $input_data,
-                common_data => $common_data
-                };
+	my $self = {
+		input_isbn  => $input_data,
+		common_data => $common_data
+		};
 
-        my $isbn = do {
-                if( length( $common_data ) == 10 ) {
-                        bless $self, 'Business::ISBN10';
-                        }
-                elsif( length( $common_data ) == 13 ) {
-                        bless $self, 'Business::ISBN13';
-                        }
-                else {
-                        return BAD_ISBN;
-                        }
-                };
+	my $isbn = do {
+		if( length( $common_data ) == 10 ) {
+			bless $self, 'Business::ISBN10';
+			}
+		elsif( length( $common_data ) == 13 ) {
+			bless $self, 'Business::ISBN13';
+			}
+		else {
+			return BAD_ISBN;
+			}
+		};
 
-        $self->_init( $common_data );
-        $self->_parse_isbn( $common_data );
+	$self->_init( $common_data );
+	$self->_parse_isbn( $common_data );
 
-        return $isbn;
-        }
+	return $isbn;
+	}
 
 =back
 
@@ -345,10 +345,10 @@ C<Business::ISBN::Data>.
 sub group { $_[0]->_group_data( $_[0]->group_code )->[0] }
 
 sub _group_code_length {
-        length(
-                defined $_[0]->{'group_code'} ? $_[0]->{'group_code'} : ''
-                );
-        }
+	length(
+		defined $_[0]->{'group_code'} ? $_[0]->{'group_code'} : ''
+		);
+	}
 
 =item publisher_code
 
@@ -359,10 +359,10 @@ for instance '596' for O'Reilly Media.
 
 sub publisher_code { $_[0]->{'publisher_code'} }
 sub _publisher_code_length {
-        length(
-                defined $_[0]->{'publisher_code'} ? $_[0]->{'publisher_code'} : ''
-                );
-        }
+	length(
+		defined $_[0]->{'publisher_code'} ? $_[0]->{'publisher_code'} : ''
+		);
+	}
 
 =item article_code
 
@@ -393,15 +393,15 @@ that the rest of the ISBN is actually assigned to a book.
 =cut
 
 sub is_valid_checksum {
-        my $self = shift;
+	my $self = shift;
 
-        cluck "is_valid_checksum: Didn't get object!" unless ref $self;
+	cluck "is_valid_checksum: Didn't get object!" unless ref $self;
 
-        no warnings 'uninitialized';
-        return GOOD_ISBN if $self->checksum eq $self->_checksum;
+	no warnings 'uninitialized';
+	return GOOD_ISBN if $self->checksum eq $self->_checksum;
 
-        return BAD_CHECKSUM;
-        }
+	return BAD_CHECKSUM;
+	}
 
 =item fix_checksum
 
@@ -410,22 +410,22 @@ Checks the checksum and modifies the ISBN to set it correctly if needed.
 =cut
 
 sub fix_checksum {
-        my $self = shift;
+	my $self = shift;
 
-        my $last_char = substr($self->isbn, $self->_checksum_pos, 1);
-        my $checksum = $self->_checksum;
+	my $last_char = substr($self->isbn, $self->_checksum_pos, 1);
+	my $checksum = $self->_checksum;
 
-        my $isbn = $self->isbn;
-        substr($isbn, $self->_checksum_pos, 1) = $checksum;
+	my $isbn = $self->isbn;
+	substr($isbn, $self->_checksum_pos, 1) = $checksum;
 
-        $self->_set_isbn( $isbn );
-        $self->_set_checksum( $checksum );
+	$self->_set_isbn( $isbn );
+	$self->_set_checksum( $checksum );
 
-        $self->_check_validity;
+	$self->_check_validity;
 
-        return 0 if $last_char eq $checksum;
-        return 1;
-        }
+	return 0 if $last_char eq $checksum;
+	return 1;
+	}
 
 
 =item as_string(),  as_string([])
@@ -453,26 +453,26 @@ A terminating 'x' is changed to 'X'.
 =cut
 
 sub as_string {
-        my $self      = shift;
-        my $array_ref = shift;
+	my $self      = shift;
+	my $array_ref = shift;
 
-        #this allows one to override the positions settings from the
-        #constructor
-        $array_ref = $self->_hyphen_positions unless ref $array_ref eq ref [];
+	#this allows one to override the positions settings from the
+	#constructor
+	$array_ref = $self->_hyphen_positions unless ref $array_ref eq ref [];
 
-#       print STDERR Data::Dumper->Dump( [$array_ref], [qw(array_ref)] );
-#       print STDERR Data::Dumper->Dump( [$self], [qw(self)] );
+#	print STDERR Data::Dumper->Dump( [$array_ref], [qw(array_ref)] );
+#	print STDERR Data::Dumper->Dump( [$self], [qw(self)] );
 
-        return unless $self->is_valid eq GOOD_ISBN;
-        my $isbn = $self->isbn;
+	return unless $self->is_valid eq GOOD_ISBN;
+	my $isbn = $self->isbn;
 
-        foreach my $position ( sort { $b <=> $a } @$array_ref ) {
-                next if $position > 12 or $position < 1;
-                substr($isbn, $position, 0) = '-';
-                }
+	foreach my $position ( sort { $b <=> $a } @$array_ref ) {
+		next if $position > 12 or $position < 1;
+		substr($isbn, $position, 0) = '-';
+		}
 
-        return $isbn;
-        }
+	return $isbn;
+	}
 
 =item as_isbn10
 
@@ -483,8 +483,8 @@ equivalent. For all other cases it returns undef.
 =cut
 
 sub as_isbn10 {
-        croak "as_isbn10() must be implemented in Business::ISBN subclass"
-        }
+	croak "as_isbn10() must be implemented in Business::ISBN subclass"
+	}
 
 =item as_isbn13
 
@@ -495,8 +495,8 @@ clones it. If it is an ISBN-10, it returns the ISBN-13 equivalent with the
 =cut
 
 sub as_isbn13 {
-        croak "as_isbn13() must be implemented in Business::ISBN subclass"
-        }
+	croak "as_isbn13() must be implemented in Business::ISBN subclass"
+	}
 
 =item xisbn
 
@@ -508,35 +508,35 @@ This feature requires C<LWP::Simple>.
 =cut
 
 sub xisbn {
-        my $self = shift;
+	my $self = shift;
 
-        my $data = $self->_get_xisbn;
-        $data =~ tr/x/X/;
+	my $data = $self->_get_xisbn;
+	$data =~ tr/x/X/;
 
-        my @isbns = $data =~ m|<isbn>(.*?)</isbn>|ig;
-        shift @isbns;
-        wantarray ? @isbns : \@isbns;
-        }
+	my @isbns = $data =~ m|<isbn>(.*?)</isbn>|ig;
+	shift @isbns;
+	wantarray ? @isbns : \@isbns;
+	}
 
 sub _get_xisbn {
-        my $self = shift;
+	my $self = shift;
 
-        eval "use LWP::Simple";
-        if( $@ ) { carp "You need LWP::Simple to use xisbn()"; return; }
+	eval "use LWP::Simple";
+	if( $@ ) { carp "You need LWP::Simple to use xisbn()"; return; }
 
-        my $data = LWP::Simple::get( $self->_xisbn_url );
+	my $data = LWP::Simple::get( $self->_xisbn_url );
 
-        carp "Could not fetch xISBN data" unless defined $data;
+	carp "Could not fetch xISBN data" unless defined $data;
 
-        return $data;
-        }
+	return $data;
+	}
 
 sub _xisbn_url {
-        my $self = shift;
-        my $isbn = $self->as_string([]);
+	my $self = shift;
+	my $isbn = $self->as_string([]);
 
-        return "http://xisbn.worldcat.org/xid/isbn/$isbn";
-        }
+	return "http://xisbn.worldcat.org/xid/isbn/$isbn";
+	}
 
 =item png_barcode
 
@@ -549,21 +549,21 @@ This requires C<GD::Barcode::EAN13>.
 =cut
 
 sub png_barcode {
-        my $self = shift;
+	my $self = shift;
 
-        my $ean = $self->as_isbn13->as_string([]);
+	my $ean = $self->as_isbn13->as_string([]);
 
-        eval "use GD::Barcode::EAN13";
-        if( $@ )
-                {
-                carp "Need GD::Barcode::EAN13 to use png_barcode!";
-                return;
-                }
+	eval "use GD::Barcode::EAN13";
+	if( $@ )
+		{
+		carp "Need GD::Barcode::EAN13 to use png_barcode!";
+		return;
+		}
 
-        my $image = GD::Barcode::EAN13->new($ean)->plot->png;
+	my $image = GD::Barcode::EAN13->new($ean)->plot->png;
 
-        return $image;
-        }
+	return $image;
+	}
 
 =back
 
@@ -574,9 +574,9 @@ sub _set_isbn           {   $_[0]->{'isbn'}           = $_[1];   }
 sub _set_is_valid       {   $_[0]->{'valid'}          = $_[1];   }
 
 sub _set_prefix
-        {
-        croak "_set_prefix() must be implemented in Business::ISBN subclass"
-        }
+	{
+	croak "_set_prefix() must be implemented in Business::ISBN subclass"
+	}
 
 sub _set_group_code     {   $_[0]->{'group_code'}     = $_[1];   }
 
@@ -591,183 +591,183 @@ sub _set_article_code   {   $_[0]->{'article_code'}   = $_[1];   }
 sub _set_checksum       {   $_[0]->{'checksum'}       = $_[1];   }
 
 sub _set_type {
-        croak "_set_type() must be implemented in Business::ISBN subclass"
-        }
+	croak "_set_type() must be implemented in Business::ISBN subclass"
+	}
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # internal methods.  you don't get to use this one.
 sub _common_format {
-        #we want uppercase X's
-        my $data = uc shift;
+	#we want uppercase X's
+	my $data = uc shift;
 
-        #get rid of everything except decimal digits and X
-        $data =~ s/[^0-9X]//g;
+	#get rid of everything except decimal digits and X
+	$data =~ s/[^0-9X]//g;
 
-        return $1 if $data =~ m/
-                \A               #anchor at start
-                (
-                        (?:\d\d\d)?
-                                \d{9}[0-9X]
-                        )
-                \z                   #anchor at end
-                          /x;
+	return $1 if $data =~ m/
+	        \A   	         #anchor at start
+	        (
+	        	(?:\d\d\d)?
+				\d{9}[0-9X]
+			)
+	        \z	             #anchor at end
+	                  /x;
 
-        return;
-        }
+	return;
+	}
 
 sub _init {
-        my $self = shift;
-        my $common_data = shift;
+	my $self = shift;
+	my $common_data = shift;
 
-        my $class = ref $self =~ m/.*::(.*)/g;
+	my $class = ref $self =~ m/.*::(.*)/g;
 
-        $self->_set_type;
-        $self->_set_isbn( $common_data );
+	$self->_set_type;
+	$self->_set_isbn( $common_data );
 
-        # we don't know if we have a valid group code yet
-        # so let's assume that we don't
-        $self->_set_is_valid( INVALID_GROUP_CODE );
-        }
+	# we don't know if we have a valid group code yet
+	# so let's assume that we don't
+	$self->_set_is_valid( INVALID_GROUP_CODE );
+	}
 
 {
 my @methods = (
-        [ qw( prefix         ), INVALID_PREFIX         ],
-        [ qw( group_code     ), INVALID_GROUP_CODE     ],
-        [ qw( publisher_code ), INVALID_PUBLISHER_CODE ],
-        [ qw( article_code   ), BAD_ISBN               ],
-        [ qw( checksum       ), BAD_CHECKSUM           ],
-        );
+	[ qw( prefix         ), INVALID_PREFIX         ],
+	[ qw( group_code     ), INVALID_GROUP_CODE     ],
+	[ qw( publisher_code ), INVALID_PUBLISHER_CODE ],
+	[ qw( article_code   ), BAD_ISBN               ],
+	[ qw( checksum       ), BAD_CHECKSUM           ],
+	);
 
 sub _parse_isbn {
-        my $self = shift;
+	my $self = shift;
 
-        foreach my $pair ( @methods )
-                {
-                my( $method, $error_code ) = @$pair;
+	foreach my $pair ( @methods )
+		{
+		my( $method, $error_code ) = @$pair;
 
-                my $parser = "_parse_$method";
-                my $result = $self->$parser;
+		my $parser = "_parse_$method";
+		my $result = $self->$parser;
 
-                unless( defined $result )
-                        {
-                        $self->_set_is_valid( $error_code );
-                        #print STDERR "Got bad result for $method [$$self{isbn}]\n";
-                        return;
-                        }
+		unless( defined $result )
+			{
+			$self->_set_is_valid( $error_code );
+			#print STDERR "Got bad result for $method [$$self{isbn}]\n";
+			return;
+			}
 
-                $method = "_set_$method";
-                $self->$method( $result );
-                }
+		$method = "_set_$method";
+		$self->$method( $result );
+		}
 
-        $self->_set_is_valid( $self->is_valid_checksum );
+	$self->_set_is_valid( $self->is_valid_checksum );
 
-        return $self;
-        }
+	return $self;
+	}
 }
 
 sub _parse_group_code {
-        my $self = shift;
+	my $self = shift;
 
-        my $trial;  # try this to see what we get
-        my $group_code_length = 0;
+	my $trial;  # try this to see what we get
+	my $group_code_length = 0;
 
-        my $count = 1;
+	my $count = 1;
 
-        GROUP_CODE:
-        while( defined( $trial= substr($self->isbn, $self->_prefix_length, $count++) ) )
-                {
-                if( defined $self->_group_data( $trial ) )
-                        {
-                        return $trial;
-                        last GROUP_CODE;
-                        }
+	GROUP_CODE:
+	while( defined( $trial= substr($self->isbn, $self->_prefix_length, $count++) ) )
+		{
+		if( defined $self->_group_data( $trial ) )
+			{
+			return $trial;
+			last GROUP_CODE;
+			}
 
-                # if we've past the point of finding a group
-                # code we're pretty much stuffed.
-                return if $count > $self->_max_group_code_length;
-                }
+		# if we've past the point of finding a group
+		# code we're pretty much stuffed.
+		return if $count > $self->_max_group_code_length;
+		}
 
-        return; #failed if I got this far
-        }
+	return; #failed if I got this far
+	}
 
 sub _parse_publisher_code {
-        my $self = shift;
+	my $self = shift;
 
-        my $pairs = $self->_publisher_ranges;
+	my $pairs = $self->_publisher_ranges;
 
-        # get the longest possible publisher code
-        # I'll try substrs of this to get the real one
-        my $longest = substr(
-                $self->isbn,
-                $self->_prefix_length + $self->_group_code_length,
-                $self->_max_publisher_code_length,
-                );
+	# get the longest possible publisher code
+	# I'll try substrs of this to get the real one
+	my $longest = substr(
+		$self->isbn,
+		$self->_prefix_length + $self->_group_code_length,
+		$self->_max_publisher_code_length,
+		);
 
-        #print STDERR "Trying to parse publisher: longest [$longest]\n";
-        while( @$pairs ) {
-                my $lower  = shift @$pairs;
-                my $upper  = shift @$pairs;
+	#print STDERR "Trying to parse publisher: longest [$longest]\n";
+	while( @$pairs ) {
+		my $lower  = shift @$pairs;
+		my $upper  = shift @$pairs;
 
-                my $trial  = substr( $longest, 0, length $lower );
-                #print STDERR "Trying [$trial] with $lower <-> $upper [$$self{isbn}]\n";
+		my $trial  = substr( $longest, 0, length $lower );
+		#print STDERR "Trying [$trial] with $lower <-> $upper [$$self{isbn}]\n";
 
-                # this has to be a sring comparison because there are
-                # possibly leading 0s
-                if( $trial ge $lower and $trial le $upper )
-                        {
-                        #print STDERR "Returning $trial\n";
-                        return $trial;
-                        }
+		# this has to be a sring comparison because there are
+		# possibly leading 0s
+		if( $trial ge $lower and $trial le $upper )
+			{
+			#print STDERR "Returning $trial\n";
+			return $trial;
+			}
 
-                }
+		}
 
-        return; #failed if I got this far
-        }
+	return; #failed if I got this far
+	}
 
 sub _parse_article_code {
-        my $self = shift;
+	my $self = shift;
 
-        my $head = $self->_prefix_length +
-                $self->_group_code_length +
-                $self->_publisher_code_length;
-        my $length = length( $self->isbn ) - $head - 1;
+	my $head = $self->_prefix_length +
+		$self->_group_code_length +
+		$self->_publisher_code_length;
+	my $length = length( $self->isbn ) - $head - 1;
 
-        substr( $self->isbn, $head, $length );
-        }
+	substr( $self->isbn, $head, $length );
+	}
 
 sub _parse_checksum {
-        my $self = shift;
+	my $self = shift;
 
-        substr( $self->isbn, -1, 1 );
-        }
+	substr( $self->isbn, -1, 1 );
+	}
 
 sub _check_validity {
-        my $self = shift;
+	my $self = shift;
 
-        if( $self->is_valid_checksum  eq GOOD_ISBN and
-                defined $self->group_code and
-                defined $self->publisher_code and
-                defined $self->prefix
-                ) {
-            $self->_set_is_valid( GOOD_ISBN );
-            return GOOD_ISBN;
-            }
-        else {
-                $self->_set_is_valid( INVALID_PUBLISHER_CODE )
-                        unless defined $self->publisher_code;
-                $self->_set_is_valid( INVALID_GROUP_CODE )
-                        unless defined $self->group_code;
-                $self->_set_is_valid( INVALID_PREFIX )
-                         unless defined $self->prefix;
-                return;
-                }
-        }
+	if( $self->is_valid_checksum  eq GOOD_ISBN and
+		defined $self->group_code and
+		defined $self->publisher_code and
+		defined $self->prefix
+		) {
+	    $self->_set_is_valid( GOOD_ISBN );
+	    return GOOD_ISBN;
+	    }
+	else {
+		$self->_set_is_valid( INVALID_PUBLISHER_CODE )
+			unless defined $self->publisher_code;
+		$self->_set_is_valid( INVALID_GROUP_CODE )
+			unless defined $self->group_code;
+		$self->_set_is_valid( INVALID_PREFIX )
+			 unless defined $self->prefix;
+		return;
+		}
+	}
 
 sub _hyphen_positions {
-        croak "hyphen_positions() must be implemented in Business::ISBN subclass"
-        }
+	croak "hyphen_positions() must be implemented in Business::ISBN subclass"
+	}
 
 
 1;

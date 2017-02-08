@@ -49,8 +49,8 @@ sub start_element {
     my $el_name = "s_" . $element->{Name};
     $el_name =~ s/[^a-zA-Z0-9_]/_/g;
     if ($self->can($el_name)) {
-        $self->$el_name($element);
-        return 1;
+	$self->$el_name($element);
+	return 1;
     }
 
     return 0;
@@ -63,8 +63,8 @@ sub end_element {
     my $el_name = "e_" . $element->{Name};
     $el_name =~ s/[^a-zA-Z0-9_]/_/g;
     if ($self->can(${el_name})) {
-        $self->$el_name($element);
-        $called_sub = 1;
+	$self->$el_name($element);
+	$called_sub = 1;
     }
 
     pop @{$self->{Names}};
@@ -84,7 +84,7 @@ sub within_element {
 
     my $count = 0;
     foreach my $el_name (@{$self->{Names}}) {
-        $count ++ if ($el_name eq $name);
+	$count ++ if ($el_name eq $name);
     }
 
     return $count;

@@ -325,7 +325,7 @@ my %ftypLookup = (
         Name => 'CompatibleBrands',
         Format => 'undef[$size-8]',
         # ignore any entry with a null, and return others as a list
-        ValueConv => 'my @a=($val=~/.{4}/sg); @a=grep(!/\0/,@a); \@a',
+        ValueConv => 'my @a=($val=~/.{4}/sg); @a=grep(!/\0/,@a); \@a', 
     },
 );
 
@@ -2584,7 +2584,7 @@ sub ProcessMOV($$;$)
                         if ($lang < 0x400) {
                             # this is a Macintosh language code
                             # a language code of 0 is Macintosh english, so treat as default
-                            if ($lang) {
+                            if ($lang) { 
                                 # use Font.pm to look up language string
                                 require Image::ExifTool::Font;
                                 $lang = $Image::ExifTool::Font::ttLang{Macintosh}{$lang};

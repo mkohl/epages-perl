@@ -2268,7 +2268,7 @@ sub new {
              defined( $options->{LexicalHandler} )  or
              defined( $options->{ErrorHandler} )    or
              defined( $options->{DeclHandler} ) ) {
-
+            
              $options->{Handler} = XML::SAX::Base::NoHandler->new;
     }
 
@@ -2395,7 +2395,7 @@ sub get_feature {
     # throw XML::SAX::Exception::NotRecognized if it's not there
     # throw XML::SAX::Exception::NotSupported if it's there but we
     # don't support it
-
+    
     my %features = $self->get_features();
     if (exists $features{$feat}) {
         my %supported = map { $_ => 1 } $self->supported_features();
@@ -2425,7 +2425,7 @@ sub set_feature {
     # throw XML::SAX::Exception::NotRecognized if it's not there
     # throw XML::SAX::Exception::NotSupported if it's there but we
     # don't support it
-
+    
     my %features = $self->get_features();
     if (exists $features{$feat}) {
         my %supported = map { $_ => 1 } $self->supported_features();
@@ -2663,7 +2663,7 @@ specification for the meaning of these values):
   String                    _parse_string($string, $options)
   SystemId                  _parse_systemid($string, $options)
 
-However note that these methods may not be sensible if your driver class
+However note that these methods may not be sensible if your driver class 
 is not for parsing XML. An example might be a DBI driver that generates
 XML/SAX from a database table. If that is the case, you likely want to
 write your own parse() method.
@@ -2676,7 +2676,7 @@ to your method.
 translation done on it. This is implemented as a regular filehandle
 and only works under Perl 5.7.2 or higher using PerlIO. To get a single
 character, or number of characters from it, use the perl core read()
-function. To get a single byte from it (or number of bytes), you can
+function. To get a single byte from it (or number of bytes), you can 
 use sysread(). The encoding of the stream should be in the Encoding
 entry for the Source.
 
@@ -2721,9 +2721,9 @@ Currently this part is unimplemented.
 
 This method takes a handler type (Handler, ContentHandler, etc.) and a
 handler object as arguments, and changes the current handler for that
-handler type, while taking care of resetting the internal state that
+handler type, while taking care of resetting the internal state that 
 needs to be reset. This allows one to change a handler during parse
-without running into problems (changing it on the parser object
+without running into problems (changing it on the parser object 
 directly will most likely cause trouble).
 
 =item * set_document_handler, set_content_handler, set_dtd_handler, set_lexical_handler, set_decl_handler, set_error_handler, set_entity_resolver
@@ -2734,14 +2734,14 @@ set_handler with the correct arguments.
 
 =item * get_handler
 
-The inverse of set_handler, this method takes a an optional string containing a handler type (DTDHandler,
+The inverse of set_handler, this method takes a an optional string containing a handler type (DTDHandler, 
 ContentHandler, etc. 'Handler' is used if no type is passed). It returns a reference to the object that implements
-that that class, or undef if that handler type is not set for the current driver/filter.
+that that class, or undef if that handler type is not set for the current driver/filter. 
 
-=item * get_document_handler, get_content_handler, get_dtd_handler, get_lexical_handler, get_decl_handler,
+=item * get_document_handler, get_content_handler, get_dtd_handler, get_lexical_handler, get_decl_handler, 
 get_error_handler, get_entity_resolver
 
-These are just simple wrappers around the get_handler() method, and take no arguments. Internally
+These are just simple wrappers around the get_handler() method, and take no arguments. Internally 
 they simply call get_handler with the correct handler type name.
 
 =back
@@ -2839,7 +2839,7 @@ supported.
 Kip Hampton (khampton@totalcinema.com) did most of the work, after porting
 it from XML::Filter::Base.
 
-Robin Berjon (robin@knowscape.com) pitched in with patches to make it
+Robin Berjon (robin@knowscape.com) pitched in with patches to make it 
 usable as a base for drivers as well as filters, along with other patches.
 
 Matt Sergeant (matt@sergeant.org) wrote the original XML::Filter::Base,

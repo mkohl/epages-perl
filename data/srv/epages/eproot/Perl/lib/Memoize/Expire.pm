@@ -14,7 +14,7 @@ $VERSION = '1.00';
 sub _header_fmt () { "N N n" }
 sub _header_size () { length(_header_fmt) }
 
-# Usage:  memoize func
+# Usage:  memoize func 
 #         TIE => [Memoize::Expire, LIFETIME => sec, NUM_USES => n,
 #                 TIE => [...] ]
 
@@ -83,7 +83,7 @@ sub EXISTS {
   }
   if (   (! $_[0]{LIFETIME} || $expire_time > time)
       && (! $_[0]{NUM_USES} || $num_uses_left > 0 )) {
-            $DEBUG and print STDERR "    (Still good)\n";
+	    $DEBUG and print STDERR "    (Still good)\n";
     return 1;
   } else {
     $DEBUG and print STDERR "    (Expired)\n";
@@ -120,7 +120,7 @@ sub _get_header  {
 
 1;
 
-=head1 NAME
+=head1 NAME 
 
 Memoize::Expire - Plug-in module for automatic expiration of memoized values
 
@@ -129,8 +129,8 @@ Memoize::Expire - Plug-in module for automatic expiration of memoized values
   use Memoize;
   use Memoize::Expire;
   tie my %cache => 'Memoize::Expire',
-                     LIFETIME => $lifetime,    # In seconds
-                     NUM_USES => $n_uses;
+	  	     LIFETIME => $lifetime,    # In seconds
+		     NUM_USES => $n_uses;
 
   memoize 'function', SCALAR_CACHE => [HASH => \%cache ];
 
@@ -186,10 +186,10 @@ example:
   tie my %disk_cache => 'DB_File', $filename, O_CREAT|O_RDWR, 0666];
 
   # Set up expiration policy, supplying persistent hash as a target
-  tie my %cache => 'Memoize::Expire',
-                     LIFETIME => $lifetime,    # In seconds
-                     NUM_USES => $n_uses,
-                     HASH => \%disk_cache;
+  tie my %cache => 'Memoize::Expire', 
+	  	     LIFETIME => $lifetime,    # In seconds
+		     NUM_USES => $n_uses,
+                     HASH => \%disk_cache; 
 
   # Set up memoization, supplying expiring persistent hash for cache
   memoize 'function', SCALAR_CACHE => [ HASH => \%cache ];
@@ -206,12 +206,12 @@ Short summary: You need to create a package that defines four methods:
 
 =over 4
 
-=item
+=item 
 TIEHASH
 
 Construct and return cache object.
 
-=item
+=item 
 EXISTS
 
 Given a function argument, is the corresponding function value in the
@@ -223,7 +223,7 @@ FETCH
 Given a function argument, look up the corresponding function value in
 the cache and return it.
 
-=item
+=item 
 STORE
 
 Given a function argument and the corresponding function value, store
@@ -268,40 +268,40 @@ cache by calling C<< C->STORE(key, value) >>.
 Here is a very brief example of a policy module that expires each
 cache item after ten seconds.
 
-        package Memoize::TenSecondExpire;
+	package Memoize::TenSecondExpire;
 
-        sub TIEHASH {
-          my ($package, %args) = @_;
+	sub TIEHASH {
+	  my ($package, %args) = @_;
           my $cache = $args{HASH} || {};
-          bless $cache => $package;
-        }
+	  bless $cache => $package;
+	}
 
-        sub EXISTS {
-          my ($cache, $key) = @_;
-          if (exists $cache->{$key} &&
+	sub EXISTS {
+	  my ($cache, $key) = @_;
+	  if (exists $cache->{$key} && 
               $cache->{$key}{EXPIRE_TIME} > time) {
-            return 1
-          } else {
-            return 0;  # Do NOT return `undef' here.
-          }
-        }
+	    return 1
+	  } else {
+	    return 0;  # Do NOT return `undef' here.
+	  }
+	}
 
-        sub FETCH {
-          my ($cache, $key) = @_;
-          return $cache->{$key}{VALUE};
-        }
+	sub FETCH {
+	  my ($cache, $key) = @_;
+	  return $cache->{$key}{VALUE};
+	}
 
-        sub STORE {
-          my ($cache, $key, $newvalue) = @_;
-          $cache->{$key}{VALUE} = $newvalue;
-          $cache->{$key}{EXPIRE_TIME} = time + 10;
-        }
+	sub STORE {
+	  my ($cache, $key, $newvalue) = @_;
+	  $cache->{$key}{VALUE} = $newvalue;
+	  $cache->{$key}{EXPIRE_TIME} = time + 10;
+	}
 
 To use this expiration policy, the user would say
 
-        use Memoize;
+	use Memoize;
         tie my %cache10sec => 'Memoize::TenSecondExpire';
-        memoize 'function', SCALAR_CACHE => [HASH => \%cache10sec];
+	memoize 'function', SCALAR_CACHE => [HASH => \%cache10sec];
 
 Memoize would then call C<function> whenever a cached value was
 entirely absent or was older than ten seconds.

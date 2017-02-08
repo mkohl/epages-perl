@@ -12,7 +12,7 @@ use vars qw /$VERSION/;
 $VERSION = '2010010201';
 
 
-my $pchars_notab      = "(?:(?:[$pchar_range]+|" .
+my $pchars_notab      = "(?:(?:[$pchar_range]+|" . 
                         "%(?:[1-9a-fA-F][0-9a-fA-F]|0[0-8a-fA-F]))*)";
 
 my $gopherplus_string = $pchars;

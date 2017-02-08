@@ -1,4 +1,4 @@
-package Tie::StdHandle;
+package Tie::StdHandle; 
 
 use strict;
 
@@ -18,8 +18,8 @@ Tie::StdHandle - base class definitions for tied handles
 
     @ISA = qw(Tie::Handle);
 
-    sub READ { ... }            # Provide a needed method
-    sub TIEHANDLE { ... }       # Overrides inherited method
+    sub READ { ... }		# Provide a needed method
+    sub TIEHANDLE { ... }	# Overrides inherited method
 
 
     package main;
@@ -35,7 +35,7 @@ selective overwriting of methods.
 
 =cut
 
-sub TIEHANDLE
+sub TIEHANDLE 
 {
  my $class = shift;
  my $fh    = \do { local *HANDLE};

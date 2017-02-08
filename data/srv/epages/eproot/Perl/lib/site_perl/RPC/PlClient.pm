@@ -49,30 +49,30 @@ sub new ($@) {
 
     my $comm = $self->{'comm'} = RPC::PlClient::Comm->new($self);
     my $app = $self->{'application'}  or
-        $self->Fatal("Missing application name");
+	$self->Fatal("Missing application name");
     my $version = $self->{'version'}  or
-        $self->Fatal("Missing version number");
+	$self->Fatal("Missing version number");
     my $user = $self->{'user'} || '';
     my $password = $self->{'password'} || '';
 
     my $socket;
     if (!($socket = $self->{'socket'})) {
-        $self->Fatal("Missing peer address") unless $self->{'peeraddr'};
-        $self->Fatal("Missing peer port")
-            unless ($self->{'peerport'}  ||
-                    index($self->{'peeraddr'}, ':') != -1);
-        $socket = $self->{'socket'} = IO::Socket::INET->new
-            ('PeerAddr' => $self->{'peeraddr'},
-             'PeerPort' => $self->{'peerport'},
-             'Proto'    => $self->{'socket_proto'},
-             'Type'     => $self->{'socket_type'},
-             'Timeout'  => $self->{'timeout'});
-        $self->Fatal("Cannot connect: $!") unless $socket;
+	$self->Fatal("Missing peer address") unless $self->{'peeraddr'};
+	$self->Fatal("Missing peer port")
+	    unless ($self->{'peerport'}  ||
+		    index($self->{'peeraddr'}, ':') != -1);
+	$socket = $self->{'socket'} = IO::Socket::INET->new
+	    ('PeerAddr' => $self->{'peeraddr'},
+	     'PeerPort' => $self->{'peerport'},
+	     'Proto'    => $self->{'socket_proto'},
+	     'Type'     => $self->{'socket_type'},
+	     'Timeout'  => $self->{'timeout'});
+	$self->Fatal("Cannot connect: $!") unless $socket;
     }
     $self->Debug("Connected to %s, port %s",
-                 $socket->peerhost(), $socket->peerport());
+		 $socket->peerhost(), $socket->peerport());
     $self->Debug("Sending login message: %s, %s, %s, %s",
-                 $app, $version, $user, "x" x length($password));
+		 $app, $version, $user, "x" x length($password));
     $comm->Write($socket, [$app, $version, $user, $password]);
     $self->Debug("Waiting for server's response ...");
     my $reply = $comm->Read($socket);
@@ -118,7 +118,7 @@ sub ClientObject {
     my($object) = $client->Call('NewHandle', $class, $method, @_);
     die "Constructor didn't return a TRUE value" unless $object;
     die "Constructor didn't return an object"
-        unless $object =~ /^((?:\w+|\:\:)+)=(\w+)/;
+	unless $object =~ /^((?:\w+|\:\:)+)=(\w+)/;
     RPC::PlClient::Object->new($1, $client, $object);
 }
 
@@ -137,7 +137,7 @@ sub AUTOLOAD {
     my $method = $AUTOLOAD;
     my $index;
     die "Cannot parse method: $method"
-        unless ($index = rindex($method, '::')) != -1;
+	unless ($index = rindex($method, '::')) != -1;
     my $class = substr($method, 0, $index);
     $method = substr($method, $index+2);
     eval <<"EOM";
@@ -146,7 +146,7 @@ sub AUTOLOAD {
             my \$self = shift;
             my \$client = \$self->{'client'}; my \$object = \$self->{'object'};
             my \@result = \$client->Call('CallMethod', \$object, '$method',
-                                         \@_);
+					 \@_);
             return \@result if wantarray;
             return \$result[0];
         }
@@ -171,7 +171,7 @@ sub DESTROY {
     my $saved_error = $@; # Save $@
     my $self = shift;
     if (my $client = delete $self->{'client'}) {
-        eval { $client->Call('DestroyHandle', $self->{'object'}) };
+	eval { $client->Call('DestroyHandle', $self->{'object'}) };
     }
     $@ = $saved_error;    # Restore $@
 }
@@ -195,11 +195,11 @@ RPC::PlClient - Perl extension for writing PlRPC clients
 
   # Create a client object and connect it to the server
   my $client = RPC::PlClient->new('peeraddr' => 'joes.host.de',
-                                  'peerport' => 2570,
-                                  'application' => 'My App',
-                                  'version' => '1.0',
-                                  'user' => 'joe',
-                                  'password' => 'hello!');
+				  'peerport' => 2570,
+				  'application' => 'My App',
+				  'version' => '1.0',
+				  'user' => 'joe',
+				  'password' => 'hello!');
 
   # Create an instance of $class on the server by calling $class->new()
   # and an associated instance on the client.
@@ -244,8 +244,8 @@ typically use it like this:
 
     $client = eval { RPC::PlClient->new ( ... ) };
     if ($@) {
-        print STDERR "Cannot create client object: $@\n";
-        exit 0;
+	print STDERR "Cannot create client object: $@\n";
+	exit 0;
     }
 
 The method accepts a list of key/value pairs as arguments. Known arguments
@@ -311,7 +311,7 @@ Example:
     use Crypt::DES;
     $cipher = Crypt::DES->new(pack("H*", "0123456789abcdef"));
     $client = RPC::PlClient->new('cipher' => $cipher,
-                                ...);
+				...);
 
 =item maxmessage
 
@@ -403,17 +403,17 @@ RPC::PlServer man page. See L<RPC::PlServer(3)>.
     # Constants
     my $MY_APPLICATION = "MD5_Server";
     my $MY_VERSION = 1.0;
-    my $MY_USER = "";           # The server doesn't require user
-    my $MY_PASSWORD = "";       # authentication.
+    my $MY_USER = "";		# The server doesn't require user
+    my $MY_PASSWORD = "";	# authentication.
 
     my $hexdigest = eval {
         my $client = RPC::PlClient->new
-            ('peeraddr'    => '127.0.0.1',
-             'peerport'    => 2000,
-             'application' => $MY_APPLICATION,
-             'version'     => $MY_VERSION,
-             'user'        => $MY_USER,
-             'password'    => $MY_PASSWORD);
+	    ('peeraddr'    => '127.0.0.1',
+	     'peerport'    => 2000,
+	     'application' => $MY_APPLICATION,
+	     'version'     => $MY_VERSION,
+	     'user'        => $MY_USER,
+	     'password'    => $MY_PASSWORD);
 
         # Create an MD5 object on the server and an associated
         # client object. Executes a
@@ -425,8 +425,8 @@ RPC::PlServer man page. See L<RPC::PlServer(3)>.
         #     $context->add("This is a silly string!");
         #     $context->hexdigest();
         # on the server.
-        $context->add("This is a silly string!");
-        $context->hexdigest();
+	$context->add("This is a silly string!");
+	$context->hexdigest();
     };
     if ($@) {
         die "An error occurred: $@";

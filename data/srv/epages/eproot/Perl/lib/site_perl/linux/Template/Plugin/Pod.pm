@@ -1,5 +1,5 @@
 #==============================================================================
-#
+# 
 # Template::Plugin::Pod
 #
 # DESCRIPTION
@@ -49,7 +49,7 @@ Template::Plugin::Pod - Plugin interface to Pod::POM (Pod Object Model)
 =head1 SYNOPSIS
 
     [% USE Pod(podfile) %]
-
+    
     [% FOREACH head1 = Pod.head1;
          FOREACH head2 = head1/head2;
            ...

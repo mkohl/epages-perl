@@ -12,7 +12,7 @@ our $VERSION = "0.79";
 #-------------------------------------------------------------------------------
 # Subroutine : get_coverage_for_line
 # Purpose    : Retreive all available data for requested metrics on a line.
-# Notes      :
+# Notes      : 
 #-------------------------------------------------------------------------------
 sub get_coverage_for_line {
     my ($options, $data, $line) = @_;
@@ -27,8 +27,8 @@ sub get_coverage_for_line {
 
 #-------------------------------------------------------------------------------
 # Subroutine : get_summary_for_file
-# Purpose    :
-# Notes      :
+# Purpose    : 
+# Notes      : 
 #-------------------------------------------------------------------------------
 sub get_summary_for_file {
     my $db   = shift;
@@ -56,8 +56,8 @@ sub get_summary_for_file {
 
 #-------------------------------------------------------------------------------
 # Subroutine : get_showing_headers
-# Purpose    :
-# Notes      :
+# Purpose    : 
+# Notes      : 
 #-------------------------------------------------------------------------------
 sub get_showing_headers {
     my $db      = shift;
@@ -76,8 +76,8 @@ sub get_showing_headers {
 
 #-------------------------------------------------------------------------------
 # Subroutine : truth_table
-# Purpose    :
-# Notes      :
+# Purpose    : 
+# Notes      : 
 #-------------------------------------------------------------------------------
 sub truth_table {
     return if @_ > 16;
@@ -177,8 +177,8 @@ sub pclass {
 
 #-------------------------------------------------------------------------------
 # Subroutine : get_coverage_report
-# Purpose    :
-# Notes      :
+# Purpose    : 
+# Notes      : 
 #-------------------------------------------------------------------------------
 sub get_coverage_report {
     my $type = shift;
@@ -281,8 +281,8 @@ END_HTML
 
 #-------------------------------------------------------------------------------
 # Subroutine : print_summary
-# Purpose    :
-# Notes      :
+# Purpose    : 
+# Notes      : 
 #-------------------------------------------------------------------------------
 sub print_summary {
     my $fh       = shift;
@@ -310,8 +310,8 @@ END_HTML
 
 #-------------------------------------------------------------------------------
 # Subroutine : print_th
-# Purpose    :
-# Notes      :
+# Purpose    : 
+# Notes      : 
 #-------------------------------------------------------------------------------
 sub print_th {
     my ($fh, $th, $span) = @_;
@@ -325,8 +325,8 @@ sub print_th {
 
 #-------------------------------------------------------------------------------
 # Subroutine : get_link
-# Purpose    :
-# Notes      :
+# Purpose    : 
+# Notes      : 
 #-------------------------------------------------------------------------------
 sub get_link {
     my $file = shift;
@@ -418,7 +418,7 @@ END_HTML
 #-------------------------------------------------------------------------------
 # Subroutine : escape_HTML
 # Purpose    : make source code web-safe
-# Notes      :
+# Notes      : 
 #-------------------------------------------------------------------------------
 sub escape_HTML {
     my $text = shift;
@@ -521,7 +521,7 @@ sub print_file_report {
                     if ($c =~ /branch|condition|subroutine/) {
                         $link = get_link($fin, $c, $.);
                     }
-
+    
                     no warnings "uninitialized";  # TODO - hack, get rid of this
                     my $text = '<div';
                     $text .= $m->{class} ? qq' class="$m->{class}"' : '';
@@ -631,8 +631,8 @@ sub print_condition_report {
 
 #-------------------------------------------------------------------------------
 # Subroutine : print_sub_report
-# Purpose    :
-# Notes      :
+# Purpose    : 
+# Notes      : 
 #-------------------------------------------------------------------------------
 sub print_sub_report {
     my ($db, $file, $opt) = @_;
@@ -802,46 +802,46 @@ __DATA__
 /* Note: default values use the color-safe web palette. */
 
 body {
-        font-family: sans-serif;
+	font-family: sans-serif;
 }
 
 h1 {
-        background-color: #3399ff;
-        border: solid 1px #999999;
-        padding: 0.2em;
-        -moz-border-radius: 10px;
+	background-color: #3399ff;
+	border: solid 1px #999999;
+	padding: 0.2em;
+	-moz-border-radius: 10px;
 }
 
 a {
-        color: #000000;
+	color: #000000;
 }
 a:visited {
-        color: #333333;
+	color: #333333;
 }
 
 table {
     border-collapse: collapse;
-        border-spacing: 0px;
+	border-spacing: 0px;
 }
 tr {
-        text-align : center;
-        vertical-align: top;
+	text-align : center;
+	vertical-align: top;
 }
 th,.h {
-        background-color: #cccccc;
-        border: solid 1px #333333;
+	background-color: #cccccc;
+	border: solid 1px #333333;
     padding: 0em 0.2em;
 }
 td {
-        border: solid 1px #cccccc;
+	border: solid 1px #cccccc;
 }
 
 /* source code */
 pre,.s {
-        text-align: left;
-        font-family: monospace;
-        white-space: pre;
-        padding: 0em 0.5em 0em 0.5em;
+	text-align: left;
+	font-family: monospace;
+	white-space: pre;
+	padding: 0em 0.5em 0em 0.5em;
 }
 
 /* Classes for color-coding coverage information:
@@ -852,18 +852,18 @@ pre,.s {
  */
 .c0, .c1, .c2, .c3 { text-align: right; }
 .c0 {
-        background-color: #ff9999;
-        border: solid 1px #cc0000;
+	background-color: #ff9999;
+	border: solid 1px #cc0000;
 }
 .c1 {
-        background-color: #ffcc99;
-        border: solid 1px #ff9933;
+	background-color: #ffcc99;
+	border: solid 1px #ff9933;
 }
 .c2 {
-        background-color: #ffff99;
-        border: solid 1px #cccc66;
+	background-color: #ffff99;
+	border: solid 1px #cccc66;
 }
 .c3 {
-        background-color: #99ff99;
-        border: solid 1px #009900;
+	background-color: #99ff99;
+	border: solid 1px #009900;
 }

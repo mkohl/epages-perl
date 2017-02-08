@@ -4,15 +4,15 @@ Crypt::Eksblowfish::Family - Eksblowfish cipher family
 
 =head1 SYNOPSIS
 
-        use Crypt::Eksblowfish::Family;
+	use Crypt::Eksblowfish::Family;
 
-        $family = Crypt::Eksblowfish::Family->new_family(8, $salt);
+	$family = Crypt::Eksblowfish::Family->new_family(8, $salt);
 
-        $cost = $family->cost;
-        $salt = $family->salt;
-        $block_size = $family->blocksize;
-        $key_size = $family->keysize;
-        $cipher = $family->new($key);
+	$cost = $family->cost;
+	$salt = $family->salt;
+	$block_size = $family->blocksize;
+	$key_size = $family->keysize;
+	$cipher = $family->new($key);
 
 =head1 DESCRIPTION
 
@@ -92,8 +92,8 @@ to 2^COST.
 =cut
 
 sub new_family {
-        my($class, $cost, $salt) = @_;
-        return bless({ cost => $cost, salt => $salt }, $class);
+	my($class, $cost, $salt) = @_;
+	return bless({ cost => $cost, salt => $salt }, $class);
 }
 
 =back
@@ -148,11 +148,11 @@ C<Crypt::Eksblowfish::Family>.
 =cut
 
 sub new {
-        my($self, $key) = @_;
-        croak "Crypt::Eksblowfish::Family::new is not a class method ".
-                        "(perhaps you want new_family instead)"
-                if ref($self) eq "";
-        return Crypt::Eksblowfish->new($self->{cost}, $self->{salt}, $key);
+	my($self, $key) = @_;
+	croak "Crypt::Eksblowfish::Family::new is not a class method ".
+			"(perhaps you want new_family instead)"
+		if ref($self) eq "";
+	return Crypt::Eksblowfish->new($self->{cost}, $self->{salt}, $key);
 }
 
 =item $family->encrypt
@@ -180,19 +180,19 @@ Perl class, and won't operate correctly on one that looks like an object.
 =cut
 
 sub as_class {
-        my($self) = @_;
-        return $self->{as_class} ||= do {
-                my $pkg = genpkg(__PACKAGE__."::");
-                no strict "refs";
-                @{"${pkg}::ISA"} = (ref($self));
-                *{"${pkg}::new_family"} =
-                        sub { croak $_[0]."->new_family called" };
-                *{"${pkg}::cost"} = sub { $self->cost };
-                *{"${pkg}::salt"} = sub { $self->salt };
-                *{"${pkg}::new"} = sub { shift; $self->new(@_) };
-                *{"${pkg}::as_class"} = sub { $pkg };
-                $pkg;
-        };
+	my($self) = @_;
+	return $self->{as_class} ||= do {
+		my $pkg = genpkg(__PACKAGE__."::");
+		no strict "refs";
+		@{"${pkg}::ISA"} = (ref($self));
+		*{"${pkg}::new_family"} =
+			sub { croak $_[0]."->new_family called" };
+		*{"${pkg}::cost"} = sub { $self->cost };
+		*{"${pkg}::salt"} = sub { $self->salt };
+		*{"${pkg}::new"} = sub { shift; $self->new(@_) };
+		*{"${pkg}::as_class"} = sub { $pkg };
+		$pkg;
+	};
 }
 
 =back

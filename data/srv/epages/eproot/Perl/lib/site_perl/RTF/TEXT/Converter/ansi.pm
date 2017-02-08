@@ -5,14 +5,14 @@ chomp(@data);
 
 sub data {
 
-        return @data;
+	return @data;
 
 }
 
 1;
 
 __DATA__
-00 `
+00 ` 
 01 &acute;
 02 ^
 03 ~

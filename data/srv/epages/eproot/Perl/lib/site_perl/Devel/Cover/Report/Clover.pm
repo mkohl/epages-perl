@@ -124,7 +124,7 @@ David Bartle <captindave@gmail.com>
 
 =head1 LICENSE
 
-Copyright David Bartle (captindave@gmail.com)
+Copyright David Bartle (captindave@gmail.com) 
 
 This software is free.  It is licensed under the same terms as Perl itself.
 

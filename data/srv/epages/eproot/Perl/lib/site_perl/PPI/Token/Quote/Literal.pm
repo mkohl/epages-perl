@@ -34,11 +34,11 @@ use PPI::Token::_QuoteEngine::Full ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = qw{
-                PPI::Token::_QuoteEngine::Full
-                PPI::Token::Quote
-        };
+	$VERSION = '1.215';
+	@ISA     = qw{
+		PPI::Token::_QuoteEngine::Full
+		PPI::Token::Quote
+	};
 }
 
 
@@ -68,10 +68,10 @@ is( $literal->[2]->string, 'foo', '->string returns as expected' );
 =cut
 
 sub string {
-        my $self     = shift;
-        my @sections = $self->_sections;
-        my $str      = $sections[0];
-        substr( $self->{content}, $str->{position}, $str->{size} );
+	my $self     = shift;
+	my @sections = $self->_sections;
+	my $str      = $sections[0];
+	substr( $self->{content}, $str->{position}, $str->{size} );	
 }
 
 =pod

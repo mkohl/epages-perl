@@ -142,7 +142,7 @@ sub read
     if ($aoff > 0)
     {
         my ($off, $gcount, $pcount);
-
+        
         $fh->seek($aoff + $boff, 0);
         $fh->read($dat, 4);
         ($off, $gcount) = TTF_Unpack('SS', $dat);
@@ -243,7 +243,7 @@ sub out
     if (defined $self->{'ATTACH'})
     {
         my ($r);
-
+        
         $aoff = $fh->tell() - $loc;
         $fh->print(pack('n*', (0) x ($#{$self->{'ATTACH'}{'POINTS'}} + 3)));
         foreach $r (@{$self->{'ATTACH'}{'POINTS'}})

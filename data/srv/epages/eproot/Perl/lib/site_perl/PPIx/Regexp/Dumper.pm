@@ -148,57 +148,57 @@ ignored.
 {
 
     my %default = (
-        indent  => 2,
-        margin  => 0,
-        ordinal => 0,
-        perl_version => 0,
-        significant => 0,
-        test    => 0,
-        tokens  => 0,
-        verbose => 0,
+	indent	=> 2,
+	margin	=> 0,
+	ordinal	=> 0,
+	perl_version => 0,
+	significant => 0,
+	test	=> 0,
+	tokens	=> 0,
+	verbose => 0,
     );
 
     sub new {
-        my ( $class, $re, %args ) = @_;
-        ref $class and $class = ref $class;
+	my ( $class, $re, %args ) = @_;
+	ref $class and $class = ref $class;
 
-        my $self = {
-            encoding => $args{encoding},
-            lister => undef,
-            object => undef,
-            source => $re,
-        };
+	my $self = {
+	    encoding => $args{encoding},
+	    lister => undef,
+	    object => undef,
+	    source => $re,
+	};
 
-        foreach my $key ( keys %default ) {
-            $self->{$key} = exists $args{$key} ?
-                delete $args{$key} :
-                $default{$key};
-        }
+	foreach my $key ( keys %default ) {
+	    $self->{$key} = exists $args{$key} ?
+		delete $args{$key} :
+		$default{$key};
+	}
 
-        $self->{ordinal} ||= $self->{verbose};
+	$self->{ordinal} ||= $self->{verbose};
 
-        if ( __instance( $re, 'PPIx::Regexp::Tokenizer' ) ) {
-            $self->{object} = $re;
-            $self->{tokens} = 1;
-        } elsif ( __instance( $re, 'PPIx::Regexp::Element' ) ) {
-            $self->{object} = $re;
-        } elsif ( ref $re eq 'ARRAY' ) {
-            $self->{object} = $re;
-        } elsif ( ref $re && ! __instance( $re, 'PPI::Element' ) ) {
-            croak "Do not know how to dump ", ref $re;
-        } elsif ( $self->{tokens} ) {
-            $self->{object} =
-                PPIx::Regexp::Tokenizer->new( $re, %args )
-                    or Carp::croak( PPIx::Regexp::Tokenizer->errstr() );
-        } else {
-            $self->{object} =
-                PPIx::Regexp->new( $re, %args )
-                    or Carp::croak( PPIx::Regexp->errstr() );
-        }
+	if ( __instance( $re, 'PPIx::Regexp::Tokenizer' ) ) {
+	    $self->{object} = $re;
+	    $self->{tokens} = 1;
+	} elsif ( __instance( $re, 'PPIx::Regexp::Element' ) ) {
+	    $self->{object} = $re;
+	} elsif ( ref $re eq 'ARRAY' ) {
+	    $self->{object} = $re;
+	} elsif ( ref $re && ! __instance( $re, 'PPI::Element' ) ) {
+	    croak "Do not know how to dump ", ref $re;
+	} elsif ( $self->{tokens} ) {
+	    $self->{object} =
+		PPIx::Regexp::Tokenizer->new( $re, %args )
+		    or Carp::croak( PPIx::Regexp::Tokenizer->errstr() );
+	} else {
+	    $self->{object} =
+		PPIx::Regexp->new( $re, %args )
+		    or Carp::croak( PPIx::Regexp->errstr() );
+	}
 
-        bless $self, $class;
+	bless $self, $class;
 
-        return $self;
+	return $self;
 
     }
 
@@ -218,7 +218,7 @@ sub list {
     my $lister = $self->{test} ? '__PPIX_DUMPER__test' : '__PPIX_DUMPER__dump';
 
     ref $self->{object} eq 'ARRAY'
-        and return ( map { $_->$lister( $self ) } @{ $self->{object} } );
+	and return ( map { $_->$lister( $self ) } @{ $self->{object} } );
 
     return $self->{object}->$lister( $self );
 }
@@ -231,7 +231,7 @@ This method simply prints the result of L</string> to standard out.
 
 =cut
 
-sub print : method {    ## no critic (ProhibitBuiltinHomonyms)
+sub print : method {	## no critic (ProhibitBuiltinHomonyms)
     my ( $self ) = @_;
     print $self->string();
     return;
@@ -250,7 +250,7 @@ sub string {
     my ( $self ) = @_;
     my $margin = ' ' x $self->{margin};
     return join( '',
-        map { $margin . $_ . "\n" } $self->list() );
+	map { $margin . $_ . "\n" } $self->list() );
 }
 
 # quote a string.
@@ -258,19 +258,19 @@ sub _safe {
     my ( $self, @args ) = @_;
     my @rslt;
     foreach my $item ( @args ) {
-        if ( blessed( $item ) ) {
-            $item = $self->encode( $item->content() );
-        }
-        if ( ! defined $item ) {
-            push @rslt, 'undef';
-        } elsif ( ref $item eq 'ARRAY' ) {
-            push @rslt, join( ' ', '[', $self->_safe( @{ $item } ), ']' );
-        } elsif ( looks_like_number( $item ) ) {
-            push @rslt, $item;
-        } else {
-            $item =~ s/ ( [\\'] ) /\\$1/smxg;
-            push @rslt, "'$item'";
-        }
+	if ( blessed( $item ) ) {
+	    $item = $self->encode( $item->content() );
+	}
+	if ( ! defined $item ) {
+	    push @rslt, 'undef';
+	} elsif ( ref $item eq 'ARRAY' ) {
+	    push @rslt, join( ' ', '[', $self->_safe( @{ $item } ), ']' );
+	} elsif ( looks_like_number( $item ) ) {
+	    push @rslt, $item;
+	} else {
+	    $item =~ s/ ( [\\'] ) /\\$1/smxg;
+	    push @rslt, "'$item'";
+	}
     }
     my $rslt = join( ', ', @rslt );
     return $rslt
@@ -295,7 +295,7 @@ sub _perl_version {
 
     my $rslt = $elem->perl_version_introduced() . ' <= $]';
     if ( my $max = $elem->perl_version_removed() ) {
-        $rslt .= ' < ' . $max;
+	$rslt .= ' < ' . $max;
     }
     return $rslt;
 }
@@ -306,11 +306,11 @@ sub _content {
 
     defined $elem or return $dflt;
     if ( ref $elem eq 'ARRAY' ) {
-        my $rslt = join '',
-            map { $self->_content( $_ ) }
-            grep { ! $self->{significant} || $_->significant() }
-            @{ $elem };
-        return $rslt eq '' ? $dflt : $rslt;
+	my $rslt = join '',
+	    map { $self->_content( $_ ) }
+	    grep { ! $self->{significant} || $_->significant() }
+	    @{ $elem };
+	return $rslt eq '' ? $dflt : $rslt;
     }
     blessed( $elem ) or return $dflt;
     return $self->encode( $elem->content() );
@@ -323,8 +323,8 @@ sub _tokens_dump {
 
     my @rslt;
     foreach my $token ( $elem->tokens() ) {
-        not $self->{significant} or $token->significant() or next;
-        push @rslt, $token->__PPIX_DUMPER__dump( $self );
+	not $self->{significant} or $token->significant() or next;
+	push @rslt, $token->__PPIX_DUMPER__dump( $self );
     }
     return @rslt;
 }
@@ -334,11 +334,11 @@ sub _format_modifiers_dump {
     my %mods = $elem->modifiers();
     my @accum;
     $mods{match_semantics}
-        and push @accum, 'match_semantics=' . delete
-            $mods{match_semantics};
+	and push @accum, 'match_semantics=' . delete
+	    $mods{match_semantics};
     foreach my $modifier ( sort keys %mods ) {
-        push @accum, $mods{$modifier} ? $modifier :
-        "-$modifier";
+	push @accum, $mods{$modifier} ? $modifier :
+	"-$modifier";
     }
     @accum and return join ' ', @accum;
     return;
@@ -351,13 +351,13 @@ sub _tokens_test {
 
     my @tokens = $elem->tokens();
     my @rslt = (
-        'tokenize( ' . $self->_safe( $elem ) . ' );',
-        'count   ( ' . scalar @tokens . ' );',
+	'tokenize( ' . $self->_safe( $elem ) . ' );',
+	'count   ( ' . scalar @tokens . ' );',
     );
     my $inx = 0;
     foreach my $token ( @tokens ) {
-        not $self->{significant} or $token->significant() or next;
-        push @rslt, $token->__PPIX_DUMPER__test( $self, $inx++ );
+	not $self->{significant} or $token->significant() or next;
+	push @rslt, $token->__PPIX_DUMPER__test( $self, $inx++ );
     }
     return @rslt;
 }
@@ -366,7 +366,7 @@ sub PPIx::Regexp::__PPIX_DUMPER__test {
     my ( $self, $dumper ) = @_;
 
     $dumper->{tokens}
-        and return $dumper->_tokens_test( $self );
+	and return $dumper->_tokens_test( $self );
 
     not $dumper->{significant} or $self->significant() or return;
 
@@ -387,18 +387,18 @@ sub PPIx::Regexp::Node::__PPIX_DUMPER__dump {
     my ( $self, $dumper ) = @_;
 
     $dumper->{tokens}
-        and return $dumper->_tokens_dump( $self );
+	and return $dumper->_tokens_dump( $self );
 
     not $dumper->{significant} or $self->significant() or return;
 
     my @rslt = ref $self;
     $self->isa( 'PPIx::Regexp' )
-        and $rslt[-1] .= "\tfailures=" . $self->failures();
+	and $rslt[-1] .= "\tfailures=" . $self->failures();
     $dumper->{perl_version}
-        and $rslt[-1] .= "\t" . $dumper->_perl_version( $self );
+	and $rslt[-1] .= "\t" . $dumper->_perl_version( $self );
     my $indent = ' ' x $dumper->{indent};
     foreach my $elem ( $self->children() ) {
-        push @rslt, map { $indent . $_ } $elem->__PPIX_DUMPER__dump( $dumper );
+	push @rslt, map { $indent . $_ } $elem->__PPIX_DUMPER__dump( $dumper );
     }
     return @rslt;
 }
@@ -410,21 +410,21 @@ sub PPIx::Regexp::Node::__PPIX_DUMPER__test {
 
     my @rslt;
     @rslt = (
-        'choose  ( ' . $dumper->_nav( $self->nav() ) . ' );',
-        'class   ( ' . $dumper->_safe( ref $self ) . ' );',
-        'count   ( ' . scalar $self->children() . ' );',
+	'choose  ( ' . $dumper->_nav( $self->nav() ) . ' );',
+	'class   ( ' . $dumper->_safe( ref $self ) . ' );',
+	'count   ( ' . scalar $self->children() . ' );',
     );
     if ( $dumper->{perl_version} ) {
-        foreach my $method ( qw{
-            perl_version_introduced
-            perl_version_removed
-        } ) {
-            push @rslt, "value   ( $method => [], " .
-                $dumper->_safe_version( $self->$method() ) . ' );';
-        }
+	foreach my $method ( qw{
+	    perl_version_introduced
+	    perl_version_removed
+	} ) {
+	    push @rslt, "value   ( $method => [], " .
+		$dumper->_safe_version( $self->$method() ) . ' );';
+	}
     }
     foreach my $elem ( $self->children() ) {
-        push @rslt, $elem->__PPIX_DUMPER__test( $dumper );
+	push @rslt, $elem->__PPIX_DUMPER__test( $dumper );
     }
     return @rslt;
 }
@@ -432,48 +432,48 @@ sub PPIx::Regexp::Node::__PPIX_DUMPER__test {
 {
 
     my %dflt = (
-        start => '???',
-        type => '',
-        finish => '???',
+	start => '???',
+	type => '',
+	finish => '???',
     );
 
     sub PPIx::Regexp::Structure::__PPIX_DUMPER__dump {
-        my ( $self, $dumper ) = @_;
+	my ( $self, $dumper ) = @_;
 
-        not $dumper->{significant} or $self->significant() or return;
+	not $dumper->{significant} or $self->significant() or return;
 
-        my @delim;
-        foreach my $method ( qw{ start type finish } ) {
-            my @elem = $self->$method();
-            push @delim, @elem ? $dumper->_content( \@elem ) : $dflt{$method};
-        }
-        my @rslt = ( ref $self, "$delim[0]$delim[1] ... $delim[2]" );
+	my @delim;
+	foreach my $method ( qw{ start type finish } ) {
+	    my @elem = $self->$method();
+	    push @delim, @elem ? $dumper->_content( \@elem ) : $dflt{$method};
+	}
+	my @rslt = ( ref $self, "$delim[0]$delim[1] ... $delim[2]" );
 
-        $dumper->{perl_version}
-            and push @rslt, $dumper->_perl_version( $self );
-        if ( $dumper->{verbose} ) {
-            foreach my $method ( qw{ number name } ) {
-                $self->can( $method ) or next;
-                my $val = $self->$method;
-                push @rslt, defined $val ?
-                    "$method=$val" :
-                    "$method undef";
-            }
-            foreach my $method ( qw{ can_be_quantified is_quantifier } ) {
-                $self->can( $method ) or next;
-                $self->$method() and push @rslt, $method;
-            }
-            $self->isa( 'PPIx::Regexp::Structure::Modifier' )
-                and push @rslt, $dumper->_format_modifiers_dump(
-                $self->type( 0 ) );
-        }
-        @rslt = ( join( "\t", @rslt ) );
-        my $indent = ' ' x $dumper->{indent};
-        foreach my $elem ( $self->children() ) {
-            push @rslt, map { $indent . $_ }
-                $elem->__PPIX_DUMPER__dump( $dumper );
-        }
-        return @rslt;
+	$dumper->{perl_version}
+	    and push @rslt, $dumper->_perl_version( $self );
+	if ( $dumper->{verbose} ) {
+	    foreach my $method ( qw{ number name } ) {
+		$self->can( $method ) or next;
+		my $val = $self->$method;
+		push @rslt, defined $val ?
+		    "$method=$val" :
+		    "$method undef";
+	    }
+	    foreach my $method ( qw{ can_be_quantified is_quantifier } ) {
+		$self->can( $method ) or next;
+		$self->$method() and push @rslt, $method;
+	    }
+	    $self->isa( 'PPIx::Regexp::Structure::Modifier' )
+		and push @rslt, $dumper->_format_modifiers_dump(
+		$self->type( 0 ) );
+	}
+	@rslt = ( join( "\t", @rslt ) );
+	my $indent = ' ' x $dumper->{indent};
+	foreach my $elem ( $self->children() ) {
+	    push @rslt, map { $indent . $_ }
+		$elem->__PPIX_DUMPER__dump( $dumper );
+	}
+	return @rslt;
     }
 
 }
@@ -485,32 +485,32 @@ sub PPIx::Regexp::Structure::__PPIX_DUMPER__test {
 
     my @nav = $self->nav();
     my @rslt = (
-        'choose  ( ' . $dumper->_nav( @nav ) . ' );',
-        'class   ( ' . $dumper->_safe( ref $self ) . ' );',
-        'count   ( ' . scalar $self->children() . ' );',
+	'choose  ( ' . $dumper->_nav( @nav ) . ' );',
+	'class   ( ' . $dumper->_safe( ref $self ) . ' );',
+	'count   ( ' . scalar $self->children() . ' );',
     );
     if ( $dumper->{verbose} ) {
-        foreach my $method ( qw{ number name } ) {
-            $self->can( $method ) or next;
-            push @rslt, 'value   ( ' . $method . ' => [], ' .
-                $dumper->_safe( $self->$method() ) . ' );';
-        }
+	foreach my $method ( qw{ number name } ) {
+	    $self->can( $method ) or next;
+	    push @rslt, 'value   ( ' . $method . ' => [], ' .
+		$dumper->_safe( $self->$method() ) . ' );';
+	}
     }
     foreach my $method ( qw{ start type finish } ) {
-        my @eles = $self->$method();
-        push @rslt, 'choose  ( ' . $dumper->_nav(
-            @nav, $method, [] ) . ' );',
-            'count   ( ' . scalar @eles . ' );';
-        foreach my $inx ( 0 .. $#eles ) {
-            my $elem = $eles[$inx];
-            push @rslt, 'choose  ( ' . $dumper->_nav(
-                @nav, $method, $inx ) . ' );',
-                'class   ( ' . $dumper->_safe( ref $elem || $elem ) . ' );',
-                'content ( ' . $dumper->_safe( $elem ) . ' );';
-        }
+	my @eles = $self->$method();
+	push @rslt, 'choose  ( ' . $dumper->_nav(
+	    @nav, $method, [] ) . ' );',
+	    'count   ( ' . scalar @eles . ' );';
+	foreach my $inx ( 0 .. $#eles ) {
+	    my $elem = $eles[$inx];
+	    push @rslt, 'choose  ( ' . $dumper->_nav(
+		@nav, $method, $inx ) . ' );',
+		'class   ( ' . $dumper->_safe( ref $elem || $elem ) . ' );',
+		'content ( ' . $dumper->_safe( $elem ) . ' );';
+	}
     }
     foreach my $elem ( $self->children() ) {
-        push @rslt, $elem->__PPIX_DUMPER__test( $dumper );
+	push @rslt, $elem->__PPIX_DUMPER__test( $dumper );
     }
     return @rslt;
 }
@@ -535,27 +535,27 @@ sub PPIx::Regexp::Token::__PPIX_DUMPER__dump {
 
     my @rslt = ( ref $self, $dumper->_safe( $self ) );
     $dumper->{perl_version}
-        and push @rslt, $dumper->_perl_version( $self );
+	and push @rslt, $dumper->_perl_version( $self );
     if ( $dumper->{ordinal} && $self->can( 'ordinal' )
-        && defined ( my $ord = $self->ordinal() ) ) {
-        push @rslt, sprintf '0x%02x', $ord;
+	&& defined ( my $ord = $self->ordinal() ) ) {
+	push @rslt, sprintf '0x%02x', $ord;
     }
     if ( $dumper->{verbose} ) {
-        if ( $self->isa( 'PPIx::Regexp::Token::Reference' ) ) {
-            foreach my $method ( qw{ absolute name number } ) {
-                defined( my $val = $self->$method() ) or next;
-                push @rslt, "$method=$val";
-            }
-        }
-        foreach my $method (
-            qw{significant can_be_quantified is_quantifier } ) {
-            $self->$method() and push @rslt, $method;
-        }
-        if ( $self->isa( 'PPIx::Regexp::Token::Modifier' ) ||
-            $self->isa( 'PPIx::Regexp::Token::GroupType::Modifier' )
-        ) {
-            push @rslt, $dumper->_format_modifiers_dump( $self );
-        }
+	if ( $self->isa( 'PPIx::Regexp::Token::Reference' ) ) {
+	    foreach my $method ( qw{ absolute name number } ) {
+		defined( my $val = $self->$method() ) or next;
+		push @rslt, "$method=$val";
+	    }
+	}
+	foreach my $method (
+	    qw{significant can_be_quantified is_quantifier } ) {
+	    $self->$method() and push @rslt, $method;
+	}
+	if ( $self->isa( 'PPIx::Regexp::Token::Modifier' ) ||
+	    $self->isa( 'PPIx::Regexp::Token::GroupType::Modifier' )
+	) {
+	    push @rslt, $dumper->_format_modifiers_dump( $self );
+	}
     }
     return join( "\t", @rslt );
 }
@@ -567,26 +567,26 @@ sub PPIx::Regexp::Token::__PPIX_DUMPER__test {
 
     @nav or @nav = $self->nav();
     my @rslt = (
-        'choose  ( ' . join(', ', $dumper->_nav( @nav ) ) . ' );',
-        'class   ( ' . $dumper->_safe( ref $self ) . ' );',
-        'content ( ' . $dumper->_safe( $self ) . ' );',
+	'choose  ( ' . join(', ', $dumper->_nav( @nav ) ) . ' );',
+	'class   ( ' . $dumper->_safe( ref $self ) . ' );',
+	'content ( ' . $dumper->_safe( $self ) . ' );',
     );
     if ( $dumper->{perl_version} ) {
-        foreach my $method ( qw{
-            perl_version_introduced
-            perl_version_removed
-        } ) {
-            push @rslt, "value   ( $method => [], " .
-                $dumper->_safe_version( $self->$method() ) . ' );';
-        }
+	foreach my $method ( qw{
+	    perl_version_introduced
+	    perl_version_removed
+	} ) {
+	    push @rslt, "value   ( $method => [], " .
+		$dumper->_safe_version( $self->$method() ) . ' );';
+	}
     }
     if ( $dumper->{verbose} ) {
-        foreach my $method (
-            qw{significant can_be_quantified is_quantifier } ) {
-            push @rslt, $self->$method() ?
-                "true    ( $method => [] );" :
-                "false   ( $method => [] );";
-        }
+	foreach my $method (
+	    qw{significant can_be_quantified is_quantifier } ) {
+	    push @rslt, $self->$method() ?
+	        "true    ( $method => [] );" :
+	        "false   ( $method => [] );";
+	}
     }
     return @rslt;
 }

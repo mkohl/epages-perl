@@ -35,15 +35,15 @@ use boolean;
 
 
 has '_client' => (
-    isa         => 'MongoDB::MongoClient',
+    isa         => 'MongoDB::MongoClient', 
     is          => 'ro',
-    handles     => [ grep { $_ !~ /^(meta|new)$/ }
-                     map { $_->name } Class::MOP::Class->initialize( 'MongoDB::MongoClient' )->get_all_methods
+    handles     => [ grep { $_ !~ /^(meta|new)$/ } 
+                     map { $_->name } Class::MOP::Class->initialize( 'MongoDB::MongoClient' )->get_all_methods 
                    ]
 );
 
 
-around 'new' => sub {
+around 'new' => sub { 
     my ( $orig, $self, @args ) = @_;
     return $self->$orig( _client => MongoDB::MongoClient->new( @args ) );
 };
@@ -82,8 +82,8 @@ version 0.702.2
 
 =head1 DEPRECATED
 
-NOTE: C<MongoDB::Connection> is DEPRECATED as of version 0.502.0 of the MongoDB CPAN distribution.
-It is no longer maintained and will be removed in a future version. Use L<MongoDB::MongoClient> instead.
+NOTE: C<MongoDB::Connection> is DEPRECATED as of version 0.502.0 of the MongoDB CPAN distribution. 
+It is no longer maintained and will be removed in a future version. Use L<MongoDB::MongoClient> instead. 
 
 =head1 SYNOPSIS
 
@@ -182,7 +182,7 @@ safe insert times out and croaks.
 
 I<MongoDB server version 2.0+: "majority" and Data Center Awareness>
 
-As of MongoDB 2.0+, the 'w' parameter can be passed strings. This can be done by passing it the string "majority" this will wait till the B<majority> of
+As of MongoDB 2.0+, the 'w' parameter can be passed strings. This can be done by passing it the string "majority" this will wait till the B<majority> of 
 of the nodes in the replica set have recieved the data. For more information see: http://www.mongodb.org/display/DOCS/getLastError+Command#getLastErrorCommand-majority
 
 This can be useful for "Data Center Awareness." In v2.0+, you can "tag" replica members. With "tagging" you can specify a new "getLastErrorMode" where you can create new
@@ -378,7 +378,7 @@ The fsync operation is synchronous by default, to run fsync asynchronously, use 
 
     $conn->fsync({async => 1});
 
-The primary use of fsync is to lock the database during backup operations. This will flush all data to the data storage layer and block all write operations until you unlock the database. Note: you can still read while the database is locked.
+The primary use of fsync is to lock the database during backup operations. This will flush all data to the data storage layer and block all write operations until you unlock the database. Note: you can still read while the database is locked. 
 
     $conn->fsync({lock => 1});
 
@@ -386,7 +386,7 @@ The primary use of fsync is to lock the database during backup operations. This 
 
     $conn->fsync_unlock();
 
-Unlocks a database server to allow writes and reverses the operation of a $conn->fsync({lock => 1}); operation.
+Unlocks a database server to allow writes and reverses the operation of a $conn->fsync({lock => 1}); operation. 
 
 =head1 AUTHORS
 

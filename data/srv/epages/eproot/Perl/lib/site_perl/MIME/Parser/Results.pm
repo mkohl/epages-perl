@@ -55,10 +55,10 @@ I<Constructor.>
 
 sub new {
     bless {
-        MPI_ID    => 'MIME-parser',
-        MPI_Msgs  => [],
-        MPI_Level => 0,
-        MPI_TopHead => undef,
+	MPI_ID    => 'MIME-parser',
+	MPI_Msgs  => [],
+	MPI_Level => 0,
+	MPI_TopHead => undef,
     }, shift;
 }
 

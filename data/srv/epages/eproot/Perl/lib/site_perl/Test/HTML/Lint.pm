@@ -64,7 +64,7 @@ sub import {
 
 =head2 html_ok( [$lint, ] $html, $name )
 
-Checks to see that C<$html> contains valid HTML.
+Checks to see that C<$html> contains valid HTML. 
 
 Checks to see if C<$html> contains valid HTML.  C<$html> being blank is OK.
 C<$html> being undef is not.

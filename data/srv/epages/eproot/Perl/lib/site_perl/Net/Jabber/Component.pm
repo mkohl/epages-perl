@@ -83,10 +83,10 @@ Net::Jabber::Component - Jabber Component Library
                                with the server.
 
     Connect(hostname=>string,       - opens a connection to the server
-                port=>integer,            based on the value of
-                componentname=>string,    connectiontype.  The only valid
-                connectiontype=>string)   setting is:
-                                            accept - TCP/IP remote connection
+	        port=>integer,            based on the value of
+	        componentname=>string,    connectiontype.  The only valid
+	        connectiontype=>string)   setting is:
+	                                    accept - TCP/IP remote connection
                                       In the future this might be used
                                       again by offering new features.
                                       If accept then it connects to the
@@ -94,7 +94,7 @@ Net::Jabber::Component - Jabber Component Library
                                       value, on the port listed.  The
                                       defaults for the two are localhost
                                       and 5269.
-
+                                      
                                       Note: A change from previous
                                       versions is that Component now
                                       shares its core with Client.  To
@@ -109,10 +109,10 @@ Net::Jabber::Component - Jabber Component Library
     Disconnect() - closes the connection to the server.
 
     Execute(hostname=>string,       - Generic inner loop to handle
-                port=>int,                connecting to the server, calling
-                secret=>string,           Process, and reconnecting if the
-                componentname=>string,    connection is lost.  There are four
-                connectiontype=>string,   callbacks available that are called
+	        port=>int,                connecting to the server, calling
+	        secret=>string,           Process, and reconnecting if the
+	        componentname=>string,    connection is lost.  There are four
+	        connectiontype=>string,   callbacks available that are called
             connectattempts=>int,     at various places in the loop.
             connectsleep=>int)          onconnect - when the component
                                                     connects to the
@@ -159,7 +159,7 @@ Net::Jabber::Component - Jabber Component Library
                            1   - Status ok, data received.
                            0   - Status ok, no data received.
                          undef - Status not ok, stop processing.
-
+                       
                        IMPORTANT: You need to check the output of every
                        Process.  If you get an undef then the connection
                        died and you should behave accordingly.
@@ -195,11 +195,11 @@ sub new
 
     bless($self, $proto);
     $self->init(@_);
-
+    
     $self->{SERVER}->{port} = 5269;
     $self->{SERVER}->{namespace} = "jabber:component:accept";
     $self->{SERVER}->{allow_register} = 0;
-
+    
     return $self;
 }
 
@@ -216,7 +216,7 @@ sub _auth
 {
     my $self = shift;
     my (%args) = @_;
-
+    
     $self->{STREAM}->SetCallBacks(node=>undef);
 
     $self->Send("<handshake>".Digest::SHA1::sha1_hex($self->{SESSION}->{id}.$args{secret})."</handshake>");
@@ -247,7 +247,7 @@ sub _connection_args
 {
     my $self = shift;
     my (%args) = @_;
-
+    
     my %connect;
     $connect{componentname}  = $args{componentname};
     $connect{hostname}       = $args{hostname};
@@ -256,7 +256,7 @@ sub _connection_args
     $connect{timeout}        = $args{connecttimeout} if exists($args{connecttimeout});
     $connect{tls}            = $args{tls}            if exists($args{tls});
 
-
+    
     return %connect;
 }
 

@@ -104,7 +104,7 @@ sub _encode_latin1 {
 
 
 sub _unpack_emu { # for Perl 5.6 unpack warnings
-    return   !utf8::is_utf8($_[0]) ? unpack('C*', $_[0])
+    return   !utf8::is_utf8($_[0]) ? unpack('C*', $_[0]) 
            : _is_valid_utf8($_[0]) ? unpack('U*', $_[0])
            : unpack('C*', $_[0]);
 }
@@ -167,7 +167,7 @@ Makamaka Hannyaharamitu, E<lt>makamaka[at]cpan.orgE<gt>
 Copyright 2007-2009 by Makamaka Hannyaharamitu
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+it under the same terms as Perl itself. 
 
 =cut
 

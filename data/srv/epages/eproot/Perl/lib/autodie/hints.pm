@@ -68,7 +68,7 @@ behaviour to demonstrate failure:
 
 A false value, in scalar context
 
-=item *
+=item * 
 
 An empty list, in list context
 
@@ -172,7 +172,7 @@ and C<list> hints to the same value:
             {
                 fail => sub { @_ == 1 and defined $_[0] and $_[0] == 0 }
             }
-        );
+	);
 
         # Unsuccessful think_positive() returns negative number on failure...
         autodie::hints->set_hints_for(
@@ -180,7 +180,7 @@ and C<list> hints to the same value:
             {
                 fail => sub { $_[0] < 0 }
             }
-        );
+	);
 
         # Unsuccessful my_system() returns non-zero on failure...
         autodie::hints->set_hints_for(
@@ -188,7 +188,7 @@ and C<list> hints to the same value:
             {
                 fail => sub { $_[0] != 0 }
             }
-        );
+	);
 
 =head1 Manually setting hints from within your program
 
@@ -198,29 +198,29 @@ the hints are specified, they are available for all files and modules loaded
 thereafter, thus you can move this work into a module and it will still
 work.
 
-        use Some::Module qw(foo bar);
-        use autodie::hints;
+	use Some::Module qw(foo bar);
+	use autodie::hints;
 
-        autodie::hints->set_hints_for(
-                \&foo,
-                {
-                        scalar => SCALAR_HINT,
-                        list   => LIST_HINT,
-                }
-        );
-        autodie::hints->set_hints_for(
-                \&bar,
+	autodie::hints->set_hints_for(
+		\&foo,
+		{
+			scalar => SCALAR_HINT,
+			list   => LIST_HINT,
+		}
+	);
+	autodie::hints->set_hints_for(
+		\&bar,
                 { fail => SOME_HINT, }
-        );
+	);
 
 It is possible to pass either a subroutine reference (recommended) or a fully
 qualified subroutine name as the first argument.  This means you can set hints
 on modules that I<might> get loaded:
 
-        use autodie::hints;
-        autodie::hints->set_hints_for(
-                'Some::Module:bar', { fail => SCALAR_HINT, }
-        );
+	use autodie::hints;
+	autodie::hints->set_hints_for(
+		'Some::Module:bar', { fail => SCALAR_HINT, }
+	);
 
 This technique is most useful when you have a project that uses a
 lot of third-party modules.  You can define all your possible hints
@@ -273,13 +273,13 @@ a hash-reference containing the hints for your subroutines:
 
         # Finally, we must define the hints themselves.
 
-        sub AUTODIE_HINTS {
-            return {
-                foo => { scalar => HINTS, list => SOME_HINTS },
-                bar => { scalar => HINTS, list => MORE_HINTS },
-                baz => { fail => HINTS },
-            }
-        }
+	sub AUTODIE_HINTS {
+	    return {
+	        foo => { scalar => HINTS, list => SOME_HINTS },
+	        bar => { scalar => HINTS, list => MORE_HINTS },
+	        baz => { fail => HINTS },
+	    }
+	}
 
 This allows your code to set hints without relying on C<autodie> and
 C<autodie::hints> being loaded, or even installed.  In this way your
@@ -299,14 +299,14 @@ an exclamation mark to the start of the subroutine name.  A lone
 exclamation mark indicates that I<all> subroutines after it must
 have hints declared.
 
-        # foo() and bar() must have their hints defined
-        use autodie qw( !foo !bar baz );
+	# foo() and bar() must have their hints defined
+	use autodie qw( !foo !bar baz );
 
-        # Everything must have hints (recommended).
-        use autodie qw( ! foo bar baz );
+	# Everything must have hints (recommended).
+	use autodie qw( ! foo bar baz );
 
-        # bar() and baz() must have their hints defined
-        use autodie qw( foo ! bar baz );
+	# bar() and baz() must have their hints defined
+	use autodie qw( foo ! bar baz );
 
         # Enable autodie for all of Perl's supported built-ins,
         # as well as for foo(), bar() and baz().  Everything must
@@ -461,7 +461,7 @@ sub normalise_hints {
 
         # Set our scalar and list hints.
 
-        $hints->{$sub}->{scalar} =
+        $hints->{$sub}->{scalar} = 
         $hints->{$sub}->{list} = delete $hints->{$sub}->{fail};
 
         return;
@@ -568,7 +568,7 @@ and C<list> hints, I<or> a single C<fail> hint.
 
 =head1 ACKNOWLEDGEMENTS
 
-=over
+=over 
 
 =item *
 

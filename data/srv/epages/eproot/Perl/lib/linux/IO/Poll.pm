@@ -16,20 +16,20 @@ our(@ISA, @EXPORT_OK, @EXPORT, $VERSION);
 $VERSION = "0.07";
 
 @EXPORT = qw( POLLIN
-              POLLOUT
-              POLLERR
-              POLLHUP
-              POLLNVAL
-            );
+	      POLLOUT
+	      POLLERR
+	      POLLHUP
+	      POLLNVAL
+	    );
 
 @EXPORT_OK = qw(
- POLLPRI
+ POLLPRI   
  POLLRDNORM
  POLLWRNORM
  POLLRDBAND
  POLLWRBAND
- POLLNORM
-               );
+ POLLNORM  
+	       );
 
 # [0] maps fd's to requested masks
 # [1] maps fd's to returned  masks
@@ -48,12 +48,12 @@ sub mask {
     my $fd = fileno($io);
     return unless defined $fd;
     if (@_) {
-        my $mask = shift;
-        if($mask) {
-          $self->[0]{$fd}{$io} = $mask; # the error events are always returned
-          $self->[1]{$fd}      = 0;     # output mask
-          $self->[2]{$io}      = $io;   # remember handle
-        } else {
+	my $mask = shift;
+	if($mask) {
+	  $self->[0]{$fd}{$io} = $mask; # the error events are always returned
+	  $self->[1]{$fd}      = 0;     # output mask
+	  $self->[2]{$io}      = $io;   # remember handle
+	} else {
           delete $self->[0]{$fd}{$io};
           unless(%{$self->[0]{$fd}}) {
             # We no longer have any handles for this FD
@@ -61,11 +61,11 @@ sub mask {
             delete $self->[0]{$fd};
           }
           delete $self->[2]{$io};
-        }
+	}
     }
-
+    
     return unless exists $self->[0]{$fd} and exists $self->[0]{$fd}{$io};
-        return $self->[0]{$fd}{$io};
+	return $self->[0]{$fd}{$io};
 }
 
 
@@ -78,31 +78,31 @@ sub poll {
     my @poll = ();
 
     while(($fd,$iom) = each %{$self->[0]}) {
-        $mask   = 0;
-        $mask  |= $_ for values(%$iom);
-        push(@poll,$fd => $mask);
+	$mask   = 0;
+	$mask  |= $_ for values(%$iom);
+	push(@poll,$fd => $mask);
     }
 
     my $ret = @poll ? _poll(defined($timeout) ? $timeout * 1000 : -1,@poll) : 0;
 
     return $ret
-        unless $ret > 0;
+	unless $ret > 0;
 
     while(@poll) {
-        my($fd,$got) = splice(@poll,0,2);
-        $self->[1]{$fd} = $got if $got;
+	my($fd,$got) = splice(@poll,0,2);
+	$self->[1]{$fd} = $got if $got;
     }
 
-    return $ret;
+    return $ret;  
 }
 
 sub events {
     my $self = shift;
     my $io = shift;
     my $fd = fileno($io);
-    exists $self->[1]{$fd} and exists $self->[0]{$fd}{$io}
+    exists $self->[1]{$fd} and exists $self->[0]{$fd}{$io} 
                 ? $self->[1]{$fd} & ($self->[0]{$fd}{$io}|POLLHUP|POLLERR|POLLNVAL)
-        : 0;
+	: 0;
 }
 
 sub remove {
@@ -120,10 +120,10 @@ sub handles {
     my @handles = ();
 
     while(($fd,$ev) = each %{$self->[1]}) {
-        while (($io,$mask) = each %{$self->[0]{$fd}}) {
-            $mask |= POLLHUP|POLLERR|POLLNVAL;  # must allow these
-            push @handles,$self->[2]{$io} if ($ev & $mask) & $events;
-        }
+	while (($io,$mask) = each %{$self->[0]{$fd}}) {
+	    $mask |= POLLHUP|POLLERR|POLLNVAL;  # must allow these
+	    push @handles,$self->[2]{$io} if ($ev & $mask) & $events;
+	}
     }
     return @handles;
 }

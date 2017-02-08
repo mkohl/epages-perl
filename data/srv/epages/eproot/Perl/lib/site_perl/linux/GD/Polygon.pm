@@ -75,8 +75,8 @@ sub getPt {
 sub setPt {
     my($self,$index,$x,$y) = @_;
     unless (($index>=0) && ($index<$self->{'length'})) {
-        carp "Attempt to set an undefined polygon vertex";
-        return undef;
+	carp "Attempt to set an undefined polygon vertex";
+	return undef;
     }
     @{$self->{'points'}->[$index]} = ($x,$y);
     1;
@@ -106,10 +106,10 @@ sub bounds {
     $right = -99999999;
     my $v;
     foreach $v ($self->vertices) {
-        $left = $v->[0] if $left > $v->[0];
-        $right = $v->[0] if $right < $v->[0];
-        $top = $v->[1] if $top > $v->[1];
-        $bottom = $v->[1] if $bottom < $v->[1];
+	$left = $v->[0] if $left > $v->[0];
+	$right = $v->[0] if $right < $v->[0];
+	$top = $v->[1] if $top > $v->[1];
+	$bottom = $v->[1] if $bottom < $v->[1];
     }
     return ($left,$top,$right,$bottom);
 }
@@ -118,8 +118,8 @@ sub bounds {
 sub deletePt {
      my($self,$index) = @_;
      unless (($index>=0) && ($index<@{$self->{'points'}})) {
-        carp "Attempt to delete an undefined polygon vertex";
-        return undef;
+ 	carp "Attempt to delete an undefined polygon vertex";
+ 	return undef;
      }
       my($vertex) = splice(@{$self->{'points'}},$index,1);
      $self->{'length'}--;
@@ -132,8 +132,8 @@ sub offset {
     my $size = $self->length;
     my($i);
     for ($i=0;$i<$size;$i++) {
-        my($x,$y)=$self->getPt($i);
-        $self->setPt($i,$x+$dh,$y+$dv);
+	my($x,$y)=$self->getPt($i);
+	$self->setPt($i,$x+$dh,$y+$dv);
     }
 }
 
@@ -146,10 +146,10 @@ sub map {
     my($vertices) = $self->length;
     my($i);
     for ($i=0;$i<$vertices;$i++) {
-        my($x,$y) = $self->getPt($i);
-        $x = int($destL + ($x - $srcL) * $factorH);
-        $y = int($destT + ($y - $srcT) * $factorV);
-        $self->setPt($i,$x,$y);
+	my($x,$y) = $self->getPt($i);
+	$x = int($destL + ($x - $srcL) * $factorH);
+	$y = int($destT + ($y - $srcT) * $factorV);
+	$self->setPt($i,$x,$y);
     }
 }
 
@@ -157,8 +157,8 @@ sub map {
 sub toPt {
     my($self, $dx, $dy) = @_;
     unless ($self->length > 0) {
-        $self->addPt($dx,$dy);
-        return;
+	$self->addPt($dx,$dy);
+	return;
     }
     my ($x, $y) = $self->getPt($self->length-1);
     $self->addPt($x+$dx,$y+$dy);
@@ -169,8 +169,8 @@ sub transform($$$$$$$) {
     my($self, $a, $b, $c, $d, $tx, $ty) = @_;
     my $size = $self->length;
     for (my $i=0;$i<$size;$i++) {
-        my($x,$y)=$self->getPt($i);
-        $self->setPt($i, $a*$x+$c*$y+$tx, $b*$x+$d*$y+$ty);
+	my($x,$y)=$self->getPt($i);
+	$self->setPt($i, $a*$x+$c*$y+$tx, $b*$x+$d*$y+$ty);
     }
 }
 

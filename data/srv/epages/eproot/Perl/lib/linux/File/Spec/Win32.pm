@@ -71,11 +71,11 @@ my $tmpdir;
 sub tmpdir {
     return $tmpdir if defined $tmpdir;
     $tmpdir = $_[0]->_tmpdir( map( $ENV{$_}, qw(TMPDIR TEMP TMP) ),
-                              'SYS:/temp',
-                              'C:\system\temp',
-                              'C:/temp',
-                              '/tmp',
-                              '/'  );
+			      'SYS:/temp',
+			      'C:\system\temp',
+			      'C:/temp',
+			      '/tmp',
+			      '/'  );
 }
 
 =item case_tolerant
@@ -113,8 +113,8 @@ sub file_name_is_absolute {
     if ($file =~ m{^($VOL_RX)}o) {
       my $vol = $1;
       return ($vol =~ m{^$UNC_RX}o ? 2
-              : $file =~ m{^$DRIVE_RX[\\/]}o ? 2
-              : 0);
+	      : $file =~ m{^$DRIVE_RX[\\/]}o ? 2
+	      : 0);
     }
     return $file =~  m{^[\\/]} ? 1 : 0;
 }
@@ -132,7 +132,7 @@ sub catfile {
     # Legacy / compatibility support
     #
     shift, return _canon_cat( "/", @_ )
-        if $_[0] eq "";
+	if $_[0] eq "";
 
     # Compatibility with File::Spec <= 3.26:
     #     catfile('A:', 'foo') should return 'A:\foo'.
@@ -148,9 +148,9 @@ sub catdir {
     # Legacy / compatibility support
     #
     return ""
-        unless @_;
+    	unless @_;
     shift, return _canon_cat( "/", @_ )
-        if $_[0] eq "";
+	if $_[0] eq "";
 
     # Compatibility with File::Spec <= 3.26:
     #     catdir('A:', 'foo') should return 'A:\foo'.
@@ -172,10 +172,10 @@ sub path {
 
 No physical check on the filesystem, but a logical cleanup of a
 path. On UNIX eliminated successive slashes and successive "/.".
-On Win32 makes
+On Win32 makes 
 
-        dir1\dir2\dir3\..\..\dir4 -> \dir\dir4 and even
-        dir1\dir2\dir3\...\dir4   -> \dir\dir4
+	dir1\dir2\dir3\..\..\dir4 -> \dir\dir4 and even
+	dir1\dir2\dir3\...\dir4   -> \dir\dir4
 
 =cut
 
@@ -192,9 +192,9 @@ sub canonpath {
     ($volume,$directories,$file) = File::Spec->splitpath( $path,
                                                           $no_file );
 
-Splits a path into volume, directory, and filename portions. Assumes that
+Splits a path into volume, directory, and filename portions. Assumes that 
 the last file is a path unless the path ends in '\\', '\\.', '\\..'
-or $no_file is true.  On Win32 this means that $no_file true makes this return
+or $no_file is true.  On Win32 this means that $no_file true makes this return 
 ( $volume, $path, '' ).
 
 Separators accepted are \ and /.
@@ -210,13 +210,13 @@ sub splitpath {
     my ($self,$path, $nofile) = @_;
     my ($volume,$directory,$file) = ('','','');
     if ( $nofile ) {
-        $path =~
+        $path =~ 
             m{^ ( $VOL_RX ? ) (.*) }sox;
         $volume    = $1;
         $directory = $2;
     }
     else {
-        $path =~
+        $path =~ 
             m{^ ( $VOL_RX ? )
                 ( (?:.*[\\/](?:\.\.?\Z(?!\n))?)? )
                 (.*)
@@ -236,11 +236,11 @@ The opposite of L<catdir()|File::Spec/catdir>.
 
     @dirs = File::Spec->splitdir( $directories );
 
-$directories must be only the directory portion of the path on systems
+$directories must be only the directory portion of the path on systems 
 that have the concept of a volume or that have path syntax that differentiates
 files from directories.
 
-Unlike just splitting the directories on the separator, leading empty and
+Unlike just splitting the directories on the separator, leading empty and 
 trailing directory entries can be returned, because these are significant
 on some OSs. So,
 
@@ -264,7 +264,7 @@ sub splitdir {
     }
     else {
         #
-        # since there was a trailing separator, add a file name to the end,
+        # since there was a trailing separator, add a file name to the end, 
         # then do the split, then replace it with ''.
         #
         my( @directories )= split( m|[\\/]|, "${directories}dummy" ) ;
@@ -295,7 +295,7 @@ sub catpath {
 
     $volume .= $directory ;
 
-    # If the volume is not just A:, make sure the glue separator is
+    # If the volume is not just A:, make sure the glue separator is 
     # there, reusing whatever separator is first in the $volume if possible.
     if ( $volume !~ m@^[a-zA-Z]:\Z(?!\n)@s &&
          $volume =~ m@[^\\/]\Z(?!\n)@      &&
@@ -347,11 +347,11 @@ sub rel2abs {
     my ( $base_volume, $base_directories ) =
       $self->splitpath( $base, 1 ) ;
 
-    $path = $self->catpath(
-                           $base_volume,
-                           $self->catdir( $base_directories, $path_directories ),
-                           $path_file
-                          ) ;
+    $path = $self->catpath( 
+			   $base_volume, 
+			   $self->catdir( $base_directories, $path_directories ), 
+			   $path_file
+			  ) ;
 
     return $self->canonpath( $path ) ;
 }
@@ -377,67 +377,67 @@ implementation of these methods, not the semantics.
 =cut
 
 
-sub _canon_cat                          # @path -> path
+sub _canon_cat				# @path -> path
 {
     my ($first, @rest) = @_;
 
-    my $volume = $first =~ s{ \A ([A-Za-z]:) ([\\/]?) }{}x      # drive letter
-               ? ucfirst( $1 ).( $2 ? "\\" : "" )
-               : $first =~ s{ \A (?:\\\\|//) ([^\\/]+)
-                                 (?: [\\/] ([^\\/]+) )?
-                                 [\\/]? }{}xs                   # UNC volume
-               ? "\\\\$1".( defined $2 ? "\\$2" : "" )."\\"
-               : $first =~ s{ \A [\\/] }{}x                     # root dir
-               ? "\\"
-               : "";
+    my $volume = $first =~ s{ \A ([A-Za-z]:) ([\\/]?) }{}x	# drive letter
+    	       ? ucfirst( $1 ).( $2 ? "\\" : "" )
+	       : $first =~ s{ \A (?:\\\\|//) ([^\\/]+)
+				 (?: [\\/] ([^\\/]+) )?
+	       			 [\\/]? }{}xs			# UNC volume
+	       ? "\\\\$1".( defined $2 ? "\\$2" : "" )."\\"
+	       : $first =~ s{ \A [\\/] }{}x			# root dir
+	       ? "\\"
+	       : "";
     my $path   = join "\\", $first, @rest;
 
-    $path =~ tr#\\/#\\\\#s;             # xx/yy --> xx\yy & xx\\yy --> xx\yy
+    $path =~ tr#\\/#\\\\#s;		# xx/yy --> xx\yy & xx\\yy --> xx\yy
 
-                                        # xx/././yy --> xx/yy
+    					# xx/././yy --> xx/yy
     $path =~ s{(?:
-                (?:\A|\\)               # at begin or after a slash
-                \.
-                (?:\\\.)*               # and more
-                (?:\\|\z)               # at end or followed by slash
-               )+                       # performance boost -- I do not know why
-             }{\\}gx;
+		(?:\A|\\)		# at begin or after a slash
+		\.
+		(?:\\\.)*		# and more
+		(?:\\|\z) 		# at end or followed by slash
+	       )+			# performance boost -- I do not know why
+	     }{\\}gx;
 
     # XXX I do not know whether more dots are supported by the OS supporting
     #     this ... annotation (NetWare or symbian but not MSWin32).
     #     Then .... could easily become ../../.. etc:
     # Replace \.\.\. by (\.\.\.+)  and substitute with
     # { $1 . ".." . "\\.." x (length($2)-2) }gex
-                                        # ... --> ../..
-    $path =~ s{ (\A|\\)                 # at begin or after a slash
-                \.\.\.
-                (?=\\|\z)               # at end or followed by slash
-             }{$1..\\..}gx;
-                                        # xx\yy\..\zz --> xx\zz
+	     				# ... --> ../..
+    $path =~ s{ (\A|\\)			# at begin or after a slash
+    		\.\.\.
+		(?=\\|\z) 		# at end or followed by slash
+	     }{$1..\\..}gx;
+    					# xx\yy\..\zz --> xx\zz
     while ( $path =~ s{(?:
-                (?:\A|\\)               # at begin or after a slash
-                [^\\]+                  # rip this 'yy' off
-                \\\.\.
-                (?<!\A\.\.\\\.\.)       # do *not* replace ^..\..
-                (?<!\\\.\.\\\.\.)       # do *not* replace \..\..
-                (?:\\|\z)               # at end or followed by slash
-               )+                       # performance boost -- I do not know why
-             }{\\}sx ) {}
+		(?:\A|\\)		# at begin or after a slash
+		[^\\]+			# rip this 'yy' off
+		\\\.\.
+		(?<!\A\.\.\\\.\.)	# do *not* replace ^..\..
+		(?<!\\\.\.\\\.\.)	# do *not* replace \..\..
+		(?:\\|\z) 		# at end or followed by slash
+	       )+			# performance boost -- I do not know why
+	     }{\\}sx ) {}
 
-    $path =~ s#\A\\##;                  # \xx --> xx  NOTE: this is *not* root
-    $path =~ s#\\\z##;                  # xx\ --> xx
+    $path =~ s#\A\\##;			# \xx --> xx  NOTE: this is *not* root
+    $path =~ s#\\\z##;			# xx\ --> xx
 
     if ( $volume =~ m#\\\z# )
-    {                                   # <vol>\.. --> <vol>\
-        $path =~ s{ \A                  # at begin
-                    \.\.
-                    (?:\\\.\.)*         # and more
-                    (?:\\|\z)           # at end or followed by slash
-                 }{}x;
+    {					# <vol>\.. --> <vol>\
+	$path =~ s{ \A			# at begin
+		    \.\.
+		    (?:\\\.\.)*		# and more
+		    (?:\\|\z) 		# at end or followed by slash
+		 }{}x;
 
-        return $1                       # \\HOST\SHARE\ --> \\HOST\SHARE
-            if    $path eq ""
-              and $volume =~ m#\A(\\\\.*)\\\z#s;
+	return $1			# \\HOST\SHARE\ --> \\HOST\SHARE
+	    if    $path eq ""
+	      and $volume =~ m#\A(\\\\.*)\\\z#s;
     }
     return $path ne "" || $volume ? $volume.$path : ".";
 }

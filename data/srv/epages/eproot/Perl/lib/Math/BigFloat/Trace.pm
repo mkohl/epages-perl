@@ -14,7 +14,7 @@ use vars qw($VERSION @ISA $PACKAGE @EXPORT_OK
 
 $VERSION = 0.01;
 
-use overload;   # inherit overload from BigFloat
+use overload;	# inherit overload from BigFloat
 
 # Globals
 $accuracy = $precision = undef;
@@ -27,14 +27,14 @@ sub new
         my $class  = ref($proto) || $proto;
 
         my $value       = shift;
-        my $a = $accuracy; $a = $_[0] if defined $_[0];
-        my $p = $precision; $p = $_[1] if defined $_[1];
+	my $a = $accuracy; $a = $_[0] if defined $_[0];
+	my $p = $precision; $p = $_[1] if defined $_[1];
         my $self = Math::BigFloat->new($value,$a,$p,$round_mode);
 
-#       remember, downgrading may return a BigInt, so don't meddle with class
-#       bless $self,$class;
+#	remember, downgrading may return a BigInt, so don't meddle with class	
+#	bless $self,$class;
 
-        print "MBF new '$value' => '$self' (",ref($self),")";
+	print "MBF new '$value' => '$self' (",ref($self),")";
         return $self;
 }
 
@@ -49,10 +49,10 @@ sub import
     {
     push @a, $_ if $_ ne ':constant';
     }
-  overload::constant float => sub { $self->new(shift); };
+  overload::constant float => sub { $self->new(shift); }; 
 
-  Math::BigFloat->import(@a);           # need it for subclasses
-#  $self->export_to_level(1,$self,@_);          # need this ?
+  Math::BigFloat->import(@a);		# need it for subclasses
+#  $self->export_to_level(1,$self,@_);		# need this ?
   }
 
 1;

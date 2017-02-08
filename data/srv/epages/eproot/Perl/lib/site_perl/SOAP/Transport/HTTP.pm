@@ -195,8 +195,8 @@ sub send_receive {
           # from string (doing pack with 'C0A*' modifier) if length and
           # bytelength are not the same
             my $bytelength = SOAP::Utils::bytelength($envelope);
-            # ePages hotfix AD-1289
-            $encoding = 'UTF-8';
+	    # ePages hotfix AD-1289
+	    $encoding = 'UTF-8';
 
             if ($] < 5.008) {
                 $envelope = pack( 'C0A*', $envelope );
@@ -261,7 +261,7 @@ sub send_receive {
                   if ( $tmpType !~ /$addition/ );
             }
 =cut
-            $http_request->content_type('text/xml; charset=utf-8');
+	    $http_request->content_type('text/xml; charset=utf-8');
 
             $http_request->content_length($bytelength);
             SOAP::Trace::transport($http_request);
@@ -824,7 +824,7 @@ sub handler {
     } else {
         %headers = %{ $r->headers_in }; # Apache2::RequestRec structure
     }
-
+    
     $self->request(
         HTTP::Request->new(
             $r->method() => $r->uri,

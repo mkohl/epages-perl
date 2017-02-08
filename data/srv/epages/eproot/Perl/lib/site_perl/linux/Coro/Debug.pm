@@ -378,10 +378,10 @@ bt <pid>                show a full backtrace of coroutine <pid>
 eval <pid> <perl>       evaluate <perl> expression in context of <pid>
 trace <pid>             enable tracing for this coroutine
 untrace <pid>           disable tracing for this coroutine
-kill <pid> <reason>     throws the given <reason> string in <pid>
-cancel <pid>            cancels this coroutine
-ready <pid>             force <pid> into the ready queue
-enable_times <enable>   enable or disable time profiling in ps
+kill <pid> <reason>	throws the given <reason> string in <pid>
+cancel <pid>		cancels this coroutine
+ready <pid>		force <pid> into the ready queue
+enable_times <enable>	enable or disable time profiling in ps
 <anything else>         evaluate as perl and print results
 <anything else> &       same as above, but evaluate asynchronously
                         you can use (find_coro <pid>) in perl expressions
@@ -462,9 +462,9 @@ sub session($) {
       } elsif ($cmd =~ /^help\s*/) {
          command $cmd;
          print <<EOF;
-loglevel <int>          enable logging for messages of level <int> and lower
+loglevel <int>		enable logging for messages of level <int> and lower
 watch <time> <command>  repeat the given command until STDIN becomes readable
-exit                    end this session
+exit			end this session
 EOF
       } else {
          command $cmd;

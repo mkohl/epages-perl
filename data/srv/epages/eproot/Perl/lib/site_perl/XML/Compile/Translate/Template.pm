@@ -148,7 +148,7 @@ sub makeBlockHandler
     sub { my $data = $proc->();
           my $occur
            = $max eq 'unbounded' && $min==0 ? 'occurs any number of times'
-           : $max ne 'unbounded' && $max==1 && $min==0 ? 'is optional'
+           : $max ne 'unbounded' && $max==1 && $min==0 ? 'is optional' 
            : $max ne 'unbounded' && $max==1 && $min==1 ? ''  # the usual case
            :       "occurs $min <= # <= $max times";
 
@@ -171,7 +171,7 @@ sub makeElementHandler
     sub { my $data = $opt->() or return;
           my $occur
            = $max eq 'unbounded' && $min==0 ? 'occurs any number of times'
-           : $max ne 'unbounded' && $max==1 && $min==0 ? 'is optional'
+           : $max ne 'unbounded' && $max==1 && $min==0 ? 'is optional' 
            : $max ne 'unbounded' && $max==1 && $min==1 ? ''  # the usual case
            :                                  "occurs $min <= # <= $max times";
           $data->{occur}  ||= $occur if $occur;
@@ -286,7 +286,7 @@ sub makeTaggedElement
     my %content =
      ( tag     => '_'
      , struct  => 'string content of the container'
-     , example => 'Hello, World!'
+     , example => 'Hello, World!' 
      );
 
     sub { my @attrs  = map {$_->()} @parts;
@@ -487,7 +487,7 @@ sub makeSubstgroup
                 $example_nest ||= $processed->{kind} eq 'simple'
                     ? ($processed->{example} || '...') : '{...}';
             }
-
+        
             $tags{$label} = $show;
         }
 
@@ -543,7 +543,7 @@ sub makeAnyElement
                  , tag => "ANY", example => 'Anything' };
     my $occur
       = $max eq 'unbounded' && $min==0 ? 'occurs any number of times'
-      : $max ne 'unbounded' && $max==1 && $min==0 ? 'is optional'
+      : $max ne 'unbounded' && $max==1 && $min==0 ? 'is optional' 
       : $max ne 'unbounded' && $max==1 && $min==1 ? ''  # the usual case
       :                                  "occurs $min <= # <= $max times";
     $data->{occur}  ||= $occur if $occur;
@@ -589,7 +589,7 @@ sub _decodeReplace($$)
     return $call if ref $call eq 'CODE';
 
     if($call eq 'COLLAPSE')
-    {   return sub
+    {   return sub 
          {  my ($tag, $path, $do) = @_;
             my $h = $do->();
             $h->{elems} = [ { struct => [ 'content collapsed' ]
@@ -642,7 +642,7 @@ sub toPerl($%)
     {   push @lines, sprintf "# %-15s %s", $nsdecl, $ast->{$nsdecl} || '(none)';
     }
     push @lines, '' if @lines;
-
+    
     # produce data tree
     push @lines, $self->_perlAny($ast, \%args);
 
@@ -711,7 +711,7 @@ sub _perlAny($$)
 
         # seperator blank, sometimes
         unshift @sub, ''
-            if $sub[0] =~ m/^\s*[#{]/   # }
+            if $sub[0] =~ m/^\s*[#{]/   # } 
             || (@subs && $subs[-1] =~ m/[}\]]\,\s*$/);
 
         push @subs, @sub;

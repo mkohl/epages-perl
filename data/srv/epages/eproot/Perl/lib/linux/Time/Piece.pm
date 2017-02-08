@@ -65,9 +65,9 @@ sub gmtime {
 sub new {
     my $class = shift;
     my ($time) = @_;
-
+    
     my $self;
-
+    
     if (defined($time)) {
         $self = $class->localtime($time);
     }
@@ -77,7 +77,7 @@ sub new {
     else {
         $self = $class->localtime();
     }
-
+    
     return bless $self, $class;
 }
 
@@ -282,7 +282,7 @@ sub isdst {
 # Thanks to Tony Olekshy <olekshy@cs.ualberta.ca> for this algorithm
 sub tzoffset {
     my $time = shift;
-
+    
     return Time::Seconds->new(0) unless $time->[c_islocal];
 
     my $epoch = $time->epoch;
@@ -543,15 +543,15 @@ sub subtract {
 
     if (shift)
     {
-        # SWAPED is set (so someone tried an expression like NOTDATE - DATE).
-        # Imitate Perl's standard behavior and return the result as if the
-        # string $time resolves to was subtracted from NOTDATE.  This way,
-        # classes which override this one and which have a stringify function
-        # that resolves to something that looks more like a number don't need
-        # to override this function.
-        return $rhs - "$time";
+	# SWAPED is set (so someone tried an expression like NOTDATE - DATE).
+	# Imitate Perl's standard behavior and return the result as if the
+	# string $time resolves to was subtracted from NOTDATE.  This way,
+	# classes which override this one and which have a stringify function
+	# that resolves to something that looks more like a number don't need
+	# to override this function.
+	return $rhs - "$time";
     }
-
+    
     if (UNIVERSAL::isa($rhs, 'Time::Piece')) {
         return Time::Seconds->new($time->epoch - $rhs->epoch);
     }
@@ -593,9 +593,9 @@ sub compare {
 
 sub add_months {
     my ($time, $num_months) = @_;
-
+    
     croak("add_months requires a number of months") unless defined($num_months);
-
+    
     my $final_month = $time->_mon + $num_months;
     my $num_years = 0;
     if ($final_month > 11 || $final_month < 0) {
@@ -603,10 +603,10 @@ sub add_months {
         # want to load POSIX.pm
         $num_years = int($final_month / 12);
         $num_years-- if ($final_month < 0);
-
+        
         $final_month = $final_month % 12;
     }
-
+    
     my @vals = _mini_mktime($time->sec, $time->min, $time->hour,
                             $time->mday, $final_month, $time->year - 1900 + $num_years);
 #    warn(sprintf("got vals: %d-%d-%d %d:%d:%d\n", reverse(@vals)));
@@ -628,7 +628,7 @@ Time::Piece - Object Oriented time objects
 =head1 SYNOPSIS
 
     use Time::Piece;
-
+    
     my $t = localtime;
     print "Time is $t\n";
     print "Year is ", $t->year, "\n";
@@ -649,7 +649,7 @@ http://www.xray.mpe.mpg.de/mailing-lists/perl5-porters/2000-01/msg00241.html
 After importing this module, when you use localtime or gmtime in a scalar
 context, rather than getting an ordinary scalar string representing the
 date and time, you get a Time::Piece object, whose stringification happens
-to produce the same effect as the localtime and gmtime functions. There is
+to produce the same effect as the localtime and gmtime functions. There is 
 also a new() constructor provided, which is the same as localtime(), except
 when passed a Time::Piece object, in which case it's a copy constructor. The
 following methods are available on the object:
@@ -708,7 +708,7 @@ following methods are available on the object:
     $t->strftime(FORMAT)    # same as POSIX::strftime (without the overhead
                             # of the full POSIX extension)
     $t->strftime()          # "Tue, 29 Feb 2000 12:34:56 GMT"
-
+    
     Time::Piece->strptime(STRING, FORMAT)
                             # see strptime man page. Creates a new
                             # Time::Piece object
@@ -741,7 +741,7 @@ And locally for months:
 It's possible to use simple addition and subtraction of objects:
 
     use Time::Seconds;
-
+    
     my $seconds = $t1 - $t2;
     $t1 += ONE_DAY; # add 1 day (constant from Time::Seconds)
 
@@ -785,7 +785,7 @@ you incredibly flexible date parsing routines. For example:
 
   my $t = Time::Piece->strptime("Sun 3rd Nov, 1943",
                                 "%A %drd %b, %Y");
-
+  
   print $t->strftime("%a, %d %b %Y");
 
 Outputs:

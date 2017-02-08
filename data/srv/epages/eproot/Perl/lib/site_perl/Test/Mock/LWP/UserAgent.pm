@@ -29,9 +29,9 @@ our $VERSION = '0.01';
 
 BEGIN {
     $Mock_ua = Test::MockObject->new;
-    $Mock_ua->fake_module('LWP::UserAgent');
+    $Mock_ua->fake_module('LWP::UserAgent');                       
     $Mock_ua->fake_new('LWP::UserAgent');
-}
+}                                                                          
 
 $Mock_ua->set_always('simple_request', HTTP::Response->new);
 $Mock_ua->set_always('request', HTTP::Response->new);

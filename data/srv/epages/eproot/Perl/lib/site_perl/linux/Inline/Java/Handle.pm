@@ -13,155 +13,155 @@ my $OBJECTS = {} ;
 
 
 sub new {
-        my $class = shift ;
-        my $object = shift ;
+	my $class = shift ;
+	my $object = shift ;
 
-        my $fh = gensym() ;
-        my $knot = tie *{$fh}, $class ;
-        my $this = bless ($fh, $class) ;
+	my $fh = gensym() ;
+	my $knot = tie *{$fh}, $class ;
+	my $this = bless ($fh, $class) ;
 
-        $OBJECTS->{$knot} = $object ;
+	$OBJECTS->{$knot} = $object ;
 
-        Inline::Java::debug(5, "this = '$this'") ;
-        Inline::Java::debug(5, "knot = '$knot'") ;
+	Inline::Java::debug(5, "this = '$this'") ; 
+	Inline::Java::debug(5, "knot = '$knot'") ;
 
-        return $this ;
+	return $this ;
 }
 
 
 sub __get_object {
-        my $this = shift ;
+	my $this = shift ;
 
-        my $knot = tied $this || $this ;
+	my $knot = tied $this || $this ;
 
-        my $ref = $OBJECTS->{$knot} ;
-        if (! defined($ref)){
-                croak "Unknown Java handle reference '$knot'" ;
-        }
-
-        return $ref ;
+	my $ref = $OBJECTS->{$knot} ;
+	if (! defined($ref)){
+		croak "Unknown Java handle reference '$knot'" ;
+	}
+	
+	return $ref ;
 }
 
 
 sub __isa {
-        my $this = shift ;
-        my $proto = shift ;
+	my $this = shift ;
+	my $proto = shift ;
 
-        return $this->__get_object()->__isa($proto) ;
+	return $this->__get_object()->__isa($proto) ;
 }
 
 
 sub __read {
-        my $this = shift ;
-        my ($buf, $len, $offset) = @_ ;
+ 	my $this = shift ;
+	my ($buf, $len, $offset) = @_ ;
 
-        my $obj = $this->__get_object() ;
+	my $obj = $this->__get_object() ;
 
-        my $ret = undef  ;
-        eval {
-                my $str = $obj->__get_private()->{proto}->ReadFromJavaHandle($len) ;
-                $len = length($str) ;
+	my $ret = undef  ;
+	eval {
+		my $str = $obj->__get_private()->{proto}->ReadFromJavaHandle($len) ;
+		$len = length($str) ;
         if ($len > 0){
             substr($buf, $offset, $len) = $str ;
             $_[0] = $buf ;
-                        $ret = $len ;
+			$ret = $len ;
         }
-        } ;
-        croak $@ if $@ ;
+	} ;
+	croak $@ if $@ ;
 
-        return $ret ;
+	return $ret ;
 }
 
 
 sub __readline {
-        my $this = shift ;
+ 	my $this = shift ;
 
-        my $obj = $this->__get_object() ;
+	my $obj = $this->__get_object() ;
 
-        my $ret = undef  ;
-        eval {
-                $ret = $obj->__get_private()->{proto}->ReadLineFromJavaHandle() ;
-        } ;
-        croak $@ if $@ ;
+	my $ret = undef  ;
+	eval {
+		$ret = $obj->__get_private()->{proto}->ReadLineFromJavaHandle() ;
+	} ;
+	croak $@ if $@ ;
 
-        return $ret ;
+	return $ret ;
 }
 
 
 sub __write {
-        my $this = shift ;
-        my $buf = shift ;
-        my $len = shift ;
-        my $offset = shift ;
+ 	my $this = shift ;
+	my $buf = shift ;
+	my $len = shift ;
+	my $offset = shift ;
 
-        my $obj = $this->__get_object() ;
+	my $obj = $this->__get_object() ;
 
-        my $ret = -1 ;
-        eval {
-                my $len = $obj->__get_private()->{proto}->WriteToJavaHandle(substr($buf, $offset, $len)) ;
-                $ret = $len ;
-        } ;
-        croak $@ if $@ ;
+	my $ret = -1 ;
+	eval {
+		my $len = $obj->__get_private()->{proto}->WriteToJavaHandle(substr($buf, $offset, $len)) ;
+		$ret = $len ;
+	} ;
+	croak $@ if $@ ;
 }
 
 
 sub __eof {
-        my $this = shift ;
+ 	my $this = shift ;
 }
 
 
 sub __close {
-        my $this = shift ;
+ 	my $this = shift ;
 
-        my $obj = $this->__get_object() ;
+	my $obj = $this->__get_object() ;
 
-        my $ret = undef ;
-        {
-                local $@ ;
-                eval {
-                        $ret = $obj->__get_private()->{proto}->CloseJavaHandle() ;
-                        $obj->__get_private()->{closed} = 1 ;
-                } ;
-                croak $@ if $@ ;
-        }
+	my $ret = undef ;
+	{
+		local $@ ;
+		eval {
+			$ret = $obj->__get_private()->{proto}->CloseJavaHandle() ;
+			$obj->__get_private()->{closed} = 1 ;
+		} ;
+		croak $@ if $@ ;
+	}
 
-        return $ret ;
+	return $ret ;
 }
 
 
 
 sub AUTOLOAD {
-        my $this = shift ;
-        my @args = @_ ;
+	my $this = shift ;
+	my @args = @_ ;
 
-        use vars qw($AUTOLOAD) ;
-        my $func_name = $AUTOLOAD ;
-        # Strip package from $func_name, Java will take of finding the correct
-        # method.
-        $func_name =~ s/^(.*)::// ;
+	use vars qw($AUTOLOAD) ;
+	my $func_name = $AUTOLOAD ;
+	# Strip package from $func_name, Java will take of finding the correct
+	# method.
+	$func_name =~ s/^(.*)::// ;
 
-        croak "Can't call method '$func_name' on Java handles" ;
+	croak "Can't call method '$func_name' on Java handles" ;
 }
 
 
 sub DESTROY {
-        my $this = shift ;
+	my $this = shift ;
 
 
-        my $knot = tied *{$this} ;
-        if (! $knot){
-                Inline::Java::debug(4, "destroying Inline::Java::Handle::Tie") ;
+	my $knot = tied *{$this} ;
+	if (! $knot){
+		Inline::Java::debug(4, "destroying Inline::Java::Handle::Tie") ;
 
-                my $obj = $this->__get_object() ;
-                if (! $obj->__get_private()->{closed}){
-                        $this->__close() ;
-                }
+		my $obj = $this->__get_object() ;
+		if (! $obj->__get_private()->{closed}){
+		 	$this->__close() ;	
+		}
 
-                $OBJECTS->{$this} = undef ;
-        }
-        else {
-                Inline::Java::debug(4, "destroying Inline::Java::Handle") ;
-        }
+		$OBJECTS->{$this} = undef ;
+	}
+	else {
+		Inline::Java::debug(4, "destroying Inline::Java::Handle") ;
+	}
 }
 
 
@@ -176,92 +176,92 @@ use Carp ;
 
 
 sub TIEHANDLE {
-        my $class = shift ;
-        my $jclass = shift ;
+	my $class = shift ;
+	my $jclass = shift ;
 
-        return $class->SUPER::TIEHANDLE(@_) ;
+	return $class->SUPER::TIEHANDLE(@_) ;
 }
 
 
 sub READ {
-        my $this = shift ;
-        my ($buf, $len, $offset) = @_ ;
+ 	my $this = shift ;
+	my ($buf, $len, $offset) = @_ ;
 
-        my $ret = $this->__read($buf, $len, $offset) ;
-        $_[0] = $buf ;
+	my $ret = $this->__read($buf, $len, $offset) ;
+	$_[0] = $buf ;
 
-        return $ret ;
+	return $ret ;
 }
 
 
 sub READLINE {
-        my $this = shift ;
+ 	my $this = shift ;
 
-        return $this->__readline() ;
+	return $this->__readline() ;
 }
 
 
 sub WRITE {
-        my $this = shift ;
-        my $buf = shift ;
-        my $len = shift ;
-        my $offset = shift ;
+ 	my $this = shift ;
+	my $buf = shift ;
+	my $len = shift ;
+	my $offset = shift ;
 
-        return $this->__write($buf, $len, $offset) ;
+	return $this->__write($buf, $len, $offset) ;
 }
 
 
 sub BINMODE {
-        my $this = shift ;
+ 	my $this = shift ;
 
-        croak "Operation BINMODE not supported on Java handle" ;
+	croak "Operation BINMODE not supported on Java handle" ;
 }
 
 
 sub OPEN {
-        my $this = shift ;
+ 	my $this = shift ;
 
-        croak "Operation OPEN not supported on Java handle" ;
+	croak "Operation OPEN not supported on Java handle" ;
 }
 
 
 sub TELL {
-        my $this = shift ;
+ 	my $this = shift ;
 
-        croak "Operation TELL not supported on Java handle" ;
+	croak "Operation TELL not supported on Java handle" ;
 }
 
 
 sub FILENO {
-        my $this = shift ;
+ 	my $this = shift ;
 
-        croak "Operation FILENO not supported on Java handle" ;
+	croak "Operation FILENO not supported on Java handle" ;
 }
 
 
 sub SEEK {
-        my $this = shift ;
+ 	my $this = shift ;
 
-        croak "Operation SEEK not supported on Java handle" ;
+	croak "Operation SEEK not supported on Java handle" ;
 }
 
 
 sub EOF {
-        my $this = shift ;
+ 	my $this = shift ;
 
-        return $this->__eof() ;
+	return $this->__eof() ;
 }
 
 
 sub CLOSE {
-        my $this = shift ;
-
-        return $this->__close() ;
+ 	my $this = shift ;
+		
+	return $this->__close() ;
 }
 
 
 sub DESTROY {
-        my $this = shift ;
+ 	my $this = shift ;
 }
 
 

@@ -5,27 +5,27 @@ Manager algorithm
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::LANManagerHalf;
+	use Authen::Passphrase::LANManagerHalf;
 
-        $ppr = Authen::Passphrase::LANManagerHalf->new(
-                hash_hex => "855c3697d9979e78");
+	$ppr = Authen::Passphrase::LANManagerHalf->new(
+		hash_hex => "855c3697d9979e78");
 
-        $ppr = Authen::Passphrase::LANManagerHalf->new(
-                passphrase => "passphr");
+	$ppr = Authen::Passphrase::LANManagerHalf->new(
+		passphrase => "passphr");
 
-        $ppr = Authen::Passphrase::LANManagerHalf->from_crypt(
-                '$LM$855c3697d9979e78');
+	$ppr = Authen::Passphrase::LANManagerHalf->from_crypt(
+		'$LM$855c3697d9979e78');
 
-        $ppr = Authen::Passphrase::LANManagerHalf->from_rfc2307(
-                '{CRYPT}$LM$855c3697d9979e78');
+	$ppr = Authen::Passphrase::LANManagerHalf->from_rfc2307(
+		'{CRYPT}$LM$855c3697d9979e78');
 
-        $hash = $ppr->hash;
-        $hash_hex = $ppr->hash_hex;
+	$hash = $ppr->hash;
+	$hash_hex = $ppr->hash_hex;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $passwd = $ppr->as_crypt;
-        $userPassword = $ppr->as_rfc2307;
+	$passwd = $ppr->as_crypt;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -96,42 +96,42 @@ Either the hash or the passphrase must be given.
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[\x00-\xff]{8}\z#
-                                or croak "not a valid LAN Manager half hash";
-                        $self->{hash} = "$value";
-                } elsif($attr eq "hash_hex") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[0-9A-Fa-f]{16}\z#
-                                or croak "\"$value\" is not a valid ".
-                                                "hex LAN Manager half hash";
-                        $self->{hash} = pack("H*", $value);
-                } elsif($attr eq "passphrase") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $self->_passphrase_acceptable($value)
-                                or croak "can't accept a passphrase exceeding".
-                                                " seven bytes";
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        $self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
-        croak "hash not specified" unless exists $self->{hash};
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "hash") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[\x00-\xff]{8}\z#
+				or croak "not a valid LAN Manager half hash";
+			$self->{hash} = "$value";
+		} elsif($attr eq "hash_hex") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[0-9A-Fa-f]{16}\z#
+				or croak "\"$value\" is not a valid ".
+						"hex LAN Manager half hash";
+			$self->{hash} = pack("H*", $value);
+		} elsif($attr eq "passphrase") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$self->_passphrase_acceptable($value)
+				or croak "can't accept a passphrase exceeding".
+						" seven bytes";
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	$self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
+	croak "hash not specified" unless exists $self->{hash};
+	return $self;
 }
 
 =item Authen::Passphrase::LANManagerHalf->from_crypt(PASSWD)
@@ -143,14 +143,14 @@ the hash in lowercase hexadecimal.
 =cut
 
 sub from_crypt {
-        my($class, $passwd) = @_;
-        if($passwd =~ /\A\$LM\$/) {
-                $passwd =~ m#\A\$LM\$([0-9a-f]{16})\z#
-                        or croak "malformed \$LM\$ data";
-                my $hash = $1;
-                return $class->new(hash_hex => $hash);
-        }
-        return $class->SUPER::from_crypt($passwd);
+	my($class, $passwd) = @_;
+	if($passwd =~ /\A\$LM\$/) {
+		$passwd =~ m#\A\$LM\$([0-9a-f]{16})\z#
+			or croak "malformed \$LM\$ data";
+		my $hash = $1;
+		return $class->new(hash_hex => $hash);
+	}
+	return $class->SUPER::from_crypt($passwd);
 }
 
 =item Authen::Passphrase::LANManagerHalf->from_rfc2307(USERPASSWORD)
@@ -172,8 +172,8 @@ Returns the hash value, as a string of 8 bytes.
 =cut
 
 sub hash {
-        my($self) = @_;
-        return $self->{hash};
+	my($self) = @_;
+	return $self->{hash};
 }
 
 =item $ppr->hash_hex
@@ -183,8 +183,8 @@ Returns the hash value, as a string of 16 hexadecimal digits.
 =cut
 
 sub hash_hex {
-        my($self) = @_;
-        return unpack("H*", $self->{hash});
+	my($self) = @_;
+	return unpack("H*", $self->{hash});
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -198,32 +198,32 @@ These methods are part of the standard L<Authen::Passphrase> interface.
 =cut
 
 sub _passphrase_acceptable {
-        my($self, $passphrase) = @_;
-        return $passphrase =~ /\A[\x00-\xff]{0,7}\z/;
+	my($self, $passphrase) = @_;
+	return $passphrase =~ /\A[\x00-\xff]{0,7}\z/;
 }
 
 sub _hash_of {
-        my($self, $passphrase) = @_;
-        $passphrase = uc($passphrase);
-        $passphrase = "\0".$passphrase."\0\0\0\0\0\0\0\0";
-        my $key = "";
-        for(my $i = 0; $i != 8; $i++) {
-                my $a = ord(substr($passphrase, $i, 1));
-                my $b = ord(substr($passphrase, $i+1, 1));
-                $key .= chr((($b >> $i) | ($a << (8-$i))) & 0xfe);
-        }
-        return Crypt::DES->new($key)->encrypt("KGS!\@#\$%");
+	my($self, $passphrase) = @_;
+	$passphrase = uc($passphrase);
+	$passphrase = "\0".$passphrase."\0\0\0\0\0\0\0\0";
+	my $key = "";
+	for(my $i = 0; $i != 8; $i++) {
+		my $a = ord(substr($passphrase, $i, 1));
+		my $b = ord(substr($passphrase, $i+1, 1));
+		$key .= chr((($b >> $i) | ($a << (8-$i))) & 0xfe);
+	}
+	return Crypt::DES->new($key)->encrypt("KGS!\@#\$%");
 }
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $self->_passphrase_acceptable($passphrase) &&
-                $self->_hash_of($passphrase) eq $self->{hash};
+	my($self, $passphrase) = @_;
+	return $self->_passphrase_acceptable($passphrase) &&
+		$self->_hash_of($passphrase) eq $self->{hash};
 }
 
 sub as_crypt {
-        my($self) = @_;
-        return "\$LM\$".$self->hash_hex;
+	my($self) = @_;
+	return "\$LM\$".$self->hash_hex;
 }
 
 =back

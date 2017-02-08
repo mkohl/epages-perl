@@ -112,7 +112,7 @@ else
 my $init = 0;
 chmod(0600, $PPM::PPMdat);
 
-# add -5.d to archname for Perl >= 5.8
+# add -5.d to archname for Perl >= 5.8 
 my $varchname = $Config{archname};
 if ($] >= 5.008) {
     my $vstring = sprintf "%vd", $^V;
@@ -162,7 +162,7 @@ sub RemoveRepository
     read_config();
     foreach (keys %repositories) {
         if ($_ =~ /^\Q$repository\E$/) {
-            &Trace("Removed repository $repositories{$repository}")
+            &Trace("Removed repository $repositories{$repository}") 
                 if $options{'TRACE'};
             delete $repositories{$repository};
             last;
@@ -244,7 +244,7 @@ sub InstallPackage
         goto InstallBlib;
     }
 
-    unless (%PPD = getPPDfile('package' => $package,
+    unless (%PPD = getPPDfile('package' => $package, 
             'location' => $location, 'PPDfile' => \$PPDfile)) {
         &Trace("Could not locate a PPD file for package $package")
             if $options{'TRACE'};
@@ -411,7 +411,7 @@ sub InstallPackage
         $inst_man3dir =~ s/\Q$inst_root/$root\E/i;
         $inst_root = $root;
     }
-
+    
     while (1) {
         my $cwd = getcwd();
         $cwd .= "/" if $cwd =~ /[a-z]:$/i;
@@ -508,7 +508,7 @@ sub RepositoryPackageProperties
     }
     parsePPD(%PPD);
 
-    my %ret_hash = map { $_ => $current_package{$_} }
+    my %ret_hash = map { $_ => $current_package{$_} } 
         qw(NAME TITLE AUTHOR VERSION ABSTRACT PERLCORE_VER);
     foreach my $dep (keys %{$current_package{'DEPEND'}}) {
         push @{$ret_hash{'DEPEND'}}, $dep;
@@ -628,7 +628,7 @@ sub VerifyPackage
 
     %installedPPD = %{ $installed_packages{$package}{'INST_PPD'} };
 
-    unless (%comparePPD = getPPDfile('package' => $package,
+    unless (%comparePPD = getPPDfile('package' => $package, 
             'location' => $location)) {
         &Trace("VerifyPackage: Could not locate a PPD file for $package")
             if $options{'TRACE'};
@@ -667,12 +667,12 @@ sub VerifyPackage
             # need to remember the $location, because once we remove the
             # package, it's unavailable.
             $location = $installed_packages{$package}{'LOCATION'} unless $location;
-            unless (getPPDfile('package' => $package,
+	    unless (getPPDfile('package' => $package, 
                     'location' => $location)) {
-                &Trace("VerifyPackage: Could not locate a PPD file for $package") if $options{'TRACE'};
-                $PPM::PPMERR = "Could not locate a PPD file for $package";
-                return undef;
-            }
+		&Trace("VerifyPackage: Could not locate a PPD file for $package") if $options{'TRACE'};
+		$PPM::PPMERR = "Could not locate a PPD file for $package";
+		return undef;
+	    }
             RemovePackage("package" => $package, "force" => 1);
             InstallPackage("package" => $package, "location" => $location,
                 "root" => $inst_root) or return undef;
@@ -806,10 +806,10 @@ sub ServerSearch
     return unless $location =~ m#^(http://.*)\?(urn:.*)#i;
     my ($proxy, $uri) = ($1, $2);
     my $client = SOAP::Lite -> uri($uri) -> proxy($proxy);
-    eval { $data = $client ->
+    eval { $data = $client -> 
         search_ppds($varchname, $searchRE, $searchtag) -> result; };
     if ($@) {
-        &Trace("Error searching repository '$proxy': $@")
+        &Trace("Error searching repository '$proxy': $@") 
             if $options{'TRACE'};
         $PPM::PPMERR = "Error searching repository '$proxy': $@\n";
         return;
@@ -831,13 +831,13 @@ sub parse_summary
     # take care of '&'
     $data =~ s/&(?!\w+;)/&amp;/go;
 
-    my $parser = new XML::Parser( Style => 'Objects',
+    my $parser = new XML::Parser( Style => 'Objects', 
         Pkg => 'PPM::XML::RepositorySummary' );
     eval { @parsed = @{ $parser->parse( $data ) } };
     if ($@) {
-        &Trace("parse_summary: content of summary file is not valid")
+        &Trace("parse_summary: content of summary file is not valid") 
             if $options{'TRACE'};
-        $PPM::PPMERR =
+        $PPM::PPMERR = 
             "parse_summary: content of summary file is not valid: $!\n";
         return;
     }
@@ -853,7 +853,7 @@ sub parse_summary
         if ($elem_type eq 'SOFTPKG') {
             my %ret_hash;
             parsePPD(%{$package});
-            %ret_hash = map { $_ => $current_package{$_} }
+            %ret_hash = map { $_ => $current_package{$_} } 
                 qw(NAME TITLE AUTHOR VERSION ABSTRACT PERLCORE_VER);
             foreach my $dep (keys %{$current_package{'DEPEND'}}) {
                 push @{$ret_hash{'DEPEND'}}, $dep;
@@ -915,8 +915,8 @@ sub save_options
         my $rep_name;
         foreach $rep_name (keys %repositories) {
             my $repository = new PPM::XML::PPMConfig::REPOSITORY;
-            %{$repository} =
-                map { $_ => $repositories{$rep_name}{$_} }
+            %{$repository} = 
+                map { $_ => $repositories{$rep_name}{$_} } 
                     keys %{$repositories{$rep_name}};
             $repository->{'NAME'} = $rep_name;
             splice( @{$PPMConfig{Kids}}, $idx, 0, $repository );
@@ -985,9 +985,9 @@ sub list_available
             my $client = SOAP::Lite -> uri($uri) -> proxy($proxy);
             eval { @ppds = $client->packages()->paramsout };
             if ($@) {
-                &Trace("Package list from '$proxy' failed: $@")
+                &Trace("Package list from '$proxy' failed: $@") 
                     if $options{'TRACE'};
-                $PPM::PPMERR =
+                $PPM::PPMERR = 
                     "Package list from repository '$proxy' failed: $@\n";
                 return;
             }
@@ -1051,9 +1051,9 @@ sub read_href
         if ($fcn eq 'fetch_summary') {
             my $summary = eval { $client->fetch_summary()->result; };
             if ($@) {
-                &Trace("Error getting summary from repository '$proxy': $@")
+                &Trace("Error getting summary from repository '$proxy': $@") 
                     if $options{'TRACE'};
-                $PPM::PPMERR =
+                $PPM::PPMERR = 
                     "Error getting summary from repository '$proxy': $@\n";
                 return;
             }
@@ -1062,9 +1062,9 @@ sub read_href
         $fcn =~ s/\.ppd$//i;
         my $ppd = eval { $client->fetch_ppd($fcn)->result };
         if ($@) {
-            &Trace("Error fetching '$fcn' from repository '$proxy': $@")
+            &Trace("Error fetching '$fcn' from repository '$proxy': $@") 
                 if $options{'TRACE'};
-            $PPM::PPMERR =
+            $PPM::PPMERR = 
                 "Error fetching '$fcn' from repository '$proxy': $@\n";
             return;
         }
@@ -1104,7 +1104,7 @@ sub read_href
     ($response, $bytes_transferred) = (undef, 0);
     if ($progress) {
         # display the 'progress indicator'
-        $ua->request($req, \&lwp_callback,
+        $ua->request($req, \&lwp_callback, 
             ($options{'DOWNLOADSTATUS'} || 4096));
         print "\n" if ($PPM::PPMShell && $options{'DOWNLOADSTATUS'});
     }
@@ -1126,9 +1126,9 @@ sub read_href
         return $response->content;
     }
     if ($response) {
-        &Trace("read_href: Error reading $href: " . $response->code . " " .
+        &Trace("read_href: Error reading $href: " . $response->code . " " . 
             $response->message) if $options{'TRACE'};
-        $PPM::PPMERR = "Error reading $href: " . $response->code . " " .
+        $PPM::PPMERR = "Error reading $href: " . $response->code . " " . 
             $response->message . "\n";
     }
     else {
@@ -1139,12 +1139,12 @@ sub read_href
 }
 
 sub lwp_callback
-{
+{ 
     my ($data, $res, $protocol) = @_;
     $response = $res;
     $response->add_content($data);
     $bytes_transferred += length($data);
-    print "Bytes transferred: $bytes_transferred\r"
+    print "Bytes transferred: $bytes_transferred\r" 
         if ($PPM::PPMShell && $options{'DOWNLOADSTATUS'});
 }
 
@@ -1177,7 +1177,7 @@ sub PPMdat_add_package
                                    );
 
     if (defined $current_package{TITLE}) {
-        my $chardata = new PPM::XML::PPMConfig::Characters(
+        my $chardata = new PPM::XML::PPMConfig::Characters( 
             Text => $current_package{TITLE} );
         my $newelem = new PPM::XML::PPMConfig::TITLE;
         push( @{$newelem->{Kids}}, $chardata );
@@ -1625,7 +1625,7 @@ sub getPPDfile
     }
     # URL?
     elsif ($package =~ m@^...*://@i) {
-        return unless ($contents = read_href("href" => $package,
+        return unless ($contents = read_href("href" => $package, 
             "request" => 'GET'));
         $$PPDfile = $package;
     }
@@ -1634,7 +1634,7 @@ sub getPPDfile
         $location = $installed_packages{$package}{'LOCATION'};
         if ($location =~ /[^\/]$/) { $location .= "/"; }
         $$PPDfile = $location . $package . ".ppd";
-        return %PPD if (%PPD = getPPDfile('package' => $$PPDfile,
+        return %PPD if (%PPD = getPPDfile('package' => $$PPDfile, 
             'parsertype' => $parsertype));
         undef $$PPDfile;
     }
@@ -1645,7 +1645,7 @@ sub getPPDfile
             my $location = $repositories{$_}{'LOCATION'};
             if ($location =~ /[^\/]$/) { $location .= "/"; }
             $$PPDfile = $location . $package . ".ppd";
-            return %PPD if (%PPD = getPPDfile('package' => $$PPDfile,
+            return %PPD if (%PPD = getPPDfile('package' => $$PPDfile, 
                 'parsertype' => $parsertype, 'PPDfile' => \$$PPDfile));
             undef $$PPDfile;
         }
@@ -1729,7 +1729,7 @@ sub read_config
             $options{'CLEAN'} = ($elem->{CLEAN} && $elem->{CLEAN} ne 'No');
             $options{'CONFIRM'} =
                 ($elem->{CONFIRM} && $elem->{CONFIRM} ne 'No');
-            $options{'DOWNLOADSTATUS'} =
+            $options{'DOWNLOADSTATUS'} = 
                 defined $elem->{DOWNLOADSTATUS} ? $elem->{DOWNLOADSTATUS} : "0";
             $options{'FORCE_INSTALL'} =
                 ($elem->{FORCEINSTALL} && $elem->{FORCEINSTALL} ne 'No');

@@ -26,7 +26,7 @@ sub new {
         $facility = 'user';
     }
 
-
+    
     return Log::Log4perl::Appender->new("Log::Dispatch::Syslog",
         name      => $appender_name,
         facility  => $facility,
@@ -47,7 +47,7 @@ Log::Log4perl::JavaMap::SysLogAppender - wraps Log::Dispatch::Syslog
 
 This maps log4j's SyslogAppender to Log::Dispatch::Syslog
 
-Possible config properties for log4j SyslogAppender are
+Possible config properties for log4j SyslogAppender are 
 
     SyslogHost (Log::Dispatch::Syslog only accepts 'localhost')
     Facility
@@ -58,7 +58,7 @@ Possible config properties for Log::Dispatch::Syslog are
     max_level
     ident    (defaults to $0)
     logopt
-    facility
+    facility 
     socket   (defaults to 'inet')
 
 =head1 SEE ALSO
@@ -69,11 +69,11 @@ Log::Log4perl::Javamap
 
 =head1 LICENSE
 
-Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt>
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
 and Kevin Goess E<lt>cpan@goess.orgE<gt>.
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+it under the same terms as Perl itself. 
 
 =head1 AUTHOR
 
@@ -83,7 +83,7 @@ Please contribute patches to the project on Github:
 
 Send bug reports or requests for enhancements to the authors via our
 
-MAILING LIST (questions, bug reports, suggestions/patches):
+MAILING LIST (questions, bug reports, suggestions/patches): 
 log4perl-devel@lists.sourceforge.net
 
 Authors (please contact them via the list above, not directly):
@@ -94,8 +94,8 @@ Contributors (in alphabetical order):
 Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
 Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
 Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
-Grundman, Paul Harrington, Alexander Hartmaier  David Hull,
-Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter,
-Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope,
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
 Lars Thegler, David Viner, Mac Yang.
 

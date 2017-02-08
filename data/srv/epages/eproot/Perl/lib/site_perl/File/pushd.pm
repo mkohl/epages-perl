@@ -129,21 +129,21 @@ version 1.005
 =head1 SYNOPSIS
 
   use File::pushd;
-
+ 
   chdir $ENV{HOME};
-
+ 
   # change directory again for a limited scope
   {
       my $dir = pushd( '/tmp' );
       # working directory changed to /tmp
   }
   # working directory has reverted to $ENV{HOME}
-
+ 
   # tempd() is equivalent to pushd( File::Temp::tempdir )
   {
       my $dir = tempd();
   }
-
+ 
   # object stringifies naturally as an absolute path
   {
      my $dir = pushd( '/tmp' );

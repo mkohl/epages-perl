@@ -56,7 +56,7 @@ groups of functions thus:
 
     use Devel::CheckOS qw(:booleans); # export the boolean functions
                                       # and 'die_unsupported'
-
+    
     use Devel::CheckOS qw(:fatal);    # export those that die on no match
 
     use Devel::CheckOS qw(:all);      # export everything
@@ -170,7 +170,7 @@ sub list_platforms {
         use File::Find::Rule;
         use File::Spec;
     ";
-
+    
     die($@) if($@);
     if (!$re_Devel) {
         my $case_flag = File::Spec->case_tolerant ? '(?i)' : '';
@@ -231,7 +231,7 @@ sub list_family_members {
     # ... so we can now query it
     my @members = eval qq{
         no strict 'refs';
-        &{"Devel::AssertOS::${family}::matches"}()
+	&{"Devel::AssertOS::${family}::matches"}()
     };
     return wantarray() ? @members : \@members;
 }

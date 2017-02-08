@@ -29,7 +29,7 @@ sub extent {
   # Hit rows
   $self->_adjust_content($self, $maxrow, $self->maxrow)
     if $maxrow != $self->maxrow;
-
+  
   # Hit columns
   my @rows = ();
   foreach ($self->content_list) {
@@ -53,7 +53,7 @@ sub refresh {
   # Reconstruct globs. There are two main globs - the row and column
   # collections - plus the globs representing each row and each column
   # of cells.
-
+  
   # Clear old row and column globs
   grep { $_->glob_delete_content } @{$self->_rows->glob_content}
     unless $self->_rows->glob_is_empty;
@@ -115,7 +115,7 @@ sub _adjust_content {
         $found = $c;
         next;
       }
-      $_->delete if $found;
+      $_->delete if $found;           
     }
     @{$e->content} = @{$e->content}[0..$found];
   }
@@ -470,7 +470,7 @@ sub _initialize_table {
 # Sub packages #
 ################
 
-{
+{ 
 
 package HTML::ElementTable::Element;
 

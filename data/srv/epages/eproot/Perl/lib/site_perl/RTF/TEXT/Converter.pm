@@ -24,29 +24,29 @@ Perl extension for converting RTF into text
 
 =head1 SYNOPSIS
 
-        use strict;
-        use RTF::TEXT::Converter;
+	use strict;
+	use RTF::TEXT::Converter;
+	
+	my $object = RTF::TEXT::Converter->new(
+	
+		output => \*STDOUT
+	
+	);
 
-        my $object = RTF::TEXT::Converter->new(
-
-                output => \*STDOUT
-
-        );
-
-        $object->parse_stream( \*RTF_FILE );
-
+	$object->parse_stream( \*RTF_FILE );
+	
 OR
 
-        use strict;
-        use RTF::TEXT::Converter;
+	use strict;
+	use RTF::TEXT::Converter;
+	
+	my $object = RTF::TEXT::Converter->new(
+	
+		output => \$string
+	
+	);
 
-        my $object = RTF::TEXT::Converter->new(
-
-                output => \$string
-
-        );
-
-        $object->parse_string( $rtf_data );
+	$object->parse_string( $rtf_data );
 
 =head1 METHODS
 
@@ -108,34 +108,34 @@ my $N = "\n"; # Pretty-printing
 
 my %charmap_defaults = map({ sprintf("%02x", $_) => chr($_) } (0..255));
 
-                                # you can split on sentences here if you want!!!
-                                # some output parameters
-%do_on_event =
+				# you can split on sentences here if you want!!!
+				# some output parameters
+%do_on_event = 
   (
-   'document' => sub {          # Special action
+   'document' => sub {		# Special action
    },
-                                # Table processing
-   'table' => sub {             # end of table
+				# Table processing
+   'table' => sub {		# end of table
      if ($event eq 'end') {
      } else {
      }
    },
-   'row' => sub {               # end of row
-     if ($event eq 'end') {
-       output "$text$N";
-     } else {
-                                # not defined
-     }
-   },
-   'cell' => sub {              # end of cell
+   'row' => sub {		# end of row
      if ($event eq 'end') {
        output "$text$N";
      } else {
-                                # not defined
+				# not defined
      }
    },
-   'par' => sub {               # Default rule: if no entry for a paragraph style
-                                # Paragraph styles
+   'cell' => sub {		# end of cell
+     if ($event eq 'end') {
+       output "$text$N";
+     } else {
+				# not defined
+     }
+   },
+   'par' => sub {		# Default rule: if no entry for a paragraph style
+				# Paragraph styles
      #return output($text) unless $text =~ /\S/;
      output "$text$N";
    },
@@ -147,7 +147,7 @@ my %charmap_defaults = map({ sprintf("%02x", $_) => chr($_) } (0..255));
 # and the corresponding glyphe in the HTML document
 # How to give a new definition to a control registered in %do_on_control:
 # - method redefinition (could be the purist's solution)
-# - $Control::do_on_control{control_word} = sub {};
+# - $Control::do_on_control{control_word} = sub {}; 
 # - when %do_on_control is exported write:
 
 
@@ -157,34 +157,34 @@ my %charmap_defaults = map({ sprintf("%02x", $_) => chr($_) } (0..255));
 # appropriate
 
 
-$do_on_control{'ansi'} =        # callcack redefinition
+$do_on_control{'ansi'} =	# callcack redefinition
   sub {
 
     my @charmap_data = $_[SELF]->charmap_reader( $_[CONTROL] );
 
     # Create the charset hash...
-                my %charset = (
+		my %charset = (
 
-                # Defaults...
-                        %charmap_defaults,
+		# Defaults...
+			%charmap_defaults,
+		
+		# Specifics from our charset file...
+			map({ s/^\s+//; split /\s+/ } @charmap_data )
 
-                # Specifics from our charset file...
-                        map({ s/^\s+//; split /\s+/ } @charmap_data )
+		);
 
-                );
-
-        # Over-ride &char to return our character mapping
-                local($^W);
-                *char = sub {
-                        output $charset{$_[1]}
-                }
-
+	# Over-ride &char to return our character mapping
+		local($^W);
+		*char = sub { 
+			output $charset{$_[1]}
+		} 
+ 
  };
 
-                                # symbol processing
-                                # RTF: \~
-                                # named chars
-                                # RTF: \ldblquote, \rdblquote
+				# symbol processing
+				# RTF: \~
+				# named chars
+				# RTF: \ldblquote, \rdblquote
 $symbol{'~'} = ' ';
 $symbol{'tab'} = "\t";
 $symbol{'ldblquote'} = '"';
@@ -196,15 +196,15 @@ $symbol{'_'} = '-';
 # char() to something sensible, so we put a nice definition here...
 sub char {
 
-        output $charmap_defaults{ $_[1] }
+	output $charmap_defaults{ $_[1] }
 
 }
 
-sub symbol {
+sub symbol {			
   if (defined(my $sym = $symbol{$_[1]}))  {
     output $sym;
   } else {
-    output $_[1];               # as it
+    output $_[1];		# as it
   }
 }
 

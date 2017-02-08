@@ -58,7 +58,7 @@ sub reset
     $self->{CompSize}   = 0;
     $self->{UnCompSize} = 0;
     $self->{CRC32}      = Compress::Raw::Zlib::crc32('');
-    $self->{ADLER32}    = Compress::Raw::Zlib::adler32('');
+    $self->{ADLER32}    = Compress::Raw::Zlib::adler32('');      
 
     return STATUS_OK ;
 }

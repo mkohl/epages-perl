@@ -122,7 +122,7 @@ version 0.47
     );
 
     # Create your own driver
-    #
+    # 
     my $cache = CHI->new( driver_class => 'My::Special::Driver', ... );
 
     # Cache operations
@@ -1116,7 +1116,7 @@ from the logs and report a summary. See L<CHI::Stats|CHI::Stats> for details.
 CHI is intended as an evolution of DeWitt Clinton's
 L<Cache::Cache|Cache::Cache> package. It starts with the same basic API (which
 has proven durable over time) but addresses some implementation shortcomings
-that cannot be fixed in Cache::Cache due to backward compatibility concerns.
+that cannot be fixed in Cache::Cache due to backward compatibility concerns. 
 In particular:
 
 =over

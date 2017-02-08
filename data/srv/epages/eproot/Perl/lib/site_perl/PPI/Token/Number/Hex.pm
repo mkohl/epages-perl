@@ -31,8 +31,8 @@ use PPI::Token::Number ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Token::Number';
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Token::Number';
 }
 
 =pod
@@ -54,11 +54,11 @@ Return the numeric value of this token.
 =cut
 
 sub literal {
-        my $self = shift;
-        my $str = $self->_literal;
-        my $neg = $str =~ s/^\-//;
-        my $val = hex $str;
-        return $neg ? -$val : $val;
+	my $self = shift;
+	my $str = $self->_literal;
+	my $neg = $str =~ s/^\-//;
+	my $val = hex $str;
+	return $neg ? -$val : $val;
 }
 
 
@@ -69,20 +69,20 @@ sub literal {
 # Tokenizer Methods
 
 sub __TOKENIZER__on_char {
-        my $class = shift;
-        my $t     = shift;
-        my $char  = substr( $t->{line}, $t->{line_cursor}, 1 );
+	my $class = shift;
+	my $t     = shift;
+	my $char  = substr( $t->{line}, $t->{line_cursor}, 1 );
 
-        # Allow underscores straight through
-        return 1 if $char eq '_';
+	# Allow underscores straight through
+	return 1 if $char eq '_';
 
-        if ( $char =~ /[\da-f]/ ) {
-                return 1;
-        }
+	if ( $char =~ /[\da-f]/ ) {
+		return 1;
+	}
 
-        # Doesn't fit a special case, or is after the end of the token
-        # End of token.
-        $t->_finalize_token->__TOKENIZER__on_char( $t );
+	# Doesn't fit a special case, or is after the end of the token
+	# End of token.
+	$t->_finalize_token->__TOKENIZER__on_char( $t );
 }
 
 1;

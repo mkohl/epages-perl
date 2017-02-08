@@ -14,43 +14,43 @@ In a module that normally delays module loading with require
   # We want to preload in in forking scenarios (like mod_perl), but
   # we want to delay loading in non-forking scenarios (like CGI)
   use prefork 'This::That';
-
+  
   sub do_something {
       my $arg = shift;
-
+  
       # Load the module at run-time as normal
       if ( $special_case ) {
           require This::That;
           This::That::blah(@_);
       }
   }
-
+  
   # Register a module to be loaded before forking directly
   prefork::prefork('Module::Name');
 
 In a script or module that is going to be forking.
 
   package Module::Forker;
-
+  
   # Enable forking mode
   use prefork ':enable';
-
+  
   # Or call it directly
   prefork::enable();
 
 In a third-party run-time loader
 
   package Runtime::Loader;
-
+  
   use prefork ();
   prefork::notify( \&load_everything );
-
+  
   ...
-
+  
   sub load_everything { ... }
-
+  
   1;
-
+  
 =head1 INTRODUCTION
 
 The task of optimizing module loading in Perl tends to move in two different
@@ -182,37 +182,37 @@ use Scalar::Util 0.18 ();
 
 use vars qw{$VERSION $FORKING %MODULES @NOTIFY};
 BEGIN {
-        $VERSION = '1.04';
+	$VERSION = '1.04';
 
-        # The main state variable for this package.
-        # Are we in preforking mode.
-        $FORKING = '';
+	# The main state variable for this package.
+	# Are we in preforking mode.
+	$FORKING = '';
 
-        # The queue of modules to load
-        %MODULES = ();
+	# The queue of modules to load
+	%MODULES = ();
 
-        # The queue of notification callbacks
-        @NOTIFY = (
-                sub {
-                        # Do a hash copy of Config to get everything
-                        # inside of it preloaded.
-                        require Config;
-                        eval {
-                                # Sometimes there is no Config_heavy.pl
-                                require 'Config_heavy.pl';
-                        };
-                        my $copy = { %Config::Config };
-                        return 1;
-                },
-        );
+	# The queue of notification callbacks
+	@NOTIFY = (
+		sub {
+			# Do a hash copy of Config to get everything
+			# inside of it preloaded.
+			require Config;
+			eval {
+				# Sometimes there is no Config_heavy.pl
+				require 'Config_heavy.pl';
+			};
+			my $copy = { %Config::Config };
+			return 1;
+		},
+	);
 
-        # Look for situations that need us to start in forking mode
-        $FORKING = 1 if $ENV{MOD_PERL};
+	# Look for situations that need us to start in forking mode
+	$FORKING = 1 if $ENV{MOD_PERL};
 }
 
 sub import {
-        return 1 unless $_[1];
-        ($_[1] eq ':enable') ? enable() : prefork($_[1]);
+	return 1 unless $_[1];
+	($_[1] eq ':enable') ? enable() : prefork($_[1]);
 }
 
 =pod
@@ -231,22 +231,22 @@ Returns true on success, or dies on error.
 =cut
 
 sub prefork ($) {
-        # Just hand straight to require if enabled
-        my $module = defined $_[0] ? "$_[0]" : ''
-                or Carp::croak('You did not pass a module name to prefork');
-        $module =~ /^[^\W\d]\w*(?:(?:\'|::)[^\W\d]\w*)*$/
-                or Carp::croak("'$module' is not a module name");
-        my $file = join( '/', split /(?:\'|::)/, $module ) . '.pm';
+	# Just hand straight to require if enabled
+	my $module = defined $_[0] ? "$_[0]" : ''
+		or Carp::croak('You did not pass a module name to prefork');
+	$module =~ /^[^\W\d]\w*(?:(?:\'|::)[^\W\d]\w*)*$/
+		or Carp::croak("'$module' is not a module name");
+	my $file = join( '/', split /(?:\'|::)/, $module ) . '.pm';
 
-        # Is it already loaded or queued
-        return 1 if $INC{$file};
-        return 1 if $MODULES{$module};
+	# Is it already loaded or queued
+	return 1 if $INC{$file};
+	return 1 if $MODULES{$module};
 
-        # Load now if enabled, or add to the module list
-        return require $file if $FORKING;
-        $MODULES{$module} = $file;
+	# Load now if enabled, or add to the module list
+	return require $file if $FORKING;
+	$MODULES{$module} = $file;
 
-        1;
+	1;
 }
 
 =pod
@@ -265,32 +265,32 @@ Returns true, dieing as normal is there is a problem loading a module.
 =cut
 
 sub enable () {
-        # Turn on the PREFORK flag, so any additional
-        # 'use prefork ...' calls made during loading
-        # will load immediately.
-        return 1 if $FORKING;
-        $FORKING = 1;
+	# Turn on the PREFORK flag, so any additional
+	# 'use prefork ...' calls made during loading
+	# will load immediately.
+	return 1 if $FORKING;
+	$FORKING = 1;
 
-        # Load all of the modules not yet loaded
-        foreach my $module ( sort keys %MODULES ) {
-                my $file = $MODULES{$module};
+	# Load all of the modules not yet loaded
+	foreach my $module ( sort keys %MODULES ) {
+		my $file = $MODULES{$module};
 
-                # Has it been loaded since we were told about it
-                next if $INC{$file};
+		# Has it been loaded since we were told about it
+		next if $INC{$file};
 
-                # Load the module.
-                require $file;
-        }
+		# Load the module.
+		require $file;
+	}
 
-        # Clear the modules list
-        %MODULES = ();
+	# Clear the modules list
+	%MODULES = ();
 
-        # Execute the third-party callbacks
-        while ( my $callback = shift @NOTIFY ) {
-                $callback->();
-        }
+	# Execute the third-party callbacks
+	while ( my $callback = shift @NOTIFY ) {
+		$callback->();
+	}
 
-        1;
+	1;
 }
 
 =pod
@@ -322,28 +322,28 @@ reference, or the callback is already set in the notify queue.
 =cut
 
 sub notify ($) {
-        # Get the CODE ref callback param
-        my $function = shift;
-        my $reftype  = Scalar::Util::reftype($function);
-        unless ( $reftype and $reftype eq 'CODE' ) {
-                Carp::croak("prefork::notify was not passed a CODE reference");
-        }
+	# Get the CODE ref callback param
+	my $function = shift;
+	my $reftype  = Scalar::Util::reftype($function);
+	unless ( $reftype and $reftype eq 'CODE' ) {
+		Carp::croak("prefork::notify was not passed a CODE reference");
+	}
 
-        # Call it immediately is already in forking mode
-        if ( $FORKING ) {
-                $function->();
-                return 1;
-        }
+	# Call it immediately is already in forking mode
+	if ( $FORKING ) {
+		$function->();
+		return 1;
+	}
 
-        # Is it already defined?
-        if ( List::Util::first { Scalar::Util::refaddr($function) == Scalar::Util::refaddr($_) } @NOTIFY ) {
-                Carp::croak("Callback function already registered");
-        }
+	# Is it already defined?
+	if ( List::Util::first { Scalar::Util::refaddr($function) == Scalar::Util::refaddr($_) } @NOTIFY ) {
+		Carp::croak("Callback function already registered");
+	}
 
-        # Add to the queue
-        push @NOTIFY, $function;
+	# Add to the queue
+	push @NOTIFY, $function;
 
-        1;
+	1;
 }
 
 
@@ -355,7 +355,7 @@ sub notify ($) {
 
 # Compile CGI functions automatically
 prefork::notify( sub {
-        CGI->compile() if $INC{'CGI.pm'};
+	CGI->compile() if $INC{'CGI.pm'};
 } );
 
 1;

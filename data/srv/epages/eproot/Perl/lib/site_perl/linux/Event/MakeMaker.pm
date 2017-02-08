@@ -17,8 +17,8 @@ $extra =~ s,$Config{prefix},$opt{PREFIX}, if
 
 for my $d ($extra, @INC) {
     if (-e "$d/Event/EventAPI.h") {
-        $installsitearch = $d;
-        last
+	$installsitearch = $d;
+	last
     }
 }
 

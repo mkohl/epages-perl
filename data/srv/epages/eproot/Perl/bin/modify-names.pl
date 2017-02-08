@@ -52,7 +52,7 @@ Usage:
 
 Options:
   --verbose, -v         print various details about the modifications made
-
+                                     
 Any sequence of the following commands:
   --print                             print the font's current name strings
   --set [name] [string]               replace the name string's value
@@ -114,7 +114,7 @@ sub print_names {
             push @lines, json_string($name_strings[$nid]).': '.json_string($name);
         }
     }
-
+    
     print "{\n";
     print join ",\n\n", @lines;
     print "\n}\n";

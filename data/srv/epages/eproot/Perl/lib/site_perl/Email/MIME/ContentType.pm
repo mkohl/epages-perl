@@ -13,7 +13,7 @@ $STRICT_PARAMS=1;
 
 my $tspecials = quotemeta '()<>@,;:\\"/[]?=';
 my $ct_default = 'text/plain; charset=us-ascii';
-my $extract_quoted =
+my $extract_quoted = 
     qr/(?:\"(?:[^\\\"]*(?:\\.[^\\\"]*)*)\"|\'(?:[^\\\']*(?:\\.[^\\\']*)*)\')/;
 
 # For documentation, really:
@@ -65,15 +65,15 @@ sub _parse_attributes {
 
 sub _extract_ct_attribute_value { # EXPECTS AND MODIFIES $_
     my $value;
-    while ($_) {
+    while ($_) { 
         s/^([^$tspecials]+)// and $value .= $1;
         s/^($extract_quoted)// and do {
             my $sub = $1; $sub =~ s/^["']//; $sub =~ s/["']$//;
             $value .= $sub;
         };
         /^;/ and last;
-        /^([$tspecials])/ and do {
-            carp "Unquoted $1 not allowed in Content-Type!";
+        /^([$tspecials])/ and do { 
+            carp "Unquoted $1 not allowed in Content-Type!"; 
             return;
         }
     }

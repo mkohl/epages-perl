@@ -131,8 +131,8 @@ lept from the value '0' to the value '1':
   tick 0             |tick 1|             tick 2
                      |      |
                  start $t   |
-                            |
-                        check $t
+		            |
+			check $t
 
 Adding a fudge of '1' in this example means that the timer is guaranteed
 not to expire before tick 2.
@@ -163,25 +163,25 @@ use Symbol;
 use Exporter;
 use vars qw( $VERSION @ISA @EXPORT_OK %EXPORT_TAGS );
 BEGIN {
-        $VERSION   = '0.89';
-        @ISA       = qw( Exporter );
-        @EXPORT_OK = qw(
-                check
-                end_time
-                exception
-                expire
-                interval
-                is_expired
-                is_reset
-                is_running
-                name
-                reset
-                start
-                timeout
-                timer
-        );
+	$VERSION   = '0.89';
+	@ISA       = qw( Exporter );
+	@EXPORT_OK = qw(
+		check
+		end_time
+		exception
+		expire
+		interval
+		is_expired
+		is_reset
+		is_running
+		name
+		reset
+		start
+		timeout
+		timer
+	);
 
-        %EXPORT_TAGS = ( 'all' => \@EXPORT_OK );
+	%EXPORT_TAGS = ( 'all' => \@EXPORT_OK );
 }
 
 require IPC::Run;
@@ -202,9 +202,9 @@ sub _parse_time {
       my ( $s, $m, $h, $d ) = @f;
       return
       ( (
-                 ( $d || 0 )   * 24
-               + ( $h || 0 ) ) * 60
-               + ( $m || 0 ) ) * 60
+	         ( $d || 0 )   * 24
+	       + ( $h || 0 ) ) * 60
+	       + ( $m || 0 ) ) * 60
                + ( $s || 0 );
    }
 }
@@ -233,7 +233,7 @@ A constructor function (not method) of IPC::Run::Timer instances:
 This convenience function is a shortened spelling of
 
    IPC::Run::Timer->new( ... );
-
+   
 .  It returns a timer in the reset state with a given interval.
 
 If an exception is provided, it will be thrown when the timer notices that
@@ -262,10 +262,10 @@ A constructor function (not method) of IPC::Run::Timer instances:
    run ..., $t;
    run ..., $t = timeout( 5 );
 
-A This convenience function is a shortened spelling of
+A This convenience function is a shortened spelling of 
 
    IPC::Run::Timer->new( exception => "IPC::Run: timeout ...", ... );
-
+   
 .  It returns a timer in the reset state that will throw an
 exception when it expires.
 
@@ -365,7 +365,7 @@ sub check {
    $now = time unless defined $now;
 
    _debug(
-      "checking ", $self->name, " (end time ", $self->end_time, ") at ", $now
+      "checking ", $self->name, " (end time ", $self->end_time, ") at ", $now 
    ) if $self->{DEBUG} || _debugging_details;
 
    my $left = $self->end_time - $now;
@@ -404,7 +404,7 @@ called yet.
 
 Note that this end_time is not start_time($t) + interval($t), since some
 small extra amount of time is added to make sure that the timer does not
-expire before interval() elapses.  If this were not so, then
+expire before interval() elapses.  If this were not so, then 
 
 Changing end_time() while a timer is running will set the expiration time.
 Changing it while it is expired has no affect, since reset()ing a timer always
@@ -418,7 +418,7 @@ sub end_time {
    if ( @_ ) {
       $self->{END_TIME} = shift;
       _debug $self->name, ' end_time set to ', $self->{END_TIME}
-         if $self->{DEBUG} > 2 || _debugging_details;
+	 if $self->{DEBUG} > 2 || _debugging_details;
    }
    return $self->{END_TIME};
 }
@@ -431,7 +431,7 @@ sub end_time {
    $t->exception( undef );
 
 Sets/gets the exception to throw, if any.  'undef' means that no
-exception will be thrown.  Exception does not need to be a scalar: you
+exception will be thrown.  Exception does not need to be a scalar: you 
 may ask that references be thrown.
 
 =cut
@@ -442,7 +442,7 @@ sub exception {
    if ( @_ ) {
       $self->{EXCEPTION} = shift;
       _debug $self->name, ' exception set to ', $self->{EXCEPTION}
-         if $self->{DEBUG} || _debugging_details;
+	 if $self->{DEBUG} || _debugging_details;
    }
    return $self->{EXCEPTION};
 }
@@ -464,7 +464,7 @@ sub interval {
    if ( @_ ) {
       $self->{INTERVAL} = _parse_time( shift );
       _debug $self->name, ' interval set to ', $self->{INTERVAL}
-         if $self->{DEBUG} > 2 || _debugging_details;
+	 if $self->{DEBUG} > 2 || _debugging_details;
 
       $self->_calc_end_time if $self->state;
    }
@@ -489,7 +489,7 @@ sub expire {
    my IPC::Run::Timer $self = shift;
    if ( defined $self->state ) {
       _debug $self->name . ' expired'
-         if $self->{DEBUG} || _debugging;
+	 if $self->{DEBUG} || _debugging;
 
       $self->state( undef );
       croak $self->exception if $self->exception;
@@ -512,7 +512,7 @@ sub is_running {
 =item is_reset
 
 =cut
-
+   
 sub is_reset {
    my IPC::Run::Timer $self = shift;
    return defined $self->state && $self->state == 0;
@@ -537,13 +537,13 @@ purposes so you can tell which freakin' timer is doing what.
 
 sub name {
    my IPC::Run::Timer $self = shift;
-
+ 
    $self->{NAME} = shift if @_;
    return defined $self->{NAME}
       ? $self->{NAME}
       : defined $self->{EXCEPTION}
          ? 'timeout'
-         : 'timer';
+	 : 'timer';
 }
 
 
@@ -583,7 +583,7 @@ You may pass an optional interval or current time value.
 
 Not passing a defined interval causes the previous interval setting to be
 re-used unless the timer is reset and an end_time has been set
-(an exception is thrown if no interval has been set).
+(an exception is thrown if no interval has been set).  
 
 Not passing a defined current time value causes the current time to be used.
 
@@ -638,7 +638,7 @@ sub start_time {
    if ( @_ ) {
       $self->{START_TIME} = _parse_time( shift );
       _debug $self->name, ' start_time set to ', $self->{START_TIME}
-         if $self->{DEBUG} > 2 || _debugging;
+	 if $self->{DEBUG} > 2 || _debugging;
    }
 
    return $self->{START_TIME};
@@ -667,7 +667,7 @@ sub state {
    if ( @_ ) {
       $self->{STATE} = shift;
       _debug $self->name, ' state set to ', $self->{STATE}
-         if $self->{DEBUG} > 2 || _debugging;
+	 if $self->{DEBUG} > 2 || _debugging;
    }
    return $self->{STATE};
 }

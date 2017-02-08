@@ -37,13 +37,13 @@ $VERSION = '0.58';
 
 # Definitions of =headN -> latex mapping
 @LatexSections = (qw/
-                  chapter
-                  section
-                  subsection
-                  subsubsection
-                  paragraph
-                  subparagraph
-                  /);
+		  chapter
+		  section
+		  subsection
+		  subsubsection
+		  paragraph
+		  subparagraph
+		  /);
 
 # Standard escape sequences converted to Latex.
 # The Unicode name of each character is given in the comments.
@@ -369,7 +369,7 @@ from C<Pod::Select> are not described in the public interface.
 Initialise the object. This method is subclassed from C<Pod::Parser>.
 The base class method is invoked. This method defines the default
 behaviour of the object unless overridden by supplying arguments to
-the constructor.
+the constructor. 
 
 Internal settings are defaulted as well as the public instance data.
 Internal hash values are accessed directly (rather than through
@@ -403,7 +403,7 @@ sub initialize {
   # Cause the '=head1 NAME' field to be treated specially
   # The contents of the NAME paragraph will be converted
   # to a section title. All subsequent =head1 will be converted
-  # to =head2 and down. Will not affect =head1's prior to NAME
+  # to =head2 and down. Will not affect =head1's prior to NAME 
   # Assumes:  'Module - purpose' format
   # Also creates a purpose field
   # The name is used for Labeling of the subsequent subsections
@@ -425,7 +425,7 @@ sub initialize {
                                          # or supplied
 
   # Control the level of =head1. default is \section
-  #
+  # 
   $self->{Head1Level}     = 1   # Offset in latex sections
     unless exists $self->{Head1Level}; # 0 is chapter, 2 is subsection
 
@@ -754,7 +754,7 @@ sub TableOfContents {
 If true, the translator will attempt to make sure that
 each C<latex> label or index entry will be uniquely identified
 by prefixing the contents of C<Label>. This allows
-multiple documents to be combined without clashing
+multiple documents to be combined without clashing 
 common labels such as C<DESCRIPTION> and C<SYNOPSIS>
 
   $parser->UniqueLabels(1);
@@ -775,9 +775,9 @@ sub UniqueLabels {
 =item B<UserPreamble>
 
 User supplied C<latex> preamble. Added before the pod translation
-data.
+data. 
 
-If set, the contents will be prepended to the output file before the translated
+If set, the contents will be prepended to the output file before the translated 
 data regardless of the value of C<AddPreamble>.
 C<MakeIndex> and C<TableOfContents> will also be ignored.
 
@@ -794,9 +794,9 @@ sub UserPreamble {
 =item B<UserPostamble>
 
 User supplied C<latex> postamble. Added after the pod translation
-data.
+data. 
 
-If set, the contents will be prepended to the output file after the translated
+If set, the contents will be prepended to the output file after the translated 
 data regardless of the value of C<AddPostamble>.
 C<MakeIndex> will also be ignored.
 
@@ -817,7 +817,7 @@ sub UserPostamble {
 Contains details of the currently active lists.
   The array contains C<Pod::List> objects. A new C<Pod::List>
 object is created each time a list is encountered and it is
-pushed onto this stack. When the list context ends, it
+pushed onto this stack. When the list context ends, it 
 is popped from the stack. The array will be empty if no
 lists are active.
 
@@ -900,14 +900,14 @@ __TEX_COMMENT__
       # Code to initialise index making
       # Use an array so that we can prepend comment if required
       my @makeidx = (
-                     '\usepackage{makeidx}',
-                     '\makeindex',
-                    );
+		     '\usepackage{makeidx}',
+		     '\makeindex',
+		    );
 
       unless ($self->MakeIndex) {
-        foreach (@makeidx) {
-          $_ = '%% ' . $_;
-        }
+	foreach (@makeidx) {
+	  $_ = '%% ' . $_;
+	}
       }
       my $makeindex = join("\n",@makeidx) . "\n";
 
@@ -915,7 +915,7 @@ __TEX_COMMENT__
       my $tableofcontents = '\tableofcontents';
 
       $tableofcontents = '%% ' . $tableofcontents
-        unless $self->TableOfContents;
+	unless $self->TableOfContents;
 
       # Roll our own
       $preamble = << "__TEX_HEADER__";
@@ -1003,7 +1003,7 @@ sub command {
   $paragraph = $self->interpolate($paragraph, $line_num);
   $paragraph =~ s/\s+$//;
 
-  # Replace characters that can only be done after
+  # Replace characters that can only be done after 
   # interpolation of interior sequences
   $paragraph = $self->_replace_special_chars_late($paragraph);
 
@@ -1056,7 +1056,7 @@ sub command {
       $self->{_dont_modify_any_para} = 1;
 
     } else {
-      # Suppress all subsequent paragraphs unless
+      # Suppress all subsequent paragraphs unless 
       # it is explcitly intended for latex
       $self->{_suppress_all_para} = 1;
     }
@@ -1127,10 +1127,10 @@ sub verbatim {
     my @l = split("\n",$paragraph);
     foreach (@l) {
       1 while s/(^|\n)([^\t\n]*)(\t+)/
-        $1. $2 . (" " x
-                  (8 * length($3)
-                   - (length($2) % 8)))
-          /sex;
+	$1. $2 . (" " x 
+		  (8 * length($3)
+		   - (length($2) % 8)))
+	  /sex;
     }
     $paragraph = join("\n",@l);
     # End of change.
@@ -1278,7 +1278,7 @@ sub interior_sequence {
     my $page = $link->page;
 
     if ($type eq 'section' && $page eq '') {
-      # Use internal latex reference
+      # Use internal latex reference 
       my $node = $link->node;
 
       # Convert to a label
@@ -1337,7 +1337,7 @@ Methods used to handle lists.
 =item B<begin_list>
 
 Called when a new list is found (via the C<over> directive).
-Creates a new C<Pod::List> object and stores it on the
+Creates a new C<Pod::List> object and stores it on the 
 list stack.
 
   $parser->begin_list($indent, $line_num);
@@ -1351,10 +1351,10 @@ sub begin_list {
 
   # Indicate that a list should be started for the next item
   # need to do this to work out the type of list
-  push ( @{$self->lists}, new Pod::List(-indent => $indent,
-                                        -start => $line_num,
-                                        -file => $self->input_file,
-                                       )
+  push ( @{$self->lists}, new Pod::List(-indent => $indent, 
+					-start => $line_num,
+					-file => $self->input_file,
+				       )	 
        );
 
 }
@@ -1387,7 +1387,7 @@ sub end_list {
   # placed in it (eg because of a =begin/=end combination)
   $self->_output("\\end{$type}\n")
     if (defined $type && length($type) > 0);
-
+  
   # Clear list
   pop(@{ $self->lists});
 
@@ -1395,7 +1395,7 @@ sub end_list {
 
 =item B<add_item>
 
-Add items to the list. The first time an item is encountered
+Add items to the list. The first time an item is encountered 
 (determined from the state of the current C<Pod::List> object)
 the type of list is determined (ordered, unnumbered or description)
 and the relevant latex code issued.
@@ -1472,7 +1472,7 @@ sub add_item {
     $self->_output("\n\\item $extra_info");
   }
 
-  # Store the item name in the object. Required so that
+  # Store the item name in the object. Required so that 
   # we can tell if the list is new or not
   $self->lists->[-1]->item($paragraph);
 
@@ -1504,7 +1504,7 @@ sub head {
 
   # If we are replace 'head1 NAME' with a section
   # we return immediately if we get it
-  return
+  return 
     if ($self->{_CURRENT_HEAD1} =~ /^NAME/i && $self->ReplaceNAMEwithSection());
 
   # Create a label
@@ -1560,7 +1560,7 @@ ignored.
 
 =cut
 
-sub _output {
+sub _output { 
   my $self = shift;
   my $text = shift;
 
@@ -1605,7 +1605,7 @@ sub _replace_special_chars {
 
   # Replace a \ with $\backslash$
   # This is made more complicated because the dollars will be escaped
-  # by the subsequent replacement. Easiest to add \backslash
+  # by the subsequent replacement. Easiest to add \backslash 
   # now and then add the dollars
   $paragraph =~ s/\\/\\backslash/g;
 
@@ -1682,7 +1682,7 @@ sub _create_label {
   $paragraph = $self->_clean_latex_commands($paragraph);
 
   # Remove non alphanumerics from the label and replace with underscores
-  # want to protect '-' though so use negated character classes
+  # want to protect '-' though so use negated character classes 
   $paragraph =~ s/[^-:\w]/_/g;
 
   # Multiple underscores will look unsightly so remove repeats
@@ -1704,12 +1704,12 @@ sub _create_label {
 =item B<_create_index>
 
 Similar to C<_create_label> except an index entry is created.
-If C<UniqueLabels> is true, the index entry is prefixed by
+If C<UniqueLabels> is true, the index entry is prefixed by 
 the current C<Label> and an exclamation mark.
 
   $ind = $parser->_create_index($paragraph);
 
-An exclamation mark is used by C<makeindex> to generate
+An exclamation mark is used by C<makeindex> to generate 
 sub-entries in an index.
 
 =cut
@@ -1755,7 +1755,7 @@ sub _clean_latex_commands {
   #  "\text{a} and \text2{b}"
   # without converting it to
   #  "a} and \text2{b"
-  # This match will still get into trouble if \} is present
+  # This match will still get into trouble if \} is present 
   # This is not vital since the subsequent replacement of non-alphanumeric
   # characters will tidy it up anyway
   $paragraph =~ s/\\\w+{(.*?)}/$1/g;

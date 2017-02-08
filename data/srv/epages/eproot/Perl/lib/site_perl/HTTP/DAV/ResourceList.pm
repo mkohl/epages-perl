@@ -19,7 +19,7 @@ sub _init {
    my ($self,@p) = @_;
 
    ####
-   # This is the order of the arguments unless used as
+   # This is the order of the arguments unless used as 
    # named parameters
    my @arg_names = qw (
       RESOURCE_TYPE
@@ -96,7 +96,7 @@ sub remove_resource {
             last;
          }
       }
-
+   
       if ( $found_index != -1 ) {
          $resource = splice(@{$self->{_resources}},$found_index,1);
          $resource->set_parent_resourcelist();
@@ -110,7 +110,7 @@ sub remove_resource {
 
    #print "Removing $ret\n" if $HTTP::DAV::DEBUG>2;
    return $ret;
-
+   
 }
 
 ###########################################################################
@@ -128,7 +128,7 @@ sub get_locktokens {
    $owned = 0 unless defined $owned;
 
    my %tokens;
-
+  
    my @uris;
    if (ref($uri) =~ /ARRAY/ ) {
       @uris = map { HTTP::DAV::Utils::make_uri($_) } @{$uri};
@@ -144,7 +144,7 @@ sub get_locktokens {
    # If you ask me for /a/b/c/x.txt you'll get 1
    # If you ask me for /a/b/e you'll get nothing
    # So, for each locked resource, if it is a member
-   #    of the uri you specify, I'll tell you what the
+   #    of the uri you specify, I'll tell you what the 
    #    locked resource tokens were
 
    foreach my $resource ( $self->get_resources ) {

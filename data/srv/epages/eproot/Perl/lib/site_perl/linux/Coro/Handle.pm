@@ -87,8 +87,8 @@ until an error condition happens (and return false).
 
 =cut
 
-sub readable    { Coro::Handle::FH::readable (tied *${$_[0]}) }
-sub writable    { Coro::Handle::FH::writable (tied *${$_[0]}) }
+sub readable	{ Coro::Handle::FH::readable (tied *${$_[0]}) }
+sub writable	{ Coro::Handle::FH::writable (tied *${$_[0]}) }
 
 =item $fh->readline ([$terminator])
 
@@ -99,7 +99,7 @@ effect.
 
 =cut
 
-sub readline    { tied(*${+shift})->READLINE (@_) }
+sub readline	{ tied(*${+shift})->READLINE (@_) }
 
 =item $fh->autoflush ([...])
 
@@ -108,7 +108,7 @@ only). Might change in the future.
 
 =cut
 
-sub autoflush   { !0 }
+sub autoflush	{ !0 }
 
 =item $fh->fileno, $fh->close, $fh->read, $fh->sysread, $fh->syswrite, $fh->print, $fh->printf
 
@@ -118,13 +118,13 @@ work but it's not efficient).
 
 =cut
 
-sub read        { Coro::Handle::FH::READ   (tied *${$_[0]}, $_[1], $_[2], $_[3]) }
-sub sysread     { Coro::Handle::FH::READ   (tied *${$_[0]}, $_[1], $_[2], $_[3]) }
-sub syswrite    { Coro::Handle::FH::WRITE  (tied *${$_[0]}, $_[1], $_[2], $_[3]) }
-sub print       { Coro::Handle::FH::WRITE  (tied *${+shift}, join "", @_) }
-sub printf      { Coro::Handle::FH::PRINTF (tied *${+shift}, @_) }
-sub fileno      { Coro::Handle::FH::FILENO (tied *${$_[0]}) }
-sub close       { Coro::Handle::FH::CLOSE  (tied *${$_[0]}) }
+sub read	{ Coro::Handle::FH::READ   (tied *${$_[0]}, $_[1], $_[2], $_[3]) }
+sub sysread	{ Coro::Handle::FH::READ   (tied *${$_[0]}, $_[1], $_[2], $_[3]) }
+sub syswrite	{ Coro::Handle::FH::WRITE  (tied *${$_[0]}, $_[1], $_[2], $_[3]) }
+sub print	{ Coro::Handle::FH::WRITE  (tied *${+shift}, join "", @_) }
+sub printf	{ Coro::Handle::FH::PRINTF (tied *${+shift}, @_) }
+sub fileno	{ Coro::Handle::FH::FILENO (tied *${$_[0]}) }
+sub close	{ Coro::Handle::FH::CLOSE  (tied *${$_[0]}) }
 sub blocking    { !0 } # this handler always blocks the caller
 
 sub partial     {
@@ -143,16 +143,16 @@ true on EINPROGRESS). Remember that these must be method calls.
 
 =cut
 
-sub connect     { connect     tied(*${$_[0]})->[0], $_[1] or $! == EINPROGRESS or $! == EAGAIN or $! == WSAEWOULDBLOCK }
-sub bind        { bind        tied(*${$_[0]})->[0], $_[1] }
-sub listen      { listen      tied(*${$_[0]})->[0], $_[1] }
-sub getsockopt  { getsockopt  tied(*${$_[0]})->[0], $_[1], $_[2] }
-sub setsockopt  { setsockopt  tied(*${$_[0]})->[0], $_[1], $_[2], $_[3] }
-sub send        { send        tied(*${$_[0]})->[0], $_[1], $_[2], @_ > 2 ? $_[3] : () }
-sub recv        { recv        tied(*${$_[0]})->[0], $_[1], $_[2], @_ > 2 ? $_[3] : () }
-sub sockname    { getsockname tied(*${$_[0]})->[0] }
-sub peername    { getpeername tied(*${$_[0]})->[0] }
-sub shutdown    { shutdown    tied(*${$_[0]})->[0], $_[1] }
+sub connect	{ connect     tied(*${$_[0]})->[0], $_[1] or $! == EINPROGRESS or $! == EAGAIN or $! == WSAEWOULDBLOCK }
+sub bind	{ bind        tied(*${$_[0]})->[0], $_[1] }
+sub listen	{ listen      tied(*${$_[0]})->[0], $_[1] }
+sub getsockopt	{ getsockopt  tied(*${$_[0]})->[0], $_[1], $_[2] }
+sub setsockopt	{ setsockopt  tied(*${$_[0]})->[0], $_[1], $_[2], $_[3] }
+sub send	{ send        tied(*${$_[0]})->[0], $_[1], $_[2], @_ > 2 ? $_[3] : () }
+sub recv	{ recv        tied(*${$_[0]})->[0], $_[1], $_[2], @_ > 2 ? $_[3] : () }
+sub sockname	{ getsockname tied(*${$_[0]})->[0] }
+sub peername	{ getpeername tied(*${$_[0]})->[0] }
+sub shutdown	{ shutdown    tied(*${$_[0]})->[0], $_[1] }
 
 =item peeraddr, peerhost, peerport
 
@@ -183,7 +183,7 @@ sub accept {
    my ($peername, $fh);
    while () {
       $peername = accept $fh, tied(*${$_[0]})->[0]
-         and return wantarray
+         and return wantarray 
                     ? ($_[0]->new_from_fh($fh), $peername)
                     :  $_[0]->new_from_fh($fh);
 

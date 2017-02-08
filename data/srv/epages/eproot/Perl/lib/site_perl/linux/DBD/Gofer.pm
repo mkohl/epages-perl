@@ -1159,7 +1159,7 @@ had not been specified.
 
 The default behaviour is to retry requests where $request->is_idempotent is true,
 or the error message matches C</induced by DBI_GOFER_RANDOM/>.
-
+    
 =head3 cache
 
 Specifies that client-side caching should be performed.  The value is the name

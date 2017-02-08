@@ -1,5 +1,5 @@
 #==============================================================================
-#
+# 
 # Template::Plugin::Dumper
 #
 # DESCRIPTION
@@ -52,8 +52,8 @@ sub new {
         }
     }
 
-    bless {
-        _CONTEXT => $context,
+    bless { 
+        _CONTEXT => $context, 
     }, $class;
 }
 
@@ -87,7 +87,7 @@ Template::Plugin::Dumper - Plugin interface to Data::Dumper
 =head1 SYNOPSIS
 
     [% USE Dumper %]
-
+    
     [% Dumper.dump(variable) %]
     [% Dumper.dump_html(variable) %]
 
@@ -128,7 +128,7 @@ Generates a raw text dump of the data structure(s) passed
 
 =head2 dump_html()
 
-Generates a dump of the data structures, as per L<dump()>, but with the
+Generates a dump of the data structures, as per L<dump()>, but with the 
 characters E<lt>, E<gt> and E<amp> converted to their equivalent HTML
 entities and newlines converted to E<lt>brE<gt>.
 

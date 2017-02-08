@@ -1,14 +1,14 @@
 # ===========================================================================
 # Net::LDAP::FilterMatch
-#
+# 
 # LDAP entry matching
-#
+# 
 # Hans Klunder <hans.klunder@bigfoot.com>
 # Peter Marschall <peter@adpm.de>
 #  Copyright (c) 2005-2006.
-#
+# 
 # See below for documentation.
-#
+# 
 
 package Net::LDAP::FilterMatch;
 
@@ -92,13 +92,13 @@ sub match
   return _filterMatch($self, $entry, $schema);
 }
 
-# map Ops to schema matches
+# map Ops to schema matches 
 my %op2schema = qw(
-        equalityMatch   equality
-        greaterOrEqual  equality
-        lessOrEqual     ordering
-        approxMatch     approx
-        substrings      substr
+	equalityMatch	equality
+	greaterOrEqual	equality
+	lessOrEqual	ordering
+	approxMatch	approx
+	substrings	substr
 );
 
 sub _filterMatch($@)
@@ -111,25 +111,25 @@ sub _filterMatch($@)
   my ($op, $args) = each(%{$filter});
 
   # handle combined filters
-  if ($op eq 'and') {   # '(&()...)' => fail on 1st mismatch
+  if ($op eq 'and') {	# '(&()...)' => fail on 1st mismatch
     foreach my $subfilter (@{$args}) {
       return 0  if (!_filterMatch($subfilter, $entry));
-    }
-    return 1;   # all matched or '(&)' => succeed
-  }
-  if ($op eq 'or') {    # '(|()...)' => succeed on 1st match
+    }  
+    return 1;	# all matched or '(&)' => succeed
+  }  
+  if ($op eq 'or') {	# '(|()...)' => succeed on 1st match
     foreach my $subfilter (@{$args}) {
       return 1  if (_filterMatch($subfilter, $entry));
-    }
-    return 0;   # none matched or '(|)' => fail
-  }
+    }  
+    return 0;	# none matched or '(|)' => fail
+  }  
   if ($op eq 'not') {
     return (! _filterMatch($args, $entry));
-  }
+  }  
   if ($op eq 'present') {
-    #return 1  if (lc($args) eq 'objectclass'); # "all match" filter
+    #return 1  if (lc($args) eq 'objectclass');	# "all match" filter
     return ($entry->exists($args));
-  }
+  }  
 
   # handle basic filters
   if ($op =~ /^(equalityMatch|greaterOrEqual|lessOrEqual|approxMatch|substrings)/o) {
@@ -164,8 +164,8 @@ sub _filterMatch($@)
 
     return eval( "$match".'($assertion,$op,@values)' ) ;
   }
-
-  return undef; # all other filters => fail with error
+  
+  return undef;	# all other filters => fail with error
 }
 
 sub _cis_equalityMatch($$@)
@@ -265,12 +265,12 @@ sub _cis_greaterOrEqual($$@)
   my $assertion=shift;
   my $op=shift;
 
-  if (grep(!/^-?\d+$/o, $assertion, @_)) {      # numerical values only => compare numerically
+  if (grep(!/^-?\d+$/o, $assertion, @_)) {	# numerical values only => compare numerically
       return _cis_orderingMatch($assertion,$op,@_);
   }
   else {
       return _numeric_orderingMatch($assertion,$op,@_);
-  }
+  }  
 }
 
 *_cis_lessOrEqual = \&_cis_greaterOrEqual;
@@ -300,8 +300,8 @@ sub _cis_approxMatch($$@)
 }
 
 1;
-
-
+  
+  
 __END__
 
 =head1 NAME
@@ -319,7 +319,7 @@ Net::LDAP::FilterMatch - LDAP entry matching
   $entry->add (
    'cn' => 'dummy entry',
    'street' => [ '1 some road','nowhere' ] );
-
+   
   my @filters = (qw/(cn=dummy*)
                  (ou=*)
                  (&(cn=dummy*)(street=*road))
@@ -346,7 +346,7 @@ It can be used on its own or as part of a Net::LDAP::Server based LDAP server.
 
 =item match ( ENTRY [ ,SCHEMA ] )
 
-Return whether ENTRY matches the filter object. If a schema object is provided,
+Return whether ENTRY matches the filter object. If a schema object is provided, 
 the selection of matching algorithms will be derived from schema.
 
 In case of error undef is returned.
@@ -368,7 +368,7 @@ If you want to specifically use one implementation only, simply do
 
 =head1 SEE ALSO
 
-L<Net::LDAP::Filter>
+L<Net::LDAP::Filter> 
 
 =head1 COPYRIGHT
 

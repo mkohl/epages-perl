@@ -193,7 +193,7 @@ sub XML_element
     my ($ndepth, $d);
 
     return unless defined $dat;
-
+    
     if (!ref($dat))
     {
         $fh->printf("%s<%s>%s</%s>\n", $depth, $k, $dat, $k);
@@ -248,7 +248,7 @@ sub XML_end
     substr($self->{' dat'}, $addr, length($dat)) = $dat;
     return $context;
 }
-
+    
 
 =head2 $t->dirty($val)
 

@@ -144,7 +144,7 @@ the call is the final authentication string.
 
 =head1 SEE ALSO
 
-L<perl>, L<Mail::IMAPClient>, L<LWP::Authen::Ntlm>
+L<perl>, L<Mail::IMAPClient>, L<LWP::Authen::Ntlm> 
 
 =head1 HISTORY
 
@@ -152,8 +152,8 @@ L<perl>, L<Mail::IMAPClient>, L<LWP::Authen::Ntlm>
     1.07 - not publicly released
     1.06 - relicense as GPL+ or Artistic
     1.05 - add OO interface by Dmitry Karasik
-    1.04 - implementation of NTLMv2 by Andrew Hobson/Dmitry Karasik
-    1.03 - fixes long-standing 1 line bug L<http://rt.cpan.org/Public/Bug/Display.html?id=9521> - released by David Bussenschutt 9th Aug 2007
+    1.04 - implementation of NTLMv2 by Andrew Hobson/Dmitry Karasik 
+    1.03 - fixes long-standing 1 line bug L<http://rt.cpan.org/Public/Bug/Display.html?id=9521> - released by David Bussenschutt 9th Aug 2007 
     1.02 - released by Mark Bush 29th Oct 2001
 
 =cut
@@ -286,7 +286,7 @@ sub ntlm
     $c_info = &decode_challenge($challenge);
     $u_user = &unicode($user);
     if (!$ntlm_v2) {
-      $domain = substr($challenge, $c_info->{domain}{offset}, $c_info->{domain}{len});
+      $domain = substr($challenge, $c_info->{domain}{offset}, $c_info->{domain}{len}); 
       $lmResp = &lmEncrypt($c_info->{data});
       $ntResp = &ntEncrypt($c_info->{data});
       $flags = pack($msg3_tl, $c_info->{flags});
@@ -312,7 +312,7 @@ sub ntlm
     $session_hdr = &hdr("", $msg3_hlen, $s_off);
     $response .= $lm_hdr . $nt_hdr . $domain_hdr . $user_hdr .
                  $wks_hdr . $session_hdr . $flags .
-                 $lmResp . $ntResp . $domain . $u_user . $u_host;
+		 $lmResp . $ntResp . $domain . $u_user . $u_host;
   }
   else # first response;
   {

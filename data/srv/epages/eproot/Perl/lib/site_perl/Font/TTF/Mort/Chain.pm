@@ -58,7 +58,7 @@ sub read
     my $subtables = [];
     foreach (1 .. $nSubtables) {
         my $subtableStart = $fh->tell();
-
+        
         $fh->read($dat, 8);
         my ($length, $coverage, $subFeatureFlags) = TTF_Unpack("SSL", $dat);
         my $type = $coverage & 0x0007;
@@ -66,11 +66,11 @@ sub read
         my $subtable = Font::TTF::Mort::Subtable->create($type, $coverage, $subFeatureFlags, $length);
         $subtable->read($fh);
         $subtable->{' PARENT'} = $self;
-
+        
         push @$subtables, $subtable;
         $fh->seek($subtableStart + $length, IO::File::SEEK_SET);
     }
-
+    
     $self->{'defaultFlags'} = $defaultFlags;
     $self->{'featureEntries'} = $featureEntries;
     $self->{'subtables'} = $subtables;
@@ -89,19 +89,19 @@ Writes the table to a file either from memory or by copying
 sub out
 {
     my ($self, $fh) = @_;
-
+    
     my $chainStart = $fh->tell();
     my ($featureEntries, $subtables) = ($_->{'featureEntries'}, $_->{'subtables'});
     $fh->print(TTF_Pack("LLSS", $_->{'defaultFlags'}, 0, scalar @$featureEntries, scalar @$subtables)); # placeholder for length
-
+    
     foreach (@$featureEntries) {
         $fh->print(TTF_Pack("SSLL", $_->{'type'}, $_->{'setting'}, $_->{'enable'}, $_->{'disable'}));
     }
-
+    
     foreach (@$subtables) {
         $_->out($fh);
     }
-
+    
     my $chainLength = $fh->tell() - $chainStart;
     $fh->seek($chainStart + 4, IO::File::SEEK_SET);
     $fh->print(pack("N", $chainLength));
@@ -117,7 +117,7 @@ Prints a human-readable representation of the chain
 sub feat
 {
     my ($self) = @_;
-
+    
     my $feat = $self->{' PARENT'}{' PARENT'}{'feat'};
     if (defined $feat) {
         $feat->read;
@@ -125,19 +125,19 @@ sub feat
     else {
         $feat = {};
     }
-
+    
     return $feat;
 }
 
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     $fh->printf("version %f\n", $self->{'version'});
-
+    
     my $defaultFlags = $self->{'defaultFlags'};
     $fh->printf("chain: defaultFlags = %08x\n", $defaultFlags);
-
+    
     my $feat = $self->feat();
     my $featureEntries = $self->{'featureEntries'};
     foreach (@$featureEntries) {
@@ -145,7 +145,7 @@ sub print
                     $_->{'type'}, $_->{'setting'}, $_->{'enable'}, $_->{'disable'},
                     $feat->settingName($_->{'type'}, $_->{'setting'}));
     }
-
+    
     my $subtables = $self->{'subtables'};
     foreach (@$subtables) {
         my $type = $_->{'type'};
@@ -158,7 +158,7 @@ sub print
                             join(": ", $feat->settingName($_->{'type'}, $_->{'setting'}) )
                         } grep { ($_->{'enable'} & $subFeatureFlags) != 0 } @$featureEntries
                     ) );
-
+        
         $_->print($fh);
     }
 }
@@ -167,7 +167,7 @@ sub subtable_type_
 {
     my ($val) = @_;
     my ($res);
-
+    
     my @types =    (
                     'Rearrangement',
                     'Contextual',
@@ -177,7 +177,7 @@ sub subtable_type_
                     'Insertion',
                 );
     $res = $types[$val] or ('Undefined (' . $val . ')');
-
+    
     $res;
 }
 

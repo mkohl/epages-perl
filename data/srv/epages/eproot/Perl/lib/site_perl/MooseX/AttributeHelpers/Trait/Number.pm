@@ -10,7 +10,7 @@ with 'MooseX::AttributeHelpers::Trait::Base';
 sub helper_type { 'Num' }
 
 # NOTE:
-# we don't use the method provider for this
+# we don't use the method provider for this 
 # module since many of the names of the provied
 # methods would conflict with keywords
 # - SL
@@ -52,7 +52,7 @@ has 'method_constructors' => (
         }
     }
 );
-
+    
 no Moose::Role;
 
 1;
@@ -64,11 +64,11 @@ no Moose::Role;
 MooseX::AttributeHelpers::Number
 
 =head1 SYNOPSIS
-
+  
   package Real;
   use Moose;
   use MooseX::AttributeHelpers;
-
+  
   has 'integer' => (
       metaclass => 'Number',
       is        => 'ro',
@@ -87,8 +87,8 @@ MooseX::AttributeHelpers::Number
 
   my $real = Real->new();
   $real->add(5); # same as $real->integer($real->integer + 5);
-  $real->sub(2); # same as $real->integer($real->integer - 2);
-
+  $real->sub(2); # same as $real->integer($real->integer - 2);  
+  
 =head1 DESCRIPTION
 
 This provides a simple numeric attribute, which supports most of the
@@ -145,7 +145,7 @@ Sets the current value of the attribute to its absolute value.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

@@ -9,7 +9,7 @@ package CGI::Push;
 
 # Copyright 1995-2000, Lincoln D. Stein.  All rights reserved.
 # It may be used and modified freely, but I do request that this copyright
-# notice remain attached to the file.  You may modify this module as you
+# notice remain attached to the file.  You may modify this module as you 
 # wish, but if you redistribute a modified version, please attach a note
 # listing the modifications you have made.
 
@@ -103,7 +103,7 @@ sub do_sleep {
 
 sub push_delay {
     my ($self,$delay) = CGI::self_or_default(@_);
-    return defined($delay) ? $self->{'.delay'} =
+    return defined($delay) ? $self->{'.delay'} = 
         $delay : $self->{'.delay'};
 }
 
@@ -148,7 +148,7 @@ You provide CGI::Push with a pointer to a subroutine that will draw
 one page.  Every time your subroutine is called, it generates a new
 page.  The contents of the page will be transmitted to the browser
 in such a way that it will replace what was there beforehand.  The
-technique will work with HTML pages as well as with graphics files,
+technique will work with HTML pages as well as with graphics files, 
 allowing you to create animated GIFs.
 
 Only Netscape Navigator supports server push.  Internet Explorer
@@ -187,7 +187,7 @@ This required parameter points to a reference to a subroutine responsible for
 drawing each new page.  The subroutine should expect two parameters
 consisting of the CGI object and a counter indicating the number
 of times the subroutine has been called.  It should return the
-contents of the page as an B<array> of one or more items to print.
+contents of the page as an B<array> of one or more items to print.  
 It can return a false value (or an empty array) in order to abort the
 redrawing loop and print out the final page (if any)
 
@@ -217,7 +217,7 @@ defaults to "text/html".  Normally the module assumes that each page
 is of a homogenous MIME type.  However if you provide either of the
 magic values "heterogeneous" or "dynamic" (the latter provided for the
 convenience of those who hate long parameter names), you can specify
-the MIME type -- and other header fields -- on a per-page basis.  See
+the MIME type -- and other header fields -- on a per-page basis.  See 
 "heterogeneous pages" for more details.
 
 =item -delay
@@ -241,7 +241,7 @@ If not specified, -nph will default to 1 (as needed for many servers, see below)
 Ordinarily all pages displayed by CGI::Push share a common MIME type.
 However by providing a value of "heterogeneous" or "dynamic" in the
 do_push() -type parameter, you can specify the MIME type of each page
-on a case-by-case basis.
+on a case-by-case basis.  
 
 If you use this option, you will be responsible for producing the
 HTTP header for each page.  Simply modify your draw routine to
@@ -258,7 +258,7 @@ look like this:
 You can add any header fields that you like, but some (cookies and
 status fields included) may not be interpreted by the browser.  One
 interesting effect is to display a series of pages, then, after the
-last page, to redirect the browser to a new URL.  Because redirect()
+last page, to redirect the browser to a new URL.  Because redirect() 
 does b<not> work, the easiest way is with a -refresh header field,
 as shown below:
 
@@ -278,7 +278,7 @@ as shown below:
                h1('This is the last page'),
                'Goodbye!'
                hr,
-               end_html;
+               end_html; 
     }
 
 =head2 Changing the Page Delay on the Fly
@@ -294,8 +294,8 @@ parameters, push_delay() just returns the current delay.
 
 Server push scripts must be installed as no-parsed-header (NPH)
 scripts in order to work correctly on many servers.  On Unix systems,
-this is most often accomplished by prefixing the script's name with "nph-".
-Recognition of NPH scripts happens automatically with WebSTAR and
+this is most often accomplished by prefixing the script's name with "nph-".  
+Recognition of NPH scripts happens automatically with WebSTAR and 
 Microsoft IIS.  Users of other servers should see their documentation
 for help.
 
@@ -306,7 +306,7 @@ NPH script.
 
 =head1 AUTHOR INFORMATION
 
-Copyright 1995-1998, Lincoln D. Stein.  All rights reserved.
+Copyright 1995-1998, Lincoln D. Stein.  All rights reserved.  
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

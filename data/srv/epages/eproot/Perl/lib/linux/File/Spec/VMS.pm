@@ -26,7 +26,7 @@ See File::Spec::Unix for a documentation of the methods provided
 there. This package overrides the implementation of these methods, not
 the semantics.
 
-The default behavior is to allow either VMS or Unix syntax on input and to
+The default behavior is to allow either VMS or Unix syntax on input and to 
 return VMS syntax on output unless Unix syntax has been explicity requested
 via the C<DECC$FILENAME_UNIX_REPORT> CRTL feature.
 
@@ -52,7 +52,7 @@ sub _unix_rpt {
         $unix_rpt = VMS::Feature::current("filename_unix_report");
     } else {
         my $env_unix_rpt = $ENV{'DECC$FILENAME_UNIX_REPORT'} || '';
-        $unix_rpt = $env_unix_rpt =~ /^[ET1]/i;
+        $unix_rpt = $env_unix_rpt =~ /^[ET1]/i; 
     }
     return $unix_rpt;
 }
@@ -80,37 +80,37 @@ sub canonpath {
       $path = $pathify ? vmspath($path) : vmsify($path);
     }
 
-    $path =~ s/(?<!\^)</[/;                     # < and >       ==> [ and ]
+    $path =~ s/(?<!\^)</[/;			# < and >       ==> [ and ]
     $path =~ s/(?<!\^)>/]/;
-    $path =~ s/(?<!\^)\]\[\./\.\]\[/g;          # ][.           ==> .][
-    $path =~ s/(?<!\^)\[000000\.\]\[/\[/g;      # [000000.][    ==> [
-    $path =~ s/(?<!\^)\[000000\./\[/g;          # [000000.      ==> [
-    $path =~ s/(?<!\^)\.\]\[000000\]/\]/g;      # .][000000]    ==> ]
-    $path =~ s/(?<!\^)\.\]\[/\./g;              # foo.][bar     ==> foo.bar
+    $path =~ s/(?<!\^)\]\[\./\.\]\[/g;		# ][.		==> .][
+    $path =~ s/(?<!\^)\[000000\.\]\[/\[/g;	# [000000.][	==> [
+    $path =~ s/(?<!\^)\[000000\./\[/g;		# [000000.	==> [
+    $path =~ s/(?<!\^)\.\]\[000000\]/\]/g;	# .][000000]	==> ]
+    $path =~ s/(?<!\^)\.\]\[/\./g;		# foo.][bar     ==> foo.bar
     1 while ($path =~ s/(?<!\^)([\[\.])(-+)\.(-+)([\.\]])/$1$2$3$4/);
-                                                # That loop does the following
-                                                # with any amount of dashes:
-                                                # .-.-.         ==> .--.
-                                                # [-.-.         ==> [--.
-                                                # .-.-]         ==> .--]
-                                                # [-.-]         ==> [--]
+						# That loop does the following
+						# with any amount of dashes:
+						# .-.-.		==> .--.
+						# [-.-.		==> [--.
+						# .-.-]		==> .--]
+						# [-.-]		==> [--]
     1 while ($path =~ s/(?<!\^)([\[\.])[^\]\.]+\.-(-+)([\]\.])/$1$2$3/);
-                                                # That loop does the following
-                                                # with any amount (minimum 2)
-                                                # of dashes:
-                                                # .foo.--.      ==> .-.
-                                                # .foo.--]      ==> .-]
-                                                # [foo.--.      ==> [-.
-                                                # [foo.--]      ==> [-]
-                                                #
-                                                # And then, the remaining cases
-    $path =~ s/(?<!\^)\[\.-/[-/;                # [.-           ==> [-
-    $path =~ s/(?<!\^)\.[^\]\.]+\.-\./\./g;     # .foo.-.       ==> .
-    $path =~ s/(?<!\^)\[[^\]\.]+\.-\./\[/g;     # [foo.-.       ==> [
-    $path =~ s/(?<!\^)\.[^\]\.]+\.-\]/\]/g;     # .foo.-]       ==> ]
-                                                # [foo.-]       ==> [000000]
+						# That loop does the following
+						# with any amount (minimum 2)
+						# of dashes:
+						# .foo.--.	==> .-.
+						# .foo.--]	==> .-]
+						# [foo.--.	==> [-.
+						# [foo.--]	==> [-]
+						#
+						# And then, the remaining cases
+    $path =~ s/(?<!\^)\[\.-/[-/;		# [.-		==> [-
+    $path =~ s/(?<!\^)\.[^\]\.]+\.-\./\./g;	# .foo.-.	==> .
+    $path =~ s/(?<!\^)\[[^\]\.]+\.-\./\[/g;	# [foo.-.	==> [
+    $path =~ s/(?<!\^)\.[^\]\.]+\.-\]/\]/g;	# .foo.-]	==> ]
+						# [foo.-]       ==> [000000]
     $path =~ s/(?<!\^)\[[^\]\.]+\.-\]/\[000000\]/g;
-                                                # []            ==>
+						# []		==>
     $path =~ s/(?<!\^)\[\]// unless $path eq '[]';
     return $unix_rpt ? unixify($path) : $path;
 }
@@ -134,34 +134,34 @@ sub catdir {
 
     my $rslt;
     if (@dirs) {
-        my $path = (@dirs == 1 ? $dirs[0] : $self->catdir(@dirs));
-        my ($spath,$sdir) = ($path,$dir);
-        $spath =~ s/\.dir\Z(?!\n)//i; $sdir =~ s/\.dir\Z(?!\n)//i;
+	my $path = (@dirs == 1 ? $dirs[0] : $self->catdir(@dirs));
+	my ($spath,$sdir) = ($path,$dir);
+	$spath =~ s/\.dir\Z(?!\n)//i; $sdir =~ s/\.dir\Z(?!\n)//i; 
 
-        if ($unix_rpt) {
-            $spath = unixify($spath) unless $spath =~ m#/#;
-            $sdir= unixify($sdir) unless $sdir =~ m#/#;
+	if ($unix_rpt) {
+	    $spath = unixify($spath) unless $spath =~ m#/#;
+	    $sdir= unixify($sdir) unless $sdir =~ m#/#;
             return $self->SUPER::catdir($spath, $sdir)
             }
 
-        $sdir = $self->eliminate_macros($sdir) unless $sdir =~ /^[\w\-]+\Z(?!\n)/s;
-            $rslt = $self->fixpath($self->eliminate_macros($spath)."/$sdir",1);
+	$sdir = $self->eliminate_macros($sdir) unless $sdir =~ /^[\w\-]+\Z(?!\n)/s;
+	    $rslt = $self->fixpath($self->eliminate_macros($spath)."/$sdir",1);
 
-            # Special case for VMS absolute directory specs: these will have
-            # had device prepended during trip through Unix syntax in
-            # eliminate_macros(), since Unix syntax has no way to express
-            # "absolute from the top of this device's directory tree".
-            if ($spath =~ /^[\[<][^.\-]/s) { $rslt =~ s/^[^\[<]+//s; }
+	    # Special case for VMS absolute directory specs: these will have
+	    # had device prepended during trip through Unix syntax in
+	    # eliminate_macros(), since Unix syntax has no way to express
+	    # "absolute from the top of this device's directory tree".
+	    if ($spath =~ /^[\[<][^.\-]/s) { $rslt =~ s/^[^\[<]+//s; }
 
                 } else {
-        # Single directory. Return an empty string on null input; otherwise
-        # just return a canonical path.
+	# Single directory. Return an empty string on null input; otherwise
+	# just return a canonical path.
 
-        if    (not defined $dir or not length $dir) {
-            $rslt = '';
+	if    (not defined $dir or not length $dir) {
+	    $rslt = '';
             } else {
-            $rslt = $unix_rpt ? $dir : vmspath($dir);
-        }
+	    $rslt = $unix_rpt ? $dir : vmspath($dir);
+	}
     }
     return $self->canonpath($rslt);
 }
@@ -183,22 +183,22 @@ sub catfile {
 
     my $rslt;
     if (@files) {
-        my $path = (@files == 1 ? $files[0] : $self->catdir(@files));
-        my $spath = $path;
+	my $path = (@files == 1 ? $files[0] : $self->catdir(@files));
+	my $spath = $path;
 
         # Something building a VMS path in pieces may try to pass a
         # directory name in filename format, so normalize it.
-        $spath =~ s/\.dir\Z(?!\n)//i;
+	$spath =~ s/\.dir\Z(?!\n)//i;
 
         # If the spath ends with a directory delimiter and the file is bare,
         # then just concatenate them.
-        if ($spath =~ /^(?<!\^)[^\)\]\/:>]+\)\Z(?!\n)/s && basename($file) eq $file) {
-            $rslt = "$spath$file";
-        } else {
-                $rslt = $self->eliminate_macros($spath);
+	if ($spath =~ /^(?<!\^)[^\)\]\/:>]+\)\Z(?!\n)/s && basename($file) eq $file) {
+	    $rslt = "$spath$file";
+	} else {
+		$rslt = $self->eliminate_macros($spath);
            $rslt .= (defined($rslt) && length($rslt) ? '/' : '') . unixify($file);
            $rslt = vmsify($rslt) unless $unix_rpt;
-        }
+	}
     }
     else {
         # Only passed a single file?
@@ -334,8 +334,8 @@ sub file_name_is_absolute {
     # If it's a logical name, expand it.
     $file = $ENV{$file} while $file =~ /^[\w\$\-]+\Z(?!\n)/s && $ENV{$file};
     return scalar($file =~ m!^/!s             ||
-                  $file =~ m![<\[][^.\-\]>]!  ||
-                  $file =~ /:[^<\[]/);
+		  $file =~ m![<\[][^.\-\]>]!  ||
+		  $file =~ /:[^<\[]/);
 }
 
 =item splitpath (override)
@@ -383,20 +383,20 @@ sub splitdir {
     my @dirs = ();
     return @dirs if ( (!defined $dirspec) || ('' eq $dirspec) );
 
-    $dirspec =~ s/(?<!\^)</[/;                  # < and >       ==> [ and ]
+    $dirspec =~ s/(?<!\^)</[/;                  # < and >	==> [ and ]
     $dirspec =~ s/(?<!\^)>/]/;
-    $dirspec =~ s/(?<!\^)\]\[\./\.\]\[/g;       # ][.           ==> .][
-    $dirspec =~ s/(?<!\^)\[000000\.\]\[/\[/g;   # [000000.][    ==> [
-    $dirspec =~ s/(?<!\^)\[000000\./\[/g;       # [000000.      ==> [
-    $dirspec =~ s/(?<!\^)\.\]\[000000\]/\]/g;   # .][000000]    ==> ]
-    $dirspec =~ s/(?<!\^)\.\]\[/\./g;           # foo.][bar     ==> foo.bar
+    $dirspec =~ s/(?<!\^)\]\[\./\.\]\[/g;	# ][.		==> .][
+    $dirspec =~ s/(?<!\^)\[000000\.\]\[/\[/g;	# [000000.][	==> [
+    $dirspec =~ s/(?<!\^)\[000000\./\[/g;	# [000000.	==> [
+    $dirspec =~ s/(?<!\^)\.\]\[000000\]/\]/g;	# .][000000]	==> ]
+    $dirspec =~ s/(?<!\^)\.\]\[/\./g;		# foo.][bar	==> foo.bar
     while ($dirspec =~ s/(^|[\[\<\.])\-(\-+)($|[\]\>\.])/$1-.$2$3/g) {}
-                                                # That loop does the following
-                                                # with any amount of dashes:
-                                                # .--.          ==> .-.-.
-                                                # [--.          ==> [-.-.
-                                                # .--]          ==> .-.-]
-                                                # [--]          ==> [-.-]
+						# That loop does the following
+						# with any amount of dashes:
+						# .--.		==> .-.-.
+						# [--.		==> [-.-.
+						# .--]		==> .-.-]
+						# [--]		==> [-.-]
     $dirspec = "[$dirspec]" unless $dirspec =~ /(?<!\^)[\[<]/; # make legal
     $dirspec =~ s/^(\[|<)\./$1/;
     @dirs = split /(?<!\^)\./, vmspath($dirspec);
@@ -413,12 +413,12 @@ Construct a complete filespec.
 
 sub catpath {
     my($self,$dev,$dir,$file) = @_;
-
+    
     # We look for a volume in $dev, then in $dir, but not both
         my ($dir_volume, $dir_dir, $dir_file) = $self->splitpath($dir);
         $dev = $dir_volume unless length $dev;
     $dir = length $dir_file ? $self->catfile($dir_dir, $dir_file) : $dir_dir;
-
+    
     if ($dev =~ m|^(?<!\^)/+([^/]+)|) { $dev = "$1:"; }
     else { $dev .= ':' unless $dev eq '' or $dev =~ /:\Z(?!\n)/; }
     if (length($dev) or length($dir)) {
@@ -446,15 +446,15 @@ sub abs2rel {
     for ($path, $base) { $_ = $self->canonpath($_) }
 
     # Are we even starting $path on the same (node::)device as $base?  Note that
-    # logical paths or nodename differences may be on the "same device"
-    # but the comparison that ignores device differences so as to concatenate
-    # [---] up directory specs is not even a good idea in cases where there is
+    # logical paths or nodename differences may be on the "same device" 
+    # but the comparison that ignores device differences so as to concatenate 
+    # [---] up directory specs is not even a good idea in cases where there is 
     # a logical path difference between $path and $base nodename and/or device.
     # Hence we fall back to returning the absolute $path spec
     # if there is a case blind device (or node) difference of any sort
     # and we do not even try to call $parse() or consult %ENV for $trnlnm()
     # (this module needs to run on non VMS platforms after all).
-
+    
     my ($path_volume, $path_directories, $path_file) = $self->splitpath($path);
     my ($base_volume, $base_directories, $base_file) = $self->splitpath($base);
     return $path unless lc($path_volume) eq lc($base_volume);
@@ -469,9 +469,9 @@ sub abs2rel {
     my $basechunks = @basechunks;
     unshift(@basechunks,'000000') unless $basechunks[0] eq '000000';
 
-    while ( @pathchunks &&
-            @basechunks &&
-            lc( $pathchunks[0] ) eq lc( $basechunks[0] )
+    while ( @pathchunks && 
+            @basechunks && 
+            lc( $pathchunks[0] ) eq lc( $basechunks[0] ) 
           ) {
         shift @pathchunks ;
         shift @basechunks ;
@@ -501,9 +501,9 @@ sub rel2abs {
     my ($path,$base ) = @_;
     return undef unless defined $path;
         if ($path =~ m/\//) {
-            $path = ( -d $path || $path =~ m/\/\z/  # educated guessing about
-                       ? vmspath($path)             # whether it's a directory
-                       : vmsify($path) );
+	    $path = ( -d $path || $path =~ m/\/\z/  # educated guessing about
+		       ? vmspath($path)             # whether it's a directory
+		       : vmsify($path) );
         }
     $base = vmspath($base) if defined $base && $base =~ m/\//;
 
@@ -549,7 +549,7 @@ sub rel2abs {
 # copies as of 6.06_03 which are the canonical ones.  We leave these
 # here, in peace, so that File::Spec continues to work with MakeMakers
 # prior to 6.06_03.
-#
+# 
 # Please consider these two methods deprecated.  Do not patch them,
 # patch the ones in ExtUtils::MM_VMS instead.
 #
@@ -573,7 +573,7 @@ sub eliminate_macros {
     my($head,$macro,$tail);
 
     # perform m##g in scalar context so it acts as an iterator
-    while ($npath =~ m#(.*?)\$\((\S+?)\)(.*)#gs) {
+    while ($npath =~ m#(.*?)\$\((\S+?)\)(.*)#gs) { 
         if (defined $self->{$2}) {
             ($head,$macro,$tail) = ($1,$2,$3);
             if (ref $self->{$macro}) {
@@ -618,10 +618,10 @@ sub fixpath {
     if ($path =~ /\s/) {
       return join ' ',
              map { $self->fixpath($_,$force_path) }
-             split /\s+/, $path;
+	     split /\s+/, $path;
     }
 
-    if ($path =~ m#^\$\([^\)]+\)\Z(?!\n)#s || $path =~ m#[/:>\]]#) {
+    if ($path =~ m#^\$\([^\)]+\)\Z(?!\n)#s || $path =~ m#[/:>\]]#) { 
         if ($force_path or $path =~ /(?:DIR\)|\])\Z(?!\n)/) {
             $fixedpath = vmspath($self->eliminate_macros($path));
         }

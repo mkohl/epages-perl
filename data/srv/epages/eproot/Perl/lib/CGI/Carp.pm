@@ -10,7 +10,7 @@ B<CGI::Carp> - CGI routines for writing to the HTTPD (or other) error log
 
     croak "We're outta here!";
     confess "It was my fault: $!";
-    carp "It was your fault!";
+    carp "It was your fault!";   
     warn "I'm confused";
     die  "I'm dying.\n";
 
@@ -149,11 +149,11 @@ set_message() from within a BEGIN{} block.
 
 =head1 DOING MORE THAN PRINTING A MESSAGE IN THE EVENT OF PERL ERRORS
 
-If fatalsToBrowser in conjunction with set_message does not provide
-you with all of the functionality you need, you can go one step
+If fatalsToBrowser in conjunction with set_message does not provide 
+you with all of the functionality you need, you can go one step 
 further by specifying a function to be executed any time a script
 calls "die", has a syntax error, or dies unexpectedly at runtime
-with a line like "undef->explode();".
+with a line like "undef->explode();". 
 
     use CGI::Carp qw(set_die_handler);
     BEGIN {
@@ -173,14 +173,14 @@ with a line like "undef->explode();".
 Notice that if you use set_die_handler(), you must handle sending
 HTML headers to the browser yourself if you are printing a message.
 
-If you use set_die_handler(), you will most likely interfere with
-the behavior of fatalsToBrowser, so you must use this or that, not
-both.
+If you use set_die_handler(), you will most likely interfere with 
+the behavior of fatalsToBrowser, so you must use this or that, not 
+both. 
 
 Using set_die_handler() sets SIG{__DIE__} (as does fatalsToBrowser),
-and there is only one SIG{__DIE__}. This means that if you are
-attempting to set SIG{__DIE__} yourself, you may interfere with
-this module's functionality, or this module may interfere with
+and there is only one SIG{__DIE__}. This means that if you are 
+attempting to set SIG{__DIE__} yourself, you may interfere with 
+this module's functionality, or this module may interfere with 
 your module's functionality.
 
 =head1 MAKING WARNINGS APPEAR AS HTML COMMENTS
@@ -242,7 +242,7 @@ You can set the program back to the default by calling
 Note that this override doesn't happen until after the program has
 compiled, so any compile-time errors will still show up with the
 non-overridden program name
-
+  
 =head1 CHANGE LOG
 
 1.29 Patch from Peter Whaite to fix the unfixable problem of CGI::Carp
@@ -257,12 +257,12 @@ non-overridden program name
 1.08 set_message() added and carpout() expanded to allow for FileHandle
      objects.
 
-1.09 set_message() now allows users to pass a code REFERENCE for
+1.09 set_message() now allows users to pass a code REFERENCE for 
      really custom error messages.  croak and carp are now
      exported by default.  Thanks to Gunther Birznieks for the
      patches.
 
-1.10 Patch from Chris Dean (ctdean@cogit.com) to allow
+1.10 Patch from Chris Dean (ctdean@cogit.com) to allow 
      module to run correctly under mod_perl.
 
 1.11 Changed order of &gt; and &lt; escapes.
@@ -291,7 +291,7 @@ non-overridden program name
 
 =head1 AUTHORS
 
-Copyright 1995-2002, Lincoln D. Stein.  All rights reserved.
+Copyright 1995-2002, Lincoln D. Stein.  All rights reserved.  
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
@@ -308,8 +308,8 @@ CGI::Response
 require 5.000;
 use Exporter;
 #use Carp;
-BEGIN {
-  require Carp;
+BEGIN { 
+  require Carp; 
   *CORE::GLOBAL::die = \&CGI::Carp::die;
 }
 
@@ -368,8 +368,8 @@ sub stamp {
         $id = $CGI::Carp::PROGNAME;
     } else {
         do {
-          $id = $file;
-          ($pack,$file) = caller($frame++);
+  	  $id = $file;
+	  ($pack,$file) = caller($frame++);
         } until !$file;
     }
     ($dev,$dirs,$id) = File::Spec->splitpath($id);
@@ -395,14 +395,14 @@ sub warn {
 sub _warn {
     my $msg = shift;
     if ($EMIT_WARNINGS) {
-        # We need to mangle the message a bit to make it a valid HTML
-        # comment.  This is done by substituting similar-looking ISO
-        # 8859-1 characters for <, > and -.  This is a hack.
-        $msg =~ tr/<>-/\253\273\255/;
-        chomp $msg;
-        print STDOUT "<!-- warning: $msg -->\n";
+	# We need to mangle the message a bit to make it a valid HTML
+	# comment.  This is done by substituting similar-looking ISO
+	# 8859-1 characters for <, > and -.  This is a hack.
+	$msg =~ tr/<>-/\253\273\255/;
+	chomp $msg;
+	print STDOUT "<!-- warning: $msg -->\n";
     } else {
-        push @WARNINGS, $msg;
+	push @WARNINGS, $msg;
     }
 }
 
@@ -454,19 +454,19 @@ sub set_message {
 sub set_die_handler {
 
     my ($handler) = shift;
-
+    
     #setting SIG{__DIE__} here is necessary to catch runtime
     #errors which are not called by literally saying "die",
     #such as the line "undef->explode();". however, doing this
-    #will interfere with fatalsToBrowser, which also sets
-    #SIG{__DIE__} in the import() function above (or the
+    #will interfere with fatalsToBrowser, which also sets 
+    #SIG{__DIE__} in the import() function above (or the 
     #import() function above may interfere with this). for
     #this reason, you should choose to either set the die
-    #handler here, or use fatalsToBrowser, not both.
+    #handler here, or use fatalsToBrowser, not both. 
     $main::SIG{__DIE__} = $handler;
-
-    $CGI::Carp::DIE_HANDLER = $handler;
-
+    
+    $CGI::Carp::DIE_HANDLER = $handler; 
+    
     return $CGI::Carp::DIE_HANDLER;
 }
 
@@ -481,10 +481,10 @@ sub carpout {
     my($in) = @_;
     my($no) = fileno(to_filehandle($in));
     realdie("Invalid filehandle $in\n") unless defined $no;
-
+    
     open(SAVEERR, ">&STDERR");
-    open(STDERR, ">&$no") or
-        ( print SAVEERR "Unable to redirect STDERR: $!\n" and exit(1) );
+    open(STDERR, ">&$no") or 
+	( print SAVEERR "Unable to redirect STDERR: $!\n" and exit(1) );
 }
 
 sub warningsToBrowser {
@@ -503,11 +503,11 @@ sub fatalsToBrowser {
   $msg=~s/</&lt;/g;
   $msg=~s/"/&quot;/g;
 
-  my($wm) = $ENV{SERVER_ADMIN} ?
+  my($wm) = $ENV{SERVER_ADMIN} ? 
     qq[the webmaster (<a href="mailto:$ENV{SERVER_ADMIN}">$ENV{SERVER_ADMIN}</a>)] :
       "this site's webmaster";
   my ($outer_message) = <<END;
-For help, please send mail to $wm, giving this error message
+For help, please send mail to $wm, giving this error message 
 and the time and date of the error.
 END
   ;
@@ -515,9 +515,9 @@ END
 
   if ($CUSTOM_MSG) {
     if (ref($CUSTOM_MSG) eq 'CODE') {
-      print STDOUT "Content-type: text/html\n\n"
+      print STDOUT "Content-type: text/html\n\n" 
         unless $mod_perl;
-        eval {
+        eval { 
             &$CUSTOM_MSG($msg); # nicer to perl 5.003 users
         };
         if ($@) { print STDERR q(error while executing the error handler: $@); }
@@ -589,11 +589,11 @@ sub to_filehandle {
     return $thingy if UNIVERSAL::isa($thingy,'GLOB');
     return $thingy if UNIVERSAL::isa($thingy,'FileHandle');
     if (!ref($thingy)) {
-        my $caller = 1;
-        while (my $package = caller($caller++)) {
-            my($tmp) = $thingy=~/[\':]/ ? $thingy : "$package\:\:$thingy";
-            return $tmp if defined(fileno($tmp));
-        }
+	my $caller = 1;
+	while (my $package = caller($caller++)) {
+	    my($tmp) = $thingy=~/[\':]/ ? $thingy : "$package\:\:$thingy"; 
+	    return $tmp if defined(fileno($tmp));
+	}
     }
     return undef;
 }

@@ -10,63 +10,63 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 my @keytable = (
-        'W', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
-        'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-        'P', 'Q', 'R', 'S', 'T', 'U', 'V',
+	'W', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+	'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+	'P', 'Q', 'R', 'S', 'T', 'U', 'V', 
 );
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{7})([A-W])$/i) {
-                return $2 eq $self->_compute_checkdigit($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{7})([A-W])$/i) {
+		return $2 eq $self->_compute_checkdigit($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{7})$/i) {
-                return $number . $self->_compute_checkdigit($1);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{7})$/i) {
+		return $number . $self->_compute_checkdigit($1);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{7})([A-W])$/i) {
-                return $1 if (uc($2) eq $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{7})([A-W])$/i) {
+		return $1 if (uc($2) eq $self->_compute_checkdigit($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{7})([A-W])$/i) {
-                return $2 if (uc($2) eq $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{7})([A-W])$/i) {
+		return $2 if (uc($2) eq $self->_compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
-        my $sum    = 0;
+	my $self   = shift;
+	my $number = shift;
+	my $sum    = 0;
 
-        my @digits = split(//,$number);
+	my @digits = split(//,$number);
 
-        for (my $i = 0; $i < 7; $i++) {
-                $sum += $digits[$i] * (8-$i);
-        }
-        return $keytable[$sum % 23];
+	for (my $i = 0; $i < 7; $i++) {
+		$sum += $digits[$i] * (8-$i);
+	}
+	return $keytable[$sum % 23];
 
 } # _compute_checkdigit()
 
@@ -86,7 +86,7 @@ CheckDigits::M23_002 - compute check digits for VAT Registration Number (IE)
   $dni = CheckDigits('ustid_ie');
 
   if ($dni->is_valid('8473625E')) {
-        # do something
+	# do something
   }
 
   $cn = $dni->complete('8473625');
@@ -97,7 +97,7 @@ CheckDigits::M23_002 - compute check digits for VAT Registration Number (IE)
 
   $bn = $dni->basenumber('8473625E');
   # $bn = '8473625'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

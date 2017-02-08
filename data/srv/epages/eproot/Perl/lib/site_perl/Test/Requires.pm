@@ -89,7 +89,7 @@ Test::Requires - Checks to see if the module can be loaded
 
     # or
     use Test::More tests => 10;
-    use Test::Requires qw(
+    use Test::Requires qw( 
         HTTP::MobileAttribute
     );
     isa_ok HTTP::MobileAttribute->new, 'HTTP::MobileAttribute::NonMobile';

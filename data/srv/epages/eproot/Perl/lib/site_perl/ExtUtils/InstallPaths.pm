@@ -15,176 +15,176 @@ my %complex_accessors = map { $_ => 1 } qw/prefix_relpaths install_sets/;
 my %hash_accessors = map { $_ => 1 } qw/install_path install_base_relpaths original_prefix /;
 
 my %defaults = (
-        installdirs     => 'site',
-        install_base    => undef,
-        prefix          => undef,
-        verbose         => 0,
-        blib            => 'blib',
-        create_packlist => 1,
-        dist_name       => undef,
-        module_name     => undef,
-        destdir         => undef,
-        install_path    => sub { {} },
-        install_sets    => \&_default_install_sets,
-        original_prefix => \&_default_original_prefix,
-        install_base_relpaths => \&_default_base_relpaths,
-        prefix_relpaths => \&_default_prefix_relpaths,
+	installdirs     => 'site',
+	install_base    => undef,
+	prefix          => undef,
+	verbose         => 0,
+	blib            => 'blib',
+	create_packlist => 1,
+	dist_name       => undef,
+	module_name     => undef,
+	destdir         => undef,
+	install_path    => sub { {} },
+	install_sets    => \&_default_install_sets,
+	original_prefix => \&_default_original_prefix,
+	install_base_relpaths => \&_default_base_relpaths,
+	prefix_relpaths => \&_default_prefix_relpaths,
 );
 
 sub _merge_shallow {
-        my ($name, $filter) = @_;
-        return sub {
-                my ($override, $config) = @_;
-                my $defaults = $defaults{$name}->($config);
-                $filter->($_) for grep $filter, values %$override;
-                return { %$defaults, %$override };
-        }
+	my ($name, $filter) = @_;
+	return sub {
+		my ($override, $config) = @_;
+		my $defaults = $defaults{$name}->($config);
+		$filter->($_) for grep $filter, values %$override;
+		return { %$defaults, %$override };
+	}
 }
 
 sub _merge_deep {
-        my ($name, $filter) = @_;
-        return sub {
-                my ($override, $config) = @_;
-                my $defaults = $defaults{$name}->($config);
-                my $pair_for = sub {
-                        my $key = shift;
-                        my %override = %{ $override->{$key} || {} };
-                        $filter && $filter->($_) for values %override;
-                        return $key => { %{ $defaults->{$key} }, %override };
-                };
-                return { map { $pair_for->($_) } keys %$defaults };
-        }
+	my ($name, $filter) = @_;
+	return sub {
+		my ($override, $config) = @_;
+		my $defaults = $defaults{$name}->($config);
+		my $pair_for = sub {
+			my $key = shift;
+			my %override = %{ $override->{$key} || {} };
+			$filter && $filter->($_) for values %override;
+			return $key => { %{ $defaults->{$key} }, %override };
+		};
+		return { map { $pair_for->($_) } keys %$defaults };
+	}
 }
 
 my %allowed_installdir = map { $_ => 1 } qw/core site vendor/;
 my $must_be_relative = sub { Carp::croak('Value must be a relative path') if File::Spec->file_name_is_absolute($_[0]) };
 my %deep_filter = map { $_ => $must_be_relative } qw/install_base_relpaths prefix_relpaths/;
 my %filter = (
-        installdirs => sub {
-                my $value = shift;
-                $value = 'core', Carp::carp('Perhaps you meant installdirs to be "core" rather than "perl"?') if $value eq 'perl';
-                Carp::croak('installdirs must be one of "core", "site", or "vendor"') if not $allowed_installdir{$value};
-                return $value;
-        },
-        (map { $_ => _merge_shallow($_, $deep_filter{$_}) } qw/original_prefix install_base_relpaths/),
-        (map { $_ => _merge_deep($_, $deep_filter{$_}) } qw/install_sets prefix_relpaths/),
+	installdirs => sub {
+		my $value = shift;
+		$value = 'core', Carp::carp('Perhaps you meant installdirs to be "core" rather than "perl"?') if $value eq 'perl';
+		Carp::croak('installdirs must be one of "core", "site", or "vendor"') if not $allowed_installdir{$value};
+		return $value;
+	},
+	(map { $_ => _merge_shallow($_, $deep_filter{$_}) } qw/original_prefix install_base_relpaths/),
+	(map { $_ => _merge_deep($_, $deep_filter{$_}) } qw/install_sets prefix_relpaths/),
 );
 
 for my $attribute (keys %defaults) {
-        no strict qw/refs/;
-        *{$attribute} = $hash_accessors{$attribute} ?
-        sub {
-                my ($self, $key) = @_;
-                Carp::confess("$attribute needs key") if not defined $key;
-                return $self->{$attribute}{$key};
-        } :
-        $complex_accessors{$attribute} ?
-        sub {
-                my ($self, $installdirs, $key) = @_;
-                Carp::confess("$attribute needs installdir") if not defined $installdirs;
-                Carp::confess("$attribute needs key") if not defined $key;
-                return $self->{$attribute}{$installdirs}{$key};
-        } :
-        sub {
-                my $self = shift;
-                return $self->{$attribute};
-        };
+	no strict qw/refs/;
+	*{$attribute} = $hash_accessors{$attribute} ? 
+	sub {
+		my ($self, $key) = @_;
+		Carp::confess("$attribute needs key") if not defined $key;
+		return $self->{$attribute}{$key};
+	} :
+	$complex_accessors{$attribute} ?
+	sub {
+		my ($self, $installdirs, $key) = @_;
+		Carp::confess("$attribute needs installdir") if not defined $installdirs;
+		Carp::confess("$attribute needs key") if not defined $key;
+		return $self->{$attribute}{$installdirs}{$key};
+	} :
+	sub {
+		my $self = shift;
+		return $self->{$attribute};
+	};
 }
 
 sub new {
-        my ($class, %args) = @_;
-        my $config = $args{config} || ExtUtils::Config->new;
-        my %self = (
-                config => $config,
-                map { $_ => exists $args{$_} ? $filter{$_} ? $filter{$_}->($args{$_}, $config) : $args{$_} : ref $defaults{$_} ? $defaults{$_}->($config) : $defaults{$_} } keys %defaults,
-        );
-        $self{module_name} ||= do { my $module_name = $self{dist_name}; $module_name =~ s/-/::/g; $module_name } if defined $self{dist_name};
-        return bless \%self, $class;
+	my ($class, %args) = @_;
+	my $config = $args{config} || ExtUtils::Config->new;
+	my %self = (
+		config => $config,
+		map { $_ => exists $args{$_} ? $filter{$_} ? $filter{$_}->($args{$_}, $config) : $args{$_} : ref $defaults{$_} ? $defaults{$_}->($config) : $defaults{$_} } keys %defaults,
+	);
+	$self{module_name} ||= do { my $module_name = $self{dist_name}; $module_name =~ s/-/::/g; $module_name } if defined $self{dist_name};
+	return bless \%self, $class;
 }
 
 my @install_sets_keys = qw/lib arch bin script bindoc libdoc binhtml libhtml/;
 my @install_sets_tail = qw/bin script man1dir man3dir html1dir html3dir/;
 my %install_sets_values = (
-        core   => [ qw/privlib archlib /, @install_sets_tail ],
-        site   => [ map { "site$_" } qw/lib arch/, @install_sets_tail ],
-        vendor => [ map { "vendor$_" } qw/lib arch/, @install_sets_tail ],
+	core   => [ qw/privlib archlib /, @install_sets_tail ],
+	site   => [ map { "site$_" } qw/lib arch/, @install_sets_tail ],
+	vendor => [ map { "vendor$_" } qw/lib arch/, @install_sets_tail ],
 );
 
 sub _default_install_sets {
-        my $c = shift;
+	my $c = shift;
 
-        my %ret;
-        for my $installdir (qw/core site vendor/) {
-                @{$ret{$installdir}}{@install_sets_keys} = map { $c->get("install$_") } @{ $install_sets_values{$installdir} };
-        }
-        return \%ret;
+	my %ret;
+	for my $installdir (qw/core site vendor/) {
+		@{$ret{$installdir}}{@install_sets_keys} = map { $c->get("install$_") } @{ $install_sets_values{$installdir} };
+	}
+	return \%ret;
 }
 
 sub _default_base_relpaths {
-        my $config = shift;
-        return {
-                lib     => ['lib', 'perl5'],
-                arch    => ['lib', 'perl5', $config->get('archname')],
-                bin     => ['bin'],
-                script  => ['bin'],
-                bindoc  => ['man', 'man1'],
-                libdoc  => ['man', 'man3'],
-                binhtml => ['html'],
-                libhtml => ['html'],
-        };
+	my $config = shift;
+	return {
+		lib     => ['lib', 'perl5'],
+		arch    => ['lib', 'perl5', $config->get('archname')],
+		bin     => ['bin'],
+		script  => ['bin'],
+		bindoc  => ['man', 'man1'],
+		libdoc  => ['man', 'man3'],
+		binhtml => ['html'],
+		libhtml => ['html'],
+	};
 }
 
 my %common_prefix_relpaths = (
-        bin        => ['bin'],
-        script     => ['bin'],
-        bindoc     => ['man', 'man1'],
-        libdoc     => ['man', 'man3'],
-        binhtml    => ['html'],
-        libhtml    => ['html'],
+	bin        => ['bin'],
+	script     => ['bin'],
+	bindoc     => ['man', 'man1'],
+	libdoc     => ['man', 'man3'],
+	binhtml    => ['html'],
+	libhtml    => ['html'],
 );
 
 sub _default_prefix_relpaths {
-        my $c = shift;
+	my $c = shift;
 
-        my @libstyle = $c->get('installstyle') ?  File::Spec->splitdir($c->get('installstyle')) : qw(lib perl5);
-        my $arch     = $c->get('archname');
-        my $version  = $c->get('version');
+	my @libstyle = $c->get('installstyle') ?  File::Spec->splitdir($c->get('installstyle')) : qw(lib perl5);
+	my $arch     = $c->get('archname');
+	my $version  = $c->get('version');
 
-        return {
-                core => {
-                        lib        => [@libstyle],
-                        arch       => [@libstyle, $version, $arch],
-                        %common_prefix_relpaths,
-                },
-                vendor => {
-                        lib        => [@libstyle],
-                        arch       => [@libstyle, $version, $arch],
-                        %common_prefix_relpaths,
-                },
-                site => {
-                        lib        => [@libstyle, 'site_perl'],
-                        arch       => [@libstyle, 'site_perl', $version, $arch],
-                        %common_prefix_relpaths,
-                },
-        };
+	return {
+		core => {
+			lib        => [@libstyle],
+			arch       => [@libstyle, $version, $arch],
+			%common_prefix_relpaths,
+		},
+		vendor => {
+			lib        => [@libstyle],
+			arch       => [@libstyle, $version, $arch],
+			%common_prefix_relpaths,
+		},
+		site => {
+			lib        => [@libstyle, 'site_perl'],
+			arch       => [@libstyle, 'site_perl', $version, $arch],
+			%common_prefix_relpaths,
+		},
+	};
 }
 
 sub _default_original_prefix {
-        my $c = shift;
+	my $c = shift;
 
-        my %ret = (
-                core   => $c->get('installprefixexp'),
-                site   => $c->get('siteprefixexp'),
-                vendor => $c->get('usevendorprefix') ? $c->get('vendorprefixexp') : '',
-        );
+	my %ret = (
+		core   => $c->get('installprefixexp'),
+		site   => $c->get('siteprefixexp'),
+		vendor => $c->get('usevendorprefix') ? $c->get('vendorprefixexp') : '',
+	);
 
-        return \%ret;
+	return \%ret;
 }
 
 sub _log_verbose {
-        my $self = shift;
-        print @_ if $self->verbose;
-        return;
+	my $self = shift;
+	print @_ if $self->verbose;
+	return;
 }
 
 # Given a file type, will return true if the file type would normally
@@ -192,203 +192,203 @@ sub _log_verbose {
 # I.e. it will be true only if the path is set from Config.pm or
 # set explicitly by the user via install-path.
 sub is_default_installable {
-        my $self = shift;
-        my $type = shift;
-        my $installable = $self->install_destination($type) && ( $self->install_path($type) || $self->install_sets($self->installdirs, $type));
-        return $installable ? 1 : 0;
+	my $self = shift;
+	my $type = shift;
+	my $installable = $self->install_destination($type) && ( $self->install_path($type) || $self->install_sets($self->installdirs, $type));
+	return $installable ? 1 : 0;
 }
 
 sub _prefixify_default {
-        my $self = shift;
-        my $type = shift;
-        my $rprefix = shift;
+	my $self = shift;
+	my $type = shift;
+	my $rprefix = shift;
 
-        my $default = $self->prefix_relpaths($self->installdirs, $type);
-        if( !$default ) {
-                $self->_log_verbose("    no default install location for type '$type', using prefix '$rprefix'.\n");
-                return $rprefix;
-        } else {
-                return File::Spec->catdir(@{$default});
-        }
+	my $default = $self->prefix_relpaths($self->installdirs, $type);
+	if( !$default ) {
+		$self->_log_verbose("    no default install location for type '$type', using prefix '$rprefix'.\n");
+		return $rprefix;
+	} else {
+		return File::Spec->catdir(@{$default});
+	}
 }
 
 # Translated from ExtUtils::MM_Unix::prefixify()
 sub _prefixify_novms {
-        my($self, $path, $sprefix, $type) = @_;
+	my($self, $path, $sprefix, $type) = @_;
 
-        my $rprefix = $self->prefix;
-        $rprefix .= '/' if $sprefix =~ m{/$};
+	my $rprefix = $self->prefix;
+	$rprefix .= '/' if $sprefix =~ m{/$};
 
-        $self->_log_verbose("  prefixify $path from $sprefix to $rprefix\n") if defined $path && length $path;
+	$self->_log_verbose("  prefixify $path from $sprefix to $rprefix\n") if defined $path && length $path;
 
-        if (not defined $path or length $path == 0 ) {
-                $self->_log_verbose("  no path to prefixify, falling back to default.\n");
-                return $self->_prefixify_default( $type, $rprefix );
-        } elsif( !File::Spec->file_name_is_absolute($path) ) {
-                $self->_log_verbose("    path is relative, not prefixifying.\n");
-        } elsif( $path !~ s{^\Q$sprefix\E\b}{}s ) {
-                $self->_log_verbose("    cannot prefixify, falling back to default.\n");
-                return $self->_prefixify_default( $type, $rprefix );
-        }
+	if (not defined $path or length $path == 0 ) {
+		$self->_log_verbose("  no path to prefixify, falling back to default.\n");
+		return $self->_prefixify_default( $type, $rprefix );
+	} elsif( !File::Spec->file_name_is_absolute($path) ) {
+		$self->_log_verbose("    path is relative, not prefixifying.\n");
+	} elsif( $path !~ s{^\Q$sprefix\E\b}{}s ) {
+		$self->_log_verbose("    cannot prefixify, falling back to default.\n");
+		return $self->_prefixify_default( $type, $rprefix );
+	}
 
-        $self->_log_verbose("    now $path in $rprefix\n");
+	$self->_log_verbose("    now $path in $rprefix\n");
 
-        return $path;
+	return $path;
 }
 
 sub _catprefix_vms {
-        my ($self, $rprefix, $default) = @_;
+	my ($self, $rprefix, $default) = @_;
 
-        my ($rvol, $rdirs) = File::Spec->splitpath($rprefix);
-        if ($rvol) {
-                return File::Spec->catpath($rvol, File::Spec->catdir($rdirs, $default), '');
-        }
-        else {
-                return File::Spec->catdir($rdirs, $default);
-        }
+	my ($rvol, $rdirs) = File::Spec->splitpath($rprefix);
+	if ($rvol) {
+		return File::Spec->catpath($rvol, File::Spec->catdir($rdirs, $default), '');
+	}
+	else {
+		return File::Spec->catdir($rdirs, $default);
+	}
 }
 sub _prefixify_vms {
-        my($self, $path, $sprefix, $type) = @_;
-        my $rprefix = $self->prefix;
+	my($self, $path, $sprefix, $type) = @_;
+	my $rprefix = $self->prefix;
 
-        return '' unless defined $path;
+	return '' unless defined $path;
 
-        $self->_log_verbose("  prefixify $path from $sprefix to $rprefix\n");
+	$self->_log_verbose("  prefixify $path from $sprefix to $rprefix\n");
 
-        require VMS::Filespec;
-        # Translate $(PERLPREFIX) to a real path.
-        $rprefix = VMS::Filespec::vmspath($rprefix) if $rprefix;
-        $sprefix = VMS::Filespec::vmspath($sprefix) if $sprefix;
+	require VMS::Filespec;
+	# Translate $(PERLPREFIX) to a real path.
+	$rprefix = VMS::Filespec::vmspath($rprefix) if $rprefix;
+	$sprefix = VMS::Filespec::vmspath($sprefix) if $sprefix;
 
-        $self->_log_verbose("  rprefix translated to $rprefix\n  sprefix translated to $sprefix\n");
+	$self->_log_verbose("  rprefix translated to $rprefix\n  sprefix translated to $sprefix\n");
 
-        if (length($path) == 0 ) {
-                $self->_log_verbose("  no path to prefixify.\n")
-        }
-        elsif (!File::Spec->file_name_is_absolute($path)) {
-                $self->_log_verbose("   path is relative, not prefixifying.\n");
-        }
-        elsif ($sprefix eq $rprefix) {
-                $self->_log_verbose("  no new prefix.\n");
-        }
-        else {
-                my ($path_vol, $path_dirs) = File::Spec->splitpath( $path );
-                my $vms_prefix = $self->config->get('vms_prefix');
-                if ($path_vol eq $vms_prefix.':') {
-                        $self->_log_verbose("  $vms_prefix: seen\n");
+	if (length($path) == 0 ) {
+		$self->_log_verbose("  no path to prefixify.\n")
+	}
+	elsif (!File::Spec->file_name_is_absolute($path)) {
+		$self->_log_verbose("	path is relative, not prefixifying.\n");
+	}
+	elsif ($sprefix eq $rprefix) {
+		$self->_log_verbose("  no new prefix.\n");
+	}
+	else {
+		my ($path_vol, $path_dirs) = File::Spec->splitpath( $path );
+		my $vms_prefix = $self->config->get('vms_prefix');
+		if ($path_vol eq $vms_prefix.':') {
+			$self->_log_verbose("  $vms_prefix: seen\n");
 
-                        $path_dirs =~ s{^\[}{\[.} unless $path_dirs =~ m{^\[\.};
-                        $path = $self->_catprefix_vms($rprefix, $path_dirs);
-                }
-                else {
-                        $self->_log_verbose("   cannot prefixify.\n");
-                        return File::Spec->catdir($self->prefix_relpaths($self->installdirs, $type));
-                }
-        }
+			$path_dirs =~ s{^\[}{\[.} unless $path_dirs =~ m{^\[\.};
+			$path = $self->_catprefix_vms($rprefix, $path_dirs);
+		}
+		else {
+			$self->_log_verbose("	cannot prefixify.\n");
+			return File::Spec->catdir($self->prefix_relpaths($self->installdirs, $type));
+		}
+	}
 
-        $self->_log_verbose("   now $path\n");
+	$self->_log_verbose("	now $path\n");
 
-        return $path;
+	return $path;
 }
 
 BEGIN { *_prefixify = $^O eq 'VMS' ? \&_prefixify_vms : \&_prefixify_novms }
 
 # Translated from ExtUtils::MM_Any::init_INSTALL_from_PREFIX
 sub prefix_relative {
-        my ($self, $installdirs, $type) = @_;
+	my ($self, $installdirs, $type) = @_;
 
-        my $relpath = $self->install_sets($installdirs, $type);
+	my $relpath = $self->install_sets($installdirs, $type);
 
-        return $self->_prefixify($relpath, $self->original_prefix($installdirs), $type);
+	return $self->_prefixify($relpath, $self->original_prefix($installdirs), $type);
 }
 
 sub install_destination {
-        my ($self, $type) = @_;
+	my ($self, $type) = @_;
 
-        return $self->install_path($type) if $self->install_path($type);
+	return $self->install_path($type) if $self->install_path($type);
 
-        if ( $self->install_base ) {
-                my $relpath = $self->install_base_relpaths($type);
-                return $relpath ? File::Spec->catdir($self->install_base, @{$relpath}) : undef;
-        }
+	if ( $self->install_base ) {
+		my $relpath = $self->install_base_relpaths($type);
+		return $relpath ? File::Spec->catdir($self->install_base, @{$relpath}) : undef;
+	}
 
-        if ( $self->prefix ) {
-                my $relpath = $self->prefix_relative($self->installdirs, $type);
-                return $relpath ? File::Spec->catdir($self->prefix, $relpath) : undef;
-        }
-        return $self->install_sets($self->installdirs, $type);
+	if ( $self->prefix ) {
+		my $relpath = $self->prefix_relative($self->installdirs, $type);
+		return $relpath ? File::Spec->catdir($self->prefix, $relpath) : undef;
+	}
+	return $self->install_sets($self->installdirs, $type);
 }
 
 sub install_types {
-        my $self = shift;
+	my $self = shift;
 
-        my %types = ( %{ $self->{install_path} },
-                  $self->install_base ?  %{ $self->{install_base_relpaths} }
-                : $self->prefix ? %{ $self->{prefix_relpaths}{ $self->installdirs } }
-                : %{ $self->{install_sets}{ $self->installdirs } });
+	my %types = ( %{ $self->{install_path} }, 
+		  $self->install_base ?  %{ $self->{install_base_relpaths} }
+		: $self->prefix ? %{ $self->{prefix_relpaths}{ $self->installdirs } }
+		: %{ $self->{install_sets}{ $self->installdirs } });
 
-        return sort keys %types;
+	return sort keys %types;
 }
 
 sub install_map {
-        my ($self, $blib) = @_;
-        $blib ||= $self->blib;
+	my ($self, $blib) = @_;
+	$blib ||= $self->blib;
 
-        my (%map, @skipping);
-        foreach my $type ($self->install_types) {
-                my $localdir = File::Spec->catdir($blib, $type);
-                next unless -e $localdir;
+	my (%map, @skipping);
+	foreach my $type ($self->install_types) {
+		my $localdir = File::Spec->catdir($blib, $type);
+		next unless -e $localdir;
 
-                # the line "...next if (($type eq 'bindoc'..." was one of many changes introduced for
-                # improving HTML generation on ActivePerl, see https://rt.cpan.org/Public/Bug/Display.html?id=53478
-                # Most changes were ok, but this particular line caused test failures in t/manifypods.t on windows,
-                # therefore it is commented out.
+		# the line "...next if (($type eq 'bindoc'..." was one of many changes introduced for
+		# improving HTML generation on ActivePerl, see https://rt.cpan.org/Public/Bug/Display.html?id=53478
+		# Most changes were ok, but this particular line caused test failures in t/manifypods.t on windows,
+		# therefore it is commented out.
 
-                # ********* next if (($type eq 'bindoc' || $type eq 'libdoc') && not $self->is_unixish);
+		# ********* next if (($type eq 'bindoc' || $type eq 'libdoc') && not $self->is_unixish);
 
-                if (my $dest = $self->install_destination($type)) {
-                        $map{$localdir} = $dest;
-                } else {
-                        push @skipping, $type;
-                }
-        }
+		if (my $dest = $self->install_destination($type)) {
+			$map{$localdir} = $dest;
+		} else {
+			push @skipping, $type;
+		}
+	}
 
-        warn "WARNING: Can't figure out install path for types: @skipping\nFiles will not be installed.\n" if @skipping;
+	warn "WARNING: Can't figure out install path for types: @skipping\nFiles will not be installed.\n" if @skipping;
 
-        # Write the packlist into the same place as ExtUtils::MakeMaker.
-        if ($self->create_packlist and my $module_name = $self->module_name) {
-                my $archdir = $self->install_destination('arch');
-                my @ext = split /::/, $module_name;
-                $map{write} = File::Spec->catfile($archdir, 'auto', @ext, '.packlist');
-        }
+	# Write the packlist into the same place as ExtUtils::MakeMaker.
+	if ($self->create_packlist and my $module_name = $self->module_name) {
+		my $archdir = $self->install_destination('arch');
+		my @ext = split /::/, $module_name;
+		$map{write} = File::Spec->catfile($archdir, 'auto', @ext, '.packlist');
+	}
 
-        # Handle destdir
-        if (length(my $destdir = $self->destdir || '')) {
-                foreach (keys %map) {
-                        # Need to remove volume from $map{$_} using splitpath, or else
-                        # we'll create something crazy like C:\Foo\Bar\E:\Baz\Quux
-                        # VMS will always have the file separate than the path.
-                        my ($volume, $path, $file) = File::Spec->splitpath( $map{$_}, 0 );
+	# Handle destdir
+	if (length(my $destdir = $self->destdir || '')) {
+		foreach (keys %map) {
+			# Need to remove volume from $map{$_} using splitpath, or else
+			# we'll create something crazy like C:\Foo\Bar\E:\Baz\Quux
+			# VMS will always have the file separate than the path.
+			my ($volume, $path, $file) = File::Spec->splitpath( $map{$_}, 0 );
 
-                        # catdir needs a list of directories, or it will create something
-                        # crazy like volume:[Foo.Bar.volume.Baz.Quux]
-                        my @dirs = File::Spec->splitdir($path);
+			# catdir needs a list of directories, or it will create something
+			# crazy like volume:[Foo.Bar.volume.Baz.Quux]
+			my @dirs = File::Spec->splitdir($path);
 
-                        # First merge the directories
-                        $path = File::Spec->catdir($destdir, @dirs);
+			# First merge the directories
+			$path = File::Spec->catdir($destdir, @dirs);
 
-                        # Then put the file back on if there is one.
-                        if ($file ne '') {
-                            $map{$_} = File::Spec->catfile($path, $file)
-                        } else {
-                            $map{$_} = $path;
-                        }
-                }
-        }
+			# Then put the file back on if there is one.
+			if ($file ne '') {
+			    $map{$_} = File::Spec->catfile($path, $file)
+			} else {
+			    $map{$_} = $path;
+			}
+		}
+	}
 
-        $map{read} = '';  # To keep ExtUtils::Install quiet
+	$map{read} = '';  # To keep ExtUtils::Install quiet
 
-        return \%map;
+	return \%map;
 }
 
 1;

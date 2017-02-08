@@ -29,7 +29,7 @@ sub _hexdump {
     # On the last time through replace '%02X ' with '__ ' for the
     # missing values
     substr($linefmt, 5*@y,5*($cnt-@y)) = "__ " x ($cnt - @y)
-        if @y != $cnt;
+	if @y != $cnt;
 
     # Change non-printable chars to '.'
     $data =~ s/[\x00-\x1f\x7f-\xff]/./sg;
@@ -42,19 +42,19 @@ sub _hexdump {
 
 my %type = (
   split(/[\t\n]\s*/,
-    q(10        SEQUENCE
-      01        BOOLEAN
-      0A        ENUM
-      0D        RELATIVE-OID
-      11        SET
-      02        INTEGER
-      03        BIT STRING
-      C0        [PRIVATE %d]
-      04        STRING
-      40        [APPLICATION %d]
-      05        NULL
-      06        OBJECT ID
-      80        [CONTEXT %d]
+    q(10	SEQUENCE
+      01	BOOLEAN
+      0A	ENUM
+      0D	RELATIVE-OID
+      11	SET
+      02	INTEGER
+      03	BIT STRING
+      C0	[PRIVATE %d]
+      04	STRING
+      40	[APPLICATION %d]
+      05	NULL
+      06	OBJECT ID
+      80	[CONTEXT %d]
     )
   )
 );
@@ -78,7 +78,7 @@ sub asn_dump {
       printf "$fmt     : %s}\n",$pos,$indent;
     }
     last unless $pos < $length;
-
+    
     my $start = $pos;
     my($tb,$tag,$tnum) = asn_decode_tag2(substr($_[0],$pos,10));
     $pos += $tb;
@@ -92,8 +92,8 @@ sub asn_dump {
     printf $fmt. " %4d: %s",$start,$len,$indent;
 
     my $label = $type{sprintf("%02X",$tag & ~0x20)}
-                || $type{sprintf("%02X",$tag & 0xC0)}
-                || "[UNIVERSAL %d]";
+		|| $type{sprintf("%02X",$tag & 0xC0)}
+		|| "[UNIVERSAL %d]";
     printf $label, $tnum;
 
     if ($tag & ASN_CONSTRUCTOR) {
@@ -112,43 +112,43 @@ sub asn_dump {
 
     for ($label) { # switch
       /^(INTEGER|ENUM)/ && do {
-        Convert::ASN1::_dec_integer({},[],{},$tmp,$_[0],$pos,$len);
-        printf " = %d\n",$tmp;
+	Convert::ASN1::_dec_integer({},[],{},$tmp,$_[0],$pos,$len);
+	printf " = %d\n",$tmp;
         last;
       };
 
       /^BOOLEAN/ && do {
-        Convert::ASN1::_dec_boolean({},[],{},$tmp,$_[0],$pos,$len);
-        printf " = %s\n",$tmp ? 'TRUE' : 'FALSE';
+	Convert::ASN1::_dec_boolean({},[],{},$tmp,$_[0],$pos,$len);
+	printf " = %s\n",$tmp ? 'TRUE' : 'FALSE';
         last;
       };
 
       /^(?:(OBJECT ID)|(RELATIVE-OID))/ && do {
-        my @op; $op[cTYPE] = $1 ? opOBJID : opROID;
-        Convert::ASN1::_dec_object_id({},\@op,{},$tmp,$_[0],$pos,$len);
-        printf " = %s\n",$tmp;
+	my @op; $op[cTYPE] = $1 ? opOBJID : opROID;
+	Convert::ASN1::_dec_object_id({},\@op,{},$tmp,$_[0],$pos,$len);
+	printf " = %s\n",$tmp;
         last;
       };
 
       /^NULL/ && do {
-        print "\n";
+	print "\n";
         last;
       };
 
       /^STRING/ && do {
-        Convert::ASN1::_dec_string({},[],{},$tmp,$_[0],$pos,$len);
-        if ($tmp =~ /[\x00-\x1f\x7f-\xff]/s) {
-          _hexdump($tmp,$fmt . "     :   ".$indent, $pos);
-        }
-        else {
-          printf " = '%s'\n",$tmp;
-        }
+	Convert::ASN1::_dec_string({},[],{},$tmp,$_[0],$pos,$len);
+	if ($tmp =~ /[\x00-\x1f\x7f-\xff]/s) {
+  	  _hexdump($tmp,$fmt . "     :   ".$indent, $pos);
+	}
+	else {
+	  printf " = '%s'\n",$tmp;
+	}
         last;
       };
 
 #      /^BIT STRING/ && do {
-#       Convert::BER::BIT_STRING->unpack($ber,\$tmp);
-#       print " = ",$tmp,"\n";
+#	Convert::BER::BIT_STRING->unpack($ber,\$tmp);
+#	print " = ",$tmp,"\n";
 #        last;
 #      };
 
@@ -174,7 +174,7 @@ sub asn_hexdump {
 BEGIN { undef &dump }
 sub dump {
   my $self = shift;
-
+  
   for (@{$self->{script}}) {
     dump_op($_,"",{},1);
   }
@@ -183,7 +183,7 @@ sub dump {
 BEGIN { undef &dump_all }
 sub dump_all {
   my $self = shift;
-
+  
   while(my($k,$v) = each %{$self->{tree}}) {
     print STDERR "$k:\n";
     for (@$v) {

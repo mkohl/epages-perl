@@ -61,7 +61,7 @@ $VERSION = '0.77';
 
 __PACKAGE__->valid_params(
     Quick => {
-        type => SCALAR|OBJECT,
+	type => SCALAR|OBJECT,
         callbacks => {
             good_classname => sub {
                 (ref $_[0]) or ( $_[0] =~ /^\w+[:'\w+]*\w+/ )
@@ -85,10 +85,10 @@ sub create_parser
 
     return sub {
         my ($self, $date) = @_;
-        return unless defined $date;
+	return unless defined $date;
         my $rv = eval { $class->$method( $date ) };
         return $rv if defined $rv;
-        return;
+	return;
     };
 }
 

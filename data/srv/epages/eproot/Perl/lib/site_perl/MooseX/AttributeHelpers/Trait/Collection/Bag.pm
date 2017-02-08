@@ -29,7 +29,7 @@ before 'process_options_for_provides' => sub {
     if ((my $type = $self->helper_type) && !exists $options->{isa}){
         $options->{isa} = $type;
     }
-
+    
     $options->{default} = sub { +{} } unless exists $options->{default};
 };
 
@@ -51,23 +51,23 @@ MooseX::AttributeHelpers::Collection::Bag
   package Stuff;
   use Moose;
   use MooseX::AttributeHelpers;
-
+  
   has 'word_histogram' => (
       metaclass => 'Collection::Bag',
       is        => 'ro',
       isa       => 'Bag', # optional ... as is defalt
       provides  => {
           'add'    => 'add_word',
-          'get'    => 'get_count_for',
+          'get'    => 'get_count_for',            
           'empty'  => 'has_any_words',
           'count'  => 'num_words',
           'delete' => 'delete_word',
       }
   );
-
+  
 =head1 DESCRIPTION
 
-This module provides a Bag attribute which provides a number of
+This module provides a Bag attribute which provides a number of 
 bag-like operations. See L<MooseX::AttributeHelpers::MethodProvider::Bag>
 for more details.
 
@@ -89,7 +89,7 @@ for more details.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

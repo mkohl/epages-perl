@@ -120,7 +120,7 @@ sub _prefixify {
     }
     else {
         my($path_vol, $path_dirs) = File::Spec->splitpath( $path );
-        my $vms_prefix = $self->config('vms_prefix');
+	my $vms_prefix = $self->config('vms_prefix');
         if( $path_vol eq $vms_prefix.':' ) {
             $self->log_verbose("  $vms_prefix: seen\n");
 
@@ -129,7 +129,7 @@ sub _prefixify {
         }
         else {
             $self->log_verbose("    cannot prefixify.\n");
-            return $self->prefix_relpaths($self->installdirs, $type);
+	    return $self->prefix_relpaths($self->installdirs, $type);
         }
     }
 

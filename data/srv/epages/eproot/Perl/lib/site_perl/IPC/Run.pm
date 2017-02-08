@@ -28,7 +28,7 @@ IPC::Run - system() and background procs w/ piping, redirs, ptys (Unix, Win32)
 
       use IPC::Run qw( start pump finish timeout );
 
-      # Incrementally read from / write to scalars.
+      # Incrementally read from / write to scalars. 
       # $in is drained as it is fed to cat's stdin,
       # $out accumulates cat's stdout
       # $err accumulates cat's stderr
@@ -44,7 +44,7 @@ IPC::Run - system() and background procs w/ piping, redirs, ptys (Unix, Win32)
       $in .= "some final input\n";
       finish $h or die "cat returned $?";
 
-      warn $err if $err;
+      warn $err if $err; 
       print $out;         ## All of cat's output
 
    # Piping between children
@@ -75,7 +75,7 @@ IPC::Run - system() and background procs w/ piping, redirs, ptys (Unix, Win32)
          \@cat,
             '<pipe', \*IN,
             '>pipe', \*OUT,
-            '2>pipe', \*ERR
+            '2>pipe', \*ERR 
          or die "cat returned $?";
       print IN "some input\n";
       close IN;
@@ -430,7 +430,7 @@ L<IPC::Run::IO> objects may be passed in as well, whether or not
 child processes are also specified:
 
    run io( "infile", ">", \$in ), io( "outfile", "<", \$in );
-
+      
 as can L<IPC::Run::Timer> objects:
 
    run \@cmd, io( "outfile", "<", \$in ), timeout( 10 );
@@ -498,7 +498,7 @@ If you want to close a child processes stdin, you may do any of:
    run \@cmd, '<&-';
    run \@cmd, '0<&-';
 
-Redirection is done by placing redirection specifications immediately
+Redirection is done by placing redirection specifications immediately 
 after a command or child subroutine:
 
    run \@cmd1,      \$in, '|', \@cmd2,      \$out;
@@ -510,7 +510,7 @@ are outputs.  A leading '|' consumes descriptor 0, so this
 works as expected.
 
    run \@cmd1, \$in, '|', \@cmd2, \$out;
-
+   
 The parameter following a redirection operator can be a scalar ref,
 a subroutine ref, a file name, an open filehandle, or a closed
 filehandle.
@@ -524,7 +524,7 @@ that variable:
 
 Scalars used in incremental (start()/pump()/finish()) applications are treated
 as queues: input is removed from input scalers, resulting in them dwindling
-to '', and output is appended to output scalars.  This is not true of
+to '', and output is appended to output scalars.  This is not true of 
 harnesses run() in batch mode.
 
 It's usually wise to append new input to be sent to the child to the input
@@ -587,7 +587,7 @@ listing.
 This can make it hard to guarantee that your output parser won't be fooled
 into early termination of results.
 
-To help work around this, you can see if the program can alter it's
+To help work around this, you can see if the program can alter it's 
 prompt, and use something you feel is never going to occur in actual
 practice.
 
@@ -714,7 +714,7 @@ will be fixed.  Until it is, it's best not to mix-and-match children.
 
    <pipe, N<pipe     P   Pipe opens H for caller to read, write, close.
    >pipe, N>pipe     P   Pipe opens H for caller to read, write, close.
-
+                      
 'N' and 'M' are placeholders for integer file descriptor numbers.  The
 terms 'input' and 'output' are from the child process's perspective.
 
@@ -736,7 +736,7 @@ scalar variable, subroutine, file handle, or a named file.  If stdin
 is not redirected, the parent's stdin is inherited.
 
    run \@cat, \undef          ## Closes child's stdin immediately
-      or die "cat returned $?";
+      or die "cat returned $?"; 
 
    run \@cat, \$in;
 
@@ -765,7 +765,7 @@ You can't do either of
 
    run \@a, *IN;      ## INVALID
    run \@a, '<', *IN; ## BUGGY: Reads file named like "*main::A"
-
+   
 because perl passes a scalar containing a string that
 looks like "*main::A" to &run, and &run can't tell the difference
 between that and a redirection operator or a file name.  &run guarantees
@@ -818,10 +818,10 @@ operator:
 
    @ls = ( 'ls' );
    run \@ls, \undef, \$out
-      or die "ls returned $?";
+      or die "ls returned $?"; 
 
    run \@ls, \undef, \&out;  ## Calls &out each time some output
-                              ## is received from the child's
+                              ## is received from the child's 
                               ## when undef is returned.
 
    run \@ls, \undef, '2>ls.err';
@@ -1000,7 +1000,7 @@ code.  B<This is the opposite of perl's system() command>.
 
 All routines raise exceptions (via die()) when error conditions are
 recognized.  A non-zero command result is not treated as an error
-condition, since some commands are tests whose results are reported
+condition, since some commands are tests whose results are reported 
 in their exit codes.
 
 =head1 ROUTINES
@@ -1013,34 +1013,34 @@ use strict;
 use Exporter ();
 use vars qw{$VERSION @ISA @FILTER_IMP @FILTERS @API @EXPORT_OK %EXPORT_TAGS};
 BEGIN {
-        $VERSION = '0.89';
-        @ISA     = qw{ Exporter };
+	$VERSION = '0.89';
+	@ISA     = qw{ Exporter };
 
-        ## We use @EXPORT for the end user's convenience: there's only one function
-        ## exported, it's homonymous with the module, it's an unusual name, and
-        ## it can be suppressed by "use IPC::Run ();".
-        @FILTER_IMP = qw( input_avail get_more_input );
-        @FILTERS    = qw(
-                new_appender
-                new_chunker
-                new_string_source
-                new_string_sink
-        );
-        @API        = qw(
-                run
-                harness start pump pumpable finish
-                signal kill_kill reap_nb
-                io timer timeout
-                close_terminal
-                binary
-        );
-        @EXPORT_OK = ( @API, @FILTER_IMP, @FILTERS, qw( Win32_MODE ) );
-        %EXPORT_TAGS = (
-                'filter_imp' => \@FILTER_IMP,
-                'all'        => \@EXPORT_OK,
-                'filters'    => \@FILTERS,
-                'api'        => \@API,
-        );
+	## We use @EXPORT for the end user's convenience: there's only one function
+	## exported, it's homonymous with the module, it's an unusual name, and
+	## it can be suppressed by "use IPC::Run ();".
+	@FILTER_IMP = qw( input_avail get_more_input );
+	@FILTERS    = qw(
+		new_appender
+		new_chunker
+		new_string_source
+		new_string_sink
+	);
+	@API        = qw(
+		run
+		harness start pump pumpable finish
+		signal kill_kill reap_nb
+		io timer timeout
+		close_terminal
+		binary
+	);
+	@EXPORT_OK = ( @API, @FILTER_IMP, @FILTERS, qw( Win32_MODE ) );
+	%EXPORT_TAGS = (
+		'filter_imp' => \@FILTER_IMP,
+		'all'        => \@EXPORT_OK,
+		'filters'    => \@FILTERS,
+		'api'        => \@API,
+	);
 
 }
 
@@ -1376,14 +1376,14 @@ sub _spawn {
 
    if ( ! defined $sync_pulse || length $sync_pulse ) {
       if ( waitpid( $kid->{PID}, 0 ) >= 0 ) {
-         $kid->{RESULT} = $?;
+	 $kid->{RESULT} = $?;
       }
       else {
-         $kid->{RESULT} = -1;
+	 $kid->{RESULT} = -1;
       }
       $sync_pulse =
          "error reading synchronization pipe for $kid->{NUM}, pid $kid->{PID}"
-         unless length $sync_pulse;
+	 unless length $sync_pulse;
       croak $sync_pulse;
    }
    return $kid->{PID};
@@ -1417,7 +1417,7 @@ input is available, collecting all output that arrives, until the
 pipes delivering output are closed, then waiting for the children to
 exit and reaping their result codes.
 
-You may think of C<run( ... )> as being like
+You may think of C<run( ... )> as being like 
 
    start( ... )->finish();
 
@@ -1468,7 +1468,7 @@ Normally TERM kills a process gracefully (this is what the command line utility
 C<kill> does by default), INT is sent by one of the keys C<^C>, C<Backspace> or
 C<E<lt>DelE<gt>>, and C<QUIT> is used to kill a process and make it coredump.
 
-The C<HUP> signal is often used to get a process to "restart", rereading
+The C<HUP> signal is often used to get a process to "restart", rereading 
 config files, and C<USR1> and C<USR2> for really application-specific things.
 
 Often, running C<kill -l> (that's a lower case "L") on the command line will
@@ -1512,7 +1512,7 @@ sub signal {
       kill $signal, $_->{PID}
          or _debugging && _debug "$! sending $signal to $_->{PID}";
    }
-
+   
    return;
 }
 
@@ -1544,7 +1544,7 @@ The harness is then cleaned up.
 The doubled name indicates that this function may kill again and avoids
 colliding with the core Perl C<kill> function.
 
-Returns a 1 if the C<TERM> was sufficient, or a 0 if C<KILL> was
+Returns a 1 if the C<TERM> was sufficient, or a 0 if C<KILL> was 
 required.  Throws an exception if C<KILL> did not permit the children
 to be reaped.
 
@@ -1722,7 +1722,7 @@ sub harness {
          if ( ref eq 'ARRAY' || ( ! $cur_kid && ref eq 'CODE' ) ) {
             croak "Process control symbol ('|', '&') missing" if $cur_kid;
             croak "Can't spawn a subroutine on Win32"
-               if Win32_MODE && ref eq "CODE";
+	       if Win32_MODE && ref eq "CODE";
             $cur_kid = {
                TYPE   => 'cmd',
                VAL    => $_,
@@ -1740,13 +1740,13 @@ sub harness {
             $cur_kid = undef;
             $succinct = 1;
          }
-
+         
          elsif ( UNIVERSAL::isa( $_, 'IPC::Run::Timer' ) ) {
             push @{$self->{TIMERS}}, $_;
             $cur_kid = undef;
             $succinct = 1;
          }
-
+         
          elsif ( /^(\d*)>&(\d+)$/ ) {
             croak "No command before '$_'" unless $cur_kid;
             push @{$cur_kid->{OPS}}, {
@@ -1837,22 +1837,22 @@ sub harness {
             if ( ( ref $source eq 'GLOB' || UNIVERSAL::isa $source, 'IO::Handle' )
                && $type !~ /^<p(ty<|ipe)$/
             ) {
-               _debug "setting DONT_CLOSE" if _debugging_details;
+	       _debug "setting DONT_CLOSE" if _debugging_details;
                $pipe->{DONT_CLOSE} = 1; ## this FD is not closed by us.
-               _dont_inherit( $source ) if Win32_MODE;
+	       _dont_inherit( $source ) if Win32_MODE;
             }
 
             push @{$cur_kid->{OPS}}, $pipe;
       }
 
          elsif ( /^()   (>>?)  (&)     ()      (.*)$/x
-            ||   /^()   (&)    (>pipe) ()      ()  $/x
-            ||   /^()   (>pipe)(&)     ()      ()  $/x
+            ||   /^()   (&)    (>pipe) ()      ()  $/x 
+            ||   /^()   (>pipe)(&)     ()      ()  $/x 
             ||   /^(\d*)()     (>pipe) ()      ()  $/x
-            ||   /^()   (&)    (>pty)  ( \w*)> ()  $/x
-## TODO:    ||   /^()   (>pty) (\d*)> (&) ()  $/x
+            ||   /^()   (&)    (>pty)  ( \w*)> ()  $/x 
+## TODO:    ||   /^()   (>pty) (\d*)> (&) ()  $/x 
             ||   /^(\d*)()     (>pty)  ( \w*)> ()  $/x
-            ||   /^()   (&)    (>>?)   ()      (.*)$/x
+            ||   /^()   (&)    (>>?)   ()      (.*)$/x 
             ||   /^(\d*)()     (>>?)   ()      (.*)$/x
          ) {
             croak "No command before '$_'" unless $cur_kid;
@@ -1886,7 +1886,7 @@ sub harness {
                if ( ! $succinct ) {
                   ## unshift...shift: '>' filters source...sink left...right
                   while ( @args > 1
-                     && (
+                     && ( 
                         ( ref $args[1] && !  UNIVERSAL::isa $args[1], "IPC::Run::Timer" )
                         || UNIVERSAL::isa $args[0], "IPC::Run::binmode_pseudo_filter"
                      )
@@ -1925,7 +1925,7 @@ sub harness {
             if (  ( UNIVERSAL::isa( $dest, 'GLOB' ) || UNIVERSAL::isa( $dest, 'IO::Handle' ) )
                && $type !~ /^>(pty>|pipe)$/
             ) {
-               _debug "setting DONT_CLOSE" if _debugging_details;
+	       _debug "setting DONT_CLOSE" if _debugging_details;
                $pipe->{DONT_CLOSE} = 1; ## this FD is not closed by us.
             }
             push @{$cur_kid->{OPS}}, $pipe;
@@ -1995,7 +1995,7 @@ sub harness {
          }
 
          else {
-            croak join(
+            croak join( 
                '',
                'Unexpected ',
                ( ref() ? $_ : 'scalar' ),
@@ -2058,8 +2058,8 @@ sub _open_pipes {
          $kid->{PATH} = _search_path $kid->{VAL}->[0];
       }
       if ( defined $pipe_read_fd ) {
-         _debug "placing write end of pipe on kid $kid->{NUM}'s stdin"
-            if _debugging_details;
+	 _debug "placing write end of pipe on kid $kid->{NUM}'s stdin"
+	    if _debugging_details;
          unshift @{$kid->{OPS}}, {
             TYPE => 'PIPE',  ## Prevent next loop from triggering on this
             KFD  => 0,
@@ -2073,58 +2073,58 @@ sub _open_pipes {
          my $ok = eval {
             if ( $op->{TYPE} eq '<' ) {
                my $source = $op->{SOURCE};
-               if ( ! ref $source ) {
-                  _debug(
-                     "kid ", $kid->{NUM}, " to read ", $op->{KFD},
-                     " from '" .  $source, "' (read only)"
-                  ) if _debugging_details;
-                  croak "simulated open failure"
-                     if $self->{_simulate_open_failure};
-                  $op->{TFD} = _sysopen( $source, O_RDONLY );
-                  push @close_on_fail, $op->{TFD};
-               }
-               elsif ( UNIVERSAL::isa( $source, 'GLOB' )
-                  ||   UNIVERSAL::isa( $source, 'IO::Handle' )
-               ) {
-                  croak
-                     "Unopened filehandle in input redirect for $op->{KFD}"
-                     unless defined fileno $source;
-                  $op->{TFD} = fileno $source;
-                  _debug(
-                     "kid ", $kid->{NUM}, " to read ", $op->{KFD},
-                     " from fd ", $op->{TFD}
-                  ) if _debugging_details;
-               }
-               elsif ( UNIVERSAL::isa( $source, 'SCALAR' ) ) {
-                  _debug(
-                     "kid ", $kid->{NUM}, " to read ", $op->{KFD},
-                     " from SCALAR"
-                  ) if _debugging_details;
+	       if ( ! ref $source ) {
+		  _debug(
+		     "kid ", $kid->{NUM}, " to read ", $op->{KFD},
+		     " from '" .  $source, "' (read only)"
+		  ) if _debugging_details;
+		  croak "simulated open failure"
+		     if $self->{_simulate_open_failure};
+		  $op->{TFD} = _sysopen( $source, O_RDONLY );
+		  push @close_on_fail, $op->{TFD};
+	       }
+	       elsif ( UNIVERSAL::isa( $source, 'GLOB' )
+		  ||   UNIVERSAL::isa( $source, 'IO::Handle' )
+	       ) {
+		  croak
+		     "Unopened filehandle in input redirect for $op->{KFD}"
+		     unless defined fileno $source;
+		  $op->{TFD} = fileno $source;
+		  _debug(
+		     "kid ", $kid->{NUM}, " to read ", $op->{KFD},
+		     " from fd ", $op->{TFD}
+		  ) if _debugging_details;
+	       }
+	       elsif ( UNIVERSAL::isa( $source, 'SCALAR' ) ) {
+		  _debug(
+		     "kid ", $kid->{NUM}, " to read ", $op->{KFD},
+		     " from SCALAR"
+		  ) if _debugging_details;
 
-                  $op->open_pipe( $self->_debug_fd );
-                  push @close_on_fail, $op->{KFD}, $op->{FD};
+		  $op->open_pipe( $self->_debug_fd );
+		  push @close_on_fail, $op->{KFD}, $op->{FD};
 
-                  my $s = '';
-                  $op->{KIN_REF} = \$s;
-               }
-               elsif ( UNIVERSAL::isa( $source, 'CODE' ) ) {
-                  _debug(
-                     'kid ', $kid->{NUM}, ' to read ', $op->{KFD}, ' from CODE'
-                  ) if _debugging_details;
-
-                  $op->open_pipe( $self->_debug_fd );
-                  push @close_on_fail, $op->{KFD}, $op->{FD};
-
-                  my $s = '';
-                  $op->{KIN_REF} = \$s;
-               }
-               else {
-                  croak(
-                     "'"
-                     . ref( $source )
-                     . "' not allowed as a source for input redirection"
-                  );
-               }
+		  my $s = '';
+		  $op->{KIN_REF} = \$s;
+	       }
+	       elsif ( UNIVERSAL::isa( $source, 'CODE' ) ) {
+		  _debug(
+		     'kid ', $kid->{NUM}, ' to read ', $op->{KFD}, ' from CODE'
+		  ) if _debugging_details;
+		  
+		  $op->open_pipe( $self->_debug_fd );
+		  push @close_on_fail, $op->{KFD}, $op->{FD};
+		  
+		  my $s = '';
+		  $op->{KIN_REF} = \$s;
+	       }
+	       else {
+		  croak(
+		     "'"
+		     . ref( $source )
+		     . "' not allowed as a source for input redirection"
+		  );
+	       }
                $op->_init_filters;
             }
             elsif ( $op->{TYPE} eq '<pipe' ) {
@@ -2134,18 +2134,18 @@ sub _open_pipes {
                ) if _debugging_details;
 
                my ( $r, $w ) = $op->open_pipe( $self->_debug_fd, $op->{SOURCE} );
-               _debug "caller will write to ", fileno $op->{SOURCE}
-                  if _debugging_details;
+	       _debug "caller will write to ", fileno $op->{SOURCE}
+	          if _debugging_details;
 
                $op->{TFD}    = $r;
-               $op->{FD}     = undef; # we don't manage this fd
+	       $op->{FD}     = undef; # we don't manage this fd
                $op->_init_filters;
             }
             elsif ( $op->{TYPE} eq '<pty<' ) {
                _debug(
                   'kid to read ', $op->{KFD}, " from pty '", $op->{PTY_ID}, "'",
                ) if _debugging_details;
-
+               
                for my $source ( $op->{SOURCE} ) {
                   if ( UNIVERSAL::isa( $source, 'SCALAR' ) ) {
                      _debug(
@@ -2191,16 +2191,16 @@ sub _open_pipes {
                   $op->{TFD} = _sysopen(
                      $dest,
                      ( O_WRONLY
-                     | O_CREAT
+                     | O_CREAT 
                      | ( $op->{TRUNC} ? O_TRUNC : O_APPEND )
                      )
                   );
-                  if ( Win32_MODE ) {
-                     ## I have no idea why this is needed to make the current
-                     ## file position survive the gyrations TFD must go
-                     ## through...
-                     POSIX::lseek( $op->{TFD}, 0, POSIX::SEEK_END() );
-                  }
+		  if ( Win32_MODE ) {
+		     ## I have no idea why this is needed to make the current
+		     ## file position survive the gyrations TFD must go 
+		     ## through...
+		     POSIX::lseek( $op->{TFD}, 0, POSIX::SEEK_END() );
+		  }
                   push @close_on_fail, $op->{TFD};
                }
                elsif ( UNIVERSAL::isa( $dest, 'GLOB' ) ) {
@@ -2220,7 +2220,7 @@ sub _open_pipes {
                      "kid ", $kid->{NUM}, " to write $op->{KFD} to SCALAR"
                   ) if _debugging_details;
 
-                  $op->open_pipe( $self->_debug_fd );
+		  $op->open_pipe( $self->_debug_fd );
                   push @close_on_fail, $op->{FD}, $op->{TFD};
                   $$dest = '' if $op->{TRUNC};
                }
@@ -2229,7 +2229,7 @@ sub _open_pipes {
                      "kid $kid->{NUM} to write $op->{KFD} to CODE"
                   ) if _debugging_details;
 
-                  $op->open_pipe( $self->_debug_fd );
+		  $op->open_pipe( $self->_debug_fd );
                   push @close_on_fail, $op->{FD}, $op->{TFD};
                }
                else {
@@ -2248,15 +2248,15 @@ sub _open_pipes {
                ## on.
                _debug(
                   "kid ", $kid->{NUM}, " to write ", $op->{KFD},
-                  ' to a pipe IPC::Run opens and returns'
+		  ' to a pipe IPC::Run opens and returns'
                ) if _debugging_details;
 
                my ( $r, $w ) = $op->open_pipe( $self->_debug_fd, $op->{DEST} );
-               _debug "caller will read from ", fileno $op->{DEST}
-                  if _debugging_details;
+	       _debug "caller will read from ", fileno $op->{DEST}
+	          if _debugging_details;
 
                $op->{TFD} = $w;
-               $op->{FD}  = undef; # we don't manage this fd
+	       $op->{FD}  = undef; # we don't manage this fd
                $op->_init_filters;
 
                $output_fds_accum[$op->{KFD}] = $op;
@@ -2296,21 +2296,21 @@ sub _open_pipes {
                   . ( $kid->{NUM} + 1 )
                ) if _debugging_details;
                ( $pipe_read_fd, $op->{TFD} ) = _pipe;
-               if ( Win32_MODE ) {
-                  _dont_inherit( $pipe_read_fd );
-                  _dont_inherit( $op->{TFD} );
-               }
+	       if ( Win32_MODE ) {
+		  _dont_inherit( $pipe_read_fd );
+		  _dont_inherit( $op->{TFD} );
+	       }
                @output_fds_accum = ();
             }
             elsif ( $op->{TYPE} eq '&' ) {
                @output_fds_accum = ();
             } # end if $op->{TYPE} tree
-            1;
-         }; # end eval
-         unless ( $ok ) {
-            push @errs, $@;
-            _debug 'caught ', $@ if _debugging;
-         }
+	    1;
+	 }; # end eval
+	 unless ( $ok ) {
+	    push @errs, $@;
+	    _debug 'caught ', $@ if _debugging;
+	 }
       } # end for ( OPS }
    }
 
@@ -2369,7 +2369,7 @@ sub _open_pipes {
                ' is my ', $_->{FD}
             ) if _debugging_details;
             vec( $self->{ $_->{TYPE} =~ /^</ ? 'WIN' : 'RIN' }, $_->{FD}, 1 ) = 1;
-#           vec( $self->{EIN}, $_->{FD}, 1 ) = 1;
+#	    vec( $self->{EIN}, $_->{FD}, 1 ) = 1;
             push @{$self->{PIPES}}, $_;
          }
       }
@@ -2402,12 +2402,12 @@ sub _open_pipes {
             if ( $@ ) {
                $in = '';
                ## IO::Pty throws the Input/output error if the kid dies.
-               ## read() throws the bad file descriptor message if the
-               ## kid dies on Win32.
+	       ## read() throws the bad file descriptor message if the
+	       ## kid dies on Win32.
                die $@ unless
-                  $@ =~ /^Input\/output error: read/ ||
-                  ($@ =~ /input or output/ && $^O =~ /aix/)
-                  || ( Win32_MODE && $@ =~ /Bad file descriptor/ );
+	          $@ =~ /^Input\/output error: read/ ||
+		  ($@ =~ /input or output/ && $^O =~ /aix/) 
+		  || ( Win32_MODE && $@ =~ /Bad file descriptor/ );
             }
 
             unless ( length $in ) {
@@ -2446,7 +2446,7 @@ sub _open_pipes {
                unless ( $pipe->{PAUSED} ) {
                   _debug_desc_fd( 'pausing', $pipe ) if _debugging_details;
                   vec( $self->{WIN}, $pipe->{FD}, 1 ) = 0;
-#                 vec( $self->{EIN}, $pipe->{FD}, 1 ) = 0;
+#		  vec( $self->{EIN}, $pipe->{FD}, 1 ) = 0;
                   vec( $self->{PIN}, $pipe->{FD}, 1 ) = 1;
                   $pipe->{PAUSED} = 1;
                }
@@ -2522,8 +2522,8 @@ sub _do_kid_and_exit {
       local $cur_self = $self;
 
       _set_child_debug_name( ref $kid->{VAL} eq "CODE"
-         ? "CODE"
-         : basename( $kid->{VAL}->[0] )
+	 ? "CODE"
+	 : basename( $kid->{VAL}->[0] )
       );
 
       ## close parent FD's first so they're out of the way.
@@ -2534,7 +2534,7 @@ sub _do_kid_and_exit {
       $needed[ $self->{DEBUG_FD} ] = 1 if defined $self->{DEBUG_FD};
 
       for ( @{$kid->{OPS}} ) {
-         $needed[ $_->{TFD} ] = 1 if defined $_->{TFD};
+	 $needed[ $_->{TFD} ] = 1 if defined $_->{TFD};
       }
 
       ## TODO: use the forthcoming IO::Pty to close the terminal and
@@ -2543,34 +2543,34 @@ sub _do_kid_and_exit {
       ## other kids to lose stdin/stdout/stderr.
       my @closed;
       if ( %{$self->{PTYS}} ) {
-         ## Clean up the parent's fds.
-         for ( keys %{$self->{PTYS}} ) {
-            _debug "Cleaning up parent's ptty '$_'" if _debugging_details;
-            my $slave = $self->{PTYS}->{$_}->slave;
-            $closed[ $self->{PTYS}->{$_}->fileno ] = 1;
-            close $self->{PTYS}->{$_};
-            $self->{PTYS}->{$_} = $slave;
-         }
+	 ## Clean up the parent's fds.
+	 for ( keys %{$self->{PTYS}} ) {
+	    _debug "Cleaning up parent's ptty '$_'" if _debugging_details;
+	    my $slave = $self->{PTYS}->{$_}->slave;
+	    $closed[ $self->{PTYS}->{$_}->fileno ] = 1;
+	    close $self->{PTYS}->{$_};
+	    $self->{PTYS}->{$_} = $slave;
+	 }
 
-         close_terminal;
-         $closed[ $_ ] = 1 for ( 0..2 );
+	 close_terminal;
+	 $closed[ $_ ] = 1 for ( 0..2 );
       }
 
       for my $sibling ( @{$self->{KIDS}} ) {
-         for ( @{$sibling->{OPS}} ) {
-            if ( $_->{TYPE} =~ /^.pty.$/ ) {
-               $_->{TFD} = $self->{PTYS}->{$_->{PTY_ID}}->fileno;
-               $needed[$_->{TFD}] = 1;
-            }
+	 for ( @{$sibling->{OPS}} ) {
+	    if ( $_->{TYPE} =~ /^.pty.$/ ) {
+	       $_->{TFD} = $self->{PTYS}->{$_->{PTY_ID}}->fileno;
+	       $needed[$_->{TFD}] = 1;
+	    }
 
-#           for ( $_->{FD}, ( $sibling != $kid ? $_->{TFD} : () ) ) {
-#              if ( defined $_ && ! $closed[$_] && ! $needed[$_] ) {
-#                 _close( $_ );
-#                 $closed[$_] = 1;
-#                 $_ = undef;
-#              }
-#           }
-         }
+#	    for ( $_->{FD}, ( $sibling != $kid ? $_->{TFD} : () ) ) {
+#	       if ( defined $_ && ! $closed[$_] && ! $needed[$_] ) {
+#		  _close( $_ );
+#		  $closed[$_] = 1;
+#		  $_ = undef;
+#	       }
+#	    }
+	 }
       }
 
       ## This is crude: we have no way of keeping track of browsing all open
@@ -2587,58 +2587,58 @@ sub _do_kid_and_exit {
       ## several times.
       my @lazy_close;
       for ( @{$kid->{OPS}} ) {
-         if ( defined $_->{TFD} ) {
-            unless ( $_->{TFD} == $_->{KFD} ) {
-               $self->_dup2_gently( $kid->{OPS}, $_->{TFD}, $_->{KFD} );
-               push @lazy_close, $_->{TFD};
-            }
-         }
-         elsif ( $_->{TYPE} eq 'dup' ) {
-            $self->_dup2_gently( $kid->{OPS}, $_->{KFD1}, $_->{KFD2} )
-               unless $_->{KFD1} == $_->{KFD2};
-         }
-         elsif ( $_->{TYPE} eq 'close' ) {
-            for ( $_->{KFD} ) {
-               if ( ! $closed[$_] ) {
-                  _close( $_ );
-                  $closed[$_] = 1;
-                  $_ = undef;
-               }
-            }
-         }
-         elsif ( $_->{TYPE} eq 'init' ) {
-            $_->{SUB}->();
-         }
+	 if ( defined $_->{TFD} ) {
+	    unless ( $_->{TFD} == $_->{KFD} ) {
+	       $self->_dup2_gently( $kid->{OPS}, $_->{TFD}, $_->{KFD} );
+	       push @lazy_close, $_->{TFD};
+	    }
+	 }
+	 elsif ( $_->{TYPE} eq 'dup' ) {
+	    $self->_dup2_gently( $kid->{OPS}, $_->{KFD1}, $_->{KFD2} )
+	       unless $_->{KFD1} == $_->{KFD2};
+	 }
+	 elsif ( $_->{TYPE} eq 'close' ) {
+	    for ( $_->{KFD} ) {
+	       if ( ! $closed[$_] ) {
+		  _close( $_ );
+		  $closed[$_] = 1;
+		  $_ = undef;
+	       }
+	    }
+	 }
+	 elsif ( $_->{TYPE} eq 'init' ) {
+	    $_->{SUB}->();
+	 }
       }
 
       for ( @lazy_close ) {
-         unless ( $closed[$_] ) {
-            _close( $_ );
-            $closed[$_] = 1;
-         }
+	 unless ( $closed[$_] ) {
+	    _close( $_ );
+	    $closed[$_] = 1;
+	 }
       }
 
       if ( ref $kid->{VAL} ne 'CODE' ) {
-         open $s1, ">&=$self->{SYNC_WRITER_FD}"
-            or croak "$! setting filehandle to fd SYNC_WRITER_FD";
-         fcntl $s1, F_SETFD, 1;
+	 open $s1, ">&=$self->{SYNC_WRITER_FD}"
+	    or croak "$! setting filehandle to fd SYNC_WRITER_FD";
+	 fcntl $s1, F_SETFD, 1;
 
-         if ( defined $self->{DEBUG_FD} ) {
-            open $s2, ">&=$self->{DEBUG_FD}"
-               or croak "$! setting filehandle to fd DEBUG_FD";
-            fcntl $s2, F_SETFD, 1;
-         }
+	 if ( defined $self->{DEBUG_FD} ) {
+	    open $s2, ">&=$self->{DEBUG_FD}"
+	       or croak "$! setting filehandle to fd DEBUG_FD";
+	    fcntl $s2, F_SETFD, 1;
+	 }
 
-         my @cmd = ( $kid->{PATH}, @{$kid->{VAL}}[1..$#{$kid->{VAL}}] );
-         _debug 'execing ', join " ", map { /[\s\"]/ ? "'$_'" : $_ } @cmd
-            if _debugging;
+	 my @cmd = ( $kid->{PATH}, @{$kid->{VAL}}[1..$#{$kid->{VAL}}] );
+	 _debug 'execing ', join " ", map { /[\s\"]/ ? "'$_'" : $_ } @cmd
+	    if _debugging;
 
-         die "exec failed: simulating exec() failure"
-            if $self->{_simulate_exec_failure};
+	 die "exec failed: simulating exec() failure"
+	    if $self->{_simulate_exec_failure};
 
-         _exec $kid->{PATH}, @{$kid->{VAL}}[1..$#{$kid->{VAL}}];
+	 _exec $kid->{PATH}, @{$kid->{VAL}}[1..$#{$kid->{VAL}}];
 
-         croak "exec failed: $!";
+	 croak "exec failed: $!";
       }
    };
    if ( $@ ) {
@@ -2789,11 +2789,11 @@ sub start {
             croak "simulated failure of fork"
                if $self->{_simulate_fork_failure};
             unless ( Win32_MODE ) {
-               $self->_spawn( $kid );
+	       $self->_spawn( $kid );
             }
             else {
 ## TODO: Test and debug spawing code.  Someday.
-               _debug(
+               _debug( 
                   'spawning ',
                   join(
                      ' ',
@@ -2803,14 +2803,14 @@ sub start {
                      )
                   )
                ) if _debugging;
-               ## The external kid wouldn't know what to do with it anyway.
-               ## This is only used by the "helper" pump processes on Win32.
-               _dont_inherit( $self->{DEBUG_FD} );
+	       ## The external kid wouldn't know what to do with it anyway.
+	       ## This is only used by the "helper" pump processes on Win32.
+	       _dont_inherit( $self->{DEBUG_FD} );
                ( $kid->{PID}, $kid->{PROCESS} ) =
-                  IPC::Run::Win32Helper::win32_spawn(
-                     [ $kid->{PATH}, @{$kid->{VAL}}[1..$#{$kid->{VAL}}] ],
-                     $kid->{OPS},
-                  );
+		  IPC::Run::Win32Helper::win32_spawn( 
+		     [ $kid->{PATH}, @{$kid->{VAL}}[1..$#{$kid->{VAL}}] ],
+		     $kid->{OPS},
+		  );
                _debug "spawn() = ", $kid->{PID} if _debugging;
             }
          };
@@ -2931,7 +2931,7 @@ SELECT:
    while ( $self->pumpable ) {
       if ( $io_occurred && $self->{break_on_io} ) {
          _debug "exiting _select(): io occured and break_on_io set"
-            if _debugging_details;
+	    if _debugging_details;
          last;
       }
 
@@ -2965,7 +2965,7 @@ SELECT:
             _debug_desc_fd( "unpausing", $file ) if _debugging_details;
             $file->{PAUSED} = 0;
             vec( $self->{WIN}, $file->{FD}, 1 ) = 1;
-#           vec( $self->{EIN}, $file->{FD}, 1 ) = 1;
+#	    vec( $self->{EIN}, $file->{FD}, 1 ) = 1;
             vec( $self->{PIN}, $file->{FD}, 1 ) = 0;
          }
          else {
@@ -3001,8 +3001,8 @@ SELECT:
       if ( $p > 0  && ( ! defined $timeout || $timeout > 0.1 ) ) {
          ## No I/O will wake the select loop up, but we have children
          ## lingering, so we need to poll them with a short timeout.
-         ## Otherwise, assume more input will be coming.
-         $timeout = $not_forever;
+	 ## Otherwise, assume more input will be coming.
+	 $timeout = $not_forever;
          $not_forever *= 2;
          $not_forever = 0.5 if $not_forever >= 0.5;
       }
@@ -3011,16 +3011,16 @@ SELECT:
       ## paused.
       if ( ! defined $timeout && ! ( @{$self->{PIPES}} - $paused ) ) {
          ## Need to return if we're in pump and all input is paused, or
-         ## we'll loop until all inputs are unpaused, which is darn near
-         ## forever.  And a day.
+	 ## we'll loop until all inputs are unpaused, which is darn near
+	 ## forever.  And a day.
          if ( $self->{break_on_io} ) {
-            _debug "exiting _select(): no I/O to do and timeout=forever"
+	    _debug "exiting _select(): no I/O to do and timeout=forever"
                if _debugging;
-            last;
-         }
+	    last;
+	 }
 
-         ## Otherwise, assume more input will be coming.
-         $timeout = $not_forever;
+	 ## Otherwise, assume more input will be coming.
+	 $timeout = $not_forever;
          $not_forever *= 2;
          $not_forever = 0.5 if $not_forever >= 0.5;
       }
@@ -3034,27 +3034,27 @@ SELECT:
             $self->{ROUT} = $self->{RIN},
             $self->{WOUT} = $self->{WIN},
             $self->{EOUT} = $self->{EIN},
-            $timeout
-         );
+            $timeout 
+	 );
       }
       else {
-         my @in = map $self->{$_}, qw( RIN WIN EIN );
-         ## Win32's select() on Win32 seems to die if passed vectors of
-         ## all 0's.  Need to report this when I get back online.
-         for ( @in ) {
-            $_ = undef unless index( ( unpack "b*", $_ ), 1 ) >= 0;
-         }
+	 my @in = map $self->{$_}, qw( RIN WIN EIN );
+	 ## Win32's select() on Win32 seems to die if passed vectors of
+	 ## all 0's.  Need to report this when I get back online.
+	 for ( @in ) {
+	    $_ = undef unless index( ( unpack "b*", $_ ), 1 ) >= 0;
+	 }
 
-         $nfound = select(
+	 $nfound = select(
             $self->{ROUT} = $in[0],
             $self->{WOUT} = $in[1],
             $self->{EOUT} = $in[2],
-            $timeout
+            $timeout 
          );
 
-         for ( $self->{ROUT}, $self->{WOUT}, $self->{EOUT} ) {
-            $_ = "" unless defined $_;
-         }
+	 for ( $self->{ROUT}, $self->{WOUT}, $self->{EOUT} ) {
+	    $_ = "" unless defined $_;
+	 }
       }
       last if ! $nfound && $self->{non_blocking};
 
@@ -3087,8 +3087,8 @@ SELECT:
 #      for my $pipe ( @pipes ) {
 #         ## Pipes can be shared among kids.  If another kid closes the
 #         ## pipe, then it's {FD} will be undef.  Also, on Win32, pipes can
-#        ## be optimized to be files, in which case the FD is left undef
-#        ## so we don't try to select() on it.
+#	 ## be optimized to be files, in which case the FD is left undef
+#	 ## so we don't try to select() on it.
 #         if ( $pipe->{TYPE} =~ /^>/
 #            && defined $pipe->{FD}
 #            && vec( $self->{ROUT}, $pipe->{FD}, 1 )
@@ -3100,8 +3100,8 @@ SELECT:
 #            next FILE unless defined $pipe->{FD};
 #         }
 #
-#        ## On Win32, pipes to the child can be optimized to be files
-#        ## and FD left undefined so we won't select on it.
+#	 ## On Win32, pipes to the child can be optimized to be files
+#	 ## and FD left undefined so we won't select on it.
 #         if ( $pipe->{TYPE} =~ /^</
 #            && defined $pipe->{FD}
 #            && vec( $self->{WOUT}, $pipe->{FD}, 1 )
@@ -3147,7 +3147,7 @@ sub _cleanup {
       };
       carp $@ . " closing ptys" if $@;
    }
-
+   
    _debug "cleaning up pipes" if _debugging_details;
    ## _clobber modifies PIPES
    $self->_clobber( $self->{PIPES}->[0] ) while @{$self->{PIPES}};
@@ -3172,7 +3172,7 @@ sub _cleanup {
       }
 
 #      if ( defined $kid->{DEBUG_FD} ) {
-#        die;
+#	 die;
 #         @{$kid->{OPS}} = grep
 #            ! defined $_->{KFD} || $_->{KFD} != $kid->{DEBUG_FD},
 #            @{$kid->{OPS}};
@@ -3243,7 +3243,7 @@ sub pump {
 
    local $cur_self = $self;
 
-   _debug "** pumping"
+   _debug "** pumping" 
       if _debugging;
 
 #   my $r = eval {
@@ -3324,7 +3324,7 @@ sub pumpable {
    ## exits.
    ##
    ## A better solution would be to unpause all the pipes, but I tried that
-   ## and it never errored on linux.  Sigh.
+   ## and it never errored on linux.  Sigh.  
    select undef, undef, undef, 0.0001;
 
    ## try again
@@ -3374,49 +3374,49 @@ sub reap_nb {
    ## may have spawned.
    for my $kid ( @{$self->{KIDS}} ) {
       if ( Win32_MODE ) {
-         next if ! defined $kid->{PROCESS} || defined $kid->{RESULT};
-         unless ( $kid->{PROCESS}->Wait( 0 ) ) {
-            _debug "kid $kid->{NUM} ($kid->{PID}) still running"
+	 next if ! defined $kid->{PROCESS} || defined $kid->{RESULT};
+	 unless ( $kid->{PROCESS}->Wait( 0 ) ) {
+	    _debug "kid $kid->{NUM} ($kid->{PID}) still running"
                if _debugging_details;
-            next;
-         }
+	    next;
+	 }
 
          _debug "kid $kid->{NUM} ($kid->{PID}) exited"
             if _debugging;
 
-         $kid->{PROCESS}->GetExitCode( $kid->{RESULT} )
-            or croak "$! while GetExitCode()ing for Win32 process";
+	 $kid->{PROCESS}->GetExitCode( $kid->{RESULT} )
+	    or croak "$! while GetExitCode()ing for Win32 process";
 
-         unless ( defined $kid->{RESULT} ) {
-            $kid->{RESULT} = "0 but true";
-            $? = $kid->{RESULT} = 0x0F;
-         }
-         else {
-            $? = $kid->{RESULT} << 8;
-         }
+	 unless ( defined $kid->{RESULT} ) {
+	    $kid->{RESULT} = "0 but true";
+	    $? = $kid->{RESULT} = 0x0F;
+	 }
+	 else {
+	    $? = $kid->{RESULT} << 8;
+	 }
       }
       else {
-         next if ! defined $kid->{PID} || defined $kid->{RESULT};
-         my $pid = waitpid $kid->{PID}, POSIX::WNOHANG();
-         unless ( $pid ) {
-            _debug "$kid->{NUM} ($kid->{PID}) still running"
+	 next if ! defined $kid->{PID} || defined $kid->{RESULT};
+	 my $pid = waitpid $kid->{PID}, POSIX::WNOHANG();
+	 unless ( $pid ) {
+	    _debug "$kid->{NUM} ($kid->{PID}) still running"
                if _debugging_details;
-            next;
-         }
+	    next;
+	 }
 
-         if ( $pid < 0 ) {
-            _debug "No such process: $kid->{PID}\n" if _debugging;
-            $kid->{RESULT} = "unknown result, unknown PID";
-         }
-         else {
+	 if ( $pid < 0 ) {
+	    _debug "No such process: $kid->{PID}\n" if _debugging;
+	    $kid->{RESULT} = "unknown result, unknown PID";
+	 }
+	 else {
             _debug "kid $kid->{NUM} ($kid->{PID}) exited"
                if _debugging;
 
-            confess "waitpid returned the wrong PID: $pid instead of $kid->{PID}"
-               unless $pid = $kid->{PID};
-            _debug "$kid->{PID} returned $?\n" if _debugging;
-            $kid->{RESULT} = $?;
-         }
+	    confess "waitpid returned the wrong PID: $pid instead of $kid->{PID}"
+	       unless $pid = $kid->{PID};
+	    _debug "$kid->{PID} returned $?\n" if _debugging;
+	    $kid->{RESULT} = $?;
+	 }
       }
    }
 }
@@ -3473,7 +3473,7 @@ sub finish {
 
    $h->result;
 
-Returns the first non-zero result code (ie $? >> 8).  See L</full_result> to
+Returns the first non-zero result code (ie $? >> 8).  See L</full_result> to 
 get the $? value for a child process.
 
 To get the result of a particular child, do:
@@ -3502,7 +3502,7 @@ sub _assert_finished {
 sub result {
    &_assert_finished;
    my IPC::Run $self = shift;
-
+   
    if ( @_ ) {
       my ( $which ) = @_;
       croak(
@@ -3529,7 +3529,7 @@ Returns a list of child exit values.  See L</full_results> if you want to
 know if a signal killed the child.
 
 Throws an exception if the harness is not in a finished state.
-
+ 
 =cut
 
 sub results {
@@ -3546,7 +3546,7 @@ sub results {
 
    $h->full_result;
 
-Returns the first non-zero $?.  See L</result> to get the first $? >> 8
+Returns the first non-zero $?.  See L</result> to get the first $? >> 8 
 value for a child process.
 
 To get the result of a particular child, do:
@@ -3584,7 +3584,7 @@ Returns a list of child exit values as returned by C<wait>.  See L</results>
 if you don't care about coredumps or signals.
 
 Throws an exception if the harness is not in a finished state.
-
+ 
 =cut
 
 sub full_results {
@@ -3762,9 +3762,9 @@ sub new_appender($) {
 
 TODO: Needs confirmation. Was previously undocumented. in this module.
 
-This is a filter which is exportable. Returns a sub which appends the data passed in to the output buffer and returns 1 if data was appended. 0 if it was an empty string and undef if no data was passed.
+This is a filter which is exportable. Returns a sub which appends the data passed in to the output buffer and returns 1 if data was appended. 0 if it was an empty string and undef if no data was passed. 
 
-NOTE: Any additional variables passed to new_string_source will be passed to the sub every time it's called and appended to the output.
+NOTE: Any additional variables passed to new_string_source will be passed to the sub every time it's called and appended to the output. 
 
 =cut
 
@@ -3875,15 +3875,15 @@ sub new_string_sink {
 #      ( $self->{TIMEOUT} ) = @_;
 #      $self->{TIMEOUT_END} = undef;
 #      if ( defined $self->{TIMEOUT} ) {
-#        if ( $self->{TIMEOUT} =~ /[^\d.]/ ) {
-#           my @f = split( /[^\d\.]+/i, $self->{TIMEOUT} );
-#           unshift @f, 0 while @f < 3;
-#           $self->{TIMEOUT} = (($f[0]*60)+$f[1])*60+$f[2];
-#        }
-#        elsif ( $self->{TIMEOUT} =~ /^(\d*)(?:\.(\d*))/ ) {
-#           $self->{TIMEOUT} = $1 + 1;
-#        }
-#        $self->_calc_timeout_end if $self->{STATE} >= _started;
+#	 if ( $self->{TIMEOUT} =~ /[^\d.]/ ) {
+#	    my @f = split( /[^\d\.]+/i, $self->{TIMEOUT} );
+#	    unshift @f, 0 while @f < 3;
+#	    $self->{TIMEOUT} = (($f[0]*60)+$f[1])*60+$f[2];
+#	 }
+#	 elsif ( $self->{TIMEOUT} =~ /^(\d*)(?:\.(\d*))/ ) {
+#	    $self->{TIMEOUT} = $1 + 1;
+#	 }
+#	 $self->_calc_timeout_end if $self->{STATE} >= _started;
 #      }
 #   }
 #   return $self->{TIMEOUT};
@@ -3893,7 +3893,7 @@ sub new_string_sink {
 #sub _calc_timeout_end {
 #   my IPC::Run $self = shift;
 #
-#   $self->{TIMEOUT_END} = defined $self->{TIMEOUT}
+#   $self->{TIMEOUT_END} = defined $self->{TIMEOUT} 
 #      ? time + $self->{TIMEOUT}
 #      : undef;
 #
@@ -3912,7 +3912,7 @@ and a source or destination (depends on the redirection operator).  Returns
 an IPC::Run::IO object suitable for harness()ing (including via start()
 or run()).
 
-This is shorthand for
+This is shorthand for 
 
 
    require IPC::Run::IO;
@@ -3936,7 +3936,7 @@ sub io {
 
 Instantiates a non-fatal timer.  pump() returns once each time a timer
 expires.  Has no direct effect on run(), but you can pass a subroutine
-to fire when the timer expires.
+to fire when the timer expires. 
 
 See L</timeout> for building timers that throw exceptions on
 expiration.
@@ -4019,7 +4019,7 @@ These functions are for use from within filters.
 
 =item input_avail
 
-Returns TRUE if input is available.  If none is available, then
+Returns TRUE if input is available.  If none is available, then 
 &get_more_input is called and its result is returned.
 
 This is usually used in preference to &get_more_input so that the
@@ -4253,7 +4253,7 @@ if you have the problem.  If it dies, you have the problem.
    use IO::Pty;
 
    sub makecmd {
-       return ['perl', '-e',
+       return ['perl', '-e', 
                '<STDIN>, print "\n" x '.$_[0].'; while(<STDIN>){last if /end/}'];
    }
 

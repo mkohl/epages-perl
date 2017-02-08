@@ -26,12 +26,12 @@ sub clone_http_resp {
    my ($class,$http_resp) = @_;
    my %clone = %{$http_resp};
    my $self = \%clone;
-   bless $self, (ref($class) || $class);
+   bless $self, (ref($class) || $class); 
 }
 
 # This routine resets the base
-# message in the
-# object based on the
+# message in the 
+# object based on the 
 # code and the status_codes above.
 # set_message('207');
 sub set_message {
@@ -51,7 +51,7 @@ sub get_responsedescription { $_[0]->{'_dav_responsedescription'}; }
 
 sub add_status_line {
    my($self,$message,$responsedescription,$handle,$url) = @_;
-
+   
    # Parse "status-line". See section 6.1 of RFC 2068
    # Status-Line= HTTP-Version SP Status-Code SP Reason-Phrase CRLF
    if (defined $message && $message =~ /^(.*?)\s(.*?)\s(.*?)$/ ) {
@@ -77,7 +77,7 @@ sub add_status_line {
 # PUBLIC METHODS
 
 sub is_multistatus {
-    return ($_[0]->code eq "207" )? 1:0;
+    return ($_[0]->code eq "207" )? 1:0; 
 }
 
 sub messages {
@@ -110,10 +110,10 @@ sub codes {
    return \@codes;
 }
 
-sub response_count {
+sub response_count { 
    return -1 unless exists $_[0]->{_dav_multistatus};
    return -1 unless ref($_[0]->{_dav_multistatus}) =~ /ARRAY/;
-   return  $#{$_[0]->{_dav_multistatus}};
+   return  $#{$_[0]->{_dav_multistatus}}; 
 }
 
 sub message_bynum { $_[0]->{_dav_multistatus}[$_[1]]{'message'}; }
@@ -181,7 +181,7 @@ require HTTP::DAV::Response;
 
 =head1 DESCRIPTION
 
-The HTTP::DAV::Response class encapsulates HTTP style responses.  A response consists of a response line, some headers, and (potentially empty) content.
+The HTTP::DAV::Response class encapsulates HTTP style responses.  A response consists of a response line, some headers, and (potentially empty) content. 
 
 HTTP::DAV::Response is a subclass of C<HTTP::Response> and therefore inherits its methods.  (HTTP::Response in turn inherits it's methods from C<HTTP::Message>).
 
@@ -209,7 +209,7 @@ The six extra status codes that DAV servers can be returned in an HTTP Response 
 
 See C<HTTP::Status> for the rest.
 
-=head1 HANDLING A MULTISTATUS
+=head1 HANDLING A MULTISTATUS 
 
 So, many DAV requests may return a multistatus ("207 multistatus") instead of, say, "200 OK" or "403 Forbidden".
 
@@ -223,7 +223,7 @@ $response = $resource->lock();
 if ( $response->is_multistatus() ) {
 
    foreach $num ( 0 .. $response->response_count() ) {
-      ($err_code,$mesg,$url,$desc) =
+      ($err_code,$mesg,$url,$desc) = 
          $response->response_bynum($num);
       print "$mesg ($err_code) for $url\n";
    }
@@ -233,12 +233,12 @@ Would produce something like this:
    Failed Dependency (424) for /test/directory
    Locked (423) for /test/directory/file3
 
-This says that we couldn't lock /test/directory
+This says that we couldn't lock /test/directory 
 because file3 which exists inside is already locked by somebody else.
 
 =head1 METHODS
 
-=over 4
+=over 4 
 
 =item B<is_multistatus>
 
@@ -248,14 +248,14 @@ For example: if ($response->is_multistatus() ) { }
 
 If the HTTP reply had "207 Multistatus" in the header then that indicates that there are multiple status messages in the XML content that was returned.
 
-In this event, you may be interested in knowing what the individual messages were. To do this you would then use C<messages>.
+In this event, you may be interested in knowing what the individual messages were. To do this you would then use C<messages>. 
 
 =item B<response_count>
 
 Takes no arguments and returns "the number of error responses -1" that we got.
 Why -1? Because usually you will want to use this like an array operator:
 
-foreach $num ( 0 .. $response->response_count() ) {
+foreach $num ( 0 .. $response->response_count() ) { 
    print $response->message_bynum();
 }
 
@@ -265,7 +265,7 @@ Takes one argument, the "response number" that you're interested in. And returns
 
    ($code,$message,$url,$description) = response_bynum(2);
 
-where
+where 
    $code - is the HTTP error code (e.g. 403, 423, etc).
    $message - is the associated message for that error code.
    $url - is the url that this error applies to (recall that there can be multiple responses within one response and they all relate to one URL)
@@ -313,7 +313,7 @@ e.g. $messages eq "Forbidden\nLocked";
 @messages = $response->messages();
 e.g. @messages eq ["Forbidden", "Locked"];
 
-This routine is a variant on the standard C<HTTP::Response> C<message()>.
+This routine is a variant on the standard C<HTTP::Response> C<message()>. 
 
 =cut
 

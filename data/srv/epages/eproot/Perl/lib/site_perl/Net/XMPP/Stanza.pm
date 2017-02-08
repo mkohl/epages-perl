@@ -1162,7 +1162,7 @@ sub _xpath_defined
 
     foreach my $packet (@{$self->{CHILDREN}})
     {
-            $self->_debug("_xpath_defined: packet->GetXMLNS ",$packet->GetXMLNS());
+	    $self->_debug("_xpath_defined: packet->GetXMLNS ",$packet->GetXMLNS());
         if (defined($ns) && ($packet->GetXMLNS() eq $ns))
         {
             $defined = 1;

@@ -28,15 +28,15 @@ sub display_html {
   # We need to use a temp file for communication
   my ($self,$html) = @_;
 
-  $self->cleanup_tempfiles;
+  $self->cleanup_tempfiles;  
 
   require File::Temp;
   my($tempfh, $tempfile) = File::Temp::tempfile(undef, SUFFIX => '.html');
   print $tempfh $html;
   close $tempfh;
 
-  push @{$self->{delete}}, $tempfile;
-
+  push @{$self->{delete}}, $tempfile;  
+  
   my $cmdline = sprintf($self->browsercmd, $tempfile);
   system( $cmdline ) == 0
     or warn "Couldn't launch '$cmdline' : $?";

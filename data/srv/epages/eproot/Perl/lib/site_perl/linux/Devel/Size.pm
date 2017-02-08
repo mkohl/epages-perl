@@ -9,9 +9,9 @@ require DynaLoader;
 
 @ISA = qw(Exporter DynaLoader);
 
-# This allows declaration       use Devel::Size ':all';
+# This allows declaration	use Devel::Size ':all';
 %EXPORT_TAGS = ( 'all' => [ qw(
-        size total_size
+	size total_size
 ) ] );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
@@ -42,7 +42,7 @@ Devel::Size - Perl extension for finding the memory usage of Perl variables
   my $other_size = size(\@foo);
 
   my $foo = {a => [1, 2, 3],
-          b => {a => [1, 3, 4]}
+	  b => {a => [1, 3, 4]}
          };
   my $total_size = total_size($foo);
 
@@ -202,28 +202,28 @@ and will definitely expand your process' memory footprint.
 
 =over 4
 
-=item   "Devel::Size: Unknown variable type"
+=item	"Devel::Size: Unknown variable type"
 
-The thing (or something contained within it) that you gave to
+The thing (or something contained within it) that you gave to 
 total_size() was unrecognisable as a Perl entity.
 
 =back
 
 =head2 warnings
 
-These messages warn you that for some types, the sizes calculated may not include
-everything that could be associated with those types. The differences are usually
+These messages warn you that for some types, the sizes calculated may not include 
+everything that could be associated with those types. The differences are usually 
 insignificant for most uses of this module.
 
 These may be disabled by setting
 
-        $Devel::Size::warn = 0
+	$Devel::Size::warn = 0
 
 =over 4
 
-=item   "Devel::Size: Calculated sizes for CVs are incomplete"
+=item	"Devel::Size: Calculated sizes for CVs are incomplete"
 
-=item   "Devel::Size: Calculated sizes for FMs are incomplete"
+=item	"Devel::Size: Calculated sizes for FMs are incomplete"
 
 =back
 

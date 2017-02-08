@@ -19,8 +19,8 @@ MIME::Field::ParamVal - subclass of Mail::Field, for structured MIME fields
 
     # Same:
     $field->set('_'        => 'text/html',
-                'charset'  => 'us-ascii',
-                'boundary' => '---ABC---');
+		'charset'  => 'us-ascii',
+		'boundary' => '---ABC---');
 
     # Get an attribute, or undefined if not present:
     print "no id!"  if defined($field->param('id'));
@@ -38,14 +38,14 @@ This is an abstract superclass of most MIME fields.  It handles
 fields with a general syntax like this:
 
     Content-Type: Message/Partial;
-        number=2; total=3;
-        id="oc=jpbe0M2Yt4s@thumper.bellcore.com"
+	number=2; total=3;
+	id="oc=jpbe0M2Yt4s@thumper.bellcore.com"
 
 Comments are supported I<between> items, like this:
 
     Content-Type: Message/Partial; (a comment)
-        number=2  (another comment) ; (yet another comment) total=3;
-        id="oc=jpbe0M2Yt4s@thumper.bellcore.com"
+	number=2  (another comment) ; (yet another comment) total=3;
+	id="oc=jpbe0M2Yt4s@thumper.bellcore.com"
 
 
 =head1 PUBLIC INTERFACE
@@ -134,9 +134,9 @@ signifying the "default" (unnamed) parameter for the field:
    #     Content-type: Message/Partial; number=2; total=3; id="ocj=pbe0M2"
    #
    $conttype->set('_'       => 'Message/Partial',
-                  'number'  => 2,
-                  'total'   => 3,
-                  'id'      => "ocj=pbe0M2");
+		  'number'  => 2,
+		  'total'   => 3,
+		  'id'      => "ocj=pbe0M2");
 
 Note that a single argument is taken to be a I<reference> to
 a paramhash, while multiple args are taken to be the elements
@@ -165,16 +165,16 @@ Extract parameter info from a structured field, and return
 it as a hash reference.  For example, here is a field with parameters:
 
     Content-Type: Message/Partial;
-        number=2; total=3;
-        id="oc=jpbe0M2Yt4s@thumper.bellcore.com"
+	number=2; total=3;
+	id="oc=jpbe0M2Yt4s@thumper.bellcore.com"
 
 Here is how you'd extract them:
 
     $params = $class->parse_params('content-type');
     if ($$params{'_'} eq 'message/partial') {
-        $number = $$params{'number'};
-        $total  = $$params{'total'};
-        $id     = $$params{'id'};
+	$number = $$params{'number'};
+	$total  = $$params{'total'};
+	$id     = $$params{'id'};
     }
 
 Like field names, parameter names are coerced to lowercase.
@@ -192,15 +192,15 @@ sub rfc2231decode {
 
     local($1,$2,$3);
     if ($val =~ m/^([^']*)'([^']*)'(.*)\z/s) {
-        $enc = $1;
-        $lang = $2;
-        $rest = $3;
+	$enc = $1;
+	$lang = $2;
+	$rest = $3;
     } elsif ($val =~ m/^([^']*)'([^']*)\z/s) {
-        $enc = $1;
-        $rest = $2;
+	$enc = $1;
+	$rest = $2;
     } else {
-        $rest = $val;
-        # $enc remains undefined when charset/language info is missing
+	$rest = $val;
+	# $enc remains undefined when charset/language info is missing
     }
     return ($enc, $lang, $rest);
 }
@@ -235,65 +235,65 @@ sub parse_params {
     # Extract subsequent parameters.
     # No, we can't just "split" on semicolons: they're legal in quoted strings!
     while (1) {                     # keep chopping away until done...
-        $raw =~ m/\G$SPCZ(\;$SPCZ)+/og or last;             # skip leading separator
-        $raw =~ m/\G($PARAMNAME)\s*=\s*/og or last;      # give up if not a param
-        $param = lc($1);
-        $raw =~ m/\G(?:("([^"]*)")|($ENCTOKEN)|($BADTOKEN)|($TOKEN))/g or last;   # give up if no value"
-        my ($qstr, $str, $enctoken, $badtoken, $token) = ($1, $2, $3, $4, $5);
-        if (defined($badtoken)) {
-            # Strip leading/trailing whitespace from badtoken
-            $badtoken =~ s/^\s+//;
-            $badtoken =~ s/\s+\z//;
-        }
-        $val = defined($qstr) ? $str :
-            (defined($enctoken) ? $enctoken :
-             (defined($badtoken) ? $badtoken : $token));
+	$raw =~ m/\G$SPCZ(\;$SPCZ)+/og or last;             # skip leading separator
+	$raw =~ m/\G($PARAMNAME)\s*=\s*/og or last;      # give up if not a param
+	$param = lc($1);
+	$raw =~ m/\G(?:("([^"]*)")|($ENCTOKEN)|($BADTOKEN)|($TOKEN))/g or last;   # give up if no value"
+	my ($qstr, $str, $enctoken, $badtoken, $token) = ($1, $2, $3, $4, $5);
+	if (defined($badtoken)) {
+	    # Strip leading/trailing whitespace from badtoken
+	    $badtoken =~ s/^\s+//;
+	    $badtoken =~ s/\s+\z//;
+	}
+	$val = defined($qstr) ? $str :
+	    (defined($enctoken) ? $enctoken :
+	     (defined($badtoken) ? $badtoken : $token));
 
-        # Do RFC 2231 processing
-        # Pick out the parts of the parameter
-        if ($param =~ /\*/ &&
+	# Do RFC 2231 processing
+	# Pick out the parts of the parameter
+	if ($param =~ /\*/ &&
             $param =~ /^ ([^*]+) (?: \* ([^*]+) )? (\*)? \z/xs) {
-            # We have param*number* or param*number or param*
-            my($name, $num) = ($1, $2||0);
-            if (defined($3)) {
-                # We have param*number* or param*
-                # RFC 2231: Asterisks ("*") are reused to provide the
-                # indicator that language and character set information
-                # is present and encoding is being used
-                $val = rfc2231percent($val);
-                $rfc2231encoding_is_used{$name} = 1;
-            }
-            $rfc2231params{$name}{$num} .= $val;
-        } else {
-            # Assign non-rfc2231 value directly.  If we
-            # did get a mix of rfc2231 and non-rfc2231 values,
+	    # We have param*number* or param*number or param*
+	    my($name, $num) = ($1, $2||0);
+	    if (defined($3)) {
+		# We have param*number* or param*
+		# RFC 2231: Asterisks ("*") are reused to provide the
+		# indicator that language and character set information
+		# is present and encoding is being used
+		$val = rfc2231percent($val);
+		$rfc2231encoding_is_used{$name} = 1;
+	    }
+	    $rfc2231params{$name}{$num} .= $val;
+	} else {
+	    # Assign non-rfc2231 value directly.  If we
+	    # did get a mix of rfc2231 and non-rfc2231 values,
             # the non-rfc2231 will be blown away in the
-            # "extract reconstructed parameters" loop.
-            $params{$param} = $val;
-        }
+	    # "extract reconstructed parameters" loop.
+	    $params{$param} = $val;
+	}
     }
 
     # Extract reconstructed parameters
     foreach $param (keys %rfc2231params) {
-        # If we got any rfc-2231 parameters, then
+	# If we got any rfc-2231 parameters, then
         # blow away any potential non-rfc-2231 parameter.
-        $params{$param} = '';
-        foreach $part (sort { $a <=> $b } keys %{$rfc2231params{$param}}) {
-            $params{$param} .= $rfc2231params{$param}{$part};
-        }
-        if ($rfc2231encoding_is_used{$param}) {
-            my($enc, $lang, $val) = rfc2231decode($params{$param});
-            if (defined $enc) {
-                # re-encode as QP, preserving charset and language info
-                $val =~ s{([=?_\x00-\x1F\x7F-\xFF])}
-                         {sprintf("=%02X", ord($1))}eg;
-                $val =~ tr/ /_/;
-                # RFC 2231 section 5: Language specification in Encoded Words
-                $enc .= '*' . $lang  if defined $lang && $lang ne '';
-                $params{$param} = '=?' . $enc . '?Q?' . $val . '?=';
-            }
-        }
-        debug "   field param <$param> = <$params{$param}>";
+	$params{$param} = '';
+	foreach $part (sort { $a <=> $b } keys %{$rfc2231params{$param}}) {
+	    $params{$param} .= $rfc2231params{$param}{$part};
+	}
+	if ($rfc2231encoding_is_used{$param}) {
+	    my($enc, $lang, $val) = rfc2231decode($params{$param});
+	    if (defined $enc) {
+		# re-encode as QP, preserving charset and language info
+		$val =~ s{([=?_\x00-\x1F\x7F-\xFF])}
+			 {sprintf("=%02X", ord($1))}eg;
+		$val =~ tr/ /_/;
+		# RFC 2231 section 5: Language specification in Encoded Words
+		$enc .= '*' . $lang  if defined $lang && $lang ne '';
+		$params{$param} = '=?' . $enc . '?Q?' . $val . '?=';
+	    }
+	}
+	debug "   field param <$param> = <$params{$param}>";
     }
 
     # Done:
@@ -371,9 +371,9 @@ sub stringify {
 
     my $str = $self->{'_'};                   # default subfield
     foreach $key (sort keys %$self) {
-        next if ($key !~ /^[a-z][a-z-_0-9]*$/);  # only lowercase ones!
-        defined($val = $self->{$key}) or next;
-        $str .= qq{; $key="$val"};
+	next if ($key !~ /^[a-z][a-z-_0-9]*$/);  # only lowercase ones!
+	defined($val = $self->{$key}) or next;
+	$str .= qq{; $key="$val"};
     }
     $str;
 }

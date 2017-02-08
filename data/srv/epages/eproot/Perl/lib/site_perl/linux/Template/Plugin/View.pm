@@ -53,15 +53,15 @@ Template::Plugin::View - Plugin to create views (Template::View)
 
     [% USE view(
             prefix = 'splash/'          # template prefix/suffix
-            suffix = '.tt2'
-            bgcol  = '#ffffff'          # and any other variables you
+            suffix = '.tt2'             
+            bgcol  = '#ffffff'          # and any other variables you 
             style  = 'Fancy HTML'       # care to define as view metadata,
             items  = [ foo, bar.baz ]   # including complex data and
             foo    = bar ? baz : x.y.z  # expressions
     %]
-
+    
     [% view.title %]                    # access view metadata
-
+    
     [% view.header(title = 'Foo!') %]   # view "methods" process blocks or
     [% view.footer %]                   # templates with prefix/suffix added
 

@@ -23,8 +23,8 @@ use PPI::Document ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Document';
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Document';
 }
 
 
@@ -47,8 +47,8 @@ instead of attempting to index the locations of the Elements.
 
 # There's no point indexing a fragment
 sub index_locations {
-        warn "Useless attempt to index the locations of a document fragment";
-        undef;
+	warn "Useless attempt to index the locations of a document fragment";
+	undef;
 }
 
 

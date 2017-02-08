@@ -17,12 +17,12 @@ DateTime::Tiny - A date object, with as little code as possible
       minute => 45,
       second => 0,
       );
-
+  
   # Show the current date
   my $now = DateTime::Tiny->now;
   print "Year   : " . $now->year   . "\n";
   print "Month  : " . $now->month  . "\n";
-  print "Day    : " . $now->day    . "\n";
+  print "Day    : " . $now->day    . "\n"; 
   print "Hour   : " . $now->hour   . "\n";
   print "Minute : " . $now->minute . "\n";
   print "Second : " . $now->second . "\n";
@@ -108,8 +108,8 @@ less of it.
 
 use strict;
 BEGIN {
-        require 5.004;
-        $DateTime::Tiny::VERSION = '1.04';
+	require 5.004;
+	$DateTime::Tiny::VERSION = '1.04';
 }
 use overload 'bool' => sub () { 1 };
 use overload '""'   => 'as_string';
@@ -151,8 +151,8 @@ Returns a new B<DateTime::Tiny> object.
 =cut
 
 sub new {
-        my $class = shift;
-        bless { @_ }, $class;
+	my $class = shift;
+	bless { @_ }, $class;
 }
 
 =pod
@@ -171,15 +171,15 @@ Returns a new B<DateTime::Tiny> object.
 =cut
 
 sub now {
-        my @t = localtime time;
-        shift->new(
-                year   => $t[5] + 1900,
-                month  => $t[4] + 1,
-                day    => $t[3],
-                hour   => $t[2],
-                minute => $t[1],
-                second => $t[0],
-        );
+	my @t = localtime time;
+	shift->new(
+		year   => $t[5] + 1900,
+		month  => $t[4] + 1,
+		day    => $t[3],
+		hour   => $t[2],
+		minute => $t[1],
+		second => $t[0],
+	);
 }
 
 =pod
@@ -191,7 +191,7 @@ The C<year> accessor returns the 4-digit year for the date.
 =cut
 
 sub year {
-        defined $_[0]->{year} ? $_[0]->{year} : 1970;
+	defined $_[0]->{year} ? $_[0]->{year} : 1970;
 }
 
 =pod
@@ -203,7 +203,7 @@ The C<month> accessor returns the 1-12 month of the year for the date.
 =cut
 
 sub month {
-        $_[0]->{month} || 1;
+	$_[0]->{month} || 1;
 }
 
 =pod
@@ -215,7 +215,7 @@ The C<day> accessor returns the 1-31 day of the month for the date.
 =cut
 
 sub day {
-        $_[0]->{day} || 1;
+	$_[0]->{day} || 1;
 }
 
 =pod
@@ -229,7 +229,7 @@ time.
 =cut
 
 sub hour {
-        $_[0]->{hour} || 0;
+	$_[0]->{hour} || 0;
 }
 
 =pod
@@ -242,7 +242,7 @@ as an integer from zero to fifty-nine (0-59).
 =cut
 
 sub minute {
-        $_[0]->{minute} || 0;
+	$_[0]->{minute} || 0;
 }
 
 =pod
@@ -255,7 +255,7 @@ as an integer from zero to fifty-nine (0-59).
 =cut
 
 sub second {
-        $_[0]->{second} || 0;
+	$_[0]->{second} || 0;
 }
 
 =pod
@@ -268,14 +268,14 @@ format, which returns in the form "2006-04-12".
 =cut
 
 sub ymdhms {
-        sprintf( "%04u-%02u-%02uT%02u:%02u:%02u",
-                $_[0]->year,
-                $_[0]->month,
-                $_[0]->day,
-                $_[0]->hour,
-                $_[0]->minute,
-                $_[0]->second,
-        );
+	sprintf( "%04u-%02u-%02uT%02u:%02u:%02u",
+		$_[0]->year,
+		$_[0]->month,
+		$_[0]->day,
+		$_[0]->hour,
+		$_[0]->minute,
+		$_[0]->second,
+	);
 }
 
 
@@ -300,21 +300,21 @@ Returns a new B<DateTime::Tiny> object, or throws an exception on error.
 =cut
 
 sub from_string {
-        my $string = $_[1];
-        unless ( defined $string and ! ref $string ) {
-                Carp::croak("Did not provide a string to from_string");
-        }
-        unless ( $string =~ /^(\d\d\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)$/ ) {
-                Carp::croak("Invalid time format (does not match ISO 8601)");
-        }
-        $_[0]->new(
-                year   => $1 + 0,
-                month  => $2 + 0,
-                day    => $3 + 0,
-                hour   => $4 + 0,
-                minute => $5 + 0,
-                second => $6 + 0,
-        );
+	my $string = $_[1];
+	unless ( defined $string and ! ref $string ) {
+		Carp::croak("Did not provide a string to from_string");
+	}
+	unless ( $string =~ /^(\d\d\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)$/ ) {
+		Carp::croak("Invalid time format (does not match ISO 8601)");
+	}
+	$_[0]->new(
+		year   => $1 + 0,
+		month  => $2 + 0,
+		day    => $3 + 0,
+		hour   => $4 + 0,
+		minute => $5 + 0,
+		second => $6 + 0,
+	);
 }
 
 =pod
@@ -330,7 +330,7 @@ a string.
 =cut
 
 sub as_string {
-        $_[0]->ymdhms;
+	$_[0]->ymdhms;
 }
 
 =pod
@@ -352,19 +352,19 @@ is not installed on the current host.
 =cut
 
 sub DateTime {
-        require DateTime;
-        my $self = shift;
-        DateTime->new(
-                day       => $self->day,
-                month     => $self->month,
-                year      => $self->year,
-                hour      => $self->hour,
-                minute    => $self->minute,
-                second    => $self->second,
-                locale    => 'C',
-                time_zone => 'floating',
-                @_,
-        );
+	require DateTime;
+	my $self = shift;
+	DateTime->new(
+		day       => $self->day,
+		month     => $self->month,
+		year      => $self->year,
+		hour      => $self->hour,
+		minute    => $self->minute,
+		second    => $self->second,
+		locale    => 'C',
+		time_zone => 'floating',
+		@_,
+	);
 }
 
 1;

@@ -2,7 +2,7 @@
 #
 # AppConfig::File.pm
 #
-# Perl5 module to read configuration files and use the contents therein
+# Perl5 module to read configuration files and use the contents therein 
 # to update variable values in an AppConfig::State object.
 #
 # Written by Andy Wardley <abw@wardley.org>
@@ -23,8 +23,8 @@ our $VERSION = '1.65';
 #------------------------------------------------------------------------
 # new($state, $file, [$file, ...])
 #
-# Module constructor.  The first, mandatory parameter should be a
-# reference to an AppConfig::State object to which all actions should
+# Module constructor.  The first, mandatory parameter should be a 
+# reference to an AppConfig::State object to which all actions should 
 # be applied.  The remaining parameters are assumed to be file names or
 # file handles for reading and are passed to parse().
 #
@@ -36,7 +36,7 @@ sub new {
     my $state = shift;
     my $self  = {
         STATE    => $state,                # AppConfig::State ref
-        DEBUG    => $state->_debug(),      # store local copy of debug
+        DEBUG    => $state->_debug(),      # store local copy of debug 
         PEDANTIC => $state->_pedantic,     # and pedantic flags
     };
 
@@ -52,17 +52,17 @@ sub new {
 #------------------------------------------------------------------------
 # parse($file, [file, ...])
 #
-# Reads and parses a config file, updating the contents of the
-# AppConfig::State referenced by $self->{ STATE } according to the
-# contents of the file.  Multiple files may be specified and are
-# examined in turn.  The method reports any error condition via
-# $self->{ STATE }->_error() and immediately returns undef if it
-# encounters a system error (i.e. cannot open one of the files.
-# Parsing errors such as unknown variables or unvalidated values will
+# Reads and parses a config file, updating the contents of the 
+# AppConfig::State referenced by $self->{ STATE } according to the 
+# contents of the file.  Multiple files may be specified and are 
+# examined in turn.  The method reports any error condition via 
+# $self->{ STATE }->_error() and immediately returns undef if it 
+# encounters a system error (i.e. cannot open one of the files.  
+# Parsing errors such as unknown variables or unvalidated values will 
 # also cause warnings to be raised vi the same _error(), but parsing
 # continues to the end of the current file and through any subsequent
-# files.  If the PEDANTIC option is set in the $self->{ STATE } object,
-# the behaviour is overridden and the method returns 0 immediately on
+# files.  If the PEDANTIC option is set in the $self->{ STATE } object, 
+# the behaviour is overridden and the method returns 0 immediately on 
 # any system or parsing error.
 #
 # The EXPAND option for each variable determines how the variable
@@ -82,9 +82,9 @@ sub parse {
     # take a local copy of the state to avoid much hash dereferencing
     my ($state, $debug, $pedantic) = @$self{ qw( STATE DEBUG PEDANTIC ) };
 
-    # we want to install a custom error handler into the AppConfig::State
-    # which appends filename and line info to error messages and then
-    # calls the previous handler;  we start by taking a copy of the
+    # we want to install a custom error handler into the AppConfig::State 
+    # which appends filename and line info to error messages and then 
+    # calls the previous handler;  we start by taking a copy of the 
     # current handler..
     my $errhandler = $state->_ehandler();
 
@@ -95,9 +95,9 @@ sub parse {
     # install a closure as a new error handler
     $state->_ehandler(
         sub {
-            # modify the error message
+            # modify the error message 
             my $format  = shift;
-               $format .= ref $file
+               $format .= ref $file 
                           ? " at line $."
                           : " at $file line $.";
 
@@ -193,18 +193,18 @@ sub parse {
                 $variable =~ s/^([\-+]?)//;
                 $flag = $1;
 
-                # $variable gets any $prefix
+                # $variable gets any $prefix 
                 $variable = $prefix . '_' . $variable
                     if length $prefix;
 
-                # if the variable doesn't exist, we call set() to give
+                # if the variable doesn't exist, we call set() to give 
                 # AppConfig::State a chance to auto-create it
-                unless ($state->_exists($variable)
+                unless ($state->_exists($variable) 
                             || $state->set($variable, 1)) {
                     $warnings++;
                     last FILE if $pedantic;
                     next;
-                }
+                }       
 
                 my $nargs = $state->_argcount($variable);
 
@@ -224,10 +224,10 @@ sub parse {
                         # expand any embedded variables, ~uids or
                         # environment variables, testing the return value
                         # for errors;  we pass in any variable-specific
-                        # EXPAND value
-                        unless ($self->_expand(\$value,
+                        # EXPAND value 
+                        unless ($self->_expand(\$value, 
                                 $state->_expand($variable), $prefix)) {
-                            print STDERR "expansion of [$value] failed\n"
+                            print STDERR "expansion of [$value] failed\n" 
                                 if $debug;
                             $warnings++;
                             last FILE if $pedantic;
@@ -257,7 +257,7 @@ sub parse {
                     print STDERR "$variable => $value (no expansion)\n"
                         if $debug;
                 }
-
+           
                 # set the variable, noting any failure from set()
                 unless ($state->set($variable, $value)) {
                     $warnings++;
@@ -273,7 +273,7 @@ sub parse {
 
     # restore original error handler
     $state->_ehandler($errhandler);
-
+    
     # return $warnings => 0, $success => 1
     return $warnings ? 0 : 1;
 }
@@ -287,11 +287,11 @@ sub parse {
 #------------------------------------------------------------------------
 # _expand(\$value, $expand, $prefix)
 #
-# The variable value string, referenced by $value, is examined and any
-# embedded variables, environment variables or tilde globs (home
-# directories) are replaced with their respective values, depending on
+# The variable value string, referenced by $value, is examined and any 
+# embedded variables, environment variables or tilde globs (home 
+# directories) are replaced with their respective values, depending on 
 # the value of the second parameter, $expand.  The third paramter may
-# specify the name of the current [block] in which the parser is
+# specify the name of the current [block] in which the parser is 
 # parsing.  This prefix is prepended to any embedded variable name that
 # can't otherwise be resolved.  This allows the following to work:
 #
@@ -301,7 +301,7 @@ sub parse {
 #   html = $home/public_html     # same as above, 'define' is prefix
 #
 # Modifications are made directly into the variable referenced by $value.
-# The method returns 1 on success or 0 if any warnings (undefined
+# The method returns 1 on success or 0 if any warnings (undefined 
 # variables) were encountered.
 #------------------------------------------------------------------------
 
@@ -320,7 +320,7 @@ sub _expand {
     # bail out if there's nothing to do
     return 1 unless $expand && defined($$value);
 
-    # create an AppConfig::Sys instance, or re-use a previous one,
+    # create an AppConfig::Sys instance, or re-use a previous one, 
     # to handle platform dependant functions: getpwnam(), getpwuid()
     unless ($sys = $self->{ SYS }) {
         require AppConfig::Sys;
@@ -331,7 +331,7 @@ sub _expand {
 
     EXPAND: {
 
-        #
+        # 
         # EXPAND_VAR
         # expand $(var) and $var as AppConfig::State variables
         #
@@ -348,7 +348,7 @@ sub _expand {
                 if ($state->_exists($var)) {
                     $val = $state->get($var);
                 }
-                elsif (length $prefix
+                elsif (length $prefix 
                         && $state->_exists($prefix . '_' . $var)) {
                     print STDERR "(\$$var => \$${prefix}_$var) "
                         if $debug;
@@ -394,7 +394,7 @@ sub _expand {
                         $val = ($sys->getpwnam($var))[7];
                     }
                 } else {
-                    # determine home directory
+                    # determine home directory 
                     $val = $ENV{ HOME };
                 }
 
@@ -426,7 +426,7 @@ sub _expand {
         #
         if ($expand & AppConfig::EXPAND_ENV) {
 
-            $$value =~ s{
+            $$value =~ s{ 
                 ( \$ \{ (\w+) \} )
             } {
                 $var = $2;
@@ -459,7 +459,7 @@ sub _expand {
 
     print STDERR "=> [$$value] (EXPAND = $expand)\n" if $debug;
 
-    # return status
+    # return status 
     return $warnings ? 0 : 1;
 }
 
@@ -475,10 +475,10 @@ sub _dump {
     my $self = shift;
 
     foreach my $key (keys %$self) {
-        printf("%-10s => %s\n", $key,
+        printf("%-10s => %s\n", $key, 
                 defined($self->{ $key }) ? $self->{ $key } : "<undef>");
-    }
-}
+    }       
+} 
 
 
 
@@ -501,8 +501,8 @@ AppConfig::File - Perl5 module for reading configuration files.
 
 =head1 OVERVIEW
 
-AppConfig::File is a Perl5 module which reads configuration files and use
-the contents therein to update variable values in an AppConfig::State
+AppConfig::File is a Perl5 module which reads configuration files and use 
+the contents therein to update variable values in an AppConfig::State 
 object.
 
 AppConfig::File is distributed as part of the AppConfig bundle.
@@ -516,23 +516,23 @@ in your Perl script:
 
     use AppConfig::File;
 
-AppConfig::File is used automatically if you use the AppConfig module
+AppConfig::File is used automatically if you use the AppConfig module 
 and create an AppConfig::File object through the file() method.
 
-AppConfig::File is implemented using object-oriented methods.  A new
-AppConfig::File object is created and initialised using the
-AppConfig::File->new() method.  This returns a reference to a new
-AppConfig::File object.  A reference to an AppConfig::State object
+AppConfig::File is implemented using object-oriented methods.  A new 
+AppConfig::File object is created and initialised using the 
+AppConfig::File->new() method.  This returns a reference to a new 
+AppConfig::File object.  A reference to an AppConfig::State object 
 should be passed in as the first parameter:
-
+       
     my $state   = AppConfig::State->new();
     my $cfgfile = AppConfig::File->new($state);
 
 This will create and return a reference to a new AppConfig::File object.
 
-=head2 READING CONFIGURATION FILES
+=head2 READING CONFIGURATION FILES 
 
-The C<parse()> method is used to read a configuration file and have the
+The C<parse()> method is used to read a configuration file and have the 
 contents update the STATE accordingly.
 
     $cfgfile->parse($file);
@@ -543,7 +543,7 @@ Multiple files maye be specified and will be read in turn.
 
 The method will return an undef value if it encounters any errors opening
 the files.  It will return immediately without processing any further files.
-By default, the PEDANTIC option in the AppConfig::State object,
+By default, the PEDANTIC option in the AppConfig::State object, 
 $self->{ STATE }, is turned off and any parsing errors (invalid variables,
 unvalidated values, etc) will generated warnings, but not cause the method
 to return.  Having processed all files, the method will return 1 if all
@@ -552,7 +552,7 @@ raised.  When the PEDANTIC option is turned on, the method generates a
 warning and immediately returns a value of 0 as soon as it encounters any
 parsing error.
 
-Variables values in the configuration files may be expanded depending on
+Variables values in the configuration files may be expanded depending on 
 the value of their EXPAND option, as determined from the App::State object.
 See L<AppConfig::State> for more information on variable expansion.
 
@@ -568,9 +568,9 @@ the line.
     url = index.html#hello  # this too, but not the '#welcome'
 
 Notice how the '#welcome' part of the URL is not treated as a comment
-because a whitespace character doesn't precede it.
+because a whitespace character doesn't precede it.  
 
-Long lines can be continued onto the next line by ending the first
+Long lines can be continued onto the next line by ending the first 
 line with a '\'.
 
     callsign = alpha bravo camel delta echo foxtrot golf hipowls \
@@ -578,10 +578,10 @@ line with a '\'.
                quebec romeo sierra tango umbrella victor whiskey \
                x-ray yankee zebra
 
-Variables that are simple flags and do not expect an argument (ARGCOUNT =
-ARGCOUNT_NONE) can be specified without any value.  They will be set with
+Variables that are simple flags and do not expect an argument (ARGCOUNT = 
+ARGCOUNT_NONE) can be specified without any value.  They will be set with 
 the value 1, with any value explicitly specified (except "0" and "off")
-being ignored.  The variable may also be specified with a "no" prefix to
+being ignored.  The variable may also be specified with a "no" prefix to 
 implicitly set the variable to 0.
 
     verbose                              # on  (1)
@@ -592,11 +592,11 @@ implicitly set the variable to 0.
     verbose mumble                       # on  (1)
     noverbose                            # off (0)
 
-Variables that expect an argument (ARGCOUNT = ARGCOUNT_ONE) will be set to
+Variables that expect an argument (ARGCOUNT = ARGCOUNT_ONE) will be set to 
 whatever follows the variable name, up to the end of the current line.  An
 equals sign may be inserted between the variable and value for clarity.
 
-    room = /home/kitchen
+    room = /home/kitchen     
     room   /home/bedroom
 
 Each subsequent re-definition of the variable value overwrites the previous
@@ -606,7 +606,7 @@ value.
 
 Variables may be defined to accept multiple values (ARGCOUNT = ARGCOUNT_LIST).
 Each subsequent definition of the variable adds the value to the list of
-previously set values for the variable.
+previously set values for the variable.  
 
     drink = coffee
     drink = tea
@@ -649,8 +649,8 @@ style.
    # comments are treated as a normal text.
    The same applies to line continuation. \
    _bar_
-
-Note that you cannot use HERE document as a key in a hash or a name
+   
+Note that you cannot use HERE document as a key in a hash or a name 
 of a variable.
 
 The '-' prefix can be used to reset a variable to its default value and
@@ -660,8 +660,8 @@ the '+' prefix can be used to set it to 1
     +debug
 
 Variable, environment variable and tilde (home directory) expansions
-Variable values may contain references to other AppConfig variables,
-environment variables and/or users' home directories.  These will be
+Variable values may contain references to other AppConfig variables, 
+environment variables and/or users' home directories.  These will be 
 expanded depending on the EXPAND value for each variable or the GLOBAL
 EXPAND value.
 
@@ -669,19 +669,19 @@ Three different expansion types may be applied:
 
     bin = ~/bin          # expand '~' to home dir if EXPAND_UID
     tmp = ~abw/tmp       # as above, but home dir for user 'abw'
-
+    
     perl = $bin/perl     # expand value of 'bin' variable if EXPAND_VAR
     ripl = $(bin)/ripl   # as above with explicit parens
-
+    
     home = ${HOME}       # expand HOME environment var if EXPAND_ENV
 
 See L<AppConfig::State> for more information on expanding variable values.
 
-The configuration files may have variables arranged in blocks.  A block
-header, consisting of the block name in square brackets, introduces a
-configuration block.  The block name and an underscore are then prefixed
-to the names of all variables subsequently referenced in that block.  The
-block continues until the next block definition or to the end of the current
+The configuration files may have variables arranged in blocks.  A block 
+header, consisting of the block name in square brackets, introduces a 
+configuration block.  The block name and an underscore are then prefixed 
+to the names of all variables subsequently referenced in that block.  The 
+block continues until the next block definition or to the end of the current 
 file.
 
     [block1]
@@ -698,7 +698,7 @@ Andy Wardley, E<lt>abw@wardley.orgE<gt>
 
 Copyright (C) 1997-2007 Andy Wardley.  All Rights Reserved.
 
-This module is free software; you can redistribute it and/or modify it
+This module is free software; you can redistribute it and/or modify it 
 under the same terms as Perl itself.
 
 =head1 SEE ALSO

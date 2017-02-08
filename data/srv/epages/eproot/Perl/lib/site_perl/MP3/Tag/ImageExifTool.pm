@@ -16,7 +16,7 @@ MP3::Tag::ImageExifTool - extract size info from image files via L<Image::Size|I
 
 =head1 SYNOPSIS
 
-  my $db = MP3::Tag::ImageExifTool->new($filename);     # Name of multimedia file
+  my $db = MP3::Tag::ImageExifTool->new($filename);	# Name of multimedia file
 
 see L<MP3::Tag>
 
@@ -60,10 +60,10 @@ sub __info ($) {
 }
 
 my %tr = qw( mime_type MIMEType year Date width ImageWidth height ImageHeight
-             bit_depth BitDepth );
+	     bit_depth BitDepth );
 
 for my $elt ( qw( title track artist album year genre comment mime_type
-                  width height ) ) {
+		  width height ) ) {
   my $n = ($tr{$elt} or ucfirst $elt);
   my $is_genre = ($elt eq 'genre');
   my $r = sub ($) {
@@ -99,7 +99,7 @@ sub _duration ($) {
   }
   # Probably this is already covered by Duration?  No, it is usually rounded...
   my($c, $r, $r1) = map $info->{$_}, qw(FrameCount VideoFrameRate FrameRate);
-  unless (defined $c and $r ||= $r1) {  # $d usually contains rounded value
+  unless (defined $c and $r ||= $r1) {	# $d usually contains rounded value
     return $1*3600 + $2*60 + $3 if $dd and $d =~ /^(\d+):(\d+):(\d+(\.\d*)?)$/;
     return $1*60 + $2 if $dd and $d =~ /^(\d+):(\d+(\.\d*)?)$/;
     return;

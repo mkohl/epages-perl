@@ -23,7 +23,7 @@ Encode::JP - Japanese Encodings
 
 =head1 SYNOPSIS
 
-    use Encode qw/encode decode/;
+    use Encode qw/encode decode/; 
     $euc_jp = encode("euc-jp", $utf8);   # loads Encode::JP implicitly
     $utf8   = decode("euc-jp", $euc_jp); # ditto
 
@@ -32,21 +32,21 @@ Encode::JP - Japanese Encodings
 This module implements Japanese charset encodings.  Encodings
 supported are as follows.
 
-  Canonical   Alias             Description
+  Canonical   Alias		Description
   --------------------------------------------------------------------
-  euc-jp      /\beuc.*jp$/i     EUC (Extended Unix Character)
-              /\bjp.*euc/i
+  euc-jp      /\beuc.*jp$/i	EUC (Extended Unix Character)
+              /\bjp.*euc/i   
           /\bujis$/i
-  shiftjis    /\bshift.*jis$/i  Shift JIS (aka MS Kanji)
+  shiftjis    /\bshift.*jis$/i	Shift JIS (aka MS Kanji)
           /\bsjis$/i
-  7bit-jis    /\bjis$/i         7bit JIS
-  iso-2022-jp                   ISO-2022-JP                  [RFC1468]
-                = 7bit JIS with all Halfwidth Kana
+  7bit-jis    /\bjis$/i		7bit JIS
+  iso-2022-jp			ISO-2022-JP                  [RFC1468]
+                = 7bit JIS with all Halfwidth Kana 
                   converted to Fullwidth
-  iso-2022-jp-1                 ISO-2022-JP-1                [RFC2237]
+  iso-2022-jp-1			ISO-2022-JP-1                [RFC2237]
                                 = ISO-2022-JP with JIS X 0212-1990
                   support.  See below
-  MacJapanese                   Shift JIS + Apple vendor mappings
+  MacJapanese	                Shift JIS + Apple vendor mappings
   cp932       /\bwindows-31j$/i Code Page 932
                                 = Shift JIS + MS/IBM vendor mappings
   jis0201-raw                   JIS0201, raw format

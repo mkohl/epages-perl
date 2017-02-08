@@ -7,33 +7,33 @@ use XML::SAX::PurePerl::Productions qw($SingleChar);
 
 sub elementdecl {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(9);
     return 0 unless $data =~ /^<!ELEMENT/;
     $reader->move_along(9);
-
+    
     $self->skip_whitespace($reader) ||
         $self->parser_error("No whitespace after ELEMENT declaration", $reader);
-
+    
     my $name = $self->Name($reader);
-
+    
     $self->skip_whitespace($reader) ||
         $self->parser_error("No whitespace after ELEMENT's name", $reader);
-
+        
     $self->contentspec($reader, $name);
-
+    
     $self->skip_whitespace($reader);
-
+    
     $reader->match('>') or $self->parser_error("Closing angle bracket not found on ELEMENT declaration", $reader);
-
+    
     return 1;
 }
 
 sub contentspec {
     my ($self, $reader, $name) = @_;
-
+    
     my $data = $reader->data(5);
-
+    
     my $model;
     if ($data =~ /^EMPTY/) {
         $reader->move_along(5);
@@ -52,7 +52,7 @@ sub contentspec {
         $self->element_decl({Name => $name, Model => $model});
         return 1;
     }
-
+    
     $self->parser_error("contentspec not found in ELEMENT declaration", $reader);
 }
 
@@ -61,7 +61,7 @@ sub Mixed_or_children {
 
     my $data = $reader->data(8);
     $data =~ /^\(/ or return; # $self->parser_error("No opening bracket in Mixed or children", $reader);
-
+    
     if ($data =~ /^\(\s*\#PCDATA/) {
         $reader->match('(');
         $self->skip_whitespace($reader);
@@ -82,16 +82,16 @@ sub Mixed {
     # Mixed_or_children already matched '(' S* '#PCDATA'
 
     my $model = '(#PCDATA';
-
+            
     $self->skip_whitespace($reader);
 
     my %seen;
-
+    
     while (1) {
         last unless $reader->match('|');
         $self->skip_whitespace($reader);
 
-        my $name = $self->Name($reader) ||
+        my $name = $self->Name($reader) || 
             $self->parser_error("No 'Name' after Mixed content '|'", $reader);
 
         if ($seen{$name}) {
@@ -100,10 +100,10 @@ sub Mixed {
         $seen{$name}++;
 
         $model .= "|$name";
-
+        
         $self->skip_whitespace($reader);
     }
-
+    
     $reader->match(')') || $self->parser_error("no closing bracket on mixed content", $reader);
 
     $model .= ")";
@@ -111,7 +111,7 @@ sub Mixed {
     if ($reader->match('*')) {
         $model .= "*";
     }
-
+    
     return $model;
 }
 
@@ -130,21 +130,21 @@ sub Mixed {
 #        MixedCardinality ::= '*'
 sub children {
     my ($self, $reader) = @_;
-
+    
     return $self->ChoiceOrSeq($reader) . $self->Cardinality($reader);
 }
 
 sub ChoiceOrSeq {
     my ($self, $reader) = @_;
-
+    
     $reader->match('(') or $self->parser_error("choice/seq contains no opening bracket", $reader);
-
+    
     my $model = '(';
-
+    
     $self->skip_whitespace($reader);
 
     $model .= $self->Cp($reader);
-
+    
     if (my $choice = $self->Choice($reader)) {
         $model .= $choice;
     }
@@ -157,7 +157,7 @@ sub ChoiceOrSeq {
     $reader->match(')') or $self->parser_error("choice/seq contains no closing bracket", $reader);
 
     $model .= ')';
-
+    
     return $model;
 }
 
@@ -178,9 +178,9 @@ sub Cp {
     my $model;
     my $name = eval
     {
-        if (my $name = $self->Name($reader)) {
-            return $name . $self->Cardinality($reader);
-        }
+	if (my $name = $self->Name($reader)) {
+	    return $name . $self->Cardinality($reader);
+	}
     };
     return $name if defined $name;
     return $self->ChoiceOrSeq($reader) . $self->Cardinality($reader);
@@ -188,10 +188,10 @@ sub Cp {
 
 sub Choice {
     my ($self, $reader) = @_;
-
+    
     my $model = '';
     $self->skip_whitespace($reader);
-
+    
     while ($reader->match('|')) {
         $self->skip_whitespace($reader);
         $model .= '|';
@@ -204,10 +204,10 @@ sub Choice {
 
 sub Seq {
     my ($self, $reader) = @_;
-
+    
     my $model = '';
     $self->skip_whitespace($reader);
-
+    
     while ($reader->match(',')) {
         $self->skip_whitespace($reader);
         my $cp = $self->Cp($reader);
@@ -223,26 +223,26 @@ sub Seq {
 
 sub AttlistDecl {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(9);
     if ($data =~ /^<!ATTLIST/) {
         # It's an attlist
-
+        
         $reader->move_along(9);
-
-        $self->skip_whitespace($reader) ||
+        
+        $self->skip_whitespace($reader) || 
             $self->parser_error("No whitespace after ATTLIST declaration", $reader);
         my $name = $self->Name($reader);
 
         $self->AttDefList($reader, $name);
 
         $self->skip_whitespace($reader);
-
+        
         $reader->match('>') or $self->parser_error("Closing angle bracket not found on ATTLIST declaration", $reader);
-
+        
         return 1;
     }
-
+    
     return 0;
 }
 
@@ -257,20 +257,20 @@ sub AttDef {
 
     $self->skip_whitespace($reader) || return 0;
     my $att_name = $self->Name($reader) || return 0;
-    $self->skip_whitespace($reader) ||
+    $self->skip_whitespace($reader) || 
         $self->parser_error("No whitespace after Name in attribute definition", $reader);
     my $att_type = $self->AttType($reader);
 
     $self->skip_whitespace($reader) ||
         $self->parser_error("No whitespace after AttType in attribute definition", $reader);
     my ($mode, $value) = $self->DefaultDecl($reader);
-
+    
     # fire SAX event here!
     $self->attribute_decl({
-            eName => $el_name,
-            aName => $att_name,
-            Type => $att_type,
-            Mode => $mode,
+            eName => $el_name, 
+            aName => $att_name, 
+            Type => $att_type, 
+            Mode => $mode, 
             Value => $value,
             });
     return 1;
@@ -287,7 +287,7 @@ sub AttType {
 
 sub StringType {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(5);
     return unless $data =~ /^CDATA/;
     $reader->move_along(5);
@@ -296,7 +296,7 @@ sub StringType {
 
 sub TokenizedType {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(8);
     if ($data =~ /^(IDREFS?|ID|ENTITIES|ENTITY|NMTOKENS?)/) {
         $reader->move_along(length($1));
@@ -312,15 +312,15 @@ sub EnumeratedType {
 
 sub NotationType {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(8);
     return unless $data =~ /^NOTATION/;
     $reader->move_along(8);
-
+    
     $self->skip_whitespace($reader) ||
         $self->parser_error("No whitespace after NOTATION", $reader);
     $reader->match('(') or $self->parser_error("No opening bracket in notation section", $reader);
-
+    
     $self->skip_whitespace($reader);
     my $model = 'NOTATION (';
     my $name = $self->Name($reader) ||
@@ -340,7 +340,7 @@ sub NotationType {
     }
     $data =~ /^\)/ or $self->parser_error("No closing bracket in notation section", $reader);
     $reader->move_along(1);
-
+    
     $model .= ')';
 
     return $model;
@@ -348,9 +348,9 @@ sub NotationType {
 
 sub Enumeration {
     my ($self, $reader) = @_;
-
+    
     return unless $reader->match('(');
-
+    
     $self->skip_whitespace($reader);
     my $model = '(';
     my $nmtoken = $self->Nmtoken($reader) ||
@@ -370,7 +370,7 @@ sub Enumeration {
     }
     $data =~ /^\)/ or $self->parser_error("No closing bracket in enumerated declaration", $reader);
     $reader->move_along(1);
-
+    
     $model .= ')';
 
     return $model;
@@ -383,7 +383,7 @@ sub Nmtoken {
 
 sub DefaultDecl {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(9);
     if ($data =~ /^(\#REQUIRED|\#IMPLIED)/) {
         $reader->move_along(length($1));
@@ -403,20 +403,20 @@ sub DefaultDecl {
 
 sub EntityDecl {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(8);
     return 0 unless $data =~ /^<!ENTITY/;
     $reader->move_along(8);
-
+    
     $self->skip_whitespace($reader) || $self->parser_error(
         "No whitespace after ENTITY declaration", $reader);
-
+    
     $self->PEDecl($reader) || $self->GEDecl($reader);
-
+    
     $self->skip_whitespace($reader);
-
+    
     $reader->match('>') or $self->parser_error("No closing '>' in entity definition", $reader);
-
+    
     return 1;
 }
 
@@ -447,7 +447,7 @@ sub GEDecl {
 
 sub PEDecl {
     my ($self, $reader) = @_;
-
+    
     return 0 unless $reader->match('%');
 
     $self->skip_whitespace($reader) || $self->parser_error("No whitespace after parameter entity marker", $reader);
@@ -465,7 +465,7 @@ my $aposre = qr/[^%&\']/;
 
 sub EntityValue {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data;
     my $quote = '"';
     my $re = $quotre;
@@ -475,15 +475,15 @@ sub EntityValue {
         $re = $aposre;
     }
     $reader->move_along(1);
-
+    
     my $value = '';
-
+    
     while (1) {
         my $data = $reader->data;
 
         $self->parser_error("EOF found while reading entity value", $reader)
             unless length($data);
-
+        
         if ($data =~ /^($re+)/) {
             my $match = $1;
             $value .= $match;
@@ -556,7 +556,7 @@ sub EntityValue {
             $self->parser_error("Invalid character in attribute value: " . substr($reader->data, 0, 1), $reader);
         }
     }
-
+    
     return $value;
 }
 
@@ -573,7 +573,7 @@ sub NDataDecl {
 
 sub NotationDecl {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(10);
     return 0 unless $data =~ /^<!NOTATION/;
     $reader->move_along(10);
@@ -584,7 +584,7 @@ sub NotationDecl {
     while(1) {
         $self->parser_error("EOF found while looking for end of NotationDecl", $reader)
             unless length($data);
-
+        
         if ($data =~ /^([^>]*)>/) {
             $value .= $1;
             $reader->move_along(length($1) + 1);

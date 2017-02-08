@@ -44,10 +44,10 @@ sub match {
     my $ii = 0;
     while ($ii <= $#$patterns) {
         my $pattern = $patterns->[$ii];
-        if ($names_path =~ m|/$pattern$|) {
-            return $ii / 2;
-        }
-        $ii += 2;
+	if ($names_path =~ m|/$pattern$|) {
+	    return $ii / 2;
+	}
+	$ii += 2;
     }
 
     return undef;
@@ -68,8 +68,8 @@ XML::PatAct::MatchName - A pattern module for matching element names
  my $matcher = XML::PatAct::MatchName->new();
 
  my $patterns = [ 'foo' => ACTION,
-                  'bar/foo' => ACTION,
-                  ... ];
+		  'bar/foo' => ACTION,
+		  ... ];
 
 =head1 DESCRIPTION
 

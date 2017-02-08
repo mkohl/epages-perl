@@ -2,7 +2,7 @@
 #  For other contributors see ChangeLog.
 # See the manual pages for details on the licensing terms.
 # Pod stripped from pm file by OODoc 2.00.
-
+ 
 package XML::Compile::Translate::Writer;
 use vars '$VERSION';
 $VERSION = '1.22';
@@ -26,7 +26,7 @@ use XML::Compile::Util qw/pack_type unpack_type type_of_node SCHEMA2001i
 # before you attempt to change anything.
 #
 # The returned writer subroutines will always be called
-#       $writer->($doc, $value)
+#       $writer->($doc, $value) 
 
 sub actsAs($) { $_[1] eq 'WRITER' }
 
@@ -155,7 +155,7 @@ sub makeSequence($@)
             $do->($doc, delete $values->{$take});
         }, 'BLOCK';
     }
-
+ 
     bless sub {
         my ($doc, $values) = @_;
         defined $values or return;
@@ -180,7 +180,7 @@ sub makeChoice($@)
     {   push @specials, delete $do{$el}
             if ref $do{$el} eq 'BLOCK' || ref $do{$el} eq 'ANY';
     }
-
+ 
     if(!@specials && keys %do==1)
     {   my ($take, $do) = %do;
         return bless sub {
@@ -258,7 +258,7 @@ sub makeAll($@)
         @res;
     }, 'BLOCK';
 }
-
+ 
 #
 ## Element
 #

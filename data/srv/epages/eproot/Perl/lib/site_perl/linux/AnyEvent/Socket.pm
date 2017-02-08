@@ -5,18 +5,18 @@ AnyEvent::Socket - useful IPv4 and IPv6 stuff. also unix domain sockets. and stu
 =head1 SYNOPSIS
 
    use AnyEvent::Socket;
-
+   
    tcp_connect "gameserver.deliantra.net", 13327, sub {
       my ($fh) = @_
          or die "gameserver.deliantra.net connect failed: $!";
-
+   
       # enjoy your filehandle
    };
-
+   
    # a simple tcp server
    tcp_server undef, 8888, sub {
       my ($fh, $host, $port) = @_;
-
+   
       syswrite $fh, "The internet is full, $host:$port. Go away!\015\012";
    };
 
@@ -1005,7 +1005,7 @@ sub tcp_connect($$$;$) {
             or return $state{next}();
 
          fh_nonblocking $state{fh}, 1;
-
+         
          my $timeout = $prepare && $prepare->($state{fh});
 
          $timeout ||= 30 if AnyEvent::WIN32;
@@ -1198,7 +1198,7 @@ sub tcp_server($$$;$) {
       my ($service, $host) = unpack_sockaddr getsockname $state{fh};
       $len = $prepare && $prepare->($state{fh}, format_address $host, $service);
    }
-
+   
    $len ||= 128;
 
    listen $state{fh}, $len

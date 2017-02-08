@@ -9,56 +9,56 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 sub new {
-        my $proto = shift;
-        my $class = ref($proto) || $proto;
-        return bless({}, $class);
+	my $proto = shift;
+	my $class = ref($proto) || $proto;
+	return bless({}, $class);
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^([A-Za-z][0-9]{10})([0-9])$/) {
-                return $2 == _compute_checkdigit($1);
-        }
-        return 0;
+	my ($self,$number) = @_;
+	if ($number =~ /^([A-Za-z][0-9]{10})([0-9])$/) {
+		return $2 == _compute_checkdigit($1);
+	}
+	return 0;
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^[A-Za-z][0-9]{10}$/) {
-                return  $number . _compute_checkdigit($number);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^[A-Za-z][0-9]{10}$/) {
+		return  $number . _compute_checkdigit($number);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^([A-Za-z][0-9]{10})([0-9])$/) {
-                return $1 if ($2 == _compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([A-Za-z][0-9]{10})([0-9])$/) {
+		return $1 if ($2 == _compute_checkdigit($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^([A-Za-z][0-9]{10})([0-9])$/) {
-                return $2 if ($2 == _compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([A-Za-z][0-9]{10})([0-9])$/) {
+		return $2 if ($2 == _compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $number = shift;
-        if ($number =~ /^([A-Za-z])([0-9]{10})$/) {
-                my @nums = ();
-                my $sum  = 0;
-                push(@nums,ord(uc($1)) - ord('A') +1);
-                push(@nums,split(//,$2));
-                foreach my $num (@nums) {
-                        $sum += $num;
-                }
-                return 8 - ($sum % 9);
-        }
-        return -1;
+	my $number = shift;
+	if ($number =~ /^([A-Za-z])([0-9]{10})$/) {
+		my @nums = ();
+		my $sum  = 0;
+		push(@nums,ord(uc($1)) - ord('A') +1);
+		push(@nums,split(//,$2));
+		foreach my $num (@nums) {
+			$sum += $num;
+		}
+		return 8 - ($sum % 9);
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -77,7 +77,7 @@ CheckDigits::M09_001 - compute check digits for Euro notes
   $euro = CheckDigits('euronote');
 
   if ($euro->is_valid('X07738250357')) {
-        # do something
+	# do something
   }
 
   $cn = $euro->complete('X0773825035');     # $cn = 'X07738250357'
@@ -85,7 +85,7 @@ CheckDigits::M09_001 - compute check digits for Euro notes
   $cd = $euro->checkdigit('X07738250357'); # $cd = '7'
 
   $bn = $euro->basenumber('X07738250357'); # $bn = 'X0773825035'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

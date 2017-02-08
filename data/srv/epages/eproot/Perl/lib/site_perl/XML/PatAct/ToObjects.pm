@@ -33,13 +33,13 @@ sub new {
 
     my $usage = <<'EOF';
 usage: XML::PatAct::ToObjects->new( Matcher => $matcher,
-                                    Patterns => $patterns );
+				    Patterns => $patterns );
 EOF
 
     die "No Matcher specified\n$usage\n"
-        if !defined $self->{Matcher};
+	if !defined $self->{Matcher};
     die "No Patterns specified\n$usage\n"
-        if !defined $self->{Patterns};
+	if !defined $self->{Patterns};
 
     # Parse action items
     $self->{Actions} = [ ];
@@ -47,18 +47,18 @@ EOF
     my $ii = 1;
     while ($ii <= $#$patterns) {
         if (ref $patterns->[$ii]) {
-            push @{$self->{Actions}},
-              $self->_parse_action($patterns->[$ii]);
-        } else {
-            # is a code fragment
-        }
-        $ii += 2;
+	    push @{$self->{Actions}},
+	      $self->_parse_action($patterns->[$ii]);
+	} else {
+	    # is a code fragment
+	}
+	$ii += 2;
     }
 
     if (defined $self->{GroveBuilder}) {
-        require XML::Grove::Builder;
-        import XML::Grove::Builder;
-        $self->{GroveBuilder} = XML::Grove::Builder->new();
+	require XML::Grove::Builder;
+	import XML::Grove::Builder;
+	$self->{GroveBuilder} = XML::Grove::Builder->new();
     }
 
     return $self;
@@ -77,9 +77,9 @@ sub start_document {
     $self->{Data} = undef;
     $self->{SourceIsGrove} = UNIVERSAL::isa($document, 'Data::Grove');
     if (!defined $self->{CharacterDataType}) {
-        require Data::Grove;
-        import Data::Grove;
-        $self->{CharacterDataType} = 'Data::Grove::Characters';
+	require Data::Grove;
+	import Data::Grove;
+	$self->{CharacterDataType} = 'Data::Grove::Characters';
     }
 }
 
@@ -105,14 +105,14 @@ sub start_element {
     push @{$self->{Nodes}}, $element;
 
     my $index = $self->{Matcher}->match($element,
-                                        $self->{Names},
-                                        $self->{Nodes});
+					$self->{Names},
+					$self->{Nodes});
 
     my $action;
     if (!defined $index) {
-        $action = undef;
+	$action = undef;
     } else {
-        $action = $self->{Actions}[$index];
+	$action = $self->{Actions}[$index];
     }
 
     push @{$self->{ActionStack}}, $action;
@@ -121,80 +121,80 @@ sub start_element {
     push @{$self->{States}}, $state;
 
     if (($state eq 'as-grove') and !$self->{SourceIsGrove}) {
-        $self->{GroveBuilder}->start_element($element);
+	$self->{GroveBuilder}->start_element($element);
     }
 
     return if (($state ne 'normal') && ($state ne 'pcdata'));
 
     if (defined($action) and defined($action->{PCData})) {
-        $self->{States}[-1] = 'pcdata';
+	$self->{States}[-1] = 'pcdata';
     }
 
     if (!defined($action) or $action->{Holder}) {
-        # ignore this element but continue processing below
-        return;
+	# ignore this element but continue processing below
+	return;
     }
 
     if ($action->{Ignore} or $action->{FieldValue}) {
-        # ignore (discard) this element and it's children
-        $self->{States}[-1] = 'discarding';
-        return;
+	# ignore (discard) this element and it's children
+	$self->{States}[-1] = 'discarding';
+	return;
     }
 
     if ($action->{AsString}) {
-        $self->{Data} = [ ];
-        $self->{States}[-1] = 'as-string';
-        return;
+	$self->{Data} = [ ];
+	$self->{States}[-1] = 'as-string';
+	return;
     }
 
     if ($action->{AsGrove}) {
-        $self->{States}[-1] = 'as-grove';
-        if (!$self->{SourceIsGrove}) {
-            $self->{GroveBuilder}->start_document( { } );
-            $self->{GroveBuilder}->start_element($element);
-        }
-        return;
+	$self->{States}[-1] = 'as-grove';
+	if (!$self->{SourceIsGrove}) {
+	    $self->{GroveBuilder}->start_document( { } );
+	    $self->{GroveBuilder}->start_element($element);
+	}
+	return;
     }
 
     if (defined $action->{Make}) {
-        my @args;
-        if (defined $element->{Attributes}) {
-            if (defined $self->{CopyAttributes}) {
-                push @args, %{$element->{Attributes}};
-            } elsif ($self->{CopyId} && defined($element->{Attributes}{ID})) {
-                # FIXME use code from XML::Grove::IDs
-                push (@args, ID => $element->{Attributes}{ID});
-            }
-        }
+	my @args;
+	if (defined $element->{Attributes}) {
+	    if (defined $self->{CopyAttributes}) {
+		push @args, %{$element->{Attributes}};
+	    } elsif ($self->{CopyId} && defined($element->{Attributes}{ID})) {
+		# FIXME use code from XML::Grove::IDs
+		push (@args, ID => $element->{Attributes}{ID});
+	    }
+	}
 
-        if (defined $action->{Args}) {
-            eval 'push (@args, (' . $action->{Args} . '))';
-            if ($@) {
-                warn "$@\nwhile processing pattern/action #$index\n";
-            }
-        }
+	if (defined $action->{Args}) {
+	    eval 'push (@args, (' . $action->{Args} . '))';
+	    if ($@) {
+		warn "$@\nwhile processing pattern/action #$index\n";
+	    }
+	}
 
-        if ($action->{Make} eq 'HASH') {
-            push @{$self->{Parents}}, { @args };
-        } else {
-            my $is_defined = 0;
-            #eval "\$is_defined = defined %{$action->{Make}" . "::}";
-            if ($is_defined) {
-                push @{$self->{Parents}}, $action->{Make}->new( @args );
-            } else {
-                push (@{$self->{Parents}},
-                      bless ({ @args }, $action->{Make}));
-            }
-        }
+	if ($action->{Make} eq 'HASH') {
+	    push @{$self->{Parents}}, { @args };
+	} else {
+	    my $is_defined = 0;
+	    #eval "\$is_defined = defined %{$action->{Make}" . "::}";
+	    if ($is_defined) {
+		push @{$self->{Parents}}, $action->{Make}->new( @args );
+	    } else {
+		push (@{$self->{Parents}},
+		      bless ({ @args }, $action->{Make}));
+	    }
+	}
 
-        if ($action->{ContentsAsGrove}) {
-            $self->{States}[-1] = 'as-grove';
-            if (!$self->{SourceIsGrove}) {
-                $self->{GroveBuilder}->start_document( { } );
-            }
-        }
+	if ($action->{ContentsAsGrove}) {
+	    $self->{States}[-1] = 'as-grove';
+	    if (!$self->{SourceIsGrove}) {
+		$self->{GroveBuilder}->start_document( { } );
+	    }
+	}
 
-        return;
+	return;
     }
 
     # Place to store all the rest of gathered contents
@@ -211,51 +211,51 @@ sub end_element {
     my $state = pop @{$self->{States}};
 
     if ($state eq 'as-grove' and !$self->{SourceIsGrove}) {
-        $self->{GroveBuilder}->end_element($end_element);
+	$self->{GroveBuilder}->end_element($end_element);
     }
 
     if (!defined($action) or $action->{Holder}) {
-        return;
+	return;
     }
 
     if ($action->{Ignore}) {
-        return;
+	return;
     }
 
     my $value;
 
     if ($action->{AsString}) {
-        $value = join("", @{$self->{Data}});
+	$value = join("", @{$self->{Data}});
     } elsif ($action->{AsGrove}) {
-        if ($self->{SourceIsGrove}) {
-            $value = $element;
-        } else {
-            # get just the root element of the document fragment
-            $value = $self->{GroveBuilder}->end_document({ })->{Contents}[0];
-        }
+	if ($self->{SourceIsGrove}) {
+	    $value = $element;
+	} else {
+	    # get just the root element of the document fragment
+	    $value = $self->{GroveBuilder}->end_document({ })->{Contents}[0];
+	}
     } elsif (defined $action->{FieldValue}) {
-        $value = $action->{FieldValue};
-        $value =~ s/%\{($name_re)\}/$element->{Attributes}{$1}/ge;
+	$value = $action->{FieldValue};
+	$value =~ s/%\{($name_re)\}/$element->{Attributes}{$1}/ge;
     } elsif (defined $action->{Make}) {
-        $value = pop @{$self->{Parents}};
-        if ($action->{ContentsAsGrove}) {
-            if ($self->{SourceIsGrove}) {
-                $value->{Contents} = $element->{Contents};
-            } else {
-                $value->{Contents} =
-                    $self->{GroveBuilder}->end_document({ })->{Contents};
-            }
-        }
+	$value = pop @{$self->{Parents}};
+	if ($action->{ContentsAsGrove}) {
+	    if ($self->{SourceIsGrove}) {
+		$value->{Contents} = $element->{Contents};
+	    } else {
+		$value->{Contents} =
+		    $self->{GroveBuilder}->end_document({ })->{Contents};
+	    }
+	}
     } else {
-        $value = pop(@{$self->{Parents}})->{Contents};
+	$value = pop(@{$self->{Parents}})->{Contents};
     }
 
     if ($action->{FieldIsArray}) {
-        push @{$self->{Parents}[-1]{$action->{Field}}}, $value;
+	push @{$self->{Parents}[-1]{$action->{Field}}}, $value;
     } elsif (defined $action->{Field}) {
-        $self->{Parents}[-1]{$action->{Field}} = $value;
+	$self->{Parents}[-1]{$action->{Field}} = $value;
     } else {
-        push @{$self->{Parents}[-1]{Contents}}, $value;
+	push @{$self->{Parents}[-1]{Contents}}, $value;
     }
 }
 
@@ -264,12 +264,12 @@ sub characters {
 
     my $state = $self->{States}[-1];
     if ($state eq 'as-string') {
-        push @{$self->{Data}}, $characters->{Data};
+	push @{$self->{Data}}, $characters->{Data};
     } elsif ($state eq 'as-grove' and !$self->{SourceIsGrove}) {
-        $self->{GroveBuilder}->characters($characters);
+	$self->{GroveBuilder}->characters($characters);
     } elsif ($state eq 'pcdata') {
-        push (@{$self->{Parents}[-1]{Contents}},
-              $self->{CharacterDataType}->new(%$characters));
+	push (@{$self->{Parents}[-1]{Contents}},
+	      $self->{CharacterDataType}->new(%$characters));
     }
 }
 
@@ -286,37 +286,37 @@ sub _parse_action {
     my $action = {};
 
     while ($#$source > -1) {
-        my $option = shift @$source;
-        if ($option eq '-holder') {
-            $action->{Holder} = 1;
-        } elsif ($option eq '-make') {
-            $action->{Make} = shift @$source;
-        } elsif ($option eq '-args') {
-            my $args = shift @$source;
-            $args =~ s/%\{($name_re)\}/(\$element->{Attributes}{'$1'})/g;
-            $action->{Args} = $args;
-        } elsif ($option eq '-field') {
-            $action->{Field} = shift @$source;
-        } elsif ($option eq '-push-field') {
-            $action->{Field} = shift @$source;
-            $action->{FieldIsArray} = 1;
-        } elsif ($option eq '-as-string') {
-            $action->{AsString} = 1;
-        } elsif ($option eq '-value') {
-            $action->{FieldValue} = shift @$source;
-        } elsif ($option eq '-grove') {
-            $self->{GroveBuilder} = 1;
-            $action->{AsGrove} = 1;
-        } elsif ($option eq '-grove-contents') {
-            $self->{GroveBuilder} = 1;
-            $action->{ContentsAsGrove} = 1;
-        } elsif ($option eq '-ignore') {
-            $action->{Ignore} = 1;
-        } elsif ($option eq '-pcdata') {
-            $action->{PCData} = 1;
-        } else {
-            die "$option: undefined option\n";
-        }
+	my $option = shift @$source;
+	if ($option eq '-holder') {
+	    $action->{Holder} = 1;
+	} elsif ($option eq '-make') {
+	    $action->{Make} = shift @$source;
+	} elsif ($option eq '-args') {
+	    my $args = shift @$source;
+	    $args =~ s/%\{($name_re)\}/(\$element->{Attributes}{'$1'})/g;
+	    $action->{Args} = $args;
+	} elsif ($option eq '-field') {
+	    $action->{Field} = shift @$source;
+	} elsif ($option eq '-push-field') {
+	    $action->{Field} = shift @$source;
+	    $action->{FieldIsArray} = 1;
+	} elsif ($option eq '-as-string') {
+	    $action->{AsString} = 1;
+	} elsif ($option eq '-value') {
+	    $action->{FieldValue} = shift @$source;
+	} elsif ($option eq '-grove') {
+	    $self->{GroveBuilder} = 1;
+	    $action->{AsGrove} = 1;
+	} elsif ($option eq '-grove-contents') {
+	    $self->{GroveBuilder} = 1;
+	    $action->{ContentsAsGrove} = 1;
+	} elsif ($option eq '-ignore') {
+	    $action->{Ignore} = 1;
+	} elsif ($option eq '-pcdata') {
+	    $action->{PCData} = 1;
+	} else {
+	    die "$option: undefined option\n";
+	}
     }
 
     return $action;
@@ -335,13 +335,13 @@ XML::PatAct::ToObjects - An action module for creating Perl objects
  use XML::PatAct::ToObjects;
 
  my $patterns = [ PATTERN => [ OPTIONS ],
-                  PATTERN => "PERL-CODE",
-                  ... ];
+		  PATTERN => "PERL-CODE",
+		  ... ];
 
  my $matcher = XML::PatAct::ToObjects->new( Patterns => $patterns,
-                                            Matcher => $matcher,
-                                            CopyId => 1,
-                                            CopyAttributes => 1 );
+					    Matcher => $matcher,
+					    CopyId => 1,
+					    CopyAttributes => 1 );
 
 
 =head1 DESCRIPTION

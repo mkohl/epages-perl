@@ -22,31 +22,31 @@ sub versioncmp( $$ ) {
 
     my ($A, $B);
     while (@A and @B) {
-        $A = shift @A;
-        $B = shift @B;
-        if ($A eq '-' and $B eq '-') {
-            next;
-        } elsif ( $A eq '-' ) {
-            return -1;
-        } elsif ( $B eq '-') {
-            return 1;
-        } elsif ($A eq '.' and $B eq '.') {
-            next;
-        } elsif ( $A eq '.' ) {
-            return -1;
-        } elsif ( $B eq '.' ) {
-            return 1;
-        } elsif ($A =~ /^\d+$/ and $B =~ /^\d+$/) {
-            if ($A =~ /^0/ || $B =~ /^0/) {
-                return $A cmp $B if $A cmp $B;
-            } else {
-                return $A <=> $B if $A <=> $B;
-            }
-        } else {
-            $A = uc $A;
-            $B = uc $B;
-            return $A cmp $B if $A cmp $B;
-        }
+	$A = shift @A;
+	$B = shift @B;
+	if ($A eq '-' and $B eq '-') {
+	    next;
+	} elsif ( $A eq '-' ) {
+	    return -1;
+	} elsif ( $B eq '-') {
+	    return 1;
+	} elsif ($A eq '.' and $B eq '.') {
+	    next;
+	} elsif ( $A eq '.' ) {
+	    return -1;
+	} elsif ( $B eq '.' ) {
+	    return 1;
+	} elsif ($A =~ /^\d+$/ and $B =~ /^\d+$/) {
+	    if ($A =~ /^0/ || $B =~ /^0/) {
+		return $A cmp $B if $A cmp $B;
+	    } else {
+		return $A <=> $B if $A <=> $B;
+	    }
+	} else {
+	    $A = uc $A;
+	    $B = uc $B;
+	    return $A cmp $B if $A cmp $B;
+	}	
     }
     @A <=> @B;
 }
@@ -65,21 +65,21 @@ Sort::Versions - a perl 5 module for sorting of revision-like numbers
 
 =head1 SYNOPSIS
 
-        use Sort::Versions;
-        @l = sort { versioncmp($a, $b) } qw( 1.2 1.2.0 1.2a.0 1.2.a 1.a 02.a );
+	use Sort::Versions;
+	@l = sort { versioncmp($a, $b) } qw( 1.2 1.2.0 1.2a.0 1.2.a 1.a 02.a );
 
-        ...
+	...
 
-        use Sort::Versions;
-        print 'lower' if versioncmp('1.2', '1.2a') == -1;
+	use Sort::Versions;
+	print 'lower' if versioncmp('1.2', '1.2a') == -1;
+	
+	...
+	
+	use Sort::Versions;
+	%h = (1 => 'd', 2 => 'c', 3 => 'b', 4 => 'a');
+	@h = sort { versioncmp($h{$a}, $h{$b}) } keys %h;
 
-        ...
-
-        use Sort::Versions;
-        %h = (1 => 'd', 2 => 'c', 3 => 'b', 4 => 'a');
-        @h = sort { versioncmp($h{$a}, $h{$b}) } keys %h;
-
-=head1 DESCRIPTION
+=head1 DESCRIPTION	
 
 Sort::Versions allows easy sorting of mixed non-numeric and numeric strings,
 like the 'version numbers' that many shared library systems and revision

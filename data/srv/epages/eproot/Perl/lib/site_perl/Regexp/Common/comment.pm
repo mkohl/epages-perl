@@ -79,7 +79,7 @@ my @generic = (
 
     {languages => [qw /Oberon/],
      from_to   => [[qw /(* *)/]]},
-
+     
     {languages => [[qw /Pascal Delphi/], [qw /Pascal Free/], [qw /Pascal GPC/]],
      to_eol    => ['//'],
      from_to   => [[qw !{ }!], [qw !(* *)!]]},
@@ -224,9 +224,9 @@ foreach my $group (@generic) {
                 ;
     }
 }
+                
 
-
-
+    
 #
 # Other languages.
 #
@@ -453,15 +453,15 @@ L<http://www.catseye.mb.ca/esoteric/b-juliet/index.html>.
 The esotoric language I<Befunge-98> uses comments that start and end
 with a C<;>. See L<http://www.catseye.mb.ca/esoteric/befunge/98/spec98.html>.
 
-=item BML
+=item BML                 
 
 I<BML>, or I<Better Markup Language> is an HTML templating language that
 uses comments starting with C<< <?c_ >>, and ending with C<< c_?> >>.
-See L<http://www.livejournal.com/doc/server/bml.index.html>.
+See L<http://www.livejournal.com/doc/server/bml.index.html>.               
 
 =item Brainfuck
 
-The minimal language I<Brainfuck> uses only eight characters,
+The minimal language I<Brainfuck> uses only eight characters, 
 C<E<lt>>, C<E<gt>>, C<[>, C<]>, C<+>, C<->, C<.> and C<,>.
 Any other characters are considered comments. With C<{-keep}>,
 C<$1> is set to the entire comment.
@@ -732,7 +732,7 @@ of the line. See also L<http://www.lua.org/manual/manual.html>.
 =item M, MUMPS
 
 In C<M> (aka C<MUMPS>), comments start with a semi-colon, and last
-till the end of a line. The language specification requires the
+till the end of a line. The language specification requires the 
 semi-colon to be preceeded by one or more I<linestart character>s.
 Those characters default to a space, but that's configurable. This
 requirement, of preceeding the comment with linestart characters is
@@ -787,7 +787,7 @@ pattern for comments of several implementations.
 
 =item C<$RE{comment}{Pascal}>
 
-This is the pattern that recognizes comments according to the Pascal ISO
+This is the pattern that recognizes comments according to the Pascal ISO 
 standard. This standard says that comments start with either C<{>, or
 C<(*>, and end with C<}> or C<*)>. This means that C<{*)> and C<(*}>
 are considered to be comments. Many Pascal applications don't allow this.
@@ -806,12 +806,12 @@ The I<Delphi Pascal>, I<Free Pascal> and the I<Gnu Pascal Compiler>
 implementations of Pascal all have comments that either start with
 C<//> and last till the end of the line, are delimited with C<{>
 and C<}> or are delimited with C<(*> and C<*)>. Patterns for those
-comments are given by C<$RE{comment}{Pascal}{Delphi}>,
+comments are given by C<$RE{comment}{Pascal}{Delphi}>, 
 C<$RE{comment}{Pascal}{Free}> and C<$RE{comment}{Pascal}{GPC}>
 respectively. These patterns only set C<$1> when C<{-keep}> is used,
 which will then include the entire comment.
 
-See L<http://info.borland.com/techpubs/delphi5/oplg/>,
+See L<http://info.borland.com/techpubs/delphi5/oplg/>, 
 L<http://www.freepascal.org/docs-html/ref/ref.html> and
 L<http://www.gnu-pascal.de/gpc/>.
 
@@ -830,7 +830,7 @@ See L<http://docs.sun.com/db/doc/802-5762>.
 =item PEARL
 
 Comments in I<PEARL> start with a C<!> and last till the end of the
-line, or start with C</*> and end with C<*/>. With C<{-keep}>,
+line, or start with C</*> and end with C<*/>. With C<{-keep}>, 
 C<$1> will be set to the entire comment.
 
 =item PHP
@@ -841,7 +841,7 @@ C<$1> will be set to the entire comment.
 
 =item PL/B
 
-In I<PL/B>, comments start with either C<.> or C<;>, and end with the
+In I<PL/B>, comments start with either C<.> or C<;>, and end with the 
 next newline. See L<http://www.mmcctech.com/pl-b/plb-0010.htm>.
 
 =item PL/I
@@ -912,7 +912,7 @@ a C<;>. See L<http://www.catseye.mb.ca/esoteric/shelta/index.html>.
 The I<SLIDE> language has two froms of comments. First there is the
 line comment, which starts with a C<#> and includes the rest of the
 line (just like Perl). Second, there is the multiline, nested comment,
-which are delimited by C<(*> and C<*)>. Under C{-keep}>, only
+which are delimited by C<(*> and C<*)>. Under C{-keep}>, only 
 C<$1> is set, and is set to the entire comment. This pattern needs
 at least Perl version 5.6.0. See
 L<http://www.cs.berkeley.edu/~ug/slide/docs/slide/spec/spec_frame_intro.shtml>.
@@ -939,11 +939,11 @@ C<">. Double quotes can appear inside comments by doubling them.
 =item SQL
 
 Standard I<SQL> uses comments starting with two or more dashes, and
-ending at the end of the line.
+ending at the end of the line. 
 
 I<MySQL> does not follow the standard. Instead, it allows comments
 that start with a C<#> or C<-- > (that's two dashes and a space)
-ending with the following newline, and comments starting with
+ending with the following newline, and comments starting with 
 C</*>, and ending with the next C<;> or C<*/> that isn't inside
 single or double quotes. A pattern for this is returned by
 C<$RE{comment}{SQL}{MySQL}>. With C<{-keep}>, only C<$1> will
@@ -984,7 +984,7 @@ end of the line.
 
 =item ZZT-OOP
 
-The in-game language I<ZZT-OOP> uses comments that start with a C<'>
+The in-game language I<ZZT-OOP> uses comments that start with a C<'> 
 character, and end at the following newline. See
 L<http://dave2.rocketjump.org/rad/zzthelp/lang.html>.
 

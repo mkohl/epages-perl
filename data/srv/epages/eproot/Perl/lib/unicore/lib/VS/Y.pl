@@ -9,35 +9,35 @@
 
 # This file returns the 259 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{Variation_Selector=Yes}
 #         \p{VS=Y}
 #         \p{Is_Variation_Selector=T}
 #         \p{Is_VS=True}
-#
+# 
 #         \p{Variation_Selector}
 #         \p{Is_Variation_Selector}
 #         \p{VS}
 #         \p{Is_VS}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_VS: Yes}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-180B    180D     # [3]
-FE00    FE0F     # [16]
-E0100   E01EF    # [240]
+180B	180D	 # [3]
+FE00	FE0F	 # [16]
+E0100	E01EF	 # [240]
 END

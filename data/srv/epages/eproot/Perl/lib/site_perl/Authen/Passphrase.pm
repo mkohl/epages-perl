@@ -4,17 +4,17 @@ Authen::Passphrase - hashed passwords/passphrases as objects
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase;
+	use Authen::Passphrase;
 
-        $ppr = Authen::Passphrase->from_crypt($passwd);
-        $ppr = Authen::Passphrase->from_rfc2307($userPassword);
+	$ppr = Authen::Passphrase->from_crypt($passwd);
+	$ppr = Authen::Passphrase->from_rfc2307($userPassword);
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $passphrase = $ppr->passphrase;
+	$passphrase = $ppr->passphrase;
 
-        $crypt = $ppr->as_crypt;
-        $userPassword = $ppr->as_rfc2307;
+	$crypt = $ppr->as_crypt;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -270,48 +270,48 @@ are regarded as invalid encodings.
 =cut
 
 my %crypt_scheme_handler = (
-        "1"    => [ "Authen::Passphrase::MD5Crypt", 0.003 ],
-        "2"    => [ "Authen::Passphrase::BlowfishCrypt", 0.007 ],
-        "2a"   => [ "Authen::Passphrase::BlowfishCrypt", 0.007 ],
-        "3"    => [ "Authen::Passphrase::NTHash", 0.003 ],
-        "IPB2" => sub($) { croak '$IPB2$ is unimplemented' },
-        "K4"   => sub($) { croak '$K4$ is unimplemented' },
-        "LM"   => [ "Authen::Passphrase::LANManagerHalf", 0.003 ],
-        "NT"   => [ "Authen::Passphrase::NTHash", 0.003 ],
-        "P"    => [ "Authen::Passphrase::PHPass", 0.003 ],
-        "VMS1" => [ "Authen::Passphrase::VMSPurdy", 0.006 ],
-        "VMS2" => [ "Authen::Passphrase::VMSPurdy", 0.006 ],
-        "VMS3" => [ "Authen::Passphrase::VMSPurdy", 0.006 ],
-        "af"   => sub($) { croak '$af$ is unimplemented' },
-        "apr1" => sub($) { croak '$apr1$ is unimplemented' },
-        "krb5" => sub($) { croak '$krb5$ is unimplemented' },
+	"1"    => [ "Authen::Passphrase::MD5Crypt", 0.003 ],
+	"2"    => [ "Authen::Passphrase::BlowfishCrypt", 0.007 ],
+	"2a"   => [ "Authen::Passphrase::BlowfishCrypt", 0.007 ],
+	"3"    => [ "Authen::Passphrase::NTHash", 0.003 ],
+	"IPB2" => sub($) { croak '$IPB2$ is unimplemented' },
+	"K4"   => sub($) { croak '$K4$ is unimplemented' },
+	"LM"   => [ "Authen::Passphrase::LANManagerHalf", 0.003 ],
+	"NT"   => [ "Authen::Passphrase::NTHash", 0.003 ],
+	"P"    => [ "Authen::Passphrase::PHPass", 0.003 ],
+	"VMS1" => [ "Authen::Passphrase::VMSPurdy", 0.006 ],
+	"VMS2" => [ "Authen::Passphrase::VMSPurdy", 0.006 ],
+	"VMS3" => [ "Authen::Passphrase::VMSPurdy", 0.006 ],
+	"af"   => sub($) { croak '$af$ is unimplemented' },
+	"apr1" => sub($) { croak '$apr1$ is unimplemented' },
+	"krb5" => sub($) { croak '$krb5$ is unimplemented' },
 );
 
 sub from_crypt {
-        my($class, $passwd) = @_;
-        croak "crypt string \"$passwd\" not supported for $class"
-                unless $class eq __PACKAGE__;
-        my $handler;
-        if($passwd =~ /\A\$([0-9A-Za-z]+)\$/) {
-                my $scheme = $1;
-                $handler = $crypt_scheme_handler{$scheme};
-                croak "unrecognised crypt scheme \$$scheme\$"
-                        unless defined $handler;
-        } elsif($passwd =~ m#\A(?:[^\$].{12}|_.{19})\z#s) {
-                $handler = [ "Authen::Passphrase::DESCrypt", 0.006 ];
-        } elsif($passwd eq "") {
-                $handler = [ "Authen::Passphrase::AcceptAll", 0.003 ];
-        } elsif($passwd =~ /\A[^\$].{0,11}\z/s) {
-                $handler = [ "Authen::Passphrase::RejectAll", 0.003 ];
-        } else {
-                croak "bad crypt syntax in \"$passwd\"";
-        }
-        if(ref($handler) eq "CODE") {
-                return $handler->($passwd);
-        } else {
-                my($modname, $modver) = @$handler;
-                return use_module($modname, $modver)->from_crypt($passwd);
-        }
+	my($class, $passwd) = @_;
+	croak "crypt string \"$passwd\" not supported for $class"
+		unless $class eq __PACKAGE__;
+	my $handler;
+	if($passwd =~ /\A\$([0-9A-Za-z]+)\$/) {
+		my $scheme = $1;
+		$handler = $crypt_scheme_handler{$scheme};
+		croak "unrecognised crypt scheme \$$scheme\$"
+			unless defined $handler;
+	} elsif($passwd =~ m#\A(?:[^\$].{12}|_.{19})\z#s) {
+		$handler = [ "Authen::Passphrase::DESCrypt", 0.006 ];
+	} elsif($passwd eq "") {
+		$handler = [ "Authen::Passphrase::AcceptAll", 0.003 ];
+	} elsif($passwd =~ /\A[^\$].{0,11}\z/s) {
+		$handler = [ "Authen::Passphrase::RejectAll", 0.003 ];
+	} else {
+		croak "bad crypt syntax in \"$passwd\"";
+	}
+	if(ref($handler) eq "CODE") {
+		return $handler->($passwd);
+	} else {
+		my($modname, $modver) = @$handler;
+		return use_module($modname, $modver)->from_crypt($passwd);
+	}
 }
 
 =item Authen::Passphrase->from_rfc2307(USERPASSWORD)
@@ -426,46 +426,46 @@ Synonym for B<{CRYPT}>, used by CommuniGate Pro.
 =cut
 
 my %rfc2307_scheme_handler = (
-        "CLEARTEXT"  => [ "Authen::Passphrase::Clear", 0.003 ],
-        # "CRYPT" is handled specially
-        "CRYPT16"    => sub($) { croak "{CRYPT16} is ambiguous" },
-        "K5KEY"      => sub($) { croak "{K5KEY} is a placeholder" },
-        "KERBEROS"   => sub($) { croak "{KERBEROS} is a placeholder" },
-        "LANM"       => [ "Authen::Passphrase::LANManager", 0.003 ],
-        "LANMAN"     => [ "Authen::Passphrase::LANManager", 0.003 ],
-        "MD4"        => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
-        "MD5"        => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
-        "MSNT"       => [ "Authen::Passphrase::NTHash", 0.003 ],
-        "NS-MTA-MD5" => [ "Authen::Passphrase::NetscapeMail", 0.003 ],
-        "RMD160"     => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
-        "SASL"       => sub($) { croak "{SASL} is a placeholder" },
-        "SHA"        => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
-        "SMD5"       => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
-        "SSHA"       => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
-        "UNIX"       => sub($) { croak "{UNIX} is a placeholder" },
-        # "WM-CRY" is handled specially
+	"CLEARTEXT"  => [ "Authen::Passphrase::Clear", 0.003 ],
+	# "CRYPT" is handled specially
+	"CRYPT16"    => sub($) { croak "{CRYPT16} is ambiguous" },
+	"K5KEY"      => sub($) { croak "{K5KEY} is a placeholder" },
+	"KERBEROS"   => sub($) { croak "{KERBEROS} is a placeholder" },
+	"LANM"       => [ "Authen::Passphrase::LANManager", 0.003 ],
+	"LANMAN"     => [ "Authen::Passphrase::LANManager", 0.003 ],
+	"MD4"        => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
+	"MD5"        => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
+	"MSNT"       => [ "Authen::Passphrase::NTHash", 0.003 ],
+	"NS-MTA-MD5" => [ "Authen::Passphrase::NetscapeMail", 0.003 ],
+	"RMD160"     => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
+	"SASL"       => sub($) { croak "{SASL} is a placeholder" },
+	"SHA"        => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
+	"SMD5"       => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
+	"SSHA"       => [ "Authen::Passphrase::SaltedDigest", 0.008 ],
+	"UNIX"       => sub($) { croak "{UNIX} is a placeholder" },
+	# "WM-CRY" is handled specially
 );
 
 sub from_rfc2307 {
-        my($class, $userpassword) = @_;
-        if($userpassword =~ m#\A\{(?i:crypt|wm-cry)\}(.*)\z#s) {
-                my $passwd = $1;
-                return $class->from_crypt($passwd);
-        }
-        croak "RFC 2307 string \"$userpassword\" not supported for $class"
-                unless $class eq __PACKAGE__;
-        $userpassword =~ /\A\{([-0-9a-z]+)\}/i
-                or croak "bad RFC 2307 syntax in \"$userpassword\"";
-        my $scheme = uc($1);
-        my $handler = $rfc2307_scheme_handler{$scheme};
-        croak "unrecognised RFC 2307 scheme {$scheme}" unless defined $handler;
-        if(ref($handler) eq "CODE") {
-                return $handler->($userpassword);
-        } else {
-                my($modname, $modver) = @$handler;
-                return use_module($modname, $modver)
-                        ->from_rfc2307($userpassword);
-        }
+	my($class, $userpassword) = @_;
+	if($userpassword =~ m#\A\{(?i:crypt|wm-cry)\}(.*)\z#s) {
+		my $passwd = $1;
+		return $class->from_crypt($passwd);
+	}
+	croak "RFC 2307 string \"$userpassword\" not supported for $class"
+		unless $class eq __PACKAGE__;
+	$userpassword =~ /\A\{([-0-9a-z]+)\}/i
+		or croak "bad RFC 2307 syntax in \"$userpassword\"";
+	my $scheme = uc($1);
+	my $handler = $rfc2307_scheme_handler{$scheme};
+	croak "unrecognised RFC 2307 scheme {$scheme}" unless defined $handler;
+	if(ref($handler) eq "CODE") {
+		return $handler->($userpassword);
+	} else {
+		my($modname, $modver) = @$handler;
+		return use_module($modname, $modver)
+			->from_rfc2307($userpassword);
+	}
 }
 
 =back

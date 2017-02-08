@@ -9,36 +9,36 @@
 
 # This file returns the 26 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{Canonical_Combining_Class=Overlay}
 #         \p{Ccc=OV}
 #         \p{Is_Canonical_Combining_Class=1}
 #         \p{Is_Ccc=Overlay}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Ccc: Overlay}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-0334    0338     # [5]
-1CD4
-1CE2    1CE8     # [7]
-20D2    20D3     # [2]
-20D8    20DA     # [3]
-20E5    20E6     # [2]
-20EA    20EB     # [2]
-10A39
-1D167   1D169    # [3]
+0334	0338	 # [5]
+1CD4		
+1CE2	1CE8	 # [7]
+20D2	20D3	 # [2]
+20D8	20DA	 # [3]
+20E5	20E6	 # [2]
+20EA	20EB	 # [2]
+10A39		
+1D167	1D169	 # [3]
 END

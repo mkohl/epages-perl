@@ -51,22 +51,22 @@ Socket6 - IPv6 related part of the C socket.h defines and structure manipulators
     @res = getaddrinfo('hishost.com', 'daytime', AF_UNSPEC, SOCK_STREAM);
     $family = -1;
     while (scalar(@res) >= 5) {
-        ($family, $socktype, $proto, $saddr, $canonname, @res) = @res;
+	($family, $socktype, $proto, $saddr, $canonname, @res) = @res;
 
-        ($host, $port) = getnameinfo($saddr, NI_NUMERICHOST | NI_NUMERICSERV);
-        print STDERR "Trying to connect to $host port port $port...\n";
+	($host, $port) = getnameinfo($saddr, NI_NUMERICHOST | NI_NUMERICSERV);
+	print STDERR "Trying to connect to $host port port $port...\n";
 
-        socket(Socket_Handle, $family, $socktype, $proto) || next;
+	socket(Socket_Handle, $family, $socktype, $proto) || next;
         connect(Socket_Handle, $saddr) && last;
 
-        close(Socket_Handle);
-        $family = -1;
+	close(Socket_Handle);
+	$family = -1;
     }
 
     if ($family != -1) {
-        print STDERR "connected to $host port port $port\n";
+	print STDERR "connected to $host port port $port\n";
     } else {
-        die "connect attempt failed\n";
+	die "connect attempt failed\n";
     }
 
 =head1 DESCRIPTION
@@ -215,57 +215,57 @@ use Carp;
 use base qw(Exporter DynaLoader);
 
 @EXPORT = qw(
-        inet_pton inet_ntop pack_sockaddr_in6 pack_sockaddr_in6_all
-        unpack_sockaddr_in6 unpack_sockaddr_in6_all sockaddr_in6
-        gethostbyname2 getaddrinfo getnameinfo
-        in6addr_any in6addr_loopback
-        gai_strerror getipnodebyname getipnodebyaddr
-        AI_ADDRCONFIG
-        AI_ALL
-        AI_CANONNAME
-        AI_NUMERICHOST
-        AI_NUMERICSERV
-        AI_DEFAULT
-        AI_MASK
-        AI_PASSIVE
-        AI_V4MAPPED
-        AI_V4MAPPED_CFG
-        EAI_ADDRFAMILY
-        EAI_AGAIN
-        EAI_BADFLAGS
-        EAI_FAIL
-        EAI_FAMILY
-        EAI_MEMORY
-        EAI_NODATA
-        EAI_NONAME
-        EAI_SERVICE
-        EAI_SOCKTYPE
-        EAI_SYSTEM
-        EAI_BADHINTS
-        EAI_PROTOCOL
-        IP_AUTH_TRANS_LEVEL
-        IP_AUTH_NETWORK_LEVEL
-        IP_ESP_TRANS_LEVEL
-        IP_ESP_NETWORK_LEVEL
-        IPPROTO_IP
-        IPPROTO_IPV6
-        IPSEC_LEVEL_AVAIL
-        IPSEC_LEVEL_BYPASS
-        IPSEC_LEVEL_DEFAULT
-        IPSEC_LEVEL_NONE
-        IPSEC_LEVEL_REQUIRE
-        IPSEC_LEVEL_UNIQUE
-        IPSEC_LEVEL_USE
-        IPV6_AUTH_TRANS_LEVEL
-        IPV6_AUTH_NETWORK_LEVEL
-        IPV6_ESP_NETWORK_LEVEL
-        IPV6_ESP_TRANS_LEVEL
-        NI_NOFQDN
-        NI_NUMERICHOST
-        NI_NAMEREQD
-        NI_NUMERICSERV
-        NI_DGRAM
-        NI_WITHSCOPEID
+	inet_pton inet_ntop pack_sockaddr_in6 pack_sockaddr_in6_all
+	unpack_sockaddr_in6 unpack_sockaddr_in6_all sockaddr_in6
+	gethostbyname2 getaddrinfo getnameinfo
+	in6addr_any in6addr_loopback
+	gai_strerror getipnodebyname getipnodebyaddr
+	AI_ADDRCONFIG
+	AI_ALL
+	AI_CANONNAME
+	AI_NUMERICHOST
+	AI_NUMERICSERV
+	AI_DEFAULT
+	AI_MASK
+	AI_PASSIVE
+	AI_V4MAPPED
+	AI_V4MAPPED_CFG
+	EAI_ADDRFAMILY
+	EAI_AGAIN
+	EAI_BADFLAGS
+	EAI_FAIL
+	EAI_FAMILY
+	EAI_MEMORY
+	EAI_NODATA
+	EAI_NONAME
+	EAI_SERVICE
+	EAI_SOCKTYPE
+	EAI_SYSTEM
+	EAI_BADHINTS
+	EAI_PROTOCOL
+	IP_AUTH_TRANS_LEVEL
+	IP_AUTH_NETWORK_LEVEL
+	IP_ESP_TRANS_LEVEL
+	IP_ESP_NETWORK_LEVEL
+	IPPROTO_IP
+	IPPROTO_IPV6
+	IPSEC_LEVEL_AVAIL
+	IPSEC_LEVEL_BYPASS
+	IPSEC_LEVEL_DEFAULT
+	IPSEC_LEVEL_NONE
+	IPSEC_LEVEL_REQUIRE
+	IPSEC_LEVEL_UNIQUE
+	IPSEC_LEVEL_USE
+	IPV6_AUTH_TRANS_LEVEL
+	IPV6_AUTH_NETWORK_LEVEL
+	IPV6_ESP_NETWORK_LEVEL
+	IPV6_ESP_TRANS_LEVEL
+	NI_NOFQDN
+	NI_NUMERICHOST
+	NI_NAMEREQD
+	NI_NUMERICSERV
+	NI_DGRAM
+	NI_WITHSCOPEID
 );
 push @EXPORT, qw(AF_INET6) unless defined eval {Socket::AF_INET6()};
 push @EXPORT, qw(PF_INET6) unless defined eval {Socket::PF_INET6()};
@@ -278,10 +278,10 @@ push @EXPORT, qw(PF_INET6) unless defined eval {Socket::PF_INET6()};
 
 sub sockaddr_in6 {
     if (wantarray) {
-        croak "usage:   (port,iaddr) = sockaddr_in6(sin_sv)" unless @_ == 1;
+	croak "usage:   (port,iaddr) = sockaddr_in6(sin_sv)" unless @_ == 1;
         unpack_sockaddr_in6(@_);
     } else {
-        croak "usage:   sin_sv = sockaddr_in6(port,iaddr))" unless @_ == 2;
+	croak "usage:   sin_sv = sockaddr_in6(port,iaddr))" unless @_ == 2;
         pack_sockaddr_in6(@_);
     }
 }
@@ -292,7 +292,7 @@ sub AUTOLOAD {
     $! = 0;
     my $val = constant($constname, @_ ? $_[0] : 0);
     if ($! != 0) {
-        croak "Your vendor has not defined Socket macro $constname, used";
+	croak "Your vendor has not defined Socket macro $constname, used";
     }
     eval "sub $AUTOLOAD { $val }";
     goto &$AUTOLOAD;

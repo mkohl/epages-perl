@@ -49,7 +49,7 @@ sub handle_request {
     OAuth::Lite2::Server::Error::InvalidScope->throw
         unless $dh->validate_grouping_scope( $client_id, $scope );
 
-    # create response
+    # create response 
     my $auth_info =    $dh->create_or_update_auth_info(
                                     client_id       => $client_id,
                                     user_id         => $grouping_auth_info->user_id,

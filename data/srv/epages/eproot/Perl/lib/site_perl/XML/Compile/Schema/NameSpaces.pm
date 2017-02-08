@@ -46,7 +46,7 @@ sub add(@)
 {   my $self = shift;
     foreach my $instance (@_)
     {   unshift @{$self->{tns}{$_}}, $instance
-            for $instance->tnses;
+	    for $instance->tnses;
 
         while(my($base,$ext) = each %{$instance->sgs})
         {   $self->{sgs}{$base}{$_} ||= $instance for @$ext;
@@ -184,14 +184,14 @@ sub findID($;$)
     my @nodes;
     foreach my $fragment ($self->schemas($ns))
     {   @nodes = $xpc->findnodes("/*/a:*#$id", $fragment->schema)
-            or next;
+	    or next;
 
-        return $nodes[0]
-            if @nodes==1;
+	return $nodes[0]
+	    if @nodes==1;
 
         error "multiple elements with the same id {id} in {source}"
-          , id => $label
-          , source => ($fragment->filename || $fragment->source);
+	  , id => $label
+	  , source => ($fragment->filename || $fragment->source);
     }
 
     undef;

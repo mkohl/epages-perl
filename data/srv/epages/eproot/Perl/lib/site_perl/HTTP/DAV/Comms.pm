@@ -353,39 +353,39 @@ sub credentials {
         }
 
         {
-                no warnings;
-                        if ($HTTP::DAV::DEBUG > 2) {
-                                if (defined $user) {
-                                        print "Setting auth details for $netloc, $realm to '$user', '$pass'\n";
-                                }
-                                else {
-                                        print "Resetting user and password for $netloc, $realm\n";
-                                }
-                        }
+          	no warnings;
+			if ($HTTP::DAV::DEBUG > 2) {
+				if (defined $user) {
+					print "Setting auth details for $netloc, $realm to '$user', '$pass'\n";
+				}
+				else {
+					print "Resetting user and password for $netloc, $realm\n";
+				}
+			}
         }
 
-                # Pay attention to not autovivify the hash value (RT #47500)
-                my $cred;
-                if (
-                        exists $self->{basic_authentication}->{$netloc} &&
-                        exists $self->{basic_authentication}->{$netloc}->{$realm}) {
-                        $cred = $self->{basic_authentication}->{$netloc}->{$realm};
-                }
-                else {
-                        $cred = [];
-                }
+		# Pay attention to not autovivify the hash value (RT #47500)
+		my $cred;
+		if (
+			exists $self->{basic_authentication}->{$netloc} &&
+			exists $self->{basic_authentication}->{$netloc}->{$realm}) {
+			$cred = $self->{basic_authentication}->{$netloc}->{$realm};
+		}
+		else {
+			$cred = [];
+		}
 
         # Replace with new credentials (if any)
         if (defined $user) {
             $self->{basic_authentication}->{$netloc}->{$realm}->[0] = $user;
             $self->{basic_authentication}->{$netloc}->{$realm}->[1] = $pass;
-                        $cred = $self->{basic_authentication}->{$netloc}->{$realm};
+			$cred = $self->{basic_authentication}->{$netloc}->{$realm};
         }
 
         # Return current values
-                if (! @{$cred}) {
-                        return wantarray ? () : undef;
-                }
+		if (! @{$cred}) {
+			return wantarray ? () : undef;
+		}
 
         # User/password pair
         if (wantarray) { return @{$cred} }
@@ -403,7 +403,7 @@ sub credentials {
         my $userpass;
         {
             no warnings;    # SHUTUP with your silly warnings.
-            $userpass
+            $userpass 
                 = $self->{'basic_authentication'}{$netloc}{$realm}
                 || $self->{'basic_authentication'}{default}{$realm}
                 || $self->{'basic_authentication'}{$netloc}{default}

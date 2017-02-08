@@ -38,7 +38,7 @@ sub check_for_frompath {
     binmode F if $binmode;
     while (<F>) {
         if (/\Q$frompath\E/o) {
-            close F;
+	    close F;
             edit_it($file, $binmode);
             last;
         }

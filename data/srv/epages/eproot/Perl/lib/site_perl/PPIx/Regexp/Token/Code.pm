@@ -54,11 +54,11 @@ sub _new {
 
     my $self = {};
     if ( __instance( $content, 'PPI::Document' ) ) {
-        $self->{ppi} = $content;
+	$self->{ppi} = $content;
     } elsif ( ref $content ) {
-        return;
+	return;
     } else {
-        $self->{content} = $content;
+	$self->{content} = $content;
     }
     bless $self, $class;
     return $self;
@@ -67,11 +67,11 @@ sub _new {
 sub content {
     my ( $self ) = @_;
     if ( exists $self->{content} ) {
-        return $self->{content};
+	return $self->{content};
     } elsif ( exists $self->{ppi} ) {
-        return ( $self->{content} = $self->{ppi}->content() );
+	return ( $self->{content} = $self->{ppi}->content() );
     } else {
-        return;
+	return;
     }
 }
 
@@ -90,12 +90,12 @@ representing the content. This document should be considered read only.
 sub ppi {
     my ( $self ) = @_;
     if ( exists $self->{ppi} ) {
-        return $self->{ppi};
+	return $self->{ppi};
     } elsif ( exists $self->{content} ) {
-        return ( $self->{ppi} = PPI::Document->new(
-                \($self->{content}), readonly => 1 ) );
+	return ( $self->{ppi} = PPI::Document->new(
+		\($self->{content}), readonly => 1 ) );
     } else {
-        return;
+	return;
     }
 }
 
@@ -105,25 +105,25 @@ sub ppi {
 {
 
     my %default = (
-        perl_version_introduced => '5.005',     # When (?{...}) introduced.
+	perl_version_introduced	=> '5.005',	# When (?{...}) introduced.
     );
 
     sub __PPIX_TOKEN__post_make {
-        my ( $self, $tokenizer, $arg ) = @_;
+	my ( $self, $tokenizer, $arg ) = @_;
 
-        if ( 'HASH' eq ref $arg ) {
-            foreach my $key ( qw{ perl_version_introduced } ) {
-                exists $arg->{$key}
-                    and $self->{$key} = $arg->{$key};
-            }
-        }
+	if ( 'HASH' eq ref $arg ) {
+	    foreach my $key ( qw{ perl_version_introduced } ) {
+		exists $arg->{$key}
+		    and $self->{$key} = $arg->{$key};
+	    }
+	}
 
-        foreach my $key ( keys %default ) {
-            exists $self->{$key}
-                or $self->{$key} = $default{$key};
-        }
+	foreach my $key ( keys %default ) {
+	    exists $self->{$key}
+		or $self->{$key} = $default{$key};
+	}
 
-        return;
+	return;
     }
 
 }
@@ -134,9 +134,9 @@ sub __PPIX_TOKENIZER__regexp {
     $character eq '{' or return;
 
     my $offset = $tokenizer->find_matching_delimiter()
-        or return;
+	or return;
 
-    return $offset + 1; # to include the closing delimiter.
+    return $offset + 1;	# to include the closing delimiter.
 }
 
 1;

@@ -10,66 +10,66 @@ our $VERSION = '1.1.2';
 our @ISA = qw(Algorithm::CheckDigits);
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(.+)(.)$/) {
-                return uc($2) eq $self->_compute_checkdigit($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(.+)(.)$/) {
+		return uc($2) eq $self->_compute_checkdigit($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^[ 0-9]+$/) {
-                return  $number . $self->_compute_checkdigit($number);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^[ 0-9]+$/) {
+		return  $number . $self->_compute_checkdigit($number);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(.+)(.)$/) {
-                return $1 if (uc($2) eq $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(.+)(.)$/) {
+		return $1 if (uc($2) eq $self->_compute_checkdigit($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(.+)(.)$/) {
-                return $2 if (uc($2) eq $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(.+)(.)$/) {
+		return $2 if (uc($2) eq $self->_compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        if ($number =~ /^[ 0-9]+$/) {
+	if ($number =~ /^[ 0-9]+$/) {
 
-                $number =~ s/ //g;
-                my @digits = split(//,$number);
-                my $sum    = 0;
-                my $prod   = 10;
+		$number =~ s/ //g;
+		my @digits = split(//,$number);
+		my $sum    = 0;
+		my $prod   = 10;
 
-                for (my $i = 0; $i <= $#digits; $i++) {
+		for (my $i = 0; $i <= $#digits; $i++) {
 
-                        $sum  = (($prod + $digits[$i]) % 10) || 10;
-                        $prod = (2 * $sum) % 11;
+			$sum  = (($prod + $digits[$i]) % 10) || 10;
+			$prod = (2 * $sum) % 11;
 
-                }
-                return (11 - $prod) % 10;
-        }
-        return -1;
+		}
+		return (11 - $prod) % 10;
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -91,7 +91,7 @@ CheckDigits::MBase_002 - compute check digits for blood bags (DE), BZÜ
   $bb = CheckDigits('blutbeutel');
 
   if ($bb->is_valid('2761011234567893')) {
-        # do something
+	# do something
   }
 
   $cn = $bb->complete('276101123456789');
@@ -102,7 +102,7 @@ CheckDigits::MBase_002 - compute check digits for blood bags (DE), BZÜ
 
   $bn = $bb->basenumber('2761011234567893');
   # $bn = '276101123456789';
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

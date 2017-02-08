@@ -4,49 +4,49 @@ Params::Classify - argument type classification
 
 =head1 SYNOPSIS
 
-        use Params::Classify qw(
-                scalar_class
-                is_undef check_undef
-                is_string check_string
-                is_number check_number
-                is_glob check_glob
-                is_regexp check_regexp
-                is_ref check_ref ref_type
-                is_blessed check_blessed blessed_class
-                is_strictly_blessed check_strictly_blessed
-                is_able check_able
-        );
+	use Params::Classify qw(
+		scalar_class
+		is_undef check_undef
+		is_string check_string
+		is_number check_number
+		is_glob check_glob
+		is_regexp check_regexp
+		is_ref check_ref ref_type
+		is_blessed check_blessed blessed_class
+		is_strictly_blessed check_strictly_blessed
+		is_able check_able
+	);
 
-        $c = scalar_class($arg);
+	$c = scalar_class($arg);
 
-        if(is_undef($arg)) {
-        check_undef($arg);
+	if(is_undef($arg)) {
+	check_undef($arg);
 
-        if(is_string($arg)) {
-        check_string($arg);
-        if(is_number($arg)) {
-        check_number($arg);
+	if(is_string($arg)) {
+	check_string($arg);
+	if(is_number($arg)) {
+	check_number($arg);
 
-        if(is_glob($arg)) {
-        check_glob($arg);
-        if(is_regexp($arg)) {
-        check_regexp($arg);
+	if(is_glob($arg)) {
+	check_glob($arg);
+	if(is_regexp($arg)) {
+	check_regexp($arg);
 
-        if(is_ref($arg)) {
-        check_ref($arg);
-        $t = ref_type($arg);
-        if(is_ref($arg, "HASH")) {
-        check_ref($arg, "HASH");
+	if(is_ref($arg)) {
+	check_ref($arg);
+	$t = ref_type($arg);
+	if(is_ref($arg, "HASH")) {
+	check_ref($arg, "HASH");
 
-        if(is_blessed($arg)) {
-        check_blessed($arg);
-        if(is_blessed($arg, "IO::Handle")) {
-        check_blessed($arg, "IO::Handle");
-        $c = blessed_class($arg);
-        if(is_strictly_blessed($arg, "IO::Pipe::End")) {
-        check_strictly_blessed($arg, "IO::Pipe::End");
-        if(is_able($arg, ["print", "flush"])) {
-        check_able($arg, ["print", "flush"]);
+	if(is_blessed($arg)) {
+	check_blessed($arg);
+	if(is_blessed($arg, "IO::Handle")) {
+	check_blessed($arg, "IO::Handle");
+	$c = blessed_class($arg);
+	if(is_strictly_blessed($arg, "IO::Pipe::End")) {
+	check_strictly_blessed($arg, "IO::Pipe::End");
+	if(is_able($arg, ["print", "flush"])) {
+	check_able($arg, ["print", "flush"]);
 
 =head1 DESCRIPTION
 
@@ -82,49 +82,49 @@ our $VERSION = "0.013";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
-        scalar_class
-        is_undef check_undef
-        is_string check_string
-        is_number check_number
-        is_glob check_glob
-        is_regexp check_regexp
-        is_ref check_ref ref_type
-        is_blessed check_blessed blessed_class
-        is_strictly_blessed check_strictly_blessed
-        is_able check_able
+	scalar_class
+	is_undef check_undef
+	is_string check_string
+	is_number check_number
+	is_glob check_glob
+	is_regexp check_regexp
+	is_ref check_ref ref_type
+	is_blessed check_blessed blessed_class
+	is_strictly_blessed check_strictly_blessed
+	is_able check_able
 );
 
 eval { local $SIG{__DIE__};
-        require XSLoader;
-        XSLoader::load(__PACKAGE__, $VERSION);
+	require XSLoader;
+	XSLoader::load(__PACKAGE__, $VERSION);
 };
 
 if($@ eq "") {
-        close(DATA);
+	close(DATA);
 } else {
-        (my $filename = __FILE__) =~ tr# -~##cd;
-        local $/ = undef;
-        my $pp_code = "#line 128 \"$filename\"\n".<DATA>;
-        close(DATA);
-        {
-                local $SIG{__DIE__};
-                eval $pp_code;
-        }
-        die $@ if $@ ne "";
+	(my $filename = __FILE__) =~ tr# -~##cd;
+	local $/ = undef;
+	my $pp_code = "#line 128 \"$filename\"\n".<DATA>;
+	close(DATA);
+	{
+		local $SIG{__DIE__};
+		eval $pp_code;
+	}
+	die $@ if $@ ne "";
 }
 
 sub is_string($);
 sub is_number($) {
-        return 0 unless &is_string;
-        my $warned;
-        local $SIG{__WARN__} = sub { $warned = 1; };
-        my $arg = $_[0];
-        { no warnings "void"; 0 + $arg; }
-        return !$warned;
+	return 0 unless &is_string;
+	my $warned;
+	local $SIG{__WARN__} = sub { $warned = 1; };
+	my $arg = $_[0];
+	{ no warnings "void"; 0 + $arg; }
+	return !$warned;
 }
 
 sub check_number($) {
-        die "argument is not a number\n" unless &is_number;
+	die "argument is not a number\n" unless &is_number;
 }
 
 1;
@@ -196,13 +196,13 @@ Returns "B<UNDEF>", "B<STRING>", "B<GLOB>", "B<REGEXP>", "B<REF>", or
 =cut
 
 sub scalar_class($) {
-        my $type = reftype(\$_[0]);
-        if($type eq "SCALAR") {
-                $type = defined($_[0]) ? "STRING" : "UNDEF";
-        } elsif($type eq "REF") {
-                $type = "BLESSED" if defined(blessed($_[0]));
-        }
-        $type;
+	my $type = reftype(\$_[0]);
+	if($type eq "SCALAR") {
+		$type = defined($_[0]) ? "STRING" : "UNDEF";
+	} elsif($type eq "REF") {
+		$type = "BLESSED" if defined(blessed($_[0]));
+	}
+	$type;
 }
 
 =back
@@ -223,7 +223,7 @@ equivalent to C<!defined(ARG)>, and is included for completeness.
 sub is_undef($) { !defined($_[0]) }
 
 sub check_undef($) {
-        die "argument is not undefined\n" unless &is_undef;
+	die "argument is not undefined\n" unless &is_undef;
 }
 
 =back
@@ -247,7 +247,7 @@ then you don't want to do that.
 sub is_string($) { defined($_[0]) && reftype(\$_[0]) eq "SCALAR" }
 
 sub check_string($) {
-        die "argument is not a string\n" unless &is_string;
+	die "argument is not a string\n" unless &is_string;
 }
 
 =item is_number(ARG)
@@ -307,7 +307,7 @@ Check whether I<ARG> is a typeglob.
 sub is_glob($) { reftype(\$_[0]) eq "GLOB" }
 
 sub check_glob($) {
-        die "argument is not a typeglob\n" unless &is_glob;
+	die "argument is not a typeglob\n" unless &is_glob;
 }
 
 =back
@@ -327,7 +327,7 @@ Check whether I<ARG> is a regexp object.
 sub is_regexp($) { reftype(\$_[0]) eq "REGEXP" }
 
 sub check_regexp($) {
-        die "argument is not a regexp\n" unless &is_regexp;
+	die "argument is not a regexp\n" unless &is_regexp;
 }
 
 =back
@@ -369,56 +369,56 @@ Possible I<TYPE>s are "B<SCALAR>", "B<ARRAY>", "B<HASH>", "B<CODE>",
 =cut
 
 {
-        my %xlate_reftype = (
-                REF    => "SCALAR",
-                SCALAR => "SCALAR",
-                LVALUE => "SCALAR",
-                GLOB   => "SCALAR",
-                REGEXP => "SCALAR",
-                ARRAY  => "ARRAY",
-                HASH   => "HASH",
-                CODE   => "CODE",
-                FORMAT => "FORMAT",
-                IO     => "IO",
-        );
+	my %xlate_reftype = (
+		REF    => "SCALAR",
+		SCALAR => "SCALAR",
+		LVALUE => "SCALAR",
+		GLOB   => "SCALAR",
+		REGEXP => "SCALAR",
+		ARRAY  => "ARRAY",
+		HASH   => "HASH",
+		CODE   => "CODE",
+		FORMAT => "FORMAT",
+		IO     => "IO",
+	);
 
-        my %reftype_ok = map { ($_ => undef) } qw(
-                SCALAR ARRAY HASH CODE FORMAT IO
-        );
+	my %reftype_ok = map { ($_ => undef) } qw(
+		SCALAR ARRAY HASH CODE FORMAT IO
+	);
 
-        sub ref_type($) {
-                my $reftype = &reftype;
-                return undef unless
-                        defined($reftype) && !defined(blessed($_[0]));
-                my $xlated_reftype = $xlate_reftype{$reftype};
-                die "unknown reftype `$reftype', please update Params::Classify"
-                        unless defined $xlated_reftype;
-                $xlated_reftype;
-        }
+	sub ref_type($) {
+		my $reftype = &reftype;
+		return undef unless
+			defined($reftype) && !defined(blessed($_[0]));
+		my $xlated_reftype = $xlate_reftype{$reftype};
+		die "unknown reftype `$reftype', please update Params::Classify"
+			unless defined $xlated_reftype;
+		$xlated_reftype;
+	}
 
-        sub is_ref($;$) {
-                if(@_ == 2) {
-                        die "reference type argument is not a string\n"
-                                unless is_string($_[1]);
-                        die "invalid reference type\n"
-                                unless exists $reftype_ok{$_[1]};
-                }
-                my $reftype = reftype($_[0]);
-                return undef unless
-                        defined($reftype) && !defined(blessed($_[0]));
-                return 1 if @_ != 2;
-                my $xlated_reftype = $xlate_reftype{$reftype};
-                die "unknown reftype `$reftype', please update Params::Classify"
-                        unless defined $xlated_reftype;
-                return $xlated_reftype eq $_[1];
-        }
+	sub is_ref($;$) {
+		if(@_ == 2) {
+			die "reference type argument is not a string\n"
+				unless is_string($_[1]);
+			die "invalid reference type\n"
+				unless exists $reftype_ok{$_[1]};
+		}
+		my $reftype = reftype($_[0]);
+		return undef unless
+			defined($reftype) && !defined(blessed($_[0]));
+		return 1 if @_ != 2;
+		my $xlated_reftype = $xlate_reftype{$reftype};
+		die "unknown reftype `$reftype', please update Params::Classify"
+			unless defined $xlated_reftype;
+		return $xlated_reftype eq $_[1];
+	}
 }
 
 sub check_ref($;$) {
-        unless(&is_ref) {
-                die "argument is not a reference to plain ".
-                        (@_ == 2 ? lc($_[1]) : "object")."\n";
-        }
+	unless(&is_ref) {
+		die "argument is not a reference to plain ".
+			(@_ == 2 ? lc($_[1]) : "object")."\n";
+	}
 }
 
 =back
@@ -446,16 +446,16 @@ I<CLASS> must be a string, naming a Perl class.
 =cut
 
 sub is_blessed($;$) {
-        die "class argument is not a string\n"
-                if @_ == 2 && !is_string($_[1]);
-        return defined(blessed($_[0])) && (@_ != 2 || $_[0]->isa($_[1]));
+	die "class argument is not a string\n"
+		if @_ == 2 && !is_string($_[1]);
+	return defined(blessed($_[0])) && (@_ != 2 || $_[0]->isa($_[1]));
 }
 
 sub check_blessed($;$) {
-        unless(&is_blessed) {
-                die "argument is not a reference to blessed ".
-                        (@_ == 2 ? $_[1] : "object")."\n";
-        }
+	unless(&is_blessed) {
+		die "argument is not a reference to blessed ".
+			(@_ == 2 ? $_[1] : "object")."\n";
+	}
 }
 
 =item blessed_class(ARG)
@@ -491,17 +491,17 @@ specialised occasions where it is useful.
 =cut
 
 sub is_strictly_blessed($;$) {
-        return &is_blessed unless @_ == 2;
-        die "class argument is not a string\n" unless is_string($_[1]);
-        my $blessed = blessed($_[0]);
-        return defined($blessed) && $blessed eq $_[1];
+	return &is_blessed unless @_ == 2;
+	die "class argument is not a string\n" unless is_string($_[1]);
+	my $blessed = blessed($_[0]);
+	return defined($blessed) && $blessed eq $_[1];
 }
 
 sub check_strictly_blessed($;$) {
-        return &check_blessed unless @_ == 2;
-        unless(&is_strictly_blessed) {
-                die "argument is not a reference to strictly blessed $_[1]\n";
-        }
+	return &check_blessed unless @_ == 2;
+	unless(&is_strictly_blessed) {
+		die "argument is not a reference to strictly blessed $_[1]\n";
+	}
 }
 
 =item is_able(ARG)
@@ -526,40 +526,40 @@ check (such as L</is_blessed> performs).
 =cut
 
 sub _check_methods_arg($) {
-        return if &is_string;
-        die "methods argument is not a string or array\n"
-                unless is_ref($_[0], "ARRAY");
-        foreach(@{$_[0]}) {
-                die "method name is not a string\n" unless is_string($_);
-        }
+	return if &is_string;
+	die "methods argument is not a string or array\n"
+		unless is_ref($_[0], "ARRAY");
+	foreach(@{$_[0]}) {
+		die "method name is not a string\n" unless is_string($_);
+	}
 }
 
 sub is_able($;$) {
-        return &is_blessed unless @_ == 2;
-        _check_methods_arg($_[1]);
-        return 0 unless defined blessed $_[0];
-        foreach my $method (ref($_[1]) eq "" ? $_[1] : @{$_[1]}) {
-                return 0 unless $_[0]->can($method);
-        }
-        return 1;
+	return &is_blessed unless @_ == 2;
+	_check_methods_arg($_[1]);
+	return 0 unless defined blessed $_[0];
+	foreach my $method (ref($_[1]) eq "" ? $_[1] : @{$_[1]}) {
+		return 0 unless $_[0]->can($method);
+	}
+	return 1;
 }
 
 sub check_able($;$) {
-        return &check_blessed unless @_ == 2;
-        _check_methods_arg($_[1]);
-        unless(defined blessed $_[0]) {
-                my $desc = ref($_[1]) eq "" ?
-                                "method \"$_[1]\""
-                        : @{$_[1]} == 0 ?
-                                "at all"
-                        :
-                                "method \"".$_[1]->[0]."\"";
-                die "argument is not able to perform $desc\n";
-        }
-        foreach my $method (ref($_[1]) eq "" ? $_[1] : @{$_[1]}) {
-                die "argument is not able to perform method \"$method\"\n"
-                        unless $_[0]->can($method);
-        }
+	return &check_blessed unless @_ == 2;
+	_check_methods_arg($_[1]);
+	unless(defined blessed $_[0]) {
+		my $desc = ref($_[1]) eq "" ?
+				"method \"$_[1]\""
+			: @{$_[1]} == 0 ?
+				"at all"
+			:
+				"method \"".$_[1]->[0]."\"";
+		die "argument is not able to perform $desc\n";
+	}
+	foreach my $method (ref($_[1]) eq "" ? $_[1] : @{$_[1]}) {
+		die "argument is not able to perform method \"$method\"\n"
+			unless $_[0]->can($method);
+	}
 }
 
 =back

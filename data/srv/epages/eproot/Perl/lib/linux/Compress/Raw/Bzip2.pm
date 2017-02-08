@@ -13,7 +13,7 @@ use bytes ;
 our ($VERSION, $XS_VERSION, @ISA, @EXPORT, $AUTOLOAD);
 
 $VERSION = '2.024';
-$XS_VERSION = $VERSION;
+$XS_VERSION = $VERSION; 
 $VERSION = eval $VERSION;
 
 @ISA = qw(Exporter);
@@ -21,24 +21,24 @@ $VERSION = eval $VERSION;
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 @EXPORT = qw(
-                BZ_RUN
-                BZ_FLUSH
-                BZ_FINISH
+		BZ_RUN
+		BZ_FLUSH
+		BZ_FINISH
 
-                BZ_OK
-                BZ_RUN_OK
-                BZ_FLUSH_OK
-                BZ_FINISH_OK
-                BZ_STREAM_END
-                BZ_SEQUENCE_ERROR
-                BZ_PARAM_ERROR
-                BZ_MEM_ERROR
-                BZ_DATA_ERROR
-                BZ_DATA_ERROR_MAGIC
-                BZ_IO_ERROR
-                BZ_UNEXPECTED_EOF
-                BZ_OUTBUFF_FULL
-                BZ_CONFIG_ERROR
+		BZ_OK
+		BZ_RUN_OK
+		BZ_FLUSH_OK
+		BZ_FINISH_OK
+		BZ_STREAM_END
+		BZ_SEQUENCE_ERROR
+		BZ_PARAM_ERROR
+		BZ_MEM_ERROR
+		BZ_DATA_ERROR
+		BZ_DATA_ERROR_MAGIC
+		BZ_IO_ERROR
+		BZ_UNEXPECTED_EOF
+		BZ_OUTBUFF_FULL
+		BZ_CONFIG_ERROR
 
     );
 
@@ -62,11 +62,11 @@ eval {
     require XSLoader;
     XSLoader::load('Compress::Raw::Bzip2', $XS_VERSION);
     1;
-}
+} 
 or do {
     require DynaLoader;
     local @ISA = qw(DynaLoader);
-    bootstrap Compress::Raw::Bzip2 $XS_VERSION ;
+    bootstrap Compress::Raw::Bzip2 $XS_VERSION ; 
 };
 
 #sub Compress::Raw::Bzip2::new
@@ -108,14 +108,14 @@ Compress::Raw::Bzip2 - Low-Level Interface to bzip2 compression library
 
     my ($bz, $status) = new Compress::Raw::Bzip2 [OPTS]
         or die "Cannot create bzip2 object: $bzerno\n";
-
+    
     $status = $bz->bzdeflate($input, $output);
     $status = $bz->bzflush($output);
     $status = $bz->bzclose($output);
 
     my ($bz, $status) = new Compress::Raw::Bunzip2 [OPTS]
         or die "Cannot create bunzip2 object: $bzerno\n";
-
+    
     $status = $bz->bzinflate($input, $output);
 
     my $version = Compress::Raw::Bzip2::bzlibversion();
@@ -123,7 +123,7 @@ Compress::Raw::Bzip2 - Low-Level Interface to bzip2 compression library
 =head1 DESCRIPTION
 
 C<Compress::Raw::Bzip2> provides an interface to the in-memory
-compression/uncompression functions from the bzip2 compression library.
+compression/uncompression functions from the bzip2 compression library. 
 
 Although the primary purpose for the existence of C<Compress::Raw::Bzip2>
 is for use by the  C<IO::Compress::Bzip2> and C<IO::Compress::Bunzip2>
@@ -134,7 +134,7 @@ tasks.
 
 =head2 ($z, $status) = new Compress::Raw::Bzip2 $appendOutput, $blockSize100k, $workfactor;
 
-Creates a new compression object.
+Creates a new compression object. 
 
 If successful, it will return the initialised compression object, C<$z>
 and a C<$status> of C<BZ_OK> in a list context. In scalar context it
@@ -249,7 +249,7 @@ To quote the bzip2 documentation
     If small is nonzero, the library will use an alternative decompression
     algorithm which uses less memory but at the cost of decompressing more
     slowly (roughly speaking, half the speed, but the maximum memory
-    requirement drops to around 2300k).
+    requirement drops to around 2300k). 
 
 Defaults to 0.
 
@@ -257,7 +257,7 @@ Defaults to 0.
 
 The C<LimitOutput> option changes the behavior of the C<< $i->bzinflate >>
 method so that the amount of memory used by the output buffer can be
-limited.
+limited. 
 
 When C<LimitOutput> is used the size of the output buffer used will either
 be the 16k or the amount of memory already allocated to C<$output>,
@@ -277,7 +277,7 @@ This option defaults to false.
 
 =head2 $status = $z->bzinflate($input, $output);
 
-Uncompresses C<$input> and writes the uncompressed data to C<$output>.
+Uncompresses C<$input> and writes the uncompressed data to C<$output>. 
 
 Returns C<BZ_OK> if the uncompression was successful, but the end of the
 compressed data stream has not been reached. Returns C<BZ_STREAM_END> on
@@ -305,24 +305,24 @@ Returns the version of the underlying bzip2 library.
 
 The following bzip2 constants are exported by this module
 
-                BZ_RUN
-                BZ_FLUSH
-                BZ_FINISH
+		BZ_RUN
+		BZ_FLUSH
+		BZ_FINISH
 
-                BZ_OK
-                BZ_RUN_OK
-                BZ_FLUSH_OK
-                BZ_FINISH_OK
-                BZ_STREAM_END
-                BZ_SEQUENCE_ERROR
-                BZ_PARAM_ERROR
-                BZ_MEM_ERROR
-                BZ_DATA_ERROR
-                BZ_DATA_ERROR_MAGIC
-                BZ_IO_ERROR
-                BZ_UNEXPECTED_EOF
-                BZ_OUTBUFF_FULL
-                BZ_CONFIG_ERROR
+		BZ_OK
+		BZ_RUN_OK
+		BZ_FLUSH_OK
+		BZ_FINISH_OK
+		BZ_STREAM_END
+		BZ_SEQUENCE_ERROR
+		BZ_PARAM_ERROR
+		BZ_MEM_ERROR
+		BZ_DATA_ERROR
+		BZ_DATA_ERROR_MAGIC
+		BZ_IO_ERROR
+		BZ_UNEXPECTED_EOF
+		BZ_OUTBUFF_FULL
+		BZ_CONFIG_ERROR
 
 =head1 SEE ALSO
 
@@ -340,7 +340,7 @@ See the module L<Compress::Bzip2|Compress::Bzip2>
 
 =head1 AUTHOR
 
-This module was written by Paul Marquess, F<pmqs@cpan.org>.
+This module was written by Paul Marquess, F<pmqs@cpan.org>. 
 
 =head1 MODIFICATION HISTORY
 

@@ -19,7 +19,7 @@ sub new {
     my $this        = shift;
     my ($gd,$group) = @_;
     return bless {gd    => $gd,
-                  group => $group},ref $this || $this;
+		  group => $group},ref $this || $this;
 }
 
 sub DESTROY {

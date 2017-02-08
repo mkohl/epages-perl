@@ -1,5 +1,5 @@
 package Text::Abbrev;
-require 5.005;          # Probably works on earlier versions too.
+require 5.005;		# Probably works on earlier versions too.
 require Exporter;
 
 our $VERSION = '1.01';
@@ -36,9 +36,9 @@ The values are the original list elements.
 @EXPORT = qw(abbrev);
 
 # Usage:
-#       abbrev \%foo, LIST;
-#       ...
-#       $long = $foo{$short};
+#	abbrev \%foo, LIST;
+#	...
+#	$long = $foo{$short};
 
 sub abbrev {
     my ($word, $hashref, $glob, %table, $returnvoid);
@@ -55,19 +55,19 @@ sub abbrev {
 
     WORD: foreach $word (@_) {
         for (my $len = (length $word) - 1; $len > 0; --$len) {
-            my $abbrev = substr($word,0,$len);
-            my $seen = ++$table{$abbrev};
-            if ($seen == 1) {       # We're the first word so far to have
-                                    # this abbreviation.
-                $hashref->{$abbrev} = $word;
-            } elsif ($seen == 2) {  # We're the second word to have this
-                                    # abbreviation, so we can't use it.
-                delete $hashref->{$abbrev};
-            } else {                # We're the third word to have this
-                                    # abbreviation, so skip to the next word.
-                next WORD;
-            }
-        }
+	    my $abbrev = substr($word,0,$len);
+	    my $seen = ++$table{$abbrev};
+	    if ($seen == 1) {	    # We're the first word so far to have
+	    			    # this abbreviation.
+	        $hashref->{$abbrev} = $word;
+	    } elsif ($seen == 2) {  # We're the second word to have this
+	    			    # abbreviation, so we can't use it.
+	        delete $hashref->{$abbrev};
+	    } else {		    # We're the third word to have this
+	    			    # abbreviation, so skip to the next word.
+	        next WORD;
+	    }
+	}
     }
     # Non-abbreviations always get entered, even if they aren't unique
     foreach $word (@_) {

@@ -8,10 +8,10 @@ use strict;
 use vars qw($VERSION @ISA);
 
 $VERSION = "2.14";
-@ISA     = qw(Authen::SASL::Perl);
+@ISA	 = qw(Authen::SASL::Perl);
 
 my %secflags = (
-        noplaintext => 1,
+	noplaintext => 1,
 );
 
 sub _order { 0 }
@@ -80,14 +80,14 @@ documentation written by Peter Marschall <peter@adpm.de>.
 Please report any bugs, or post any suggestions, to the perl-ldap mailing list
 <perl-ldap@perl.org>
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT 
 
 Copyright (c) 2002-2004 Graham Barr.
-All rights reserved. This program is free software; you can redistribute
+All rights reserved. This program is free software; you can redistribute 
 it and/or modify it under the same terms as Perl itself.
 
 Documentation Copyright (c) 2004 Peter Marschall.
 All rights reserved.  This documentation is distributed,
-and may be redistributed, under the same terms as Perl itself.
+and may be redistributed, under the same terms as Perl itself. 
 
 =cut

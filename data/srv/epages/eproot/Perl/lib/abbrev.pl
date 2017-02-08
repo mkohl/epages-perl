@@ -1,8 +1,8 @@
 ;# Usage:
-;#      %foo = ();
-;#      &abbrev(*foo,LIST);
-;#      ...
-;#      $long = $foo{$short};
+;#	%foo = ();
+;#	&abbrev(*foo,LIST);
+;#	...
+;#	$long = $foo{$short};
 
 #
 # This library is no longer being maintained, and is included for backward
@@ -24,21 +24,21 @@ sub main'abbrev {
     @cmp = @_;
     local($[) = 0;
     foreach $name (@_) {
-        @extra = split(//,$name);
-        $abbrev = shift(@extra);
-        $len = 1;
-        foreach $cmp (@cmp) {
-            next if $cmp eq $name;
-            while (@extra && substr($cmp,0,$len) eq $abbrev) {
-                $abbrev .= shift(@extra);
-                ++$len;
-            }
-        }
-        $domain{$abbrev} = $name;
-        while ($#extra >= 0) {
-            $abbrev .= shift(@extra);
-            $domain{$abbrev} = $name;
-        }
+	@extra = split(//,$name);
+	$abbrev = shift(@extra);
+	$len = 1;
+	foreach $cmp (@cmp) {
+	    next if $cmp eq $name;
+	    while (@extra && substr($cmp,0,$len) eq $abbrev) {
+		$abbrev .= shift(@extra);
+		++$len;
+	    }
+	}
+	$domain{$abbrev} = $name;
+	while ($#extra >= 0) {
+	    $abbrev .= shift(@extra);
+	    $domain{$abbrev} = $name;
+	}
     }
 }
 

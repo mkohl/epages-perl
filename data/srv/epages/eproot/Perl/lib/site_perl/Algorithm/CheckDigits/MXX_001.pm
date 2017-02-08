@@ -10,114 +10,114 @@ our $VERSION = '1.2.0';
 our @ISA = qw(Algorithm::CheckDigits);
 
 my %weight = (
-        'aba_rn'  => [ 3,7,1,3,7,1,3,7,1, ],
-        'mxx-001' => [ 7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1, ],
-        'pa_de'   => [ 7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1, ],
+	'aba_rn'  => [ 3,7,1,3,7,1,3,7,1, ],
+	'mxx-001' => [ 7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1, ],
+	'pa_de'   => [ 7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1,7,3,1, ],
 );
 
 sub new {
-        my ($proto, $type) = @_;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type}   = lc($type);
-        $self->{weight} = $weight{$type};
-        if ('aba_rn' eq $type) {
-                $self->{complement} = 1;
-        }
-        return $self;
+	my ($proto, $type) = @_;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type}   = lc($type);
+	$self->{weight} = $weight{$type};
+	if ('aba_rn' eq $type) {
+		$self->{complement} = 1;
+	}
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ('aba_rn' eq $self->{type}) {
-                $number =~ y/[0-9]//cd;
-                if ($number =~ /^(\d{8})(\d)$/) {
-                        my $ccd = $self->_compute($1);
-                        my $pcd = $2;
-                        return 1 if ($ccd == $pcd);
-                }
-        }
-        else {
-                if ($number =~ /^\d{9}(\d).<+\d{6}(\d)<+\d{6}(\d)<+(\d)$/) {
-                        my @cd = $self->_compute_checkdigit($number);
-                        return 1 if (   $cd[0] == $1 and $cd[1] == $2
-                                and $cd[2] == $3 and $cd[3] == $4
-                                );
-                }
-                elsif ($number =~ /^(\d+)(\d)$/) {
-                        return 1 if $2 == $self->_compute($1);
-                }
-        }
-        return 0;
+	my ($self,$number) = @_;
+	if ('aba_rn' eq $self->{type}) {
+		$number =~ y/[0-9]//cd;
+		if ($number =~ /^(\d{8})(\d)$/) {
+			my $ccd = $self->_compute($1);
+			my $pcd = $2;
+			return 1 if ($ccd == $pcd);
+		}
+	}
+	else {
+		if ($number =~ /^\d{9}(\d).<+\d{6}(\d)<+\d{6}(\d)<+(\d)$/) {
+			my @cd = $self->_compute_checkdigit($number);
+			return 1 if (   $cd[0] == $1 and $cd[1] == $2
+		            	and $cd[2] == $3 and $cd[3] == $4
+			    	);
+		}
+		elsif ($number =~ /^(\d+)(\d)$/) {
+			return 1 if $2 == $self->_compute($1);
+		}
+	}
+	return 0;
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{9}).(.<+\d{6}).(<+\d{6}).(<+).$/) {
-                my @cd = $self->_compute_checkdigit($number);
-                return $1 . $cd[0] . $2 . $cd[1] . $3 . $cd[2] . $4 .  $cd[3];
-        }
-        elsif ($number =~ /^(\d+)$/) {
-                return $number . $self->_compute($number);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{9}).(.<+\d{6}).(<+\d{6}).(<+).$/) {
+		my @cd = $self->_compute_checkdigit($number);
+		return $1 . $cd[0] . $2 . $cd[1] . $3 . $cd[2] . $4 .  $cd[3];
+	}
+	elsif ($number =~ /^(\d+)$/) {
+		return $number . $self->_compute($number);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d{9})(\d)(.<+\d{6})(\d)(<+\d{6})(\d)(<+)(\d)$/) {
-                my @cd = $self->_compute_checkdigit($number);
-                return $1 . '_' . $3 . '_' . $5 . '_' . $7 . '_'
-                        if (   $cd[0] == $2 and $cd[1] == $4
-                           and $cd[2] == $6 and $cd[3] == $8
-                           );
-        }
-        elsif ($number =~ /^(\d+)(\d)$/) {
-                return $1 if $2 == $self->_compute($1);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d{9})(\d)(.<+\d{6})(\d)(<+\d{6})(\d)(<+)(\d)$/) {
+		my @cd = $self->_compute_checkdigit($number);
+		return $1 . '_' . $3 . '_' . $5 . '_' . $7 . '_'
+			if (   $cd[0] == $2 and $cd[1] == $4
+		           and $cd[2] == $6 and $cd[3] == $8
+			   );
+	}
+	elsif ($number =~ /^(\d+)(\d)$/) {
+		return $1 if $2 == $self->_compute($1);
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^\d{9}(\d).<+\d{6}(\d)<+\d{6}(\d)<+(\d)$/) {
-                my @cd = $self->_compute_checkdigit($number);
-                return join('<',@cd)
-                        if (   $cd[0] == $1 and $cd[1] == $2
-                           and $cd[2] == $3 and $cd[3] == $4
-                           );
-        }
-        elsif ($number =~ /^(\d+)(\d)$/) {
-                return $self->_compute($1);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^\d{9}(\d).<+\d{6}(\d)<+\d{6}(\d)<+(\d)$/) {
+		my @cd = $self->_compute_checkdigit($number);
+		return join('<',@cd)
+			if (   $cd[0] == $1 and $cd[1] == $2
+		           and $cd[2] == $3 and $cd[3] == $4
+			   );
+	}
+	elsif ($number =~ /^(\d+)(\d)$/) {
+		return $self->_compute($1);
+	}
+	return '';
 } # checkdigit()
 
 sub _compute {
-        my ($self,$digits) = @_;
-        my ($sum,$i) = (0,0);
-        my @w = @{$self->{weight}};
-        while ($digits =~ /(\d)/g) {
-                $sum += $1 * $w[$i++];
-        }
-        if ($self->{complement}) {
-                return (10 - $sum % 10) % 10;
-        }
-        return $sum % 10;
+	my ($self,$digits) = @_;
+	my ($sum,$i) = (0,0);
+	my @w = @{$self->{weight}};
+	while ($digits =~ /(\d)/g) {
+	        $sum += $1 * $w[$i++];
+	}
+	if ($self->{complement}) {
+		return (10 - $sum % 10) % 10;
+	}
+	return $sum % 10;
 } # _compute()
 
 sub _compute_checkdigit {
-        my ($self,$number) = @_;
+	my ($self,$number) = @_;
 
-        if ($number =~ /^(\d{9})..<+(\d{6}).<+(\d{6}).<+.$/) {
-                my @cd;
-                $cd[0] = $self->_compute($1);
-                $cd[1] = $self->_compute($2);
-                $cd[2] = $self->_compute($3);
-                $cd[3] = $self->_compute($1 . $cd[0] . $2 . $cd[1] . $3 . $cd[2]);
-                return @cd;
-        }
-        return ();
+	if ($number =~ /^(\d{9})..<+(\d{6}).<+(\d{6}).<+.$/) {
+		my @cd;
+		$cd[0] = $self->_compute($1);
+		$cd[1] = $self->_compute($2);
+		$cd[2] = $self->_compute($3);
+		$cd[3] = $self->_compute($1 . $cd[0] . $2 . $cd[1] . $3 . $cd[2]);
+		return @cd;
+	}
+	return ();
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -137,11 +137,11 @@ CheckDigits::MXX_001 - compute check digits for german Personalausweis
   $pa = CheckDigits('pa_de');
 
   if ($pa->is_valid('2406055684D<<6810203<0705109<6')) {
-        # do something
+	# do something
   }
 
   if ($pa->is_valid('2406055684') {
-        # do_something
+  	# do_something
   }
 
   $cn = $pa->complete('240605568_D<<681020_<070510_<_');
@@ -157,7 +157,7 @@ CheckDigits::MXX_001 - compute check digits for german Personalausweis
   if ($aba->is_valid('789456124')) {
        # do something
   }
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

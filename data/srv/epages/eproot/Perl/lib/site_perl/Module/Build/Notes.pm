@@ -13,11 +13,11 @@ sub new {
   my ($class, %args) = @_;
   my $file = delete $args{file} or die "Missing required parameter 'file' to new()";
   my $self = bless {
-                    disk => {},
-                    new  => {},
-                    file => $file,
-                    %args,
-                   }, $class;
+		    disk => {},
+		    new  => {},
+		    file => $file,
+		    %args,
+		   }, $class;
 }
 
 sub restore {
@@ -64,8 +64,8 @@ sub read {
 
   # Return all data
   my $out = (keys %{$self->{new}}
-             ? {%{$self->{disk}}, %{$self->{new}}}
-             : $self->{disk});
+	     ? {%{$self->{disk}}, %{$self->{new}}}
+	     : $self->{disk});
   return wantarray ? %$out : $out;
 }
 
@@ -206,8 +206,8 @@ sub write {
   seek($fh, tell($fh), 0);
   my $data = [$config, $features, $auto_features];
   print($fh 'do{ my '
-              . Data::Dumper->new([$data],['x'])->Purity(1)->Dump()
-              . '$x; }' );
+	      . Data::Dumper->new([$data],['x'])->Purity(1)->Dump()
+	      . '$x; }' );
   truncate($fh, tell($fh));
   close $fh;
 

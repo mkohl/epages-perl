@@ -166,9 +166,9 @@ sub _do_query {
 sub fields {
     my ($self, $f) = @_;
     confess "cannot set fields after querying"
-        if $self->started_iterating;
+	if $self->started_iterating;
     confess 'not a hash reference'
-            unless ref $f eq 'HASH' || ref $f eq 'Tie::IxHash';
+	    unless ref $f eq 'HASH' || ref $f eq 'Tie::IxHash';
 
     $self->_fields($f);
     return $self;
@@ -178,9 +178,9 @@ sub fields {
 sub sort {
     my ($self, $order) = @_;
     confess "cannot set sort after querying"
-        if $self->started_iterating;
+	if $self->started_iterating;
     confess 'not a hash reference'
-            unless ref $order eq 'HASH' || ref $order eq 'Tie::IxHash';
+	    unless ref $order eq 'HASH' || ref $order eq 'Tie::IxHash';
 
     $self->_ensure_special;
     $self->_query->{'orderby'} = $order;
@@ -192,7 +192,7 @@ sub sort {
 sub limit {
     my ($self, $num) = @_;
     confess "cannot set limit after querying"
-        if $self->started_iterating;
+	if $self->started_iterating;
 
     $self->_limit($num);
     return $self;
@@ -201,12 +201,12 @@ sub limit {
 
 
 sub tailable {
-        my($self, $bool) = @_;
-        confess "cannot set tailable after querying"
-        if $self->started_iterating;
-
-        $self->_tailable($bool);
-        return $self;
+	my($self, $bool) = @_;
+	confess "cannot set tailable after querying"
+	if $self->started_iterating;
+	
+	$self->_tailable($bool);
+	return $self;
 }
 
 
@@ -215,7 +215,7 @@ sub tailable {
 sub skip {
     my ($self, $num) = @_;
     confess "cannot set skip after querying"
-        if $self->started_iterating;
+	if $self->started_iterating;
 
     $self->_skip($num);
     return $self;
@@ -225,7 +225,7 @@ sub skip {
 sub snapshot {
     my ($self) = @_;
     confess "cannot set snapshot after querying"
-        if $self->started_iterating;
+	if $self->started_iterating;
 
     $self->_ensure_special;
     $self->_query->{'$snapshot'} = 1;
@@ -236,9 +236,9 @@ sub snapshot {
 sub hint {
     my ($self, $index) = @_;
     confess "cannot set hint after querying"
-        if $self->started_iterating;
+	if $self->started_iterating;
     confess 'not a hash reference'
-        unless ref $index eq 'HASH' || ref $index eq 'Tie::IxHash';
+    	unless ref $index eq 'HASH' || ref $index eq 'Tie::IxHash';
 
     $self->_ensure_special;
     $self->_query->{'$hint'} = $index;
@@ -292,7 +292,7 @@ sub count {
 
 
 # shortcut to make some XS code saner
-sub _dt_type {
+sub _dt_type { 
     my $self = shift;
     return $self->_client->dt_type;
 }

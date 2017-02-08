@@ -12,58 +12,58 @@ our @ISA = qw(Algorithm::CheckDigits);
 my @weight = ( 2, 3, 4, 5, 6, 7 );
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d\d)([\d ]+)$/) {
-                return $1 == $self->_compute_checkdigits($2);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d\d)([\d ]+)$/) {
+		return $1 == $self->_compute_checkdigits($2);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^([\d ]+)$/) {
-                return $self->_compute_checkdigits($1) . $1;
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([\d ]+)$/) {
+		return $self->_compute_checkdigits($1) . $1;
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d\d)([\d ]+)$/) {
-                return $2 if ($1 == $self->_compute_checkdigits($2));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d\d)([\d ]+)$/) {
+		return $2 if ($1 == $self->_compute_checkdigits($2));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d\d)([\d ]+)$/) {
-                return $1 if ($1 == $self->_compute_checkdigits($2));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d\d)([\d ]+)$/) {
+		return $1 if ($1 == $self->_compute_checkdigits($2));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigits {
-        my ($self,$number) = @_;
+	my ($self,$number) = @_;
 
-        $number =~ s/\s//g;
-        my @digits = split(//,$number);
-        my $sum = 0;
-        for (my $i = $#digits; $i >= 0; $i--) {
-                $sum += $weight[($#digits - $i) % 6] * $digits[$i];
-        }
-        $sum %= 11;
-        my $retval = (0 == $sum) ? '00' : sprintf("%02d",(11 - $sum));
-        $retval;
+	$number =~ s/\s//g;
+	my @digits = split(//,$number);
+	my $sum = 0;
+	for (my $i = $#digits; $i >= 0; $i--) {
+		$sum += $weight[($#digits - $i) % 6] * $digits[$i];
+	}
+	$sum %= 11;
+	my $retval = (0 == $sum) ? '00' : sprintf("%02d",(11 - $sum));
+	$retval;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -82,7 +82,7 @@ CheckDigits::M11_015 - compute check digits for ESR5 (CH)
   $ustid = CheckDigits('esr5_ch');
 
   if ($ustid->is_valid('050001000012000 241170032660178 10304')) {
-        # do something
+	# do something
   }
 
   $cn = $ustid->complete('0001000012000 241170032660178 10304');
@@ -93,7 +93,7 @@ CheckDigits::M11_015 - compute check digits for ESR5 (CH)
 
   $bn = $ustid->basenumber('050001000012000 241170032660178 10304');
   # $bn = '0001000012000 241170032660178 10304';
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

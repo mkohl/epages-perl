@@ -1078,7 +1078,7 @@ my %sKeywordStruct1 = (
     GROUPS => { 1 => 'XMP-mwg-kw', 2 => 'Image' },
     NAMESPACE => 'mwg-kw',
     NOTES => q{
-        Hierarchical keywords metadata defined by the MWG 2.0 specification.
+        Hierarchical keywords metadata defined by the MWG 2.0 specification. 
         ExifTool unrolls keyword structures to an arbitrary depth of 4 to allow
         individual levels to be accessed with different tag names, and to avoid
         infinite recursion.  See L<http://www.metadataworkinggroup.org/> for the

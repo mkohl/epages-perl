@@ -35,9 +35,9 @@ sub import {
     no strict 'refs';
     my $callpkg = caller(0);
     foreach my $func (@funcs) {
-        die sprintf qq{"%s" is not exported by the %s module\n},
-            $func, __PACKAGE__ unless $Export_Cache{$func};
-        *{$callpkg.'::'.$func} = \&{$func};
+	die sprintf qq{"%s" is not exported by the %s module\n},
+	    $func, __PACKAGE__ unless $Export_Cache{$func};
+	*{$callpkg.'::'.$func} = \&{$func};
     }
 
     *{"$callpkg\::Config"} = \%Config if $export_Config;
@@ -49,7 +49,7 @@ die "Perl lib version (5.12.3) doesn't match executable version ($])"
 
 $^V eq 5.12.3
     or die "Perl lib version (5.12.3) doesn't match executable version (" .
-        sprintf("v%vd",$^V) . ")";
+	sprintf("v%vd",$^V) . ")";
 
 
 sub FETCH {

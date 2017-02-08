@@ -23,7 +23,7 @@ sub new {
   my $s        = $class->sock;
   return unless defined $s->if_mtu($if_name);
   return bless {s    => $s,
-                name => $if_name},ref $class || $class;
+		name => $if_name},ref $class || $class;
 }
 
 sub new_from_address {

@@ -4,55 +4,55 @@ Data::Float - details of the floating point data type
 
 =head1 SYNOPSIS
 
-        use Data::Float qw(have_signed_zero);
+	use Data::Float qw(have_signed_zero);
 
-        if(have_signed_zero) { ...
+	if(have_signed_zero) { ...
 
-        # and many other constants; see text
+	# and many other constants; see text
 
-        use Data::Float qw(
-                float_class float_is_normal float_is_subnormal
-                float_is_nzfinite float_is_zero float_is_finite
-                float_is_infinite float_is_nan
-        );
+	use Data::Float qw(
+		float_class float_is_normal float_is_subnormal
+		float_is_nzfinite float_is_zero float_is_finite
+		float_is_infinite float_is_nan
+	);
 
-        $class = float_class($value);
+	$class = float_class($value);
 
-        if(float_is_normal($value)) { ...
-        if(float_is_subnormal($value)) { ...
-        if(float_is_nzfinite($value)) { ...
-        if(float_is_zero($value)) { ...
-        if(float_is_finite($value)) { ...
-        if(float_is_infinite($value)) { ...
-        if(float_is_nan($value)) { ...
+	if(float_is_normal($value)) { ...
+	if(float_is_subnormal($value)) { ...
+	if(float_is_nzfinite($value)) { ...
+	if(float_is_zero($value)) { ...
+	if(float_is_finite($value)) { ...
+	if(float_is_infinite($value)) { ...
+	if(float_is_nan($value)) { ...
 
-        use Data::Float qw(float_sign signbit float_parts);
+	use Data::Float qw(float_sign signbit float_parts);
 
-        $sign = float_sign($value);
-        $sign_bit = signbit($value);
-        ($sign, $exponent, $significand) = float_parts($value);
+	$sign = float_sign($value);
+	$sign_bit = signbit($value);
+	($sign, $exponent, $significand) = float_parts($value);
 
-        use Data::Float qw(float_hex hex_float);
+	use Data::Float qw(float_hex hex_float);
 
-        print float_hex($value);
-        $value = hex_float($string);
+	print float_hex($value);
+	$value = hex_float($string);
 
-        use Data::Float qw(float_id_cmp totalorder);
+	use Data::Float qw(float_id_cmp totalorder);
 
-        @sorted_floats = sort { float_id_cmp($a, $b) } @floats;
-        if(totalorder($a, $b)) { ...
+	@sorted_floats = sort { float_id_cmp($a, $b) } @floats;
+	if(totalorder($a, $b)) { ...
 
-        use Data::Float qw(
-                pow2 mult_pow2 copysign
-                nextup nextdown nextafter
-        );
+	use Data::Float qw(
+		pow2 mult_pow2 copysign
+		nextup nextdown nextafter
+	);
 
-        $x = pow2($exp);
-        $x = mult_pow2($value, $exp);
-        $x = copysign($magnitude, $sign_from);
-        $x = nextup($x);
-        $x = nextdown($x);
-        $x = nextafter($x, $direction);
+	$x = pow2($exp);
+	$x = mult_pow2($value, $exp);
+	$x = copysign($magnitude, $sign_from);
+	$x = nextup($x);
+	$x = nextdown($x);
+	$x = nextafter($x, $direction);
 
 =head1 DESCRIPTION
 
@@ -182,12 +182,12 @@ our $VERSION = "0.012";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
-        float_class float_is_normal float_is_subnormal float_is_nzfinite
-        float_is_zero float_is_finite float_is_infinite float_is_nan
-        float_sign signbit float_parts
-        float_hex hex_float
-        float_id_cmp totalorder
-        pow2 mult_pow2 copysign nextup nextdown nextafter
+	float_class float_is_normal float_is_subnormal float_is_nzfinite
+	float_is_zero float_is_finite float_is_infinite float_is_nan
+	float_sign signbit float_parts
+	float_hex hex_float
+	float_id_cmp totalorder
+	pow2 mult_pow2 copysign nextup nextdown nextafter
 );
 # constant functions get added to @EXPORT_OK later
 
@@ -333,10 +333,10 @@ by the C<have_nan> constant.)
 =cut
 
 sub _mk_constant($$) {
-        my($name, $value) = @_;
-        no strict "refs";
-        *{__PACKAGE__."::".$name} = sub () { $value };
-        push @EXPORT_OK, $name;
+	my($name, $value) = @_;
+	no strict "refs";
+	*{__PACKAGE__."::".$name} = sub () { $value };
+	push @EXPORT_OK, $name;
 }
 
 #
@@ -362,19 +362,19 @@ my @powtwo = (2.0);
 my @powhalf = (0.5);
 
 sub mult_pow2($$) {
-        my($value, $exp) = @_;
-        return $_[0] if $value == 0.0;
-        my $powa = \@powtwo;
-        if($exp < 0) {
-                $powa = \@powhalf;
-                $exp = -$exp;
-        }
-        for(my $i = 0; $i != $#$powa && $exp != 0; $i++) {
-                $value *= $powa->[$i] if $exp & 1;
-                $exp >>= 1;
-        }
-        $value *= $powa->[-1] while $exp--;
-        return $value;
+	my($value, $exp) = @_;
+	return $_[0] if $value == 0.0;
+	my $powa = \@powtwo;
+	if($exp < 0) {
+		$powa = \@powhalf;
+		$exp = -$exp;
+	}
+	for(my $i = 0; $i != $#$powa && $exp != 0; $i++) {
+		$value *= $powa->[$i] if $exp & 1;
+		$exp >>= 1;
+	}
+	$value *= $powa->[-1] while $exp--;
+	return $value;
 }
 
 #
@@ -387,48 +387,48 @@ my $max_finite_pow2;
 my $min_finite;
 
 my @directions = (
-        {
-                expsign => -1,
-                powa => \@powhalf,
-                xexp => \$min_finite_exp,
-                xpower => \$min_finite,
-        },
-        {
-                expsign => +1,
-                powa => \@powtwo,
-                xexp => \$max_finite_exp,
-                xpower => \$max_finite_pow2,
-        },
+	{
+		expsign => -1,
+		powa => \@powhalf,
+		xexp => \$min_finite_exp,
+		xpower => \$min_finite,
+	},
+	{
+		expsign => +1,
+		powa => \@powtwo,
+		xexp => \$max_finite_exp,
+		xpower => \$max_finite_pow2,
+	},
 );
 
 while(!$directions[0]->{done} || !$directions[1]->{done}) {
-        foreach my $direction (@directions) {
-                next if $direction->{done};
-                my $lastpow = $direction->{powa}->[-1];
-                my $nextpow = $lastpow * $lastpow;
-                unless(mult_pow2($nextpow, -$direction->{expsign} *
-                                          (1 << (@{$direction->{powa}} - 1)))
-                                == $lastpow) {
-                        $direction->{done} = 1;
-                        next;
-                }
-                push @{$direction->{powa}}, $nextpow;
-        }
+	foreach my $direction (@directions) {
+		next if $direction->{done};
+		my $lastpow = $direction->{powa}->[-1];
+		my $nextpow = $lastpow * $lastpow;
+		unless(mult_pow2($nextpow, -$direction->{expsign} *
+					  (1 << (@{$direction->{powa}} - 1)))
+				== $lastpow) {
+			$direction->{done} = 1;
+			next;
+		}
+		push @{$direction->{powa}}, $nextpow;
+	}
 }
 
 foreach my $direction (@directions) {
-        my $expsign = $direction->{expsign};
-        my $xexp = 1 << (@{$direction->{powa}} - 1);
-        my $extremum = $direction->{powa}->[-1];
-        for(my $addexp = $xexp; $addexp >>= 1; ) {
-                my $nx = mult_pow2($extremum, $expsign*$addexp);
-                if(mult_pow2($nx, -$expsign*$addexp) == $extremum) {
-                        $xexp += $addexp;
-                        $extremum = $nx;
-                }
-        }
-        ${$direction->{xexp}} = $expsign * $xexp;
-        ${$direction->{xpower}} = $extremum;
+	my $expsign = $direction->{expsign};
+	my $xexp = 1 << (@{$direction->{powa}} - 1);
+	my $extremum = $direction->{powa}->[-1];
+	for(my $addexp = $xexp; $addexp >>= 1; ) {
+		my $nx = mult_pow2($extremum, $expsign*$addexp);
+		if(mult_pow2($nx, -$expsign*$addexp) == $extremum) {
+			$xexp += $addexp;
+			$extremum = $nx;
+		}
+	}
+	${$direction->{xexp}} = $expsign * $xexp;
+	${$direction->{xpower}} = $extremum;
 }
 
 _mk_constant("min_finite_exp", $min_finite_exp);
@@ -442,10 +442,10 @@ _mk_constant("max_finite_pow2", $max_finite_pow2);
 #
 
 sub pow2($) {
-        my($exp) = @_;
-        croak "exponent $exp out of range [$min_finite_exp, $max_finite_exp]"
-                unless $exp >= $min_finite_exp && $exp <= $max_finite_exp;
-        return mult_pow2(1.0, $exp);
+	my($exp) = @_;
+	croak "exponent $exp out of range [$min_finite_exp, $max_finite_exp]"
+		unless $exp >= $min_finite_exp && $exp <= $max_finite_exp;
+	return mult_pow2(1.0, $exp);
 }
 
 #
@@ -454,28 +454,28 @@ sub pow2($) {
 
 my($significand_bits, $significand_step);
 {
-        my $i;
-        for($i = 1; ; $i++) {
-                my $tryeps = $powhalf[$i];
-                last unless (1.0 + $tryeps) - 1.0 == $tryeps;
-        }
-        $i--;
-        $significand_bits = 1 << $i;
-        $significand_step = $powhalf[$i];
-        while($i--) {
-                my $tryeps = $significand_step * $powhalf[$i];
-                if((1.0 + $tryeps) - 1.0 == $tryeps) {
-                        $significand_bits += 1 << $i;
-                        $significand_step = $tryeps;
-                }
-        }
+	my $i;
+	for($i = 1; ; $i++) {
+		my $tryeps = $powhalf[$i];
+		last unless (1.0 + $tryeps) - 1.0 == $tryeps;
+	}
+	$i--;
+	$significand_bits = 1 << $i;
+	$significand_step = $powhalf[$i];
+	while($i--) {
+		my $tryeps = $significand_step * $powhalf[$i];
+		if((1.0 + $tryeps) - 1.0 == $tryeps) {
+			$significand_bits += 1 << $i;
+			$significand_step = $tryeps;
+		}
+	}
 }
 
 _mk_constant("significand_bits", $significand_bits);
 _mk_constant("significand_step", $significand_step);
 
 my $max_finite = $max_finite_pow2 -
-                        pow2($max_finite_exp - $significand_bits - 1);
+			pow2($max_finite_exp - $significand_bits - 1);
 $max_finite += $max_finite;
 
 my $max_integer = pow2($significand_bits + 1);
@@ -489,19 +489,19 @@ _mk_constant("max_integer", $max_integer);
 
 my $have_subnormal;
 {
-        my $testval = $min_finite * 1.5;
-        $have_subnormal = $testval == $min_finite ||
-                                $testval == ($min_finite + $min_finite);
+	my $testval = $min_finite * 1.5;
+	$have_subnormal = $testval == $min_finite ||
+				$testval == ($min_finite + $min_finite);
 }
 
 _mk_constant("have_subnormal", $have_subnormal);
 
 my $min_normal_exp = $have_subnormal ?
-                        $min_finite_exp + $significand_bits :
-                        $min_finite_exp;
+			$min_finite_exp + $significand_bits :
+			$min_finite_exp;
 my $min_normal = $have_subnormal ?
-                        mult_pow2($min_finite, $significand_bits) :
-                        $min_finite;
+			mult_pow2($min_finite, $significand_bits) :
+			$min_finite;
 
 _mk_constant("min_normal_exp", $min_normal_exp);
 _mk_constant("min_normal", $min_normal);
@@ -514,33 +514,33 @@ my $have_signed_zero = sprintf("%e", -0.0) =~ /\A-/;
 _mk_constant("have_signed_zero", $have_signed_zero);
 my($pos_zero, $neg_zero);
 if($have_signed_zero) {
-        $pos_zero = +0.0;
-        $neg_zero = -0.0;
-        my $tzero = -0.0;
-        { no warnings "void"; $tzero == $tzero; }
-        my $ntzero = -$tzero;
-        if(sprintf("%e", -$ntzero) =~ /\A-/) {
-                _mk_constant("pos_zero", $pos_zero);
-                _mk_constant("neg_zero", $neg_zero);
-        } else {
-                # Zeroes lose their signedness upon arithmetic operations.
-                # Therefore make the pos_zero and neg_zero functions
-                # return fresh zeroes to avoid trouble.
-                *pos_zero = sub () { my $ret = $pos_zero };
-                *neg_zero = sub () { my $ret = $neg_zero };
-                push @EXPORT_OK, "pos_zero", "neg_zero";
-        }
+	$pos_zero = +0.0;
+	$neg_zero = -0.0;
+	my $tzero = -0.0;
+	{ no warnings "void"; $tzero == $tzero; }
+	my $ntzero = -$tzero;
+	if(sprintf("%e", -$ntzero) =~ /\A-/) {
+		_mk_constant("pos_zero", $pos_zero);
+		_mk_constant("neg_zero", $neg_zero);
+	} else {
+		# Zeroes lose their signedness upon arithmetic operations.
+		# Therefore make the pos_zero and neg_zero functions
+		# return fresh zeroes to avoid trouble.
+		*pos_zero = sub () { my $ret = $pos_zero };
+		*neg_zero = sub () { my $ret = $neg_zero };
+		push @EXPORT_OK, "pos_zero", "neg_zero";
+	}
 }
 
 my($have_infinite, $pos_infinity, $neg_infinity);
 {
-        my $testval = $max_finite * $max_finite;
-        $have_infinite = $testval == $testval && $testval != $max_finite;
-        _mk_constant("have_infinite", $have_infinite);
-        if($have_infinite) {
-                _mk_constant("pos_infinity", $pos_infinity = $testval);
-                _mk_constant("neg_infinity", $neg_infinity = -$testval);
-        }
+	my $testval = $max_finite * $max_finite;
+	$have_infinite = $testval == $testval && $testval != $max_finite;
+	_mk_constant("have_infinite", $have_infinite);
+	if($have_infinite) {
+		_mk_constant("pos_infinity", $pos_infinity = $testval);
+		_mk_constant("neg_infinity", $neg_infinity = -$testval);
+	}
 }
 
 my $max_number = $have_infinite ? $pos_infinity : $max_finite;
@@ -548,33 +548,33 @@ _mk_constant("max_number", $max_number);
 
 my($have_nan, $nan);
 foreach my $nan_formula (
-                '$have_infinite && $pos_infinity/$pos_infinity',
-                'log(-1.0)',
-                '0.0/0.0',
-                '"nan"') {
-        my $maybe_nan =
-                eval 'local $SIG{__DIE__}; local $SIG{__WARN__} = sub { }; '.
-                     $nan_formula;
-        if(do { local $SIG{__WARN__} = sub { }; $maybe_nan != $maybe_nan }) {
-                $have_nan = 1;
-                $nan = $maybe_nan;
-                _mk_constant("nan", $nan);
-                last;
-        }
+		'$have_infinite && $pos_infinity/$pos_infinity',
+		'log(-1.0)',
+		'0.0/0.0',
+		'"nan"') {
+	my $maybe_nan =
+		eval 'local $SIG{__DIE__}; local $SIG{__WARN__} = sub { }; '.
+		     $nan_formula;
+	if(do { local $SIG{__WARN__} = sub { }; $maybe_nan != $maybe_nan }) {
+		$have_nan = 1;
+		$nan = $maybe_nan;
+		_mk_constant("nan", $nan);
+		last;
+	}
 }
 _mk_constant("have_nan", $have_nan);
 
 # The rest of the code is parsed after the constants have been calculated
 # and installed, so that it can benefit from their constancy.
 {
-        local $/ = undef;
-        my $code = <DATA>;
-        close(DATA);
-        {
-                local $SIG{__DIE__};
-                eval $code;
-        }
-        die $@ if $@ ne "";
+	local $/ = undef;
+	my $code = <DATA>;
+	close(DATA);
+	{
+		local $SIG{__DIE__};
+		eval $code;
+	}
+	die $@ if $@ ne "";
 }
 
 1;
@@ -605,12 +605,12 @@ accordingly.
 =cut
 
 sub float_class($) {
-        my($val) = @_;
-        return "ZERO" if $val == 0.0;
-        return "NAN" if $val != $val;
-        $val = -$val if $val < 0;
-        return "INFINITE" if have_infinite && $val == $pos_infinity;
-        return have_subnormal && $val < min_normal ? "SUBNORMAL" : "NORMAL";
+	my($val) = @_;
+	return "ZERO" if $val == 0.0;
+	return "NAN" if $val != $val;
+	$val = -$val if $val < 0;
+	return "INFINITE" if have_infinite && $val == $pos_infinity;
+	return have_subnormal && $val < min_normal ? "SUBNORMAL" : "NORMAL";
 }
 
 =item float_is_normal(VALUE)
@@ -639,8 +639,8 @@ subnormal; not zero, infinite, or NaN).
 sub float_is_infinite($);
 
 sub float_is_nzfinite($) {
-        my($val) = @_;
-        return $val != 0.0 && $val == $val && !float_is_infinite($val);
+	my($val) = @_;
+	return $val != 0.0 && $val == $val && !float_is_infinite($val);
 }
 
 =item float_is_zero(VALUE)
@@ -651,8 +651,8 @@ is irrelevant.
 =cut
 
 sub float_is_zero($) {
-        my($val) = @_;
-        return $val == 0.0;
+	my($val) = @_;
+	return $val == 0.0;
 }
 
 =item float_is_finite(VALUE)
@@ -663,8 +663,8 @@ or zero; not infinite or NaN).
 =cut
 
 sub float_is_finite($) {
-        my($val) = @_;
-        return $val == $val && !float_is_infinite($val);
+	my($val) = @_;
+	return $val == $val && !float_is_infinite($val);
 }
 
 =item float_is_infinite(VALUE)
@@ -675,9 +675,9 @@ negative infinity).
 =cut
 
 sub float_is_infinite($) {
-        return undef unless have_infinite;
-        my($val) = @_;
-        return $val == $pos_infinity || $val == $neg_infinity;
+	return undef unless have_infinite;
+	my($val) = @_;
+	return $val == $pos_infinity || $val == $neg_infinity;
 }
 
 =item float_is_nan(VALUE)
@@ -687,8 +687,8 @@ Returns true iff VALUE is a NaN.
 =cut
 
 sub float_is_nan($) {
-        my($val) = @_;
-        return $val != $val;
+	my($val) = @_;
+	return $val != $val;
 }
 
 =back
@@ -707,9 +707,9 @@ zero returns the sign "B<+>".  C<die>s if VALUE is a NaN.
 sub signbit($);
 
 sub float_sign($) {
-        my($val) = @_;
-        croak "can't get sign of a NaN" if $val != $val;
-        return signbit($val) ? "-" : "+";
+	my($val) = @_;
+	croak "can't get sign of a NaN" if $val != $val;
+	return signbit($val) ? "-" : "+";
 }
 
 =item signbit(VALUE)
@@ -725,9 +725,9 @@ have a well-behaved sign bit, but Perl can't see that bit.
 =cut
 
 sub signbit($) {
-        my($val) = @_;
-        return (have_signed_zero && $val == 0.0 ?
-                sprintf("%+.f", $val) eq "-0" : $val < 0.0) ? 1 : 0;
+	my($val) = @_;
+	return (have_signed_zero && $val == 0.0 ?
+		sprintf("%+.f", $val) eq "-0" : $val < 0.0) ? 1 : 0;
 }
 
 =item float_parts(VALUE)
@@ -741,38 +741,38 @@ C<die>s if VALUE is not finite and non-zero.
 =cut
 
 sub float_parts($) {
-        my($val) = @_;
-        croak "$val is not non-zero finite" unless float_is_nzfinite($val);
-        my $sign = "+";
-        if($val < 0.0) {
-                $sign = "-";
-                $val = -$val;
-        }
-        if(have_subnormal && $val < min_normal) {
-                return ($sign, min_normal_exp,
-                        mult_pow2($val, -(min_normal_exp)));
-        }
-        my $exp = 0;
-        if($val < 1.0) {
-                for(my $i = @powhalf; $i--; ) {
-                        $exp <<= 1;
-                        if($val < $powhalf[$i]) {
-                                $exp |= 1;
-                                $val = mult_pow2($val, 1 << $i);
-                        }
-                }
-                $val *= 2.0;
-                $exp = -1-$exp;
-        } elsif($val >= 2.0) {
-                for(my $i = @powtwo; $i--; ) {
-                        $exp <<= 1;
-                        if($val >= $powtwo[$i]) {
-                                $exp |= 1;
-                                $val = mult_pow2($val, -(1 << $i));
-                        }
-                }
-        }
-        return ($sign, $exp, $val);
+	my($val) = @_;
+	croak "$val is not non-zero finite" unless float_is_nzfinite($val);
+	my $sign = "+";
+	if($val < 0.0) {
+		$sign = "-";
+		$val = -$val;
+	}
+	if(have_subnormal && $val < min_normal) {
+		return ($sign, min_normal_exp,
+			mult_pow2($val, -(min_normal_exp)));
+	}
+	my $exp = 0;
+	if($val < 1.0) {
+		for(my $i = @powhalf; $i--; ) {
+			$exp <<= 1;
+			if($val < $powhalf[$i]) {
+				$exp |= 1;
+				$val = mult_pow2($val, 1 << $i);
+			}
+		}
+		$val *= 2.0;
+		$exp = -1-$exp;
+	} elsif($val >= 2.0) {
+		for(my $i = @powtwo; $i--; ) {
+			$exp <<= 1;
+			if($val >= $powtwo[$i]) {
+				$exp |= 1;
+				$val = mult_pow2($val, -(1 << $i));
+			}
+		}
+	}
+	return ($sign, $exp, $val);
 }
 
 =back
@@ -889,152 +889,152 @@ a positive sign.
 =cut
 
 my %float_hex_defaults = (
-        infinite_string => "inf",
-        nan_string => "nan",
-        exp_neg_sign => "-",
-        exp_pos_sign => "+",
-        pos_sign => "+",
-        neg_sign => "-",
-        hex_prefix_string => "0x",
-        subnormal_strategy => "SUBNORMAL",
-        zero_strategy => "STRING=0.0",
-        frac_digits => 0,
-        frac_digits_bits_mod => "ATLEAST",
-        frac_digits_value_mod => "ATLEAST",
-        exp_digits => 0,
-        exp_digits_range_mod => "IGNORE",
+	infinite_string => "inf",
+	nan_string => "nan",
+	exp_neg_sign => "-",
+	exp_pos_sign => "+",
+	pos_sign => "+",
+	neg_sign => "-",
+	hex_prefix_string => "0x",
+	subnormal_strategy => "SUBNORMAL",
+	zero_strategy => "STRING=0.0",
+	frac_digits => 0,
+	frac_digits_bits_mod => "ATLEAST",
+	frac_digits_value_mod => "ATLEAST",
+	exp_digits => 0,
+	exp_digits_range_mod => "IGNORE",
 );
 
 sub _float_hex_option($$) {
-        my($options, $name) = @_;
-        my $val = defined($options) ? $options->{$name} : undef;
-        return defined($val) ? $val : $float_hex_defaults{$name};
+	my($options, $name) = @_;
+	my $val = defined($options) ? $options->{$name} : undef;
+	return defined($val) ? $val : $float_hex_defaults{$name};
 }
 
 use constant exp_digits_range => do {
-        my $minexp = min_normal_exp - significand_bits;
-        my $maxexp = max_finite_exp + 1;
-        my $len_minexp = length(-$minexp);
-        my $len_maxexp = length($maxexp);
-        $len_minexp > $len_maxexp ? $len_minexp : $len_maxexp;
+	my $minexp = min_normal_exp - significand_bits;
+	my $maxexp = max_finite_exp + 1;
+	my $len_minexp = length(-$minexp);
+	my $len_maxexp = length($maxexp);
+	$len_minexp > $len_maxexp ? $len_minexp : $len_maxexp;
 };
 use constant frac_digits_bits => (significand_bits + 3) >> 2;
 use constant frac_sections => do { use integer; (frac_digits_bits + 6) / 7; };
 
 sub float_hex($;$) {
-        my($val, $options) = @_;
-        return _float_hex_option($options, "nan_string") if $val != $val;
-        if(have_infinite) {
-                my $inf_sign;
-                if($val == $pos_infinity) {
-                        $inf_sign = _float_hex_option($options, "pos_sign");
-                        EMIT_INFINITY:
-                        return $inf_sign.
-                                _float_hex_option($options, "infinite_string");
-                } elsif($val == $neg_infinity) {
-                        $inf_sign = _float_hex_option($options, "neg_sign");
-                        goto EMIT_INFINITY;
-                }
-        }
-        my($sign, $exp, $sgnf);
-        if($val == 0.0) {
-                $sign = float_sign($val);
-                my $strat = _float_hex_option($options, "zero_strategy");
-                if($strat =~ /\ASTRING=(.*)\z/s) {
-                        my $string = $1;
-                        return _float_hex_option($options,
-                                    $sign eq "-" ? "neg_sign" : "pos_sign").
-                                $string;
-                } elsif($strat eq "SUBNORMAL") {
-                        $exp = min_normal_exp;
-                } elsif($strat =~ /\AEXPONENT=([-+]?[0-9]+)\z/) {
-                        $exp = $1;
-                } else {
-                        croak "unrecognised zero strategy `$strat'";
-                }
-                $sgnf = 0.0;
-        } else {
-                ($sign, $exp, $sgnf) = float_parts($val);
-        }
-        my $digits = int($sgnf);
-        if($digits eq "0" && $sgnf != 0.0) {
-                my $strat = _float_hex_option($options, "subnormal_strategy");
-                if($strat eq "NORMAL") {
-                        my $add_exp;
-                        (undef, $add_exp, $sgnf) = float_parts($sgnf);
-                        $exp += $add_exp;
-                        $digits = "1";
-                } elsif($strat eq "SUBNORMAL") {
-                        # do nothing extra
-                } else {
-                        croak "unrecognised subnormal strategy `$strat'";
-                }
-        }
-        $sgnf -= $digits;
-        for(my $i = frac_sections; $i--; ) {
-                $sgnf *= 268435456.0;
-                my $section = int($sgnf);
-                $digits .= sprintf("%07x", $section);
-                $sgnf -= $section;
-        }
-        $digits =~ s/(.)0+\z/$1/;
-        my $ndigits = 1 + _float_hex_option($options, "frac_digits");
-        croak "negative number of digits requested" if $ndigits <= 0;
-        my $mindigits = 1;
-        my $maxdigits = $ndigits + frac_digits_bits;
-        foreach my $constraint (["frac_digits_bits_mod", 1+frac_digits_bits],
-                                ["frac_digits_value_mod", length($digits)]) {
-                my($optname, $number) = @$constraint;
-                my $mod = _float_hex_option($options, $optname);
-                if($mod =~ /\A(?:ATLEAST|EXACTLY)\z/) {
-                        $mindigits = $number if $mindigits < $number;
-                }
-                if($mod =~ /\A(?:ATMOST|EXACTLY)\z/) {
-                        $maxdigits = $number if $maxdigits > $number;
-                }
-                croak "unrecognised length modification setting `$mod'"
-                        unless $mod =~ /\A(?:AT(?:MO|LEA)ST|EXACTLY|IGNORE)\z/;
-        }
-        croak "incompatible length constraints" if $maxdigits < $mindigits;
-        $ndigits = $ndigits < $mindigits ? $mindigits :
-                        $ndigits > $maxdigits ? $maxdigits : $ndigits;
-        if($ndigits > length($digits)) {
-                $digits .= "0" x ($ndigits - length($digits));
-        } elsif($ndigits < length($digits)) {
-                my $chopped = substr($digits, $ndigits, length($digits), "");
-                if($chopped =~ /\A[89abcdef]/ &&
-                                !($chopped =~ /\A80*\z/ &&
-                                  $digits =~ /[02468ace]\z/)) {
-                        for(my $i = length($digits) - 1; ; ) {
-                                my $d = substr($digits, $i, 1);
-                                $d =~ tr/0-9a-f/1-9a-f0/;
-                                substr($digits, $i, 1, $d);
-                                last unless $d eq "0";
-                        }
-                        if($digits =~ /\A2/) {
-                                $exp++;
-                                substr($digits, 0, 1, "1");
-                        }
-                }
-        }
-        my $nexpdigits = _float_hex_option($options, "exp_digits");
-        my $mod = _float_hex_option($options, "exp_digits_range_mod");
-        if($mod eq "ATLEAST") {
-                $nexpdigits = exp_digits_range
-                        if $nexpdigits < exp_digits_range;
-        } elsif($mod ne "IGNORE") {
-                croak "unrecognised exponent length ".
-                        "modification setting `$mod'";
-        }
-        $digits =~ s/\A(.)(.)/$1.$2/;
-        return sprintf("%s%s%sp%s%0*d",
-                _float_hex_option($options,
-                        $sign eq "-" ? "neg_sign" : "pos_sign"),
-                _float_hex_option($options, "hex_prefix_string"),
-                $digits,
-                _float_hex_option($options,
-                        $exp < 0 ? "exp_neg_sign" : "exp_pos_sign"),
-                $nexpdigits, abs($exp));
+	my($val, $options) = @_;
+	return _float_hex_option($options, "nan_string") if $val != $val;
+	if(have_infinite) {
+		my $inf_sign;
+		if($val == $pos_infinity) {
+			$inf_sign = _float_hex_option($options, "pos_sign");
+			EMIT_INFINITY:
+			return $inf_sign.
+				_float_hex_option($options, "infinite_string");
+		} elsif($val == $neg_infinity) {
+			$inf_sign = _float_hex_option($options, "neg_sign");
+			goto EMIT_INFINITY;
+		}
+	}
+	my($sign, $exp, $sgnf);
+	if($val == 0.0) {
+		$sign = float_sign($val);
+		my $strat = _float_hex_option($options, "zero_strategy");
+		if($strat =~ /\ASTRING=(.*)\z/s) {
+			my $string = $1;
+			return _float_hex_option($options,
+				    $sign eq "-" ? "neg_sign" : "pos_sign").
+				$string;
+		} elsif($strat eq "SUBNORMAL") {
+			$exp = min_normal_exp;
+		} elsif($strat =~ /\AEXPONENT=([-+]?[0-9]+)\z/) {
+			$exp = $1;
+		} else {
+			croak "unrecognised zero strategy `$strat'";
+		}
+		$sgnf = 0.0;
+	} else {
+		($sign, $exp, $sgnf) = float_parts($val);
+	}
+	my $digits = int($sgnf);
+	if($digits eq "0" && $sgnf != 0.0) {
+		my $strat = _float_hex_option($options, "subnormal_strategy");
+		if($strat eq "NORMAL") {
+			my $add_exp;
+			(undef, $add_exp, $sgnf) = float_parts($sgnf);
+			$exp += $add_exp;
+			$digits = "1";
+		} elsif($strat eq "SUBNORMAL") {
+			# do nothing extra
+		} else {
+			croak "unrecognised subnormal strategy `$strat'";
+		}
+	}
+	$sgnf -= $digits;
+	for(my $i = frac_sections; $i--; ) {
+		$sgnf *= 268435456.0;
+		my $section = int($sgnf);
+		$digits .= sprintf("%07x", $section);
+		$sgnf -= $section;
+	}
+	$digits =~ s/(.)0+\z/$1/;
+	my $ndigits = 1 + _float_hex_option($options, "frac_digits");
+	croak "negative number of digits requested" if $ndigits <= 0;
+	my $mindigits = 1;
+	my $maxdigits = $ndigits + frac_digits_bits;
+	foreach my $constraint (["frac_digits_bits_mod", 1+frac_digits_bits],
+				["frac_digits_value_mod", length($digits)]) {
+		my($optname, $number) = @$constraint;
+		my $mod = _float_hex_option($options, $optname);
+		if($mod =~ /\A(?:ATLEAST|EXACTLY)\z/) {
+			$mindigits = $number if $mindigits < $number;
+		}
+		if($mod =~ /\A(?:ATMOST|EXACTLY)\z/) {
+			$maxdigits = $number if $maxdigits > $number;
+		}
+		croak "unrecognised length modification setting `$mod'"
+			unless $mod =~ /\A(?:AT(?:MO|LEA)ST|EXACTLY|IGNORE)\z/;
+	}
+	croak "incompatible length constraints" if $maxdigits < $mindigits;
+	$ndigits = $ndigits < $mindigits ? $mindigits :
+			$ndigits > $maxdigits ? $maxdigits : $ndigits;
+	if($ndigits > length($digits)) {
+		$digits .= "0" x ($ndigits - length($digits));
+	} elsif($ndigits < length($digits)) {
+		my $chopped = substr($digits, $ndigits, length($digits), "");
+		if($chopped =~ /\A[89abcdef]/ &&
+				!($chopped =~ /\A80*\z/ &&
+				  $digits =~ /[02468ace]\z/)) {
+			for(my $i = length($digits) - 1; ; ) {
+				my $d = substr($digits, $i, 1);
+				$d =~ tr/0-9a-f/1-9a-f0/;
+				substr($digits, $i, 1, $d);
+				last unless $d eq "0";
+			}
+			if($digits =~ /\A2/) {
+				$exp++;
+				substr($digits, 0, 1, "1");
+			}
+		}
+	}
+	my $nexpdigits = _float_hex_option($options, "exp_digits");
+	my $mod = _float_hex_option($options, "exp_digits_range_mod");
+	if($mod eq "ATLEAST") {
+		$nexpdigits = exp_digits_range
+			if $nexpdigits < exp_digits_range;
+	} elsif($mod ne "IGNORE") {
+		croak "unrecognised exponent length ".
+			"modification setting `$mod'";
+	}
+	$digits =~ s/\A(.)(.)/$1.$2/;
+	return sprintf("%s%s%sp%s%0*d",
+		_float_hex_option($options,
+			$sign eq "-" ? "neg_sign" : "pos_sign"),
+		_float_hex_option($options, "hex_prefix_string"),
+		$digits,
+		_float_hex_option($options,
+			$exp < 0 ? "exp_neg_sign" : "exp_pos_sign"),
+		$nexpdigits, abs($exp));
 }
 
 =item hex_float(STRING)
@@ -1066,89 +1066,89 @@ settings.
 =cut
 
 sub hex_float($) {
-        my($str) = @_;
-        if($str =~ /\A([-+]?)(?:0x)?([0-9a-f]+)(?:\.([0-9a-f]+)+)?
-                    (?:p([-+]?[0-9]+))?\z/xi) {
-                my($sign, $digits, $frac_digits, $in_exp) = ($1, $2, $3, $4);
-                my $value;
-                $frac_digits = "" unless defined $frac_digits;
-                $in_exp = "0" unless defined $in_exp;
-                $digits .= $frac_digits;
-                $digits =~ s/\A0+//;
-                if($digits eq "") {
-                        $value = 0.0;
-                        goto GOT_MAG;
-                }
-                my $digit_exp = (length($digits) - length($frac_digits)) * 4;
-                my @limbs;
-                push @limbs, hex($1) while $digits =~ /(.{7})/sgc;
-                push @limbs, hex(substr($1."000000", 0, 7))
-                        if $digits =~ /(.+)/sg;
-                my $skip_bits = $limbs[0] < 0x4000000 ?
-                        $limbs[0] < 0x2000000 ? 3 : 2 :
-                        $limbs[0] < 0x8000000 ? 1 : 0;
-                my $val_exp = $digit_exp - $skip_bits - 1 + $in_exp;
-                my $sig_bits;
-                if($val_exp > max_finite_exp) {
-                        $value = have_infinite ? Data::Float::pos_infinity() :
-                                                 max_finite;
-                        goto GOT_MAG;
-                } elsif($val_exp < min_finite_exp-1) {
-                        $value = 0.0;
-                        goto GOT_MAG;
-                } elsif($val_exp < min_normal_exp) {
-                        $sig_bits = $val_exp - (min_finite_exp-1);
-                } else {
-                        $sig_bits = significand_bits+1;
-                }
-                my $gbit_lpos = do { use integer; ($skip_bits+$sig_bits)/28 };
-                if(@limbs > $gbit_lpos) {
-                        my $gbit_bpos = 27 - ($skip_bits + $sig_bits) % 28;
-                        my $sbit = 0;
-                        while(@limbs > $gbit_lpos+1) {
-                                $sbit = 1 if pop(@limbs) != 0;
-                        }
-                        my $gbit_mask = 1 << $gbit_bpos;
-                        my $sbit_mask = $gbit_mask - 1;
-                        if($limbs[$gbit_lpos] & $sbit_mask) {
-                                $sbit = 1;
-                                $limbs[$gbit_lpos] &= ~$sbit_mask;
-                        }
-                        if($limbs[$gbit_lpos] & $gbit_mask) {
-                                unless($sbit) {
-                                        if($gbit_bpos == 27 &&
-                                           $gbit_lpos != 0) {
-                                                $sbit = $limbs[$gbit_lpos - 1]
-                                                        & 1;
-                                        } else {
-                                                $sbit = $limbs[$gbit_lpos] &
-                                                        ($gbit_mask << 1);
-                                        }
-                                }
-                                if($sbit) {
-                                        $limbs[$gbit_lpos] += $gbit_mask;
-                                } else {
-                                        $limbs[$gbit_lpos] -= $gbit_mask;
-                                }
-                        }
-                }
-                $value = 0.0;
-                for(my $i = @limbs; $i--; ) {
-                        $value += mult_pow2($limbs[$i], -28*($i+1));
-                }
-                $value = mult_pow2($value, $in_exp + $digit_exp);
-                GOT_MAG:
-                return $sign eq "-" ? -$value : $value;
-        } elsif($str =~ /\A([-+]?)inf(?:inity)?\z/i) {
-                croak "infinite values not available" unless have_infinite;
-                return $1 eq "-" ? Data::Float::neg_infinity() :
-                                   Data::Float::pos_infinity();
-        } elsif($str =~ /\A([-+]?)s?nan\z/si) {
-                croak "Nan value not available" unless have_nan;
-                return Data::Float::nan();
-        } else {
-                croak "bad syntax for hexadecimal floating point value";
-        }
+	my($str) = @_;
+	if($str =~ /\A([-+]?)(?:0x)?([0-9a-f]+)(?:\.([0-9a-f]+)+)?
+		    (?:p([-+]?[0-9]+))?\z/xi) {
+		my($sign, $digits, $frac_digits, $in_exp) = ($1, $2, $3, $4);
+		my $value;
+		$frac_digits = "" unless defined $frac_digits;
+		$in_exp = "0" unless defined $in_exp;
+		$digits .= $frac_digits;
+		$digits =~ s/\A0+//;
+		if($digits eq "") {
+			$value = 0.0;
+			goto GOT_MAG;
+		}
+		my $digit_exp = (length($digits) - length($frac_digits)) * 4;
+		my @limbs;
+		push @limbs, hex($1) while $digits =~ /(.{7})/sgc;
+		push @limbs, hex(substr($1."000000", 0, 7))
+			if $digits =~ /(.+)/sg;
+		my $skip_bits = $limbs[0] < 0x4000000 ?
+			$limbs[0] < 0x2000000 ? 3 : 2 :
+			$limbs[0] < 0x8000000 ? 1 : 0;
+		my $val_exp = $digit_exp - $skip_bits - 1 + $in_exp;
+		my $sig_bits;
+		if($val_exp > max_finite_exp) {
+			$value = have_infinite ? Data::Float::pos_infinity() :
+						 max_finite;
+			goto GOT_MAG;
+		} elsif($val_exp < min_finite_exp-1) {
+			$value = 0.0;
+			goto GOT_MAG;
+		} elsif($val_exp < min_normal_exp) {
+			$sig_bits = $val_exp - (min_finite_exp-1);
+		} else {
+			$sig_bits = significand_bits+1;
+		}
+		my $gbit_lpos = do { use integer; ($skip_bits+$sig_bits)/28 };
+		if(@limbs > $gbit_lpos) {
+			my $gbit_bpos = 27 - ($skip_bits + $sig_bits) % 28;
+			my $sbit = 0;
+			while(@limbs > $gbit_lpos+1) {
+				$sbit = 1 if pop(@limbs) != 0;
+			}
+			my $gbit_mask = 1 << $gbit_bpos;
+			my $sbit_mask = $gbit_mask - 1;
+			if($limbs[$gbit_lpos] & $sbit_mask) {
+				$sbit = 1;
+				$limbs[$gbit_lpos] &= ~$sbit_mask;
+			}
+			if($limbs[$gbit_lpos] & $gbit_mask) {
+				unless($sbit) {
+					if($gbit_bpos == 27 &&
+					   $gbit_lpos != 0) {
+						$sbit = $limbs[$gbit_lpos - 1]
+							& 1;
+					} else {
+						$sbit = $limbs[$gbit_lpos] &
+							($gbit_mask << 1);
+					}
+				}
+				if($sbit) {
+					$limbs[$gbit_lpos] += $gbit_mask;
+				} else {
+					$limbs[$gbit_lpos] -= $gbit_mask;
+				}
+			}
+		}
+		$value = 0.0;
+		for(my $i = @limbs; $i--; ) {
+			$value += mult_pow2($limbs[$i], -28*($i+1));
+		}
+		$value = mult_pow2($value, $in_exp + $digit_exp);
+		GOT_MAG:
+		return $sign eq "-" ? -$value : $value;
+	} elsif($str =~ /\A([-+]?)inf(?:inity)?\z/i) {
+		croak "infinite values not available" unless have_infinite;
+		return $1 eq "-" ? Data::Float::neg_infinity() :
+				   Data::Float::pos_infinity();
+	} elsif($str =~ /\A([-+]?)s?nan\z/si) {
+		croak "Nan value not available" unless have_nan;
+		return Data::Float::nan();
+	} else {
+		croak "bad syntax for hexadecimal floating point value";
+	}
 }
 
 =back
@@ -1178,16 +1178,16 @@ of a particular sign.
 =cut
 
 sub float_id_cmp($$) {
-        my($a, $b) = @_;
-        if(float_is_nan($a)) {
-                return float_is_nan($b) ? 0 : -1;
-        } elsif(float_is_nan($b)) {
-                return +1;
-        } elsif(float_is_zero($a) && float_is_zero($b)) {
-                return signbit($b) - signbit($a);
-        } else {
-                return $a <=> $b;
-        }
+	my($a, $b) = @_;
+	if(float_is_nan($a)) {
+		return float_is_nan($b) ? 0 : -1;
+	} elsif(float_is_nan($b)) {
+		return +1;
+	} elsif(float_is_zero($a) && float_is_zero($b)) {
+		return signbit($b) - signbit($a);
+	} else {
+		return $a <=> $b;
+	}
 }
 
 =item totalorder(A, B)
@@ -1245,10 +1245,10 @@ so behaviour on NaNs is not standard-conforming.
 =cut
 
 sub copysign($$) {
-        my($val, $signfrom) = @_;
-        return $val if float_is_nan($val);
-        $val = -$val if signbit($val) != signbit($signfrom);
-        return $val;
+	my($val, $signfrom) = @_;
+	return $val if float_is_nan($val);
+	$val = -$val if signbit($val) != signbit($signfrom);
+	return $val;
 }
 
 =item nextup(VALUE)
@@ -1268,27 +1268,27 @@ This is an IEEE 754r standard function.
 =cut
 
 sub nextup($) {
-        my($val) = @_;
-        return $val if $val != $val || $val == max_number;
-        return -(max_finite) if have_infinite && $val == -(max_number);
-        return min_finite if $val == 0.0;
-        my($sign, $exp, $significand) = float_parts($val);
-        if($sign eq "+") {
-                $significand += significand_step;
-                if($significand == 2.0) {
-                        return max_number
-                                if have_infinite && $exp == max_finite_exp;
-                        $significand = 1.0;
-                        $exp++;
-                }
-        } else {
-                if($significand == 1.0 && $exp != min_normal_exp) {
-                        $significand = 2.0;
-                        $exp--;
-                }
-                $significand -= significand_step;
-        }
-        return copysign(mult_pow2($significand, $exp), $val);
+	my($val) = @_;
+	return $val if $val != $val || $val == max_number;
+	return -(max_finite) if have_infinite && $val == -(max_number);
+	return min_finite if $val == 0.0;
+	my($sign, $exp, $significand) = float_parts($val);
+	if($sign eq "+") {
+		$significand += significand_step;
+		if($significand == 2.0) {
+			return max_number
+				if have_infinite && $exp == max_finite_exp;
+			$significand = 1.0;
+			$exp++;
+		}
+	} else {
+		if($significand == 1.0 && $exp != min_normal_exp) {
+			$significand = 2.0;
+			$exp--;
+		}
+		$significand -= significand_step;
+	}
+	return copysign(mult_pow2($significand, $exp), $val);
 }
 
 =item nextdown(VALUE)
@@ -1326,9 +1326,9 @@ This is an IEEE 754 standard function.
 =cut
 
 sub nextafter($$) {
-        my($val, $dir) = @_;
-        return $_[1] if $dir != $dir || $val == $dir;
-        return $dir > $val ? nextup($_[0]) : nextdown($_[0]);
+	my($val, $dir) = @_;
+	return $_[1] if $dir != $dir || $val == $dir;
+	return $dir > $val ? nextup($_[0]) : nextdown($_[0]);
 }
 
 =back

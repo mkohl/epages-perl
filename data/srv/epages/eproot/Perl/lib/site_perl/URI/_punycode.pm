@@ -46,8 +46,8 @@ sub adapt {
     $delta += $delta / $numpoints;
     my $k = 0;
     while ($delta > ((BASE - TMIN) * TMAX) / 2) {
-        $delta /= BASE - TMIN;
-        $k += BASE;
+	$delta /= BASE - TMIN;
+	$k += BASE;
     }
     return $k + (((BASE - TMIN + 1) * $delta) / ($delta + SKEW));
 }
@@ -61,31 +61,31 @@ sub decode_punycode {
     my @output;
 
     if ($code =~ s/(.*)$Delimiter//o) {
-        push @output, map ord, split //, $1;
-        return _croak('non-basic code point') unless $1 =~ /^$BasicRE*$/o;
+	push @output, map ord, split //, $1;
+	return _croak('non-basic code point') unless $1 =~ /^$BasicRE*$/o;
     }
 
     while ($code) {
-        my $oldi = $i;
-        my $w    = 1;
+	my $oldi = $i;
+	my $w    = 1;
     LOOP:
-        for (my $k = BASE; 1; $k += BASE) {
-            my $cp = substr($code, 0, 1, '');
-            my $digit = digit_value($cp);
-            defined $digit or return _croak("invalid punycode input");
-            $i += $digit * $w;
-            my $t = ($k <= $bias) ? TMIN
-                : ($k >= $bias + TMAX) ? TMAX : $k - $bias;
-            last LOOP if $digit < $t;
-            $w *= (BASE - $t);
-        }
-        $bias = adapt($i - $oldi, @output + 1, $oldi == 0);
-        warn "bias becomes $bias" if $DEBUG;
-        $n += $i / (@output + 1);
-        $i = $i % (@output + 1);
-        splice(@output, $i, 0, $n);
-        warn join " ", map sprintf('%04x', $_), @output if $DEBUG;
-        $i++;
+	for (my $k = BASE; 1; $k += BASE) {
+	    my $cp = substr($code, 0, 1, '');
+	    my $digit = digit_value($cp);
+	    defined $digit or return _croak("invalid punycode input");
+	    $i += $digit * $w;
+	    my $t = ($k <= $bias) ? TMIN
+		: ($k >= $bias + TMAX) ? TMAX : $k - $bias;
+	    last LOOP if $digit < $t;
+	    $w *= (BASE - $t);
+	}
+	$bias = adapt($i - $oldi, @output + 1, $oldi == 0);
+	warn "bias becomes $bias" if $DEBUG;
+	$n += $i / (@output + 1);
+	$i = $i % (@output + 1);
+	splice(@output, $i, 0, $n);
+	warn join " ", map sprintf('%04x', $_), @output if $DEBUG;
+	$i++;
     }
     return join '', map chr, @output;
 }
@@ -106,33 +106,33 @@ sub encode_punycode {
     warn "basic codepoints: (@output)" if $DEBUG;
 
     while ($h < @input) {
-        my $m = min(grep { $_ >= $n } map ord, @input);
-        warn sprintf "next code point to insert is %04x", $m if $DEBUG;
-        $delta += ($m - $n) * ($h + 1);
-        $n = $m;
-        for my $i (@input) {
-            my $c = ord($i);
-            $delta++ if $c < $n;
-            if ($c == $n) {
-                my $q = $delta;
-            LOOP:
-                for (my $k = BASE; 1; $k += BASE) {
-                    my $t = ($k <= $bias) ? TMIN :
-                        ($k >= $bias + TMAX) ? TMAX : $k - $bias;
-                    last LOOP if $q < $t;
-                    my $cp = code_point($t + (($q - $t) % (BASE - $t)));
-                    push @output, chr($cp);
-                    $q = ($q - $t) / (BASE - $t);
-                }
-                push @output, chr(code_point($q));
-                $bias = adapt($delta, $h + 1, $h == $b);
-                warn "bias becomes $bias" if $DEBUG;
-                $delta = 0;
-                $h++;
-            }
-        }
-        $delta++;
-        $n++;
+	my $m = min(grep { $_ >= $n } map ord, @input);
+	warn sprintf "next code point to insert is %04x", $m if $DEBUG;
+	$delta += ($m - $n) * ($h + 1);
+	$n = $m;
+	for my $i (@input) {
+	    my $c = ord($i);
+	    $delta++ if $c < $n;
+	    if ($c == $n) {
+		my $q = $delta;
+	    LOOP:
+		for (my $k = BASE; 1; $k += BASE) {
+		    my $t = ($k <= $bias) ? TMIN :
+			($k >= $bias + TMAX) ? TMAX : $k - $bias;
+		    last LOOP if $q < $t;
+		    my $cp = code_point($t + (($q - $t) % (BASE - $t)));
+		    push @output, chr($cp);
+		    $q = ($q - $t) / (BASE - $t);
+		}
+		push @output, chr(code_point($q));
+		$bias = adapt($delta, $h + 1, $h == $b);
+		warn "bias becomes $bias" if $DEBUG;
+		$delta = 0;
+		$h++;
+	    }
+	}
+	$delta++;
+	$n++;
     }
     return join '', @output;
 }

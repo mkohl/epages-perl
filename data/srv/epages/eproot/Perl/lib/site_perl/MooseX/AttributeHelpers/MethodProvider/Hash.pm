@@ -11,14 +11,14 @@ sub set : method {
     my ($attr, $reader, $writer) = @_;
     if ($attr->has_type_constraint && $attr->type_constraint->isa('Moose::Meta::TypeConstraint::Parameterized')) {
         my $container_type_constraint = $attr->type_constraint->type_parameter;
-        return sub {
+        return sub { 
             my ( $self, @kvp ) = @_;
-
+           
             my ( @keys, @values );
 
             while ( @kvp ) {
                 my ( $key, $value ) = ( shift(@kvp), shift(@kvp) );
-                ($container_type_constraint->check($value))
+                ($container_type_constraint->check($value)) 
                     || confess "Value " . ($value||'undef') . " did not pass container type constraint '$container_type_constraint'";
                 push @keys, $key;
                 push @values, $value;
@@ -95,7 +95,7 @@ sub clear : method {
 
 sub delete : method {
     my ($attr, $reader, $writer) = @_;
-    return sub {
+    return sub { 
         my $hashref = $reader->(shift);
         CORE::delete @{$hashref}{@_};
     };
@@ -110,13 +110,13 @@ __END__
 =head1 NAME
 
 MooseX::AttributeHelpers::MethodProvider::Hash
-
+  
 =head1 DESCRIPTION
 
-This is a role which provides the method generators for
+This is a role which provides the method generators for 
 L<MooseX::AttributeHelpers::Collection::Hash>.
 
-This role is composed from the
+This role is composed from the 
 L<MooseX::AttributeHelpers::Collection::ImmutableHash> role.
 
 =head1 METHODS
@@ -184,7 +184,7 @@ arguments, sets the value of the requested key.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

@@ -69,31 +69,31 @@ use TAP::Formatter::HTML::Session;
 
 use base qw( TAP::Base );
 use accessors qw( verbosity stdout output_fh escape_output tests session_class sessions
-                  template_processor template html html_id_iterator minify color
-                  css_uris js_uris inline_css inline_js abs_file_paths force_inline_css force_inline_js );
+		  template_processor template html html_id_iterator minify color
+		  css_uris js_uris inline_css inline_js abs_file_paths force_inline_css force_inline_js );
 
 use constant default_session_class => 'TAP::Formatter::HTML::Session';
 use constant default_template      => 'TAP/Formatter/HTML/default_report.tt2';
 use constant default_js_uris       => ['file:TAP/Formatter/HTML/jquery-1.4.2.min.js',
-                                       'file:TAP/Formatter/HTML/jquery.tablesorter-2.0.3.min.js',
-                                       'file:TAP/Formatter/HTML/default_report.js'];
+				       'file:TAP/Formatter/HTML/jquery.tablesorter-2.0.3.min.js',
+				       'file:TAP/Formatter/HTML/default_report.js'];
 use constant default_css_uris      => ['file:TAP/Formatter/HTML/default_page.css',
-                                       'file:TAP/Formatter/HTML/default_report.css'];
+				       'file:TAP/Formatter/HTML/default_report.css'];
 
 use constant severity_map => {
-                              ''          => 0,
-                              'very-low'  => 1,
-                              'low'       => 2,
-                              'med'       => 3,
-                              'high'      => 4,
-                              'very-high' => 5,
-                              0 => '',
-                              1 => 'very-low',
-                              2 => 'low',
-                              3 => 'med',
-                              4 => 'high',
-                              5 => 'very-high',
-                             };
+			      ''          => 0,
+			      'very-low'  => 1,
+			      'low'       => 2,
+			      'med'       => 3,
+			      'high'      => 4,
+			      'very-high' => 5,
+			      0 => '',
+			      1 => 'very-low',
+			      2 => 'low',
+			      3 => 'med',
+			      4 => 'high',
+			      5 => 'very-high',
+			     };
 
 our $VERSION = '0.11';
 our $FAKE_WIN32_URIS = 0; # for testing only
@@ -110,8 +110,8 @@ sub _initialize {
     $self->verbosity( 0 )
          ->stdout( $stdout_fh )
          ->output_fh( $stdout_fh )
-         ->minify( 1 )
-         ->escape_output( 0 )
+	 ->minify( 1 )
+	 ->escape_output( 0 )
          ->abs_file_paths( 1 )
          ->abs_file_paths( 1 )
          ->force_inline_css( 1 )
@@ -122,15 +122,15 @@ sub _initialize {
          ->js_uris( $self->default_js_uris )
          ->css_uris( $self->default_css_uris )
          ->inline_js( '' )
-         ->inline_css( '' )
-         ->sessions( [] );
+	 ->inline_css( '' )
+	 ->sessions( [] );
 
     $self->check_for_overrides_in_env;
 
     # Laziness...
     # trust the user knows what they're doing with the args:
     foreach my $key (keys %$args) {
-        $self->$key( $args->{$key} ) if ($self->can( $key ));
+	$self->$key( $args->{$key} ) if ($self->can( $key ));
     }
 
     $self->html_id_iterator( $self->create_iterator( $args ) );
@@ -142,31 +142,31 @@ sub check_for_overrides_in_env {
     my $self = shift;
 
     if (my $file = $ENV{TAP_FORMATTER_HTML_OUTFILE}) {
-        $self->output_file( $file );
+	$self->output_file( $file );
     }
 
     my $force_css = $ENV{TAP_FORMATTER_HTML_FORCE_INLINE_CSS};
     if (defined( $force_css )) {
-        $self->force_inline_css( $force_css );
+	$self->force_inline_css( $force_css );
     }
 
     my $force_js = $ENV{TAP_FORMATTER_HTML_FORCE_INLINE_JS};
     if (defined( $force_js )) {
-        $self->force_inline_js( $force_js );
+	$self->force_inline_js( $force_js );
     }
 
     if (my $uris = $ENV{TAP_FORMATTER_HTML_CSS_URIS}) {
-        my $list = [ split( ':', $uris ) ];
-        $self->css_uris( $list );
+	my $list = [ split( ':', $uris ) ];
+	$self->css_uris( $list );
     }
 
     if (my $uris = $ENV{TAP_FORMATTER_HTML_JS_URIS}) {
-        my $list = [ split( ':', $uris ) ];
-        $self->js_uris( $list );
+	my $list = [ split( ':', $uris ) ];
+	$self->js_uris( $list );
     }
 
     if (my $file = $ENV{TAP_FORMATTER_HTML_TEMPLATE}) {
-        $self->template( $file );
+	$self->template( $file );
     }
 
     return $self;
@@ -247,8 +247,8 @@ sub open_test {
     my ($self, $test, $parser) = @_;
     #warn ref($self) . "->open_test called with args: " . Dumper( [$test, $parser] );
     my $session = $self->session_class->new({ test => $test,
-                                              parser => $parser,
-                                              formatter => $self });
+					      parser => $parser,
+					      formatter => $self });
     push @{ $self->sessions }, $session;
     return $session;
 }
@@ -267,8 +267,8 @@ sub summary {
 
     # if silent is set, only print HTML if we're not printing to stdout
     if (! $self->silent or $self->output_fh->fileno != fileno(STDOUT)) {
-        print { $self->output_fh } ${ $self->html };
-        $self->output_fh->flush;
+	print { $self->output_fh } ${ $self->html };
+	$self->output_fh->flush;
     }
 
     return $self;
@@ -282,14 +282,14 @@ sub generate_report {
     $self->slurp_js if $self->force_inline_js;
 
     my $params = {
-                  report => $r,
-                  js_uris  => $self->js_uris,
-                  css_uris => $self->css_uris,
-                  inline_js  => $self->inline_js,
-                  inline_css => $self->inline_css,
-                  formatter => { class => ref( $self ),
-                                 version => $self->VERSION },
-                 };
+		  report => $r,
+		  js_uris  => $self->js_uris,
+		  css_uris => $self->css_uris,
+		  inline_js  => $self->inline_js,
+		  inline_css => $self->inline_css,
+		  formatter => { class => ref( $self ),
+				 version => $self->VERSION },
+		 };
 
     my $html = '';
     $self->template_processor->process( $self->template, $params, \$html )
@@ -315,24 +315,24 @@ sub check_uris {
     my ($self) = @_;
 
     foreach my $uri_list ($self->js_uris, $self->css_uris) {
-        # take them out of the list to verify, push them back on later
-        my @uris = splice( @$uri_list, 0, scalar @$uri_list );
-        foreach my $uri (@uris) {
-            if (($^O =~ /win32/i or $FAKE_WIN32_URIS)
-                and $uri =~ /^(?:(?:file)|(?:\w:)?\\)/) {
-                $uri = URI::file->new($uri, 'win32');
-            } else {
-                $uri = URI->new( $uri );
-            }
-            if ($uri->scheme && $uri->scheme eq 'file') {
-                my $path = $uri->path;
-                unless (file_name_is_absolute($path)) {
-                    my $new_path;
-                    if (-e $path) {
-                        $new_path = rel2abs( $path ) if ($self->abs_file_paths);
-                    } else {
-                        $new_path = $self->find_in_INC( $path );
-                    }
+	# take them out of the list to verify, push them back on later
+	my @uris = splice( @$uri_list, 0, scalar @$uri_list );
+	foreach my $uri (@uris) {
+	    if (($^O =~ /win32/i or $FAKE_WIN32_URIS)
+		and $uri =~ /^(?:(?:file)|(?:\w:)?\\)/) {
+		$uri = URI::file->new($uri, 'win32');
+	    } else {
+	        $uri = URI->new( $uri );
+    	    }
+	    if ($uri->scheme && $uri->scheme eq 'file') {
+		my $path = $uri->path;
+		unless (file_name_is_absolute($path)) {
+		    my $new_path;
+		    if (-e $path) {
+			$new_path = rel2abs( $path ) if ($self->abs_file_paths);
+		    } else {
+			$new_path = $self->find_in_INC( $path );
+		    }
                     if ($new_path) {
                         if (($^O =~ /win32/i or $FAKE_WIN32_URIS)) {
                             $uri = URI::file->new("file://$new_path", 'win32');
@@ -340,10 +340,10 @@ sub check_uris {
                             $uri->path( $new_path );
                         }
                     }
-                }
-            }
-            push @$uri_list, $uri;
-        }
+		}
+	    }
+	    push @$uri_list, $uri;
+	}
     }
 
     return $self;
@@ -353,36 +353,36 @@ sub prepare_report {
     my ($self, $a) = @_;
 
     my $r = {
-             tests => [],
-             start_time => '?',
-             end_time => '?',
-             elapsed_time => $a->elapsed_timestr,
-            };
+	     tests => [],
+	     start_time => '?',
+	     end_time => '?',
+	     elapsed_time => $a->elapsed_timestr,
+	    };
 
 
     # add aggregate test info:
     for my $key (qw(
-                    total
-                    has_errors
-                    has_problems
-                    failed
-                    parse_errors
-                    passed
-                    skipped
-                    todo
-                    todo_passed
-                    wait
-                    exit
-                   )) {
-        $r->{$key} = $a->$key;
+		    total
+		    has_errors
+		    has_problems
+		    failed
+		    parse_errors
+		    passed
+		    skipped
+		    todo
+		    todo_passed
+		    wait
+		    exit
+		   )) {
+	$r->{$key} = $a->$key;
     }
 
     # do some other handy calcs:
     $r->{actual_passed} = $r->{passed} + $r->{todo_passed};
     if ($r->{total}) {
-        $r->{percent_passed} = sprintf('%.1f', $r->{actual_passed} / $r->{total} * 100);
+	$r->{percent_passed} = sprintf('%.1f', $r->{actual_passed} / $r->{total} * 100);
     } else {
-        $r->{percent_passed} = 0;
+	$r->{percent_passed} = 0;
     }
 
     # estimate # files (# sessions could be different?):
@@ -391,9 +391,9 @@ sub prepare_report {
     # add test results:
     my $total_time = 0;
     foreach my $s (@{ $self->sessions }) {
-        my $sr = $s->as_report;
-        push @{$r->{tests}}, $sr;
-        $total_time += $sr->{elapsed_time} || 0;
+	my $sr = $s->as_report;
+	push @{$r->{tests}}, $sr;
+	$total_time += $sr->{elapsed_time} || 0;
     }
     $r->{total_time} = $total_time;
 
@@ -403,7 +403,7 @@ sub prepare_report {
     $severity += $smap->{$_->{severity} || ''} for @{$r->{tests}};
     my $avg_severity = 0;
     if (scalar @{$r->{tests}}) {
-        $avg_severity = ceil($severity / scalar( @{$r->{tests}} ));
+	$avg_severity = ceil($severity / scalar( @{$r->{tests}} ));
     }
     $r->{severity} = $smap->{$avg_severity};
 
@@ -418,11 +418,11 @@ sub find_in_INC {
     my ($self, $file) = @_;
 
     foreach my $path (grep { not ref } @INC) {
-        my $target = catfile($path, $file);
-        if (-e $target) {
-            $target = rel2abs($target) if $self->abs_file_paths;
-            return $target;
-        }
+	my $target = catfile($path, $file);
+	if (-e $target) {
+	    $target = rel2abs($target) if $self->abs_file_paths;
+	    return $target;
+	}
     }
 
     # non-fatal
@@ -463,23 +463,23 @@ sub _slurp_uris {
     my ($self, $uris, $slurp_to_ref) = @_;
 
     foreach my $uri (@$uris) {
-        my $scheme = $uri->scheme;
-        if ($scheme && $scheme eq 'file') {
-            my $path = $uri->path;
-            if (-e $path) {
-                if (open my $fh, $path) {
-                    local $/ = undef;
-                    $$slurp_to_ref .= <$fh>;
-                    $$slurp_to_ref .= "\n";
-                } else {
-                    $self->log("Warning: couldn't open $path: $!");
-                }
-            } else {
-                $self->log("Warning: couldn't read $path: file does not exist!");
-            }
-        } else {
-            $self->log("Warning: can't include $uri inline: not a file uri");
-        }
+	my $scheme = $uri->scheme;
+	if ($scheme && $scheme eq 'file') {
+	    my $path = $uri->path;
+	    if (-e $path) {
+		if (open my $fh, $path) {
+		    local $/ = undef;
+		    $$slurp_to_ref .= <$fh>;
+		    $$slurp_to_ref .= "\n";
+		} else {
+		    $self->log("Warning: couldn't open $path: $!");
+		}
+	    } else {
+		$self->log("Warning: couldn't read $path: file does not exist!");
+	    }
+	} else {
+	    $self->log("Warning: can't include $uri inline: not a file uri");
+	}
     }
 
     return $slurp_to_ref;
@@ -516,11 +516,11 @@ sub _output {
     my $self = shift;
     return if $self->silent;
     if (ref($_[0]) && ref( $_[0]) eq 'SCALAR') {
-        # DEPRECATED: printing HTML:
-        print { $self->stdout } ${ $_[0] };
+	# DEPRECATED: printing HTML:
+	print { $self->stdout } ${ $_[0] };
     } else {
-        unshift @_, '# ' if $self->escape_output;
-        print { $self->stdout } @_;
+	unshift @_, '# ' if $self->escape_output;
+	print { $self->stdout } @_;
     }
 }
 

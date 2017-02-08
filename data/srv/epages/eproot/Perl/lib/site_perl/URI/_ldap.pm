@@ -107,18 +107,18 @@ sub canonical
     # Remove filter if default
     my $old_filter = $other->filter;
     $other->filter("") if lc($old_filter) eq "(objectclass=*)" ||
-                          lc($old_filter) eq "objectclass=*";
+	                  lc($old_filter) eq "objectclass=*";
 
     # Lowercase extensions types and deal with known extension values
     my @ext = $other->extensions;
     for (my $i = 0; $i < @ext; $i += 2) {
-        my $etype = $ext[$i] = lc($ext[$i]);
-        if ($etype =~ /^!?bindname$/) {
-            $ext[$i+1] = _normalize_dn($ext[$i+1]);
-        }
+	my $etype = $ext[$i] = lc($ext[$i]);
+	if ($etype =~ /^!?bindname$/) {
+	    $ext[$i+1] = _normalize_dn($ext[$i+1]);
+	}
     }
     $other->extensions(@ext) if @ext;
-
+    
     $other;
 }
 
@@ -132,7 +132,7 @@ sub _normalize_dn  # RFC 2253
 
     my @dn = split(/([+,])/, $dn);
     for (@dn) {
-        s/^([a-zA-Z]+=)/lc($1)/e;
+	s/^([a-zA-Z]+=)/lc($1)/e;
     }
     join("", @dn);
 }

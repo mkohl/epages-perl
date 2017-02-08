@@ -266,7 +266,7 @@ sub update
     $self->{'usLastCharIndex'} = $keys[-1];
 
     $table = $self->{' PARENT'}{'hhea'}->read;
-
+    
     # try any way we can to get some real numbers passed around!
     if (($self->{'fsSelection'} & 128) != 0)
     {
@@ -287,7 +287,7 @@ sub update
         $table->{'LineGap'} = $self->{'sTypoLineGap'};
         $self->{'usWinAscent'} = $self->{'sTypoAscender'} + $self->{'sTypoLineGap'};
         $self->{'usWinDescent'} = -$self->{'sTypoDescender'};
-    }
+    } 
     elsif ($self->{'usWinAscent'} != 0 || $self->{'usWinDescent'} != 0)
     {
         $self->{'sTypoAscender'} = $table->{'Ascender'} = $self->{'usWinAscent'};
@@ -326,7 +326,7 @@ sub update
 
     $self->{'Version'} = 1 if (defined $self->{'ulCodePageRange1'} && $self->{'Version'} < 1);
     $self->{'Version'} = 2 if (defined $self->{'maxLookups'} && $self->{'Version'} < 2);
-
+    
     if ((exists $self->{' PARENT'}{'GPOS'} && $self->{' PARENT'}{'GPOS'}{' read'}) ||
         (exists $self->{' PARENT'}{'GSUB'} && $self->{' PARENT'}{'GSUB'}{' read'}))
     {
@@ -336,7 +336,7 @@ sub update
         $ls = $self->{' PARENT'}{'GSUB'}->maxContext if exists $self->{' PARENT'}{'GSUB'};
         $self->{'maxLookups'} = $lp > $ls ? $lp : $ls;
     }
-
+    
     $self;
 }
 

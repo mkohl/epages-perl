@@ -8,14 +8,14 @@ HTML::AsSubs - functions that construct a HTML syntax tree
 
  use HTML::AsSubs;
  $h = body(
-           h1("This is the heading"),
-           p("This is the first paragraph which contains a ",
-             a({href=>'link.html'}, "link"),
-             " and an ",
-             img({src=>'img.gif', alt=>'image'}),
-             "."
-            ),
-          );
+	   h1("This is the heading"),
+	   p("This is the first paragraph which contains a ",
+	     a({href=>'link.html'}, "link"),
+	     " and an ",
+	     img({src=>'img.gif', alt=>'image'}),
+	     "."
+	    ),
+	  );
  print $h->as_HTML;
 
 =head1 DESCRIPTION

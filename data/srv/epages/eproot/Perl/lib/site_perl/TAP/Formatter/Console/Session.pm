@@ -204,13 +204,13 @@ sub _closures {
     };
 }
 
-=head2 C<<      clear_for_close >>
+=head2 C<< 	clear_for_close >>
 
-=head2 C<<      close_test >>
+=head2 C<< 	close_test >>
 
-=head2 C<<      header >>
+=head2 C<< 	header >>
 
-=head2 C<<      result >>
+=head2 C<< 	result >>
 
 =cut
 

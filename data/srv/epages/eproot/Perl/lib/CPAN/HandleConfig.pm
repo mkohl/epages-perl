@@ -494,12 +494,12 @@ sub require_myconfig_or_config () {
 sub home () {
     my $home;
     # Suppress load messages until we load the config and know whether
-    # load messages are desired.  Otherwise, it's unexpected and odd
+    # load messages are desired.  Otherwise, it's unexpected and odd 
     # why one load message pops up even when verbosity is turned off.
     # This means File::HomeDir load messages are never seen, but I
     # think that's probably OK -- DAGOLDEN
-
-    # 5.6.2 seemed to segfault localizing a value in a hashref
+    
+    # 5.6.2 seemed to segfault localizing a value in a hashref 
     # so do it manually instead
     my $old_v = $CPAN::Config->{load_module_verbosity};
     $CPAN::Config->{load_module_verbosity} = q[none];

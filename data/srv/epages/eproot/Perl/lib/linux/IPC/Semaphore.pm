@@ -17,7 +17,7 @@
 package IPC::Semaphore;
 
 use IPC::SysV qw(GETNCNT GETZCNT GETVAL SETVAL GETPID GETALL SETALL
-                 IPC_STAT IPC_SET IPC_RMID);
+		 IPC_STAT IPC_SET IPC_RMID);
 use strict;
 use vars qw($VERSION);
 use Carp;
@@ -34,14 +34,14 @@ my $N = do { my $foo = eval { pack "L!", 0 }; $@ ? '' : '!' };
     use Class::Struct qw(struct);
 
     struct 'IPC::Semaphore::stat' => [
-        uid     => '$',
-        gid     => '$',
-        cuid    => '$',
-        cgid    => '$',
-        mode    => '$',
-        ctime   => '$',
-        otime   => '$',
-        nsems   => '$',
+	uid	=> '$',
+	gid	=> '$',
+	cuid	=> '$',
+	cgid	=> '$',
+	mode	=> '$',
+	ctime	=> '$',
+	otime	=> '$',
+	nsems	=> '$',
     ];
 }
 
@@ -52,8 +52,8 @@ sub new {
     my $id = semget($_[0],$_[1],$_[2]);
 
     defined($id)
-        ? bless \$id, $class
-        : undef;
+	? bless \$id, $class
+	: undef;
 }
 
 sub id {
@@ -110,7 +110,7 @@ sub stat {
     my $self = shift;
     my $data = "";
     semctl($$self,0,IPC_STAT,$data)
-        or return undef;
+	or return undef;
     IPC::Semaphore::stat->new->unpack($data);
 }
 
@@ -119,16 +119,16 @@ sub set {
     my $ds;
 
     if(@_ == 1) {
-        $ds = shift;
+	$ds = shift;
     }
     else {
-        croak 'Bad arg count' if @_ % 2;
-        my %arg = @_;
-        $ds = $self->stat
-                or return undef;
-        my($key,$val);
-        $ds->$key($val)
-            while(($key,$val) = each %arg);
+	croak 'Bad arg count' if @_ % 2;
+	my %arg = @_;
+	$ds = $self->stat
+		or return undef;
+	my($key,$val);
+	$ds->$key($val)
+	    while(($key,$val) = each %arg);
     }
 
     my $v = semctl($$self,0,IPC_SET,$ds->pack);
@@ -139,7 +139,7 @@ sub getall {
     my $self = shift;
     my $data = "";
     semctl($$self,0,GETALL,$data)
-        or return ();
+	or return ();
     (unpack("s$N*",$data));
 }
 
@@ -250,8 +250,8 @@ first is the semaphore number, the second is the operation and the last
 is a flags value. See L<semop> for more details. For example
 
     $sem->op(
-        0, -1, IPC_NOWAIT,
-        1,  1, IPC_NOWAIT
+	0, -1, IPC_NOWAIT,
+	1,  1, IPC_NOWAIT
     );
 
 =item remove
@@ -300,7 +300,7 @@ of these fields see your system documentation.
 
 =head1 SEE ALSO
 
-L<IPC::SysV>, L<Class::Struct>, L<semget>, L<semctl>, L<semop>
+L<IPC::SysV>, L<Class::Struct>, L<semget>, L<semctl>, L<semop> 
 
 =head1 AUTHORS
 

@@ -233,7 +233,7 @@ as a class method, it returns false.
 
 Note that, because strings are converted to message objects before wrapping,
 this method will return an object when the Email::Abstract was constructed from
-a string.
+a string. 
 
 =head1 PERL EMAIL PROJECT
 
@@ -254,6 +254,6 @@ Ricardo SIGNES, <F<rjbs@cpan.org>>
 Copyright 2004 by Simon Cozens
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+it under the same terms as Perl itself. 
 
 =cut

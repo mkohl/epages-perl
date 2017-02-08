@@ -31,7 +31,7 @@ MooseX::AttributeHelpers::String
   package MyHomePage;
   use Moose;
   use MooseX::AttributeHelpers;
-
+  
   has 'text' => (
       metaclass => 'String',
       is        => 'rw',
@@ -45,7 +45,7 @@ MooseX::AttributeHelpers::String
 
   my $page = MyHomePage->new();
   $page->add_text("foo"); # same as $page->text($page->text . "foo");
-
+  
 =head1 DESCRIPTION
 
 This module provides a simple string attribute, to which mutating string
@@ -131,7 +131,7 @@ Sets the string to the empty string (not the value passed to C<default>).
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

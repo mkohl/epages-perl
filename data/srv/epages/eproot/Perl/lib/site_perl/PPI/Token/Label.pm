@@ -33,8 +33,8 @@ use PPI::Token ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Token';
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Token';
 }
 
 1;

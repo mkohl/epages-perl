@@ -73,11 +73,11 @@ sub _build_chunks {
 # If they are not found, they will be created.
 sub BUILD {
     my ($self) = @_;
-
+   
     # check for the required indexs in the system.indexes colleciton
     my $count = $self->_database->get_collection('system.indexes')->count({key=>{filename => 1}});
     $count   += $self->_database->get_collection('system.indexes')->count({key=>{files_id => 1, n => 1}});
-
+    
     # if we dont have the required indexes, create them now.
     if ($count < 2){
        $self->_ensure_indexes();
@@ -184,8 +184,8 @@ sub insert {
     }
     $fh->setpos($start_pos);
 
-    # get an md5 hash for the file. set the retry flag to 'true' incase the
-    # database, collection, or indexes are missing. That way we can recreate them
+    # get an md5 hash for the file. set the retry flag to 'true' incase the 
+    # database, collection, or indexes are missing. That way we can recreate them 
     # retry the md5 calc.
     my $result = $self->_calc_md5($id, $self->prefix, 1);
 
@@ -213,30 +213,30 @@ sub insert {
 # Calculates the md5 of the file on the server
 # $id    : reference to the object we want to hash
 # $root  : the namespace the file resides in
-# $retry : a flag which controls whether or not to retry the md5 calc.
+# $retry : a flag which controls whether or not to retry the md5 calc. 
 #         (which is currently only if we are missing our indexes)
 sub _calc_md5 {
     my ($self, $id, $root, $retry) = @_;
-
+   
     # Try to get an md5 hash for the file
     my $result = $self->_database->run_command(["filemd5", $id, "root" => $self->prefix]);
-
-    # If we didn't get a hash back, it means something is wrong (probably to do with gridfs's
+    
+    # If we didn't get a hash back, it means something is wrong (probably to do with gridfs's 
     # indexes because its currently the only error that is thown from the md5 class)
     if (ref($result) ne 'HASH') {
         # Yep, indexes are missing. If we have the $retry flag, lets create them calc the md5 again
-        # but we wont pass set the $retry flag again. we dont want an infinate loop for any reason.
+        # but we wont pass set the $retry flag again. we dont want an infinate loop for any reason. 
         if ($retry == 1 && $result eq 'need an index on { files_id : 1 , n : 1 }'){
             $self->_ensure_indexes();
             $result = $self->_calc_md5($id, $root, 0);
         }
-        # Well, something bad is happening, so lets clean up and die.
+        # Well, something bad is happening, so lets clean up and die. 
         else{
             $self->chunks->remove({files_id => $id});
             die "recieve an unexpected error from the server: $result";
         }
     }
-
+    
     return $result;
 }
 

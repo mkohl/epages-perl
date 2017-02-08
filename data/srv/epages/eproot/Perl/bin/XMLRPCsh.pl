@@ -1,5 +1,5 @@
-#!/srv/epages/eproot/Perl/bin/perl
-#!d:\perl\bin\perl.exe
+#!/srv/epages/eproot/Perl/bin/perl 
+#!d:\perl\bin\perl.exe 
 
 # -- XMLRPC::Lite -- soaplite.com -- Copyright (C) 2001 Paul Kulchenko --
 
@@ -35,7 +35,7 @@ XMLRPCsh.pl - Interactive shell for XMLRPC calls
 
 =head1 SYNOPSIS
 
-  perl XMLRPCsh.pl http://betty.userland.com/RPC2
+  perl XMLRPCsh.pl http://betty.userland.com/RPC2 
   > examples.getStateName(2)
   > examples.getStateNames(1,2,3,7)
   > examples.getStateList([1,9])
@@ -51,20 +51,20 @@ or
 =head1 DESCRIPTION
 
 XMLRPCsh.pl is a shell for making XMLRPC calls. It takes one parameter,
-endpoint (actually it will tell you about it if you try to run it).
+endpoint (actually it will tell you about it if you try to run it). 
 Additional commands can follow.
 
-After that you'll be able to run any methods of XMLRPC::Lite, like autotype,
-readable, etc. You can run it the same way as you do it in
+After that you'll be able to run any methods of XMLRPC::Lite, like autotype, 
+readable, etc. You can run it the same way as you do it in 
 your Perl script. You'll see output from method, result of XMLRPC call,
 detailed info on XMLRPC faulure or transport error.
 
 For full list of available methods see documentation for XMLRPC::Lite.
 
-Along with methods of XMLRPC::Lite you'll be able (and that's much more
+Along with methods of XMLRPC::Lite you'll be able (and that's much more 
 interesting) run any XMLRPC methods you know about on remote server and
-see processed results. You can even switch on debugging (with call
-something like: C<on_debug(sub{print@_})>) and see XMLRPC code with
+see processed results. You can even switch on debugging (with call 
+something like: C<on_debug(sub{print@_})>) and see XMLRPC code with 
 headers sent and received.
 
 =head1 COPYRIGHT

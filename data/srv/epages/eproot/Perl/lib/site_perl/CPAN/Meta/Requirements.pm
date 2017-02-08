@@ -71,7 +71,7 @@ BEGIN {
 
       return $self;
     };
-
+    
     no strict 'refs';
     *$to_add = $code;
   }

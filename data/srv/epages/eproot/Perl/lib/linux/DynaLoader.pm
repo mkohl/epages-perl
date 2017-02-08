@@ -52,7 +52,7 @@ $do_expand = 0;
 @dl_library_path    = ();       # path to look for files
 
 #XSLoader.pm may have added elements before we were required
-#@dl_shared_objects  = ();       # shared objects for symbols we have
+#@dl_shared_objects  = ();       # shared objects for symbols we have 
 #@dl_librefs         = ();       # things we have loaded
 #@dl_modules         = ();       # Modules we have loaded
 
@@ -94,7 +94,7 @@ boot_DynaLoader('DynaLoader') if defined(&boot_DynaLoader) &&
 if ($dl_debug) {
     print STDERR "DynaLoader.pm loaded (@INC, @dl_library_path)\n";
     print STDERR "DynaLoader not linked into this perl\n"
-            unless defined(&boot_DynaLoader);
+	    unless defined(&boot_DynaLoader);
 }
 
 1; # End of main code
@@ -120,19 +120,19 @@ sub bootstrap {
     local(@dirs, $file);
 
     unless ($module) {
-        require Carp;
-        Carp::confess("Usage: DynaLoader::bootstrap(module)");
+	require Carp;
+	Carp::confess("Usage: DynaLoader::bootstrap(module)");
     }
 
     # A common error on platforms which don't support dynamic loading.
     # Since it's fatal and potentially confusing we give a detailed message.
     croak("Can't load module $module, dynamic loading not available in this perl.\n".
-        "  (You may need to build a new perl executable which either supports\n".
-        "  dynamic loading or has the $module module statically linked into it.)\n")
-        unless defined(&dl_load_file);
+	"  (You may need to build a new perl executable which either supports\n".
+	"  dynamic loading or has the $module module statically linked into it.)\n")
+	unless defined(&dl_load_file);
 
 
-
+    
     my @modparts = split(/::/,$module);
     my $modfname = $modparts[-1];
 
@@ -141,36 +141,36 @@ sub bootstrap {
     # It may also edit @modparts if required.
     $modfname = &mod2fname(\@modparts) if defined &mod2fname;
 
-
+    
 
     my $modpname = join('/',@modparts);
 
     print STDERR "DynaLoader::bootstrap for $module ",
-                       "(auto/$modpname/$modfname.$dl_dlext)\n"
-        if $dl_debug;
+		       "(auto/$modpname/$modfname.$dl_dlext)\n"
+	if $dl_debug;
 
     foreach (@INC) {
-
-
-            my $dir = "$_/auto/$modpname";
-
-
-        next unless -d $dir; # skip over uninteresting directories
-
-        # check for common cases to avoid autoload of dl_findfile
-        my $try =  "$dir/$modfname.$dl_dlext";
-        last if $file = ($do_expand) ? dl_expandspec($try) : ((-f $try) && $try);
-
-        # no luck here, save dir for possible later dl_findfile search
-        push @dirs, $dir;
+	
+	
+	    my $dir = "$_/auto/$modpname";
+	
+	
+	next unless -d $dir; # skip over uninteresting directories
+	
+	# check for common cases to avoid autoload of dl_findfile
+	my $try =  "$dir/$modfname.$dl_dlext";
+	last if $file = ($do_expand) ? dl_expandspec($try) : ((-f $try) && $try);
+	
+	# no luck here, save dir for possible later dl_findfile search
+	push @dirs, $dir;
     }
     # last resort, let dl_findfile have a go in all known locations
     $file = dl_findfile(map("-L$_",@dirs,@INC), $modfname) unless $file;
 
     croak("Can't locate loadable object for module $module in \@INC (\@INC contains: @INC)")
-        unless $file;   # wording similar to error from 'require'
+	unless $file;	# wording similar to error from 'require'
 
-
+    
     my $bootname = "boot_$module";
     $bootname =~ s/\W/_/g;
     @dl_require_symbols = ($bootname);
@@ -188,7 +188,7 @@ sub bootstrap {
 
     my $boot_symbol_ref;
 
-
+    
 
     # Many dynamic extension loading problems will appear to come from
     # this section of code: XYZ failed at line 123 of DynaLoader.pm.
@@ -198,14 +198,14 @@ sub bootstrap {
     # it executed.
 
     my $libref = dl_load_file($file, $module->dl_load_flags) or
-        croak("Can't load '$file' for module $module: ".dl_error());
+	croak("Can't load '$file' for module $module: ".dl_error());
 
     push(@dl_librefs,$libref);  # record loaded object
 
     my @unresolved = dl_undef_symbols();
     if (@unresolved) {
-        require Carp;
-        Carp::carp("Undefined symbols present after loading $file: @unresolved\n");
+	require Carp;
+	Carp::carp("Undefined symbols present after loading $file: @unresolved\n");
     }
 
     $boot_symbol_ref = dl_find_symbol($libref, $bootname) or
@@ -218,7 +218,7 @@ sub bootstrap {
 
     # See comment block above
 
-        push(@dl_shared_objects, $file); # record files loaded
+	push(@dl_shared_objects, $file); # record files loaded
 
     &$xs(@args);
 }
@@ -251,27 +251,27 @@ sub dl_findfile {
     # accumulate directories but process files as they appear
     arg: foreach(@args) {
         #  Special fast case: full filepath requires no search
-
-
-
+	
+	
+	
         if (m:/: && -f $_) {
-            push(@found,$_);
-            last arg unless wantarray;
-            next;
-        }
-
+	    push(@found,$_);
+	    last arg unless wantarray;
+	    next;
+	}
+	
 
         # Deal with directories first:
         #  Using a -L prefix is the preferred option (faster and more robust)
         if (m:^-L:) { s/^-L//; push(@dirs, $_); next; }
 
-
-
+	
+	
         #  Otherwise we try to try to spot directories by a heuristic
         #  (this is a more complicated issue than it first appears)
         if (m:/: && -d $_) {   push(@dirs, $_); next; }
 
-
+	
 
         #  Only files should get this far...
         my(@names, $name);    # what filenames to look for
@@ -287,17 +287,17 @@ sub dl_findfile {
             push(@names,"$_.a")          if !m/\.a$/ and $dlsrc eq "dl_dld.xs";
             push(@names, $_);
         }
-        my $dirsep = '/';
-
+	my $dirsep = '/';
+	
         foreach $dir (@dirs, @dl_library_path) {
             next unless -d $dir;
-
+	    
             foreach $name (@names) {
-                my($file) = "$dir$dirsep$name";
+		my($file) = "$dir$dirsep$name";
                 print STDERR " checking in $dir for $name\n" if $dl_debug;
-                $file = ($do_expand) ? dl_expandspec($file) : (-f $file && $file);
-                #$file = _check_file($file);
-                if ($file) {
+		$file = ($do_expand) ? dl_expandspec($file) : (-f $file && $file);
+		#$file = _check_file($file);
+		if ($file) {
                     push(@found, $file);
                     next arg; # no need to look any further
                 }
@@ -331,9 +331,9 @@ sub dl_expandspec {
 
     my $file = $spec; # default output to input
 
-
-        return undef unless -f $file;
-
+    
+	return undef unless -f $file;
+    
     print STDERR "dl_expandspec($spec) => $file\n" if $dl_debug;
     $file;
 }
@@ -343,8 +343,8 @@ sub dl_find_symbol_anywhere
     my $sym = shift;
     my $libref;
     foreach $libref (@dl_librefs) {
-        my $symref = dl_find_symbol($libref,$sym);
-        return $symref if $symref;
+	my $symref = dl_find_symbol($libref,$sym);
+	return $symref if $symref;
     }
     return undef;
 }
@@ -361,7 +361,7 @@ DynaLoader - Dynamically load C libraries into Perl code
     bootstrap YourPackage;
 
     # optional method for 'global' loading
-    sub dl_load_flags { 0x01 }
+    sub dl_load_flags { 0x01 }     
 
 
 =head1 DESCRIPTION
@@ -534,7 +534,7 @@ names are treated as filenames to be searched for.
 
 Using arguments of the form C<-Ldir> and C<-lname> is recommended.
 
-Example:
+Example: 
 
     @dl_resolve_using = dl_findfile(qw(-L/usr/5lib -lposix));
 
@@ -563,7 +563,7 @@ Dynamically load $filename, which must be the path to a shared object
 or library.  An opaque 'library reference' is returned as a handle for
 the loaded object.  Returns undef on error.
 
-The $flags argument to alters dl_load_file behaviour.
+The $flags argument to alters dl_load_file behaviour.  
 Assigned bits:
 
  0x01  make symbols available for linking later dl_load_file's.

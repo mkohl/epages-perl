@@ -132,7 +132,7 @@ You have to ask for them.  C<use My::Module qw($Foo bar)>.
 =head1 Methods
 
 Export::Lite has one public method, import(), which is called
-automaticly when your modules is use()'d.
+automaticly when your modules is use()'d.  
 
 In normal usage you don't have to worry about this at all.
 

@@ -55,7 +55,7 @@ Crypt::OpenSSL::DSA - Digital Signature Algorithm using OpenSSL
 Crypt::OpenSSL::DSA implements the DSA
 (Digital Signature Algorithm) signature verification system.
 
-It is a thin XS wrapper to the DSA functions contained in the
+It is a thin XS wrapper to the DSA functions contained in the 
 OpenSSL crypto library, located at http://www.openssl.org
 
 =head1 CLASS METHODS
@@ -180,7 +180,7 @@ T.J. Mather, E<lt>tjmather@maxmind.comE<gt>
 =head1 COPYRIGHT
 
 Copyright (c) 2002 T.J. Mather.  Crypt::OpenSSL::DSA is free software;
-you may redistribute it and/or modify it under the same terms as Perl itself.
+you may redistribute it and/or modify it under the same terms as Perl itself. 
 
 Paid support is available from directly from the author of this package.
 Please see L<http://www.maxmind.com/app/opensourceservices> for more details.

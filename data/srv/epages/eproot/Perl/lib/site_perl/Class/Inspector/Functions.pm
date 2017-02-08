@@ -8,38 +8,38 @@ use Class::Inspector ();
 
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 BEGIN {
-        $VERSION = '1.25';
-        @ISA     = 'Exporter';
+	$VERSION = '1.25';
+	@ISA     = 'Exporter';
 
 
-        @EXPORT = qw(
-                installed
-                loaded
+	@EXPORT = qw(
+		installed
+		loaded
 
-                filename
-                functions
-                methods
+		filename
+		functions
+		methods
 
-                subclasses
-        );
+		subclasses
+	);
 
-        @EXPORT_OK = qw(
-                resolved_filename
-                loaded_filename
+	@EXPORT_OK = qw(
+		resolved_filename
+		loaded_filename
 
-                function_refs
-                function_exists
-        );
-                #children
-                #recursive_children
+		function_refs
+		function_exists
+	);
+		#children
+		#recursive_children
 
-        %EXPORT_TAGS = ( ALL => [ @EXPORT_OK, @EXPORT ] );
+	%EXPORT_TAGS = ( ALL => [ @EXPORT_OK, @EXPORT ] );
 
-        foreach my $meth (@EXPORT, @EXPORT_OK) {
-            my $sub = Class::Inspector->can($meth);
-            no strict 'refs';
-            *{$meth} = sub {&$sub('Class::Inspector', @_)};
-        }
+	foreach my $meth (@EXPORT, @EXPORT_OK) {
+	    my $sub = Class::Inspector->can($meth);
+	    no strict 'refs';
+	    *{$meth} = sub {&$sub('Class::Inspector', @_)};
+	}
 
 }
 
@@ -58,21 +58,21 @@ Class::Inspector::Functions - Get information about a class and its structure
   use Class::Inspector::Functions;
   # Class::Inspector provides a non-polluting,
   # method based interface!
-
+  
   # Is a class installed and/or loaded
   installed( 'Foo::Class' );
   loaded( 'Foo::Class' );
-
+  
   # Filename related information
   filename( 'Foo::Class' );
   resolved_filename( 'Foo::Class' );
-
+  
   # Get subroutine related information
   functions( 'Foo::Class' );
   function_refs( 'Foo::Class' );
   function_exists( 'Foo::Class', 'bar' );
   methods( 'Foo::Class', 'full', 'public' );
-
+  
   # Find all loaded subclasses or something
   subclasses( 'Foo::Class' );
 

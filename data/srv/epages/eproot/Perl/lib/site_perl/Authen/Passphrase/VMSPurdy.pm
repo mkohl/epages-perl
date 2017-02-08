@@ -5,32 +5,32 @@ system
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::VMSPurdy;
+	use Authen::Passphrase::VMSPurdy;
 
-        $ppr = Authen::Passphrase::VMSPurdy->new(
-                        username => "jrandom", salt => 25362,
-                        hash_hex => "832a0c270179584a");
+	$ppr = Authen::Passphrase::VMSPurdy->new(
+			username => "jrandom", salt => 25362,
+			hash_hex => "832a0c270179584a");
 
-        $ppr = Authen::Passphrase::VMSPurdy->new(
-                        username => "jrandom", salt_random => 1,
-                        passphrase => "passphrase");
+	$ppr = Authen::Passphrase::VMSPurdy->new(
+			username => "jrandom", salt_random => 1,
+			passphrase => "passphrase");
 
-        $ppr = Authen::Passphrase::VMSPurdy->from_crypt(
-                '$VMS3$1263832A0C270179584AJRANDOM');
+	$ppr = Authen::Passphrase::VMSPurdy->from_crypt(
+		'$VMS3$1263832A0C270179584AJRANDOM');
 
-        $ppr = Authen::Passphrase::VMSPurdy->from_rfc2307(
-                '{CRYPT}$VMS3$1263832A0C270179584AJRANDOM');
+	$ppr = Authen::Passphrase::VMSPurdy->from_rfc2307(
+		'{CRYPT}$VMS3$1263832A0C270179584AJRANDOM');
 
-        $algorithm = $ppr->algorithm;
-        $username = $ppr->username;
-        $salt = $ppr->salt;
-        $hash = $ppr->hash;
-        $hash_hex = $ppr->hash_hex;
+	$algorithm = $ppr->algorithm;
+	$username = $ppr->username;
+	$salt = $ppr->salt;
+	$hash = $ppr->hash;
+	$hash_hex = $ppr->hash_hex;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $passwd = $ppr->as_crypt;
-        $userPassword = $ppr->as_rfc2307;
+	$passwd = $ppr->as_crypt;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -148,72 +148,72 @@ passphrase.
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "algorithm") {
-                        croak "algorithm specified redundantly"
-                                if exists $self->{algorithm};
-                        $value =~ m#\APURDY(?:|_V|_S)\z#
-                                or croak "not a valid algorithm";
-                        $self->{algorithm} = "$value";
-                } elsif($attr eq "username") {
-                        croak "username specified redundantly"
-                                if exists $self->{username};
-                        $value =~ m#\A[_\$0-9A-Za-z]{1,31}\z#
-                                or croak "not a valid VMS username";
-                        $self->{username} = uc("$value");
-                } elsif($attr eq "salt") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $value == int($value) && $value >= 0 && $value < 65536
-                                or croak "not a valid salt";
-                        $self->{salt} = 0+$value;
-                } elsif($attr eq "salt_hex") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $value =~ /\A([0-9a-fA-F]{2})([0-9a-fA-F]{2})\z/
-                                or croak "not a valid salt";
-                        $self->{salt} = hex($2.$1);
-                } elsif($attr eq "salt_random") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $self->{salt} = rand_int(65536);
-                } elsif($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[\x00-\xff]{8}\z#
-                                or croak "not a valid raw hash";
-                        $self->{hash} = "$value";
-                } elsif($attr eq "hash_hex") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[0-9A-Fa-f]{16}\z#
-                                or croak "not a valid hexadecimal hash";
-                        $self->{hash} = pack("H*", $value);
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $self->_passphrase_acceptable($value)
-                                or croak "can't accept that passphrase";
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        $self->{algorithm} = "PURDY_S" unless exists $self->{algorithm};
-        croak "username not specified" unless exists $self->{username};
-        croak "salt not specified" unless exists $self->{salt};
-        $self->{hash} = $self->_hash_of($passphrase)
-                if defined $passphrase;
-        croak "hash not specified" unless exists $self->{hash};
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "algorithm") {
+			croak "algorithm specified redundantly"
+				if exists $self->{algorithm};
+			$value =~ m#\APURDY(?:|_V|_S)\z#
+				or croak "not a valid algorithm";
+			$self->{algorithm} = "$value";
+		} elsif($attr eq "username") {
+			croak "username specified redundantly"
+				if exists $self->{username};
+			$value =~ m#\A[_\$0-9A-Za-z]{1,31}\z#
+				or croak "not a valid VMS username";
+			$self->{username} = uc("$value");
+		} elsif($attr eq "salt") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$value == int($value) && $value >= 0 && $value < 65536
+				or croak "not a valid salt";
+			$self->{salt} = 0+$value;
+		} elsif($attr eq "salt_hex") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$value =~ /\A([0-9a-fA-F]{2})([0-9a-fA-F]{2})\z/
+				or croak "not a valid salt";
+			$self->{salt} = hex($2.$1);
+		} elsif($attr eq "salt_random") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$self->{salt} = rand_int(65536);
+		} elsif($attr eq "hash") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[\x00-\xff]{8}\z#
+				or croak "not a valid raw hash";
+			$self->{hash} = "$value";
+		} elsif($attr eq "hash_hex") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[0-9A-Fa-f]{16}\z#
+				or croak "not a valid hexadecimal hash";
+			$self->{hash} = pack("H*", $value);
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$self->_passphrase_acceptable($value)
+				or croak "can't accept that passphrase";
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	$self->{algorithm} = "PURDY_S" unless exists $self->{algorithm};
+	croak "username not specified" unless exists $self->{username};
+	croak "salt not specified" unless exists $self->{salt};
+	$self->{hash} = $self->_hash_of($passphrase)
+		if defined $passphrase;
+	croak "hash not specified" unless exists $self->{hash};
+	return $self;
 }
 
 =item Authen::Passphrase::VMSPurdy->from_crypt(PASSWD)
@@ -231,23 +231,23 @@ for "B<PURDY_S>".  The whole crypt string must be uppercase.
 =cut
 
 my %decode_crypt_alg_num = (
-        "1" => "PURDY",
-        "2" => "PURDY_V",
-        "3" => "PURDY_S",
+	"1" => "PURDY",
+	"2" => "PURDY_V",
+	"3" => "PURDY_S",
 );
 
 sub from_crypt {
-        my($class, $passwd) = @_;
-        if($passwd =~ /\A\$VMS([123])\$/) {
-                my $alg = $1;
-                $passwd =~ /\A\$VMS[123]\$([0-9A-F]{4})
-                            ([0-9A-F]{16})([_\$0-9A-Z]{1,31})\z/x
-                        or croak "malformed \$VMS${alg}\$ data";
-                my($salt, $hash, $un) = ($1, $2, $3);
-                return $class->new(algorithm => $decode_crypt_alg_num{$alg},
-                        username => $un, salt_hex => $salt, hash_hex => $hash);
-        }
-        return $class->SUPER::from_crypt($passwd);
+	my($class, $passwd) = @_;
+	if($passwd =~ /\A\$VMS([123])\$/) {
+		my $alg = $1;
+		$passwd =~ /\A\$VMS[123]\$([0-9A-F]{4})
+			    ([0-9A-F]{16})([_\$0-9A-Z]{1,31})\z/x
+			or croak "malformed \$VMS${alg}\$ data";
+		my($salt, $hash, $un) = ($1, $2, $3);
+		return $class->new(algorithm => $decode_crypt_alg_num{$alg},
+			username => $un, salt_hex => $salt, hash_hex => $hash);
+	}
+	return $class->SUPER::from_crypt($passwd);
 }
 
 =item Authen::Passphrase::VMSPurdy->from_rfc2307(USERPASSWORD)
@@ -273,8 +273,8 @@ processing long strings).
 =cut
 
 sub algorithm {
-        my($self) = @_;
-        return $self->{algorithm};
+	my($self) = @_;
+	return $self->{algorithm};
 }
 
 =item $ppr->username
@@ -285,8 +285,8 @@ uppercase, which is the canonical form.
 =cut
 
 sub username {
-        my($self) = @_;
-        return $self->{username};
+	my($self) = @_;
+	return $self->{username};
 }
 
 =item $ppr->salt
@@ -296,8 +296,8 @@ Returns the salt, as an integer.
 =cut
 
 sub salt {
-        my($self) = @_;
-        return $self->{salt};
+	my($self) = @_;
+	return $self->{salt};
 }
 
 =item $ppr->salt_hex
@@ -310,8 +310,8 @@ byte.
 =cut
 
 sub salt_hex {
-        my($self) = @_;
-        return sprintf("%02X%02X", $self->{salt} & 0xff, $self->{salt} >> 8);
+	my($self) = @_;
+	return sprintf("%02X%02X", $self->{salt} & 0xff, $self->{salt} >> 8);
 }
 
 =item $ppr->hash
@@ -321,8 +321,8 @@ Returns the hash value, as a string of eight bytes.
 =cut
 
 sub hash {
-        my($self) = @_;
-        return $self->{hash};
+	my($self) = @_;
+	return $self->{hash};
 }
 
 =item $ppr->hash_hex
@@ -332,8 +332,8 @@ Returns the hash value, as a string of 16 uppercase hexadecimal digits.
 =cut
 
 sub hash_hex {
-        my($self) = @_;
-        return uc(unpack("H*", $self->{hash}));
+	my($self) = @_;
+	return uc(unpack("H*", $self->{hash}));
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -347,38 +347,38 @@ These methods are part of the standard L<Authen::Passphrase> interface.
 =cut
 
 sub _passphrase_acceptable {
-        my($self, $passphrase) = @_;
-        return $passphrase =~ /\A[_\$0-9A-Za-z]{1,32}\z/;
+	my($self, $passphrase) = @_;
+	return $passphrase =~ /\A[_\$0-9A-Za-z]{1,32}\z/;
 }
 
 my %hpwd_alg_num = (
-        PURDY => UAI_C_PURDY,
-        PURDY_V => UAI_C_PURDY_V,
-        PURDY_S => UAI_C_PURDY_S,
+	PURDY => UAI_C_PURDY,
+	PURDY_V => UAI_C_PURDY_V,
+	PURDY_S => UAI_C_PURDY_S,
 );
 
 sub _hash_of {
-        my($self, $passphrase) = @_;
-        return lgi_hpwd($self->{username}, uc($passphrase),
-                        $hpwd_alg_num{$self->{algorithm}}, $self->{salt});
+	my($self, $passphrase) = @_;
+	return lgi_hpwd($self->{username}, uc($passphrase),
+			$hpwd_alg_num{$self->{algorithm}}, $self->{salt});
 }
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $self->_passphrase_acceptable($passphrase) &&
-                $self->_hash_of($passphrase) eq $self->{hash};
+	my($self, $passphrase) = @_;
+	return $self->_passphrase_acceptable($passphrase) &&
+		$self->_hash_of($passphrase) eq $self->{hash};
 }
 
 my %crypt_alg_num = (
-        PURDY => "1",
-        PURDY_V => "2",
-        PURDY_S => "3",
+	PURDY => "1",
+	PURDY_V => "2",
+	PURDY_S => "3",
 );
 
 sub as_crypt {
-        my($self) = @_;
-        return "\$VMS".$crypt_alg_num{$self->{algorithm}}."\$".
-                $self->salt_hex.$self->hash_hex.$self->{username};
+	my($self) = @_;
+	return "\$VMS".$crypt_alg_num{$self->{algorithm}}."\$".
+		$self->salt_hex.$self->hash_hex.$self->{username};
 }
 
 =back

@@ -175,7 +175,7 @@ sub _encode_q {
     my $chunk = shift;
     $chunk = encode_utf8($chunk);
     $chunk =~ s{
-           ([^0-9A-Za-z])
+	   ([^0-9A-Za-z])
        }{
             join("" => map {sprintf "=%02X", $_} unpack("C*", $1))
        }egox;

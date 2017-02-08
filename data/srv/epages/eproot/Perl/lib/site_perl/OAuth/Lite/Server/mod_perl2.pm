@@ -133,8 +133,8 @@ See it.
             consumer_key => $consumer_key,
             -nest => [
                 nonce     => $nonce,
-                timestamp => { '>' => $timestamp },
-            ],
+                timestamp => { '>' => $timestamp }, 
+            ], 
         });
         if ($count > 0) {
             return $self->error(q{Invalid timestamp or consumer});
@@ -313,7 +313,7 @@ Returns l<OAuth::Lite::ServerUtil> object.
 =head2 support_signature_methods
 
 These methods are just only delegate methods.
-For example,
+For example, 
 
     $self->allow_extra_param('foo');
 
@@ -414,52 +414,52 @@ See http://oauth.googlecode.com/svn/spec/ext/consumer_request/1.0/drafts/1/spec.
 
 To adopt this spec, you have to set var 'AcceptConsumerRequest' on httpd.conf
 
-        <Location /resource>
-        PerlSetVar Mode PROTECTED_RESOURCE
-        PerlSetVar AcceptConsumerRequest 1
-        PerlResponseHandler MyServiceWithOAuth
-        </Location>
+	<Location /resource>
+	PerlSetVar Mode PROTECTED_RESOURCE
+	PerlSetVar AcceptConsumerRequest 1
+	PerlResponseHandler MyServiceWithOAuth
+	</Location>
 
 Then override service method for protected resource.
 
-        sub service {
-                my $self = shift;
+	sub service {
+		my $self = shift;
         my $params = $self->{params};
 
-                my $resource_owner_id;
+		my $resource_owner_id;
 
-                if (exists $params->{oauth_token}) {
+		if (exists $params->{oauth_token}) {
 
-                        my $access_token_value = $params->{oauth_token};
-                        $resource_owner_id = $self->get_user_id_of_access_token($access_token_value);
+			my $access_token_value = $params->{oauth_token};
+			$resource_owner_id = $self->get_user_id_of_access_token($access_token_value);
 
-                } else {
+		} else {
 
-                        my $consumer_key = $params->{oauth_consumer_key};
-                        $resource_owner_id = $self->get_user_id_of_consumer_developer($consumer_key);
+			my $consumer_key = $params->{oauth_consumer_key};
+			$resource_owner_id = $self->get_user_id_of_consumer_developer($consumer_key);
 
-                }
+		}
 
-                my @resources = MyDB::Scheme->resultset('SomeResource')->search({
-                                user_id => $resource_owner_id,
-                });
+		my @resources = MyDB::Scheme->resultset('SomeResource')->search({
+				user_id => $resource_owner_id,	
+		});
 
-                # output resource data in the manner your api defines.
-                ...
+		# output resource data in the manner your api defines.
+		...
 
-                return Apache2::Const::OK;
+		return Apache2::Const::OK;
 
-        }
+	}
 
 =head2 accepts_reverse_phone_home
 
 You can adopt OpenSocial Reverse Phone Home.
 
-        <Location /resource>
-        PerlSetVar Mode PROTECTED_RESOURCE
-        PerlSetVar AcceptReversePhoneHome 1
-        PerlResponseHandler MyServiceWithOAuth
-        </Location>
+	<Location /resource>
+	PerlSetVar Mode PROTECTED_RESOURCE
+	PerlSetVar AcceptReversePhoneHome 1
+	PerlResponseHandler MyServiceWithOAuth
+	</Location>
 
 =head2 error
 
@@ -535,8 +535,8 @@ sub new {
         realm => undef,
         secure => 0,
         mode => PROTECTED_RESOURCE,
-                accepts_consumer_request => 0,
-                accepts_reverse_phone_home => 0,
+		accepts_consumer_request => 0,
+		accepts_reverse_phone_home => 0,
         params => {},
         completed_validation => 0,
     }, $class;
@@ -553,7 +553,7 @@ sub new {
     my @valid_modes = (PROTECTED_RESOURCE, REQUEST_TOKEN, ACCESS_TOKEN);
     if ($mode) {
         if (none { $mode eq $_ } @valid_modes) {
-            die "Invalid mode.";
+            die "Invalid mode."; 
         } else {
             $self->{mode} = $mode;
         }
@@ -732,7 +732,7 @@ sub __build_request_uri {
 
     PROXY_CHECK: {
         last PROXY_CHECK unless $self->request->headers_in->{'X-Forwarded-Host'};
-
+        
         $host = $self->request->headers_in->{'X-Forwarded-Host'};
 
         if ( $host =~ /^(.+):(\d+)$/ ) {
@@ -749,7 +749,7 @@ sub __build_request_uri {
     if ( $location && $location ne '/' ) {
         $base_path = $location;
     }
-
+   
     if ($host !~ /:/ ) {
         $host .= ":$port";
     }
@@ -893,14 +893,14 @@ sub errout {
     my ($self, $code, $message, $description) = @_;
 
     if ( ( $self->request_method() eq 'GET'
-        || $self->request_method() eq 'HEAD') &&
+        || $self->request_method() eq 'HEAD') && 
         $self->is_required_protected_resource &&
         $self->_check_if_request_accepts_xrds ) {
         if ($self->xrds_locaton) {
             $self->request->status(200);
             $self->request->err_headers_out->add('X-XRDS-Location' => $self->xrds_location);
             return Apache2::Const::OK;
-        } elsif ($self->request_method() eq 'GET' &&
+        } elsif ($self->request_method() eq 'GET' && 
             (my $xrds = $self->build_xrds())) {
             return $self->output(
                 code    => 200,
@@ -911,13 +911,13 @@ sub errout {
     }
     my $problem;
     if (OAuth::Lite::Problems->match($message)) {
-       $problem = $message;
+       $problem = $message; 
        $message = sprintf(q{oauth_problem=%s}, $message);
     }
 
     $self->set_authenticate_header($problem);
     return $self->output(
-        code    => $code,
+        code    => $code, 
         type    => q{text/plain; charset=utf-8},
         content => $message,
     );

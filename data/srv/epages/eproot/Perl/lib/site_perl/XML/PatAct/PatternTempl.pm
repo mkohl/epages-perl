@@ -48,7 +48,7 @@ __END__
 
 =head1 NAME
 
-XML::PatAct::PATTERN - A pattern module for
+XML::PatAct::PATTERN - A pattern module for 
 
 =head1 SYNOPSIS
 

@@ -14,18 +14,18 @@ use Locale::Constants;
 
 
 #-----------------------------------------------------------------------
-#       Public Global Variables
+#	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 $VERSION   = sprintf("%d.%02d", q$Revision: 2.7 $ =~ /(\d+)\.(\d+)/);
 @ISA       = qw(Exporter);
 @EXPORT    = qw(code2country country2code
                 all_country_codes all_country_names
-                country_code2code
-                LOCALE_CODE_ALPHA_2 LOCALE_CODE_ALPHA_3 LOCALE_CODE_NUMERIC);
+		country_code2code
+		LOCALE_CODE_ALPHA_2 LOCALE_CODE_ALPHA_3 LOCALE_CODE_NUMERIC);
 
 #-----------------------------------------------------------------------
-#       Private Global Variables
+#	Private Global Variables
 #-----------------------------------------------------------------------
 my $CODES     = [];
 my $COUNTRIES = [];
@@ -52,12 +52,12 @@ sub code2country
     #-------------------------------------------------------------------
     if ($codeset == LOCALE_CODE_NUMERIC)
     {
-        return undef if ($code =~ /\D/);
-        $code = sprintf("%.3d", $code);
+	return undef if ($code =~ /\D/);
+	$code = sprintf("%.3d", $code);
     }
     else
     {
-        $code = lc($code);
+	$code = lc($code);
     }
 
     if (exists $CODES->[$codeset]->{$code})
@@ -191,7 +191,7 @@ sub alias_code
 # rename_country
 #
 # change the official name for a country, eg:
-#       gb => 'Great Britain'
+#	gb => 'Great Britain'
 # rather than the standard 'United Kingdom'. The original is retained
 # as an alias, but the new name will be returned if you lookup the
 # name from code.
@@ -215,20 +215,20 @@ sub rename_country
     $country = $CODES->[$codeset]->{$code};
 
     foreach my $cset (LOCALE_CODE_ALPHA_2,
-                        LOCALE_CODE_ALPHA_3,
-                        LOCALE_CODE_NUMERIC)
+			LOCALE_CODE_ALPHA_3,
+			LOCALE_CODE_NUMERIC)
     {
-        if ($cset == $codeset)
-        {
-            $c = $code;
-        }
-        else
-        {
-            $c = country_code2code($code, $codeset, $cset);
-        }
+	if ($cset == $codeset)
+	{
+	    $c = $code;
+	}
+	else
+	{
+	    $c = country_code2code($code, $codeset, $cset);
+	}
 
-        $CODES->[$cset]->{$c} = $new_name;
-        $COUNTRIES->[$cset]->{"\L$new_name"} = $c;
+	$CODES->[$cset]->{$c} = $new_name;
+	$COUNTRIES->[$cset]->{"\L$new_name"} = $c;
     }
 
     return 1;
@@ -249,9 +249,9 @@ sub _code2codeset
 
 
     foreach my $codeset (LOCALE_CODE_ALPHA_2, LOCALE_CODE_ALPHA_3,
-                        LOCALE_CODE_NUMERIC)
+			LOCALE_CODE_NUMERIC)
     {
-        return $codeset if (exists $CODES->[$codeset]->{$code})
+	return $codeset if (exists $CODES->[$codeset]->{$code})
     }
 
     return undef;
@@ -276,28 +276,28 @@ sub _code2codeset
         ($alpha2, $alpha3, $numeric, @countries) = split(/:/, $_);
 
         $CODES->[LOCALE_CODE_ALPHA_2]->{$alpha2} = $countries[0];
-        foreach $country (@countries)
-        {
-            $COUNTRIES->[LOCALE_CODE_ALPHA_2]->{"\L$country"} = $alpha2;
-        }
+	foreach $country (@countries)
+	{
+	    $COUNTRIES->[LOCALE_CODE_ALPHA_2]->{"\L$country"} = $alpha2;
+	}
 
-        if ($alpha3)
-        {
+	if ($alpha3)
+	{
             $CODES->[LOCALE_CODE_ALPHA_3]->{$alpha3} = $countries[0];
-            foreach $country (@countries)
-            {
-                $COUNTRIES->[LOCALE_CODE_ALPHA_3]->{"\L$country"} = $alpha3;
-            }
-        }
+	    foreach $country (@countries)
+	    {
+		$COUNTRIES->[LOCALE_CODE_ALPHA_3]->{"\L$country"} = $alpha3;
+	    }
+	}
 
-        if ($numeric)
-        {
+	if ($numeric)
+	{
             $CODES->[LOCALE_CODE_NUMERIC]->{$numeric} = $countries[0];
-            foreach $country (@countries)
-            {
-                $COUNTRIES->[LOCALE_CODE_NUMERIC]->{"\L$country"} = $numeric;
-            }
-        }
+	    foreach $country (@countries)
+	    {
+		$COUNTRIES->[LOCALE_CODE_NUMERIC]->{"\L$country"} = $numeric;
+	    }
+	}
 
     }
 

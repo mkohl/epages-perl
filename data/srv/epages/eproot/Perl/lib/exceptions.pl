@@ -16,24 +16,24 @@
 # (catch takes a list of regexps to catch), and if so, it returns the one it
 # caught.  If it *can't* catch it, then it will reraise the exception
 # for someone else to possibly see, or to die otherwise.
-#
-# I use oddly named variables in order to make darn sure I don't conflict
+# 
+# I use oddly named variables in order to make darn sure I don't conflict 
 # with my caller.  I also hide in my own package, and eval the code in his.
-#
+# 
 # The EXCEPTION: prefix is so you can tell whether it's a user-raised
 # exception or a perl-raised one (eval error).
-#
+# 
 # --tom
 #
 # examples:
-#       if (&catch('/$user_input/', 'regexp', 'syntax error') {
-#               warn "oops try again";
-#               redo;
-#       }
+#	if (&catch('/$user_input/', 'regexp', 'syntax error') {
+#		warn "oops try again";
+#		redo;
+#	}
 #
-#       if ($error = &catch('&subroutine()')) { # catches anything
+#	if ($error = &catch('&subroutine()')) { # catches anything
 #
-#       &throw('bad input') if /^$/;
+#	&throw('bad input') if /^$/;
 
 sub catch {
     package exception;
@@ -43,20 +43,20 @@ sub catch {
 
     eval "package $__package__; $__code__";
     if ($__exception__ = &'thrown) {
-        for (@__exceptions__) {
-            return $__exception__ if /$__exception__/;
-        }
-        &'throw($__exception__);
-    }
-}
+	for (@__exceptions__) {
+	    return $__exception__ if /$__exception__/;
+	} 
+	&'throw($__exception__);
+    } 
+} 
 
 sub throw {
     local($exception) = @_;
     die "EXCEPTION: $exception\n";
-}
+} 
 
 sub thrown {
     $@ =~ /^(EXCEPTION: )+(.+)/ && $2;
-}
+} 
 
 1;

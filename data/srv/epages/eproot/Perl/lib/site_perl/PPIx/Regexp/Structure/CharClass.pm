@@ -45,8 +45,8 @@ sub _new {
     $brkt{finish} = pop @args;
     $brkt{start} = shift @args;
     __instance( $args[0], 'PPIx::Regexp::Token::Operator' )
-        and $args[0]->content() eq '^'
-        and $brkt{type} = shift @args;
+	and $args[0]->content() eq '^'
+	and $brkt{type} = shift @args;
     return $class->SUPER::_new( \%brkt, @args );
 }
 

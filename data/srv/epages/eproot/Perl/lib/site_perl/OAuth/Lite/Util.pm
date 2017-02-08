@@ -60,9 +60,9 @@ Utilty functions for OAuth are implemented here.
 If you use OAuth 1.31 or older version, its has invalid way to normalize params.
 (when there are two or more same key and they contain ASCII and non ASCII value)
 
-But the many services have already supported deprecated version,
+But the many services have already supported deprecated version, 
 and the correct way breaks backward compatibility.
-So, from 1.32, supported both correct and deprecated method.
+So, from 1.32, supported both correct and deprecated method. 
 
 use $OAuth::Lite::USE_DEPRECATED_NORMALIZER to switch behaviour.
 Currently 1 is set by default to keep backward compatibility.
@@ -180,7 +180,7 @@ according to the way OAuth Core spec defines.
 =cut
 
 sub normalize_params {
-    $OAuth::Lite::USE_DEPRECATED_NORMALIZER
+    $OAuth::Lite::USE_DEPRECATED_NORMALIZER 
         ? _normalize_params_deprecated(@_)
         : _normalize_params(@_);
 }
@@ -214,12 +214,12 @@ sub _normalize_params_deprecated {
     my @pairs = ();
     for my $k (sort keys %$params) {
         if (!ref $params->{$k}) {
-            push @pairs,
+            push @pairs, 
                 sprintf(q{%s=%s}, encode_param($k), encode_param($params->{$k}));
         }
         elsif (ref $params->{$k} eq 'ARRAY') {
             for my $v (sort @{ $params->{$k} }) {
-                push @pairs,
+                push @pairs, 
                     sprintf(q{%s=%s}, encode_param($k), encode_param($v));
             }
         }
@@ -263,7 +263,7 @@ sub parse_auth_header {
 =head2 build_auth_header(%params)
 
     my $header = build_auth_header($realm, {
-        oauth_consumer_key     => '...',
+        oauth_consumer_key     => '...', 
         oauth_signature_method => '...',
         ... and other oauth params
     });

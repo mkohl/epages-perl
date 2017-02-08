@@ -102,7 +102,7 @@ sub handle_request {
 
         my $client_secret = ($header_credentials->{client_secret}) ? $header_credentials->{client_secret} : $request->param("client_secret");
 
-        # The grant type which are defined in spec require client authentication,
+        # The grant type which are defined in spec require client authentication, 
         # but additional grant type may not.
         if ( $handler->is_required_client_authentication ) {
             OAuth::Lite2::Server::Error::InvalidRequest->throw(

@@ -317,8 +317,8 @@ sub allow_any_unambiguous_abbrev { return 0 }
 
 
 sub global_options {
-        my $self = shift;
-        return $self->{global_options} ||= {} if ref $self;
+	my $self = shift;
+	return $self->{global_options} ||= {} if ref $self;
   return {};
 }
 

@@ -3,13 +3,13 @@ package Data::Dump::FilterContext;
 sub new {
     my($class, $obj, $oclass, $type, $ref, $pclass, $pidx, $idx) = @_;
     return bless {
-        object => $obj,
-        class => $ref && $oclass,
-        reftype => $type,
-        is_ref => $ref,
-        pclass => $pclass,
-        pidx => $pidx,
-        idx => $idx,
+	object => $obj,
+	class => $ref && $oclass,
+	reftype => $type,
+	is_ref => $ref,
+	pclass => $pclass,
+	pidx => $pidx,
+	idx => $idx,
     }, $class;
 }
 

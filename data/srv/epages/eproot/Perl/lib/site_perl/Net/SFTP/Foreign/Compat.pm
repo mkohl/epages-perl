@@ -16,24 +16,24 @@ my $supplant;
 
 sub import {
     for my $arg (@_[1..$#_]) {
-        if ($arg eq ':supplant') {
+	if ($arg eq ':supplant') {
             # print STDERR "suplanting Net::SFTP...\n";
-            if (!$supplant) {
-                $supplant = 1;
+	    if (!$supplant) {
+		$supplant = 1;
 
-                @Net::SFTP::ISA = qw(Net::SFTP::Foreign::Compat);
-                @Net::SFTP::Attributes::ISA = qw(Net::SFTP::Foreign::Attributes::Compat);
-                @Net::SFTP::Constant::ISA = qw(Net::SFTP::Foreign::Constants);
+		@Net::SFTP::ISA = qw(Net::SFTP::Foreign::Compat);
+		@Net::SFTP::Attributes::ISA = qw(Net::SFTP::Foreign::Attributes::Compat);
+		@Net::SFTP::Constant::ISA = qw(Net::SFTP::Foreign::Constants);
 
-                $INC{q(Net/SFTP.pm)} = $INC{q(Net/SFTP/Foreign/Compat.pm)};
-                $INC{q(Net/SFTP/Attributes.pm)} = $INC{q(Net/SFTP/Foreign/Compat.pm)};
-                $INC{q(Net/SFTP/Constants.pm)} = $INC{q(Net/SFTP/Foreign/Compat.pm)};
+		$INC{q(Net/SFTP.pm)} = $INC{q(Net/SFTP/Foreign/Compat.pm)};
+		$INC{q(Net/SFTP/Attributes.pm)} = $INC{q(Net/SFTP/Foreign/Compat.pm)};
+		$INC{q(Net/SFTP/Constants.pm)} = $INC{q(Net/SFTP/Foreign/Compat.pm)};
 
-            }
-        }
-        else {
-            croak "invalid import tag '$arg'"
-        }
+	    }
+	}
+	else {
+	    croak "invalid import tag '$arg'"
+	}
     }
 }
 
@@ -68,10 +68,10 @@ sub new {
 
     my $warn;
     if (exists $opts{warn}) {
-        $warn = delete($opts{warn}) || sub {};
+	$warn = delete($opts{warn}) || sub {};
     }
     else {
-        $warn = sub { warn(CORE::join '', @_, "\n") };
+	$warn = sub { warn(CORE::join '', @_, "\n") };
     }
 
     my $sftp = $class->SUPER::new($host, @{$DEFAULTS{new}}, %opts);
@@ -85,14 +85,14 @@ sub new {
 sub _warn {
     my $sftp = shift;
     if (my $w = $sftp->{_compat_warn}) {
-        $w->(@_);
+	$w->(@_);
     }
 }
 
 sub _warn_error {
     my $sftp = shift;
     if (my $e = $sftp->SUPER::error) {
-        $sftp->_warn($e);
+	$sftp->_warn($e);
     }
 }
 
@@ -123,7 +123,7 @@ sub get {
         or return undef;
 
     if ($save) {
-        return CORE::join('', @content);
+	return CORE::join('', @content);
     }
 }
 
@@ -133,7 +133,7 @@ sub put {
 
     $sftp->SUPER::put($local, $remote,
                       @{$DEFAULTS{put}},
-                      callback => $cb);
+		      callback => $cb);
     $sftp->_warn_error;
     !$sftp->SUPER::error;
 }
@@ -142,19 +142,19 @@ sub ls {
     croak '$Usage: $sftp->ls($path, $cb)' if @_ < 2 or @_ > 3;
     my ($sftp, $path, $cb) = @_;
     if ($cb) {
-        $sftp->SUPER::ls($path,
+	$sftp->SUPER::ls($path,
                          @{$DEFAULTS{ls}},
-                         wanted => sub { _rebless_attrs($_[1]->{a});
-                                         $cb->($_[1]);
-                                         0 } );
-        return ();
+			 wanted => sub { _rebless_attrs($_[1]->{a});
+					 $cb->($_[1]);
+					 0 } );
+	return ();
     }
     else {
-        if (my $ls = $sftp->SUPER::ls($path, @{$DEFAULTS{ls}})) {
-            _rebless_attrs($_->{a}) for @$ls;
-            return @$ls;
-        }
-        return ()
+	if (my $ls = $sftp->SUPER::ls($path, @{$DEFAULTS{ls}})) {
+	    _rebless_attrs($_->{a}) for @$ls;
+	    return @$ls;
+	}
+	return ()
     }
 }
 
@@ -169,20 +169,20 @@ sub do_read {
     my $read = $sftp->SUPER::sftpread(@_);
     $sftp->_warn_error;
     if (wantarray) {
-        return ($read, $sftp->status);
+	return ($read, $sftp->status);
     }
     else {
-        return $read
+	return $read
     }
 }
 
 sub _gen_do_and_status {
     my $method = "SUPER::" . shift;
     return sub {
-        my $sftp = shift;
-        $sftp->$method(@_);
-        $sftp->_warn_error;
-        $sftp->status;
+	my $sftp = shift;
+	$sftp->$method(@_);
+	$sftp->_warn_error;
+	$sftp->status;
     }
 }
 
@@ -198,9 +198,9 @@ sub _gen_do_and_status {
 sub _rebless_attrs {
     my $a = shift;
     if ($a) {
-        bless $a,  ( $supplant
-                     ? "Net::SFTP::Attributes"
-                     : "Net::SFTP::Foreign::Attributes::Compat" );
+	bless $a,  ( $supplant
+		     ? "Net::SFTP::Attributes"
+		     : "Net::SFTP::Foreign::Attributes::Compat" );
     }
     $a;
 }
@@ -210,14 +210,14 @@ sub _gen_do_stat {
     my $method = "SUPER::$name";
     return sub {
         croak '$Usage: $sftp->'.$name.'($local, $remote, $cb)' if @_ != 2;
-        my $sftp = shift;
-        if (my $a = $sftp->$method(@_)) {
-            return _rebless_attrs($a);
-        }
-        else {
-            $sftp->_warn_error;
-            return undef;
-        }
+	my $sftp = shift;
+	if (my $a = $sftp->$method(@_)) {
+	    return _rebless_attrs($a);
+	}
+	else {
+	    $sftp->_warn_error;
+	    return undef;
+	}
     }
 }
 

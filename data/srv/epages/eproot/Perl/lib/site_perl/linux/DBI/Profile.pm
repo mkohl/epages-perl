@@ -223,7 +223,7 @@ value to use at the corresponding level of the profile Data tree.
 If the value of Path is anything other than an array reference,
 it is treated as if it was:
 
-        [ '!Statement' ]
+	[ '!Statement' ]
 
 The elements of Path array can be one of the following types:
 
@@ -547,7 +547,7 @@ For example:
       my $totals=[],
       [ 10, 0.51, 0.11, 0.01, 0.22, 1023110000, 1023110010 ],
       [ 15, 0.42, 0.12, 0.02, 0.23, 1023110005, 1023110009 ],
-  );
+  );        
 
 $totals will then contain
 
@@ -695,9 +695,9 @@ $VERSION = sprintf("2.%06d", q$Revision: 14123 $ =~ /(\d+)/o);
     format_profile_thingy
 );
 
-use constant DBIprofile_Statement       => '!Statement';
-use constant DBIprofile_MethodName      => '!MethodName';
-use constant DBIprofile_MethodClass     => '!MethodClass';
+use constant DBIprofile_Statement	=> '!Statement';
+use constant DBIprofile_MethodName	=> '!MethodName';
+use constant DBIprofile_MethodClass	=> '!MethodClass';
 
 our $ON_DESTROY_DUMP = sub { DBI->trace_msg(shift, 0) };
 our $ON_FLUSH_DUMP   = sub { DBI->trace_msg(shift, 0) };
@@ -715,9 +715,9 @@ sub _auto_new {
 
     # This sub is called by DBI internals when a non-hash-ref is
     # assigned to the Profile attribute. For example
-    #   dbi:mysql(RaiseError=>1,Profile=>!Statement:!MethodName/DBIx::MyProfile/arg1:arg2):dbname
+    #	dbi:mysql(RaiseError=>1,Profile=>!Statement:!MethodName/DBIx::MyProfile/arg1:arg2):dbname
     # This sub works out what to do and returns a suitable hash ref.
-
+    
     $arg =~ s/^DBI::/2\/DBI::/
         and carp "Automatically changed old-style DBI::Profile specification to $arg";
 
@@ -731,11 +731,11 @@ sub _auto_new {
             my $reverse = ($element < 0) ? ($element=-$element, 1) : 0;
             my @p;
             # a single "DBI" is special-cased in format()
-            push @p, "DBI"                      if $element & 0x01;
-            push @p, DBIprofile_Statement       if $element & 0x02;
-            push @p, DBIprofile_MethodName      if $element & 0x04;
-            push @p, DBIprofile_MethodClass     if $element & 0x08;
-            push @p, '!Caller2'                 if $element & 0x10;
+            push @p, "DBI"			if $element & 0x01;
+            push @p, DBIprofile_Statement	if $element & 0x02;
+            push @p, DBIprofile_MethodName	if $element & 0x04;
+            push @p, DBIprofile_MethodClass	if $element & 0x08;
+            push @p, '!Caller2'            	if $element & 0x10;
             push @Path, ($reverse ? reverse @p : @p);
         }
         elsif ($element =~ m/^&(\w.*)/) {
@@ -766,7 +766,7 @@ sub empty {             # empty out profile data
     my $self = shift;
     DBI->trace_msg("profile data discarded\n",0) if $self->{Trace};
     $self->{Data} = undef;
-}
+}   
 
 sub filename {          # baseclass method, see DBI::ProfileDumper
     return undef;
@@ -784,7 +784,7 @@ sub flush_to_disk {     # baseclass method, see DBI::ProfileDumper & DashProfile
 sub as_node_path_list {
     my ($self, $node, $path) = @_;
     # convert the tree into an array of arrays
-    # from
+    # from 
     #   {key1a}{key2a}[node1]
     #   {key1a}{key2b}[node2]
     #   {key1b}{key2a}{key3a}[node3]
@@ -813,7 +813,7 @@ sub as_text {
         || "%s"; # or e.g., " key%2$d='%s'"
     my $format    = $args_ref->{format}
         || '%1$s: %11$fs / %10$d = %2$fs avg (first %12$fs, min %13$fs, max %14$fs)'."\n";
-
+    
     my @node_path_list = $self->as_node_path_list(undef, $args_ref->{path});
 
     $args_ref->{sortsub}->(\@node_path_list) if $args_ref->{sortsub};
@@ -836,39 +836,39 @@ sub as_text {
             ($node->[0] ? $node->[1]/$node->[0] : 0), # 2=avg
             @spare_slots,
             @$node; # 10=count, 11=dur, 12=first_dur, 13=min, 14=max, 15=first_called, 16=last_called
-    }
+    }       
     return @text if wantarray;
     return join "", @text;
-}
+}   
 
 
 sub format {
     my $self = shift;
     my $class = ref($self) || $self;
-
+    
     my $prologue = "$class: ";
     my $detail = $self->format_profile_thingy(
-        $self->{Data}, 0, "    ",
-        my $path = [],
-        my $leaves = [],
+	$self->{Data}, 0, "    ",
+	my $path = [],
+	my $leaves = [],
     )."\n";
 
     if (@$leaves) {
-        dbi_profile_merge_nodes(my $totals=[], @$leaves);
-        my ($count, $time_in_dbi, undef, undef, undef, $t1, $t2) = @$totals;
-        (my $progname = $0) =~ s:.*/::;
-        if ($count) {
-            $prologue .= sprintf "%fs ", $time_in_dbi;
-            my $perl_time = ($DBI::PERL_ENDING) ? time() - $^T : $t2-$t1;
-            $prologue .= sprintf "%.2f%% ", $time_in_dbi/$perl_time*100 if $perl_time;
-            my @lt = localtime(time);
-            my $ts = sprintf "%d-%02d-%02d %02d:%02d:%02d",
-                1900+$lt[5], $lt[4]+1, @lt[3,2,1,0];
-            $prologue .= sprintf "(%d calls) $progname \@ $ts\n", $count;
-        }
-        if (@$leaves == 1 && ref($self->{Data}) eq 'HASH' && $self->{Data}->{DBI}) {
-            $detail = "";       # hide the "DBI" from DBI_PROFILE=1
-        }
+	dbi_profile_merge_nodes(my $totals=[], @$leaves);
+	my ($count, $time_in_dbi, undef, undef, undef, $t1, $t2) = @$totals;
+	(my $progname = $0) =~ s:.*/::;
+	if ($count) {
+	    $prologue .= sprintf "%fs ", $time_in_dbi;
+	    my $perl_time = ($DBI::PERL_ENDING) ? time() - $^T : $t2-$t1;
+	    $prologue .= sprintf "%.2f%% ", $time_in_dbi/$perl_time*100 if $perl_time;
+	    my @lt = localtime(time);
+	    my $ts = sprintf "%d-%02d-%02d %02d:%02d:%02d",
+		1900+$lt[5], $lt[4]+1, @lt[3,2,1,0];
+	    $prologue .= sprintf "(%d calls) $progname \@ $ts\n", $count;
+	}
+	if (@$leaves == 1 && ref($self->{Data}) eq 'HASH' && $self->{Data}->{DBI}) {
+	    $detail = "";	# hide the "DBI" from DBI_PROFILE=1
+	}
     }
     return ($prologue, $detail) if wantarray;
     return $prologue.$detail;
@@ -878,32 +878,32 @@ sub format {
 sub format_profile_leaf {
     my ($self, $thingy, $depth, $pad, $path, $leaves) = @_;
     croak "format_profile_leaf called on non-leaf ($thingy)"
-        unless UNIVERSAL::isa($thingy,'ARRAY');
+	unless UNIVERSAL::isa($thingy,'ARRAY');
 
     push @$leaves, $thingy if $leaves;
     my ($count, $total_time, $first_time, $min, $max, $first_called, $last_called) = @$thingy;
     return sprintf "%s%fs\n", ($pad x $depth), $total_time
-        if $count <= 1;
+	if $count <= 1;
     return sprintf "%s%fs / %d = %fs avg (first %fs, min %fs, max %fs)\n",
-        ($pad x $depth), $total_time, $count, $count ? $total_time/$count : 0,
-        $first_time, $min, $max;
+	($pad x $depth), $total_time, $count, $count ? $total_time/$count : 0,
+	$first_time, $min, $max;
 }
 
 
 sub format_profile_branch {
     my ($self, $thingy, $depth, $pad, $path, $leaves) = @_;
     croak "format_profile_branch called on non-branch ($thingy)"
-        unless UNIVERSAL::isa($thingy,'HASH');
+	unless UNIVERSAL::isa($thingy,'HASH');
     my @chunk;
     my @keys = sort keys %$thingy;
     while ( @keys ) {
-        my $k = shift @keys;
-        my $v = $thingy->{$k};
-        push @$path, $k;
-        push @chunk, sprintf "%s'%s' =>\n%s",
-            ($pad x $depth), $k,
-            $self->format_profile_thingy($v, $depth+1, $pad, $path, $leaves);
-        pop @$path;
+	my $k = shift @keys;
+	my $v = $thingy->{$k};
+	push @$path, $k;
+	push @chunk, sprintf "%s'%s' =>\n%s",
+	    ($pad x $depth), $k,
+	    $self->format_profile_thingy($v, $depth+1, $pad, $path, $leaves);
+	pop @$path;
     }
     return join "", @chunk;
 }
@@ -913,9 +913,9 @@ sub format_profile_thingy {
     my ($self, $thingy, $depth, $pad, $path, $leaves) = @_;
     return "undef" if not defined $thingy;
     return $self->format_profile_leaf(  $thingy, $depth, $pad, $path, $leaves)
-        if UNIVERSAL::isa($thingy,'ARRAY');
+	if UNIVERSAL::isa($thingy,'ARRAY');
     return $self->format_profile_branch($thingy, $depth, $pad, $path, $leaves)
-        if UNIVERSAL::isa($thingy,'HASH');
+	if UNIVERSAL::isa($thingy,'HASH');
     return "$thingy\n";
 }
 

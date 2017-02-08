@@ -128,7 +128,7 @@ much like a wrapper around C<< $req->cb () >>).
 =item $retval = aio_readahead $fh,$offset,$length
 
 =item $status = aio_stat $fh_or_path
-
+      
 =item $status = aio_lstat $fh
 
 =item $status = aio_unlink $pathname

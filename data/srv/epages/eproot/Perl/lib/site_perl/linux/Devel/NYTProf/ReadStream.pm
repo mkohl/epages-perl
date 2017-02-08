@@ -16,7 +16,7 @@ sub for_chunks (&%) {
     my($cb, %opts) = @_;
     Devel::NYTProf::Data->new( {
         %opts,
-        callback => $cb,
+	callback => $cb,
     });
 }
 

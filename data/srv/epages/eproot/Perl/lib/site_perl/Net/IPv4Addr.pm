@@ -22,12 +22,12 @@ BEGIN {
     @EXPORT = qw();
 
     %EXPORT_TAGS = (
-                    all => [qw{ ipv4_parse      ipv4_chkip
-                                ipv4_network    ipv4_broadcast
-                                ipv4_cidr2msk   ipv4_msk2cidr
-                                ipv4_in_network ipv4_dflt_netmask
-                                } ],
-                   );
+		    all => [qw{ ipv4_parse	ipv4_chkip
+				ipv4_network    ipv4_broadcast
+				ipv4_cidr2msk   ipv4_msk2cidr
+				ipv4_in_network ipv4_dflt_netmask
+				} ],
+		   );
 
     @EXPORT_OK = qw();
 
@@ -65,7 +65,7 @@ sub ipv4_parse($;$) {
     if ($msk =~ /^\d{1,2}$/) {
       # Check cidr
       croak __PACKAGE__, ": invalid cidr: ", $msk, "\n"
-        if $msk < 0 or $msk > 32;
+	if $msk < 0 or $msk > 32;
     } elsif ($msk =~ /^$ip_rgx$/o ) {
       $msk = ipv4_msk2cidr($msk);
     } else {
@@ -83,8 +83,8 @@ sub ipv4_dflt_netmask($) {
 
   my ($b1) = split /\./, $ip;
 
-  return "255.0.0.0"    if $b1 <= 127;
-  return "255.255.0.0"  if $b1 <= 191;
+  return "255.0.0.0"	if $b1 <= 127;
+  return "255.255.0.0"	if $b1 <= 191;
   return "255.255.255.0";
 }
 
@@ -226,7 +226,7 @@ Net::IPv4Addr - Perl extension for manipulating IPv4 addresses.
 
 Net::IPv4Addr provides functions for parsing IPv4 addresses both
 in traditional address/netmask format and in the new CIDR format.
-There are also methods for calculating the network and broadcast
+There are also methods for calculating the network and broadcast 
 address and also to see check if a given address is in a specific
 network.
 
@@ -257,7 +257,7 @@ same scalar value or as separate values. That is either
 
 =head1 USING
 
-No functions are exported by default. Either use the C<:all> tag
+No functions are exported by default. Either use the C<:all> tag 
 to import them all or explicitly import those you need.
 
 =head1 FUNCTIONS
@@ -273,8 +273,8 @@ to import them all or explicitly import those you need.
 Parse an IPv4 address and in scalar context the address in CIDR
 format and in an array context the address and the mask length.
 
-If the parameters doesn't contains a netmask or a mask length,
-in scalar context only the IPv4 address is returned and in an
+If the parameters doesn't contains a netmask or a mask length, 
+in scalar context only the IPv4 address is returned and in an 
 array context the mask length is undefined.
 
 If the function cannot parse its input, it croaks. Trap it using
@@ -342,17 +342,17 @@ Trap bad input with C<eval> or else.
 =item ipv4_checkip
 
     if ($ip = ipv4_checkip($str) ) {
-        # Do something
+	# Do something
     }
 
-Return the IPv4 address in the string or undef if the input
+Return the IPv4 address in the string or undef if the input 
 doesn't contains a valid IPv4 address.
 
 =item ipv4_cidr2msk
 
     my $netmask = ipv4_cidr2msk( $cidr );
 
-Returns the netmask corresponding to the mask length given in input.
+Returns the netmask corresponding to the mask length given in input. 
 As usual, croaks if it doesn't like your input (in this case a number
 between 0 and 32).
 

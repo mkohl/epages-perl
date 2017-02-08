@@ -73,7 +73,7 @@ defaults to L<Font::TTF::Table>. The current tables which are supported are:
 
 Links are:
 
-L<Font::TTF::Table>
+L<Font::TTF::Table> 
 L<Font::TTF::EBDT> L<Font::TTF::EBLC> L<Font::TTF::GrFeat>
 L<Font::TTF::GDEF> L<Font::TTF::GPOS> L<Font::TTF::GSUB> L<Font::TTF::LTSH>
 L<Font::TTF::OS_2> L<Font::TTF::PCLT> L<Font::TTF::Sill> L<Font::TTF::Bsln> L<Font::TTF::Cmap> L<Font::TTF::Cvt_>
@@ -136,7 +136,7 @@ $VERSION = 0.38;    # MJPH       2-FEB-2008     Add Sill table
 # $VERSION = 0.33;    # MJPH       9-OCT-2002     Support CFF OpenType (just by version=='OTTO'?!)
 # $VERSION = 0.32;    # MJPH       2-OCT-2002     Bug fixes to TTFBuilder, new methods and some
 #                                                 extension table support in Ttopen and Coverage
-# $VERSION = 0.31;    # MJPH       1-JUL-2002     fix read format 12 cmap (bart@cs.pdx.edu)
+# $VERSION = 0.31;    # MJPH       1-JUL-2002     fix read format 12 cmap (bart@cs.pdx.edu) 
 #                                                 improve surrogate support in ttfremap
 #                                                 fix return warn to return warn,undef
 #                                                 ensure correct indexToLocFormat
@@ -210,7 +210,7 @@ $VERSION = 0.38;    # MJPH       2-FEB-2008     Add Sill table
 # This is special code because I am fed up of every time I x a table in the debugger
 # I get the whole font printed. Thus substitutes my 3 line change to dumpvar into
 # the debugger. Clunky, but nice. You are welcome to a copy if you want one.
-
+          
 BEGIN {
     my ($p);
 
@@ -227,7 +227,7 @@ BEGIN {
 
 sub main::dumpValue
 { do $dumper; &main::dumpValue; }
-
+    
 
 =head2 Font::TTF::Font->AddTable($tablename, $class)
 
@@ -300,7 +300,7 @@ sub open
     my ($class, $fname) = @_;
     my ($fh);
     my ($self) = {};
-
+    
     unless (ref($fname))
     {
         $fh = IO::File->new($fname) or return undef;
@@ -312,7 +312,7 @@ sub open
     $self->{' fname'} = $fname;
     $self->{' OFFSET'} = 0;
     bless $self, $class;
-
+    
     $self->read;
 }
 
@@ -334,7 +334,7 @@ sub read
     $fh->read($dat, 12);
     ($ver, $dir_num) = unpack("Nn", $dat);
     $ver == 1 << 16 || $ver == unpack('N', 'OTTO') || $ver == 0x74727565 or return undef;  # support Mac sfnts
-
+    
     for ($i = 0; $i < $dir_num; $i++)
     {
         $fh->read($dat, 16) || die "Reading table entry";
@@ -355,7 +355,7 @@ sub read
                                     LENGTH  => $len,
                                     CSUM    => $check);
     }
-
+    
     foreach $t ('head', 'maxp')
     { $self->{$t}->read if defined $self->{$t}; }
 
@@ -393,7 +393,7 @@ sub out
         binmode $fh;
     } else
     { $fh = $fname; }
-
+    
     $self->{' oname'} = $fname;
     $self->{' outfile'} = $fh;
 
@@ -409,11 +409,11 @@ sub out
     }
     elsif ($#tlist < 0)
     { @tlist = sort keys %$self; }
-
+    
     @tlist = grep(length($_) == 4 && defined $self->{$_}, @tlist);
     $numTables = $#tlist + 1;
     $numTables++ if ($self->{' wantsig'});
-
+    
     ($numTables, $sRange, $eSel, $shift) = Font::TTF::Utils::TTF_bininfo($numTables, 16);
     $dat = pack("Nnnnn", 1 << 16, $numTables, $sRange, $eSel, $shift);
     $fh->print($dat);
@@ -541,7 +541,7 @@ sub out_xml
     $context->{'fh'} = $fh;
     $fh->print("<?xml version='1.0' encoding='UTF-8'?>\n");
     $fh->print("<font tables='$numTables'>\n\n");
-
+    
     foreach $k (@tlist)
     {
         $fh->print("<table name='$k'>\n");
@@ -615,7 +615,7 @@ flags on each table. The data structure in now consistent as a font (we hope).
 sub update
 {
     my ($self) = @_;
-
+    
     $self->tables_do(sub { $_[0]->update; });
 
     $self;
@@ -671,7 +671,7 @@ will throw a warning message whenever unexpected key values are found within
 the C<Font::TTF::Font> object.  This is done to help ensure that any unexpected
 and unfreed values are brought to your attention so that you can bug us to keep
 the module updated properly; otherwise the potential for memory leaks due to
-dangling circular references will exist.
+dangling circular references will exist.  
 
 =cut
 

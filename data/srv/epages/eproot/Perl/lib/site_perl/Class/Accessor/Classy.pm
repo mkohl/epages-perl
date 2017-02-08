@@ -393,7 +393,7 @@ sub exports {
       foreach my $item (@list) {
         $package->make_array_method(
           class => $class,
-          item  => $item,
+          item  => $item, 
           functions => [qw(get)],
         );
       }
@@ -404,7 +404,7 @@ sub exports {
       #@f and croak("not yet");
       $package->make_array_method(
         class => $CP->(caller),
-        item  => $item,
+        item  => $item, 
         functions => [qw(get set add), @f],
       );
     },
@@ -424,7 +424,7 @@ sub exports {
       }
       my @ans = $package->make_array_method(
         class => $CP->(caller),
-        item  => $item,
+        item  => $item, 
         functions => [qw(get set), @f],
         secret => 1,
       );
@@ -942,7 +942,7 @@ sub make_class_data {
 } # end subroutine make_class_data definition
 ########################################################################
 
-# TODO
+# TODO 
 # opt '+aliases';
 # opts prefix => '_';
 # $package->options

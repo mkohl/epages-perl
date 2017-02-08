@@ -50,183 +50,183 @@ sub _decode {
 
       if (length $op->[cTAG]) {
 
-        TAGLOOP: {
-          my($tag,$len,$npos,$indef) = _decode_tl($buf,$pos,$end,$larr)
-            or do {
-              next OP if $pos==$end and ($seqof || defined $op->[cOPT]);
-              die "decode error";
-            };
+	TAGLOOP: {
+	  my($tag,$len,$npos,$indef) = _decode_tl($buf,$pos,$end,$larr)
+	    or do {
+	      next OP if $pos==$end and ($seqof || defined $op->[cOPT]);
+	      die "decode error";
+	    };
 
-          if ($tag eq $op->[cTAG]) {
+	  if ($tag eq $op->[cTAG]) {
 
-            &{$decode[$op->[cTYPE]]}(
-              $optn,
-              $op,
-              $stash,
-              # We send 1 if there is not var as if there is the decode
-              # should be getting undef. So if it does not get undef
-              # it knows it has no variable
-              ($seqof ? $seqof->[$idx++] : defined($var) ? $stash->{$var} : ref($stash) eq 'SCALAR' ? $$stash : 1),
-              $buf,$npos,$len, $larr
-            );
+	    &{$decode[$op->[cTYPE]]}(
+	      $optn,
+	      $op,
+	      $stash,
+	      # We send 1 if there is not var as if there is the decode
+	      # should be getting undef. So if it does not get undef
+	      # it knows it has no variable
+	      ($seqof ? $seqof->[$idx++] : defined($var) ? $stash->{$var} : ref($stash) eq 'SCALAR' ? $$stash : 1),
+	      $buf,$npos,$len, $larr
+	    );
 
-            $pos = $npos+$len+$indef;
+	    $pos = $npos+$len+$indef;
 
-            redo TAGLOOP if $seqof && $pos < $end;
-            next OP;
-          }
+	    redo TAGLOOP if $seqof && $pos < $end;
+	    next OP;
+	  }
 
-          if ($tag eq ($op->[cTAG] | chr(ASN_CONSTRUCTOR))
-              and my $ctr = $ctr[$op->[cTYPE]])
-          {
-            _decode(
-              $optn,
-              [$op],
-              undef,
-              $npos,
-              $npos+$len,
-              (\my @ctrlist),
-              $larr,
-              $buf,
-            );
+	  if ($tag eq ($op->[cTAG] | chr(ASN_CONSTRUCTOR))
+	      and my $ctr = $ctr[$op->[cTYPE]]) 
+	  {
+	    _decode(
+	      $optn,
+	      [$op],
+	      undef,
+	      $npos,
+	      $npos+$len,
+	      (\my @ctrlist),
+	      $larr,
+	      $buf,
+	    );
 
-            ($seqof ? $seqof->[$idx++] : defined($var) ? $stash->{$var} : ref($stash) eq 'SCALAR' ? $$stash : undef)
-                = &{$ctr}(@ctrlist);
-            $pos = $npos+$len+$indef;
+	    ($seqof ? $seqof->[$idx++] : defined($var) ? $stash->{$var} : ref($stash) eq 'SCALAR' ? $$stash : undef)
+		= &{$ctr}(@ctrlist);
+	    $pos = $npos+$len+$indef;
 
-            redo TAGLOOP if $seqof && $pos < $end;
-            next OP;
+	    redo TAGLOOP if $seqof && $pos < $end;
+	    next OP;
 
-          }
+	  }
 
-          if ($seqof || defined $op->[cOPT]) {
-            next OP;
-          }
+	  if ($seqof || defined $op->[cOPT]) {
+	    next OP;
+	  }
 
-          die "decode error " . unpack("H*",$tag) ."<=>" . unpack("H*",$op->[cTAG]), " ",$pos," ",$op->[cTYPE]," ",$op->[cVAR]||'';
+	  die "decode error " . unpack("H*",$tag) ."<=>" . unpack("H*",$op->[cTAG]), " ",$pos," ",$op->[cTYPE]," ",$op->[cVAR]||'';
         }
       }
       else { # opTag length is zero, so it must be an ANY or CHOICE
+	
+	if ($op->[cTYPE] == opANY) {
 
-        if ($op->[cTYPE] == opANY) {
+	  ANYLOOP: {
 
-          ANYLOOP: {
+	    my($tag,$len,$npos,$indef) = _decode_tl($buf,$pos,$end,$larr)
+	      or do {
+		next OP if $pos==$end and ($seqof || defined $op->[cOPT]);
+		die "decode error";
+	      };
 
-            my($tag,$len,$npos,$indef) = _decode_tl($buf,$pos,$end,$larr)
-              or do {
-                next OP if $pos==$end and ($seqof || defined $op->[cOPT]);
-                die "decode error";
-              };
-
-            $len += $npos-$pos;
+	    $len += $npos-$pos;
 
              if ($op->[cDEFINE]) {
                 $handler = $optn->{oidtable} && $optn->{oidtable}{$stash->{$op->[cDEFINE]}};
                 $handler ||= $optn->{handlers}{$op->[cVAR]}{$stash->{$op->[cDEFINE]}};
              }
 
-            ($seqof ? $seqof->[$idx++] : ref($stash) eq 'SCALAR' ? $$stash : $stash->{$var})
-              = $handler ? $handler->decode(substr($buf,$pos,$len)) : substr($buf,$pos,$len);
+	    ($seqof ? $seqof->[$idx++] : ref($stash) eq 'SCALAR' ? $$stash : $stash->{$var})
+	      = $handler ? $handler->decode(substr($buf,$pos,$len)) : substr($buf,$pos,$len);
 
-            $pos += $len + $indef;
+	    $pos += $len + $indef;
 
-            redo ANYLOOP if $seqof && $pos < $end;
-          }
-        }
-        else {
+	    redo ANYLOOP if $seqof && $pos < $end;
+	  }
+	}
+	else {
 
-          CHOICELOOP: {
-            my($tag,$len,$npos,$indef) = _decode_tl($buf,$pos,$end,$larr)
-              or do {
-                next OP if $pos==$end and ($seqof || defined $op->[cOPT]);
-                die "decode error";
-              };
-            foreach my $cop (@{$op->[cCHILD]}) {
+	  CHOICELOOP: {
+	    my($tag,$len,$npos,$indef) = _decode_tl($buf,$pos,$end,$larr)
+	      or do {
+		next OP if $pos==$end and ($seqof || defined $op->[cOPT]);
+		die "decode error";
+	      };
+	    foreach my $cop (@{$op->[cCHILD]}) {
 
-              if ($tag eq $cop->[cTAG]) {
+	      if ($tag eq $cop->[cTAG]) {
 
-                my $nstash = $seqof
-                        ? ($seqof->[$idx++]={})
-                        : defined($var)
-                                ? ($stash->{$var}={})
-                                : ref($stash) eq 'SCALAR'
-                                        ? ($$stash={}) : $stash;
+		my $nstash = $seqof
+			? ($seqof->[$idx++]={})
+			: defined($var)
+				? ($stash->{$var}={})
+				: ref($stash) eq 'SCALAR'
+					? ($$stash={}) : $stash;
 
-                &{$decode[$cop->[cTYPE]]}(
-                  $optn,
-                  $cop,
-                  $nstash,
-                  ($cop->[cVAR] ? $nstash->{$cop->[cVAR]} : undef),
-                  $buf,$npos,$len,$larr,
-                );
+		&{$decode[$cop->[cTYPE]]}(
+		  $optn,
+		  $cop,
+		  $nstash,
+		  ($cop->[cVAR] ? $nstash->{$cop->[cVAR]} : undef),
+		  $buf,$npos,$len,$larr,
+		);
 
-                $pos = $npos+$len+$indef;
+		$pos = $npos+$len+$indef;
 
-                redo CHOICELOOP if $seqof && $pos < $end;
-                next OP;
-              }
+		redo CHOICELOOP if $seqof && $pos < $end;
+		next OP;
+	      }
 
-              unless (length $cop->[cTAG]) {
-                eval {
-                  _decode(
-                    $optn,
-                    [$cop],
-                    (\my %tmp_stash),
-                    $pos,
-                    $npos+$len+$indef,
-                    undef,
-                    $larr,
-                    $buf,
-                  );
+	      unless (length $cop->[cTAG]) {
+		eval {
+		  _decode(
+		    $optn,
+		    [$cop],
+		    (\my %tmp_stash),
+		    $pos,
+		    $npos+$len+$indef,
+		    undef,
+		    $larr,
+		    $buf,
+		  );
 
-                  my $nstash = $seqof
-                          ? ($seqof->[$idx++]={})
-                          : defined($var)
-                                  ? ($stash->{$var}={})
-                                  : ref($stash) eq 'SCALAR'
-                                          ? ($$stash={}) : $stash;
+		  my $nstash = $seqof
+			  ? ($seqof->[$idx++]={})
+			  : defined($var)
+				  ? ($stash->{$var}={})
+				  : ref($stash) eq 'SCALAR'
+					  ? ($$stash={}) : $stash;
 
-                  @{$nstash}{keys %tmp_stash} = values %tmp_stash;
+		  @{$nstash}{keys %tmp_stash} = values %tmp_stash;
 
-                } or next;
+		} or next;
 
-                $pos = $npos+$len+$indef;
+		$pos = $npos+$len+$indef;
 
-                redo CHOICELOOP if $seqof && $pos < $end;
-                next OP;
-              }
+		redo CHOICELOOP if $seqof && $pos < $end;
+		next OP;
+	      }
 
-              if ($tag eq ($cop->[cTAG] | chr(ASN_CONSTRUCTOR))
-                  and my $ctr = $ctr[$cop->[cTYPE]])
-              {
-                my $nstash = $seqof
-                        ? ($seqof->[$idx++]={})
-                        : defined($var)
-                                ? ($stash->{$var}={})
-                                : ref($stash) eq 'SCALAR'
-                                        ? ($$stash={}) : $stash;
+	      if ($tag eq ($cop->[cTAG] | chr(ASN_CONSTRUCTOR))
+		  and my $ctr = $ctr[$cop->[cTYPE]]) 
+	      {
+		my $nstash = $seqof
+			? ($seqof->[$idx++]={})
+			: defined($var)
+				? ($stash->{$var}={})
+				: ref($stash) eq 'SCALAR'
+					? ($$stash={}) : $stash;
 
-                _decode(
-                  $optn,
-                  [$cop],
-                  undef,
-                  $npos,
-                  $npos+$len,
-                  (\my @ctrlist),
-                  $larr,
-                  $buf,
-                );
+		_decode(
+		  $optn,
+		  [$cop],
+		  undef,
+		  $npos,
+		  $npos+$len,
+		  (\my @ctrlist),
+		  $larr,
+		  $buf,
+		);
 
-                $nstash->{$cop->[cVAR]} = &{$ctr}(@ctrlist);
-                $pos = $npos+$len+$indef;
+		$nstash->{$cop->[cVAR]} = &{$ctr}(@ctrlist);
+		$pos = $npos+$len+$indef;
 
-                redo CHOICELOOP if $seqof && $pos < $end;
-                next OP;
-              }
-            }
-          }
-          die "decode error" unless $op->[cOPT];
-        }
+		redo CHOICELOOP if $seqof && $pos < $end;
+		next OP;
+	      }
+	    }
+	  }
+	  die "decode error" unless $op->[cOPT];
+	}
       }
     }
   }
@@ -404,84 +404,84 @@ SET_OP:
     foreach my $op (@$ch) {
       $idx++;
       if (length($op->[cTAG])) {
-        if ($tag eq $op->[cTAG]) {
-          my $var = $op->[cVAR];
-          &{$decode[$op->[cTYPE]]}(
-            $optn,
-            $op,
-            $stash,
-            # We send 1 if there is not var as if there is the decode
-            # should be getting undef. So if it does not get undef
-            # it knows it has no variable
-            (defined($var) ? $stash->{$var} : 1),
-            $_[4],$npos,$len,$larr,
-          );
-          $done = $idx;
-          last SET_OP;
-        }
-        if ($tag eq ($op->[cTAG] | chr(ASN_CONSTRUCTOR))
-            and my $ctr = $ctr[$op->[cTYPE]])
-        {
-          _decode(
-            $optn,
-            [$op],
-            undef,
-            $npos,
-            $npos+$len,
-            (\my @ctrlist),
-            $larr,
-            $_[4],
-          );
+	if ($tag eq $op->[cTAG]) {
+	  my $var = $op->[cVAR];
+	  &{$decode[$op->[cTYPE]]}(
+	    $optn,
+	    $op,
+	    $stash,
+	    # We send 1 if there is not var as if there is the decode
+	    # should be getting undef. So if it does not get undef
+	    # it knows it has no variable
+	    (defined($var) ? $stash->{$var} : 1),
+	    $_[4],$npos,$len,$larr,
+	  );
+	  $done = $idx;
+	  last SET_OP;
+	}
+	if ($tag eq ($op->[cTAG] | chr(ASN_CONSTRUCTOR))
+	    and my $ctr = $ctr[$op->[cTYPE]]) 
+	{
+	  _decode(
+	    $optn,
+	    [$op],
+	    undef,
+	    $npos,
+	    $npos+$len,
+	    (\my @ctrlist),
+	    $larr,
+	    $_[4],
+	  );
 
-          $stash->{$op->[cVAR]} = &{$ctr}(@ctrlist)
-            if defined $op->[cVAR];
-          $done = $idx;
-          last SET_OP;
-        }
-        next SET_OP;
+	  $stash->{$op->[cVAR]} = &{$ctr}(@ctrlist)
+	    if defined $op->[cVAR];
+	  $done = $idx;
+	  last SET_OP;
+	}
+	next SET_OP;
       }
       elsif ($op->[cTYPE] == opANY) {
-        $any = $idx;
+	$any = $idx;
       }
       elsif ($op->[cTYPE] == opCHOICE) {
-        foreach my $cop (@{$op->[cCHILD]}) {
-          if ($tag eq $cop->[cTAG]) {
-            my $nstash = defined($var) ? ($stash->{$var}={}) : $stash;
+	foreach my $cop (@{$op->[cCHILD]}) {
+	  if ($tag eq $cop->[cTAG]) {
+	    my $nstash = defined($var) ? ($stash->{$var}={}) : $stash;
 
-            &{$decode[$cop->[cTYPE]]}(
-              $optn,
-              $cop,
-              $nstash,
-              $nstash->{$cop->[cVAR]},
-              $_[4],$npos,$len,$larr,
-            );
-            $done = $idx;
-            last SET_OP;
-          }
-          if ($tag eq ($cop->[cTAG] | chr(ASN_CONSTRUCTOR))
-              and my $ctr = $ctr[$cop->[cTYPE]])
-          {
-            my $nstash = defined($var) ? ($stash->{$var}={}) : $stash;
+	    &{$decode[$cop->[cTYPE]]}(
+	      $optn,
+	      $cop,
+	      $nstash,
+	      $nstash->{$cop->[cVAR]},
+	      $_[4],$npos,$len,$larr,
+	    );
+	    $done = $idx;
+	    last SET_OP;
+	  }
+	  if ($tag eq ($cop->[cTAG] | chr(ASN_CONSTRUCTOR))
+	      and my $ctr = $ctr[$cop->[cTYPE]]) 
+	  {
+	    my $nstash = defined($var) ? ($stash->{$var}={}) : $stash;
 
-            _decode(
-              $optn,
-              [$cop],
-              undef,
-              $npos,
-              $npos+$len,
-              (\my @ctrlist),
-              $larr,
-              $_[4],
-            );
+	    _decode(
+	      $optn,
+	      [$cop],
+	      undef,
+	      $npos,
+	      $npos+$len,
+	      (\my @ctrlist),
+	      $larr,
+	      $_[4],
+	    );
 
-            $nstash->{$cop->[cVAR]} = &{$ctr}(@ctrlist);
-            $done = $idx;
-            last SET_OP;
-          }
-        }
+	    $nstash->{$cop->[cVAR]} = &{$ctr}(@ctrlist);
+	    $done = $idx;
+	    last SET_OP;
+	  }
+	}
       }
       else {
-        die "internal error";
+	die "internal error";
       }
     }
 
@@ -631,8 +631,8 @@ sub _scan_indef {
     if((ord($tag) & 0x1f) == 0x1f) {
       my $b;
       do {
-        $tag .= substr($_[0],$pos++,1);
-        $b = ord substr($tag,-1);
+	$tag .= substr($_[0],$pos++,1);
+	$b = ord substr($tag,-1);
       } while($b & 0x80);
     }
     return if $pos >= $end;
@@ -641,9 +641,9 @@ sub _scan_indef {
 
     if($len & 0x80) {
       if ($len &= 0x7f) {
-        return if $pos+$len > $end ;
+	return if $pos+$len > $end ;
 
-        $pos += $len + unpack("N", "\0" x (4 - $len) . substr($_[0],$pos,$len));
+	$pos += $len + unpack("N", "\0" x (4 - $len) . substr($_[0],$pos,$len));
       }
       else {
         # reserve another list element

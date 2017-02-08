@@ -37,7 +37,7 @@ sub is_valid {
 
         return $checkdigit eq _compute_checkdigit($number);
     }
-        return ''
+	return ''
 } # is_valid()
 
 sub complete {
@@ -48,7 +48,7 @@ sub complete {
 
         $incomplete =~ /^(..)..(.+)/;
 
-                return $1 . _compute_checkdigit($number) . $2;
+		return $1 . _compute_checkdigit($number) . $2;
     }
     return '';
 } # complete()
@@ -61,7 +61,7 @@ sub basenumber {
 
         $unchecked =~ /^(..)..(.+)/;
 
-                return $1.'00'.$2
+		return $1.'00'.$2
             if ($checkdigit eq _compute_checkdigit($number));
     }
     return '';
@@ -71,7 +71,7 @@ sub checkdigit {
     my $self = shift;
 
     if (my ($checkdigit,$number) = _prepare_number(shift)) {
-                return $checkdigit
+		return $checkdigit
             if ($checkdigit eq _compute_checkdigit($number));
     }
     return '';
@@ -131,7 +131,7 @@ Account Number (IBAN)
   $iban = CheckDigits('iban');
 
   if ($iban->is_valid('DE88 2008 0000 09703 7570 0')) {
-        # do something
+	# do something
   }
 
   $cn = $iban->complete('DE00 2008 0000 09703 7570 0');
@@ -142,7 +142,7 @@ Account Number (IBAN)
 
   $bn = $iban->basenumber('DE88 2008 0000 09703 7570 0');
   # $bn = 'DE00 2008 0000 09703 7570 0'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

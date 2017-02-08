@@ -456,7 +456,7 @@ sub all_target {
 
     return <<'MAKE_EXT';
 all :: pure_all
-        $(NOECHO) $(NOOP)
+	$(NOECHO) $(NOOP)
 MAKE_EXT
 
 }
@@ -487,11 +487,11 @@ sub blibdirs_target {
 
     my $make = sprintf <<'MAKE', join(' ', @exists);
 blibdirs : %s
-        $(NOECHO) $(NOOP)
+	$(NOECHO) $(NOOP)
 
 # Backwards compat with 6.18 through 6.25
 blibdirs.ts : blibdirs
-        $(NOECHO) $(NOOP)
+	$(NOECHO) $(NOOP)
 
 MAKE
 
@@ -578,8 +578,8 @@ clean :: clean_subdirs
 
     # Leave Makefile.old around for realclean
     push @m, <<'MAKE';
-          $(NOECHO) $(RM_F) $(MAKEFILE_OLD)
-        - $(MV) $(FIRST_MAKEFILE) $(MAKEFILE_OLD) $(DEV_NULL)
+	  $(NOECHO) $(RM_F) $(MAKEFILE_OLD)
+	- $(MV) $(FIRST_MAKEFILE) $(MAKEFILE_OLD) $(DEV_NULL)
 MAKE
 
     push(@m, "\t$attribs{POSTOP}\n")   if $attribs{POSTOP};
@@ -603,7 +603,7 @@ sub clean_subdirs_target {
     # No subdirectories, no cleaning.
     return <<'NOOP_FRAG' unless @{$self->{DIR}};
 clean_subdirs :
-        $(NOECHO) $(NOOP)
+	$(NOECHO) $(NOOP)
 NOOP_FRAG
 
 
@@ -645,9 +645,9 @@ sub dir_target {
     foreach my $dir (@dirs) {
         $make .= sprintf <<'MAKE', ($dir) x 7;
 %s$(DFSEP).exists :: Makefile.PL
-        $(NOECHO) $(MKPATH) %s
-        $(NOECHO) $(CHMOD) $(PERM_DIR) %s
-        $(NOECHO) $(TOUCH) %s$(DFSEP).exists
+	$(NOECHO) $(MKPATH) %s
+	$(NOECHO) $(CHMOD) $(PERM_DIR) %s
+	$(NOECHO) $(TOUCH) %s$(DFSEP).exists
 
 MAKE
 
@@ -675,12 +675,12 @@ sub distdir {
 
     return sprintf <<'MAKE_FRAG', $meta_target, $sign_target;
 create_distdir :
-        $(RM_RF) $(DISTVNAME)
-        $(PERLRUN) "-MExtUtils::Manifest=manicopy,maniread" \
-                -e "manicopy(maniread(),'$(DISTVNAME)', '$(DIST_CP)');"
+	$(RM_RF) $(DISTVNAME)
+	$(PERLRUN) "-MExtUtils::Manifest=manicopy,maniread" \
+		-e "manicopy(maniread(),'$(DISTVNAME)', '$(DIST_CP)');"
 
 distdir : create_distdir %s %s
-        $(NOECHO) $(NOOP)
+	$(NOECHO) $(NOOP)
 
 MAKE_FRAG
 
@@ -708,7 +708,7 @@ sub dist_test {
 
     return sprintf <<'MAKE_FRAG', $test;
 disttest : distdir
-        %s
+	%s
 
 MAKE_FRAG
 
@@ -728,7 +728,7 @@ sub dynamic {
     my($self) = shift;
     '
 dynamic :: $(FIRST_MAKEFILE) $(BOOTSTRAP) $(INST_DYNAMIC)
-        $(NOECHO) $(NOOP)
+	$(NOECHO) $(NOOP)
 ';
 }
 
@@ -747,7 +747,7 @@ confused or something gets snuck in before the real 'all' target.
 sub makemakerdflt_target {
     return <<'MAKE_FRAG';
 makemakerdflt : all
-        $(NOECHO) $(NOOP)
+	$(NOECHO) $(NOOP)
 MAKE_FRAG
 
 }
@@ -782,7 +782,7 @@ END
     foreach my $section (qw(1 3)) {
         my $pods = $self->{"MAN${section}PODS"};
         push @man_cmds, $self->split_command(<<CMD, map {($_,$pods->{$_})} sort keys %$pods);
-        \$(NOECHO) \$(POD2MAN) --section=$section --perm_rw=\$(PERM_RW)
+	\$(NOECHO) \$(POD2MAN) --section=$section --perm_rw=\$(PERM_RW)
 CMD
     }
 
@@ -816,7 +816,7 @@ sub metafile_target {
     my $self = shift;
     return <<'MAKE_FRAG' if $self->{NO_META} or ! _has_cpan_meta();
 metafile :
-        $(NOECHO) $(NOOP)
+	$(NOECHO) $(NOOP)
 MAKE_FRAG
 
     my %metadata   = $self->metafile_data(
@@ -853,12 +853,12 @@ MAKE_FRAG
     my $metajson = join("\n\t", @write_metajson);
     return sprintf <<'MAKE_FRAG', $metayml, $metajson;
 metafile : create_distdir
-        $(NOECHO) $(ECHO) Generating META.yml
-        %s
-        -$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
-        $(NOECHO) $(ECHO) Generating META.json
-        %s
-        -$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
+	$(NOECHO) $(ECHO) Generating META.yml
+	%s
+	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
+	$(NOECHO) $(ECHO) Generating META.json
+	%s
+	-$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
 MAKE_FRAG
 
 }
@@ -1295,8 +1295,8 @@ CODE
 
     return sprintf <<'MAKE', @add_meta_to_distdir;
 distmeta : create_distdir metafile
-        $(NOECHO) %s
-        $(NOECHO) %s
+	$(NOECHO) %s
+	$(NOECHO) %s
 
 MAKE
 
@@ -1443,8 +1443,8 @@ sub realclean {
     my $m = sprintf <<'MAKE', $rm_cmd, $rmf_cmd;
 # Delete temporary files (via clean) and also delete dist files
 realclean purge ::  clean realclean_subdirs
-        %s
-        %s
+	%s
+	%s
 MAKE
 
     $m .= "\t$attribs{POSTOP}\n" if $attribs{POSTOP};
@@ -1467,7 +1467,7 @@ sub realclean_subdirs_target {
 
     return <<'NOOP_FRAG' unless @{$self->{DIR}};
 realclean_subdirs :
-        $(NOECHO) $(NOOP)
+	$(NOECHO) $(NOOP)
 NOOP_FRAG
 
     my $rclean = "realclean_subdirs :\n";
@@ -1479,7 +1479,7 @@ chdir '%s';  system '$(MAKE) $(USEMAKEFILE) %s realclean' if -f '%s';
 CODE
 
             $rclean .= sprintf <<'RCLEAN', $subrclean;
-        - %s
+	- %s
 RCLEAN
 
         }
@@ -1504,7 +1504,7 @@ sub signature_target {
 
     return <<'MAKE_FRAG';
 signature :
-        cpansign -s
+	cpansign -s
 MAKE_FRAG
 
 }
@@ -1536,9 +1536,9 @@ CODE
 
     return sprintf <<'MAKE', $add_sign_to_dist, $touch_sig, $sign_dist
 distsignature : create_distdir
-        $(NOECHO) %s
-        $(NOECHO) %s
-        %s
+	$(NOECHO) %s
+	$(NOECHO) %s
+	%s
 
 MAKE
 

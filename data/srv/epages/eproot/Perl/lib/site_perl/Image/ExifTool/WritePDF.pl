@@ -394,7 +394,7 @@ sub WritePDF($$)
 
     # must encrypt all values in dictionary if they came from an encrypted stream
     CryptObject($infoDict) if $$infoDict{_needCrypt};
-
+    
     # must set line separator before calling WritePDFValue()
     local $/ = $capture{newline};
 

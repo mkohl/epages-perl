@@ -11,7 +11,7 @@
 ###
 ###   Graph::Element -- elements for a directed graph
 ###     Neil Bowers <neilb@cre.canon.co.uk> (NIELB)
-###
+### 
 
 package Data::Grove;
 
@@ -25,8 +25,8 @@ sub new {
     my $self = ($#_ == 0) ? { %{ (shift) } } : { @_ };
 
     if (defined $self->{Raw}) {
-        # clone the raw object
-        $self = { %{ $self->{Raw} } };
+	# clone the raw object
+	$self = { %{ $self->{Raw} } };
     }
 
     return bless $self, $type;
@@ -82,7 +82,7 @@ C<Data::Grove> objects do not contain parent references, Perl garbage
 collection will delete them when no longer referenced and
 sub-structures can be shared among several structures.
 C<Data::Grove::Parent> is used to create temporary objects with parent
-pointers.
+pointers.  
 
 Properties of data classes are accessed directly using Perl's hash
 functions (i.e. `C<$object-E<gt>{Property}>').  Extension modules may

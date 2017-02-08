@@ -50,8 +50,8 @@ sub C_stringify {
   # be utf8, which includes my 8 bit test cases.
   $_ = pack 'C*', unpack 'U*', $_ . pack 'U*' if is_perl56;
   s/\\/\\\\/g;
-  s/([\"\'])/\\$1/g;    # Grr. fix perl mode.
-  s/\n/\\n/g;           # Ensure newlines don't end up in octal
+  s/([\"\'])/\\$1/g;	# Grr. fix perl mode.
+  s/\n/\\n/g;		# Ensure newlines don't end up in octal
   s/\r/\\r/g;
   s/\t/\\t/g;
   s/\f/\\f/g;
@@ -87,8 +87,8 @@ sub perl_stringify {
   local $_ = shift;
   return unless defined $_;
   s/\\/\\\\/g;
-  s/([\"\'])/\\$1/g;    # Grr. fix perl mode.
-  s/\n/\\n/g;           # Ensure newlines don't end up in octal
+  s/([\"\'])/\\$1/g;	# Grr. fix perl mode.
+  s/\n/\\n/g;		# Ensure newlines don't end up in octal
   s/\r/\\r/g;
   s/\t/\\t/g;
   s/\f/\\f/g;
@@ -98,11 +98,11 @@ sub perl_stringify {
     # I cheat
     my $cheat = '([[:^print:]])';
     if (is_sane_perl) {
-        if (ord('A') == 193) { # EBCDIC has no ^\0-\177 workalike.
-            s/$cheat/sprintf "\\x{%X}", ord $1/ge;
-        } else {
-            s/([^\0-\177])/sprintf "\\x{%X}", ord $1/ge;
-        }
+	if (ord('A') == 193) { # EBCDIC has no ^\0-\177 workalike.
+	    s/$cheat/sprintf "\\x{%X}", ord $1/ge;
+	} else {
+	    s/([^\0-\177])/sprintf "\\x{%X}", ord $1/ge;
+	}
     } else {
       # Grr 5.6.1. And I don't think I can use utf8; to force the regexp
       # because 5.005_03 will fail.

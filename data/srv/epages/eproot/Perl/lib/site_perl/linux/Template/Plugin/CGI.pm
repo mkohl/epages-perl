@@ -43,8 +43,8 @@ sub CGI::params {
         my $params = { $self->Vars() };
 
         # convert any null separated values into lists
-        @$params{ keys %$params } = map {
-            /\0/ ? [ split /\0/ ] : $_
+        @$params{ keys %$params } = map { 
+            /\0/ ? [ split /\0/ ] : $_ 
         } values %$params;
 
         $params;
@@ -63,10 +63,10 @@ Template::Plugin::CGI - Interface to the CGI module
 
     [% USE CGI %]
     [% CGI.param('parameter') %]
-
+    
     [% USE things = CGI %]
     [% things.param('name') %]
-
+    
     # see CGI docs for other methods provided by the CGI object
 
 =head1 DESCRIPTION
@@ -89,7 +89,7 @@ be identified.
     [% mycgi.popup_menu({ Name   => 'Color'
                           Values => [ 'Green' 'Black' 'Brown' ] }) %]
 
-Parenthesised parameters to the C<USE> directive will be passed to the plugin
+Parenthesised parameters to the C<USE> directive will be passed to the plugin 
 constructor:
 
     [% USE cgiprm = CGI('uid=abw&name=Andy+Wardley') %]

@@ -24,8 +24,8 @@ This is useful if you want to allow parallel tasks to run in parallel but
 not on the same problem. Just use a SemaphoreSet and lock on the problem
 identifier.
 
-You don't have to load C<Coro::SemaphoreSet> manually, it will be loaded
-automatically when you C<use Coro> and call the C<new> constructor.
+You don't have to load C<Coro::SemaphoreSet> manually, it will be loaded 
+automatically when you C<use Coro> and call the C<new> constructor. 
 
 =over 4
 

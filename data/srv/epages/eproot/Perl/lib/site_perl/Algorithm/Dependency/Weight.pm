@@ -10,19 +10,19 @@ Algorithm::Dependency::Weight - Calculate dependency 'weights'
 
   # Create a source from a file
   my $Source = Algorithm::Dependency::Source->new( 'file.txt' );
-
+  
   # Create a Weight algorithm object
   my $alg = Algorithm::Dependency::Weight->new( source => $Source );
-
+  
   # Find the weight for a single item
   my $weight = $alg->weight('foo');
   print "The weight of 'foo' is $weight\n";
-
+  
   # Or a group
   my $hash = $alg->weight_hash('foo', 'bar', 'baz');
   print "The weight of 'foo', 'bar', and 'bar' are $hash->{foo},"
       . " $hash->{bar} and $hash->{baz} respectively\n";
-
+  
   # Or all of the items
   my $all = $alg->weight_all;
   print "The following is a list from heaviest to lightest:\n";
@@ -44,7 +44,7 @@ result would be (in a simple systems) equal to:
 
   # Create your normal (non-ordered alg:dep)
   my $dependency = Algorithm::Dependency->new( ... );
-
+  
   # Find the naive weight for an item
   my $weight = scalar($dependency->schedule('itemname'));
 
@@ -71,7 +71,7 @@ use Params::Util qw{_INSTANCE _STRING};
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '1.110';
+	$VERSION = '1.110';
 }
 
 
@@ -105,29 +105,29 @@ Returns a new C<Algorithm::Dependency::Weight> object, or C<undef> on error.
 =cut
 
 sub new {
-        my $class = shift;
-        my %args  = @_;
+	my $class = shift;
+	my %args  = @_;
 
-        # Get the source object, or derive it from an existing alg-dep
-        my $source = _INSTANCE($args{source}, 'Algorithm::Dependency')
-                ? $args{source}->source
-                : _INSTANCE($args{source}, 'Algorithm::Dependency::Source')
-                or return undef;
+	# Get the source object, or derive it from an existing alg-dep
+	my $source = _INSTANCE($args{source}, 'Algorithm::Dependency')
+		? $args{source}->source
+		: _INSTANCE($args{source}, 'Algorithm::Dependency::Source')
+		or return undef;
 
-        # Build the alg-dep object we use
-        my $algdep = Algorithm::Dependency->new(
-                source         => $source,
-                ignore_orphans => 1,
-                ) or return undef;
+	# Build the alg-dep object we use
+	my $algdep = Algorithm::Dependency->new(
+		source         => $source,
+		ignore_orphans => 1,
+		) or return undef;
 
-        # Create the basic object
-        my $self = bless {
-                source => $source,
-                algdep => $algdep,
-                weight => {},
-                }, $class;
+	# Create the basic object
+	my $self = bless {
+		source => $source,
+		algdep => $algdep,
+		weight => {},
+		}, $class;
 
-        $self;
+	$self;
 }
 
 =pod
@@ -143,7 +143,7 @@ inside the C<Algorithm::Dependency> object passed as the C<source> param
 =cut
 
 sub source {
-        $_[0]->{source}
+	$_[0]->{source}
 }
 
 
@@ -168,16 +168,16 @@ on error.
 =cut
 
 sub weight {
-        my $self = shift;
-        my $id   = defined(_STRING($_[0])) ? shift : return undef;
-        $self->{weight}->{$id} or
-        $self->{weight}->{$id} = $self->_weight($id);
+	my $self = shift;
+	my $id   = defined(_STRING($_[0])) ? shift : return undef;
+	$self->{weight}->{$id} or
+	$self->{weight}->{$id} = $self->_weight($id);
 }
 
 sub _weight {
-        my $self  = shift;
-        my $items = $self->{algdep}->schedule($_[0]) or return undef;
-        scalar(@$items);
+	my $self  = shift;
+	my $items = $self->{algdep}->schedule($_[0]) or return undef;
+	scalar(@$items);
 }
 
 =pod
@@ -192,9 +192,9 @@ Returns the weight as a scalar, or C<undef> on error.
 =cut
 
 sub weight_merged {
-        my $self  = shift;
-        my $items = $self->{algdep}->schedule(@_) or return undef;
-        scalar(@$items);
+	my $self  = shift;
+	my $items = $self->{algdep}->schedule(@_) or return undef;
+	scalar(@$items);
 }
 
 =pod
@@ -210,20 +210,20 @@ as values, or C<undef> on error.
 =cut
 
 sub weight_hash {
-        my $self  = shift;
-        my @names = @_;
+	my $self  = shift;
+	my @names = @_;
 
-        # Iterate over the list
-        my %hash = ();
-        foreach my $name ( @names ) {
-                if ( $self->{weight}->{$name} ) {
-                        $hash{$name} = $self->{weight}->{$name};
-                        next;
-                }
-                $hash{$name} = $self->weight($name) or return undef;
-        }
+	# Iterate over the list
+	my %hash = ();
+	foreach my $name ( @names ) {
+		if ( $self->{weight}->{$name} ) {
+			$hash{$name} = $self->{weight}->{$name};
+			next;
+		}
+		$hash{$name} = $self->weight($name) or return undef;
+	}
 
-        \%hash;
+	\%hash;
 }
 
 =pod
@@ -241,10 +241,10 @@ as values, or C<undef> on error.
 =cut
 
 sub weight_all {
-        my $self  = shift;
-        my @items = $self->source->items;
-        defined $items[0] or return undef;
-        $self->weight_hash( map { $_->id } @items );
+	my $self  = shift;
+	my @items = $self->source->items;
+	defined $items[0] or return undef;
+	$self->weight_hash( map { $_->id } @items );
 }
 
 1;

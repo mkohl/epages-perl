@@ -13,23 +13,23 @@ DateTime::Format::Builder::Parser::Dispatch - Dispatch parsers by group
     package SampleDispatch;
     use DateTime::Format::Builder
     (
-        parsers => {
-            parse_datetime => [
-                {
-                    Dispatch => sub {
-                        return 'fnerk';
-                    }
-                }
-            ]
-        },
-        groups => {
-            fnerk => [
-                {
-                    regex => qr/^(\d{4})(\d\d)(\d\d)$/,
-                    params => [qw( year month day )],
-                },
-            ]
-        }
+	parsers => {
+	    parse_datetime => [
+		{
+		    Dispatch => sub {
+			return 'fnerk';
+		    }
+		}
+	    ]
+	},
+	groups => {
+	    fnerk => [
+		{
+		    regex => qr/^(\d{4})(\d\d)(\d\d)$/,
+		    params => [qw( year month day )],
+		},
+	    ]
+	}
     );
 
 =head1 DESCRIPTION
@@ -82,7 +82,7 @@ $VERSION = '0.78';
 
 DateTime::Format::Builder::Parser->valid_params(
     Dispatch => {
-        type => CODEREF,
+	type => CODEREF,
     }
 );
 
@@ -92,22 +92,22 @@ sub create_parser
     my $coderef = $args{Dispatch};
 
     return sub {
-        my ($self, $date, $p, @args) = @_;
-        return unless defined $date;
-        my $class = ref($self)||$self;
+	my ($self, $date, $p, @args) = @_;
+	return unless defined $date;
+	my $class = ref($self)||$self;
 
-        my @results = $coderef->( $date );
-        return unless @results;
-        return unless defined $results[0];
+	my @results = $coderef->( $date );
+	return unless @results;
+	return unless defined $results[0];
 
-        for my $group (@results)
-        {
-            my $parser = $dispatch_data{$class}{$group};
-            die "Unknown parsing group: $class\n" unless defined $parser;
-            my $rv = eval { $parser->parse( $self, $date, $p, @args ) };
-            return $rv unless $@ or not defined $rv;
-        }
-        return;
+	for my $group (@results)
+	{
+	    my $parser = $dispatch_data{$class}{$group};
+	    die "Unknown parsing group: $class\n" unless defined $parser;
+	    my $rv = eval { $parser->parse( $self, $date, $p, @args ) };
+	    return $rv unless $@ or not defined $rv;
+	}
+	return;
     };
 }
 

@@ -1,7 +1,7 @@
 ##
 ## Czech tables
 ##
-## Contributed by Honza Pazdziora
+## Contributed by Honza Pazdziora 
 
 package Date::Language::Czech;
 
@@ -10,7 +10,7 @@ use vars qw(@ISA @DoW @DoWs @MoY @MoYs @MoY2 @AMPM %MoY %DoW $VERSION);
 $VERSION = "1.01";
 
 @MoY = qw(leden únor bøezen duben kvìten èerven èervenec srpen záøí
-              øíjen listopad prosinec);
+	      øíjen listopad prosinec);
 @MoYs = qw(led únor bøe dub kvì èvn èec srp záøí øíj lis pro);
 @MoY2 = @MoY;
 for (@MoY2)

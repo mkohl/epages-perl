@@ -69,13 +69,13 @@ sub _tabinit($$$) {
     $r = $i if $ref;
     for (my $j=0; $j<8; $j++) {
       if ($ref) {
-        $r = ($r>>1)^($r&1&&$poly)
+	$r = ($r>>1)^($r&1&&$poly)
       } else {
-        if ($r&(1<<($width-1))) {
-          $r = ($r<<1)^$poly
-        } else {
-          $r = ($r<<1)
-        }
+	if ($r&(1<<($width-1))) {
+	  $r = ($r<<1)^$poly
+	} else {
+	  $r = ($r<<1)
+	}
       }
     }
     my $x=$r&2**$width-1;
@@ -174,8 +174,8 @@ sub _encode_base64 {
   my ($res, $padding, $in) = ("", undef, $_[0]);
   $in = pack("H*", sprintf("%x",$in));
   while ($in =~ /(.{1,45})/gs) {
-          $res .= substr pack('u', $1), 1;
-          chop $res;
+	  $res .= substr pack('u', $1), 1;
+	  chop $res;
   }
   $res =~ tr|` -_|AA-Za-z0-9+/|;
   $padding = (3 - length($in) % 3) % 3;
@@ -224,7 +224,7 @@ sub digest {
   if (!$self->{_crc}) {
     my $init = $self->{init};
     $crc =_crc($self->{_data},$self->{width},$init,$self->{xorout},
-         $self->{refin},$self->{refout},$self->{cont},$self->{_tab});
+	 $self->{refin},$self->{refout},$self->{cont},$self->{_tab});
   } else {
     $crc = $self->{_crc};
     $self->{_crc} = undef;
@@ -243,7 +243,7 @@ sub b64digest {
 
 sub clone {
   my $self = shift;
-  my $clone = {
+  my $clone = { 
     type => $self->{type},
     width => $self->{width},
     init => $self->{init},
@@ -365,7 +365,7 @@ Digest::CRC - Generic CRC functions
   use Digest::CRC;
 
   $ctx = Digest::CRC->new(type=>"crc16");
-  $ctx = Digest::CRC->new(width=>16, init=>0x2345, xorout=>0x0000,
+  $ctx = Digest::CRC->new(width=>16, init=>0x2345, xorout=>0x0000, 
                           refout=>1, poly=>0x8005, refin=>1, cont=>1);
 
   $ctx->add($data);
@@ -396,7 +396,7 @@ Oliver Maul, oli@42.nu
 CRC algorithm code taken from "A PAINLESS GUIDE TO CRC ERROR DETECTION
  ALGORITHMS".
 
-The author of this package disclaims all copyrights and
+The author of this package disclaims all copyrights and 
 releases it into the public domain.
 
 =cut

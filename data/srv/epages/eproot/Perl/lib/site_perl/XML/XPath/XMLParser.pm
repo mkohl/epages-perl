@@ -39,23 +39,23 @@ sub new {
 
 sub parse {
     my $self = shift;
-
+    
     $self->{IdNames} = {};
-    $self->{InScopeNamespaceStack} = [ {
+    $self->{InScopeNamespaceStack} = [ { 
             '_Default' => undef,
             'xmlns' => $xmlns_ns,
             'xml' => $xml_ns,
         } ];
-
+    
     $self->{NodeStack} = [ ];
-
+    
     $self->set_xml($_[0]) if $_[0];
-
+    
     my $parser = $self->get_parser || XML::Parser->new(
             ErrorContext => 2,
             ParseParamEnt => 1,
             );
-
+    
     $parser->setHandlers(
             Init => sub { $self->parse_init(@_) },
             Char => sub { $self->parse_char(@_) },
@@ -66,7 +66,7 @@ sub parse {
             Comment => sub { $self->parse_comment(@_) },
             Attlist => sub { $self->parse_attlist(@_) },
             );
-
+    
     my $toparse;
     if ($toparse = $self->get_filename) {
         return $parser->parsefile($toparse);
@@ -101,16 +101,16 @@ sub parse_char {
     my $self = shift;
     my $e = shift;
     my $text = shift;
-
+    
     my $parent = $self->{current};
-
+    
     my $last = $parent->getLastChild;
     if ($last && $last->isTextNode) {
         # append to previous text node
         $last->appendText($text);
         return;
     }
-
+    
     my $node = XML::XPath::Node::Text->new($text);
     $parent->appendChild($node, 1);
 }
@@ -119,18 +119,18 @@ sub parse_start {
     my $self = shift;
     my $e = shift;
     my $tag = shift;
-
+    
     push @{ $self->{InScopeNamespaceStack} },
          { %{ $self->{InScopeNamespaceStack}[-1] } };
     $self->_scan_namespaces(@_);
-
+    
     my ($prefix, $namespace) = $self->_namespace($tag);
-
+    
     my $node = XML::XPath::Node::Element->new($tag, $prefix);
-
+    
     my @attributes;
     for (my $ii = 0; $ii < $#_; $ii += 2) {
-        my ($name, $value) = ($_[$ii], $_[$ii+1]);
+	my ($name, $value) = ($_[$ii], $_[$ii+1]);
         if ($name =~ /^xmlns(:(.*))?$/) {
             # namespace node
             my $prefix = $2 || '#default';
@@ -139,7 +139,7 @@ sub parse_start {
             $node->appendNamespace($newns);
         }
         else {
-            my ($prefix, $namespace) = $self->_namespace($name);
+	    my ($prefix, $namespace) = $self->_namespace($name);
             undef $namespace unless $prefix;
 
             my $newattr = XML::XPath::Node::Attribute->new($name, $value, $prefix);
@@ -150,7 +150,7 @@ sub parse_start {
             }
         }
     }
-
+        
     $self->{current}->appendChild($node, 1);
     $self->{current} = $node;
 }
@@ -190,12 +190,12 @@ sub _scan_namespaces {
     my ($self, %attributes) = @_;
 
     while (my ($attr_name, $value) = each %attributes) {
-        if ($attr_name eq 'xmlns') {
-            $self->{InScopeNamespaceStack}[-1]{'_Default'} = $value;
-        } elsif ($attr_name =~ /^xmlns:(.*)$/) {
-            my $prefix = $1;
-            $self->{InScopeNamespaceStack}[-1]{$prefix} = $value;
-        }
+	if ($attr_name eq 'xmlns') {
+	    $self->{InScopeNamespaceStack}[-1]{'_Default'} = $value;
+	} elsif ($attr_name =~ /^xmlns:(.*)$/) {
+	    my $prefix = $1;
+	    $self->{InScopeNamespaceStack}[-1]{$prefix} = $value;
+	}
     }
 }
 
@@ -204,13 +204,13 @@ sub _namespace {
 
     my ($prefix, $localname) = split(/:/, $name);
     if (!defined($localname)) {
-        if ($prefix eq 'xmlns') {
-            return '', undef;
-        } else {
-            return '', $self->{InScopeNamespaceStack}[-1]{'_Default'};
-        }
+	if ($prefix eq 'xmlns') {
+	    return '', undef;
+	} else {
+	    return '', $self->{InScopeNamespaceStack}[-1]{'_Default'};
+	}
     } else {
-        return $prefix, $self->{InScopeNamespaceStack}[-1]{$prefix};
+	return $prefix, $self->{InScopeNamespaceStack}[-1]{$prefix};
     }
 }
 
@@ -262,7 +262,7 @@ All nodes have the same first 2 entries in the array: node_parent
 and node_pos. The type of the node is determined using the ref() function.
 The node_parent always contains an entry for the parent of the current
 node - except for the root node which has undef in there. And node_pos is the
-position of this node in the array that it is in (think:
+position of this node in the array that it is in (think: 
 $node == $node->[node_parent]->[node_children]->[$node->[node_pos]] )
 
 Nodes are structured as follows:
@@ -356,7 +356,7 @@ The new method takes either no parameters, or any of the following parameters:
 This uses the familiar hash syntax, so an example might be:
 
     use XML::XPath::XMLParser;
-
+    
     my $parser = XML::XPath::XMLParser->new(filename => 'example.xml');
 
 The parameters represent a filename, a string containing XML, an XML::Parser

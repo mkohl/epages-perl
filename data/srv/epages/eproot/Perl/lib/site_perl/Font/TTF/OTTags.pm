@@ -7,14 +7,14 @@ Font::TTF::OTTags - Utilities for TrueType/OpenType tags
 =head1 SYNOPSIS
 
   use Font::TTF::OTTags qw( %tttags %ttnames readtagsfile );
-
+  
   # Look at built-in stuff:
   $script_tag = $tttags{'SCRIPT'}{'Cypriot Syllabary'};
   $lang_name = $ttnames{'LANGUAGE'}{'AFK '}
-
+  
   # Read latest tags file to add to built-in definitions
   readtagsfile ("C:\\Program Files\\Microsoft VOLT\\TAGS.txt");
-
+  
 First-level keys to %tttags and %ttnames are:
 
 =over
@@ -28,7 +28,7 @@ First-level keys to %tttags and %ttnames are:
 =back
 
 Built-in data has been derived from Microsoft's tag registry at
-L<http://www.microsoft.com/typography/otspec/ttoreg.htm>,
+L<http://www.microsoft.com/typography/otspec/ttoreg.htm>, 
 updated to draft v1.5 of the OpenType Spec.
 
 =head1 METHODS
@@ -138,7 +138,7 @@ require Exporter;
     "Ugaritic Cuneiform" => "ugar",
     "Vai" => "vai ",
     "Yi" => "yi  ",
-    },
+    }, 
 
 'LANGUAGE' => {
     "Aari" => "ARI ",
@@ -690,15 +690,15 @@ sub readtagsfile
 {
     my $fname = shift;
     open (TAGS, $fname) or return 0;
-        my ($what, $name, $tag);
-        while (<TAGS>)
-        {
-                ($what, $name, $tag) = (m/"([^"]*)", "([^"]*)", "([^"]*)"/);  #"
-                $ttnames{$what}{$tag} = $name;
-                $tttags{$what}{$name} = $tag;
-        }
-        close TAGS;
-    return 1;
+	my ($what, $name, $tag);
+	while (<TAGS>)
+	{
+		($what, $name, $tag) = (m/"([^"]*)", "([^"]*)", "([^"]*)"/);  #"
+		$ttnames{$what}{$tag} = $name;
+		$tttags{$what}{$name} = $tag;
+	}
+	close TAGS;
+    return 1;	
 }
 
 

@@ -42,15 +42,15 @@ The following examples might help to get you started:
 
 
   require LWP::Parallel::UserAgent;
-  use HTTP::Request;
+  use HTTP::Request; 
 
   # display tons of debugging messages. See 'perldoc LWP::Debug'
   #use LWP::Debug qw(+);
 
   # shortcut for demo URLs
-  my $url = "http://localhost/";
+  my $url = "http://localhost/"; 
 
-  my $reqs = [
+  my $reqs = [  
      HTTP::Request->new('GET', $url),
      HTTP::Request->new('GET', $url."homes/marclang/"),
   ];
@@ -63,9 +63,9 @@ The following examples might help to get you started:
 
   foreach my $req (@$reqs) {
     print "Registering '".$req->url."'\n";
-    if ( my $res = $pua->register ($req) ) {
-        print STDERR $res->error_as_HTML;
-    }
+    if ( my $res = $pua->register ($req) ) { 
+	print STDERR $res->error_as_HTML; 
+    }  
   }
   my $entries = $pua->wait();
 
@@ -78,7 +78,7 @@ The following examples might help to get you started:
 
 Parallel::UserAgent (as well as the Parallel::RobotUA) offer three
 default methods that will be called at certain points during the
-connection: C<on_connect>, C<on_return> and C<on_failure>.
+connection: C<on_connect>, C<on_return> and C<on_failure>. 
 
 
   #
@@ -109,14 +109,14 @@ connection: C<on_connect>, C<on_return> and C<on_failure>.
     my ($self, $request, $response, $entry) = @_;
     print "Failed to connect to ",$request->url,"\n\t",
           $response->code, ", ", $response->message,"\n"
-            if $response;
+	    if $response;
   }
 
   # on_return gets called whenever a connection (or its callback)
   # returns EOF (or any other terminating status code available for
   # callback functions). Please note that on_return gets called for
   # any successfully terminated HTTP connection! This does not imply
-  # that the response sent from the server is a success!
+  # that the response sent from the server is a success! 
   sub on_return {
     my ($self, $request, $response, $entry) = @_;
     if ($response->is_success) {
@@ -132,12 +132,12 @@ connection: C<on_connect>, C<on_return> and C<on_failure>.
   }
 
   package main;
-  use HTTP::Request;
+  use HTTP::Request; 
 
   # shortcut for demo URLs
-  my $url = "http://localhost/";
+  my $url = "http://localhost/"; 
 
-  my $reqs = [
+  my $reqs = [  
      HTTP::Request->new('GET', $url),
      HTTP::Request->new('GET', $url."homes/marclang/"),
   ];
@@ -157,31 +157,31 @@ far. This example also uses callbacks to handle the response as it
 comes in.
 
   require LWP::Parallel::UserAgent;
-  use HTTP::Request;
+  use HTTP::Request; 
 
   # persistent robot rules support. See 'perldoc WWW::RobotRules::AnyDBM_File'
   require WWW::RobotRules::AnyDBM_File;
 
   # shortcut for demo URLs
-  my $url = "http://www.cs.washington.edu/";
+  my $url = "http://www.cs.washington.edu/"; 
 
-  my $reqs = [
+  my $reqs = [  
      HTTP::Request->new('GET', $url),
-            # these are all redirects. depending on how you set
+	    # these are all redirects. depending on how you set
             # 'redirect_ok' they either just return the status code for
             # redirect (like 302 moved), or continue to follow redirection.
      HTTP::Request->new('GET', $url."research/ahoy/"),
      HTTP::Request->new('GET', $url."research/ahoy/doc/paper.html"),
      HTTP::Request->new('GET', "http://metacrawler.cs.washington.edu:6060/"),
-            # these are all non-existant server. the first one should take
+	    # these are all non-existant server. the first one should take
             # some time, but the following ones should be rejected right
             # away
      HTTP::Request->new('GET', "http://www.foobar.foo/research/ahoy/"),
      HTTP::Request->new('GET', "http://www.foobar.foo/foobar/foo/"),
      HTTP::Request->new('GET', "http://www.foobar.foo/baz/buzz.html"),
-            # although server exists, file doesn't
+	    # although server exists, file doesn't
      HTTP::Request->new('GET', $url."foobar/bar/baz.html"),
-            ];
+	    ];
 
   my ($req,$res);
 
@@ -191,14 +191,14 @@ comes in.
   my $rules = new WWW::RobotRules::AnyDBM_File 'ParallelUA', 'cache';
 
   # create new UserAgent (actually, a Robot)
-  my $pua = new LWP::Parallel::RobotUA ("ParallelUA",
+  my $pua = new LWP::Parallel::RobotUA ("ParallelUA", 
                                         'yourname@your.site.com', $rules);
 
   $pua->timeout   (2);  # in seconds
   $pua->delay    ( 5);  # in seconds
   $pua->max_req  ( 2);  # max parallel requests per server
   $pua->max_hosts(10);  # max parallel servers accessed
-
+ 
   # for our own print statements that follow below:
   local($\) = ""; # ensure standard $OUTPUT_RECORD_SEPARATOR
 
@@ -224,18 +224,18 @@ comes in.
     # set current response to point to the very first response of this
     # sequence. (not very exciting if you set '$pua->redirect(0)')
     my $r = $res; my @redirects;
-    while ($r) {
-        $res = $r;
-        $r = $r->previous;
-        push (@redirects, $res) if $r;
+    while ($r) { 
+	$res = $r; 
+	$r = $r->previous; 
+	push (@redirects, $res) if $r;
     }
-
+    
     # summarize response. see "perldoc HTTP::Response"
     print "Answer for '",$res->request->url, "' was \t", $res->code,": ",
           $res->message,"\n";
     # print redirection history, in case we got redirected
     foreach (@redirects) {
-        print "\t",$_->request->url, "\t", $_->code,": ", $_->message,"\n";
+	print "\t",$_->request->url, "\t", $_->code,": ", $_->message,"\n";
     }
   }
 
@@ -249,25 +249,25 @@ comes in.
           $response->code, ", ", $response->message,"\n";
 
     if (length ($content) ) {
-        # just store content if it comes in
-        $response->add_content($content);
+	# just store content if it comes in
+	$response->add_content($content);
     } else {
         # Having no content doesn't mean the connection is closed!
         # Sometimes the server might return zero bytes, so unless
         # you already got the information you need, you should continue
         # processing here (see below)
-
-        # Otherwise you can return a special exit code that will
+        
+	# Otherwise you can return a special exit code that will
         # determins how ParallelUA will continue with this connection.
 
-        # Note: We have to import those constants via "qw(:CALLBACK)"!
+	# Note: We have to import those constants via "qw(:CALLBACK)"!
 
-        # return C_ENDCON;  # will end only this connection
-                            # (silly, we already have EOF)
-        # return C_LASTCON; # wait for remaining open connections,
-                            # but don't issue any new ones!!
-        # return C_ENDALL;  # will immediately end all connections
-                            # and return from $pua->wait
+	# return C_ENDCON;  # will end only this connection
+			    # (silly, we already have EOF)
+	# return C_LASTCON; # wait for remaining open connections,
+			    # but don't issue any new ones!!
+	# return C_ENDALL;  # will immediately end all connections
+			    # and return from $pua->wait
     }
 
     # ATTENTION!! If you want to keep reading from your connection,
@@ -276,8 +276,8 @@ comes in.
     # undef here. The Parallel UserAgent will figure out by itself
     # when to close the connection!
 
-    return undef;           # just keep on connecting/reading/waiting
-                            # until the server closes the connection.
+    return undef;	    # just keep on connecting/reading/waiting 
+                            # until the server closes the connection. 
   }
 
 =head1 AUTHOR

@@ -52,7 +52,7 @@ sub perl_version_introduced {
     my ( $self ) = @_;
     my $condition = $self->child( 0 ) or return;
     $condition->isa( 'PPIx::Regexp::Structure' )
-        and return MINIMUM_PERL;
+	and return MINIMUM_PERL;
     my $content = $condition->content();
     $content =~ m/ \( \d+ \) /smx and return MINIMUM_PERL;
     return '5.009005';
@@ -75,33 +75,33 @@ sub __PPIX_LEXER__finalize {
     # sure we have a first child and that it is of the expected class.
     # If it is, determine how many alternations are allowed.
     if ( my $condition = $self->child( 0 ) ) {
-        foreach my $class ( qw{
-            PPIx::Regexp::Structure::Assertion
-            PPIx::Regexp::Structure::Code
-            PPIx::Regexp::Token::Condition
-            } ) {
-            $condition->isa( $class ) or next;
-            $alternations = $condition->content() eq '(DEFINE)' ? 0 : 1;
-            last;
-        }
+	foreach my $class ( qw{
+	    PPIx::Regexp::Structure::Assertion
+	    PPIx::Regexp::Structure::Code
+	    PPIx::Regexp::Token::Condition
+	    } ) {
+	    $condition->isa( $class ) or next;
+	    $alternations = $condition->content() eq '(DEFINE)' ? 0 : 1;
+	    last;
+	}
     }
 
     if ( defined $alternations ) {
-        # If we figured out how many alternations were allowed, count
-        # them, changing surplus ones to the unknown token.
-        foreach my $kid ( $self->children () ) {
-            $kid->isa( 'PPIx::Regexp::Token::Operator' ) or next;
-            $kid->content() eq '|' or next;
-            --$alternations >= 0 and next;
-            bless $kid, TOKEN_UNKNOWN;
-            $rslt++;
-        }
+	# If we figured out how many alternations were allowed, count
+	# them, changing surplus ones to the unknown token.
+	foreach my $kid ( $self->children () ) {
+	    $kid->isa( 'PPIx::Regexp::Token::Operator' ) or next;
+	    $kid->content() eq '|' or next;
+	    --$alternations >= 0 and next;
+	    bless $kid, TOKEN_UNKNOWN;
+	    $rslt++;
+	}
     } else {
-        # If we could not figure out how many alternations were allowed,
-        # it means we did not understand our condition. Rebless
-        # ourselves to the unknown structure and count a parse failure.
-        bless $self, STRUCTURE_UNKNOWN;
-        $rslt++;
+	# If we could not figure out how many alternations were allowed,
+	# it means we did not understand our condition. Rebless
+	# ourselves to the unknown structure and count a parse failure.
+	bless $self, STRUCTURE_UNKNOWN;
+	$rslt++;
     }
 
     # Delegate to the superclass to finalize our children, now that we

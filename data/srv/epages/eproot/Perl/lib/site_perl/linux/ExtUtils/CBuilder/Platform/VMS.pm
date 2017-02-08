@@ -30,7 +30,7 @@ sub arg_defines {
 
   return ('/define=('
           . join(',',
-                 @config_defines,
+		 @config_defines,
                  map "\"$_" . ( length($args{$_}) ? "=$args{$_}" : '') . "\"",
                      sort keys %args)
           . ')');
@@ -256,7 +256,7 @@ sub _liblist_ext {
                ( -f ($fullname = VMS::Filespec::rmsexpand($name,$obj_ext)) or
                  -f ($fullname = VMS::Filespec::rmsexpand($name,'.obj'))))  {
           warn "Note (probably harmless): "
-                       ."Plain object file $fullname found in library list\n";
+		       ."Plain object file $fullname found in library list\n";
           $type = 'OBJ';
           $name = $fullname unless $fullname =~ /obj;?\d*$/i;
         }
@@ -269,12 +269,12 @@ sub _liblist_ext {
         push @{$found{$ctype}}, $cand;
         warn "\tFound as $cand (really $fullname), type $ctype\n"
           if $verbose > 1;
-        push @flibs, $name unless $libs_seen{$fullname}++;
+	push @flibs, $name unless $libs_seen{$fullname}++;
         next LIB;
       }
     }
     warn "Note (probably harmless): "
-                 ."No library found for $lib\n";
+		 ."No library found for $lib\n";
   }
 
   push @fndlibs, @{$found{OBJ}}                      if exists $found{OBJ};

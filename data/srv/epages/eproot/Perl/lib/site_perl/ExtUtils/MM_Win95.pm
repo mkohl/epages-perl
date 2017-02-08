@@ -42,8 +42,8 @@ sub xs_c {
     return '' unless $self->needs_linking();
     '
 .xs.c:
-        $(XSUBPPRUN) $(XSPROTOARG) $(XSUBPPARGS) $*.xs > $*.c
-        '
+	$(XSUBPPRUN) $(XSPROTOARG) $(XSUBPPARGS) $*.xs > $*.c
+	'
 }
 
 
@@ -58,8 +58,8 @@ sub xs_cpp {
     return '' unless $self->needs_linking();
     '
 .xs.cpp:
-        $(XSUBPPRUN) $(XSPROTOARG) $(XSUBPPARGS) $*.xs > $*.cpp
-        ';
+	$(XSUBPPRUN) $(XSPROTOARG) $(XSUBPPARGS) $*.xs > $*.cpp
+	';
 }
 
 =item xs_o
@@ -73,9 +73,9 @@ sub xs_o {
     return '' unless $self->needs_linking();
     '
 .xs$(OBJ_EXT):
-        $(XSUBPPRUN) $(XSPROTOARG) $(XSUBPPARGS) $*.xs > $*.c
-        $(CCCMD) $(CCCDLFLAGS) -I$(PERL_INC) $(DEFINE) $*.c
-        ';
+	$(XSUBPPRUN) $(XSPROTOARG) $(XSUBPPARGS) $*.xs > $*.c
+	$(CCCMD) $(CCCDLFLAGS) -I$(PERL_INC) $(DEFINE) $*.c
+	';
 }
 
 

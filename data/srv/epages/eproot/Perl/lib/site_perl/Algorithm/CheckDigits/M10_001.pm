@@ -155,7 +155,7 @@ RN (IT), VAT RN (SE), International Securities Identifikation Number
   $visa = CheckDigits('visa');
 
   if ($visa->is_valid('4111 1111 1111 1111')) {
-        # do something
+	# do something
   }
 
   $cn = $visa->complete('4111 1111 1111 111');
@@ -166,7 +166,7 @@ RN (IT), VAT RN (SE), International Securities Identifikation Number
 
   $bn = $visa->basenumber('4111 1111 1111 1111');
   # $bn = '4111 1111 1111 111'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

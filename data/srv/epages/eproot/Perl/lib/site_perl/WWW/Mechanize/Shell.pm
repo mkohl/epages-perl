@@ -106,7 +106,7 @@ sub init {
     cookiefile => 'cookies.txt',
     dumprequests => 0,
     dumpresponses => 0,
-                verbose => 0,
+		verbose => 0,
   };
   # Install the request dumper :
   $self->{request_wrapper} = wrap 'LWP::UserAgent::request',
@@ -119,8 +119,8 @@ sub init {
   $self->{redirect_ok_wrapper} = wrap 'WWW::Mechanize::redirect_ok',
     post => sub {
         return unless $_[1];
-        $self->status( "\nRedirecting to ".$_[1]->uri."\n" );
-        $_[-1]
+        $self->status( "\nRedirecting to ".$_[1]->uri."\n" ); 
+        $_[-1] 
     };
 
   # Load the proxy settings from the environment
@@ -231,13 +231,13 @@ sub print_paged {
     close $fh;
 
     my @pagers = ($ENV{PAGER},qq{"$^X" -p});
-                foreach my $pager (@pagers) {
-                        if ($^O eq 'VMS') {
-                                last if system("$pager $filename") == 0; # quoting prevents logical expansion
-                        } else {
-                                last if system(qq{$pager "$filename"}) == 0;
-                        }
-                };
+		foreach my $pager (@pagers) {
+			if ($^O eq 'VMS') {
+				last if system("$pager $filename") == 0; # quoting prevents logical expansion
+			} else {
+				last if system(qq{$pager "$filename"}) == 0;
+			}
+		};
     unlink $filename
       or $self->display_user_warning("Couldn't unlink tempfile $filename : $!\n");
   } else {
@@ -685,7 +685,7 @@ sub run_title {
 
 Prints all C<< <H1> >> through C<< <H5> >> strings found in the content,
 indented accordingly.  With an argument, prints only those
-levels; e.g., C<headers 145> prints H1,H4,H5 strings only.
+levels; e.g., C<headers 145> prints H1,H4,H5 strings only. 
 
 =cut
 
@@ -704,36 +704,36 @@ sub run_headers {
     my $p = HTML::TokeParser::Simple->new( \$content );
     while ( my $token = $p->get_token ) {
         # This prints all text in an HTML doc (i.e., it strips the HTML)
-        if ($token->is_start_tag($wanted)) {
-            my $tag = $token->get_tag;
+	if ($token->is_start_tag($wanted)) {
+	    my $tag = $token->get_tag;
 
-            # Indent with two spaces per level
-            my $indent;
-            $indent = $1
-                if ($tag =~ /(\d)/);
-            $indent ||= 1;
-            $indent--;
-            $indent *= 2;
+	    # Indent with two spaces per level
+	    my $indent;
+	    $indent = $1
+	        if ($tag =~ /(\d)/);
+	    $indent ||= 1;
+	    $indent--;
+	    $indent *= 2;
 
-            # advance and print the first text tag we encounter
-            while ($token and not $token->is_text and not $token->is_end_tag($wanted)) {
-                $token = $p->get_token
-            };
-            my $text = "<no text>";
-            if ($token and $token->is_text) {
-                $text = $token->as_is;
-                if ($text !~ /\S/) {
-                    $text = "<empty tag>";
-                };
-            };
+	    # advance and print the first text tag we encounter
+	    while ($token and not $token->is_text and not $token->is_end_tag($wanted)) {
+	        $token = $p->get_token
+	    };
+	    my $text = "<no text>";
+	    if ($token and $token->is_text) {
+	        $text = $token->as_is;
+		if ($text !~ /\S/) {
+		    $text = "<empty tag>";
+		};
+	    };
 
-            # Clean up whitespace
-            $text =~ s/^\s+//g;
-            $text =~ s/\s+$//g;
-            $text =~ s/\s+/ /g;
+	    # Clean up whitespace
+	    $text =~ s/^\s+//g;
+	    $text =~ s/\s+$//g;
+	    $text =~ s/\s+/ /g;
 
-            printf "%s:%${indent}s%s\n", $tag, "", $text;
-        };
+	    printf "%s:%${indent}s%s\n", $tag, "", $text;
+	};
     }
 };
 
@@ -798,7 +798,7 @@ sub run_parse {
   my $content = $self->agent->content;
   my $p = HTML::TokeParser->new(\$content);
 
-        #$p->report_tags(qw(form input textarea select optgroup option));
+	#$p->report_tags(qw(form input textarea select optgroup option));
 
   while (my $token = $p->get_token()) {
   #while (my $token = $p->get_tag("frame")) {
@@ -1105,7 +1105,7 @@ sub run_open {
     my $re = $link if ref $link;
     my $count = -1;
     my @possible_links = $self->agent->links();
-    my @links = defined $re
+    my @links = defined $re 
         ? map { $count++; $_->text =~ /$re/ ? $count : () } @possible_links
         : map { $count++; $_->text eq $link ? $count : () } @possible_links;
     if (@links > 1) {
@@ -1338,10 +1338,10 @@ Syntax:
 If you know the authority and the realm in advance, you can
 presupply the credentials, for example at the start of the script :
 
-        >auth corion secret
-        >get http://www.example.com
-        Retrieving http://www.example.com(200)
-        http://www.example.com>
+	>auth corion secret
+	>get http://www.example.com
+	Retrieving http://www.example.com(200)
+	http://www.example.com>
 
 =cut
 
@@ -1410,8 +1410,8 @@ sub run_table {
     };
     $code->();
     my $body = $self->munge_code($code);
-
-    $self->add_history(
+    
+    $self->add_history( 
         "require HTML::TableExtract;\n",
         sprintf( 'my @columns = ( %s );'."\n", join( ",", map( { s/(['\\])/\\$1/g; qq('$_') } @columns ))),
         $body
@@ -1578,8 +1578,8 @@ sub run_eval {
         return
     };
     print join "", @res,"\n";
-
-
+    
+    
     my $script_code = $self->munge_code(qq{print $code, "\\n";});
     #warn "Script: $script_code<<";
     $self->add_history( $script_code );
@@ -1622,7 +1622,7 @@ sub run_versions {
   my ($self) = @_;
   no strict 'refs';
   my @modules = qw( WWW::Mechanize::Shell WWW::Mechanize::FormFiller WWW::Mechanize
-                                                            Term::Shell
+  							    Term::Shell
                     HTML::Parser HTML::TableExtract HTML::Parser HTML::Display
                     Pod::Constants
                     File::Modified );
@@ -1700,7 +1700,7 @@ sub run_referrer {
   } else {
     # print "syntax: referer|referrer URL\n";
     eval {
-                        print "Referer: ", $self->agent->{req}->header('Referer'),"\n";
+			print "Referer: ", $self->agent->{req}->header('Referer'),"\n";
     };
   }
 };
@@ -1745,22 +1745,22 @@ output independent of WWW::Mechanize::Shell.
 sub munge_code {
     my ($self, $code) = @_;
     my $body;
-
+    
     if (ref $code) {
         # Munge code
         my $d = B::Deparse->new('-sC');
-        if ($d->can('ambient_pragmas')) {
+	if ($d->can('ambient_pragmas')) {
             $d->ambient_pragmas(strict => 'all', warnings => 'all');
-        };
+	};
         $body = $d->coderef2text($code);
     } else {
         $body = $code
     }
-
+    
     while (my ($key,$val) = each %munge_map) {
         $body =~ s/$key/$val/gs;
     };
-
+    
     $body
 };
 
@@ -2039,7 +2039,7 @@ invocation of the shell like with CPAN :
 
 =head1 REPOSITORY
 
-The public repository of this module is
+The public repository of this module is 
 L<http://github.com/Corion/WWW-Mechanize-Shell>.
 
 =head1 SUPPORT

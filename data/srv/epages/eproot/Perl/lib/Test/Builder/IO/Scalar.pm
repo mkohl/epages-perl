@@ -190,7 +190,7 @@ sub getline {
 
     ### Get next line:
     my $sr = *$self->{SR};
-    my $i  = *$self->{Pos};             ### Start matching at this point.
+    my $i  = *$self->{Pos};	        ### Start matching at this point.
 
     ### Minimal impact implementation!
     ### We do the fast fast thing (no regexps) if using the
@@ -198,7 +198,7 @@ sub getline {
 
     ### Case 1: $/ is undef: slurp all...
     if    (!defined($/)) {
-        *$self->{Pos} = length $$sr;
+	*$self->{Pos} = length $$sr;
         return substr($$sr, $i);
     }
 
@@ -228,11 +228,11 @@ sub getline {
     ###        (Thanks to Dominique Quatravaux.)
     elsif (ref($/)) {
         my $len = length($$sr);
-                my $i = ${$/} + 0;
-                my $line = substr ($$sr, *$self->{Pos}, $i);
-                *$self->{Pos} += $i;
+		my $i = ${$/} + 0;
+		my $line = substr ($$sr, *$self->{Pos}, $i);
+		*$self->{Pos} += $i;
         *$self->{Pos} = $len if (*$self->{Pos} > $len);
-                return $line;
+		return $line;
     }
 
     ### Case 4: $/ is either "" (paragraphs) or something weird...
@@ -242,13 +242,13 @@ sub getline {
     else {
         pos($$sr) = $i;
 
-        ### If in paragraph mode, skip leading lines (and update i!):
+	### If in paragraph mode, skip leading lines (and update i!):
         length($/) or
-            (($$sr =~ m/\G\n*/g) and ($i = pos($$sr)));
+	    (($$sr =~ m/\G\n*/g) and ($i = pos($$sr)));
 
         ### If we see the separator in the buffer ahead...
         if (length($/)
-            ?  $$sr =~ m,\Q$/\E,g          ###   (ordinary sep) TBD: precomp!
+	    ?  $$sr =~ m,\Q$/\E,g          ###   (ordinary sep) TBD: precomp!
             :  $$sr =~ m,\n\n,g            ###   (a paragraph)
             ) {
             *$self->{Pos} = pos $$sr;

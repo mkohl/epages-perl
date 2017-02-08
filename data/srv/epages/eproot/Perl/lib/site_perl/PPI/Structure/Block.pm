@@ -9,13 +9,13 @@ PPI::Structure::Block - Curly braces representing a code block
 =head1 SYNOPSIS
 
   sub foo { ... }
-
+  
   grep { ... } @list;
-
+  
   if ( condition ) {
       ...
   }
-
+  
   LABEL: {
       ...
   }
@@ -47,8 +47,8 @@ use PPI::Structure ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Structure';
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Structure';
 }
 
 

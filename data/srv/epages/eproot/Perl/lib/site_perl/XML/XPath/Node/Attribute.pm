@@ -14,18 +14,18 @@ use vars qw/@ISA/;
 use XML::XPath::Node ':node_keys';
 
 sub new {
-        my $class = shift;
-        my ($key, $val, $prefix) = @_;
-
+	my $class = shift;
+	my ($key, $val, $prefix) = @_;
+	
         my $pos = XML::XPath::Node->nextPos;
-
+        
         my @vals;
         @vals[node_global_pos, node_prefix, node_key, node_value] =
                 ($pos, $prefix, $key, $val);
-        my $self = \@vals;
-
-        bless $self, $class;
-
+	my $self = \@vals;
+        
+	bless $self, $class;
+	
 }
 
 sub getNodeType { ATTRIBUTE_NODE }
@@ -59,27 +59,27 @@ sub setNodeValue {
 }
 
 sub getPrefix {
-        my $self = shift;
-        $self->[node_prefix];
+	my $self = shift;
+	$self->[node_prefix];
 }
 
 sub string_value {
-        my $self = shift;
-        return $self->[node_value];
+	my $self = shift;
+	return $self->[node_value];
 }
 
 sub toString {
-        my $self = shift;
-        my $string = ' ';
-#       if ($self->[node_prefix]) {
-#               $string .= $self->[node_prefix] . ':';
-#       }
-        $string .= join('',
-                                        $self->[node_key],
-                                        '="',
-                                        XML::XPath::Node::XMLescape($self->[node_value], '"&><'),
-                                        '"');
-        return $string;
+	my $self = shift;
+	my $string = ' ';
+# 	if ($self->[node_prefix]) {
+# 		$string .= $self->[node_prefix] . ':';
+# 	}
+	$string .= join('',
+					$self->[node_key],
+					'="',
+					XML::XPath::Node::XMLescape($self->[node_value], '"&><'),
+					'"');
+	return $string;
 }
 
 sub getNamespace {

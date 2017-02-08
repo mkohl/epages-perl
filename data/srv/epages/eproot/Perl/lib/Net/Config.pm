@@ -48,10 +48,10 @@ my %nc = (
     ph_hosts        => [ \$InternetConfig{ kICPhHost() }   ],
     ftp_ext_passive => \$InternetConfig{"646F676F\xA5UsePassiveMode"} || 0,
     ftp_int_passive => \$InternetConfig{"646F676F\xA5UsePassiveMode"} || 0,
-    socks_hosts     =>
-        \$InternetConfig{ kICUseSocks() }    ? [ \$InternetConfig{ kICSocksHost() }    ] : [],
-    ftp_firewall    =>
-        \$InternetConfig{ kICUseFTPProxy() } ? [ \$InternetConfig{ kICFTPProxyHost() } ] : [],
+    socks_hosts     => 
+    	\$InternetConfig{ kICUseSocks() }    ? [ \$InternetConfig{ kICSocksHost() }    ] : [],
+    ftp_firewall    => 
+    	\$InternetConfig{ kICUseFTPProxy() } ? [ \$InternetConfig{ kICFTPProxyHost() } ] : [],
 );
 \@NetConfig{keys %nc} = values %nc;
 }
@@ -141,7 +141,7 @@ For example
     # .libnetrc
     {
         nntp_hosts => [ "my_preferred_host" ],
-        ph_hosts   => [ "my_ph_server" ],
+	ph_hosts   => [ "my_ph_server" ],
     }
     __END__
 

@@ -55,7 +55,7 @@ sub _run {
     print 'Deleted queue', "\n";
     print 'message_count: ', $method_frame->message_count, "\n";
     return;
-}
+} 
 
 1;
 

@@ -39,17 +39,17 @@ Version 0.0801
 
 =head1 DESCRIPTION
 
-This module mainly proposes functions for reading one or more files,
+This module mainly proposes functions for reading one or more files, 
 with different options. See below for more details and examples.
 
 =head2 Rationale
 
-This module was created to address a quite specific need: reading many
-files, some as a normal user and others as root, and eventually do a
-little more processing, all while being at the same time compatible
-with Perl 5.004. C<File::Slurp> addresses the first point, but not the
-others, hence the creation of C<File::Read>. If you don't need reading
-files as root or the post-processing features, then it's faster to
+This module was created to address a quite specific need: reading many 
+files, some as a normal user and others as root, and eventually do a 
+little more processing, all while being at the same time compatible 
+with Perl 5.004. C<File::Slurp> addresses the first point, but not the 
+others, hence the creation of C<File::Read>. If you don't need reading 
+files as root or the post-processing features, then it's faster to 
 directly use C<File::Slurp>.
 
 =head1 EXPORT
@@ -67,9 +67,9 @@ set C<read_file()>'s C<err_mode> option default value to C<"quiet">.
 
 =item B<read_file()>
 
-Read the files given in argument and return their content,
-as as list, one element per file, when called in list context,
-or as one big chunk of text when called in scalar context.
+Read the files given in argument and return their content, 
+as as list, one element per file, when called in list context, 
+or as one big chunk of text when called in scalar context. 
 Options can be set using a hashref as first parameter.
 
 B<Options>
@@ -78,42 +78,42 @@ B<Options>
 
 =item *
 
-C<aggregate> controls how the function returns the content of the files
-that were successfully read. By default, When set to true (default),
-the function returns the content as a scalar; when set to false, the
+C<aggregate> controls how the function returns the content of the files 
+that were successfully read. By default, When set to true (default), 
+the function returns the content as a scalar; when set to false, the 
 content is returned as a list.
 
 =item *
 
-C<as_root> tells the function to read the given file(s) as root using
+C<as_root> tells the function to read the given file(s) as root using 
 the command indicated by the C<cmd> option.
 
 =item *
 
-C<cmd> sets the shell command used for reading files as root. Default
-is C<"sudo cat">. Therefore you need B<sudo(8)> and B<cat(1)> on your
+C<cmd> sets the shell command used for reading files as root. Default 
+is C<"sudo cat">. Therefore you need B<sudo(8)> and B<cat(1)> on your 
 system, and F<sudoers(5)> must be set so the user can execute B<cat(1)>.
 
 =item *
 
-C<err_mode> controls how the function behaves when an error occurs.
+C<err_mode> controls how the function behaves when an error occurs. 
 Available values are C<"croak">, C<"carp"> and C<"quiet">.
 Default value is C<"croak">.
 
 =item *
 
-C<skip_comments> tells the functions to remove all comment lines from
-the read files.
+C<skip_comments> tells the functions to remove all comment lines from 
+the read files. 
 
 =item *
 
-C<skip_blanks> tells the functions to remove all blank lines from
-the read files.
+C<skip_blanks> tells the functions to remove all blank lines from 
+the read files. 
 
 =item *
 
 C<to_ascii> tells the functions to convert the text to US-ASCII using
-C<Text::Unidecode>. If this module is not available, non-ASCII data
+C<Text::Unidecode>. If this module is not available, non-ASCII data 
 are deleted.
 
 =back
@@ -138,18 +138,18 @@ Read several files, skipping blank lines and comments:
 
 =item B<read_files()>
 
-C<read_files()> is just an alias for C<read_file()> so that it look more
-sane when reading several files.
+C<read_files()> is just an alias for C<read_file()> so that it look more 
+sane when reading several files. 
 
 =cut
 
 my %defaults = (
-    aggregate       => 1,
+    aggregate       => 1, 
     cmd             => "sudo cat",
-    err_mode        => 'croak',
-    skip_comments   => 0,
-    skip_blanks     => 0,
-    to_ascii        => 0,
+    err_mode        => 'croak', 
+    skip_comments   => 0, 
+    skip_blanks     => 0, 
+    to_ascii        => 0, 
 );
 
 sub import {
@@ -185,9 +185,9 @@ sub read_file {
         or croak "error: Bad value '$opts{err_mode}' for option 'err_mode'";
 
     my %err_with = (
-        'carp'  => \&carp,
-        'croak' => \&croak,
-        'quiet' => sub{},
+        'carp'  => \&carp, 
+        'croak' => \&croak, 
+        'quiet' => sub{}, 
     );
     my $err_sub = $err_with{$opts{err_mode}};
 
@@ -196,7 +196,7 @@ sub read_file {
     for my $path (@paths) {
         my @lines = ();
         my $error = '';
-
+        
         # first, read the file
         if ($opts{as_root}) {   # ... as root
             my $redir = $opts{err_mode} eq 'quiet' ? '2>&1' : '';
@@ -262,8 +262,8 @@ sub _to_ascii {
 
 =item C<Bad value '%s' for option '%s'>
 
-B<(E)> You gave a bad value for the indicated option. Please check the
-documentation for the valid values.
+B<(E)> You gave a bad value for the indicated option. Please check the 
+documentation for the valid values. 
 
 =item C<This function needs at least one path>
 

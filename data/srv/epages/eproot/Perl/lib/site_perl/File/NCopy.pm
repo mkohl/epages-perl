@@ -489,8 +489,8 @@ sub _docopy_file_dir($$$)
     else {
         $file_to = $file;
     }
-
-    $dir =~ s/$dir_sep$//; # remove trailing slash
+    
+    $dir =~ s/$dir_sep$//; # remove trailing slash 
 
     _docopy_file_file $this, $file,$dir.$dir_sep.$file_to;
 }
@@ -528,7 +528,7 @@ sub expand(@)
 {
     my @args;
 
-    return
+    return 
         if @_ < 2;
 
     for (my $i = 0;$i < $#_;++$i) {
@@ -591,7 +591,7 @@ sub cp(@) {
 sub new(@)
 {
     my $this = shift;
-
+    
     my $conf = {
         'test'           => 0,
         'recursive'      => 0,

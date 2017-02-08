@@ -103,7 +103,7 @@ sub touch
     foreach my $file (@files) {
         my $time = time();
         my ($atime,$mtime);
-
+        
         if (-e $file) {
             my $sb = stat($file) or croak("Could not stat ($file): $!");
             $atime = $sb->atime;

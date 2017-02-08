@@ -279,7 +279,7 @@ sub parse_datetime {
         print qq|
 
 Entered     = $time_string
-Parser          = $parser
+Parser		= $parser
 
 dow_name    = $dow_name
 month_name  = $month_name
@@ -307,7 +307,7 @@ epoch       = $epoch
 iso_week_year     = $iso_week_year
 iso_week_year_100 = $iso_week_year_100
 
-                |;
+		|;
 
     }
 
@@ -451,7 +451,7 @@ iso_week_year_100 = $iso_week_year_100
         foreach my $month ( @{ $self->{_locale}->month_format_wide } ) {
             $month_count++;
 
-            #                   use bytes;
+            # 			use bytes;
             if ( lc $month eq lc $month_name ) {
                 $month_number = $month_count;
                 last;
@@ -651,8 +651,8 @@ iso_week_year_100 = $iso_week_year_100
     $Nanosecond ||= $nanosecond;
     $Nanosecond .= '0' while length($Nanosecond) < 9;
 
-    #   Epoch doesn't return nanoseconds
-    #   croak "Your nanosecond does not match your epoch." if $epoch_dt and $Nanosecond and $Nanosecond != $epoch_dt->nanosecond;
+    #	Epoch doesn't return nanoseconds
+    #	croak "Your nanosecond does not match your epoch." if $epoch_dt and $Nanosecond and $Nanosecond != $epoch_dt->nanosecond;
     print "Set nanosecond to $Nanosecond.\n" if $self->{diagnostic};
 
     my $potential_return = eval {
@@ -1085,36 +1085,36 @@ version 1.5000
   use DateTime::Format::Strptime;
 
   my $Strp = new DateTime::Format::Strptime(
-                                pattern     => '%T',
-                                locale      => 'en_AU',
-                                time_zone   => 'Australia/Melbourne',
-                        );
+  				pattern     => '%T',
+  				locale      => 'en_AU',
+  				time_zone   => 'Australia/Melbourne',
+  			);
 
   my $dt = $Strp->parse_datetime('23:16:42');
 
   $Strp->format_datetime($dt);
-        # 23:16:42
+	# 23:16:42
 
 
 
   # Croak when things go wrong:
   my $Strp = new DateTime::Format::Strptime(
-                                pattern         => '%T',
-                                locale      => 'en_AU',
-                                time_zone       => 'Australia/Melbourne',
-                                on_error        => 'croak',
-                        );
+  				pattern 	=> '%T',
+  				locale	    => 'en_AU',
+  				time_zone	=> 'Australia/Melbourne',
+  				on_error	=> 'croak',
+  			);
 
   $newpattern = $Strp->pattern('%Q');
   # Unidentified token in pattern: %Q in %Q at line 34 of script.pl
 
   # Do something else when things go wrong:
   my $Strp = new DateTime::Format::Strptime(
-                                pattern         => '%T',
-                                locale      => 'en_AU',
-                                time_zone       => 'Australia/Melbourne',
-                                on_error        => \&phone_police,
-                        );
+  				pattern 	=> '%T',
+  				locale	    => 'en_AU',
+  				time_zone	=> 'Australia/Melbourne',
+  				on_error	=> \&phone_police,
+  			);
 
 =head1 DESCRIPTION
 
@@ -1286,7 +1286,7 @@ The day of month (1-31).
 =item * %D
 
 Equivalent to %m/%d/%y. (This is the American style date, very confusing
-to non-Americans, especially since %d/%m/%y is  widely used in Europe.
+to non-Americans, especially since %d/%m/%y is	widely used in Europe.
 The ISO 8601 standard pattern is %F.)
 
 =item * %F

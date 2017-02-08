@@ -22,48 +22,48 @@ sub VERSION {$VERSION}
 # Private function for checking to see if a signal identifier is
 # valid.
 sub is_sig {
-        my $sig = shift;
-        if (defined($sig)) {
-                if ($sig =~ /^-?(\d+)/) {
-                        my $n = $1;
-                        my @sigs = split ' ', $Config{sig_num};
-                        return grep {$_ == $n} @sigs;
-                } elsif ($sig =~ /^[A-Z][A-Z0-9]+$/) {
-                        my @sigs = split ' ', $Config{sig_name};
-                        return grep {$_ eq $sig} @sigs;
-                } else {
-                        return 0;
-                }
-        } else {
-                return 0;
-        }
+	my $sig = shift;
+	if (defined($sig)) {
+		if ($sig =~ /^-?(\d+)/) {
+			my $n = $1;
+			my @sigs = split ' ', $Config{sig_num};
+			return grep {$_ == $n} @sigs;
+		} elsif ($sig =~ /^[A-Z][A-Z0-9]+$/) {
+			my @sigs = split ' ', $Config{sig_name};
+			return grep {$_ eq $sig} @sigs;
+		} else {
+			return 0;
+		}
+	} else {
+		return 0;
+	}
 }
 
 # usage: killall(signal, pattern)
 # return: number of procs killed
 sub killall {
-        croak("Usage: killall(signal, pattern)") unless @_==2;
-        my $signal = shift;
-        my $pat = shift;
-        my $self = shift;
-        $self = 0 unless defined $self;
-        my $nkilled = 0;
-        croak("killall: Unsupported signal: $signal") unless is_sig($signal);
-        my $t = new Proc::ProcessTable;
-        my $BANG = undef;
-        foreach my $p (@{$t->table}) {
-          my $cmndline = $p->{cmndline} || $p->{fname};
-          if ($cmndline =~ /$pat/) {
-                        next unless $p->pid != $$ || $self;
-                        if (kill $signal, $p->pid) {
-                                $nkilled++;
-                        } else {
-                                $BANG = $!;
-                        }
-                }
-        }
-        $! = $BANG if defined $BANG;
-        return $nkilled;
+	croak("Usage: killall(signal, pattern)") unless @_==2;
+	my $signal = shift;
+	my $pat = shift;
+	my $self = shift;
+	$self = 0 unless defined $self;
+	my $nkilled = 0;
+	croak("killall: Unsupported signal: $signal") unless is_sig($signal);
+	my $t = new Proc::ProcessTable;
+	my $BANG = undef;
+	foreach my $p (@{$t->table}) {
+	  my $cmndline = $p->{cmndline} || $p->{fname};
+	  if ($cmndline =~ /$pat/) {
+			next unless $p->pid != $$ || $self;
+			if (kill $signal, $p->pid) {
+				$nkilled++;
+			} else {
+				$BANG = $!;
+			}
+		}
+	}
+	$! = $BANG if defined $BANG;
+	return $nkilled;
 }
 
 1;
@@ -76,10 +76,10 @@ killall - Kill all instances of a process by pattern matching the command-line
 
 =head1 SYNOPSIS
 
-        use Proc::Killall;
+	use Proc::Killall;
 
-        killall('HUP', 'xterm'); # SIGHUP all xterms
-        killall('KILL', '^netscape$'); # SIGKILL to "netscape"
+	killall('HUP', 'xterm'); # SIGHUP all xterms
+	killall('KILL', '^netscape$'); # SIGKILL to "netscape"
 
 =head1 DESCRIPTION
 

@@ -96,7 +96,7 @@ your namespace:
 
 =item * L<Test::Differences>
 
-=item * L<Test::Deep>
+=item * L<Test::Deep> 
 
 =item * L<Test::Warn>
 
@@ -150,7 +150,7 @@ set your own failure handler:
      }
  } );
 
-It receives the C<< Test::Builder >> instance as its only argument.
+It receives the C<< Test::Builder >> instance as its only argument.  
 
 B<Important>:  Note that if the failing test is the very last test run, then
 the C<$builder> will likely be undefined.  This is an unfortunate side effect
@@ -340,7 +340,7 @@ so before any tests have run.  This fixes that problem.
 We generally require the latest stable versions of various test modules.  Why?
 Because they have bug fixes and new features.  You don't want to have to keep
 remembering them, so periodically we'll release new versions of L<Test::Most>
-just for bug
+just for bug 
 
 =head2 C<use ok>
 
@@ -397,7 +397,7 @@ it's a great and useful module.
 BEGIN {
     @ISA    = qw(Test::Builder::Module);
     @EXPORT = (
-        @Test::More::EXPORT,
+        @Test::More::EXPORT, 
         qw<
             all_done
             bail_on_fail

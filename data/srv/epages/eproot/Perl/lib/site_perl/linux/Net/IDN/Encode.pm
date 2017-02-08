@@ -177,7 +177,7 @@ The following functions are available:
 =item to_ascii( $label [, AllowUnassigned => 0] [, UseSTD3ASCIIRules => 1 ] )
 
 Converts a single label C<$label> to ASCII. Will throw an
-exception on invalid input.
+exception on invalid input. 
 
 This function takes the following optional parameters:
 

@@ -17,9 +17,9 @@ HTTP::Server::Simple - Lightweight HTTP server
 
  use warnings;
  use strict;
-
+ 
  use HTTP::Server::Simple;
-
+ 
  my $server = HTTP::Server::Simple->new();
  $server->run();
 
@@ -28,7 +28,7 @@ module (see L<HTTP::Server::Simple::CGI>);
 
  package Your::Web::Server;
  use base qw(HTTP::Server::Simple::CGI);
-
+ 
  sub handle_request {
      my ($self, $cgi) = @_;
 
@@ -36,7 +36,7 @@ module (see L<HTTP::Server::Simple::CGI>);
      # selected filehandle...
 
  }
-
+ 
  1;
 
 =head1 DESCRIPTION
@@ -64,37 +64,37 @@ HUP to all running processes spawned by your app (e.g. by "kill -HUP <script>")
 
 =item PIPE
 
-If the server detects a broken pipe while writing output to the client,
-it ignores the signal. Otherwise, a client closing the connection early
+If the server detects a broken pipe while writing output to the client, 
+it ignores the signal. Otherwise, a client closing the connection early 
 could kill the server.
 
 =back
 
 =head1 EXAMPLE
-
+ 
  #!/usr/bin/perl
  {
  package MyWebServer;
-
+ 
  use HTTP::Server::Simple::CGI;
  use base qw(HTTP::Server::Simple::CGI);
-
+ 
  my %dispatch = (
      '/hello' => \&resp_hello,
      # ...
  );
-
+ 
  sub handle_request {
      my $self = shift;
      my $cgi  = shift;
-
+   
      my $path = $cgi->path_info();
      my $handler = $dispatch{$path};
-
+ 
      if (ref($handler) eq "CODE") {
          print "HTTP/1.0 200 OK\r\n";
          $handler->($cgi);
-
+         
      } else {
          print "HTTP/1.0 404 Not found\r\n";
          print $cgi->header,
@@ -103,21 +103,21 @@ could kill the server.
                $cgi->end_html;
      }
  }
-
+ 
  sub resp_hello {
      my $cgi  = shift;   # CGI.pm object
      return if !ref $cgi;
-
+     
      my $who = $cgi->param('name');
-
+     
      print $cgi->header,
            $cgi->start_html("Hello"),
            $cgi->h1("Hello $who!"),
            $cgi->end_html;
  }
-
- }
-
+ 
+ } 
+ 
  # start the server on port 8080
  my $pid = MyWebServer->new(8080)->background();
  print "Use 'kill $pid' to stop server.\n";
@@ -262,7 +262,7 @@ sub run {
     }
     else {
         $self->setup_listener;
-        $self->after_setup_listener();
+	$self->after_setup_listener();
         *{"$pkg\::run"} = $self->_default_run;
     }
 
@@ -357,13 +357,13 @@ sub _process_request {
         # The ternary operator below is to protect against a crash caused by IE
         # Ported from Catalyst::Engine::HTTP (Originally by Jasper Krogh and Peter Edwards)
         # ( http://dev.catalyst.perl.org/changeset/5195, 5221 )
-
+        
         my $remote_sockaddr = getpeername( $self->stdio_handle );
         my ( $iport, $iaddr ) = $remote_sockaddr ? sockaddr_in($remote_sockaddr) : (undef,undef);
         my $peeraddr = $iaddr ? ( inet_ntoa($iaddr) || "127.0.0.1" ) : '127.0.0.1';
-
+        
         my ( $method, $request_uri, $proto ) = $self->parse_request;
-
+        
         unless ($self->valid_http_method($method) ) {
             $self->bad_request;
             return;
@@ -435,7 +435,7 @@ sub stdin_handle {
 
 =head2 stdout_handle
 
-Returns a filehandle used for output to the client.  By default,
+Returns a filehandle used for output to the client.  By default, 
 returns whatever was set with C<stdio_handle>, but a subclass
 could do something interesting here.
 
@@ -518,7 +518,7 @@ C<headers()> in your sub-class and receive them all at once.
 
 Finally, you can define handlers to receive individual HTTP headers.
 This can be useful for very simple SOAP servers (to name a
-crack-fueled standard that defines its own special HTTP headers).
+crack-fueled standard that defines its own special HTTP headers). 
 
 To do so, you'll want to define the C<header()> method in your subclass.
 That method will be handed a (key,value) pair of the header name and the value.
@@ -549,7 +549,7 @@ accept happens.  An accept_hook to add SSL support might look like this:
         $self->SUPER::accept_hook(@_);
 
         my $newfh =
-        IO::Socket::SSL->start_SSL( $fh,
+        IO::Socket::SSL->start_SSL( $fh, 
             SSL_server    => 1,
             SSL_use_cert  => 1,
             SSL_cert_file => 'myserver.crt',
@@ -578,7 +578,7 @@ yourself in subclasses.
 sub print_banner {
     my $self = shift;
 
-    print( ref($self)
+    print( ref($self) 
             . ": You can connect to your server at "
             . "http://localhost:"
             . $self->port
@@ -701,7 +701,7 @@ Override if, for example, you'd like to do some WebDAV.  The default
 implementation only accepts C<GET>, C<POST>, C<HEAD>, C<PUT>, and
 C<DELETE>.
 
-=cut
+=cut 
 
 sub valid_http_method {
     my $self   = shift;

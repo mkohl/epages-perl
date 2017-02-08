@@ -169,7 +169,7 @@ sub out_xml
     my ($self, $context, $depth) = @_;
     my ($fh) = $context->{'fh'};
     my ($end);
-
+    
     $fh->print("$depth<anchor x='$self->{'x'}' y='$self->{'y'}'");
     $fh->print(" p='$self->{'p'}'") if defined ($self->{'p'});
     $end = (defined $self->{'xdev'} || defined $self->{'ydev'} || defined $self->{'xid'} || defined $self->{'yid'});
@@ -185,14 +185,14 @@ sub out_xml
         $self->{'xdev'}->out_xml($context, $depth . ($context->{'indent'} x 2));
         $fh->print("$depth$context->{'indent'}</xdev>\n");
     }
-
+    
     if (defined $self->{'ydev'})
     {
         $fh->print("$depth$context->{'indent'}<ydev>\n");
         $self->{'ydev'}->out_xml($context, $depth . ($context->{'indent'} x 2));
         $fh->print("$depth$context->{'indent'}</ydev>\n");
     }
-
+    
     if (defined $self->{'xid'} || defined $self->{'yid'})
     {
         $fh->print("$depth$context->{'indent'}<mmaster");
@@ -203,7 +203,7 @@ sub out_xml
     $fh->print("$depth</anchor>\n");
     $self;
 }
-
+        
 
 =head1 AUTHOR
 

@@ -10,59 +10,59 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]+)(\d)$/) {
-                return $2 == $self->_compute_checkdigits($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]+)(\d)$/) {
+		return $2 == $self->_compute_checkdigits($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]+)$/
-           and (my $cd = $self->_compute_checkdigits($1)) ne '') {
-                return $1 . $cd;
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]+)$/
+	   and (my $cd = $self->_compute_checkdigits($1)) ne '') {
+		return $1 . $cd;
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]+)(\d)$/) {
-                return $1 if ($2 == $self->_compute_checkdigits($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]+)(\d)$/) {
+		return $1 if ($2 == $self->_compute_checkdigits($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9]+)(\d)$/) {
-                return $2 if ($2 == $self->_compute_checkdigits($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9]+)(\d)$/) {
+		return $2 if ($2 == $self->_compute_checkdigits($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigits {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        my @digits = split(//,$number);
-        my $len = scalar(@digits);
-        my $sum = 0;
-        for (my $i = $#digits; $i >= 0; $i--) {
-                $sum += 2 ** ($len - $i) * $digits[$i];
-        }
-        $sum %= 11;
-        return ($sum > 9) ? 0 : $sum;
+	my @digits = split(//,$number);
+	my $len = scalar(@digits);
+	my $sum = 0;
+	for (my $i = $#digits; $i >= 0; $i--) {
+		$sum += 2 ** ($len - $i) * $digits[$i];
+	}
+	$sum %= 11;
+	return ($sum > 9) ? 0 : $sum;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -81,7 +81,7 @@ CheckDigits::M11_013 - compute check digits for VAT Registration Number (GR)
   $ustid = CheckDigits('ustid_gr');
 
   if ($ustid->is_valid('123456783')) {
-        # do something
+	# do something
   }
 
   $cn = $ustid->complete('12345678');
@@ -92,7 +92,7 @@ CheckDigits::M11_013 - compute check digits for VAT Registration Number (GR)
 
   $bn = $ustid->basenumber('123456783');
   # $bn = '12345678';
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

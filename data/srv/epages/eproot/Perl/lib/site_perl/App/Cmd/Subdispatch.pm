@@ -8,32 +8,32 @@ package App::Cmd::Subdispatch;
 
 use App::Cmd;
 use App::Cmd::Command;
-BEGIN { our @ISA = qw(App::Cmd::Command App::Cmd) }
+BEGIN { our @ISA = qw(App::Cmd::Command App::Cmd) } 
 
 # ABSTRACT: an App::Cmd::Command that is also an App::Cmd
 
 
 sub new {
-        my ($inv, $fields, @args) = @_;
-        if (ref $inv) {
-                @{ $inv }{ keys %$fields } = values %$fields;
-                return $inv;
-        } else {
-                $inv->SUPER::new($fields, @args);
-        }
+	my ($inv, $fields, @args) = @_;
+	if (ref $inv) {
+		@{ $inv }{ keys %$fields } = values %$fields;
+		return $inv;
+	} else {
+		$inv->SUPER::new($fields, @args);
+	}
 }
 
 
 sub prepare {
-        my ($class, $app, @args) = @_;
+	my ($class, $app, @args) = @_;
 
-        my $self = $class->new({ app => $app });
+	my $self = $class->new({ app => $app });
 
-        my ($subcommand, $opt, @sub_args) = $self->get_command(@args);
+	my ($subcommand, $opt, @sub_args) = $self->get_command(@args);
 
   $self->set_global_options($opt);
 
-        if (defined $subcommand) {
+	if (defined $subcommand) {
     return $self->_prepare_command($subcommand, $opt, @sub_args);
   } else {
     if (@args) {
@@ -54,17 +54,17 @@ sub app { $_[0]{app} }
 
 
 sub choose_parent_app {
-        my ( $self, $app, $plugin ) = @_;
+	my ( $self, $app, $plugin ) = @_;
 
-        if (
+	if (
     $plugin->isa("App::Cmd::Command::commands")
     or $plugin->isa("App::Cmd::Command::help")
     or scalar keys %{ $self->global_options }
   ) {
-                return $self;
-        } else {
-                return $app;
-        }
+		return $self;
+	} else {
+		return $app;
+	}
 }
 
 1;

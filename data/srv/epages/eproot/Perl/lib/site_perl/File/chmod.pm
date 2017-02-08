@@ -176,7 +176,7 @@ sub clear {
   $W & 2 and $VAL &= 05707;
   $W & 4 and $VAL &= 07770;
 }
-
+  
 
 sub u_or {
   my $val = $VAL;
@@ -335,9 +335,9 @@ This is File::chmod v0.32.
 
   use File::chmod qw( symchmod lschmod );
 
-  chmod(0666,@files);           # this is the normal chmod
-  symchmod("=rw",@files);       # takes symbolic modes only
-  lschmod("-rw-rw-rw-",@files); # takes "ls" modes only
+  chmod(0666,@files);		# this is the normal chmod
+  symchmod("=rw",@files);	# takes symbolic modes only
+  lschmod("-rw-rw-rw-",@files);	# takes "ls" modes only
 
   # more functions, read on to understand
 
@@ -355,7 +355,7 @@ here are a few examples.
 
   # NEW: if $UMASK is true, symchmod() applies a bit-mask found in $MASK
 
-  chmod("+x","file1","file2");  # overloaded chmod(), that is...
+  chmod("+x","file1","file2");	# overloaded chmod(), that is...
   # turns on the execute bit for all users on those two files
 
   chmod("o=,g-w","file1","file2");
@@ -560,11 +560,11 @@ $S was declared in C<use vars qw( ... );>, but never given a value, and the
 themselves weren't really needed anyway.  Here is a list of the variables no
 longer in use, and what they have been replaced with (if any):
 
-  $S            nothing
-  $U, $G, $O    $W
-  %r, %w, %x    octal numbers
-  @files        @_ (I had @files = @_; in nearly EVERY sub)
-  $c            $_
+  $S		nothing
+  $U, $G, $O	$W
+  %r, %w, %x	octal numbers
+  @files	@_ (I had @files = @_; in nearly EVERY sub)
+  $c		$_
 
 =item B<compacted code>
 

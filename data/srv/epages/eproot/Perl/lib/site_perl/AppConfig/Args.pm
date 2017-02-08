@@ -2,7 +2,7 @@
 #
 # AppConfig::Args.pm
 #
-# Perl5 module to read command line argument and update the variable
+# Perl5 module to read command line argument and update the variable 
 # values in an AppConfig::State object accordingly.
 #
 # Written by Andy Wardley <abw@wardley.org>
@@ -21,9 +21,9 @@ our $VERSION = '1.65';
 #------------------------------------------------------------------------
 # new($state, \@args)
 #
-# Module constructor.  The first, mandatory parameter should be a
-# reference to an AppConfig::State object to which all actions should
-# be applied.  The second parameter may be a reference to a list of
+# Module constructor.  The first, mandatory parameter should be a 
+# reference to an AppConfig::State object to which all actions should 
+# be applied.  The second parameter may be a reference to a list of 
 # command line arguments.  This list reference is passed to args() for
 # processing.
 #
@@ -33,7 +33,7 @@ our $VERSION = '1.65';
 sub new {
     my $class = shift;
     my $state = shift;
-
+    
 
     my $self = {
         STATE    => $state,                # AppConfig::State ref
@@ -42,8 +42,8 @@ sub new {
     };
 
     bless $self, $class;
-
-    # call parse() to parse any arg list passed
+        
+    # call parse() to parse any arg list passed 
     $self->parse(shift)
         if @_;
 
@@ -54,9 +54,9 @@ sub new {
 #------------------------------------------------------------------------
 # parse(\@args)
 #
-# Examines the argument list and updates the contents of the
-# AppConfig::State referenced by $self->{ STATE } accordingly.  If
-# no argument list is provided then the method defaults to examining
+# Examines the argument list and updates the contents of the 
+# AppConfig::State referenced by $self->{ STATE } accordingly.  If 
+# no argument list is provided then the method defaults to examining 
 # @ARGV.  The method reports any warning conditions (such as undefined
 # variables) by calling $self->{ STATE }->_error() and then continues to
 # examine the rest of the list.  If the PEDANTIC option is set in the
@@ -149,8 +149,8 @@ AppConfig::Args - Perl5 module for reading command line arguments.
 
 =head1 OVERVIEW
 
-AppConfig::Args is a Perl5 module which reads command line arguments and
-uses the options therein to update variable values in an AppConfig::State
+AppConfig::Args is a Perl5 module which reads command line arguments and 
+uses the options therein to update variable values in an AppConfig::State 
 object.
 
 AppConfig::File is distributed as part of the AppConfig bundle.
@@ -164,22 +164,22 @@ in your Perl script:
 
     use AppConfig::Args;
 
-AppConfig::Args is used automatically if you use the AppConfig module
+AppConfig::Args is used automatically if you use the AppConfig module 
 and create an AppConfig::Args object through the parse() method.
-
-AppConfig::File is implemented using object-oriented methods.  A new
+      
+AppConfig::File is implemented using object-oriented methods.  A new 
 AppConfig::Args object is created and initialised using the new() method.
 This returns a reference to a new AppConfig::File object.  A reference to
 an AppConfig::State object should be passed in as the first parameter:
-
+       
     my $state   = AppConfig::State->new();
     my $cfgargs = AppConfig::Args->new($state);
 
-This will create and return a reference to a new AppConfig::Args object.
+This will create and return a reference to a new AppConfig::Args object. 
 
 =head2 PARSING COMMAND LINE ARGUMENTS
 
-The C<parse()> method is used to read a list of command line arguments and
+The C<parse()> method is used to read a list of command line arguments and 
 update the STATE accordingly.  A reference to the list of arguments should
 be passed in.
 
@@ -188,7 +188,7 @@ be passed in.
 If the method is called without a reference to an argument list then it
 will examine and manipulate @ARGV.
 
-If the PEDANTIC option is turned off in the AppConfig::State object, any
+If the PEDANTIC option is turned off in the AppConfig::State object, any 
 parsing errors (invalid variables, unvalidated values, etc) will generate
 warnings, but not cause the method to return.  Having processed all
 arguments, the method will return 1 if processed without warning or 0 if
@@ -202,19 +202,19 @@ for other options are not examined in this way.
 
 =head1 FUTURE DEVELOPMENT
 
-This module was developed to provide backwards compatibility (to some
-degree) with the preceeding App::Config module.  The argument parsing
+This module was developed to provide backwards compatibility (to some 
+degree) with the preceeding App::Config module.  The argument parsing 
 it provides is basic but offers a quick and efficient solution for those
 times when simple option handling is all that is required.
 
-If you require more flexibility in parsing command line arguments, then
-you should consider using the AppConfig::Getopt module.  This is loaded
+If you require more flexibility in parsing command line arguments, then 
+you should consider using the AppConfig::Getopt module.  This is loaded 
 and used automatically by calling the AppConfig getopt() method.
 
-The AppConfig::Getopt module provides considerably extended functionality
-over the AppConfig::Args module by delegating out the task of argument
-parsing to Johan Vromans' Getopt::Long module.  For advanced command-line
-parsing, this module (either Getopt::Long by itself, or in conjunction with
+The AppConfig::Getopt module provides considerably extended functionality 
+over the AppConfig::Args module by delegating out the task of argument 
+parsing to Johan Vromans' Getopt::Long module.  For advanced command-line 
+parsing, this module (either Getopt::Long by itself, or in conjunction with 
 AppConfig::Getopt) is highly recommended.
 
 =head1 AUTHOR
@@ -227,7 +227,7 @@ Copyright (C) 1997-2007 Andy Wardley.  All Rights Reserved.
 
 Copyright (C) 1997,1998 Canon Research Centre Europe Ltd.
 
-This module is free software; you can redistribute it and/or modify it
+This module is free software; you can redistribute it and/or modify it 
 under the same terms as Perl itself.
 
 =head1 SEE ALSO

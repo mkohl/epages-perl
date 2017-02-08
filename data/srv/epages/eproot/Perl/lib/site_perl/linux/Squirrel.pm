@@ -59,7 +59,7 @@ Squirrel - Use Mouse, unless Moose is already loaded. (DEPRECATED)
     use Squirrel;
 
     has goggles => (
-        is => "rw",
+        is => "rw", 
     );
 
 =head1 DEPRECATION

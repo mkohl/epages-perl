@@ -4,42 +4,42 @@ use warnings;
 use File::Spec;
 our $VERSION = '1.07';
 
-use bytes ();           # for $bytes::hint_bits
+use bytes ();		# for $bytes::hint_bits
 
 my %alias1 = (
-                # Icky 3.2 names with parentheses.
-                'LINE FEED'             => 'LINE FEED (LF)',
-                'FORM FEED'             => 'FORM FEED (FF)',
-                'CARRIAGE RETURN'       => 'CARRIAGE RETURN (CR)',
-                'NEXT LINE'             => 'NEXT LINE (NEL)',
-                # Convenience.
-                'LF'                    => 'LINE FEED (LF)',
-                'FF'                    => 'FORM FEED (FF)',
-                'CR'                    => 'CARRIAGE RETURN (CR)',
-                'NEL'                   => 'NEXT LINE (NEL)',
-                # More convenience.  For futher convencience,
-                # it is suggested some way using using the NamesList
-                # aliases is implemented.
-                'ZWNJ'                  => 'ZERO WIDTH NON-JOINER',
-                'ZWJ'                   => 'ZERO WIDTH JOINER',
-                'BOM'                   => 'BYTE ORDER MARK',
-            );
+		# Icky 3.2 names with parentheses.
+		'LINE FEED'		=> 'LINE FEED (LF)',
+		'FORM FEED'		=> 'FORM FEED (FF)',
+		'CARRIAGE RETURN'	=> 'CARRIAGE RETURN (CR)',
+		'NEXT LINE'		=> 'NEXT LINE (NEL)',
+		# Convenience.
+		'LF'			=> 'LINE FEED (LF)',
+		'FF'			=> 'FORM FEED (FF)',
+		'CR'			=> 'CARRIAGE RETURN (CR)',
+		'NEL'			=> 'NEXT LINE (NEL)',
+	        # More convenience.  For futher convencience,
+	        # it is suggested some way using using the NamesList
+		# aliases is implemented.
+	        'ZWNJ'			=> 'ZERO WIDTH NON-JOINER',
+	        'ZWJ'			=> 'ZERO WIDTH JOINER',
+		'BOM'			=> 'BYTE ORDER MARK',
+	    );
 
 my %alias2 = (
-                # Pre-3.2 compatibility (only for the first 256 characters).
-                'HORIZONTAL TABULATION' => 'CHARACTER TABULATION',
-                'VERTICAL TABULATION'   => 'LINE TABULATION',
-                'FILE SEPARATOR'        => 'INFORMATION SEPARATOR FOUR',
-                'GROUP SEPARATOR'       => 'INFORMATION SEPARATOR THREE',
-                'RECORD SEPARATOR'      => 'INFORMATION SEPARATOR TWO',
-                'UNIT SEPARATOR'        => 'INFORMATION SEPARATOR ONE',
-                'PARTIAL LINE DOWN'     => 'PARTIAL LINE FORWARD',
-                'PARTIAL LINE UP'       => 'PARTIAL LINE BACKWARD',
-            );
+		# Pre-3.2 compatibility (only for the first 256 characters).
+		'HORIZONTAL TABULATION'	=> 'CHARACTER TABULATION',
+		'VERTICAL TABULATION'	=> 'LINE TABULATION',
+		'FILE SEPARATOR'	=> 'INFORMATION SEPARATOR FOUR',
+		'GROUP SEPARATOR'	=> 'INFORMATION SEPARATOR THREE',
+		'RECORD SEPARATOR'	=> 'INFORMATION SEPARATOR TWO',
+		'UNIT SEPARATOR'	=> 'INFORMATION SEPARATOR ONE',
+		'PARTIAL LINE DOWN'	=> 'PARTIAL LINE FORWARD',
+		'PARTIAL LINE UP'	=> 'PARTIAL LINE BACKWARD',
+	    );
 
 my %alias3 = (
-                # User defined aliasses. Even more convenient :)
-            );
+		# User defined aliasses. Even more convenient :)
+	    );
 my $txt;
 
 sub croak
@@ -124,11 +124,11 @@ sub charnames
     ## The short name is like "greek:Sigma"
     unless (@off) {
       if ($^H{charnames_short} and $name =~ /^(.+?):(.+)/s) {
-        my ($script, $cname) = ($1, $2);
-        my $case = $cname =~ /[[:upper:]]/ ? "CAPITAL" : "SMALL";
-        if ($txt =~ m/\t\t\U$script\E (?:$case )?LETTER \U\Q$cname\E$/m) {
-          @off = ($-[0], $+[0]);
-        }
+	my ($script, $cname) = ($1, $2);
+	my $case = $cname =~ /[[:upper:]]/ ? "CAPITAL" : "SMALL";
+	if ($txt =~ m/\t\t\U$script\E (?:$case )?LETTER \U\Q$cname\E$/m) {
+	  @off = ($-[0], $+[0]);
+	}
       }
     }
 
@@ -137,10 +137,10 @@ sub charnames
     if (not @off) {
       my $case = $name =~ /[[:upper:]]/ ? "CAPITAL" : "SMALL";
       for my $script (@{$^H{charnames_scripts}}) {
-        if ($txt =~ m/\t\t$script (?:$case )?LETTER \U\Q$name\E$/m) {
-          @off = ($-[0], $+[0]);
-          last;
-        }
+	if ($txt =~ m/\t\t$script (?:$case )?LETTER \U\Q$name\E$/m) {
+	  @off = ($-[0], $+[0]);
+	  last;
+	}
       }
     }
 
@@ -170,7 +170,7 @@ sub charnames
     $ord = CORE::hex substr($txt, $hexstart, $off[0] - $hexstart);
   }
 
-  if ($^H & $bytes::hint_bits) {        # "use bytes" in effect?
+  if ($^H & $bytes::hint_bits) {	# "use bytes" in effect?
     use bytes;
     return chr $ord if $ord <= 255;
     my $hex = sprintf "%04x", $ord;
@@ -200,19 +200,19 @@ sub import
   while (my $arg = shift) {
     if ($arg eq ":alias") {
       @_ or
-        croak ":alias needs an argument in charnames";
+	croak ":alias needs an argument in charnames";
       my $alias = shift;
       if (ref $alias) {
-        ref $alias eq "HASH" or
-          croak "Only HASH reference supported as argument to :alias";
-        alias ($alias);
-        next;
+	ref $alias eq "HASH" or
+	  croak "Only HASH reference supported as argument to :alias";
+	alias ($alias);
+	next;
       }
       if ($alias =~ m{:(\w+)$}) {
-        $1 eq "full" || $1 eq "short" and
-          croak ":alias cannot use existing pragma :$1 (reversed order?)";
-        alias_file ($1) and $promote = 1;
-        next;
+	$1 eq "full" || $1 eq "short" and
+	  croak ":alias cannot use existing pragma :$1 (reversed order?)";
+	alias_file ($1) and $promote = 1;
+	next;
       }
       alias_file ($alias);
       next;
@@ -239,7 +239,7 @@ sub import
 
     for my $script (@{$^H{charnames_scripts}}) {
       if (not $txt =~ m/\t\t$script (?:CAPITAL |SMALL )?LETTER /) {
-        warnings::warn('utf8',  "No such script: '$script'");
+	warnings::warn('utf8',  "No such script: '$script'");
       }
     }
   }
@@ -518,8 +518,8 @@ translations (inside the scope which C<use>s the module) with the
 following magic incantation:
 
     sub import {
-        shift;
-        $^H{charnames} = \&translator;
+	shift;
+	$^H{charnames} = \&translator;
     }
 
 Here translator() is a subroutine which takes C<CHARNAME> as an
@@ -528,14 +528,14 @@ C<\N{CHARNAME}> escape.  Since the text to insert should be different
 in C<bytes> mode and out of it, the function should check the current
 state of C<bytes>-flag as in:
 
-    use bytes ();                       # for $bytes::hint_bits
+    use bytes ();			# for $bytes::hint_bits
     sub translator {
-        if ($^H & $bytes::hint_bits) {
-            return bytes_translator(@_);
-        }
-        else {
-            return utf8_translator(@_);
-        }
+	if ($^H & $bytes::hint_bits) {
+	    return bytes_translator(@_);
+	}
+	else {
+	    return utf8_translator(@_);
+	}
     }
 
 See L</CUSTOM ALIASES> above for restrictions on C<CHARNAME>.

@@ -49,7 +49,7 @@ MIME::Decoder will know about them:
 You can also B<test> if a given encoding is supported:
 
     if (supported MIME::Decoder 'x-uuencode') {
-        ### we can uuencode!
+	### we can uuencode!
     }
 
 
@@ -169,15 +169,15 @@ sub new {
     my $concrete_name = $DecoderFor{$encoding};
 
     if( ! $concrete_name ) {
-        carp "no decoder for $encoding";
-        return undef;
+	carp "no decoder for $encoding";
+	return undef;
     }
 
     ### Create the new object (if we can):
     my $self = { MD_Encoding => lc($encoding) };
     unless (eval "require $concrete_name;") {
-        carp $@;
-        return undef;
+	carp $@;
+	return undef;
     }
     bless $self, $concrete_name;
     $self->init(@args);
@@ -202,8 +202,8 @@ sub best {
     my ($class, $enc, @args) = @_;
     my $self = $class->new($enc, @args);
     if (!$self) {
-        usage "unsupported encoding '$enc': using 'binary'";
-        $self = $class->new('binary') || croak "ack! no binary decoder!";
+	usage "unsupported encoding '$enc': using 'binary'";
+	$self = $class->new('binary') || croak "ack! no binary decoder!";
     }
     $self;
 }
@@ -232,7 +232,7 @@ sub decode {
 
     ### Invoke back-end method to do the work:
     $self->decode_it($in, $out) ||
-        die "$ME: ".$self->encoding." decoding failed\n";
+	die "$ME: ".$self->encoding." decoding failed\n";
     1;
 }
 
@@ -257,7 +257,7 @@ sub encode {
 
     ### Invoke back-end method to do the work:
     $self->encode_it($in, $out, $self->encoding eq 'quoted-printable' ? ($textual_type) : ()) ||
-        die "$ME: ".$self->encoding." encoding failed\n";
+	die "$ME: ".$self->encoding." encoding failed\n";
 }
 
 #------------------------------
@@ -303,10 +303,10 @@ is currently handled, and falsity otherwise.  The ENCODING will
 be automatically coerced to lowercase:
 
     if (supported MIME::Decoder '7BIT') {
-        ### yes, we can handle it...
+	### yes, we can handle it...
     }
     else {
-        ### drop back six and punt...
+	### drop back six and punt...
     }
 
 With no args, returns a reference to a hash of all available decoders,
@@ -401,8 +401,8 @@ and writes output to its STDOUT (which will go to the OUT argument).
 For example, here's a decoder that un-gzips its data:
 
     sub decode_it {
-        my ($self, $in, $out) = @_;
-        $self->filter($in, $out, "gzip -d -");
+	my ($self, $in, $out) = @_;
+	$self->filter($in, $out, "gzip -d -");
     }
 
 The usage is similar to IPC::Open2::open2 (which it uses internally),
@@ -412,63 +412,63 @@ so you can specify COMMAND as a single argument or as an array.
 
 sub filter
 {
-        my ($self, $in, $out, @cmd) = @_;
-        my $buf = '';
+	my ($self, $in, $out, @cmd) = @_;
+	my $buf = '';
 
-        ### Open pipe:
-        STDOUT->flush;  ### very important, or else we get duplicate output!
+	### Open pipe:
+	STDOUT->flush;  ### very important, or else we get duplicate output!
 
-        my $kidpid = open2(my $child_out, my $child_in, @cmd) || die "@cmd: open2 failed: $!";
+	my $kidpid = open2(my $child_out, my $child_in, @cmd) || die "@cmd: open2 failed: $!";
 
-        ### We have to use select() for doing both reading and writing.
-        my $rsel = IO::Select->new( $child_out );
-        my $wsel = IO::Select->new( $child_in  );
+	### We have to use select() for doing both reading and writing.
+	my $rsel = IO::Select->new( $child_out );
+	my $wsel = IO::Select->new( $child_in  );
 
-        while (1) {
+	while (1) {
 
-                ### Wait for one hour; if that fails, it's too bad.
-                my ($read, $write) = IO::Select->select( $rsel, $wsel, undef, 3600);
+		### Wait for one hour; if that fails, it's too bad.
+		my ($read, $write) = IO::Select->select( $rsel, $wsel, undef, 3600);
 
-                if( !defined $read && !defined $write ) {
-                        kill 1, $kidpid;
-                        waitpid $kidpid, 0;
-                        die "@cmd: select failed: $!";
-                }
+		if( !defined $read && !defined $write ) {
+			kill 1, $kidpid;
+			waitpid $kidpid, 0;
+			die "@cmd: select failed: $!";
+		}
 
-                ### If can read from child:
-                if( my $fh = shift @$read ) {
-                        if( $fh->sysread(my $buf, 1024) ) {
-                                $out->print($buf);
-                        } else {
-                                $rsel->remove($fh);
-                                $fh->close();
-                        }
-                }
+		### If can read from child:
+		if( my $fh = shift @$read ) {
+			if( $fh->sysread(my $buf, 1024) ) {
+				$out->print($buf);
+			} else {
+				$rsel->remove($fh);
+				$fh->close();
+			}
+		}
 
-                ### If can write to child:
-                if( my $fh = shift @$write ) {
-                        if($in->read(my $buf, 1024)) {
-                                local $SIG{PIPE} = sub {
-                                        warn "got SIGPIPE from @cmd";
-                                        $wsel->remove($fh);
-                                        $fh->close();
-                                };
-                                $fh->syswrite( $buf );
-                        } else {
-                                $wsel->remove($fh);
-                                $fh->close();
-                        }
-                }
+		### If can write to child:
+		if( my $fh = shift @$write ) {
+			if($in->read(my $buf, 1024)) {
+				local $SIG{PIPE} = sub {
+					warn "got SIGPIPE from @cmd";
+					$wsel->remove($fh);
+					$fh->close();
+				};
+				$fh->syswrite( $buf );
+			} else {
+				$wsel->remove($fh);
+				$fh->close();
+			}
+		}
 
-                ### If both $child_out and $child_in are done:
-                last unless ($rsel->count() || $wsel->count());
-        }
+		### If both $child_out and $child_in are done:
+		last unless ($rsel->count() || $wsel->count());
+	}
 
-        ### Wait for it:
-        waitpid($kidpid, 0) == $kidpid or die "@cmd: couldn't reap child $kidpid";
-        ### Check if it failed:
-        $? == 0 or die "@cmd: bad exit status: \$? = $?";
-        1;
+	### Wait for it:
+	waitpid($kidpid, 0) == $kidpid or die "@cmd: couldn't reap child $kidpid";
+	### Check if it failed:
+	$? == 0 or die "@cmd: bad exit status: \$? = $?";
+	1;
 }
 
 
@@ -616,25 +616,25 @@ encoding:
 
     ### decode_it - the private decoding method
     sub decode_it {
-        my ($self, $in, $out) = @_;
-        local $_;
-        while (defined($_ = $in->getline)) {
-            my $decoded = decode_qp($_);
-            $out->print($decoded);
-        }
-        1;
+	my ($self, $in, $out) = @_;
+	local $_;
+	while (defined($_ = $in->getline)) {
+	    my $decoded = decode_qp($_);
+	    $out->print($decoded);
+	}
+	1;
     }
 
     ### encode_it - the private encoding method
     sub encode_it {
-        my ($self, $in, $out) = @_;
+	my ($self, $in, $out) = @_;
 
-        my ($buf, $nread) = ('', 0);
-        while ($in->read($buf, 60)) {
-            my $encoded = encode_qp($buf);
-            $out->print($encoded);
-        }
-        1;
+	my ($buf, $nread) = ('', 0);
+	while ($in->read($buf, 60)) {
+	    my $encoded = encode_qp($buf);
+	    $out->print($encoded);
+	}
+	1;
     }
 
 That's it.  The task was pretty simple because the C<"quoted-printable">

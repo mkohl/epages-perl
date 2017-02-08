@@ -21,7 +21,7 @@ sub set_document_locator {
 sub start_document {
     my $self = shift;
     print "start_document\n" if $ENV{DEBUG_XML};
-    $self->{seen}{start_document}++;
+    $self->{seen}{start_document}++;    
 }
 
 sub end_document {

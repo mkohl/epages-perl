@@ -10,68 +10,68 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
+	my ($self,$number) = @_;
     if ($number =~ /^(PZN)?-?([0-9]{6,7})(.)$/) {
         return uc($3) eq $self->_compute_checkdigit($2);
     }
-        return ''
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^(PZN)?-?([0-9]{6,7})$/) {
-                my $cd = $self->_compute_checkdigit($2);
-                return $2 . $cd unless 0 > $cd;
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(PZN)?-?([0-9]{6,7})$/) {
+		my $cd = $self->_compute_checkdigit($2);
+		return $2 . $cd unless 0 > $cd;
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(PZN)?-?([0-9]{6,7})(.)$/) {
-                return $2 if (uc($3) eq $self->_compute_checkdigit($2));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(PZN)?-?([0-9]{6,7})(.)$/) {
+		return $2 if (uc($3) eq $self->_compute_checkdigit($2));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(PZN)?-?([0-9]{6,7})(.)$/) {
-                return $3 if (uc($3) eq $self->_compute_checkdigit($2));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(PZN)?-?([0-9]{6,7})(.)$/) {
+		return $3 if (uc($3) eq $self->_compute_checkdigit($2));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        if ($number =~ /^[-0-9]+$/) {
+	if ($number =~ /^[-0-9]+$/) {
 
-                $number =~ s/-//g;
-                my @digits = split(//,$number);
-                my $sum    = 0;
-                my $weight = 2;
+		$number =~ s/-//g;
+		my @digits = split(//,$number);
+		my $sum    = 0;
+		my $weight = 2;
 
-                for (my $i = 0; $i <= $#digits; $i++) {
+		for (my $i = 0; $i <= $#digits; $i++) {
 
-                        $sum += $weight * $digits[$i];
-                        ++$weight;
+			$sum += $weight * $digits[$i];
+			++$weight;
 
-                }
-                $sum %= 11;
-                return 10 == $sum ? -1 : $sum;
-        }
-        return -1;
+		}
+		$sum %= 11;
+		return 10 == $sum ? -1 : $sum;
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -90,7 +90,7 @@ CheckDigits::M11_002 - compute check digits for PZN (DE)
   $pzn = CheckDigits('pzn');
 
   if ($pzn->is_valid('4877800')) {
-        # do something
+	# do something
   }
 
   $cn = $pzn->complete('487780');
@@ -101,7 +101,7 @@ CheckDigits::M11_002 - compute check digits for PZN (DE)
 
   $bn = $pzn->basenumber('4877800');
   # $bn = '487780'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

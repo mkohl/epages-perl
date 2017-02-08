@@ -40,7 +40,7 @@ sub read
 {
     my ($self, $fh) = @_;
     my ($dat);
-
+    
     my $stateTableStart = $fh->tell();
     my ($classes, $states, $entries) = AAT_read_state_table($fh, 2);
 
@@ -55,11 +55,11 @@ sub read
             $_ = $_ ? $_ - ($mappingTables / 2) : undef;
         }
     }
-
+    
     $self->{'classes'} = $classes;
     $self->{'states'} = $states;
     $self->{'mappings'} = [unpack("n*", AAT_read_subtable($fh, $stateTableStart, $mappingTables, $limits))];
-
+            
     $self;
 }
 
@@ -70,23 +70,23 @@ sub read
 sub pack_sub
 {
     my ($self) = @_;
-
+    
     my ($dat) = pack("nnnnn", (0) x 5);    # placeholders for stateSize, classTable, stateArray, entryTable, mappingTables
-
+    
     my $classTable = length($dat);
     my $classes = $self->{'classes'};
     $dat .= AAT_pack_classes($classes);
-
+    
     my $stateArray = length($dat);
     my $states = $self->{'states'};
-    my ($dat1, $stateSize, $entries) = AAT_pack_states($classes, $stateArray, $states,
+    my ($dat1, $stateSize, $entries) = AAT_pack_states($classes, $stateArray, $states, 
             sub {
                 my $actions = $_->{'actions'};
                 ( $_->{'flags'}, @$actions )
             }
         );
     $dat .= $dat1;
-
+    
     my $entryTable = length($dat);
     my $offset = ($entryTable + 8 * @$entries) / 2;
     foreach (@$entries) {
@@ -97,10 +97,10 @@ sub pack_sub
     my $mappingTables = length($dat);
     my $mappings = $self->{'mappings'};
     $dat .= pack("n*", @$mappings);
-
+    
     $dat1 = pack("nnnnn", $stateSize, $classTable, $stateArray, $entryTable, $mappingTables);
     substr($dat, 0, length($dat1)) = $dat1;
-
+    
     return $dat;
 }
 
@@ -113,13 +113,13 @@ Prints a human-readable representation of the table
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     my $post = $self->post();
-
+    
     $fh = 'STDOUT' unless defined $fh;
 
     $self->print_classes($fh);
-
+    
     $fh->print("\n");
     my $states = $self->{'states'};
     foreach (0 .. $#$states) {

@@ -14,7 +14,7 @@ use vars qw( $Special );
 # Note: a real Name should have at least 1 char, so nobody else should use this
 $Special = "";
 
-sub new
+sub new 
 {
     my ($class, %args) = @_;
 
@@ -24,13 +24,13 @@ sub new
     bless { $Special => \%args}, $class;
 }
 
-sub getNamedItem
+sub getNamedItem 
 {
     # Don't return the $Special item!
     ($_[1] eq $Special) ? undef : $_[0]->{$_[1]};
 }
 
-sub setNamedItem
+sub setNamedItem 
 {
     my ($self, $node) = @_;
     my $prop = $self->{$Special};
@@ -39,18 +39,18 @@ sub setNamedItem
 
     if ($XML::DOM::SafeMode)
     {
-        croak new XML::DOM::DOMException (NO_MODIFICATION_ALLOWED_ERR)
-            if $self->isReadOnly;
+	croak new XML::DOM::DOMException (NO_MODIFICATION_ALLOWED_ERR)
+	    if $self->isReadOnly;
 
-        croak new XML::DOM::DOMException (WRONG_DOCUMENT_ERR)
-            if $node->[XML::DOM::Node::_Doc] != $prop->{Doc};
+	croak new XML::DOM::DOMException (WRONG_DOCUMENT_ERR)
+	    if $node->[XML::DOM::Node::_Doc] != $prop->{Doc};
 
-        croak new XML::DOM::DOMException (INUSE_ATTRIBUTE_ERR)
-            if defined ($node->[XML::DOM::Node::_UsedIn]);
+	croak new XML::DOM::DOMException (INUSE_ATTRIBUTE_ERR)
+	    if defined ($node->[XML::DOM::Node::_UsedIn]);
 
-        croak new XML::DOM::DOMException (INVALID_CHARACTER_ERR,
-                      "can't add name with NodeName [$name] to NamedNodeMap")
-            if $name eq $Special;
+	croak new XML::DOM::DOMException (INVALID_CHARACTER_ERR,
+		      "can't add name with NodeName [$name] to NamedNodeMap")
+	    if $name eq $Special;
     }
 
     my $values = $prop->{Values};
@@ -59,34 +59,34 @@ sub setNamedItem
     my $prev = $self->{$name};
     if (defined $prev)
     {
-        # decouple previous node
-        $prev->decoupleUsedIn;
+	# decouple previous node
+	$prev->decoupleUsedIn;
 
-        # find index of $prev
-        $index = 0;
-        for my $val (@{$values})
-        {
-            last if ($val == $prev);
-            $index++;
-        }
+	# find index of $prev
+	$index = 0;
+	for my $val (@{$values})
+	{
+	    last if ($val == $prev);
+	    $index++;
+	}
     }
 
-    $self->{$name} = $node;
+    $self->{$name} = $node;    
     $node->[XML::DOM::Node::_UsedIn] = $self;
 
     if ($index == -1)
     {
-        push (@{$values}, $node);
+	push (@{$values}, $node);
     }
-    else        # replace previous node with new node
+    else	# replace previous node with new node
     {
-        splice (@{$values}, $index, 1, $node);
+	splice (@{$values}, $index, 1, $node);
     }
-
+    
     $prev;
 }
 
-sub removeNamedItem
+sub removeNamedItem 
 {
     my ($self, $name) = @_;
 
@@ -101,7 +101,7 @@ sub removeNamedItem
 
     # The DOM Spec doesn't mention this Exception - I think it's an oversight
     croak new XML::DOM::DOMException (NO_MODIFICATION_ALLOWED_ERR)
-        if $self->isReadOnly;
+	if $self->isReadOnly;
 
     $node->decoupleUsedIn;
     delete $self->{$name};
@@ -111,25 +111,25 @@ sub removeNamedItem
     my $index = 0;
     for my $val (@{$values})
     {
-        if ($val == $node)
-        {
-            splice (@{$values}, $index, 1, ());
-            last;
-        }
-        $index++;
+	if ($val == $node)
+	{
+	    splice (@{$values}, $index, 1, ());
+	    last;
+	}
+	$index++;
     }
     $node;
 }
 
 # The following 2 are really bogus. DOM should use an iterator instead (Clark)
 
-sub item
+sub item 
 {
     my ($self, $item) = @_;
     $self->{$Special}->{Values}->[$item];
 }
 
-sub getLength
+sub getLength 
 {
     my ($self) = @_;
     my $vals = $self->{$Special}->{Values};
@@ -153,18 +153,18 @@ sub cloneNode
     my $prop = $self->{$Special};
 
     my $map = new XML::DOM::NamedNodeMap (Doc => $prop->{Doc});
-    # Not copying Parent property on purpose!
+    # Not copying Parent property on purpose! 
 
-    local $XML::DOM::IgnoreReadOnly = 1;        # temporarily...
+    local $XML::DOM::IgnoreReadOnly = 1;	# temporarily...
 
     for my $val (@{$prop->{Values}})
     {
-        my $key = $val->getNodeName;
+	my $key = $val->getNodeName;
 
-        my $newNode = $val->cloneNode ($deep);
-        $newNode->[XML::DOM::Node::_UsedIn] = $map;
-        $map->{$key} = $newNode;
-        push (@{$map->{$Special}->{Values}}, $newNode);
+	my $newNode = $val->cloneNode ($deep);
+	$newNode->[XML::DOM::Node::_UsedIn] = $map;
+	$map->{$key} = $newNode;
+	push (@{$map->{$Special}->{Values}}, $newNode);
     }
 
     $map;
@@ -178,7 +178,7 @@ sub setOwnerDocument
     $special->{Doc} = $doc;
     for my $kid (@{$special->{Values}})
     {
-        $kid->setOwnerDocument ($doc);
+	$kid->setOwnerDocument ($doc);
     }
 }
 
@@ -188,10 +188,10 @@ sub getChildIndex
     my $i = 0;
     for my $kid (@{$self->{$Special}->{Values}})
     {
-        return $i if $kid == $attr;
-        $i++;
+	return $i if $kid == $attr;
+	$i++;
     }
-    -1; # not found
+    -1;	# not found
 }
 
 sub getValues
@@ -207,8 +207,8 @@ sub dispose
 
     for my $kid (@{$self->getValues})
     {
-        undef $kid->[XML::DOM::Node::_UsedIn]; # was delete
-        $kid->dispose;
+	undef $kid->[XML::DOM::Node::_UsedIn]; # was delete
+	$kid->dispose;
     }
 
     delete $self->{$Special}->{Doc};
@@ -217,7 +217,7 @@ sub dispose
 
     for my $key (keys %$self)
     {
-        delete $self->{$key};
+	delete $self->{$key};
     }
 }
 
@@ -238,32 +238,32 @@ sub toString
     my $str = "NamedNodeMap[";
     while (my ($key, $val) = each %$self)
     {
-        if ($key eq $Special)
-        {
-            $str .= "##Special (";
-            while (my ($k, $v) = each %$val)
-            {
-                if ($k eq "Values")
-                {
-                    $str .= $k . " => [";
-                    for my $a (@$v)
-                    {
-#                       $str .= $a->getNodeName . "=" . $a . ",";
-                        $str .= $a->toString . ",";
-                    }
-                    $str .= "], ";
-                }
-                else
-                {
-                    $str .= $k . " => " . $v . ", ";
-                }
-            }
-            $str .= "), ";
-        }
-        else
-        {
-            $str .= $key . " => " . $val . ", ";
-        }
+	if ($key eq $Special)
+	{
+	    $str .= "##Special (";
+	    while (my ($k, $v) = each %$val)
+	    {
+		if ($k eq "Values")
+		{
+		    $str .= $k . " => [";
+		    for my $a (@$v)
+		    {
+#			$str .= $a->getNodeName . "=" . $a . ",";
+			$str .= $a->toString . ",";
+		    }
+		    $str .= "], ";
+		}
+		else
+		{
+		    $str .= $k . " => " . $v . ", ";
+		}
+	    }
+	    $str .= "), ";
+	}
+	else
+	{
+	    $str .= $key . " => " . $val . ", ";
+	}
     }
     $str . "]";
 }

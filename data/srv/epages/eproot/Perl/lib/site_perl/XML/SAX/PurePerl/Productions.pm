@@ -31,23 +31,23 @@ if ($] < 5.006) {
     $SingleChar = qr/^$Char$/;
 
     $BaseChar = qr/ [\x41-\x5A\x61-\x7A]|([\xC0-\xFD][\x80-\xBF]+) /x;
-
+    
     $Extender = qr/ \xB7 /x;
-
+    
     $Digit = qr/ [\x30-\x39] /x;
-
+    
     # can't do this one without unicode
     # $CombiningChar = qr/^$/msx;
-
+    
     $NameChar = qr/^ (?: $BaseChar | $Digit | [._:-] | $Extender )+ $/x;
     PERL
     die $@ if $@;
 }
 else {
     eval <<'    PERL';
-
+    
     use utf8; # for 5.6
-
+ 
     $Char = qr/^ [\x09\x0A\x0D\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}] $/x;
 
     $SingleChar = qr/^$Char$/;

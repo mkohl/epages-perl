@@ -125,7 +125,7 @@ The machines specified by:
 
     [ A => "Foo" => "A" ],  ## Illegal!
 
-and
+and 
 
     [ A => "Foo" => "B" ],  ## Illegal!
     [ B => "Foo" => "A" ],
@@ -237,7 +237,7 @@ test a result code, do something like
 =cut
 
 sub _find_part_rec {
-    my $self = shift;
+    my $self = shift; 
     my ( $id ) = @_;
 
     if ( ref $id ) {
@@ -260,7 +260,7 @@ sub _find_part_rec {
 
 
 sub find_part {
-    my $self = shift;
+    my $self = shift; 
     my ( $spec ) = @_;
 
     return $self->{Handler} if $spec eq "Exhaust";
@@ -331,8 +331,8 @@ use vars qw( $AUTOLOAD );
 sub DESTROY {} ## Prevent AUTOLOADing of this.
 
 my $alpha_first_char = has_named_regexp_character_classes
-            ? "^[[:alpha:]]"
-            : "^[a-zA-Z]";
+	    ? "^[[:alpha:]]"
+	    : "^[a-zA-Z]";
 
 sub AUTOLOAD {
     my $self = shift;
@@ -361,7 +361,7 @@ returned but not the parts inside the pipeline.
 =cut
 
 sub parts {
-    my $self = shift;
+    my $self = shift; 
     croak "Can't set parts for a '", ref( $self ), "'" if @_;
     confess "undef Parts" unless defined $self->{Parts};
     return map $_->{Processor}, @{$self->{Parts}};
@@ -380,7 +380,7 @@ any machines contained by this machine and their parts.
 ## recursion when building the machine.
 
 sub _all_part_recs {
-    my $self = shift;
+    my $self = shift; 
     croak "Can't pass parms to ", ref( $self ), "->_all_part_recs" if @_;
     confess "undef Parts" unless defined $self->{Parts};
     my $proc;
@@ -394,7 +394,7 @@ sub _all_part_recs {
 
 
 sub all_parts {
-    my $self = shift;
+    my $self = shift; 
     croak "Can't pass parms to ", ref( $self ), "->_all_parts" if @_;
     confess "undef Parts" unless defined $self->{Parts};
     return map $_->{Processor}, $self->_all_part_recs;
@@ -415,7 +415,7 @@ sub all_parts {
 #=cut
 #
 #sub add_parts {
-#    my $self = shift;
+#    my $self = shift; 
 #confess "TODO";
 #}
 
@@ -447,7 +447,7 @@ sub all_parts {
 #=cut
 #
 #sub remove_parts {
-#    my $self = shift;
+#    my $self = shift; 
 #
 #    my %names;
 #    my @found;
@@ -460,7 +460,7 @@ sub all_parts {
 #            }
 #            else {
 #                for my $c ( $self->parts ) {
-#                    if ( $c->can( "remove_parts" )
+#                    if ( $c->can( "remove_parts" ) 
 #                       && ( my @f = $c->remove_parts( $doomed ) )
 #                    ) {
 #                        push @found, @f;
@@ -478,7 +478,7 @@ sub all_parts {
 #            }
 #
 #            for my $c ( $self->parts ) {
-#                if ( $c->can( "remove_parts" )
+#                if ( $c->can( "remove_parts" ) 
 #                   && ( my @f = $c->remove_parts( $doomed ) )
 #                ) {
 #                    push @found, @f;
@@ -695,7 +695,7 @@ compile_methods __PACKAGE__, <<'EOCODE', sax_event_names "ParseMethods" ;
                     : scalar $h-><METHOD>( @_ )
                 );
             };
-
+            
             ## Not sure how/where causes me to need this next line, but
             ## in perl5.6.1 it seems necessary.
             return wantarray ? @result : $result[0] if $ok;
@@ -819,8 +819,8 @@ if ( ! $type ) {
 }
 
 my $is_name_like = has_named_regexp_character_classes
-            ? '^[[:alpha:]]\w*(?!\n)$'
-            :    '^[a-zA-Z]\w*(?!\n)$';
+	    ? '^[[:alpha:]]\w*(?!\n)$'
+	    :    '^[a-zA-Z]\w*(?!\n)$';
 
 sub _valid_name($) {
     my ( $prospect ) = @_;
@@ -833,7 +833,7 @@ sub _valid_name($) {
 
 sub _push_spec {
     my $self = shift;
-    my ( $name, $spec, @handlers ) =
+    my ( $name, $spec, @handlers ) = 
         ref $_[0]
             ? ( undef, @_ )       ## Implictly unnamed: [ $obj, ... ]
             : @_;                 ## Named or explicitly unnamed: [ $name, ...]
@@ -874,7 +874,7 @@ sub _push_spec {
         $self->{PartsByName}->{$name} = $self->{Parts}->[-1];
     }
 
-    ## This HASH is used to detect cycles even if the user uses
+    ## This HASH is used to detect cycles even if the user uses 
     ## preconstructed references instead of named parts.
     $self->{PartsByProcessor}->{$proc} = $part
         if ref $proc;
@@ -962,7 +962,7 @@ sub _build_part {
                 ## Oop, a cycle, and we don't want to recurse or we'll
                 ## recurse forever.
                 push @open_cycles, $part eq $handler
-                    ? [ $handler ]
+                    ? [ $handler ] 
                     : [ $part, $handler ];
                 next;
             }
@@ -1158,7 +1158,7 @@ sub _compile_specs {
     ## we assume that the constructor takes a SAXT like parameter list.
     ## TODO: figure out how to allow DocumentHandler, etc.  Perhaps allow
     ## HASH refs in ARRAY syntax decls.
-
+    
     ## Some temporaries
     $self->{BuiltParts}     = [];
     $self->{SeenParts}      = [];
@@ -1197,7 +1197,7 @@ sub _compile_specs {
             );
             $unique_cycles{$key} ||= $cycle;
         }
-
+        
         push @errors, map {
             "Cycle detected in SAX machine: " .
                 join(
@@ -1392,7 +1392,7 @@ sub generate_description {
             LocalName => "name",
             Value     => "Exhaust"
         } unless exists $handler_elt->{Attributes}->{Name};
-
+            
         $h->start_element( $handler_elt );
         $h->end_element(   $handler_elt );
     }
@@ -1469,7 +1469,7 @@ sub new {
     my $class = ref $proto || $proto;
 
     my $self = bless {}, $class;
-
+    
     my %options = @_ ;
     $self->{$_} = $options{$_} for keys %options;
 
@@ -1480,7 +1480,7 @@ sub new {
 sub string_description {
     my $self = shift;
 
-    return join(
+    return join( 
         "",
         $self->{Name}
             ? $self->{Name}

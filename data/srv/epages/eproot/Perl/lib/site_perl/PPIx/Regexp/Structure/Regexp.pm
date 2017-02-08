@@ -54,10 +54,10 @@ sub capture_names {
     my ( $self ) = @_;
     my %name;
     my $captures = $self->find(
-        'PPIx::Regexp::Structure::NamedCapture')
-        or return;
+	'PPIx::Regexp::Structure::NamedCapture')
+	or return;
     foreach my $grab ( @{ $captures } ) {
-        $name{$grab->name()}++;
+	$name{$grab->name()}++;
     }
     return ( sort keys %name );
 }
@@ -84,13 +84,13 @@ sub __PPIX_LEXER__finalize {
     my ( $self ) = @_;
     my $rslt = 0;
     foreach my $elem ( $self->elements() ) {
-        $rslt += $elem->__PPIX_LEXER__finalize();
+	$rslt += $elem->__PPIX_LEXER__finalize();
     }
 
     # Calculate the maximum capture group, and number all the other
     # capture groups along the way.
     $self->{max_capture_number} =
-        $self->__PPIX_LEXER__record_capture_number( 1 ) - 1;
+	$self->__PPIX_LEXER__record_capture_number( 1 ) - 1;
 
     return $rslt;
 }

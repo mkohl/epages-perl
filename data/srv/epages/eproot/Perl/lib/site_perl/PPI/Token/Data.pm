@@ -33,8 +33,8 @@ use PPI::Token ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = 'PPI::Token';
+	$VERSION = '1.215';
+	@ISA     = 'PPI::Token';
 }
 
 
@@ -61,8 +61,8 @@ Returns an L<IO::String> object.
 =cut
 
 sub handle {
-        my $self = shift;
-        IO::String->new( \$self->{content} );
+	my $self = shift;
+	IO::String->new( \$self->{content} );
 }
 
 sub __TOKENIZER__on_char { 1 }

@@ -21,9 +21,9 @@ require 5.005;
         macros => [
             # levels
             qw(
-                LOG_ALERT LOG_CRIT LOG_DEBUG LOG_EMERG LOG_ERR
+                LOG_ALERT LOG_CRIT LOG_DEBUG LOG_EMERG LOG_ERR 
                 LOG_INFO LOG_NOTICE LOG_WARNING
-            ),
+            ), 
 
             # standard facilities
             qw(
@@ -41,24 +41,24 @@ require 5.005;
 
             # options
             qw(
-                LOG_CONS LOG_PID LOG_NDELAY LOG_NOWAIT LOG_ODELAY LOG_PERROR
-            ),
+                LOG_CONS LOG_PID LOG_NDELAY LOG_NOWAIT LOG_ODELAY LOG_PERROR 
+            ), 
 
             # others macros
             qw(
-                LOG_FACMASK LOG_NFACILITIES LOG_PRIMASK
+                LOG_FACMASK LOG_NFACILITIES LOG_PRIMASK 
                 LOG_MASK LOG_UPTO
-            ),
+            ), 
         ],
     );
 
     @EXPORT = (
-        @{$EXPORT_TAGS{standard}},
+        @{$EXPORT_TAGS{standard}}, 
     );
 
     @EXPORT_OK = (
-        @{$EXPORT_TAGS{extended}},
-        @{$EXPORT_TAGS{macros}},
+        @{$EXPORT_TAGS{extended}}, 
+        @{$EXPORT_TAGS{macros}}, 
     );
 
     eval {
@@ -73,9 +73,9 @@ require 5.005;
 }
 
 
-#
+# 
 # Public variables
-#
+# 
 use vars qw($host);             # host to send syslog messages to (see notes at end)
 
 #
@@ -83,9 +83,9 @@ use vars qw($host);             # host to send syslog messages to (see notes at 
 #
 sub silent_eval (&);
 
-#
+# 
 # Global variables
-#
+# 
 use vars qw($facility);
 my $connected       = 0;        # flag to indicate if we're connected or not
 my $syslog_send;                # coderef of the function used to send messages
@@ -100,23 +100,23 @@ $facility           = '';       # current facility
 my $maskpri         = LOG_UPTO(&LOG_DEBUG);     # current log mask
 
 my %options = (
-    ndelay  => 0,
+    ndelay  => 0, 
     noeol   => 0,
-    nofatal => 0,
+    nofatal => 0, 
     nonul   => 0,
-    nowait  => 0,
-    perror  => 0,
-    pid     => 0,
+    nowait  => 0, 
+    perror  => 0, 
+    pid     => 0, 
 );
 
-# Default is now to first use the native mechanism, so Perl programs
+# Default is now to first use the native mechanism, so Perl programs 
 # behave like other normal Unix programs, then try other mechanisms.
 my @connectMethods = qw(native tcp udp unix pipe stream console);
 if ($^O eq "freebsd" or $^O eq "linux") {
     @connectMethods = grep { $_ ne 'udp' } @connectMethods;
 }
 
-# And on Win32 systems, we try to use the native mechanism for this
+# And on Win32 systems, we try to use the native mechanism for this 
 # platform, the events logger, available through Win32::EventLog.
 EVENTLOG: {
     my $is_Win32 = $^O =~ /Win32/i;
@@ -129,15 +129,15 @@ EVENTLOG: {
 my @defaultMethods = @connectMethods;
 my @fallbackMethods = ();
 
-# The timeout in connection_ok() was pushed up to 0.25 sec in
+# The timeout in connection_ok() was pushed up to 0.25 sec in 
 # Sys::Syslog v0.19 in order to address a heisenbug on MacOSX:
 # http://london.pm.org/pipermail/london.pm/Week-of-Mon-20061211/005961.html
-#
-# However, this also had the effect of slowing this test for
-# all other operating systems, which apparently impacted some
-# users (cf. CPAN-RT #34753). So, in order to make everybody
-# happy, the timeout is now zero by default on all systems
-# except on OSX where it is set to 250 msec, and can be set
+# 
+# However, this also had the effect of slowing this test for 
+# all other operating systems, which apparently impacted some 
+# users (cf. CPAN-RT #34753). So, in order to make everybody 
+# happy, the timeout is now zero by default on all systems 
+# except on OSX where it is set to 250 msec, and can be set 
 # with the infamous setlogsock() function.
 $sock_timeout = 0.25 if $^O =~ /darwin/;
 
@@ -175,7 +175,7 @@ sub openlog {
     $err_sub = delete $options{nofatal} ? \&warnings::warnif : \&croak;
     return 1 unless $options{ndelay};
     connect_log();
-}
+} 
 
 sub closelog {
     disconnect_log() if $connected;
@@ -183,7 +183,7 @@ sub closelog {
     $facility = $ident = "";
     $connected = 0;
     return 1
-}
+} 
 
 sub setlogmask {
     my $oldmask = $maskpri;
@@ -258,7 +258,7 @@ my %mechanism = (
         err_msg => "path not available",
     },
 );
-
+ 
 sub setlogsock {
     my %opt;
 
@@ -383,8 +383,8 @@ sub syslog {
     croak "syslog: level must be given" unless defined $numpri;
 
     if (not defined $numfac) {  # Facility not specified in this call.
-        $facility = 'user' unless $facility;
-        $numfac = xlate($facility);
+	$facility = 'user' unless $facility;
+	$numfac = xlate($facility);
     }
 
     connect_log() unless $connected;
@@ -439,33 +439,33 @@ sub syslog {
     # want to do at this point is to fallback onto a different
     # connection method.
     while (scalar @fallbackMethods || $syslog_send) {
-        if ($failed && (time - $fail_time) > 60) {
-            # it's been a while... maybe things have been fixed
-            @fallbackMethods = ();
-            disconnect_log();
-            $transmit_ok = 0; # make it look like a fresh attempt
-            connect_log();
+	if ($failed && (time - $fail_time) > 60) {
+	    # it's been a while... maybe things have been fixed
+	    @fallbackMethods = ();
+	    disconnect_log();
+	    $transmit_ok = 0; # make it look like a fresh attempt
+	    connect_log();
         }
 
-        if ($connected && !connection_ok()) {
-            # Something was OK, but has now broken. Remember coz we'll
-            # want to go back to what used to be OK.
-            $failed = $current_proto unless $failed;
-            $fail_time = time;
-            disconnect_log();
-        }
+	if ($connected && !connection_ok()) {
+	    # Something was OK, but has now broken. Remember coz we'll
+	    # want to go back to what used to be OK.
+	    $failed = $current_proto unless $failed;
+	    $fail_time = time;
+	    disconnect_log();
+	}
 
-        connect_log() unless $connected;
-        $failed = undef if ($current_proto && $failed && $current_proto eq $failed);
+	connect_log() unless $connected;
+	$failed = undef if ($current_proto && $failed && $current_proto eq $failed);
 
-        if ($syslog_send) {
+	if ($syslog_send) {
             if ($syslog_send->($buf, $numpri, $numfac)) {
-                $transmit_ok++;
-                return 1;
-            }
-            # typically doesn't happen, since errors are rare from write().
-            disconnect_log();
-        }
+		$transmit_ok++;
+		return 1;
+	    }
+	    # typically doesn't happen, since errors are rare from write().
+	    disconnect_log();
+	}
     }
     # could not send, could not fallback onto a working
     # connection method. Lose.
@@ -480,32 +480,32 @@ sub _syslog_send_console {
     # to the caller.
     if (my $pid = fork) {
 
-        if ($options{nowait}) {
-            return 1;
-        } else {
-            if (waitpid($pid, 0) >= 0) {
-                return ($? >> 8);
-            } else {
-                # it's possible that the caller has other
-                # plans for SIGCHLD, so let's not interfere
-                return 1;
-            }
-        }
+	if ($options{nowait}) {
+	    return 1;
+	} else {
+	    if (waitpid($pid, 0) >= 0) {
+	    	return ($? >> 8);
+	    } else {
+		# it's possible that the caller has other
+		# plans for SIGCHLD, so let's not interfere
+		return 1;
+	    }
+	}
     } else {
         if (open(CONS, ">/dev/console")) {
-            my $ret = print CONS $buf . "\r";  # XXX: should this be \x0A ?
-            POSIX::_exit $ret if defined $pid;
-            close CONS;
-        }
+	    my $ret = print CONS $buf . "\r";  # XXX: should this be \x0A ?
+	    POSIX::_exit $ret if defined $pid;
+	    close CONS;
+	}
 
-        POSIX::_exit if defined $pid;
+	POSIX::_exit if defined $pid;
     }
 }
 
 sub _syslog_send_stream {
     my ($buf) = @_;
-    # XXX: this only works if the OS stream implementation makes a write
-    # look like a putmsg() with simple header. For instance it works on
+    # XXX: this only works if the OS stream implementation makes a write 
+    # look like a putmsg() with simple header. For instance it works on 
     # Solaris 8 but not Solaris 7.
     # To be correct, it should use a STREAMS API, but perl doesn't have one.
     return syswrite(SYSLOG, $buf, length($buf));
@@ -532,7 +532,7 @@ sub _syslog_send_native {
 # xlate()
 # -----
 # private function to translate names to numeric values
-#
+# 
 sub xlate {
     my ($name) = @_;
 
@@ -542,10 +542,10 @@ sub xlate {
 
     # ExtUtils::Constant 0.20 introduced a new way to implement
     # constants, called ProxySubs.  When it was used to generate
-    # the C code, the constant() function no longer returns the
-    # correct value.  Therefore, we first try a direct call to
-    # constant(), and if the value is an error we try to call the
-    # constant by its full name.
+    # the C code, the constant() function no longer returns the 
+    # correct value.  Therefore, we first try a direct call to 
+    # constant(), and if the value is an error we try to call the 
+    # constant by its full name. 
     my $value = constant($name);
 
     if (index($value, "not a valid") >= 0) {
@@ -562,16 +562,16 @@ sub xlate {
 
 # connect_log()
 # -----------
-# This function acts as a kind of front-end: it tries to connect to
-# a syslog service using the selected methods, trying each one in the
-# selected order.
-#
+# This function acts as a kind of front-end: it tries to connect to 
+# a syslog service using the selected methods, trying each one in the 
+# selected order. 
+# 
 sub connect_log {
     @fallbackMethods = @connectMethods unless scalar @fallbackMethods;
 
     if ($transmit_ok && $current_proto) {
         # Retry what we were on, because it has worked in the past.
-        unshift(@fallbackMethods, $current_proto);
+	unshift(@fallbackMethods, $current_proto);
     }
 
     $connected = 0;
@@ -579,18 +579,18 @@ sub connect_log {
     my $proto = undef;
 
     while ($proto = shift @fallbackMethods) {
-        no strict 'refs';
-        my $fn = "connect_$proto";
-        $connected = &$fn(\@errs) if defined &$fn;
-        last if $connected;
+	no strict 'refs';
+	my $fn = "connect_$proto";
+	$connected = &$fn(\@errs) if defined &$fn;
+	last if $connected;
     }
 
     $transmit_ok = 0;
     if ($connected) {
-        $current_proto = $proto;
+	$current_proto = $proto;
         my ($old) = select(SYSLOG); $| = 1; select($old);
     } else {
-        @fallbackMethods = ();
+	@fallbackMethods = ();
         $err_sub->(join "\n\t- ", "no connection to syslog available", @errs);
         return undef;
     }
@@ -601,32 +601,32 @@ sub connect_tcp {
 
     my $proto = getprotobyname('tcp');
     if (!defined $proto) {
-        push @$errs, "getprotobyname failed for tcp";
-        return 0;
+	push @$errs, "getprotobyname failed for tcp";
+	return 0;
     }
 
     my $port = $sock_port || getservbyname('syslog', 'tcp');
     $port = getservbyname('syslogng', 'tcp') unless defined $port;
     if (!defined $port) {
-        push @$errs, "getservbyname failed for syslog/tcp and syslogng/tcp";
-        return 0;
+	push @$errs, "getservbyname failed for syslog/tcp and syslogng/tcp";
+	return 0;
     }
 
     my $addr;
     if (defined $host) {
         $addr = inet_aton($host);
         if (!$addr) {
-            push @$errs, "can't lookup $host";
-            return 0;
-        }
+	    push @$errs, "can't lookup $host";
+	    return 0;
+	}
     } else {
         $addr = INADDR_LOOPBACK;
     }
     $addr = sockaddr_in($port, $addr);
 
     if (!socket(SYSLOG, AF_INET, SOCK_STREAM, $proto)) {
-        push @$errs, "tcp socket: $!";
-        return 0;
+	push @$errs, "tcp socket: $!";
+	return 0;
     }
 
     setsockopt(SYSLOG, SOL_SOCKET, SO_KEEPALIVE, 1);
@@ -635,8 +635,8 @@ sub connect_tcp {
         setsockopt(SYSLOG, IPPROTO_TCP(), TCP_NODELAY(), 1);
     }
     if (!connect(SYSLOG, $addr)) {
-        push @$errs, "tcp connect: $!";
-        return 0;
+	push @$errs, "tcp connect: $!";
+	return 0;
     }
 
     $syslog_send = \&_syslog_send_socket;
@@ -649,43 +649,43 @@ sub connect_udp {
 
     my $proto = getprotobyname('udp');
     if (!defined $proto) {
-        push @$errs, "getprotobyname failed for udp";
-        return 0;
+	push @$errs, "getprotobyname failed for udp";
+	return 0;
     }
 
     my $port = $sock_port || getservbyname('syslog', 'udp');
     if (!defined $port) {
-        push @$errs, "getservbyname failed for syslog/udp";
-        return 0;
+	push @$errs, "getservbyname failed for syslog/udp";
+	return 0;
     }
 
     my $addr;
     if (defined $host) {
         $addr = inet_aton($host);
         if (!$addr) {
-            push @$errs, "can't lookup $host";
-            return 0;
-        }
+	    push @$errs, "can't lookup $host";
+	    return 0;
+	}
     } else {
         $addr = INADDR_LOOPBACK;
     }
     $addr = sockaddr_in($port, $addr);
 
     if (!socket(SYSLOG, AF_INET, SOCK_DGRAM, $proto)) {
-        push @$errs, "udp socket: $!";
-        return 0;
+	push @$errs, "udp socket: $!";
+	return 0;
     }
     if (!connect(SYSLOG, $addr)) {
-        push @$errs, "udp connect: $!";
-        return 0;
+	push @$errs, "udp connect: $!";
+	return 0;
     }
 
     # We want to check that the UDP connect worked. However the only
     # way to do that is to send a message and see if an ICMP is returned
     _syslog_send_socket("");
     if (!connection_ok()) {
-        push @$errs, "udp connect: nobody listening";
-        return 0;
+	push @$errs, "udp connect: nobody listening";
+	return 0;
     }
 
     $syslog_send = \&_syslog_send_socket;
@@ -697,14 +697,14 @@ sub connect_stream {
     my ($errs) = @_;
     # might want syslog_path to be variable based on syslog.h (if only
     # it were in there!)
-    $syslog_path = '/dev/conslog' unless defined $syslog_path;
+    $syslog_path = '/dev/conslog' unless defined $syslog_path; 
     if (!-w $syslog_path) {
-        push @$errs, "stream $syslog_path is not writable";
-        return 0;
+	push @$errs, "stream $syslog_path is not writable";
+	return 0;
     }
     if (!sysopen(SYSLOG, $syslog_path, O_WRONLY, 0400)) {
-        push @$errs, "stream can't open $syslog_path: $!";
-        return 0;
+	push @$errs, "stream can't open $syslog_path: $!";
+	return 0;
     }
     $syslog_send = \&_syslog_send_stream;
     return 1;
@@ -737,33 +737,33 @@ sub connect_unix {
 
     if (not defined $syslog_path) {
         push @$errs, "_PATH_LOG not available in syslog.h and no user-supplied socket path";
-        return 0;
+	return 0;
     }
 
     if (not (-S $syslog_path or -c _)) {
         push @$errs, "$syslog_path is not a socket";
-        return 0;
+	return 0;
     }
 
     my $addr = sockaddr_un($syslog_path);
     if (!$addr) {
-        push @$errs, "can't locate $syslog_path";
-        return 0;
+	push @$errs, "can't locate $syslog_path";
+	return 0;
     }
     if (!socket(SYSLOG, AF_UNIX, SOCK_STREAM, 0)) {
         push @$errs, "unix stream socket: $!";
-        return 0;
+	return 0;
     }
 
     if (!connect(SYSLOG, $addr)) {
         if (!socket(SYSLOG, AF_UNIX, SOCK_DGRAM, 0)) {
-            push @$errs, "unix dgram socket: $!";
-            return 0;
-        }
+	    push @$errs, "unix dgram socket: $!";
+	    return 0;
+	}
         if (!connect(SYSLOG, $addr)) {
-            push @$errs, "unix dgram connect: $!";
-            return 0;
-        }
+	    push @$errs, "unix dgram connect: $!";
+	    return 0;
+	}
     }
 
     $syslog_send = \&_syslog_send_socket;
@@ -798,8 +798,8 @@ sub connect_eventlog {
 sub connect_console {
     my ($errs) = @_;
     if (!-w '/dev/console') {
-        push @$errs, "console is not writable";
-        return 0;
+	push @$errs, "console is not writable";
+	return 0;
     }
     $syslog_send = \&_syslog_send_console;
     return 1;
@@ -808,8 +808,8 @@ sub connect_console {
 # To test if the connection is still good, we need to check if any
 # errors are present on the connection. The errors will not be raised
 # by a write. Instead, sockets are made readable and the next read
-# would cause the error to be returned. Unfortunately the syslog
-# 'protocol' never provides anything for us to read. But with
+# would cause the error to be returned. Unfortunately the syslog 
+# 'protocol' never provides anything for us to read. But with 
 # judicious use of select(), we can see if it would be readable...
 sub connection_ok {
     return 1 if defined $current_proto and (
@@ -845,10 +845,10 @@ sub disconnect_log {
 
 
 #
-# Wrappers around eval() that makes sure that nobody, and I say NOBODY,
-# ever knows that I wanted to test if something was here or not.
+# Wrappers around eval() that makes sure that nobody, and I say NOBODY, 
+# ever knows that I wanted to test if something was here or not. 
 # It is needed because some applications are trying to be too smart,
-# do it wrong, and it ends up in EPIC FAIL.
+# do it wrong, and it ends up in EPIC FAIL. 
 # Yes I'm speaking of YOU, SpamAssassin.
 #
 sub silent_eval (&) {
@@ -894,37 +894,37 @@ C<Sys::Syslog> is an interface to the UNIX C<syslog(3)> program.
 Call C<syslog()> with a string priority and a list of C<printf()> args
 just like C<syslog(3)>.
 
-You can find a kind of FAQ in L<"THE RULES OF SYS::SYSLOG">.  Please read
-it before coding, and again before asking questions.
+You can find a kind of FAQ in L<"THE RULES OF SYS::SYSLOG">.  Please read 
+it before coding, and again before asking questions. 
 
 
 =head1 EXPORTS
 
-C<Sys::Syslog> exports the following C<Exporter> tags:
+C<Sys::Syslog> exports the following C<Exporter> tags: 
 
 =over 4
 
 =item *
 
-C<:standard> exports the standard C<syslog(3)> functions:
+C<:standard> exports the standard C<syslog(3)> functions: 
 
     openlog closelog setlogmask syslog
 
 =item *
 
-C<:extended> exports the Perl specific functions for C<syslog(3)>:
+C<:extended> exports the Perl specific functions for C<syslog(3)>: 
 
     setlogsock
 
 =item *
 
-C<:macros> exports the symbols corresponding to most of your C<syslog(3)>
-macros and the C<LOG_UPTO()> and C<LOG_MASK()> functions.
-See L<"CONSTANTS"> for the supported constants and their meaning.
+C<:macros> exports the symbols corresponding to most of your C<syslog(3)> 
+macros and the C<LOG_UPTO()> and C<LOG_MASK()> functions. 
+See L<"CONSTANTS"> for the supported constants and their meaning. 
 
 =back
 
-By default, C<Sys::Syslog> exports the symbols from the C<:standard> tag.
+By default, C<Sys::Syslog> exports the symbols from the C<:standard> tag. 
 
 
 =head1 FUNCTIONS
@@ -935,12 +935,12 @@ By default, C<Sys::Syslog> exports the symbols from the C<:standard> tag.
 
 Opens the syslog.
 C<$ident> is prepended to every message.  C<$logopt> contains zero or
-more of the options detailed below.  C<$facility> specifies the part
+more of the options detailed below.  C<$facility> specifies the part 
 of the system to report about, for example C<LOG_USER> or C<LOG_LOCAL0>:
-see L<"Facilities"> for a list of well-known facilities, and your
-C<syslog(3)> documentation for the facilities available in your system.
-Check L<"SEE ALSO"> for useful links. Facility can be given as a string
-or a numeric macro.
+see L<"Facilities"> for a list of well-known facilities, and your 
+C<syslog(3)> documentation for the facilities available in your system. 
+Check L<"SEE ALSO"> for useful links. Facility can be given as a string 
+or a numeric macro. 
 
 This function will croak if it can't connect to the syslog daemon.
 
@@ -954,7 +954,7 @@ B<Options>
 
 =item *
 
-C<cons> - This option is ignored, since the failover mechanism will drop
+C<cons> - This option is ignored, since the failover mechanism will drop 
 down to the console automatically if all other media fail.
 
 =item *
@@ -969,9 +969,9 @@ appended to the message. This can be useful for some buggy syslog daemons.
 
 =item *
 
-C<nofatal> - When set to true, C<openlog()> and C<syslog()> will only
-emit warnings instead of dying if the connection to the syslog can't
-be established.
+C<nofatal> - When set to true, C<openlog()> and C<syslog()> will only 
+emit warnings instead of dying if the connection to the syslog can't 
+be established. 
 
 =item *
 
@@ -980,7 +980,7 @@ appended to the message. This can be useful for some buggy syslog daemons.
 
 =item *
 
-C<nowait> - Don't wait for child processes that may have been created
+C<nowait> - Don't wait for child processes that may have been created 
 while logging the message.  (The GNU C library does not create a child
 process, so this option has no effect on Linux.)
 
@@ -997,11 +997,11 @@ C<pid> - Include PID with each message.
 
 B<Examples>
 
-Open the syslog with options C<ndelay> and C<pid>, and with facility C<LOCAL0>:
+Open the syslog with options C<ndelay> and C<pid>, and with facility C<LOCAL0>: 
 
     openlog($name, "ndelay,pid", "local0");
 
-Same thing, but this time using the macro corresponding to C<LOCAL0>:
+Same thing, but this time using the macro corresponding to C<LOCAL0>: 
 
     openlog($name, "ndelay,pid", LOG_LOCAL0);
 
@@ -1012,16 +1012,16 @@ Same thing, but this time using the macro corresponding to C<LOCAL0>:
 
 If C<$priority> permits, logs C<$message> or C<sprintf($format, @args)>
 with the addition that C<%m> in $message or C<$format> is replaced with
-C<"$!"> (the latest error message).
+C<"$!"> (the latest error message). 
 
-C<$priority> can specify a level, or a level and a facility.  Levels and
+C<$priority> can specify a level, or a level and a facility.  Levels and 
 facilities can be given as strings or as macros.  When using the C<eventlog>
-mechanism, priorities C<DEBUG> and C<INFO> are mapped to event type
-C<informational>, C<NOTICE> and C<WARNING> to C<warning> and C<ERR> to
+mechanism, priorities C<DEBUG> and C<INFO> are mapped to event type 
+C<informational>, C<NOTICE> and C<WARNING> to C<warning> and C<ERR> to 
 C<EMERG> to C<error>.
 
-If you didn't use C<openlog()> before using C<syslog()>, C<syslog()> will
-try to guess the C<$ident> by extracting the shortest prefix of
+If you didn't use C<openlog()> before using C<syslog()>, C<syslog()> will 
+try to guess the C<$ident> by extracting the shortest prefix of 
 C<$format> that ends in a C<":">.
 
 B<Examples>
@@ -1038,9 +1038,9 @@ B<Examples>
 
 =item B<Note>
 
-C<Sys::Syslog> version v0.07 and older passed the C<$message> as the
+C<Sys::Syslog> version v0.07 and older passed the C<$message> as the 
 formatting string to C<sprintf()> even when no formatting arguments
-were provided.  If the code calling C<syslog()> might execute with
+were provided.  If the code calling C<syslog()> might execute with 
 older versions of this module, make sure to call the function as
 C<syslog($priority, "%s", $message)> instead of C<syslog($priority,
 $message)>.  This protects against hostile formatting sequences that
@@ -1051,29 +1051,29 @@ might show up if $message contains tainted data.
 
 =item B<setlogmask($mask_priority)>
 
-Sets the log mask for the current process to C<$mask_priority> and
-returns the old mask.  If the mask argument is 0, the current log mask
-is not modified.  See L<"Levels"> for the list of available levels.
-You can use the C<LOG_UPTO()> function to allow all levels up to a
+Sets the log mask for the current process to C<$mask_priority> and 
+returns the old mask.  If the mask argument is 0, the current log mask 
+is not modified.  See L<"Levels"> for the list of available levels. 
+You can use the C<LOG_UPTO()> function to allow all levels up to a 
 given priority (but it only accept the numeric macros as arguments).
 
 B<Examples>
 
-Only log errors:
+Only log errors: 
 
     setlogmask( LOG_MASK(LOG_ERR) );
 
-Log everything except informational messages:
+Log everything except informational messages: 
 
     setlogmask( ~(LOG_MASK(LOG_INFO)) );
 
-Log critical messages, errors and warnings:
+Log critical messages, errors and warnings: 
 
     setlogmask( LOG_MASK(LOG_CRIT)
               | LOG_MASK(LOG_ERR)
               | LOG_MASK(LOG_WARNING) );
 
-Log all messages up to debug:
+Log all messages up to debug: 
 
     setlogmask( LOG_UPTO(LOG_DEBUG) );
 
@@ -1130,7 +1130,7 @@ is set to 0.25 sec.
 
 =item *
 
-C<host> - sets the hostname to send the messages to.  Defaults to
+C<host> - sets the hostname to send the messages to.  Defaults to 
 the local host.
 
 =item *
@@ -1141,7 +1141,7 @@ first standard syslog port available on the system.
 =back
 
 
-The available mechanisms are:
+The available mechanisms are: 
 
 =over
 
@@ -1152,12 +1152,12 @@ C<"native"> - use the native C functions from your C<syslog(3)> library
 
 =item *
 
-C<"eventlog"> - send messages to the Win32 events logger (Win32 only;
+C<"eventlog"> - send messages to the Win32 events logger (Win32 only; 
 added in C<Sys::Syslog> 0.19).
 
 =item *
 
-C<"tcp"> - connect to a TCP socket, on the C<syslog/tcp> or C<syslogng/tcp>
+C<"tcp"> - connect to a TCP socket, on the C<syslog/tcp> or C<syslogng/tcp> 
 service.  See also the C<host>, C<port> and C<timeout> options.
 
 =item *
@@ -1167,12 +1167,12 @@ See also the C<host>, C<port> and C<timeout> options.
 
 =item *
 
-C<"inet"> - connect to an INET socket, either TCP or UDP, tried in that
+C<"inet"> - connect to an INET socket, either TCP or UDP, tried in that 
 order.  See also the C<host>, C<port> and C<timeout> options.
 
 =item *
 
-C<"unix"> - connect to a UNIX domain socket (in some systems a character
+C<"unix"> - connect to a UNIX domain socket (in some systems a character 
 special device).  The name of that socket is given by the C<path> option
 or, if omitted, the value returned by the C<_PATH_LOG> macro (if your
 system defines it), F</dev/log> or F</dev/conslog>, whichever is writable.
@@ -1182,7 +1182,7 @@ system defines it), F</dev/log> or F</dev/conslog>, whichever is writable.
 C<"stream"> - connect to the stream indicated by the C<path> option, or,
 if omitted, the value returned by the C<_PATH_LOG> macro (if your system
 defines it), F</dev/log> or F</dev/conslog>, whichever is writable.  For
-example Solaris and IRIX system may prefer C<"stream"> instead of C<"unix">.
+example Solaris and IRIX system may prefer C<"stream"> instead of C<"unix">. 
 
 =item *
 
@@ -1193,14 +1193,14 @@ HP-UX is a system which uses such a named pipe.
 
 =item *
 
-C<"console"> - send messages directly to the console, as for the C<"cons">
+C<"console"> - send messages directly to the console, as for the C<"cons"> 
 option of C<openlog()>.
 
 =back
 
-The default is to try C<native>, C<tcp>, C<udp>, C<unix>, C<pipe>, C<stream>,
+The default is to try C<native>, C<tcp>, C<udp>, C<unix>, C<pipe>, C<stream>, 
 C<console>.
-Under systems with the Win32 API, C<eventlog> will be added as the first
+Under systems with the Win32 API, C<eventlog> will be added as the first 
 mechanism to try if C<Win32::EventLog> is available.
 
 Giving an invalid value for C<$sock_type> will C<croak>.
@@ -1219,7 +1219,7 @@ Send messages to a remote host using the TCP socket mechanism:
 
     setlogsock({ type => "tcp", host => $loghost });
 
-Try the native, UDP socket then UNIX domain socket mechanisms:
+Try the native, UDP socket then UNIX domain socket mechanisms: 
 
     setlogsock(["native", "udp", "unix"]);
 
@@ -1227,12 +1227,12 @@ Try the native, UDP socket then UNIX domain socket mechanisms:
 
 =item B<Note>
 
-Now that the "native" mechanism is supported by C<Sys::Syslog> and selected
-by default, the use of the C<setlogsock()> function is discouraged because
-other mechanisms are less portable across operating systems.  Authors of
-modules and programs that use this function, especially its cargo-cult form
-C<setlogsock("unix")>, are advised to remove any occurence of it unless they
-specifically want to use a given mechanism (like TCP or UDP to connect to
+Now that the "native" mechanism is supported by C<Sys::Syslog> and selected 
+by default, the use of the C<setlogsock()> function is discouraged because 
+other mechanisms are less portable across operating systems.  Authors of 
+modules and programs that use this function, especially its cargo-cult form 
+C<setlogsock("unix")>, are advised to remove any occurence of it unless they 
+specifically want to use a given mechanism (like TCP or UDP to connect to 
 a remote host).
 
 =back
@@ -1265,7 +1265,7 @@ I<The Sixth Rule of Sys::Syslog is:>
 No C<syslog> before C<openlog>.
 
 I<The Seventh Rule of Sys::Syslog is:>
-Logs will go on as long as they have to.
+Logs will go on as long as they have to. 
 
 I<The Eighth, and Final Rule of Sys::Syslog is:>
 If this is your first use of Sys::Syslog, you must read the doc.
@@ -1449,11 +1449,11 @@ C<LOG_DEBUG> - debug-level message
 
 =item C<Invalid argument passed to setlogsock>
 
-B<(F)> You gave C<setlogsock()> an invalid value for C<$sock_type>.
+B<(F)> You gave C<setlogsock()> an invalid value for C<$sock_type>. 
 
 =item C<eventlog passed to setlogsock, but no Win32 API available>
 
-B<(W)> You asked C<setlogsock()> to use the Win32 event logger but the
+B<(W)> You asked C<setlogsock()> to use the Win32 event logger but the 
 operating system running the program isn't Win32 or does not provides Win32
 compatible facilities.
 
@@ -1463,18 +1463,18 @@ B<(F)> C<syslog()> failed to connect to the specified socket.
 
 =item C<stream passed to setlogsock, but %s is not writable>
 
-B<(W)> You asked C<setlogsock()> to use a stream socket, but the given
-path is not writable.
+B<(W)> You asked C<setlogsock()> to use a stream socket, but the given 
+path is not writable. 
 
 =item C<stream passed to setlogsock, but could not find any device>
 
-B<(W)> You asked C<setlogsock()> to use a stream socket, but didn't
+B<(W)> You asked C<setlogsock()> to use a stream socket, but didn't 
 provide a path, and C<Sys::Syslog> was unable to find an appropriate one.
 
 =item C<tcp passed to setlogsock, but tcp service unavailable>
 
-B<(W)> You asked C<setlogsock()> to use a TCP socket, but the service
-is not available on the system.
+B<(W)> You asked C<setlogsock()> to use a TCP socket, but the service 
+is not available on the system. 
 
 =item C<syslog: expecting argument %s>
 
@@ -1486,11 +1486,11 @@ B<(F)> You specified an invalid level or facility.
 
 =item C<syslog: too many levels given: %s>
 
-B<(F)> You specified too many levels.
+B<(F)> You specified too many levels. 
 
 =item C<syslog: too many facilities given: %s>
 
-B<(F)> You specified too many facilities.
+B<(F)> You specified too many facilities. 
 
 =item C<syslog: level must be given>
 
@@ -1498,12 +1498,12 @@ B<(F)> You forgot to specify a level.
 
 =item C<udp passed to setlogsock, but udp service unavailable>
 
-B<(W)> You asked C<setlogsock()> to use a UDP socket, but the service
-is not available on the system.
+B<(W)> You asked C<setlogsock()> to use a UDP socket, but the service 
+is not available on the system. 
 
 =item C<unix passed to setlogsock, but path not available>
 
-B<(W)> You asked C<setlogsock()> to use a UNIX socket, but C<Sys::Syslog>
+B<(W)> You asked C<setlogsock()> to use a UNIX socket, but C<Sys::Syslog> 
 was unable to find an appropriate an appropriate device.
 
 =back
@@ -1538,13 +1538,13 @@ Perl and C<Sys::Syslog> versions.
 
 L<syslog(3)>
 
-SUSv3 issue 6, IEEE Std 1003.1, 2004 edition,
+SUSv3 issue 6, IEEE Std 1003.1, 2004 edition, 
 L<http://www.opengroup.org/onlinepubs/000095399/basedefs/syslog.h.html>
 
-GNU C Library documentation on syslog,
+GNU C Library documentation on syslog, 
 L<http://www.gnu.org/software/libc/manual/html_node/Syslog.html>
 
-Solaris 10 documentation on syslog,
+Solaris 10 documentation on syslog, 
 L<http://docs.sun.com/app/docs/doc/816-5168/syslog-3c?a=view>
 
 Mac OS X documentation on syslog,
@@ -1553,22 +1553,22 @@ L<http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/syslog
 IRIX 6.5 documentation on syslog,
 L<http://techpubs.sgi.com/library/tpl/cgi-bin/getdoc.cgi?coll=0650&db=man&fname=3c+syslog>
 
-AIX 5L 5.3 documentation on syslog,
+AIX 5L 5.3 documentation on syslog, 
 L<http://publib.boulder.ibm.com/infocenter/pseries/v5r3/index.jsp?topic=/com.ibm.aix.basetechref/doc/basetrf2/syslog.htm>
 
-HP-UX 11i documentation on syslog,
+HP-UX 11i documentation on syslog, 
 L<http://docs.hp.com/en/B2355-60130/syslog.3C.html>
 
-Tru64 5.1 documentation on syslog,
+Tru64 5.1 documentation on syslog, 
 L<http://h30097.www3.hp.com/docs/base_doc/DOCUMENTATION/V51_HTML/MAN/MAN3/0193____.HTM>
 
-Stratus VOS 15.1,
+Stratus VOS 15.1, 
 L<http://stratadoc.stratus.com/vos/15.1.1/r502-01/wwhelp/wwhimpl/js/html/wwhelp.htm?context=r502-01&file=ch5r502-01bi.html>
 
 =head2 RFCs
 
 I<RFC 3164 - The BSD syslog Protocol>, L<http://www.faqs.org/rfcs/rfc3164.html>
--- Please note that this is an informational RFC, and therefore does not
+-- Please note that this is an informational RFC, and therefore does not 
 specify a standard of any kind.
 
 I<RFC 3195 - Reliable Delivery for syslog>, L<http://www.faqs.org/rfcs/rfc3195.html>
@@ -1589,7 +1589,7 @@ Tom Christiansen E<lt>F<tchrist (at) perl.com>E<gt> and Larry Wall
 E<lt>F<larry (at) wall.org>E<gt>.
 
 UNIX domain sockets added by Sean Robinson
-E<lt>F<robinson_s (at) sc.maricopa.edu>E<gt> with support from Tim Bunce
+E<lt>F<robinson_s (at) sc.maricopa.edu>E<gt> with support from Tim Bunce 
 E<lt>F<Tim.Bunce (at) ig.co.uk>E<gt> and the C<perl5-porters> mailing list.
 
 Dependency on F<syslog.ph> replaced with XS code by Tom Hughes
@@ -1600,16 +1600,16 @@ Code for C<constant()>s regenerated by Nicholas Clark E<lt>F<nick (at) ccl4.org>
 Failover to different communication modes by Nick Williams
 E<lt>F<Nick.Williams (at) morganstanley.com>E<gt>.
 
-Extracted from core distribution for publishing on the CPAN by
+Extracted from core distribution for publishing on the CPAN by 
 SE<eacute>bastien Aperghis-Tramoni E<lt>sebastien (at) aperghis.netE<gt>.
 
-XS code for using native C functions borrowed from C<L<Unix::Syslog>>,
+XS code for using native C functions borrowed from C<L<Unix::Syslog>>, 
 written by Marcus Harnisch E<lt>F<marcus.harnisch (at) gmx.net>E<gt>.
 
-Yves Orton suggested and helped for making C<Sys::Syslog> use the native
+Yves Orton suggested and helped for making C<Sys::Syslog> use the native 
 event logger under Win32 systems.
 
-Jerry D. Hedden and Reini Urban provided greatly appreciated help to
+Jerry D. Hedden and Reini Urban provided greatly appreciated help to 
 debug and polish C<Sys::Syslog> under Cygwin.
 
 
@@ -1676,22 +1676,22 @@ under the same terms as Perl itself.
 Notes for the future maintainer (even if it's still me..)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Using Google Code Search, I search who on Earth was relying on $host being
-public. It found 5 hits:
+Using Google Code Search, I search who on Earth was relying on $host being 
+public. It found 5 hits: 
 
-* First was inside Indigo Star Perl2exe documentation. Just an old version
-of Sys::Syslog.
+* First was inside Indigo Star Perl2exe documentation. Just an old version 
+of Sys::Syslog. 
 
 
-* One real hit was inside DalWeathDB, a weather related program. It simply
-does a
+* One real hit was inside DalWeathDB, a weather related program. It simply 
+does a 
 
     $Sys::Syslog::host = '127.0.0.1';
 
 - L<http://www.gallistel.net/nparker/weather/code/>
 
 
-* Two hits were in TPC, a fax server thingy. It does a
+* Two hits were in TPC, a fax server thingy. It does a 
 
     $Sys::Syslog::host = $TPC::LOGHOST;
 
@@ -1715,7 +1715,7 @@ This one does not use $host, but has the following piece of code:
         return hostname;
     }
 
-I guess this was a more elaborate form of the previous bit, maybe because
+I guess this was a more elaborate form of the previous bit, maybe because 
 of a bug in Sys::Syslog back then?
 
 - L<ftp://ftp.kiae.su/pub/unix/fido/>

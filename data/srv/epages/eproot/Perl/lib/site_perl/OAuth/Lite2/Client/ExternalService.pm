@@ -31,8 +31,8 @@ OAuth::Lite2::Client::ExternalService - OAuth 2.0 Federated Assertion Profile Cl
         my $your_app = shift;
 
         my $access_token = $client->get_access_token(
-            assertion => $your_app->request->param("assertion"),
-            scope     => q{photo},
+            assertion => $your_app->request->param("assertion"), 
+            scope     => q{photo}, 
         ) or return $your_app->error( $client->errstr );
 
         $your_app->store->save( access_token  => $access_token->access_token  );
@@ -211,7 +211,7 @@ sub get_access_token {
     my $headers = HTTP::Headers->new;
     $headers->header("Content-Type" => q{application/x-www-form-urlencoded});
     $headers->header("Content-Length" => bytes::length($content));
-    $headers->authorization_basic($self->{id}, $self->{secret})
+    $headers->authorization_basic($self->{id}, $self->{secret})    
         if($args{use_basic_schema});
     my $req = HTTP::Request->new( POST => $args{uri}, $headers, $content );
 
@@ -267,7 +267,7 @@ sub refresh_access_token {
     my $headers = HTTP::Headers->new;
     $headers->header("Content-Type" => q{application/x-www-form-urlencoded});
     $headers->header("Content-Length" => bytes::length($content));
-    $headers->authorization_basic($self->{id}, $self->{secret})
+    $headers->authorization_basic($self->{id}, $self->{secret})    
         if($args{use_basic_schema});
     my $req = HTTP::Request->new( POST => $args{uri}, $headers, $content );
 

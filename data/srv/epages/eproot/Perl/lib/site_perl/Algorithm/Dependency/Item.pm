@@ -23,7 +23,7 @@ use Algorithm::Dependency ();
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '1.110';
+	$VERSION = '1.110';
 }
 
 
@@ -47,9 +47,9 @@ on error.
 =cut
 
 sub new {
-        my $class = shift;
-        my $id    = (defined $_[0] and ! ref $_[0] and $_[0] ne '') ? shift : return undef;
-        bless { id => $id, depends => [ @_ ] }, $class;
+	my $class = shift;
+	my $id    = (defined $_[0] and ! ref $_[0] and $_[0] ne '') ? shift : return undef;
+	bless { id => $id, depends => [ @_ ] }, $class;
 }
 
 =pod

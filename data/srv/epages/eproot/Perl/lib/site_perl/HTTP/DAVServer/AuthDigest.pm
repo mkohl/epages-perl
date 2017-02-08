@@ -29,18 +29,18 @@ To do this you need to compile Apache with the ominous define "SECURITY_HOLE_PAS
 Like people haven't sniffed your basic authorization header before it got to the server already.
 At least with Digest this header is a bit less useful for the hostial sniffer.
 
-This code is not done and is only a sketch.
+This code is not done and is only a sketch. 
 
 =cut
 
 sub headerParts {
-
+    
     my $header=$_[0];
-        $header =~ s/^Digest /", /;
+	$header =~ s/^Digest /", /;
     $header =~ s/"\s*$//;
 
-        my @parts=split /", ([a-z]+)="/, $header;
-        shift @parts;
+	my @parts=split /", ([a-z]+)="/, $header;
+	shift @parts;
     my %parts=@parts;
     return \%parts;
 
@@ -49,14 +49,14 @@ sub headerParts {
 # Code inspired from LWP::Authen::Digest
 #  - to conform to RFC 2617
 #
-#  Send in
+#  Send in 
 #      password callback (fed username) (default to username for passwd)
 #      parts hashref (computed for CGI)
 #      request method (computed for CGI)
 
 sub authenticate {
 
-        my ($passwd, $parts, $method) = @_;
+	my ($passwd, $parts, $method) = @_;
 
     $passwd ||= sub { return $_[0] };
 
@@ -77,7 +77,7 @@ sub authenticate {
         push @digest, $parts->{'nc'}, $parts->{'cnonce'}, $parts->{'qop'};
     }
 
-    $md5->add(join( ":", $method, $parts->{'uri'} ) );
+    $md5->add(join( ":", $method, $parts->{'uri'} ) );  
     push @digest, $md5->hexdigest;
     $md5->reset;
 
@@ -99,7 +99,7 @@ sub authenticate {
 
 =head1 SUPPORT
 
-For technical support please email to jlawrenc@cpan.org ...
+For technical support please email to jlawrenc@cpan.org ... 
 for faster service please include "HTTP::DAVServer" and "help" in your subject line.
 
 =head1 AUTHOR

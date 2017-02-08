@@ -234,7 +234,7 @@ sub _fork_schedule {
 
       my $coderef = shift @$job;
       my $cb = pop @$job;
-
+      
       # gimme a break...
       my ($r, $w) = portable_pipe
          or ($forks and last) # allow failures when we have at least one job
@@ -258,7 +258,7 @@ sub _fork_schedule {
                close $r;
                --$forks;
                _fork_schedule;
-
+               
                my $result = eval { Storable::thaw ($buf) };
                $result = [$@] unless $result;
                $@ = shift @$result;
@@ -308,7 +308,7 @@ sub _fork_schedule {
          }
          POSIX::_exit (0);
          exit 1;
-
+         
       } elsif (($! != &Errno::EAGAIN && $! != &Errno::ENOMEM) || !$forks) {
          # we ignore some errors as long as we can run at least one job
          # maybe we should wait a few seconds and retry instead
@@ -562,7 +562,7 @@ Example: run F<openssl> and create a self-signed certificate and key,
 storing them in C<$cert> and C<$key>. When finished, check the exit status
 in the callback and print key and certificate.
 
-   my $cv = run_cmd [qw(openssl req
+   my $cv = run_cmd [qw(openssl req 
                      -new -nodes -x509 -days 3650
                      -newkey rsa:2048 -keyout /dev/fd/3
                      -batch -subj /CN=AnyEvent

@@ -112,7 +112,7 @@ sub summary_as_text {
     $method ||= 'connect_cached';
     $pass = '***' if defined $pass;
     my $tmp = '';
-    if ($attr) {
+    if ($attr) { 
         $tmp = { %{$attr||{}} }; # copy so we can edit
         $tmp->{Password} = '***' if exists $tmp->{Password};
         $tmp = "{ ".neat_list([ %$tmp ])." }";

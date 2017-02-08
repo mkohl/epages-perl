@@ -8,7 +8,7 @@ AnyEvent::Impl::POE - AnyEvent adaptor for POE
 
    use AnyEvent;
    use POE;
-
+  
    # this module gets loaded automatically as required
 
 =head1 DESCRIPTION

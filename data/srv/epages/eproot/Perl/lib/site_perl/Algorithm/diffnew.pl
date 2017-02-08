@@ -137,9 +137,9 @@ foreach my $piece (@$diffs) {
 
     # Don't need to check for overlap if blocks have no context lines
     if ($Context_Lines && $hunk->does_overlap($oldhunk)) {
-        $hunk->prepend_hunk($oldhunk);
+	$hunk->prepend_hunk($oldhunk);
     } else {
-        $oldhunk->output_diff(\@f1, \@f2, $Diff_Type);
+	$oldhunk->output_diff(\@f1, \@f2, $Diff_Type);
     }
 
 } continue {
@@ -212,11 +212,11 @@ sub new {
 
     # At first, a hunk will have just one Block in it
     my $hunk = {
-            "start1" => $start1,
-            "start2" => $start2,
-            "end1" => $end1,
-            "end2" => $end2,
-            "blocks" => [$block],
+	    "start1" => $start1,
+	    "start2" => $start2,
+	    "end1" => $end1,
+	    "end2" => $end2,
+	    "blocks" => [$block],
               };
     bless $hunk, $class;
 
@@ -277,10 +277,10 @@ sub output_diff {
     my $diff_type = $_[-1];
     my %funchash  = ("OLD"        => \&output_old_diff,
                      "CONTEXT"    => \&output_context_diff,
-                     "ED"         => \&store_ed_diff,
-                     "REVERSE_ED" => \&output_ed_diff,
+		     "ED"         => \&store_ed_diff,
+		     "REVERSE_ED" => \&output_ed_diff,
                      "UNIFIED"    => \&output_unified_diff,
-                    );
+	            );
     if (exists $funchash{$diff_type}) {
         &{$funchash{$diff_type}}(@_); # pass in all args
     } else {die "unknown diff type $diff_type"}
@@ -308,16 +308,16 @@ sub output_old_diff {
     # If removing anything, just print out all the remove lines in the hunk
     # which is just all the remove lines in the block
     if ($block->remove) {
-        my @outlist = @$fileref1[$hunk->{"start1"}..$hunk->{"end1"}];
-        map {$_ = "< $_\n"} @outlist; # all lines will be '< text\n'
-        print @outlist;
+	my @outlist = @$fileref1[$hunk->{"start1"}..$hunk->{"end1"}];
+	map {$_ = "< $_\n"} @outlist; # all lines will be '< text\n'
+	print @outlist;
     }
 
     print "---\n" if $op eq '!'; # only if inserting and removing
     if ($block->insert) {
-        my @outlist = @$fileref2[$hunk->{"start2"}..$hunk->{"end2"}];
-        map {$_ = "> $_\n"} @outlist; # all lines will be '> text\n'
-        print @outlist;
+	my @outlist = @$fileref2[$hunk->{"start2"}..$hunk->{"end2"}];
+	map {$_ = "> $_\n"} @outlist; # all lines will be '> text\n'
+	print @outlist;
     }
 }
 
@@ -345,19 +345,19 @@ sub output_unified_diff {
     map {s/^/ /} @outlist; # assume it's just context
 
     foreach my $block (@{$hunk->{"blocks"}}) {
-        foreach my $item ($block->remove) {
-            my $op = $item->{"sign"}; # -
-            my $offset = $item->{"item_no"} - $low + $num_added;
-            $outlist[$offset] =~ s/^ /$op/;
-            $num_removed++;
-        }
-        foreach my $item ($block->insert) {
-            my $op = $item->{"sign"}; # +
-            my $i = $item->{"item_no"};
-            my $offset = $i - $hunk->{"start2"} + $num_removed;
-            splice(@outlist,$offset,0,"$op$$fileref2[$i]");
-            $num_added++;
-        }
+	foreach my $item ($block->remove) {
+	    my $op = $item->{"sign"}; # -
+	    my $offset = $item->{"item_no"} - $low + $num_added;
+	    $outlist[$offset] =~ s/^ /$op/;
+	    $num_removed++;
+	}
+	foreach my $item ($block->insert) {
+	    my $op = $item->{"sign"}; # +
+	    my $i = $item->{"item_no"};
+	    my $offset = $i - $hunk->{"start2"} + $num_removed;
+	    splice(@outlist,$offset,0,"$op$$fileref2[$i]");
+	    $num_added++;
+	}
     }
 
     map {s/$/\n/} @outlist; # add \n's
@@ -380,32 +380,32 @@ sub output_context_diff {
     my $low = $hunk->{"start1"};
     my $hi  = $hunk->{"end1"};
     if (@blocklist = grep {$_->remove} @{$hunk->{"blocks"}}) {
-        my @outlist = @$fileref1[$low..$hi];
-        map {s/^/  /} @outlist; # assume it's just context
-        foreach my $block (@blocklist) {
-            my $op = $block->op; # - or !
-            foreach my $item ($block->remove) {
-                $outlist[$item->{"item_no"} - $low] =~ s/^ /$op/;
-            }
-        }
-        map {s/$/\n/} @outlist; # add \n's
-        print @outlist;
+	my @outlist = @$fileref1[$low..$hi];
+	map {s/^/  /} @outlist; # assume it's just context
+	foreach my $block (@blocklist) {
+	    my $op = $block->op; # - or !
+	    foreach my $item ($block->remove) {
+		$outlist[$item->{"item_no"} - $low] =~ s/^ /$op/;
+	    }
+	}
+	map {s/$/\n/} @outlist; # add \n's
+	print @outlist;
     }
 
     print "--- $range2 ----\n";
     $low = $hunk->{"start2"};
     $hi  = $hunk->{"end2"};
     if (@blocklist = grep {$_->insert} @{$hunk->{"blocks"}}) {
-        my @outlist = @$fileref2[$low..$hi];
-        map {s/^/  /} @outlist; # assume it's just context
-        foreach my $block (@blocklist) {
-            my $op = $block->op; # + or !
-            foreach my $item ($block->insert) {
-                $outlist[$item->{"item_no"} - $low] =~ s/^ /$op/;
-            }
-        }
-        map {s/$/\n/} @outlist; # add \n's
-        print @outlist;
+	my @outlist = @$fileref2[$low..$hi];
+	map {s/^/  /} @outlist; # assume it's just context
+	foreach my $block (@blocklist) {
+	    my $op = $block->op; # + or !
+	    foreach my $item ($block->insert) {
+		$outlist[$item->{"item_no"} - $low] =~ s/^ /$op/;
+	    }
+	}
+	map {s/$/\n/} @outlist; # add \n's
+	print @outlist;
     }
 }
 
@@ -438,10 +438,10 @@ sub output_ed_diff {
     print ($diff_type eq "ED" ? "$range1$action\n" : "$action$range1\n");
 
     if ($block->insert) {
-        my @outlist = @$fileref2[$hunk->{"start2"}..$hunk->{"end2"}];
-        map {s/$/\n/} @outlist; # add \n's
-        print @outlist;
-        print ".\n"; # end of ed 'c' or 'a' command
+	my @outlist = @$fileref2[$hunk->{"start2"}..$hunk->{"end2"}];
+	map {s/$/\n/} @outlist; # add \n's
+	print @outlist;
+	print ".\n"; # end of ed 'c' or 'a' command
     }
 }
 
@@ -491,9 +491,9 @@ sub new {
 
 # This just turns each change into a hash.
     foreach my $item (@$chunk) {
-        my ($sign, $item_no, $text) = @$item;
-        my $hashref = {"sign" => $sign, "item_no" => $item_no};
-        push @changes, $hashref;
+	my ($sign, $item_no, $text) = @$item;
+	my $hashref = {"sign" => $sign, "item_no" => $item_no};
+	push @changes, $hashref;
     }
 
     my $block = { "changes" => \@changes };

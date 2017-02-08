@@ -9,7 +9,7 @@ our @EXPORT_OK = qw(add_dump_filter remove_dump_filter dump_filtered);
 sub add_dump_filter {
     my $filter = shift;
     unless (ref($filter) eq "CODE") {
-        Carp::croak("add_dump_filter argument must be a code reference");
+	Carp::croak("add_dump_filter argument must be a code reference");
     }
     push(@Data::Dump::FILTERS, $filter);
     return $filter;
@@ -23,7 +23,7 @@ sub remove_dump_filter {
 sub dump_filtered {
     my $filter = pop;
     if (defined($filter) && ref($filter) ne "CODE") {
-        Carp::croak("Last argument to dump_filtered must be undef or a code reference");
+	Carp::croak("Last argument to dump_filtered must be undef or a code reference");
     }
     local @Data::Dump::FILTERS = ($filter ? $filter : ());
     return &Data::Dump::dump;
@@ -75,8 +75,8 @@ value should either be a hash reference or C<undef>.
 
     sub filter_callback {
         my($ctx, $object_ref) = @_;
-        ...
-        return { ... }
+	...
+	return { ... }
     }
 
 If the filter callback returns C<undef> (or nothing) then normal

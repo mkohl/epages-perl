@@ -17,7 +17,7 @@
 ;# whether there is a space between the switch and the argument.
 
 ;# Usage:
-;#      do Getopt('oDI');  # -o, -D & -I take arg.  Sets opt_* as a side effect.
+;#	do Getopt('oDI');  # -o, -D & -I take arg.  Sets opt_* as a side effect.
 
 sub Getopt {
     local($argumentative) = @_;
@@ -25,26 +25,26 @@ sub Getopt {
     local($[) = 0;
 
     while (@ARGV && ($_ = $ARGV[0]) =~ /^-(.)(.*)/) {
-        ($first,$rest) = ($1,$2);
-        if (index($argumentative,$first) >= $[) {
-            if ($rest ne '') {
-                shift(@ARGV);
-            }
-            else {
-                shift(@ARGV);
-                $rest = shift(@ARGV);
-            }
-            ${"opt_$first"} = $rest;
-        }
-        else {
-            ${"opt_$first"} = 1;
-            if ($rest ne '') {
-                $ARGV[0] = "-$rest";
-            }
-            else {
-                shift(@ARGV);
-            }
-        }
+	($first,$rest) = ($1,$2);
+	if (index($argumentative,$first) >= $[) {
+	    if ($rest ne '') {
+		shift(@ARGV);
+	    }
+	    else {
+		shift(@ARGV);
+		$rest = shift(@ARGV);
+	    }
+	    ${"opt_$first"} = $rest;
+	}
+	else {
+	    ${"opt_$first"} = 1;
+	    if ($rest ne '') {
+		$ARGV[0] = "-$rest";
+	    }
+	    else {
+		shift(@ARGV);
+	    }
+	}
     }
 }
 

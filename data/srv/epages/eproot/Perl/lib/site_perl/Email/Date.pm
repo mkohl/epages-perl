@@ -18,13 +18,13 @@ Email::Date - Find and Format Date Headers
 =head1 SYNOPSIS
 
   use Email::Date;
-
+  
   my $email = join '', <>;
   my $date  = find_date($email);
   print $date->ymd;
-
+  
   my $header = format_date($date->epoch);
-
+  
   Email::Simple->create(
       header => [
           Date => $header,

@@ -1816,7 +1816,7 @@ Living is good
    when you have someone to share it with
 Laughter is bad
    when there is no one there to share it with
-Talking is sad
+Talking is sad 
    if you've got no one to talk to
 Dying is good
    when the one you love grows tired of you

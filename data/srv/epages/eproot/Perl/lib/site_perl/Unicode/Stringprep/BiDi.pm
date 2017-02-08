@@ -418,8 +418,8 @@ Unicode::Stringprep::BiDi - Tables from S<RFC 3454>, S<Appendix D>
 
 =head1 SYNOPSIS
 
-  @Unicode::Stringprep::Bidi::D1        # Appendix D.1
-  @Unicode::Stringprep::Bidi::D2        # Appendix D.2
+  @Unicode::Stringprep::Bidi::D1	# Appendix D.1
+  @Unicode::Stringprep::Bidi::D2	# Appendix D.2
 
 =head1 DESCRIPTION
 

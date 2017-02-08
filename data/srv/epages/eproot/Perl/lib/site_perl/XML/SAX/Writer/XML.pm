@@ -214,7 +214,7 @@ sub skipped_entity {
         $ent = $data->{Name} . ';';
 
     } elsif ($data->{Name} eq '[dtd]') {
-        # ignoring
+	# ignoring
 
     } else {
         $ent = '&' . $data->{Name} . ';';
@@ -300,7 +300,7 @@ sub attribute_decl {
     $self->_output_dtd;
 
     # to be backward compatible with Perl SAX 2.0
-    $data->{Mode} = $data->{ValueDefault}
+    $data->{Mode} = $data->{ValueDefault} 
       if not(exists $data->{Mode}) and exists $data->{ValueDefault};
 
     # I think that param entities are normalized before this
@@ -509,7 +509,7 @@ sub _output_element {
 
     if ($self->{BufferElement}) {
         my $el = $self->{BufferElement} . '>';
-        $el = $self->safeConvert($el);
+	$el = $self->safeConvert($el);
         $self->{Consumer}->output($el);
         $self->{BufferElement} = '';
     }
@@ -524,7 +524,7 @@ sub _output_dtd {
 
     if ($self->{BufferDTD}) {
         my $dtd = $self->{BufferDTD} . " [\n";
-        $dtd = $self->safeConvert($dtd);
+	$dtd = $self->safeConvert($dtd);
         $self->{Consumer}->output($dtd);
         $self->{BufferDTD} = '';
     }
@@ -556,8 +556,8 @@ Robin Berjon, robin@knowscape.com
 
 =head1 COPYRIGHT
 
-Copyright (c) 2001-2006 Robin Berjon nad Perl XML project. All rights reserved.
-This program is free software; you can redistribute it and/or modify it under
+Copyright (c) 2001-2006 Robin Berjon nad Perl XML project. All rights reserved. 
+This program is free software; you can redistribute it and/or modify it under 
 the same terms as Perl itself.
 
 =head1 SEE ALSO

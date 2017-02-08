@@ -79,9 +79,9 @@ sub read
             };
     }
     $self->{'features'} = $features;
-
+    
     delete $self->{' dat'}; # no longer needed, and may become obsolete
-
+    
     $self;
 }
 
@@ -95,7 +95,7 @@ sub out
 {
     my ($self, $fh) = @_;
     my ($features, $numFeatures, $settings, $featuresData, $settingsData);
-
+    
     return $self->SUPER::out($fh) unless $self->{' read'};
 
     $features = $self->{'features'};
@@ -152,7 +152,7 @@ sub print
                         $_, $settings->{$_}, $names->{'strings'}[$settings->{$_}][1][0]{0});
         }
     }
-
+    
     $self;
 }
 
@@ -164,7 +164,7 @@ sub settingName
 
     my $names = $self->{' PARENT'}->{'name'};
     $names->read;
-
+    
     my $features = $self->{'features'};
     my ($featureEntry) = grep { $_->{'feature'} == $feature } @$features;
     my $featureName = $names->{'strings'}[$featureEntry->{'name'}][1][0]{0};

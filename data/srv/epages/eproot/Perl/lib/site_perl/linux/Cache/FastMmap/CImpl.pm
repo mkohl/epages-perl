@@ -41,6 +41,6 @@ Rob Mueller E<lt>cpan@robm.fastmail.fmE<gt>
 Copyright (C) 2003-2010 by The FastMail Partnership
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+it under the same terms as Perl itself. 
 
 =cut

@@ -9,18 +9,18 @@ Test::SubCalls - Track the number of times subs are called
 =head1 SYNOPSIS
 
   use Test::SubCalls;
-
+  
   # Start tracking calls to a named sub
   sub_track( 'Foo::foo' );
-
+  
   # Run some test code
   ...
-
+  
   # Test that some sub deep in the codebase was called
   # a specific number of times.
   sub_calls( 'Foo::foo', 5 );
   sub_calls( 'Foo::foo', 5, 'Use a custom test message' );
-
+  
   # Reset the counts for one or all subs
   sub_reset( 'Foo::foo' );
   sub_reset_all();
@@ -51,9 +51,9 @@ use Test::Builder      ();
 
 use vars qw{$VERSION @ISA @EXPORT};
 BEGIN {
-        $VERSION = '1.09';
-        @ISA     = 'Exporter';
-        @EXPORT  = qw{sub_track sub_calls sub_reset sub_reset_all};
+	$VERSION = '1.09';
+	@ISA     = 'Exporter';
+	@EXPORT  = qw{sub_track sub_calls sub_reset sub_reset_all};
 }
 
 my $Test = Test::Builder->new;
@@ -81,28 +81,28 @@ Returns true if added, or dies on error.
 =cut
 
 sub sub_track {
-        # Check the sub name is valid
-        my $subname = shift;
-        SCOPE: {
-                no strict 'refs';
-                unless ( defined *{"$subname"}{CODE} ) {
-                        die "Test::SubCalls::sub_track : The sub '$subname' does not exist";
-                }
-                if ( defined $CALLS{$subname} ) {
-                        die "Test::SubCalls::sub_track : Cannot add duplicate tracker for '$subname'";
-                }
-        }
+	# Check the sub name is valid
+	my $subname = shift;
+	SCOPE: {
+		no strict 'refs';
+		unless ( defined *{"$subname"}{CODE} ) {
+			die "Test::SubCalls::sub_track : The sub '$subname' does not exist";
+		}
+		if ( defined $CALLS{$subname} ) {
+			die "Test::SubCalls::sub_track : Cannot add duplicate tracker for '$subname'";
+		}
+	}
 
-        # Initialise the count
-        $CALLS{$subname} = 0;
+	# Initialise the count
+	$CALLS{$subname} = 0;
 
-        # Lexwrap the subroutine
-        Hook::LexWrap::wrap(
-                $subname,
-                pre => sub { $CALLS{$subname}++ },
-        );
+	# Lexwrap the subroutine
+	Hook::LexWrap::wrap(
+		$subname,
+		pre => sub { $CALLS{$subname}++ },
+	);
 
-        1;
+	1;
 }
 
 =pod
@@ -125,21 +125,21 @@ expected number, or not ok if not.
 =cut
 
 sub sub_calls {
-        # Check the sub name is valid
-        my $subname = shift;
-        unless ( defined $CALLS{$subname} ) {
-                die "Test::SubCalls::sub_calls : Cannot test untracked sub '$subname'";
-        }
+	# Check the sub name is valid
+	my $subname = shift;
+	unless ( defined $CALLS{$subname} ) {
+		die "Test::SubCalls::sub_calls : Cannot test untracked sub '$subname'";
+	}
 
-        # Check the count
-        my $count = shift;
-        unless ( $count =~ /^(?:0|[1-9]\d*)\z/s ) {
-                die "Test::SubCalls::sub_calls : Expected count '$count' is not an integer";
-        }
+	# Check the count
+	my $count = shift;
+	unless ( $count =~ /^(?:0|[1-9]\d*)\z/s ) {
+		die "Test::SubCalls::sub_calls : Expected count '$count' is not an integer";
+	}
 
-        # Get the message, applying default if needed
-        my $message = shift || "$subname was called $count times";
-        $Test->is_num( $CALLS{$subname}, $count, $message );
+	# Get the message, applying default if needed
+	my $message = shift || "$subname was called $count times";
+	$Test->is_num( $CALLS{$subname}, $count, $message );
 }
 
 =pod
@@ -155,15 +155,15 @@ Returns true or dies if the sub name is invalid or not currently tracked.
 =cut
 
 sub sub_reset {
-        # Check the sub name is valid
-        my $subname = shift;
-        unless ( defined $CALLS{$subname} ) {
-                die "Test::SubCalls::sub_reset : Cannot reset untracked sub '$subname'";
-        }
+	# Check the sub name is valid
+	my $subname = shift;
+	unless ( defined $CALLS{$subname} ) {
+		die "Test::SubCalls::sub_reset : Cannot reset untracked sub '$subname'";
+	}
 
-        $CALLS{$subname} = 0;
+	$CALLS{$subname} = 0;
 
-        1;
+	1;
 }
 
 =pod
@@ -178,10 +178,10 @@ Returns true.
 =cut
 
 sub sub_reset_all {
-        foreach my $subname ( keys %CALLS ) {
-                $CALLS{$subname} = 0;
-        }
-        1;
+	foreach my $subname ( keys %CALLS ) {
+		$CALLS{$subname} = 0;
+	}
+	1;
 }
 
 1;

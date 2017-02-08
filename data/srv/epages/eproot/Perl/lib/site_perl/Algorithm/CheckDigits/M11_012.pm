@@ -12,70 +12,70 @@ our @ISA = qw(Algorithm::CheckDigits);
 my @weight = ( 2,3,4,5,6,7,1,6,7,2,3 );
 
 my %table_to = (
-        0 => 0, 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5,
-        6 => 6, 7 => 7, 8 => 8, 9 => 9, A => 12, B => 14,
-        C => 16, D => 18, E => 20, F => 22, G => 24, H => 26,
-        I => 28, J => 6, K => 8, L => 10, M => 12, N => 14,
-        O => 16, P => 18, Q => 20, R => 22, S => 4, T => 6,
-        U => 8, V => 10, W => 12, X => 14, Y => 16, Z => 18,
+	0 => 0, 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5,
+	6 => 6, 7 => 7, 8 => 8, 9 => 9, A => 12, B => 14,
+	C => 16, D => 18, E => 20, F => 22, G => 24, H => 26,
+	I => 28, J => 6, K => 8, L => 10, M => 12, N => 14,
+	O => 16, P => 18, Q => 20, R => 22, S => 4, T => 6,
+	U => 8, V => 10, W => 12, X => 14, Y => 16, Z => 18,
 );
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^([-0-9a-z]+)(\d)$/i) {
-                return $2 == $self->_compute_checkdigits($1);
-        }
-        return undef;
+	my ($self,$number) = @_;
+	if ($number =~ /^([-0-9a-z]+)(\d)$/i) {
+		return $2 == $self->_compute_checkdigits($1);
+	}
+	return undef;
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^([-0-9a-z]+)$/i
-           and (my $cd = $self->_compute_checkdigits($1)) ne '') {
-                return $1 . $cd;
-        }
-        return undef;
+	my ($self,$number) = @_;
+	if ($number =~ /^([-0-9a-z]+)$/i
+	   and (my $cd = $self->_compute_checkdigits($1)) ne '') {
+		return $1 . $cd;
+	}
+	return undef;
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^([-0-9a-z]+)(\d)$/i) {
-                return $1 if ($2 == $self->_compute_checkdigits($1));
-        }
-        return undef;
+	my ($self,$number) = @_;
+	if ($number =~ /^([-0-9a-z]+)(\d)$/i) {
+		return $1 if ($2 == $self->_compute_checkdigits($1));
+	}
+	return undef;
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^([-0-9a-z]+)(\d)$/i) {
-                return $2 if ($2 == $self->_compute_checkdigits($1));
-        }
-        return undef;
+	my ($self,$number) = @_;
+	if ($number =~ /^([-0-9a-z]+)(\d)$/i) {
+		return $2 if ($2 == $self->_compute_checkdigits($1));
+	}
+	return undef;
 } # checkdigit()
 
 sub _compute_checkdigits {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        $number =~ s/-//g;
+	$number =~ s/-//g;
 
-        my @digits = split(//,$number);
-        my $len = scalar(@digits) + 1;
-        my $sum = 0;
-        for (my $i = 0; $i <= $#digits; $i++) {
-                $sum += $weight[$i] * $table_to{uc($digits[$i])};
-        }
-        $sum %= 11;
-        return ($sum == 0) ? 1 : ($sum == 1) ? 0 : 11 - $sum;
+	my @digits = split(//,$number);
+	my $len = scalar(@digits) + 1;
+	my $sum = 0;
+	for (my $i = 0; $i <= $#digits; $i++) {
+		$sum += $weight[$i] * $table_to{uc($digits[$i])};
+	}
+	$sum %= 11;
+	return ($sum == 0) ? 1 : ($sum == 1) ? 0 : 11 - $sum;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -94,7 +94,7 @@ CheckDigits::M11_012 - compute check digits for Bundeswehrpersonenkennnummer (DE
   $bwpk = CheckDigits('bwpk_de');
 
   if ($bwpk->is_valid('151058-D-20711')) {
-        # do something
+	# do something
   }
 
   $cn = $bwpk->complete('151058-D-2071');
@@ -105,7 +105,7 @@ CheckDigits::M11_012 - compute check digits for Bundeswehrpersonenkennnummer (DE
 
   $bn = $bwpk->basenumber('151058-D-20711');
   # $bn = '151058-D-2071';
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM
@@ -118,12 +118,12 @@ Beginning left all digits are weighted 2,3,4,5,6,7,1,6,7,2,3. Letters
 are replaced according to the following table:
 
   my %table_to = (
-        A => 12, B => 14, C => 16, D => 18, E => 20,
-        F => 22, G => 24, H => 26, I => 28, J => 6,
-        K => 8, L => 10, M => 12, N => 14, O => 16,
-        P => 18, Q => 20, R => 22, S => 4, T => 6,
-        U => 8, V => 10, W => 12, X => 14, Y => 16,
-        Z => 18,
+	A => 12, B => 14, C => 16, D => 18, E => 20,
+	F => 22, G => 24, H => 26, I => 28, J => 6,
+	K => 8, L => 10, M => 12, N => 14, O => 16,
+	P => 18, Q => 20, R => 22, S => 4, T => 6,
+	U => 8, V => 10, W => 12, X => 14, Y => 16,
+	Z => 18,
   );
 
 =item 2

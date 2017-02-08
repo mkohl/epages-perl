@@ -13,13 +13,13 @@ $VERSION = eval { $VERSION };
 
 our %db_to_parser = (
   # lowercase for case-insensitivity!
-  'mysql'       => 'DateTime::Format::MySQL',
-  'pg'          => 'DateTime::Format::Pg',
-  'db2'         => 'DateTime::Format::DB2',
-  'mssql'       => 'DateTime::Format::MSSQL',  # experimental
-  'oracle'      => 'DateTime::Format::Oracle',
-  'sqlite'      => 'DateTime::Format::SQLite',
-  'sybase'      => 'DateTime::Format::Sybase',
+  'mysql'	=> 'DateTime::Format::MySQL',
+  'pg'		=> 'DateTime::Format::Pg',
+  'db2'		=> 'DateTime::Format::DB2',
+  'mssql'	=> 'DateTime::Format::MSSQL',  # experimental
+  'oracle'	=> 'DateTime::Format::Oracle',
+  'sqlite'	=> 'DateTime::Format::SQLite',
+  'sybase'	=> 'DateTime::Format::Sybase',
 );
 
 sub _get_parser {
@@ -37,7 +37,7 @@ sub new {
 
 # NB: Using $dbh->{Driver}->{Name} this call does not work with drivers that
 # connect to multiple differnt types of databases, such as DBD::Proxy,
-# DBD::ODBC, DBD::JDBC,...
+# DBD::ODBC, DBD::JDBC,... 
 #
 # DBI already has code to determine the underlying database type, which is NOT
 # trivial. I don't want to duplicate that here (although it's only available
@@ -57,7 +57,7 @@ sub new {
   ## some db formatters are singletons and don't have 'new'
   ##
   my $new = UNIVERSAL::can($pclass, 'new');
-
+  
   my $parser; if(ref $new) {
     $parser = eval { $new->($pclass); };
     croak "Cannot create object for $pclass: $@" if $@;
@@ -66,7 +66,7 @@ sub new {
   }
 
   foreach(('format_datetime', 'parse_datetime')) {
-    croak "$pclass->$_ is missing"
+    croak "$pclass->$_ is missing" 
       unless UNIVERSAL::can($parser, $_)
   }
 
@@ -97,8 +97,8 @@ a given DBI connection (and C<DBD::*> driver).
 
 It currently supports the following format modules:
 L<IBM DB2 (DB2)|DateTime::Format::DB2>,
-L<Microsoft SQL (MSSQL)|DateTime::Format::MSSQL>,
-L<MySQL|DateTime::Format::MySQL>,
+L<Microsoft SQL (MSSQL)|DateTime::Format::MSSQL>, 
+L<MySQL|DateTime::Format::MySQL>, 
 L<Oracle|DateTime::Format::Oracle>,
 L<PostgreSQL (Pg)|DateTime::Format::Pg>,
 L<SQLite|DateTime::Format::SQLite>, and
@@ -118,7 +118,7 @@ This module provides a single factory method:
 =item * new( $dbh )
 
 Creates a new C<DateTime::Format::*> instance, the exact class of which depends
-on the database driver used for the database connection referenced by C<$dbh>.
+on the database driver used for the database connection referenced by C<$dbh>. 
 
 =back
 
@@ -146,7 +146,7 @@ If given an improperly formatted string, this method may die.
 =item * format_datetime( $dt )
 
 Given a C<DateTime> object, this method returns a string appropriate as input
-for all or the most common date and date/time types of the database used.
+for all or the most common date and date/time types of the database used. 
 
 =item * parse_duration( $string )
 
@@ -183,7 +183,7 @@ Claus FE<auml>rber <CFAERBER@cpan.org>
 
 =head1 LICENSE
 
-Copyright 2003-2010 Claus FE<auml>rber.  All rights reserved.
+Copyright 2003-2010 Claus FE<auml>rber.  All rights reserved.  
 
 This program is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.

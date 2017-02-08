@@ -37,7 +37,7 @@ sub load_yaml_pm {
 sub run_yaml_tests() {
     run {
         my $block = shift;
-        &{_get_function($block)}($block) unless
+        &{_get_function($block)}($block) unless 
           _skip_tests_for_now($block) or
           _skip_yaml_tests($block);
     };
@@ -68,7 +68,7 @@ sub roundtrip_nyn() {
     else {
         pass $block->description . ' (n->y)';
     }
-
+        
     return if exists $block->{no_round_trip} or
         not exists $block->{yaml};
 

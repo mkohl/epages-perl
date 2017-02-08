@@ -50,8 +50,8 @@ our $VERSION = '0.020';
 
 my %is_control = map { $_ => 1 } qw{ l u L U Q E };
 my %cookie = (
-    Q   => sub { return 1; },
-    E   => undef,
+    Q	=> sub { return 1; },
+    E	=> undef,
 );
 
 sub __PPIX_TOKENIZER__regexp {
@@ -62,12 +62,12 @@ sub __PPIX_TOKENIZER__regexp {
     # nothing.
     my $in_quote = $tokenizer->cookie( COOKIE_QUOTE );
     my $reject = $in_quote ?
-        sub {
-            my ( $size, $class ) = @_;
-            return $tokenizer->make_token( $size, $class || TOKEN_LITERAL );
-        } : sub {
-            return;
-        };
+	sub {
+	    my ( $size, $class ) = @_;
+	    return $tokenizer->make_token( $size, $class || TOKEN_LITERAL );
+	} : sub {
+	    return;
+	};
 
     # We are not interested in anything that is not escaped.
     $character eq '\\' or return $reject->( 1 );
@@ -76,7 +76,7 @@ sub __PPIX_TOKENIZER__regexp {
     # do. If there is no next character, we do not know what to call the
     # back slash.
     my $control = $tokenizer->peek( 1 )
-        or return $reject->( 1, TOKEN_UNKNOWN );
+	or return $reject->( 1, TOKEN_UNKNOWN );
 
     # We reject any escapes that do not represent controls.
     $is_control{$control} or return $reject->( 2 );
@@ -90,7 +90,7 @@ sub __PPIX_TOKENIZER__regexp {
 
     # \Q and \E make and destroy cookies respectively; do those things.
     exists $cookie{$control}
-        and $tokenizer->cookie( COOKIE_QUOTE, $cookie{$control} );
+	and $tokenizer->cookie( COOKIE_QUOTE, $cookie{$control} );
 
     # Return our token.
     return $token;

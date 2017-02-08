@@ -10,7 +10,7 @@ use vars qw(@ISA @DoW @DoWs @MoY @MoYs @AMPM @Dsuf %MoY %DoW $VERSION);
 $VERSION = "1.01";
 
 @MoY  = qw(Januar Februar Marts April Maj Juni
-           Juli August September Oktober November December);
+	   Juli August September Oktober November December);
 @MoYs = qw(Jan Feb Mar Apr Maj Jun Jul Aug Sep Okt Nov Dec);
 @DoW  = qw(Søndag Mandag Tirsdag Onsdag Torsdag Fredag Lørdag Søndag);
 @DoWs = qw(Søn Man Tir Ons Tor Fre Lør Søn);

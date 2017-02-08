@@ -31,7 +31,7 @@ require POSIX;
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '0.89';
+	$VERSION = '0.89';
 }
 
 use Socket qw( IPPROTO_TCP TCP_NODELAY );
@@ -204,12 +204,12 @@ sub _send_through_temp_file {
       my $bytes_written = 0;
       my $data_ref;
       if ( $self->binmode ) {
-         $data_ref = $self->{SOURCE};
+	 $data_ref = $self->{SOURCE};
       }
       else {
          my $data = ${$self->{SOURCE}};  # Ugh, a copy.
-         $data =~ s/(?<!\r)\n/\r\n/g;
-         $data_ref = \$data;
+	 $data =~ s/(?<!\r)\n/\r\n/g;
+	 $data_ref = \$data;
       }
 
       WriteFile(
@@ -258,11 +258,11 @@ sub _recv_through_temp_file {
       my $r;
       my $s;
       ReadFile(
-         $self->{TEMP_FILE_HANDLE},
-         $s,
-         999_999,  ## Hmmm, should read the size.
-         $r,
-         []
+	 $self->{TEMP_FILE_HANDLE},
+	 $s,
+	 999_999,  ## Hmmm, should read the size.
+	 $r,
+	 []
       ) or croak "$^E reading from $self->{TEMP_FILE_NAME}";
 
       _debug "ReadFile( $self->{TFD} ) = $r chars '$s'" if _debugging_data;
@@ -342,7 +342,7 @@ sub _spawn_pumper {
    _debug "pump cmd line: ", $cmd_line if _debugging_details;
 
    my $process;
-   Win32::Process::Create(
+   Win32::Process::Create( 
       $process,
       $^X,
       $cmd_line,
@@ -366,7 +366,7 @@ sub _spawn_pumper {
    # debug messages.  This does not always work.
    #   select undef, undef, undef, 1 if _debugging_details;
 
-   _debug "_spawn_pumper pid = ", $process->GetProcessID
+   _debug "_spawn_pumper pid = ", $process->GetProcessID 
       if _debugging_data;
 }
 
@@ -392,10 +392,10 @@ sub _socket {
 PORT_FINDER_LOOP:
    {
       $port = $next_port;
-      $next_port = 2048 if ++$next_port > 65_535;
+      $next_port = 2048 if ++$next_port > 65_535; 
       unless ( bind $listener, sockaddr_in( $port, INADDR_ANY ) ) {
-         push @errors, "$! on port $port";
-         croak join "\n", @errors if @errors > 10;
+	 push @errors, "$! on port $port";
+	 croak join "\n", @errors if @errors > 10;
          goto PORT_FINDER_LOOP;
       }
    }
@@ -413,7 +413,7 @@ PORT_FINDER_LOOP:
 
       connect $client, $paddr
          or croak "$!: connect()";
-
+    
       croak "$!: accept" unless defined $paddr;
 
       ## The windows "default" is SO_DONTLINGER, which should make
@@ -421,7 +421,7 @@ PORT_FINDER_LOOP:
       ## on experimentation, but nothing prompts me to set SO_LINGER
       ## at this time...
       setsockopt $client, IPPROTO_TCP, TCP_NODELAY, pack("l", 0)
-         or croak "$!: setsockopt()";
+	 or croak "$!: setsockopt()";
    }
 
    {
@@ -431,7 +431,7 @@ PORT_FINDER_LOOP:
    }
 
    _debug
-      "win32 _socket = ( ", fileno $server, ", ", fileno $client, " ) on port $port"
+      "win32 _socket = ( ", fileno $server, ", ", fileno $client, " ) on port $port" 
       if _debugging_details;
    return ( $server, $client );
 }
@@ -446,7 +446,7 @@ sub _open_socket_pipe {
    $self->{CHILD_HANDLE}     = gensym;
    $self->{PUMP_PIPE_HANDLE} = gensym;
 
-   (
+   ( 
       $self->{PARENT_HANDLE},
       $self->{PUMP_SOCKET_HANDLE}
    ) = _socket $parent_handle;
@@ -511,8 +511,8 @@ _debug "PUMP_PIPE_HANDLE = ", fileno $self->{PUMP_PIPE_HANDLE}
    _debug "binmode on" if _debugging_data && $self->binmode;
    _spawn_pumper(
       $is_send_to_child
-         ? ( $self->{PUMP_SOCKET_HANDLE}, $self->{PUMP_PIPE_HANDLE} )
-         : ( $self->{PUMP_PIPE_HANDLE}, $self->{PUMP_SOCKET_HANDLE} ),
+	 ? ( $self->{PUMP_SOCKET_HANDLE}, $self->{PUMP_PIPE_HANDLE} )
+	 : ( $self->{PUMP_PIPE_HANDLE}, $self->{PUMP_SOCKET_HANDLE} ),
       $debug_fd,
       $self->binmode,
       $child_fd . $self->dir . "pump" . $self->dir . $parent_fd,

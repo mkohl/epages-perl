@@ -10,68 +10,68 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(?:AT)?U?(\d{7})(\d)$/i) {
-                return $2 == $self->_compute_checkdigit($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(?:AT)?U?(\d{7})(\d)$/i) {
+		return $2 == $self->_compute_checkdigit($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^(?:AT)?U?(\d{7})$/i) {
-                return  $number .  $self->_compute_checkdigit($1);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(?:AT)?U?(\d{7})$/i) {
+		return  $number .  $self->_compute_checkdigit($1);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(AT)?(U)?(\d{7})(\d)$/i) {
-                my $cc = $1 || '';
-                my $u  = $2 || '';
-                return $cc.$u.$3 if ($4 == $self->_compute_checkdigit($3));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(AT)?(U)?(\d{7})(\d)$/i) {
+		my $cc = $1 || '';
+		my $u  = $2 || '';
+		return $cc.$u.$3 if ($4 == $self->_compute_checkdigit($3));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(?:AT)?U?(\d{7})(\d)$/i) {
-                return $2 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(?:AT)?U?(\d{7})(\d)$/i) {
+		return $2 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
-        $number =~ s/\s//g;
-        if ($number =~ /^\d{7}$/) {
-                my @digits = split(//,$number);
-                my $even = 1;
-                my $sum  = 0;
-                for (my $i = $#digits;$i >= 0;$i--) {
-                        if ($even) {
-                                $sum += $digits[$i];
-                        } else {
-                                my $tmp = 2 * $digits[$i];
-                                $sum += $tmp / 10 + $tmp % 10;
-                        }
-                        $even = not $even;
-                }
-                return (96 - $sum) % 10;
-        }
-        return -1;
+	my $self   = shift;
+	my $number = shift;
+	$number =~ s/\s//g;
+	if ($number =~ /^\d{7}$/) {
+		my @digits = split(//,$number);
+		my $even = 1;
+		my $sum  = 0;
+		for (my $i = $#digits;$i >= 0;$i--) {
+			if ($even) {
+				$sum += $digits[$i];
+			} else {
+				my $tmp = 2 * $digits[$i];
+				$sum += $tmp / 10 + $tmp % 10;
+			}
+			$even = not $even;
+		}
+		return (96 - $sum) % 10;
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -90,7 +90,7 @@ CheckDigits::MXX_004 - compute check digits for VAT RN (AT)
   $vat = CheckDigits('ustid_at');
 
   if ($vat->is_valid('U13585627')) {
-        # do something
+	# do something
   }
 
   $cn = $vat->complete('U1358562');
@@ -101,7 +101,7 @@ CheckDigits::MXX_004 - compute check digits for VAT RN (AT)
 
   $bn = $vat->basenumber('U13585627');
   # $bn = 'U1358562'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

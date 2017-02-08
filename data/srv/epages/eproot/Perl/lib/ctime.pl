@@ -28,7 +28,7 @@ CONFIG: {
 
     @DoW = ('Sun','Mon','Tue','Wed','Thu','Fri','Sat');
     @MoY = ('Jan','Feb','Mar','Apr','May','Jun',
-            'Jul','Aug','Sep','Oct','Nov','Dec');
+	    'Jul','Aug','Sep','Oct','Nov','Dec');
 }
 
 sub ctime {

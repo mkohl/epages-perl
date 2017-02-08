@@ -51,33 +51,33 @@ sub version
 #   a newly created Text::CSV object.
 
 my %def_attr = (
-    quote_char          => '"',
-    escape_char         => '"',
-    sep_char            => ',',
-    eol                 => '',
-    always_quote        => 0,
-    quote_space         => 1,
-    quote_null          => 1,
-    binary              => 0,
-    keep_meta_info      => 0,
-    allow_loose_quotes  => 0,
-    allow_loose_escapes => 0,
-    allow_whitespace    => 0,
-    blank_is_undef      => 0,
-    empty_is_undef      => 0,
-    verbatim            => 0,
-    auto_diag           => 0,
-    types               => undef,
+    quote_char		=> '"',
+    escape_char		=> '"',
+    sep_char		=> ',',
+    eol			=> '',
+    always_quote	=> 0,
+    quote_space		=> 1,
+    quote_null		=> 1,
+    binary		=> 0,
+    keep_meta_info	=> 0,
+    allow_loose_quotes	=> 0,
+    allow_loose_escapes	=> 0,
+    allow_whitespace	=> 0,
+    blank_is_undef	=> 0,
+    empty_is_undef	=> 0,
+    verbatim		=> 0,
+    auto_diag		=> 0,
+    types		=> undef,
 
-    _EOF                => 0,
-    _STATUS             => undef,
-    _FIELDS             => undef,
-    _FFLAGS             => undef,
-    _STRING             => undef,
-    _ERROR_INPUT        => undef,
-    _COLUMN_NAMES       => undef,
-    _BOUND_COLUMNS      => undef,
-    _AHEAD              => undef,
+    _EOF		=> 0,
+    _STATUS		=> undef,
+    _FIELDS		=> undef,
+    _FFLAGS		=> undef,
+    _STRING		=> undef,
+    _ERROR_INPUT	=> undef,
+    _COLUMN_NAMES	=> undef,
+    _BOUND_COLUMNS	=> undef,
+    _AHEAD		=> undef,
     );
 my $last_new_err = Text::CSV_XS->SetDiag (0);
 
@@ -85,43 +85,43 @@ sub _check_sanity
 {
     my $attr = shift;
     for (qw( sep_char quote_char escape_char )) {
-        exists $attr->{$_} && defined $attr->{$_} && $attr->{$_} =~ m/[\r\n]/ and
-            return 1003;
-        }
+	exists $attr->{$_} && defined $attr->{$_} && $attr->{$_} =~ m/[\r\n]/ and
+	    return 1003;
+	}
     $attr->{allow_whitespace} and
       (defined $attr->{quote_char}  && $attr->{quote_char}  =~ m/^[ \t]$/) ||
       (defined $attr->{escape_char} && $attr->{escape_char} =~ m/^[ \t]$/) and
-        return 1002;
+	return 1002;
     return 0;
     } # _check_sanity
 
 sub new
 {
     $last_new_err = SetDiag (undef, 1000,
-        "usage: my \$csv = Text::CSV_XS->new ([{ option => value, ... }]);");
+	"usage: my \$csv = Text::CSV_XS->new ([{ option => value, ... }]);");
 
     my $proto = shift;
-    my $class = ref ($proto) || $proto  or  return;
-    @_ > 0 &&   ref $_[0] ne "HASH"     and return;
+    my $class = ref ($proto) || $proto	or  return;
+    @_ > 0 &&   ref $_[0] ne "HASH"	and return;
     my $attr  = shift || {};
 
     for (keys %{$attr}) {
-        if (m/^[a-z]/ && exists $def_attr{$_}) {
-            $] >= 5.008002 && m/_char$/ and utf8::decode ($attr->{$_});
-            next;
-            }
-#       croak?
-        $last_new_err = SetDiag (undef, 1000, "INI - Unknown attribute '$_'");
-        $attr->{auto_diag} and error_diag ();
-        return;
-        }
+	if (m/^[a-z]/ && exists $def_attr{$_}) {
+	    $] >= 5.008002 && m/_char$/ and utf8::decode ($attr->{$_});
+	    next;
+	    }
+#	croak?
+	$last_new_err = SetDiag (undef, 1000, "INI - Unknown attribute '$_'");
+	$attr->{auto_diag} and error_diag ();
+	return;
+	}
 
     my $self  = {%def_attr, %{$attr}};
     if (my $ec = _check_sanity ($self)) {
-        $last_new_err = SetDiag (undef, $ec);
-        $attr->{auto_diag} and error_diag ();
-        return;
-        }
+	$last_new_err = SetDiag (undef, $ec);
+	$attr->{auto_diag} and error_diag ();
+	return;
+	}
 
     $last_new_err = SetDiag (undef, 0);
     defined $\ && !exists $attr->{eol} and $self->{eol} = $\;
@@ -132,24 +132,24 @@ sub new
 
 # Keep in sync with XS!
 my %_cache_id = ( # Only expose what is accessed from within PM
-    quote_char          =>  0,
-    escape_char         =>  1,
-    sep_char            =>  2,
-    binary              =>  3,
-    keep_meta_info      =>  4,
-    always_quote        =>  5,
-    allow_loose_quotes  =>  6,
-    allow_loose_escapes =>  7,
-    allow_double_quoted =>  8,
-    allow_whitespace    =>  9,
-    blank_is_undef      => 10,
-    eol                 => 11,  # 11 .. 18
-    verbatim            => 22,
-    empty_is_undef      => 23,
-    auto_diag           => 24,
-    quote_space         => 25,
-    quote_null          => 31,
-    _is_bound           => 26,  # 26 .. 29
+    quote_char		=>  0,
+    escape_char		=>  1,
+    sep_char		=>  2,
+    binary		=>  3,
+    keep_meta_info	=>  4,
+    always_quote	=>  5,
+    allow_loose_quotes	=>  6,
+    allow_loose_escapes	=>  7,
+    allow_double_quoted	=>  8,
+    allow_whitespace	=>  9,
+    blank_is_undef	=> 10,
+    eol			=> 11,	# 11 .. 18
+    verbatim		=> 22,
+    empty_is_undef	=> 23,
+    auto_diag		=> 24,
+    quote_space		=> 25,
+    quote_null		=> 31,
+    _is_bound		=> 26,	# 26 .. 29
     );
 
 # A `character'
@@ -160,7 +160,7 @@ sub _set_attr_C
     $] >= 5.008002 and utf8::decode ($val);
     $self->{$name} = $val;
     $ec = _check_sanity ($self) and
-        croak ($self->SetDiag ($ec));
+	croak ($self->SetDiag ($ec));
     $self->_cache_set ($_cache_id{$name}, $val);
     } # _set_attr_C
 
@@ -187,9 +187,9 @@ sub quote_char
 {
     my $self = shift;
     if (@_) {
-        my $qc = shift;
-        $self->_set_attr_C ("quote_char", $qc);
-        }
+	my $qc = shift;
+	$self->_set_attr_C ("quote_char", $qc);
+	}
     $self->{quote_char};
     } # quote_char
 
@@ -197,9 +197,9 @@ sub escape_char
 {
     my $self = shift;
     if (@_) {
-        my $ec = shift;
-        $self->_set_attr_C ("escape_char", $ec);
-        }
+	my $ec = shift;
+	$self->_set_attr_C ("escape_char", $ec);
+	}
     $self->{escape_char};
     } # escape_char
 
@@ -214,11 +214,11 @@ sub eol
 {
     my $self = shift;
     if (@_) {
-        my $eol = shift;
-        defined $eol or $eol = "";
-        $self->{eol} = $eol;
-        $self->_cache_set ($_cache_id{eol}, $eol);
-        }
+	my $eol = shift;
+	defined $eol or $eol = "";
+	$self->{eol} = $eol;
+	$self->_cache_set ($_cache_id{eol}, $eol);
+	}
     $self->{eol};
     } # eol
 
@@ -275,13 +275,13 @@ sub allow_whitespace
 {
     my $self = shift;
     if (@_) {
-        my $aw = shift;
-        $aw and
-          (defined $self->{quote_char}  && $self->{quote_char}  =~ m/^[ \t]$/) ||
-          (defined $self->{escape_char} && $self->{escape_char} =~ m/^[ \t]$/) and
-            croak ($self->SetDiag (1002));
-        $self->_set_attr_X ("allow_whitespace", $aw);
-        }
+	my $aw = shift;
+	$aw and
+	  (defined $self->{quote_char}  && $self->{quote_char}  =~ m/^[ \t]$/) ||
+	  (defined $self->{escape_char} && $self->{escape_char} =~ m/^[ \t]$/) and
+	    croak ($self->SetDiag (1002));
+	$self->_set_attr_X ("allow_whitespace", $aw);
+	}
     $self->{allow_whitespace};
     } # allow_whitespace
 
@@ -352,39 +352,39 @@ sub error_diag
     my @diag = (0 + $last_new_err, $last_new_err, 0);
 
     if ($self && ref $self && # Not a class method or direct call
-         $self->isa (__PACKAGE__) && exists $self->{_ERROR_DIAG}) {
-        @diag = (0 + $self->{_ERROR_DIAG}, $self->{_ERROR_DIAG});
-        exists $self->{_ERROR_POS} and $diag[2] = 1 + $self->{_ERROR_POS};
-        }
+	 $self->isa (__PACKAGE__) && exists $self->{_ERROR_DIAG}) {
+	@diag = (0 + $self->{_ERROR_DIAG}, $self->{_ERROR_DIAG});
+	exists $self->{_ERROR_POS} and $diag[2] = 1 + $self->{_ERROR_POS};
+	}
 
     my $context = wantarray;
-    unless (defined $context) { # Void context, auto-diag
-        if ($diag[0] && $diag[0] != 2012) {
-            my $msg = "# CSV_XS ERROR: $diag[0] - $diag[1] \@ pos $diag[2]\n";
-            if ($self && ref $self) {   # auto_diag
+    unless (defined $context) {	# Void context, auto-diag
+	if ($diag[0] && $diag[0] != 2012) {
+	    my $msg = "# CSV_XS ERROR: $diag[0] - $diag[1] \@ pos $diag[2]\n";
+	    if ($self && ref $self) {	# auto_diag
 
-                my $lvl = $self->{auto_diag};
-                if ($lvl < 2) {
-                    my @c = caller (2);
-                    if (@c >= 11 && $c[10] && ref $c[10] eq "HASH") {
-                        my $hints = $c[10];
-                        (exists $hints->{autodie} && $hints->{autodie} or
-                         exists $hints->{"guard Fatal"} &&
-                        !exists $hints->{"no Fatal"}) and
-                            $lvl++;
-                        # Future releases of autodie will probably set $^H{autodie}
-                        #  to "autodie @args", like "autodie :all" or "autodie open"
-                        #  so we can/should check for "open" or "new"
-                        }
-                    }
-                $lvl > 1 ? die $msg : warn $msg;
-                }
-            else {      # called without args in void context
-                warn $msg;
-                }
-            }
-        return;
-        }
+		my $lvl = $self->{auto_diag};
+		if ($lvl < 2) {
+		    my @c = caller (2);
+		    if (@c >= 11 && $c[10] && ref $c[10] eq "HASH") {
+			my $hints = $c[10];
+			(exists $hints->{autodie} && $hints->{autodie} or
+			 exists $hints->{"guard Fatal"} &&
+			!exists $hints->{"no Fatal"}) and
+			    $lvl++;
+			# Future releases of autodie will probably set $^H{autodie}
+			#  to "autodie @args", like "autodie :all" or "autodie open"
+			#  so we can/should check for "open" or "new"
+			}
+		    }
+		$lvl > 1 ? die $msg : warn $msg;
+		}
+	    else {	# called without args in void context
+		warn $msg;
+		}
+	    }
+	return;
+	}
     return $context ? @diag : $diag[1];
     } # error_diag
 
@@ -429,7 +429,7 @@ sub is_quoted
 {
     my ($self, $idx, $val) = @_;
     ref $self->{_FFLAGS} &&
-        $idx >= 0 && $idx < @{$self->{_FFLAGS}} or return;
+	$idx >= 0 && $idx < @{$self->{_FFLAGS}} or return;
     $self->{_FFLAGS}[$idx] & 0x0001 ? 1 : 0;
     } # is_quoted
 
@@ -437,7 +437,7 @@ sub is_binary
 {
     my ($self, $idx, $val) = @_;
     ref $self->{_FFLAGS} &&
-        $idx >= 0 && $idx < @{$self->{_FFLAGS}} or return;
+	$idx >= 0 && $idx < @{$self->{_FFLAGS}} or return;
     $self->{_FFLAGS}[$idx] & 0x0002 ? 1 : 0;
     } # is_binary
 
@@ -445,7 +445,7 @@ sub is_missing
 {
     my ($self, $idx, $val) = @_;
     ref $self->{_FFLAGS} &&
-        $idx >= 0 && $idx < @{$self->{_FFLAGS}} or return;
+	$idx >= 0 && $idx < @{$self->{_FFLAGS}} or return;
     $self->{_FFLAGS}[$idx] & 0x0010 ? 1 : 0;
     } # is_missing
 
@@ -491,16 +491,16 @@ sub parse
     my $fflags = [];
     $self->{_STRING} = \$str;
     if (defined $str && $self->Parse ($str, $fields, $fflags)) {
-        $self->{_ERROR_INPUT} = undef;
-        $self->{_FIELDS} = $fields;
-        $self->{_FFLAGS} = $fflags;
-        $self->{_STATUS} = 1;
-        }
+	$self->{_ERROR_INPUT} = undef;
+	$self->{_FIELDS} = $fields;
+	$self->{_FFLAGS} = $fflags;
+	$self->{_STATUS} = 1;
+	}
     else {
-        $self->{_FIELDS} = undef;
-        $self->{_FFLAGS} = undef;
-        $self->{_STATUS} = 0;
-        }
+	$self->{_FIELDS} = undef;
+	$self->{_FFLAGS} = undef;
+	$self->{_STATUS} = 0;
+	}
     $self->{_STATUS};
     } # parse
 
@@ -508,20 +508,20 @@ sub column_names
 {
     my ($self, @keys) = @_;
     @keys or
-        return defined $self->{_COLUMN_NAMES} ? @{$self->{_COLUMN_NAMES}} : undef;
+	return defined $self->{_COLUMN_NAMES} ? @{$self->{_COLUMN_NAMES}} : undef;
 
     @keys == 1 && ! defined $keys[0] and
-        return $self->{_COLUMN_NAMES} = undef;
+	return $self->{_COLUMN_NAMES} = undef;
 
     if (@keys == 1 && ref $keys[0] eq "ARRAY") {
-        @keys = @{$keys[0]};
-        }
+	@keys = @{$keys[0]};
+	}
     elsif (join "", map { defined $_ ? ref $_ : "" } @keys) {
-        croak ($self->SetDiag (3001));
-        }
+	croak ($self->SetDiag (3001));
+	}
 
     $self->{_BOUND_COLUMNS} && @keys != @{$self->{_BOUND_COLUMNS}} and
-        croak ($self->SetDiag (3003));
+	croak ($self->SetDiag (3003));
 
     $self->{_COLUMN_NAMES} = [ map { defined $_ ? $_ : "\cAUNDEF\cA" } @keys ];
     @{$self->{_COLUMN_NAMES}};
@@ -531,16 +531,16 @@ sub bind_columns
 {
     my ($self, @refs) = @_;
     @refs or
-        return defined $self->{_BOUND_COLUMNS} ? @{$self->{_BOUND_COLUMNS}} : undef;
+	return defined $self->{_BOUND_COLUMNS} ? @{$self->{_BOUND_COLUMNS}} : undef;
 
     @refs == 1 && ! defined $refs[0] and
-        return $self->{_BOUND_COLUMNS} = undef;
+	return $self->{_BOUND_COLUMNS} = undef;
 
     $self->{_COLUMN_NAMES} && @refs != @{$self->{_COLUMN_NAMES}} and
-        croak ($self->SetDiag (3003));
+	croak ($self->SetDiag (3003));
 
     join "", map { ref $_ eq "SCALAR" ? "" : "*" } @refs and
-        croak ($self->SetDiag (3004));
+	croak ($self->SetDiag (3004));
 
     $self->_set_attr_N ("_is_bound", scalar @refs);
     $self->{_BOUND_COLUMNS} = [ @refs ];
@@ -553,8 +553,8 @@ sub getline_hr
     $self->{_COLUMN_NAMES} or croak ($self->SetDiag (3002));
     my $fr = $self->getline (@args) or return;
     if (ref $self->{_FFLAGS}) {
-        $self->{_FFLAGS}[$_] = 0x0010 for ($#{$fr} + 1) .. $#{$self->{_COLUMN_NAMES}};
-        }
+	$self->{_FFLAGS}[$_] = 0x0010 for ($#{$fr} + 1) .. $#{$self->{_COLUMN_NAMES}};
+	}
     @hr{@{$self->{_COLUMN_NAMES}}} = @$fr;
     \%hr;
     } # getline_hr
@@ -571,19 +571,19 @@ sub types
 {
     my $self = shift;
     if (@_) {
-        if (my $types = shift) {
-            $self->{_types} = join "", map { chr $_ } @{$types};
-            $self->{types}  = $types;
-            }
-        else {
-            delete $self->{types};
-            delete $self->{_types};
-            undef;
-            }
-        }
+	if (my $types = shift) {
+	    $self->{_types} = join "", map { chr $_ } @{$types};
+	    $self->{types}  = $types;
+	    }
+	else {
+	    delete $self->{types};
+	    delete $self->{_types};
+	    undef;
+	    }
+	}
     else {
-        $self->{types};
-        }
+	$self->{types};
+	}
     } # types
 
 1;
@@ -636,7 +636,7 @@ But you still have the problem that you have to pass a correct line to the
 L</parse> method, which is more complicated from the usual point of usage:
 
  my $csv = Text::CSV_XS->new ({ binary => 1, eol => $/ });
- while (<>) {           #  WRONG!
+ while (<>) {		#  WRONG!
      $csv->parse ($_);
      my @fields = $csv->fields ();
 
@@ -1062,7 +1062,7 @@ is equivalent to
      eol                 => $\,
      always_quote        => 0,
      quote_space         => 1,
-     quote_null          => 1,
+     quote_null	         => 1,
      binary              => 0,
      keep_meta_info      => 0,
      allow_loose_quotes  => 0,

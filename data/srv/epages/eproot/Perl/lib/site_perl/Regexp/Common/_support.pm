@@ -66,7 +66,7 @@ Regexp::Common::support -- Support functions for Regexp::Common.
 =head1 DESCRIPTION
 
 This module contains some subroutines to be used by other C<Regexp::Common>
-modules. It's not intended to be used directly. Subroutines from the
+modules. It's not intended to be used directly. Subroutines from the 
 module may disappear without any notice, or their meaning or interface
 may change without notice.
 

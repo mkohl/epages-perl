@@ -25,16 +25,16 @@ push @{ $EXPORT_TAGS{all} }, @EXPORT_OK ;
 Exporter::export_ok_tags('all');
 
 #{
-#    # Execute at runtime
+#    # Execute at runtime  
 #    my %bad;
 #    for my $module (qw(Compress::Raw::Zlib IO::Compress::Base::Common IO::Uncompress::Base IO::Uncompress::Adapter::Inflate))
 #    {
 #        my $ver = ${ $module . "::VERSION"} ;
-#
+#        
 #        $bad{$module} = $ver
 #            if $ver ne $VERSION;
 #    }
-#
+#    
 #    if (keys %bad)
 #    {
 #        my $string = join "\n", map { "$_ $bad{$_}" } keys %bad;
@@ -148,14 +148,14 @@ sub _isRawx
 
     my $buffer = '';
 
-    $self->smartRead(\$buffer, *$self->{BlockSize}) >= 0
+    $self->smartRead(\$buffer, *$self->{BlockSize}) >= 0  
         or return $self->saveErrorString(undef, "No data to read");
 
     my $temp_buf = $magic . $buffer ;
-    *$self->{HeaderPending} = $temp_buf ;
+    *$self->{HeaderPending} = $temp_buf ;    
     $buffer = '';
     my $status = *$self->{Uncomp}->uncompr(\$temp_buf, \$buffer, $self->smartEof()) ;
-
+    
     return $self->saveErrorString(undef, *$self->{Uncomp}{Error}, STATUS_ERROR)
         if $status == STATUS_ERROR;
 
@@ -163,12 +163,12 @@ sub _isRawx
 
     return $self->saveErrorString(undef, "unexpected end of file", STATUS_ERROR)
         if $self->smartEof() && $status != STATUS_ENDSTREAM;
-
+            
     #my $buf_len = *$self->{Uncomp}->uncompressedBytes();
     my $buf_len = length $buffer;
 
     if ($status == STATUS_ENDSTREAM) {
-        if (*$self->{MultiStream}
+        if (*$self->{MultiStream} 
                     && (length $temp_buf || ! $self->smartEof())){
             *$self->{NewStream} = 1 ;
             *$self->{EndStream} = 0 ;
@@ -177,9 +177,9 @@ sub _isRawx
             *$self->{EndStream} = 1 ;
         }
     }
-    *$self->{HeaderPending} = $buffer ;
-    *$self->{InflatedBytesRead} = $buf_len ;
-    *$self->{TotalInflatedBytesRead} += $buf_len ;
+    *$self->{HeaderPending} = $buffer ;    
+    *$self->{InflatedBytesRead} = $buf_len ;    
+    *$self->{TotalInflatedBytesRead} += $buf_len ;    
     *$self->{Type} = 'rfc1951';
 
     $self->saveStatus(STATUS_OK);
@@ -229,7 +229,7 @@ sub inflateSync
                 return $self->saveErrorString(0, "unexpected end of file", STATUS_ERROR);
             }
         }
-
+        
         $status = *$self->{Uncomp}->sync($temp_buf) ;
 
         if ($status == STATUS_OK)
@@ -251,23 +251,23 @@ sub inflateSync
 #    my $status ;
 #    my $end_offset = 0;
 #
-#    $status = $self->scan()
+#    $status = $self->scan() 
 #    #or return $self->saveErrorString(undef, "Error Scanning: $$error_ref", $self->errorNo) ;
 #        or return $self->saveErrorString(G_ERR, "Error Scanning: $status")
 #
-#    $status = $self->zap($end_offset)
+#    $status = $self->zap($end_offset) 
 #        or return $self->saveErrorString(G_ERR, "Error Zapping: $status");
 #    #or return $self->saveErrorString(undef, "Error Zapping: $$error_ref", $self->errorNo) ;
 #
 #    #(*$obj->{Deflate}, $status) = $inf->createDeflate();
 #
 ##    *$obj->{Header} = *$inf->{Info}{Header};
-##    *$obj->{UnCompSize_32bit} =
+##    *$obj->{UnCompSize_32bit} = 
 ##        *$obj->{BytesWritten} = *$inf->{UnCompSize_32bit} ;
 ##    *$obj->{CompSize_32bit} = *$inf->{CompSize_32bit} ;
 #
 #
-##    if ( $outType eq 'buffer')
+##    if ( $outType eq 'buffer') 
 ##      { substr( ${ *$self->{Buffer} }, $end_offset) = '' }
 ##    elsif ($outType eq 'handle' || $outType eq 'filename') {
 ##        *$self->{FH} = *$inf->{FH} ;
@@ -275,11 +275,11 @@ sub inflateSync
 ##        *$obj->{FH}->flush() ;
 ##        *$obj->{Handle} = 1 if $outType eq 'handle';
 ##
-##        #seek(*$obj->{FH}, $end_offset, SEEK_SET)
-##        *$obj->{FH}->seek($end_offset, SEEK_SET)
+##        #seek(*$obj->{FH}, $end_offset, SEEK_SET) 
+##        *$obj->{FH}->seek($end_offset, SEEK_SET) 
 ##            or return $obj->saveErrorString(undef, $!, $!) ;
 ##    }
-#
+#    
 #}
 
 sub scan
@@ -292,7 +292,7 @@ sub scan
     my $buffer = '' ;
     my $len = 0;
 
-    $len = $self->_raw_read(\$buffer, 1)
+    $len = $self->_raw_read(\$buffer, 1) 
         while ! *$self->{EndStream} && $len >= 0 ;
 
     #return $len if $len < 0 ? $len : 0 ;
@@ -310,16 +310,16 @@ sub zap
     #printf "# block_offset $block_offset %x\n", $block_offset;
     my $byte ;
     ( $self->smartSeek($block_offset) &&
-      $self->smartRead(\$byte, 1) )
-        or return $self->saveErrorString(0, $!, $!);
+      $self->smartRead(\$byte, 1) ) 
+        or return $self->saveErrorString(0, $!, $!); 
 
     #printf "#byte is %x\n", unpack('C*',$byte);
     *$self->{Uncomp}->resetLastBlockByte($byte);
     #printf "#to byte is %x\n", unpack('C*',$byte);
 
-    ( $self->smartSeek($block_offset) &&
+    ( $self->smartSeek($block_offset) && 
       $self->smartWrite($byte) )
-        or return $self->saveErrorString(0, $!, $!);
+        or return $self->saveErrorString(0, $!, $!); 
 
     #$self->smartSeek($end_offset, 1);
 
@@ -335,12 +335,12 @@ sub createDeflate
                                     -CRC32      => *$self->{Params}->value('CRC32'),
                                     -ADLER32    => *$self->{Params}->value('ADLER32'),
                                 );
-
-    return wantarray ? ($status, $def) : $def ;
+    
+    return wantarray ? ($status, $def) : $def ;                                
 }
 
 
-1;
+1; 
 
 __END__
 
@@ -356,7 +356,7 @@ IO::Uncompress::RawInflate - Read RFC 1951 files/buffers
     my $status = rawinflate $input => $output [,OPTS]
         or die "rawinflate failed: $RawInflateError\n";
 
-    my $z = new IO::Uncompress::RawInflate $input [OPTS]
+    my $z = new IO::Uncompress::RawInflate $input [OPTS] 
         or die "rawinflate failed: $RawInflateError\n";
 
     $status = $z->read($buffer)
@@ -410,7 +410,7 @@ section.
 
     use IO::Uncompress::RawInflate qw(rawinflate $RawInflateError) ;
 
-    rawinflate $input => $output [,OPTS]
+    rawinflate $input => $output [,OPTS] 
         or die "rawinflate failed: $RawInflateError\n";
 
 The functional interface needs Perl5.005 or better.
@@ -422,7 +422,7 @@ C<rawinflate> expects at least two parameters, C<$input> and C<$output>.
 =head3 The C<$input> parameter
 
 The parameter, C<$input>, is used to define the source of
-the compressed data.
+the compressed data. 
 
 It can take one of the following forms:
 
@@ -440,17 +440,17 @@ If the C<$input> parameter is a filehandle, the input data will be
 read from it.
 The string '-' can be used as an alias for standard input.
 
-=item A scalar reference
+=item A scalar reference 
 
 If C<$input> is a scalar reference, the input data will be read
 from C<$$input>.
 
-=item An array reference
+=item An array reference 
 
 If C<$input> is an array reference, each element in the array must be a
 filename.
 
-The input data will be read from each file in turn.
+The input data will be read from each file in turn. 
 
 The complete array will be walked to ensure that it only
 contains valid filenames before any data is uncompressed.
@@ -488,7 +488,7 @@ If the C<$output> parameter is a filehandle, the uncompressed data
 will be written to it.
 The string '-' can be used as an alias for standard output.
 
-=item A scalar reference
+=item A scalar reference 
 
 If C<$output> is a scalar reference, the uncompressed data will be
 stored in C<$$output>.
@@ -528,7 +528,7 @@ L</"Constructor Options"> section below.
 
 =item C<< AutoClose => 0|1 >>
 
-This option applies to any input or output data streams to
+This option applies to any input or output data streams to 
 C<rawinflate> that are filehandles.
 
 If C<AutoClose> is specified, and the value is true, it will result in all
@@ -571,7 +571,7 @@ written to it.  Otherwise the file pointer will not be moved.
 
 =back
 
-When C<Append> is specified, and set to true, it will I<append> all uncompressed
+When C<Append> is specified, and set to true, it will I<append> all uncompressed 
 data to the output data stream.
 
 So when the output is a filehandle it will carry out a seek to the eof
@@ -596,7 +596,7 @@ This option is a no-op.
 =item C<< TrailingData => $scalar >>
 
 Returns the data, if any, that is present immediately after the compressed
-data stream once uncompression is complete.
+data stream once uncompression is complete. 
 
 This option can be used when there is useful information immediately
 following the compressed data stream, and you don't know the length of the
@@ -608,7 +608,7 @@ end of the compressed data stream to the end of the buffer.
 If the input is a filehandle, C<trailingData> will return the data that is
 left in the filehandle input buffer once the end of the compressed data
 stream has been reached. You can then use the filehandle to read the rest
-of the input file.
+of the input file. 
 
 Don't bother using C<trailingData> if the input is a filename.
 
@@ -643,7 +643,7 @@ uncompressed data to a buffer, C<$buffer>.
     my $input = new IO::File "<file1.txt.1951"
         or die "Cannot open 'file1.txt.1951': $!\n" ;
     my $buffer ;
-    rawinflate $input => \$buffer
+    rawinflate $input => \$buffer 
         or die "rawinflate failed: $RawInflateError\n";
 
 To uncompress all files in the directory "/my/home" that match "*.txt.1951" and store the compressed data in the same directory
@@ -665,7 +665,7 @@ and if you want to compress each file one at a time, this will do the trick
     {
         my $output = $input;
         $output =~ s/.1951// ;
-        rawinflate $input => $output
+        rawinflate $input => $output 
             or die "Error compressing '$input': $RawInflateError\n";
     }
 
@@ -706,7 +706,7 @@ If the C<$input> parameter is a filehandle, the compressed data will be
 read from it.
 The string '-' can be used as an alias for standard input.
 
-=item A scalar reference
+=item A scalar reference 
 
 If C<$input> is a scalar reference, the compressed data will be read from
 C<$$output>.
@@ -781,7 +781,7 @@ When present this option will limit the number of compressed bytes read
 from the input file/buffer to C<$size>. This option can be used in the
 situation where there is useful data directly after the compressed data
 stream and you know beforehand the exact length of the compressed data
-stream.
+stream. 
 
 This option is mostly used when reading from a filehandle, in which case
 the file pointer will be left pointing to the first byte directly after the
@@ -811,7 +811,7 @@ This option is a no-op.
 
 TODO
 
-=head1 Methods
+=head1 Methods 
 
 =head2 read
 
@@ -855,16 +855,16 @@ Usage is
     $line = $z->getline()
     $line = <$z>
 
-Reads a single line.
+Reads a single line. 
 
 This method fully supports the use of of the variable C<$/> (or
 C<$INPUT_RECORD_SEPARATOR> or C<$RS> when C<English> is in use) to
 determine what constitutes an end of line. Paragraph mode, record mode and
-file slurp mode are all supported.
+file slurp mode are all supported. 
 
 =head2 getc
 
-Usage is
+Usage is 
 
     $char = $z->getc()
 
@@ -940,7 +940,7 @@ This is a noop provided for completeness.
 
     $z->opened()
 
-Returns true if the object currently refers to a opened file/buffer.
+Returns true if the object currently refers to a opened file/buffer. 
 
 =head2 autoflush
 
@@ -987,7 +987,7 @@ C<undef>.
     $z->close() ;
     close $z ;
 
-Closes the output file/buffer.
+Closes the output file/buffer. 
 
 For most versions of Perl this method will be automatically invoked if
 the IO::Uncompress::RawInflate object is destroyed (either explicitly or by the
@@ -1041,7 +1041,7 @@ end of the compressed data stream to the end of the buffer.
 If the input is a filehandle, C<trailingData> will return the data that is
 left in the filehandle input buffer once the end of the compressed data
 stream has been reached. You can then use the filehandle to read the rest
-of the input file.
+of the input file. 
 
 Don't bother using C<trailingData> if the input is a filename.
 
@@ -1049,9 +1049,9 @@ If you know the length of the compressed data stream before you start
 uncompressing, you can avoid having to use C<trailingData> by setting the
 C<InputLength> option in the constructor.
 
-=head1 Importing
+=head1 Importing 
 
-No symbolic constants are required by this IO::Uncompress::RawInflate at present.
+No symbolic constants are required by this IO::Uncompress::RawInflate at present. 
 
 =over 5
 
@@ -1080,7 +1080,7 @@ L<File::GlobMapper|File::GlobMapper>, L<Archive::Zip|Archive::Zip>,
 L<Archive::Tar|Archive::Tar>,
 L<IO::Zlib|IO::Zlib>
 
-For RFC 1950, 1951 and 1952 see
+For RFC 1950, 1951 and 1952 see 
 F<http://www.faqs.org/rfcs/rfc1950.html>,
 F<http://www.faqs.org/rfcs/rfc1951.html> and
 F<http://www.faqs.org/rfcs/rfc1952.html>
@@ -1095,7 +1095,7 @@ The primary site for gzip is F<http://www.gzip.org>.
 
 =head1 AUTHOR
 
-This module was written by Paul Marquess, F<pmqs@cpan.org>.
+This module was written by Paul Marquess, F<pmqs@cpan.org>. 
 
 =head1 MODIFICATION HISTORY
 

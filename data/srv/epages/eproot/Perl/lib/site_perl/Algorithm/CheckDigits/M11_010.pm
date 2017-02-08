@@ -12,59 +12,59 @@ our @ISA = qw(Algorithm::CheckDigits);
 my @weight = ( 5, 4, 3, 2, 7, 6, 5, 4, 3, 2 );
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9.]+)(\d)$/) {
-                return $2 == $self->_compute_checkdigits($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9.]+)(\d)$/) {
+		return $2 == $self->_compute_checkdigits($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9.]+)$/) {
-                return "$1" . $self->_compute_checkdigits($1);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9.]+)$/) {
+		return "$1" . $self->_compute_checkdigits($1);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9.]+)(\d)$/) {
-                return $1 if ($2 == $self->_compute_checkdigits($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9.]+)(\d)$/) {
+		return $1 if ($2 == $self->_compute_checkdigits($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^([0-9.]+)(\d)$/) {
-                return $2 if ($2 == $self->_compute_checkdigits($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^([0-9.]+)(\d)$/) {
+		return $2 if ($2 == $self->_compute_checkdigits($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigits {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        $number =~ s/\.//g;
+	$number =~ s/\.//g;
 
-        my @digits = split(//,$number);
-        my $sum = 0;
-        for (my $i = 0; $i <= $#digits; $i++) {
-                $sum += $weight[$i] * $digits[$i];
-        }
-        $sum %= 11;
-        return $sum == 0 ? 0 : ($sum == 1 ? '' : 11 - $sum);
+	my @digits = split(//,$number);
+	my $sum = 0;
+	for (my $i = 0; $i <= $#digits; $i++) {
+		$sum += $weight[$i] * $digits[$i];
+	}
+	$sum %= 11;
+	return $sum == 0 ? 0 : ($sum == 1 ? '' : 11 - $sum);
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -83,7 +83,7 @@ CheckDigits::M11_010 - compute check digits AHV number (CH)
   $ahv = CheckDigits('ahv_ch');
 
   if ($ahv->is_valid('123.45.678.113')) {
-        # do something
+	# do something
   }
 
   $cn = $ahv->complete('123.45.678.11');
@@ -94,7 +94,7 @@ CheckDigits::M11_010 - compute check digits AHV number (CH)
 
   $bn = $ahv->basenumber('123.45.678.113');
   # $bn = '123.45.678.11';
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

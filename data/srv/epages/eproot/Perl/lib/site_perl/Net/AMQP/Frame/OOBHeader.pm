@@ -4,7 +4,7 @@ package Net::AMQP::Frame::OOBHeader;
 
 Net::AMQP::Frame::OOBHeader - AMQP wire-level out-of-band header Frame object
 
-=head1 DESCRIPTION
+=head1 DESCRIPTION 
 
 Inherits from L<Net::AMQP::Frame::Header>.
 

@@ -386,11 +386,11 @@ In this case, the C<path()> method would return the given path,
 so you I<could> say:
 
     if (defined($body->path)) {
-        open BODY, $body->path or die "open: $!";
-        while (<BODY>) {
-            ### do stuff
+	open BODY, $body->path or die "open: $!";
+	while (<BODY>) {
+	    ### do stuff
         }
-        close BODY;
+	close BODY;
     }
 
 But you're best off not doing this.
@@ -429,7 +429,7 @@ sub open {
     my $path = $self->path;
 
     if( $mode ne 'r' && $mode ne 'w' ) {
-        die "bad mode: '$mode'";
+	die "bad mode: '$mode'";
     }
 
     my $IO = IO::File->new($path, $mode) || die "MIME::Body::File->open $path: $!";
@@ -447,8 +447,8 @@ sub open {
 sub purge {
     my $self = shift;
     if (defined($self->path)) {
-        unlink $self->path or whine "couldn't unlink ".$self->path.": $!";
-        $self->path(undef);
+	unlink $self->path or whine "couldn't unlink ".$self->path.": $!";
+	$self->path(undef);
     }
     1;
 }
@@ -515,11 +515,11 @@ sub open {
     $self->{MBS_Data} = '' if ($mode eq 'w');        ### writing
 
     if ($mode eq 'w') {
-            $mode = '>:';
+	    $mode = '>:';
     } elsif ($mode eq 'r') {
-            $mode = '<:';
+	    $mode = '<:';
     } else {
-            die "bad mode: $mode";
+	    die "bad mode: $mode";
     }
 
     return IO::File->new(\($self->{MBS_Data}), $mode);
@@ -571,19 +571,19 @@ use Carp;
 sub init {
     my ($self, $data) = @_;
     if (!defined($data)) {  ### nothing
-        $self->{MBS_Data} = '';
+	$self->{MBS_Data} = '';
     }
     elsif (!ref($data)) {   ### simple scalar
-        $self->{MBS_Data} = $data;
+	$self->{MBS_Data} = $data;
     }
     elsif (ref($data) eq 'SCALAR') {
-        $self->{MBS_Data} = $$data;
+	$self->{MBS_Data} = $$data;
     }
     elsif (ref($data) eq 'ARRAY') {
-        $self->{MBS_Data} = join('', @$data);
+	$self->{MBS_Data} = join('', @$data);
     }
     else {
-        croak "I can't handle DATA which is a ".ref($data)."\n";
+	croak "I can't handle DATA which is a ".ref($data)."\n";
     }
     $self;
 }

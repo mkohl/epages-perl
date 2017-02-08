@@ -14,91 +14,91 @@ our @ISA = qw(Algorithm::CheckDigits);
 our @inverted =  (0, 4, 3, 2, 1, 5, 6, 7, 8, 9 );
 
 my $perm = [
-        [ 1, 5, 7, 6, 2, 8, 3, 0, 9, 4, ],
-        [ 5, 8, 0, 3, 7, 9, 6, 1, 4, 2, ],
-        [ 8, 9, 1, 6, 0, 4, 3, 5, 2, 7, ],
-        [ 9, 4, 5, 3, 1, 2, 6, 8, 7, 0, ],
-        [ 4, 2, 8, 6, 5, 7, 3, 9, 0, 1, ],
-        [ 2, 7, 9, 3, 8, 0, 6, 4, 1, 5, ],
-        [ 7, 0, 4, 6, 9, 1, 3, 2, 5, 8, ],
-        [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ],
-        [ 1, 5, 7, 6, 2, 8, 3, 0, 9, 4, ],
-        [ 5, 8, 0, 3, 7, 9, 6, 1, 4, 2, ],
-        [ 8, 9, 1, 6, 0, 4, 3, 5, 2, 7, ],
+	[ 1, 5, 7, 6, 2, 8, 3, 0, 9, 4, ],
+	[ 5, 8, 0, 3, 7, 9, 6, 1, 4, 2, ],
+	[ 8, 9, 1, 6, 0, 4, 3, 5, 2, 7, ],
+	[ 9, 4, 5, 3, 1, 2, 6, 8, 7, 0, ],
+	[ 4, 2, 8, 6, 5, 7, 3, 9, 0, 1, ],
+	[ 2, 7, 9, 3, 8, 0, 6, 4, 1, 5, ],
+	[ 7, 0, 4, 6, 9, 1, 3, 2, 5, 8, ],
+	[ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ],
+	[ 1, 5, 7, 6, 2, 8, 3, 0, 9, 4, ],
+	[ 5, 8, 0, 3, 7, 9, 6, 1, 4, 2, ],
+	[ 8, 9, 1, 6, 0, 4, 3, 5, 2, 7, ],
 ];
 
 my $dieder = [
-        [ 0, 1, 2, 3, 4,   5, 6, 7, 8, 9, ],
-        [ 1, 2, 3, 4, 0,   6, 7, 8, 9, 5, ],
-        [ 2, 3, 4, 0, 1,   7, 8, 9, 5, 6, ],
-        [ 3, 4, 0, 1, 2,   8, 9, 5, 6, 7, ],
-        [ 4, 0, 1, 2, 3,   9, 5, 6, 7, 8, ],
+	[ 0, 1, 2, 3, 4,   5, 6, 7, 8, 9, ],
+	[ 1, 2, 3, 4, 0,   6, 7, 8, 9, 5, ],
+	[ 2, 3, 4, 0, 1,   7, 8, 9, 5, 6, ],
+	[ 3, 4, 0, 1, 2,   8, 9, 5, 6, 7, ],
+	[ 4, 0, 1, 2, 3,   9, 5, 6, 7, 8, ],
 
-        [ 5, 9, 8, 7, 6,   0, 4, 3, 2, 1, ],
-        [ 6, 5, 9, 8, 7,   1, 0, 4, 3, 2, ],
-        [ 7, 6, 5, 6, 8,   2, 1, 0, 4, 3, ],
-        [ 8, 7, 6, 5, 9,   3, 2, 1, 0, 4, ],
-        [ 9, 8, 7, 6, 5,   4, 3, 2, 1, 0, ],
+	[ 5, 9, 8, 7, 6,   0, 4, 3, 2, 1, ],
+	[ 6, 5, 9, 8, 7,   1, 0, 4, 3, 2, ],
+	[ 7, 6, 5, 6, 8,   2, 1, 0, 4, 3, ],
+	[ 8, 7, 6, 5, 9,   3, 2, 1, 0, 4, ],
+	[ 9, 8, 7, 6, 5,   4, 3, 2, 1, 0, ],
 ];
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d+)(\d)$/i) {
-                return 1 if ($2 == $self->_compute_checkdigit(uc($1)));
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d+)(\d)$/i) {
+		return 1 if ($2 == $self->_compute_checkdigit(uc($1)));
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^\d+$/i) {
-                return $number .  $self->_compute_checkdigit(uc($number));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^\d+$/i) {
+		return $number .  $self->_compute_checkdigit(uc($number));
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d+)(\d)$/i) {
-                return $1 if ($2 == $self->_compute_checkdigit(uc($1)));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d+)(\d)$/i) {
+		return $1 if ($2 == $self->_compute_checkdigit(uc($1)));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(\d+)(\d)$/i) {
-                return $2 if ($2 == $self->_compute_checkdigit(uc($1)));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(\d+)(\d)$/i) {
+		return $2 if ($2 == $self->_compute_checkdigit(uc($1)));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
-        my $input = shift;
-        my $c = 0; # initialize check at 0
-        my $digit = 0;
-        my $i = 0; my $r;
-        foreach $digit (reverse split(//, $number)) {
-#               This was jonathans implementation, his permutation
-#               table is offset by one compared to the one I already
-#               took in MXX_003.pm and reused here
-#               $c = $di->[$c]->[$f->[($i+1) % 8]->[$digit]];
-                $c = $dieder->[$c]->[$perm->[$i % 8]->[$digit]];
-                $i++;
+	my $input = shift;
+	my $c = 0; # initialize check at 0
+	my $digit = 0;
+	my $i = 0; my $r;
+	foreach $digit (reverse split(//, $number)) {
+#		This was jonathans implementation, his permutation
+#		table is offset by one compared to the one I already
+#		took in MXX_003.pm and reused here
+#		$c = $di->[$c]->[$f->[($i+1) % 8]->[$digit]];
+		$c = $dieder->[$c]->[$perm->[$i % 8]->[$digit]];
+	        $i++;
         }
-        return $inverted[$c];
+	return $inverted[$c];
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -119,7 +119,7 @@ CheckDigits::MXX_006 - compute check digits with Verhoeff scheme
   $verhoeff = CheckDigits('verhoeff');
 
   if ($verhoeff->is_valid('14567894')) {
-        # do something
+	# do something
   }
 
   $cn = $verhoeff->complete('1456789');
@@ -130,7 +130,7 @@ CheckDigits::MXX_006 - compute check digits with Verhoeff scheme
 
   $bn = $verhoeff->basenumber('14567894');
   # $bn = '1456789'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

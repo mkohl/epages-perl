@@ -21,13 +21,13 @@ else
 {   @path = split /\:/
       , ( $ENV{MAILCAPS} || (defined $ENV{HOME} ? "$ENV{HOME}/.mailcap:" : '')
         . '/etc/mailcap:/usr/etc/mailcap:/usr/local/etc/mailcap'
-        );   # this path is specified under RFC1524 appendix A
+        );   # this path is specified under RFC1524 appendix A 
 }
 
 
 sub new
 {   my $class = shift;
-
+    
     unshift @_, 'filename' if @_ % 2;
     my %args  = @_;
 
@@ -101,7 +101,7 @@ sub _process_file
         # record this entry
         unless(exists $self->{$type})
         {   $self->{$type} = [];
-            $self->{_count}++;
+            $self->{_count}++; 
         }
         push @{$self->{$type}}, \%field;
     }
@@ -176,7 +176,7 @@ sub getEntry
     {   if(exists $_->{'test'})
         {   # must run test to see if it applies
             my $test = $self->expandPercentMacros($_->{'test'},
-                                                  $origtype, $file);
+        					  $origtype, $file);
             system $test;
             next if $?;
         }

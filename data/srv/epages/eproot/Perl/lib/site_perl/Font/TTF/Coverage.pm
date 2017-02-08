@@ -151,7 +151,7 @@ sub out
     { $fmt = 2 if ($eff / $grp > 3); }
 #    else
 #    { $fmt = 2 if ($grp > 1); }
-
+    
     if ($fmt == 1 && $self->{'cover'})
     {
         my ($last) = 0;
@@ -219,7 +219,7 @@ has the next sequential number. Returns the index number of the glyphid added
 sub add
 {
     my ($self, $gid, $class) = @_;
-
+    
     return $self->{'val'}{$gid} if (defined $self->{'val'}{$gid});
     if ($self->{'cover'})
     {

@@ -10,65 +10,65 @@ our $VERSION = '0.53';
 our @ISA = qw(Algorithm::CheckDigits);
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(M|979-?0)([0-9-]*)([0-9])$/i) {
-                return ($3 == $self->_compute_checkdigit($2));
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(M|979-?0)([0-9-]*)([0-9])$/i) {
+		return ($3 == $self->_compute_checkdigit($2));
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^(M|979-?0)([0-9-]*[0-9])(-*)$/i) {
-                return  "M$2" . '-' . $self->_compute_checkdigit($2);
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(M|979-?0)([0-9-]*[0-9])(-*)$/i) {
+		return  "M$2" . '-' . $self->_compute_checkdigit($2);
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(M|979-?0)([0-9-]*[0-9])(-*)([0-9])$/i) {
-                return "M$2" if ($self->is_valid($number));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(M|979-?0)([0-9-]*[0-9])(-*)([0-9])$/i) {
+		return "M$2" if ($self->is_valid($number));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(M|979-?0)([0-9-]*)([0-9])$/i) {
-                return $3 if ($self->is_valid($number));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(M|979-?0)([0-9-]*)([0-9])$/i) {
+		return $3 if ($self->is_valid($number));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
-        $number =~ s/-//g;
-        if ($number =~ /^([0-9]*)$/) {
-                my @digits = split(//,$number);
-                my $even = 0;
-                my $sum  = 9;
-                for (my $i = 0; $i <= $#digits; $i++) {
-                        if ($even) {
-                                $sum += 3 * $digits[$i];
-                        } else {
-                                $sum += $digits[$i];
-                        }
-                        $even = not $even;
-                }
-                return (10 - ($sum % 10) % 10);
-        }
-        return -1;
+	my $self   = shift;
+	my $number = shift;
+	$number =~ s/-//g;
+	if ($number =~ /^([0-9]*)$/) {
+		my @digits = split(//,$number);
+		my $even = 0;
+		my $sum  = 9;
+		for (my $i = 0; $i <= $#digits; $i++) {
+			if ($even) {
+				$sum += 3 * $digits[$i];
+			} else {
+				$sum += $digits[$i];
+			}
+			$even = not $even;
+		}
+		return (10 - ($sum % 10) % 10);
+	}
+	return -1;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -87,7 +87,7 @@ CheckDigits::M10_003 - compute check digits for ISMN
   $ismn = CheckDigits('ismn');
 
   if ($ismn->is_valid('M-345-24680-5')) {
-        # do something
+	# do something
   }
 
   $cn = $ismn->complete('M-345-24680');
@@ -98,7 +98,7 @@ CheckDigits::M10_003 - compute check digits for ISMN
 
   $bn = $ismn->basenumber('M-345-24680-5');
   # $bn = 'M-345-24680'
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

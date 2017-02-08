@@ -14,25 +14,25 @@
 # points in other Unicode releases, or it could be purely coincidence that
 # they happen to be the same in Unicode 5.2.0, and hence may not in other
 # versions.
-#
+# 
 # This file returns the 0 code points in Unicode Version 5.2.0 that match any
 # of the following regular expression constructs:
-#
+# 
 #         \p{Canonical_Combining_Class=Attached_Below_Left}
 #         \p{Ccc=ATBL}
 #         \p{Is_Canonical_Combining_Class=200}
 #         \p{Is_Ccc=Attached_Below_Left}
-#
+# 
 #         \p{Joining_Type=Left_Joining}
 #         \p{Jt=L}
 #         \p{Is_Joining_Type=Left_Joining}
 #         \p{Is_Jt=L}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and within each group
 # above, anything to the left of the equals (or colon) can be combined with
 # anything to the right.  Thus, for example,

@@ -14,63 +14,63 @@ our @ISA = qw(Exporter DynaLoader);
 our @EXPORT = qw(langinfo);
 
 our @EXPORT_OK = qw(
-        ABDAY_1
-        ABDAY_2
-        ABDAY_3
-        ABDAY_4
-        ABDAY_5
-        ABDAY_6
-        ABDAY_7
-        ABMON_1
-        ABMON_10
-        ABMON_11
-        ABMON_12
-        ABMON_2
-        ABMON_3
-        ABMON_4
-        ABMON_5
-        ABMON_6
-        ABMON_7
-        ABMON_8
-        ABMON_9
-        ALT_DIGITS
-        AM_STR
-        CODESET
-        CRNCYSTR
-        DAY_1
-        DAY_2
-        DAY_3
-        DAY_4
-        DAY_5
-        DAY_6
-        DAY_7
-        D_FMT
-        D_T_FMT
-        ERA
-        ERA_D_FMT
-        ERA_D_T_FMT
-        ERA_T_FMT
-        MON_1
-        MON_10
-        MON_11
-        MON_12
-        MON_2
-        MON_3
-        MON_4
-        MON_5
-        MON_6
-        MON_7
-        MON_8
-        MON_9
-        NOEXPR
-        NOSTR
-        PM_STR
-        RADIXCHAR
-        THOUSEP
-        T_FMT
-        T_FMT_AMPM
-        YESEXPR
-        YESSTR
+	ABDAY_1
+	ABDAY_2
+	ABDAY_3
+	ABDAY_4
+	ABDAY_5
+	ABDAY_6
+	ABDAY_7
+	ABMON_1
+	ABMON_10
+	ABMON_11
+	ABMON_12
+	ABMON_2
+	ABMON_3
+	ABMON_4
+	ABMON_5
+	ABMON_6
+	ABMON_7
+	ABMON_8
+	ABMON_9
+	ALT_DIGITS
+	AM_STR
+	CODESET
+	CRNCYSTR
+	DAY_1
+	DAY_2
+	DAY_3
+	DAY_4
+	DAY_5
+	DAY_6
+	DAY_7
+	D_FMT
+	D_T_FMT
+	ERA
+	ERA_D_FMT
+	ERA_D_T_FMT
+	ERA_T_FMT
+	MON_1
+	MON_10
+	MON_11
+	MON_12
+	MON_2
+	MON_3
+	MON_4
+	MON_5
+	MON_6
+	MON_7
+	MON_8
+	MON_9
+	NOEXPR
+	NOSTR
+	PM_STR
+	RADIXCHAR
+	THOUSEP
+	T_FMT
+	T_FMT_AMPM
+	YESEXPR
+	YESSTR
 );
 
 our $VERSION = '0.03';
@@ -86,14 +86,14 @@ sub AUTOLOAD {
     my ($error, $val) = constant($constname);
     if ($error) { croak $error; }
     {
-        no strict 'refs';
-        # Fixed between 5.005_53 and 5.005_61
-#XXX    if ($] >= 5.00561) {
-#XXX        *$AUTOLOAD = sub () { $val };
-#XXX    }
-#XXX    else {
-            *$AUTOLOAD = sub { $val };
-#XXX    }
+	no strict 'refs';
+	# Fixed between 5.005_53 and 5.005_61
+#XXX	if ($] >= 5.00561) {
+#XXX	    *$AUTOLOAD = sub () { $val };
+#XXX	}
+#XXX	else {
+	    *$AUTOLOAD = sub { $val };
+#XXX	}
     }
     goto &$AUTOLOAD;
 }
@@ -134,11 +134,11 @@ answers for a yes/no question in the current locale.
 In other words, in the "C" (or English) locale the above will probably
 print something like:
 
-    Sun? [yes/no]
+    Sun? [yes/no] 
 
 but under a French locale
 
-    dim? [oui/non]
+    dim? [oui/non] 
 
 The usually available constants are
 
@@ -210,6 +210,6 @@ Jarkko Hietaniemi, E<lt>jhi@hut.fiE<gt>
 Copyright 2001 by Jarkko Hietaniemi
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+it under the same terms as Perl itself. 
 
 =cut

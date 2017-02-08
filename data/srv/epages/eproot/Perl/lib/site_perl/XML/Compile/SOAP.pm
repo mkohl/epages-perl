@@ -334,7 +334,7 @@ sub _writer_xop_hook($)
         return $r->($doc, $val)
             unless UNIVERSAL::isa($val, 'XML::Compile::XOP::Include');
 
-        my $node = $val->xmlNode($doc, $path, $tag);
+        my $node = $val->xmlNode($doc, $path, $tag); 
         push @$xop_objects, $val;
         $node;
       };
@@ -440,7 +440,7 @@ sub _reader_hook($$)
    +{ type    => $type
     , replace => $code
     };
-
+ 
 }
 
 sub _reader_body_rpc_wrapper($$)

@@ -31,23 +31,23 @@ MooseX::AttributeHelpers::Collection::Bag
   package Stuff;
   use Moose;
   use MooseX::AttributeHelpers;
-
+  
   has 'word_histogram' => (
       metaclass => 'Collection::Bag',
       is        => 'ro',
       isa       => 'Bag', # optional ... as is default
       provides  => {
           'add'    => 'add_word',
-          'get'    => 'get_count_for',
+          'get'    => 'get_count_for',            
           'empty'  => 'has_any_words',
           'count'  => 'num_words',
           'delete' => 'delete_word',
       }
   );
-
+  
 =head1 DESCRIPTION
 
-This module provides a Bag attribute which provides a number of
+This module provides a Bag attribute which provides a number of 
 bag-like operations. See L<MooseX::AttributeHelpers::MethodProvider::Bag>
 for more details.
 
@@ -69,7 +69,7 @@ for more details.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

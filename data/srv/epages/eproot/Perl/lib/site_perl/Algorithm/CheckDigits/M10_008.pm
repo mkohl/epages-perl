@@ -19,70 +19,70 @@ my $re_alnum = qr/[0-9B-DF-HJ-NP-TV-Z]/;
 my $re_sedol = qr/(\d{6}|$re_alpha$re_alnum{5})(\d)?/;
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my $self = shift;
-        my $number = uc shift;
+	my $self = shift;
+	my $number = uc shift;
 
-        if ($number =~ /^$re_sedol$/o) {
-                return $2 == $self->_compute_checkdigit($1);
-        }
-        return ''
+	if ($number =~ /^$re_sedol$/o) {
+		return $2 == $self->_compute_checkdigit($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my $self = shift;
-        my $number = uc shift;
+	my $self = shift;
+	my $number = uc shift;
 
-        if ($number =~ /^$re_sedol$/o) {
-                return  $number . $self->_compute_checkdigit($number);
-        }
-        else {
-                return '';
-        }
+	if ($number =~ /^$re_sedol$/o) {
+		return  $number . $self->_compute_checkdigit($number);
+	}
+	else {
+		return '';
+	}
 } # complete()
 
 sub basenumber {
-        my $self = shift;
-        my $number = uc shift;
+	my $self = shift;
+	my $number = uc shift;
 
-        if ($number =~ /^$re_sedol$/o) {
-                return $1 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	if ($number =~ /^$re_sedol$/o) {
+		return $1 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my $self = shift;
-        my $number = uc shift;
+	my $self = shift;
+	my $number = uc shift;
 
-        if ($number =~ /^$re_sedol$/o) {
-                return $2 if ($2 == $self->_compute_checkdigit($1));
-        }
-        return '';
+	if ($number =~ /^$re_sedol$/o) {
+		return $2 if ($2 == $self->_compute_checkdigit($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigit {
-        my $self   = shift;
-        my $number = shift;
+	my $self   = shift;
+	my $number = shift;
 
 
-        my @digits = map { $ctable{$_} } split(//,$number);
-        my $sum    = 0;
+	my @digits = map { $ctable{$_} } split(//,$number);
+	my $sum    = 0;
 
-        for (my $i = 0; $i <= $#digits; $i++) {
+	for (my $i = 0; $i <= $#digits; $i++) {
 
-                $sum += $weight[$i] * $digits[$i];
+		$sum += $weight[$i] * $digits[$i];
 
-        }
-        return (10 - ($sum % 10)) % 10;
+	}
+	return (10 - ($sum % 10)) % 10;
 } # _compute_checkdigit()
 
 # Preloaded methods go here.
@@ -101,7 +101,7 @@ CheckDigits::M10_008 - compute check digits for Sedol (GB)
   $sedol = CheckDigits('sedol');
 
   if ($sedol->is_valid('0123457')) {
-        # do something
+	# do something
   }
 
   $cn = $sedol->complete('012345');
@@ -112,7 +112,7 @@ CheckDigits::M10_008 - compute check digits for Sedol (GB)
 
   $bn = $sedol->basenumber('0123457');
   # $bn = '012345'
-
+  
 =head1 DESCRIPTION
 
 Prior to March 2004 SEDOL codes solely consisted of numbers. Since March
@@ -144,7 +144,7 @@ numerical SEDOL codes issued prior to March 2004 remain valid.
 All characters are assigned a numerical value from 0 to 35 where the
 characters '0' to '9' get 0 to 9, 'B' to 'Z' get 11 to 35 with the
 position of the vowels kept empty (for instance 'D' gets 13, 'F' gets
-15).
+15). 
 
 =item 1
 

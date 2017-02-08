@@ -12,7 +12,7 @@ use URI::Escape;
 $VERSION = sprintf("%d.%02d", q$Revision: 0.29 $ =~ /(\d+)\.(\d+)/);
 
 use strict;
-use vars  qw($VERSION);
+use vars  qw($VERSION); 
 
 ###########################################################################
 
@@ -28,10 +28,10 @@ sub _init {
    my ($self,@p) = @_;
 
    ####
-   # This is the order of the arguments unless used as
+   # This is the order of the arguments unless used as 
    # named parameters
-   my ($uri,$lockedresourcelist,$comms,$client) =
-      HTTP::DAV::Utils::rearrange(
+   my ($uri,$lockedresourcelist,$comms,$client) = 
+      HTTP::DAV::Utils::rearrange( 
          ['URI', 'LOCKEDRESOURCELIST','COMMS','CLIENT'], @p);
 
    # Optionally add a scheme.
@@ -58,15 +58,15 @@ sub _init {
    # Check that the required objects exist
 
    die("Comms object required when creating a Resource object")
-      unless ( defined $self->{_comms} &&
+      unless ( defined $self->{_comms} && 
                $self->{_comms} =~ /HTTP::DAV::Comms/ );
 
    die("Locked ResourceList object required when creating a Resource object")
-      unless ( defined $self->{_lockedresourcelist} &&
+      unless ( defined $self->{_lockedresourcelist} && 
                $self->{_lockedresourcelist} =~ /HTTP::DAV::ResourceList/ );
 
    die("DAV Client required when creating a Resource object")
-      unless ( defined $self->{_dav_client} &&
+      unless ( defined $self->{_dav_client} && 
                $self->{_dav_client} =~ /HTTP::DAV/ );
 }
 
@@ -98,7 +98,7 @@ sub set_locks {
    my ($self,@locks) = @_;
 
    # Unset any existing locks because we're about to reset them
-   # But keep their name temporarily because some of them
+   # But keep their name temporarily because some of them 
    # may be ours.
    my @old_lock_tokens = keys %{$self->{_locks}} || ();
    #if (@locks && defined $self->{_locks}) {
@@ -110,8 +110,8 @@ sub set_locks {
       my $token = $lock->get_locktoken();
       #print "Adding $token\n";
 
-      # If it exists, we'll set it to owned and reapply
-      # it (it may have changed since we saw it last.
+      # If it exists, we'll set it to owned and reapply 
+      # it (it may have changed since we saw it last. 
       # Like it might have timed out?
       if (grep($token,@old_lock_tokens)) {
          $lock->set_owned(1);
@@ -121,15 +121,15 @@ sub set_locks {
    #print "Locks: " . join(' ',keys %{$self->{_locks}} )."\n";
 }
 
-sub is_option {
+sub is_option { 
    my ($self,$option) = @_;
    $self->options if (! defined $self->{_options});
    return ( $self->{_options} =~ /\b$option\b/i ) ? 1 : 0;
 }
 
-sub is_dav_compliant {
+sub is_dav_compliant { 
    my $resp = $_[0]->options if (! defined $_[0]->{_options});
-   $_[0]->{_compliance};
+   $_[0]->{_compliance}; 
 }
 
 sub get_options    { $_[0]->{_options}; }
@@ -137,11 +137,11 @@ sub get_options    { $_[0]->{_options}; }
 sub get_content    { $_[0]->{_content}; }
 sub get_content_ref{ \$_[0]->{_content}; }
 
-sub get_username   {
+sub get_username   { 
    my ($self) = @_;
    my $ra = $self->{_comms}->get_user_agent();
    my @userpass = $ra->get_basic_credentials(undef,$self->get_uri());
-   return $userpass[0];
+   return $userpass[0]; 
 }
 
 #sub get_lockpolicy { $_[0]->{_lockpolicy}; }
@@ -195,7 +195,7 @@ sub is_locked {
    return scalar $self->get_locks( @p );
 }
 
-sub is_collection {
+sub is_collection { 
    my $type = $_[0]->get_property("resourcetype");
    return ( defined $type && $type =~ /collection/ )? 1:0;
 }
@@ -250,7 +250,7 @@ sub lock {
 
    ####
    # Setup the XML content for the lock request
-   my $xml_request = HTTP::DAV::Lock->make_lock_xml (
+   my $xml_request = HTTP::DAV::Lock->make_lock_xml ( 
          -owner =>   $owner,
          -timeout => $timeout,
          -scope =>   $scope,
@@ -280,29 +280,29 @@ sub lock {
 
       ###
       # Multistatus response. Generally indicates a failure
-      if ( $resp->code == 207 ) {
-         # We're only interested in the error codes that come
+      if ( $resp->code == 207 ) { 
+         # We're only interested in the error codes that come 
          # out of the multistatus $resp.
          eval { $self->_XML_parse_multistatus( $doc, $resp ) };
          print "XML error: " . $@ if $@;
       }
-
+   
       ###
-      # Lock succeeded
+      # Lock succeeded  
       # 1. I assume from RFC2518 that if it successsfully locks
-      # then we will only get back the lockdiscover element
+      # then we will only get back the lockdiscover element 
       # for MY lock. If not, I will warn the user.
       #
-      # 2. I am fairly sure that my client should only ever be able to
-      # take out one lock on a resource. As such this program assumes
-      # that a resource can only have one lock held against it (locks
+      # 2. I am fairly sure that my client should only ever be able to 
+      # take out one lock on a resource. As such this program assumes 
+      # that a resource can only have one lock held against it (locks 
       # owned by other people do not get stored here).
       #
       elsif ( $resp->is_success ) {
          my $node_prop = HTTP::DAV::Utils::get_only_element($doc,"D:prop");
-         my $lock_discovery =
+         my $lock_discovery = 
             HTTP::DAV::Utils::get_only_element($node_prop,"D:lockdiscovery");
-         my @locks   = HTTP::DAV::Lock->XML_lockdiscovery_parse( $lock_discovery );
+         my @locks   = HTTP::DAV::Lock->XML_lockdiscovery_parse( $lock_discovery ); 
          # Degenerate case for bad server mydocsonline.
          # Doesn't return a proper lockdiscovery.
          # Just use the Lock-Token in the header instead.
@@ -350,7 +350,7 @@ sub unlock {
       }
       if ($num_locks == 1 ) {
          $opaquelocktoken = $locks[0]->get_locktoken;
-      }
+      } 
       else {
          foreach my $lock (@locks ) {
             $resp = $self->unlock( -token => $lock->get_locktoken );
@@ -359,7 +359,7 @@ sub unlock {
       }
    }
 
-
+   
    my $headers = HTTP::DAV::Headers->new;
    #$headers->header("Lock-Token", "<${opaquelocktoken}>") if $opaquelocktoken;
    $headers->header("Lock-Token", "<${opaquelocktoken}>");
@@ -380,9 +380,9 @@ sub unlock {
       #print $resp->as_string();
       #print "END\n";
    }
-
+   
    if ($resp->is_success) {
-      $self->_unset_lock($opaquelocktoken);
+      $self->_unset_lock($opaquelocktoken); 
    }
 
    return $resp;
@@ -403,8 +403,8 @@ sub forcefully_unlock_all {
       }
    }
 
-   # In the event that there were no locks to steal,
-   # then just send a dud request out and let the
+   # In the event that there were no locks to steal, 
+   # then just send a dud request out and let the 
    # server fail it.
    if (!$resp) {
       $resp = $self->unlock();
@@ -425,8 +425,8 @@ sub lockdiscovery {
    my($self,@p) = @_;
    my($depth,@other) = HTTP::DAV::Utils::rearrange(['DEPTH'],@p);
 
-   return $self->propfind(
-             -depth => $depth,
+   return $self->propfind( 
+             -depth => $depth, 
              -text  => "<D:prop><D:lockdiscovery/></D:prop>");
 }
 
@@ -438,7 +438,7 @@ sub propfind {
 
    # 'depth' default is 1
    $depth = 1 unless ( defined $depth && $depth ne "" );
-
+    
    ####
    # Setup the headers for the request
    my $headers = new HTTP::Headers;
@@ -473,7 +473,7 @@ sub propfind {
       my $parser = new XML::DOM::Parser;
       my $doc = $parser->parse($resp->content);
 
-      # Setup a ResourceList in which to pump all of the collection
+      # Setup a ResourceList in which to pump all of the collection 
       my $resource_list;
       eval { $resource_list = $self->_XML_parse_multistatus( $doc, $resp ) };
 
@@ -497,19 +497,19 @@ sub propfind {
 sub get {
    my ($self,@p) = @_;
 
-   my($save_to,$progress_callback,$chunk) =
+   my($save_to,$progress_callback,$chunk) = 
       HTTP::DAV::Utils::rearrange(['SAVE_TO','PROGRESS_CALLBACK','CHUNK'],@p);
 
    #$save_to = URI::Escape::uri_unescape($save_to);
-   my $resp = $self->{_comms}->do_http_request (
-      -method => "GET",
+   my $resp = $self->{_comms}->do_http_request ( 
+      -method => "GET", 
       -uri    =>  $self->get_uri,
       -save_to  => $save_to,
       -callback => $progress_callback,
       -chunk  => $chunk
-      );
+      ); 
 
-   # What to do with all of the headers in the response. Put
+   # What to do with all of the headers in the response. Put 
    # them into this object? If so, which ones?
    if ($resp->is_success) {
       $self->_set_content( $resp->content );
@@ -541,16 +541,16 @@ sub put {
       # }
    }
 
-   $resp = $self->{_comms}->do_http_request (
-      -method => "PUT",
+   $resp = $self->{_comms}->do_http_request ( 
+      -method => "PUT", 
       -uri    =>  $self->get_uri,
       -headers=>  $headers,
       -content=>  $content,
-      );
+      ); 
 
    #my $unlockresp = $self->unlock;
 
-   # What to do with all of the headers in the response. Put
+   # What to do with all of the headers in the response. Put 
    # them into this object? If so, which ones?
    # $self->_set_content( $resp->content );
 
@@ -567,8 +567,8 @@ sub mkcol {
    my $headers = HTTP::DAV::Headers->new();
    $self->_setup_if_headers($headers);
 
-   my $resp = $self->{_comms}->do_http_request(
-      -method => "MKCOL",
+   my $resp = $self->{_comms}->do_http_request( 
+      -method => "MKCOL", 
       -uri    => $self->get_uri,
       -headers=> $headers,
        );
@@ -580,7 +580,7 @@ sub mkcol {
       # use XML::DOM to parse the result.
       my $parser = new XML::DOM::Parser;
       my $doc = $parser->parse($resp->content);
-
+   
       # We're only interested in the error codes that come out of $resp.
       eval { $self->_XML_parse_multistatus( $doc, $resp ) };
       warn "XML error: " . $@ if $@;
@@ -597,13 +597,13 @@ sub options {
 
    my $uri = $self->get_uri;
    # Doesn't work properly. Sets it as /*
-   # How do we get LWP to send through just
+   # How do we get LWP to send through just 
    # OPTIONS * HTTP/1.1
    # ??
    #$uri->path("*") if $entire_server;
 
-   my $resp = $self->{_comms}->do_http_request (
-      -method => "OPTIONS",
+   my $resp = $self->{_comms}->do_http_request ( 
+      -method => "OPTIONS", 
       -uri    => $uri,
       );
 
@@ -612,7 +612,7 @@ sub options {
       $self->_set_options($resp->header("Allow"));
    }
 
-   # Get the "DAV" header and look for
+   # Get the "DAV" header and look for 
    # either "DAV:1" or "DAV:1,2"
    my $compliance = 0;
    if ($resp->header("DAV")) {
@@ -620,11 +620,11 @@ sub options {
       $compliance = $resp->header("DAV");
       if ($compliance =~ /^\s*1\s*,\s*2/ ) {
          $compliance = 2;
-      }
+      } 
 
       elsif ($compliance =~ /^\s*1/ ) {
          $compliance = 1;
-      }
+      } 
 
    }
    $self->_set_compliance($compliance);
@@ -650,7 +650,7 @@ sub _move_copy {
    } else {
       $depth = ( defined $depth && $depth eq "0" ) ? 0 : "infinity";
    }
-
+    
    # Sanity check. If overwrite ain't F or 0, then make it T
    $overwrite = "F" if (defined $overwrite && $overwrite eq "0");
    $overwrite = (defined $overwrite && $overwrite eq "F")?"F":"T";
@@ -668,8 +668,8 @@ sub _move_copy {
 
    # Apache, Bad Gateway workaround
    if ( $server_type =~ /Apache/i && $server_type =~ /DAV\//i ) {
-      #my $dest_str = "http://" . $dest_url->host_port . $dest_url->path;
-      $dest_str = $dest_url->scheme . "://". $dest_url->host_port . $dest_url->path;
+      #my $dest_str = "http://" . $dest_url->host_port . $dest_url->path; 
+      $dest_str = $dest_url->scheme . "://". $dest_url->host_port . $dest_url->path; 
 
       if ($HTTP::DAV::DEBUG) {
          warn "*** INSTIGATING mod_dav WORKAROUND FOR DESTINATION HEADER BUG IN Resource::_move_copy\n";
@@ -677,11 +677,11 @@ sub _move_copy {
          warn "*** Adding port number :" . $dest_url->port . " to given url: $dest_url\n";
       }
 
-   }
+   } 
 
    # Apache2 mod_dav, Permenantly Moved workaround
-   # If the src is a collection, then the dest must have a trailing
-   # slash or mod_dav2 gives a strange "bad url" error in a
+   # If the src is a collection, then the dest must have a trailing 
+   # slash or mod_dav2 gives a strange "bad url" error in a 
    # "Moved Permenantly" response.
    if ( $self->is_collection || $self->get_uri =~ /\/$/ ) {
       $dest_str =~ s#/*$#/#;
@@ -703,7 +703,7 @@ sub _move_copy {
 
    # See from RFC 12.12.
    # Valid values for '$text':
-   #
+   # 
    #    <D:keepalive>*</D:keepalive>
    # or
    #    <D:keepalive>
@@ -745,13 +745,13 @@ sub _move_copy {
       $self->_unset_my_locks();
 
       # Well... I'm baffled.
-      # I previousy had this commented out because my
+      # I previousy had this commented out because my 
       # undestanding was that the dest lock stayed in tact.
       # But mod_dav seems to remove it after a move. So,
-      # I'm going to fall in line, but if another server
-      # implements this differently, then I'm going to have
+      # I'm going to fall in line, but if another server 
+      # implements this differently, then I'm going to have 
       # to pipe up and get them to sort out their differences :)
-      #$dest_resource->_unset_my_locks();
+      #$dest_resource->_unset_my_locks(); 
    }
 
    return $resp;
@@ -762,7 +762,7 @@ sub _move_copy {
 sub proppatch {
    my ($self,@p) = @_;
 
-   my($namespace,$propname,$propvalue,$action,$use_nsabbr) =
+   my($namespace,$propname,$propvalue,$action,$use_nsabbr) = 
        HTTP::DAV::Utils::rearrange(
           ['NAMESPACE','PROPNAME','PROPVALUE','ACTION','NSABBR'],@p);
 
@@ -816,7 +816,7 @@ sub proppatch {
    $xml_request .= "</D:prop>";
    $xml_request .= "</D:$action>";
    $xml_request .= "</D:propertyupdate>";
-
+    
    ####
    # Put the proppatch request to the remote server
    my $resp= $self->{_comms}->do_http_request (
@@ -850,8 +850,8 @@ sub delete {
    # The only valid depth is infinity.
    #$headers->header("Depth", "infinity");
 
-   my $resp = $self->{_comms}->do_http_request(
-      -method => "DELETE",
+   my $resp = $self->{_comms}->do_http_request( 
+      -method => "DELETE", 
       -uri    => $self->get_uri,
       -headers=> $headers,
       );
@@ -863,7 +863,7 @@ sub delete {
       # use XML::DOM to parse the result.
       my $parser = new XML::DOM::Parser;
       my $doc = $parser->parse($resp->content);
-
+   
       # We're only interested in the error codes that come out of $resp.
       eval { $self->_XML_parse_multistatus( $doc, $resp ) };
       warn "XML error: " . $@ if $@;
@@ -880,9 +880,9 @@ sub delete {
 ###########################################################################
 ###########################################################################
 # parses a <D:multistatus> element.
-# This is the root level element for a
+# This is the root level element for a 
 # PROPFIND body or a failed DELETE body.
-# For example. The following is the result of a DELETE operation
+# For example. The following is the result of a DELETE operation 
 # with a locked progeny (child).
 #
 # >> DELETE /test/dir/newdir/ HTTP/1.1
@@ -919,7 +919,7 @@ sub _XML_parse_multistatus {
 
    ###
    # Parse III
-   # Get the overarching responsedescription for the
+   # Get the overarching responsedescription for the 
    # multistatus and set it into the DAV:Response object.
    my $node_rd = HTTP::DAV::Utils::get_only_element($node_multistatus,"D:responsedescription");
    if ($node_rd) {
@@ -958,7 +958,7 @@ sub _XML_parse_multistatus {
           # See the rules of URI.pm
           my $href_uri = HTTP::DAV::Utils::make_uri($href);
           my $res_url = $href_uri->abs( $self->get_uri );
-
+   
           # Just store the first one for later use
           $href_a = $res_url unless defined $href_a;
 
@@ -985,12 +985,12 @@ sub _XML_parse_multistatus {
 
        if ( $response_status ) {
           $resp->add_status_line($response_status,
-                                 $response_rd,
+                                 $response_rd, 
                                  "$href_a:response:$node_response",
                                  $href_a);
        }
 
-
+    
        ###
        # Parse 4.
        # Get the propstat+ list to be processed below
@@ -999,7 +999,7 @@ sub _XML_parse_multistatus {
        # <!ELEMENT propstat (prop, status, responsedescription?) >
        # Parse     a         b     c       d
 
-       ###
+       ### 
        # Parse a
        my @nodes_propstat= HTTP::DAV::Utils::get_elements_by_tag_name($node_response,"D:propstat");
        # Unset any old properties
@@ -1007,22 +1007,22 @@ sub _XML_parse_multistatus {
 
        foreach my $node_propstat ( @nodes_propstat ) {
 
-          ###
+          ### 
           # Parse b
           my $node_prop   = HTTP::DAV::Utils::get_only_element($node_propstat,"D:prop");
           my $prop_hashref = $resource->_XML_parse_and_store_props($node_prop);
 
-          ###
+          ### 
           # Parse c and d
           my ($propstat_status,$propstat_rd) = $self->_XML_parse_status($node_propstat);
 
-          # If there is no rd for this propstat, then use the
+          # If there is no rd for this propstat, then use the 
           # enclosing rd from the actual response.
           $propstat_rd=$response_rd unless $propstat_rd;
 
           if ( $propstat_status ) {
              $resp->add_status_line($propstat_status,
-                                    $propstat_rd,
+                                    $propstat_rd, 
                                     "$href_a:propstat:$node_propstat",
                                     $href_a);
           }
@@ -1055,8 +1055,8 @@ sub _XML_parse_status {
 }
 
 ###
-# Pass in the XML::DOM prop node Element and it will
-# parse and store all of the properties. These ones
+# Pass in the XML::DOM prop node Element and it will 
+# parse and store all of the properties. These ones 
 # are specifically dealt with:
 # creationdate
 # getcontenttype
@@ -1076,12 +1076,12 @@ sub _XML_parse_and_store_props {
    return unless ($node && $node->hasChildNodes() );
 
    # These elements will just get copied straight into our properties hash.
-   my @raw_copy = qw(
-      creationdate
+   my @raw_copy = qw( 
+      creationdate         
       getlastmodified
-      getetag
-      displayname
-      getcontentlength
+      getetag 
+      displayname  
+      getcontentlength     
       getcontenttype
       );
 
@@ -1091,7 +1091,7 @@ sub _XML_parse_and_store_props {
 
       my $prop = $props->item($i);
 
-      # Ignore anything in the <prop> element which is
+      # Ignore anything in the <prop> element which is  
       # not an Element. i.e. ignore comments, text, etc...
       next if ($prop->getNodeTypeName() ne "ELEMENT_NODE" );
 
@@ -1105,12 +1105,12 @@ sub _XML_parse_and_store_props {
       }
 
       elsif ( $prop_name eq "lockdiscovery" ) {
-         my @locks   = HTTP::DAV::Lock->XML_lockdiscovery_parse( $prop );
+         my @locks   = HTTP::DAV::Lock->XML_lockdiscovery_parse( $prop ); 
          $self->set_locks( @locks);
       }
 
       elsif ( $prop_name eq "supportedlock" ) {
-         my $supportedlock_hashref=
+         my $supportedlock_hashref= 
             HTTP::DAV::Lock::get_supportedlock_details( $prop );
          $self->set_property( "supportedlocks", $supportedlock_hashref );
       }
@@ -1122,7 +1122,7 @@ sub _XML_parse_and_store_props {
 #      }
 
 
-      #resourcetype and others
+      #resourcetype and others 
       else {
          my $node_name = HTTP::DAV::Utils::XML_remove_namespace( $prop->getNodeName() );
          my $str = "";
@@ -1137,10 +1137,10 @@ sub _XML_parse_and_store_props {
 
    # set collection based on resourcetype
    #my $getcontenttype = $self->get_property("getcontenttype");
-   #($getcontenttype && $getcontenttype =~ /directory/i  ) ||
+   #($getcontenttype && $getcontenttype =~ /directory/i  ) ||  
    my $resourcetype = $self->get_property("resourcetype");
-   if (
-         ($resourcetype   && $resourcetype   =~ /collection/i )
+   if ( 
+         ($resourcetype   && $resourcetype   =~ /collection/i ) 
       ) {
       $self->set_property( "resourcetype", "collection" );
       my $uri= HTTP::DAV::Utils::make_trail_slash($self->get_uri);
@@ -1216,7 +1216,7 @@ sub as_string {
    $return .= "${space}'Url': ";
    $return .= $self->{_uri}->as_string. "\n";
 
-   $return .= "${space}'Options': " . $self->{_options} . "\n"
+   $return .= "${space}'Options': " . $self->{_options} . "\n" 
       if $self->{_options};
 
    $return .= "${space}Properties\n";
@@ -1225,10 +1225,10 @@ sub as_string {
       my $prop_val;
       if ($prop eq "supportedlocks" && $depth>1 ) {
          use Data::Dumper;
-         $prop_val = $self->get_property($prop);
+         $prop_val = $self->get_property($prop); 
          $prop_val = Data::Dumper->Dump( [$prop_val] , [ '$prop_val' ] );
       } else {
-         $prop_val = $self->get_property($prop);
+         $prop_val = $self->get_property($prop); 
          $prop_val =~ s/\n/\\n/g;
       }
       $return .= "${space}   '$prop': $prop_val\n";
@@ -1246,7 +1246,7 @@ sub as_string {
       }
 
       $return .= $self->{_resource_list}->as_string($space) if $self->{_resource_list};
-   }
+   } 
 
    # SHALLOW PRINT
    else {
@@ -1289,9 +1289,9 @@ sub build_ls {
    my $lls = "URL: $abs_uri\n";
    foreach my $prop ( sort keys %{$self->{_properties}} ) {
       next if (
-         $prop eq "lastmodifiedepoch" ||
+         $prop eq "lastmodifiedepoch" || 
          $prop eq "creationepoch" ||
-         $prop eq "supportedlocks"
+         $prop eq "supportedlocks" 
          );
       $lls .= "$prop: ";
       if ($prop =~ /Content-Length/ ) {
@@ -1385,10 +1385,10 @@ sub build_ls {
 
    $self->set_property('long_ls',$lls);
 
-   # Preset this, but it will be overwritten below
+   # Preset this, but it will be overwritten below 
    # if it is a collection
    $self->set_property('short_ls',$lls);
-
+ 
    # Build the short listing if it is a collection
    if ($self->is_collection) {
       my $short = "";
@@ -1400,7 +1400,7 @@ sub build_ls {
 
          foreach my $child_res (@resources) {
             $child_res->build_ls($self);
-         }
+         } 
 
          # Get the maximum uri length for pretty printing.
          my $max_uri_length=0;
@@ -1416,7 +1416,7 @@ sub build_ls {
 
          # Print the listing
          foreach my $r ($self, sort by_URI @resources) {
-            $short .=
+            $short .= 
               sprintf(" %${max_uri_length}s  %${max_bytes_length}s  %12s  %s\n",
                       $r->get_property('rel_uri'),
                       $r->get_property('getcontentlength'),
@@ -1429,7 +1429,7 @@ sub build_ls {
       $self->set_property('short_ls',$short);
    }
 
-   sub by_URI {
+   sub by_URI { 
       my $a_str = $a->get_uri;
       my $b_str = $b->get_uri;
       return $a_str cmp $b_str;
@@ -1460,11 +1460,11 @@ Description here
 
 Returns a new resource represented by the URI.
 
-$r = HTTP::DAV::Resource->new(
-        -uri => $uri,
-        -LockedResourceList => $locks,
-        -Comms => $comms
-        -Client => $dav_client
+$r = HTTP::DAV::Resource->new( 
+        -uri => $uri, 
+        -LockedResourceList => $locks, 
+        -Comms => $comms 
+        -Client => $dav_client 
      );
 
 On creation a Resource object needs 2 other objects passed in:
@@ -1479,19 +1479,19 @@ On creation a Resource object needs 2 other objects passed in:
 
 =head1 METHODS
 
-=over 4
+=over 4 
 
 
 =item B<get/GET>
 
-Performs an HTTP GET and returns a DAV::Response object.
+Performs an HTTP GET and returns a DAV::Response object.        
 
  $response = $resource->get;
  print $resource->get_content if ($response->is_success);
 
 =item B<put/PUT>
 
-Performs an HTTP PUT and returns a DAV::Response object.
+Performs an HTTP PUT and returns a DAV::Response object.        
 
 $response = $resource->put( $string );
 
@@ -1505,11 +1505,11 @@ Will use a Lock header if this resource was previously locked.
 
 =item B<copy>
 
-Not implemented
+Not implemented 
 
 =item B<move>
 
-Not implemented
+Not implemented 
 
 =item B<delete>
 
@@ -1550,7 +1550,7 @@ Performs a WebDAV PROPFIND request and returns a DAV::Response object.
     print $resource->get_property("displayname") . "\n";
  }
 
-A successful PROPFIND fills the object with much data about the Resource.
+A successful PROPFIND fills the object with much data about the Resource.  
 Including:
    displayname
    ...
@@ -1565,7 +1565,7 @@ Performs a WebDAV LOCK request and returns a DAV::Response object.
         -owner   => "Patrick Collins",
         -depth   => "infinity"
         -scope   => "exclusive",
-        -type    => "write"
+        -type    => "write" 
         -timeout => TIMEOUT',
      )
 
@@ -1574,17 +1574,17 @@ lock takes the following arguments.
 
 B<owner> - Indicates who locked this resource
 
-The default value is:
+The default value is: 
  DAV.pm/v$DAV::VERSION ($$)
 
  e.g. DAV.pm/v0.1 (123)
 
 If you use a URL as the owner, the module will
-automatically indicate to the server that is is a
+automatically indicate to the server that is is a 
 URL (<D:href>http://...</D:href>)
 
 
-B<depth> - Indicates the depth of the lock.
+B<depth> - Indicates the depth of the lock. 
 
 Legal values are 0 or infinity. (1 is not allowed).
 
@@ -1597,7 +1597,7 @@ B<scope> - Indicates the scope of the lock.
 
 Legal DAV values are "exclusive" or "shared".
 
-The default value is exclusive.
+The default value is exclusive. 
 
 See section 6.1 of RFC2518 for a description of shared vs. exclusive locks.
 
@@ -1611,7 +1611,7 @@ The default value is write.
 
 B<timeout> - Indicates when the lock will timeout
 
-The timeout value may be one of, an Absolute Date, a Time Offset from now, or the word "infinity".
+The timeout value may be one of, an Absolute Date, a Time Offset from now, or the word "infinity". 
 
 The default value is "infinity".
 
@@ -1628,14 +1628,14 @@ Time Offset:
 Absolute Date:
 
     timeout at the indicated time & date (UTC/GMT)
-       2000-02-31 00:40:33
+       2000-02-31 00:40:33   
 
     timeout at the indicated date (UTC/GMT)
-       2000-02-31
+       2000-02-31            
 
 You can use any of the Absolute Date formats specified in HTTP::Date (see perldoc HTTP::Date)
 
-Note: the DAV server may choose to ignore your specified timeout.
+Note: the DAV server may choose to ignore your specified timeout. 
 
 
 =item B<unlock>
@@ -1644,7 +1644,7 @@ Performs a WebDAV UNLOCK request and returns a DAV::Response object.
 
  $response = $resource->unlock()
  $response = $resource->unlock( -force => 1 )
- $response = $resource->unlock(
+ $response = $resource->unlock( 
     -token => "opaquelocktoken:1342-21423-2323" )
 
 This method will automatically use the correct locktoken If: header if this resource was previously locked.
@@ -1657,7 +1657,7 @@ Remove all locks from a resource and return the last DAV::Response object. This 
 
 $response = $resource->forcefully_unlock_all;
 
-This method will perform a lockdiscovery against the resource to determine all of the current locks. Then it will UNLOCK them one by one. unlock( -token => locktoken ).
+This method will perform a lockdiscovery against the resource to determine all of the current locks. Then it will UNLOCK them one by one. unlock( -token => locktoken ). 
 
 This unlock process is achievable because DAV does not enforce any security over locks.
 
@@ -1692,14 +1692,14 @@ print $resource->as_string
 
 =head1 ACCESSOR METHODS (get, set and is)
 
-=over 4
+=over 4 
 
 =item B<is_option>
 
 Returns a boolean indicating whether this resource supports the option passed in as a string. The option match is case insensitive so, PUT and Put are should both work.
 
  if ($resource->is_option( "PUT" ) ) {
-    $resource->put( ... )
+    $resource->put( ... ) 
  }
 
 Note: this routine automatically calls the options() routine which makes the request to the server. Subsequent calls to is_option will use the cached option list. To force a rerequest to the server call options()
@@ -1714,7 +1714,7 @@ B<owned> - this parameter is used to ask, is this resource locked by me?
 
 Note: You must have already called propfind() or lockdiscovery()
 
-e.g.
+e.g. 
 Is the resource locked at all?
  print "yes" if $resource->is_locked();
 
@@ -1726,7 +1726,7 @@ Is the resource locked by someone other than me?
 
 =item B<is_collection>
 
-Returns a boolean indicating whether this resource is a collection.
+Returns a boolean indicating whether this resource is a collection. 
 
  print "Directory" if ( $resource->is_collection );
 
@@ -1758,7 +1758,7 @@ Note: If $resource->options has not been called then it will return an empty arr
 =item B<get_content>
 
 Returns the resource's content/body as a string.
-The content is typically the result of a GET.
+The content is typically the result of a GET. 
 
 $content = $resource->get_content
 
@@ -1790,7 +1790,7 @@ B<owned> - this parameter indicates which locks you want.
 
 Note: You must have already called propfind() or lockdiscovery()
 
-e.g.
+e.g. 
  Give me my locks
   @lock = $resource->get_locks( -owned=>1 );
 

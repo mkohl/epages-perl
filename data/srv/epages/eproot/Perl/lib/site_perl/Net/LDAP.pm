@@ -13,24 +13,24 @@ use Convert::ASN1 qw(asn_read);
 use Net::LDAP::Message;
 use Net::LDAP::ASN qw(LDAPResponse);
 use Net::LDAP::Constant qw(LDAP_SUCCESS
-                           LDAP_OPERATIONS_ERROR
-                           LDAP_SASL_BIND_IN_PROGRESS
-                           LDAP_DECODING_ERROR
-                           LDAP_PROTOCOL_ERROR
-                           LDAP_ENCODING_ERROR
-                           LDAP_FILTER_ERROR
-                           LDAP_LOCAL_ERROR
-                           LDAP_PARAM_ERROR
-                           LDAP_INAPPROPRIATE_AUTH
-                           LDAP_SERVER_DOWN
-                           LDAP_USER_CANCELED
-                           LDAP_EXTENSION_START_TLS
-                           LDAP_UNAVAILABLE
-                        );
+			   LDAP_OPERATIONS_ERROR
+			   LDAP_SASL_BIND_IN_PROGRESS
+			   LDAP_DECODING_ERROR
+			   LDAP_PROTOCOL_ERROR
+			   LDAP_ENCODING_ERROR
+			   LDAP_FILTER_ERROR
+			   LDAP_LOCAL_ERROR
+			   LDAP_PARAM_ERROR
+			   LDAP_INAPPROPRIATE_AUTH
+			   LDAP_SERVER_DOWN
+			   LDAP_USER_CANCELED
+			   LDAP_EXTENSION_START_TLS
+			   LDAP_UNAVAILABLE
+			);
 
-$VERSION        = "0.4001";
-@ISA            = qw(Tie::StdHash Net::LDAP::Extra);
-$LDAP_VERSION   = 3;      # default LDAP protocol version
+$VERSION 	= "0.4001";
+@ISA     	= qw(Tie::StdHash Net::LDAP::Extra);
+$LDAP_VERSION 	= 3;      # default LDAP protocol version
 
 # Net::LDAP::Extra will only exist is someone use's the module. But we need
 # to ensure the package stash exists or perl will complain that we inherit
@@ -55,10 +55,10 @@ sub _options {
     $ret{substr($v,1)} = $ret{$v};
   }
 
-  $ret{control} = [ map { (ref($_) =~ /[^A-Z]/) ? $_->to_asn : $_ }
-                      ref($ret{control}) eq 'ARRAY'
-                        ? @{$ret{control}}
-                        : $ret{control}
+  $ret{control} = [ map { (ref($_) =~ /[^A-Z]/) ? $_->to_asn : $_ } 
+		      ref($ret{control}) eq 'ARRAY'
+			? @{$ret{control}}
+			: $ret{control}
                   ]
     if exists $ret{control};
 
@@ -79,9 +79,9 @@ sub _err_msg {
 
 my %onerror = (
   'die'   => sub {
-                require Carp;
-                Carp::croak(_err_msg(@_))
-             },
+		require Carp;
+		Carp::croak(_err_msg(@_))
+	     },
   'warn'  => sub { require Carp; Carp::carp(_err_msg(@_)); $_[0] },
   'undef' => sub { require Carp; Carp::carp(_err_msg(@_)) if $^W; undef },
 );
@@ -143,7 +143,7 @@ sub connect_ldap {
   if ($arg->{inet6}) {
     require IO::Socket::INET6;
     $class = 'IO::Socket::INET6';
-  }
+  }  
 
   $ldap->{net_ldap_socket} = $class->new(
     PeerAddr   => $host,
@@ -152,10 +152,10 @@ sub connect_ldap {
     Proto      => 'tcp',
     MultiHomed => $arg->{multihomed},
     Timeout    => defined $arg->{timeout}
-                 ? $arg->{timeout}
-                 : 120
+		 ? $arg->{timeout}
+		 : 120
   ) or return undef;
-
+  
   $ldap->{net_ldap_host} = $host;
   $ldap->{net_ldap_port} = $port;
 }
@@ -176,11 +176,11 @@ sub connect_ldaps {
   $host =~ s/^([^:]+|\[.*\]):(\d+)$/$1/ and $port = $2;
 
   $ldap->{'net_ldap_socket'} = IO::Socket::SSL->new(
-    PeerAddr        => $host,
-    PeerPort        => $port,
+    PeerAddr 	    => $host,
+    PeerPort 	    => $port,
     LocalAddr       => $arg->{localaddr} || undef,
-    Proto           => 'tcp',
-    Timeout         => defined $arg->{'timeout'} ? $arg->{'timeout'} : 120,
+    Proto    	    => 'tcp',
+    Timeout  	    => defined $arg->{'timeout'} ? $arg->{'timeout'} : 120,
     _SSL_context_init_args($arg)
   ) or return undef;
 
@@ -202,10 +202,10 @@ sub _SSL_context_init_args {
   if (exists $arg->{'clientcert'}) {
       $clientcert = $arg->{'clientcert'};
       if (exists $arg->{'clientkey'}) {
-          $clientkey = $arg->{'clientkey'};
+	  $clientkey = $arg->{'clientkey'};
       } else {
-          require Carp;
-          Carp::croak("Setting client public key but not client private key");
+	  require Carp;
+	  Carp::croak("Setting client public key but not client private key");
       }
   }
 
@@ -244,8 +244,8 @@ sub connect_ldapi {
   $ldap->{net_ldap_socket} = IO::Socket::UNIX->new(
     Peer => $peer,
     Timeout  => defined $arg->{timeout}
-                 ? $arg->{timeout}
-                 : 120
+		 ? $arg->{timeout}
+		 : 120
   ) or return undef;
 
   $ldap->{net_ldap_host} = 'localhost';
@@ -544,20 +544,20 @@ sub modify {
     while($j < @{$arg->{changes}}) {
       return _error($ldap, $mesg, LDAP_PARAM_ERROR,"Bad change type '" . $arg->{changes}[--$j] . "'")
        unless defined($opcode = $opcode{$arg->{changes}[$j++]});
-
+      
       $chg = $arg->{changes}[$j++];
       if (ref($chg)) {
-        my $i = 0;
-        while ($i < @$chg) {
+	my $i = 0;
+	while ($i < @$chg) {
           push @ops, {
-            operation => $opcode,
-            modification => {
-              type => $chg->[$i],
-              vals => ref($chg->[$i+1]) ? $chg->[$i+1] : [$chg->[$i+1]]
-            }
-          };
-          $i += 2;
-        }
+	    operation => $opcode,
+	    modification => {
+	      type => $chg->[$i],
+	      vals => ref($chg->[$i+1]) ? $chg->[$i+1] : [$chg->[$i+1]]
+	    }
+	  };
+	  $i += 2;
+	}
       }
     }
   }
@@ -569,38 +569,38 @@ sub modify {
       my($k,$v);
 
       if (ref($opt) eq 'HASH') {
-        while (($k,$v) = each %$opt) {
+	while (($k,$v) = each %$opt) {
           push @ops, {
-            operation => $opcode,
-            modification => {
-              type => $k,
-              vals => ref($v) ? $v : [$v]
-            }
-          };
-        }
+	    operation => $opcode,
+	    modification => {
+	      type => $k,
+	      vals => ref($v) ? $v : [$v]
+	    }
+	  };
+	}
       }
       elsif (ref($opt) eq 'ARRAY') {
-        $k = 0;
-        while ($k < @{$opt}) {
+	$k = 0;
+	while ($k < @{$opt}) {
           my $attr = ${$opt}[$k++];
           my $val = $opcode == 1 ? [] : ${$opt}[$k++];
           push @ops, {
-            operation => $opcode,
-            modification => {
-              type => $attr,
-              vals => ref($val) ? $val : [$val]
-            }
-          };
-        }
+	    operation => $opcode,
+	    modification => {
+	      type => $attr,
+	      vals => ref($val) ? $val : [$val]
+	    }
+	  };
+	}
       }
       else {
-        push @ops, {
-          operation => $opcode,
-          modification => {
-            type => $opt,
-            vals => []
-          }
-        };
+	push @ops, {
+	  operation => $opcode,
+	  modification => {
+	    type => $opt,
+	    vals => []
+	  }
+	};
       }
     }
   }
@@ -686,24 +686,24 @@ sub compare {
     or return _error($ldap, $mesg, LDAP_PARAM_ERROR,"No DN specified");
 
   my $attr = exists $arg->{attr}
-                ? $arg->{attr}
-                : exists $arg->{attrs} #compat
-                   ? $arg->{attrs}[0]
-                   : "";
+		? $arg->{attr}
+		: exists $arg->{attrs} #compat
+		   ? $arg->{attrs}[0]
+		   : "";
 
   my $value = exists $arg->{value}
-                ? $arg->{value}
-                : exists $arg->{attrs} #compat
-                   ? $arg->{attrs}[1]
-                   : "";
+		? $arg->{value}
+		: exists $arg->{attrs} #compat
+		   ? $arg->{attrs}[1]
+		   : "";
 
 
   $mesg->encode(
     compareRequest => {
       entry => ref($dn) ? $dn->dn : $dn,
       ava   => {
-        attributeDesc  => $attr,
-        assertionValue => $value
+	attributeDesc  => $attr,
+	assertionValue => $value
       }
     },
     controls => $control
@@ -845,10 +845,10 @@ sub process {
       print STDERR "$ldap received:\n";
 
       Convert::ASN1::asn_hexdump(\*STDERR,$pdu)
-        if $debug & 2;
+	if $debug & 2;
 
       Convert::ASN1::asn_dump(\*STDERR,$pdu)
-        if $debug & 8;
+	if $debug & 8;
     }
 
     my $result = $LDAPResponse->decode($pdu)
@@ -859,10 +859,10 @@ sub process {
 
     unless ($mesg) {
       if (my $ext = $result->{protocolOp}{extendedResp}) {
-        if (($ext->{responseName} || '') eq '1.3.6.1.4.1.1466.20036') {
-          # notice of disconnection
-          return _drop_conn($ldap, LDAP_SERVER_DOWN, "Notice of Disconnection");
-        }
+	if (($ext->{responseName} || '') eq '1.3.6.1.4.1.1466.20036') {
+	  # notice of disconnection
+	  return _drop_conn($ldap, LDAP_SERVER_DOWN, "Notice of Disconnection");
+	}
       }
 
       print STDERR "Unexpected PDU, ignored\n" if $debug & 10;
@@ -944,14 +944,14 @@ sub schema {
     scope  => 'base',
     filter => '(objectClass=subschema)',
     attrs  => [qw(
-                objectClasses
-                attributeTypes
-                matchingRules
-                matchingRuleUse
-                dITStructureRules
-                dITContentRules
-                nameForms
-                ldapSyntaxes
+		objectClasses
+		attributeTypes
+		matchingRules
+		matchingRuleUse
+		dITStructureRules
+		dITContentRules
+		nameForms
+		ldapSyntaxes
                 extendedAttributeInfo
               )],
   );
@@ -966,17 +966,17 @@ sub root_dse {
   my $ldap = shift;
   my %arg  = @_;
   my $attrs = $arg{attrs} || [qw(
-                  subschemaSubentry
-                  namingContexts
-                  altServer
-                  supportedExtension
-                  supportedControl
-                  supportedFeatures
-                  supportedSASLMechanisms
-                  supportedLDAPVersion
-                  vendorName
-                  vendorVersion
-                )];
+		  subschemaSubentry
+		  namingContexts
+		  altServer
+		  supportedExtension
+		  supportedControl
+		  supportedFeatures
+		  supportedSASLMechanisms
+		  supportedLDAPVersion
+		  vendorName
+		  vendorVersion
+		)];
   my $root = $arg{attrs} && $ldap->{net_ldap_root_dse};
 
   return $root if $root;

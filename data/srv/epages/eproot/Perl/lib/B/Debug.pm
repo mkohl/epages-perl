@@ -32,30 +32,30 @@ sub B::OP::debug {
     my ($op) = @_;
     printf <<'EOT', class($op), $$op, $op->ppaddr, _printop($op->next), _printop($op->sibling), $op->targ, $op->type;
 %s (0x%lx)
-        op_ppaddr       %s
-        op_next         %s
-        op_sibling      %s
-        op_targ         %d
-        op_type         %d
+	op_ppaddr	%s
+	op_next		%s
+	op_sibling	%s
+	op_targ		%d
+	op_type		%d
 EOT
     if ($] > 5.009) {
-        printf <<'EOT', $op->opt;
-        op_opt          %d
+	printf <<'EOT', $op->opt;
+	op_opt		%d
 EOT
     } else {
-        printf <<'EOT', $op->seq;
-        op_seq          %d
+	printf <<'EOT', $op->seq;
+	op_seq		%d
 EOT
     }
     if ($have_B_Flags) {
         printf <<'EOT', $op->flags, $op->flagspv, $op->private, $op->privatepv;
-        op_flags        %d      %s
-        op_private      %d      %s
+	op_flags	%d	%s
+	op_private	%d	%s
 EOT
     } else {
         printf <<'EOT', $op->flags, $op->private;
-        op_flags        %d
-        op_private      %d
+	op_flags	%d
+	op_private	%d
 EOT
     }
 }
@@ -76,9 +76,9 @@ sub B::LOOP::debug {
     my ($op) = @_;
     $op->B::BINOP::debug();
     printf <<'EOT', _printop($op->redoop), _printop($op->nextop), _printop($op->lastop);
-        op_redoop       %s
-        op_nextop       %s
-        op_lastop       %s
+	op_redoop	%s
+	op_nextop	%s
+	op_lastop	%s
 EOT
 }
 
@@ -119,14 +119,14 @@ sub B::COP::debug {
     $op->B::OP::debug();
     my $cop_io = class($op->io) eq 'SPECIAL' ? '' : $op->io->as_string;
     printf <<'EOT', $op->label, $op->stashpv, $op->file, $op->cop_seq, $op->arybase, $op->line, ${$op->warnings}, cstring($cop_io);
-        cop_label       "%s"
-        cop_stashpv     "%s"
-        cop_file        "%s"
-        cop_seq         %d
-        cop_arybase     %d
-        cop_line        %d
-        cop_warnings    0x%x
-        cop_io          %s
+	cop_label	"%s"
+	cop_stashpv	"%s"
+	cop_file	"%s"
+	cop_seq		%d
+	cop_arybase	%d
+	cop_line	%d
+	cop_warnings	0x%x
+	cop_io		%s
 EOT
 }
 
@@ -152,22 +152,22 @@ sub B::PADOP::debug {
 sub B::NULL::debug {
     my ($sv) = @_;
     if ($$sv == ${sv_undef()}) {
-        print "&sv_undef\n";
+	print "&sv_undef\n";
     } else {
-        printf "NULL (0x%x)\n", $$sv;
+	printf "NULL (0x%x)\n", $$sv;
     }
 }
 
 sub B::SV::debug {
     my ($sv) = @_;
     if (!$$sv) {
-        print class($sv), " = NULL\n";
-        return;
+	print class($sv), " = NULL\n";
+	return;
     }
     printf <<'EOT', class($sv), $$sv, $sv->REFCNT, $sv->FLAGS;
 %s (0x%x)
-        REFCNT          %d
-        FLAGS           0x%x
+	REFCNT		%d
+	FLAGS		0x%x
 EOT
 }
 
@@ -175,7 +175,7 @@ sub B::RV::debug {
     my ($rv) = @_;
     B::SV::debug($rv);
     printf <<'EOT', ${$rv->RV};
-        RV              0x%x
+	RV		0x%x
 EOT
     $rv->RV->debug;
 }
@@ -185,8 +185,8 @@ sub B::PV::debug {
     $sv->B::SV::debug();
     my $pv = $sv->PV();
     printf <<'EOT', cstring($pv), length($pv);
-        xpv_pv          %s
-        xpv_cur         %d
+	xpv_pv		%s
+	xpv_cur		%d
 EOT
 }
 
@@ -240,15 +240,15 @@ sub B::CV::debug {
     my ($file) = $sv->FILE;
     my ($gv) = $sv->GV;
     printf <<'EOT', $$stash, $$start, $$root, $$gv, $file, $sv->DEPTH, $padlist, ${$sv->OUTSIDE}, $sv->OUTSIDE_SEQ;
-        STASH           0x%x
-        START           0x%x
-        ROOT            0x%x
-        GV              0x%x
-        FILE            %s
-        DEPTH           %d
-        PADLIST         0x%x
-        OUTSIDE         0x%x
-        OUTSIDE_SEQ     %d
+	STASH		0x%x
+	START		0x%x
+	ROOT		0x%x
+	GV		0x%x
+	FILE		%s
+	DEPTH		%d
+	PADLIST		0x%x
+	OUTSIDE		0x%x
+	OUTSIDE_SEQ	%d
 EOT
     $start->debug if $start;
     $root->debug if $root;
@@ -265,45 +265,45 @@ sub B::AV::debug {
     my $fill = eval { scalar(@array) };
     if ($Config{'useithreads'}) {
       printf <<'EOT', $fill, $av->MAX, $av->OFF;
-        FILL            %d
-        MAX             %d
-        OFF             %d
+	FILL		%d
+	MAX		%d
+	OFF		%d
 EOT
     } else {
       printf <<'EOT', $fill, $av->MAX;
-        FILL            %d
-        MAX             %d
+	FILL		%d
+	MAX		%d
 EOT
     }
     printf <<'EOT', $av->AvFLAGS if $] < 5.009;
-        AvFLAGS         %d
+	AvFLAGS		%d
 EOT
 }
 
 sub B::GV::debug {
     my ($gv) = @_;
     if ($done_gv{$$gv}++) {
-        printf "GV %s::%s\n", $gv->STASH->NAME, $gv->SAFENAME;
-        return;
+	printf "GV %s::%s\n", $gv->STASH->NAME, $gv->SAFENAME;
+	return;
     }
     my ($sv) = $gv->SV;
     my ($av) = $gv->AV;
     my ($cv) = $gv->CV;
     $gv->B::SV::debug;
     printf <<'EOT', $gv->SAFENAME, $gv->STASH->NAME, $gv->STASH, $$sv, $gv->GvREFCNT, $gv->FORM, $$av, ${$gv->HV}, ${$gv->EGV}, $$cv, $gv->CVGEN, $gv->LINE, $gv->FILE, $gv->GvFLAGS;
-        NAME            %s
-        STASH           %s (0x%x)
-        SV              0x%x
-        GvREFCNT        %d
-        FORM            0x%x
-        AV              0x%x
-        HV              0x%x
-        EGV             0x%x
-        CV              0x%x
-        CVGEN           %d
-        LINE            %d
-        FILE            %s
-        GvFLAGS         0x%x
+	NAME		%s
+	STASH		%s (0x%x)
+	SV		0x%x
+	GvREFCNT	%d
+	FORM		0x%x
+	AV		0x%x
+	HV		0x%x
+	EGV		0x%x
+	CV		0x%x
+	CVGEN		%d
+	LINE		%d
+	FILE		%s
+	GvFLAGS		0x%x
 EOT
     $sv->debug if $sv;
     $av->debug if $av;
@@ -335,7 +335,7 @@ B::Debug - Walk Perl syntax tree, printing debug info about ops
 
 =head1 SYNOPSIS
 
-        perl -MO=Debug[,OPTIONS] foo.pl
+	perl -MO=Debug[,OPTIONS] foo.pl
 
 =head1 DESCRIPTION
 
@@ -349,46 +349,46 @@ otherwise in basic order.
 =head1 Changes
 
   1.12 2010-02-10 rurban
-        remove archlib installation cruft, and use the proper PM rule.
-        By Todd Rinaldo (toddr)
+	remove archlib installation cruft, and use the proper PM rule.
+	By Todd Rinaldo (toddr)
 
   1.11 2008-07-14 rurban
-        avoid B::Flags in CORE tests not to crash on old XS in @INC
+	avoid B::Flags in CORE tests not to crash on old XS in @INC
 
   1.10 2008-06-28 rurban
-        require 5.006; Test::More not possible in 5.00505
-        our => my
-
+	require 5.006; Test::More not possible in 5.00505
+	our => my
+	
   1.09 2008-06-18 rurban
-        minor META.yml syntax fix
-        5.8.0 ending nextstate test failure: be more tolerant
-        PREREQ_PM Test::More
+	minor META.yml syntax fix
+	5.8.0 ending nextstate test failure: be more tolerant
+	PREREQ_PM Test::More
 
   1.08 2008-06-17 rurban
-        support 5.00558 - 5.6.2
+	support 5.00558 - 5.6.2
 
   1.07 2008-06-16 rurban
-        debug.t: fix strawberry perl quoting issue
+	debug.t: fix strawberry perl quoting issue
 
   1.06 2008-06-11 rurban
-        added B::Flags output
-        dual-life CPAN as B-Debug-1.06 and CORE
-        protect scalar(@array) if tied arrays leave out FETCHSIZE
+	added B::Flags output
+	dual-life CPAN as B-Debug-1.06 and CORE
+	protect scalar(@array) if tied arrays leave out FETCHSIZE
 
   1.05_03 2008-04-16 rurban
-        ithread fixes in B::AV
-        B-C-1.04_??
+	ithread fixes in B::AV
+	B-C-1.04_??
 
   B-C-1.04_09 2008-02-24 rurban
-        support 5.8 (import Asmdata)
+	support 5.8 (import Asmdata)
 
   1.05_02 2008-02-21 rurban
-        added _printop
-        B-C-1.04_08 and CORE
+	added _printop
+	B-C-1.04_08 and CORE
 
   1.05_01 2008-02-05 rurban
-        5.10 fix for op->seq
-        B-C-1.04_04
+	5.10 fix for op->seq
+	B-C-1.04_04
 
 =head1 AUTHOR
 
@@ -400,14 +400,14 @@ Reini Urban C<rurban@cpan.org>
 Copyright (c) 1996, 1997 Malcolm Beattie
 Copyright (c) 2008 Reini Urban
 
-        This program is free software; you can redistribute it and/or modify
-        it under the terms of either:
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of either:
 
-        a) the GNU General Public License as published by the Free
-        Software Foundation; either version 1, or (at your option) any
-        later version, or
+	a) the GNU General Public License as published by the Free
+	Software Foundation; either version 1, or (at your option) any
+	later version, or
 
-        b) the "Artistic License" which comes with this kit.
+	b) the "Artistic License" which comes with this kit.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of

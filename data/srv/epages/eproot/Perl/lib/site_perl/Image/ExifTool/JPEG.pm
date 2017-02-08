@@ -360,7 +360,7 @@ $VERSION = '1.12';
             1 => 'Odd',
             2 => 'Even',
         },
-    },
+    },    
 );
 
 # NITF APP6 segment (National Imagery Transmission Format)
@@ -429,7 +429,7 @@ $VERSION = '1.12';
     PROCESS_PROC => \&Image::ExifTool::JPEG::ProcessScalado,
     TAG_PREFIX => 'Scalado',
     FORMAT => 'int32s',
-    # I presume this was written by
+    # I presume this was written by 
     NOTES => q{
         Tags extracted from the JPEG APP4 "SCALADO" segment (presumably written by
         Scalado mobile software, L<http://www.scalado.com/>).

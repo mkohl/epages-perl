@@ -9,33 +9,33 @@
 
 # This file returns the 64 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{Block=NKo}
 #         \p{Blk=NKo}
 #         \p{Is_Block=NKo}
 #         \p{Is_Blk=NKo}
-#
+# 
 #         \p{In_NKo}
-#
+# 
 #     Note that contrary to what you might expect, the above is NOT the same
 #     as any of: \p{Nko}, \p{Is_NKo}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Blk: NKo}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-07C0    07FF     # [64]
+07C0	07FF	 # [64]
 END

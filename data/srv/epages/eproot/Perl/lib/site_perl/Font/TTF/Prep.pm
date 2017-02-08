@@ -53,7 +53,7 @@ sub out_xml
     $fh->print("$depth</code>\n");
     $self;
 }
-
+    
 
 =head2 $t->XML_end($context, $tag, %attrs)
 

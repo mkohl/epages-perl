@@ -45,7 +45,7 @@ sub _run {
 
     print 'Deleted exchange', "\n";
     return;
-}
+} 
 
 1;
 

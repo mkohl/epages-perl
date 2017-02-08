@@ -82,7 +82,7 @@ L<Regexp::Common> for a general description of how to use this interface.
 
 =item L<http://www.beachnet.com/~hstiles/cardtype.html>
 
-Credit Card Validation - Check Digits
+Credit Card Validation - Check Digits 
 
 =item L<http://euro.ecom.cmu.edu/resources/elibrary/everycc.htm>
 

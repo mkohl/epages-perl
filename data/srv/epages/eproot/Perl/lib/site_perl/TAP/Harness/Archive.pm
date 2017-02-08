@@ -113,7 +113,7 @@ sub new {
 
     # handle any extra files
     if($extra_files) {
-        ref $extra_files eq 'ARRAY'
+        ref $extra_files eq 'ARRAY' 
             or $class->_croak("extra_files must be an array reference!");
         foreach my $file (@$extra_files) {
             $class->_croak("extra_file $file does not exist!") unless -e $file;
@@ -197,7 +197,7 @@ sub runtests {
         $archive->add_files($self->_get_all_tap_files);
         chdir($cwd) or $self->_croak("Could not return to directory $cwd: $!");
     }
-
+ 
     # add in any extra files
     if(my $x_files = $self->{__archive_extra_files}) {
         my @rel_x_files;
@@ -311,7 +311,7 @@ The structure of the YAML file will be passed in as an argument.
                 my ($parser, $file, $full_path) = @_;
                 warn "$file is temporarily located at $full_path\n";
             }
-
+            
         }
     );
 

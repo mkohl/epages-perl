@@ -26,14 +26,14 @@ sub read
 {
     my ($self) = @_;
     my ($dat, $fh, $numChains);
-
+    
     $self->SUPER::read or return $self;
 
     $fh = $self->{' INFILE'};
 
     $fh->read($dat, 8);
     ($self->{'version'}, $numChains) = TTF_Unpack("vL", $dat);
-
+    
     my $chains = [];
     foreach (1 .. $numChains) {
         my $chain = new Font::TTF::Mort::Chain->new;
@@ -56,7 +56,7 @@ Writes the table to a file either from memory or by copying
 sub out
 {
     my ($self, $fh) = @_;
-
+    
     return $self->SUPER::out($fh) unless $self->{' read'};
 
     my $chains = $self->{'chains'};
@@ -76,17 +76,17 @@ Prints a human-readable representation of the table
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     $self->read unless $self->{' read'};
     my $feat = $self->{' PARENT'}->{'feat'};
     $feat->read;
     my $post = $self->{' PARENT'}->{'post'};
     $post->read;
-
+    
     $fh = 'STDOUT' unless defined $fh;
 
     $fh->printf("version %f\n", $self->{'version'});
-
+    
     my $chains = $self->{'chains'};
     foreach (@$chains) {
         $_->print($fh);

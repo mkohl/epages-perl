@@ -29,9 +29,9 @@ our $AUTOLOAD;
 #------------------------------------------------------------------------
 # new($context, \%config)
 #
-# This constructor method creates a simple, empty object to act as a
+# This constructor method creates a simple, empty object to act as a 
 # receiver for future object calls.  No doubt there are many interesting
-# configuration options that might be passed, but I'll leave that for
+# configuration options that might be passed, but I'll leave that for 
 # someone more knowledgable in these areas to contribute...
 #------------------------------------------------------------------------
 

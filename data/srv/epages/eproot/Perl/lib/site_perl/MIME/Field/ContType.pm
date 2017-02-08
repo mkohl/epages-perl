@@ -32,20 +32,20 @@ Instead, ask Mail::Field for new instances based on the field name!
 
     # Get information related to "message" type:
     if ($type eq 'message') {
-        print $field->id;
-        print $field->number;
-        print $field->total;
+	print $field->id;
+	print $field->number;
+	print $field->total;
     }
 
     # Get information related to "multipart" type:
     if ($type eq 'multipart') {
-        print $field->boundary;            # the basic value, fixed up
-        print $field->multipart_boundary;  # empty if not a multipart message!
+	print $field->boundary;            # the basic value, fixed up
+	print $field->multipart_boundary;  # empty if not a multipart message!
     }
 
     # Get information related to "text" type:
     if ($type eq 'text') {
-        print $field->charset;      # returns 'us-ascii' as default
+	print $field->charset;      # returns 'us-ascii' as default
     }
 
 

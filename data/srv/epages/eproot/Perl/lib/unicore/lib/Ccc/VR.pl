@@ -9,53 +9,53 @@
 
 # This file returns the 27 code points in Unicode Version 5.2.0 that match
 # any of the following regular expression constructs:
-#
+# 
 #         \p{Canonical_Combining_Class=Virama}
 #         \p{Ccc=VR}
 #         \p{Is_Canonical_Combining_Class=9}
 #         \p{Is_Ccc=Virama}
-#
+# 
 # perluniprops.pod should be consulted for the syntax rules for any of these,
 # including if adding or subtracting white space, underscore, and hyphen
 # characters matters or doesn't matter, and other permissible syntactic
 # variants.  Upper/lower case distinctions never matter.
-#
+# 
 # A colon can be substituted for the equals sign, and anything to the left of
 # the equals (or colon) can be combined with anything to the right.  Thus,
 # for example,
 #         \p{Is_Ccc: Virama}
 # is also valid.
-#
+# 
 # The format of the lines of this file is: START\tSTOP\twhere START is the
 # starting code point of the range, in hex; STOP is the ending point, or if
 # omitted, the range has just one code point.  Numbers in comments in
 # [brackets] indicate how many code points are in the range.
 
 return <<'END';
-094D
-09CD
-0A4D
-0ACD
-0B4D
-0BCD
-0C4D
-0CCD
-0D4D
-0DCA
-0E3A
-0F84
-1039    103A     # [2]
-1714
-1734
-17D2
-1A60
-1B44
-1BAA
-A806
-A8C4
-A953
-A9C0
-ABED
-10A3F
-110B9
+094D		
+09CD		
+0A4D		
+0ACD		
+0B4D		
+0BCD		
+0C4D		
+0CCD		
+0D4D		
+0DCA		
+0E3A		
+0F84		
+1039	103A	 # [2]
+1714		
+1734		
+17D2		
+1A60		
+1B44		
+1BAA		
+A806		
+A8C4		
+A953		
+A9C0		
+ABED		
+10A3F		
+110B9		
 END

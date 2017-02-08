@@ -187,7 +187,7 @@ after 'install_accessors' => sub {
             package_name => $class_name,
             name => $method_name,
         );
-
+        
         $attr->associate_method($method);
         $class->add_method($method_name => $method);
     }
@@ -239,7 +239,7 @@ Ensures that the type constraint (C<isa>) matches the helper type.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

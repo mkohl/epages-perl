@@ -136,7 +136,7 @@ sub make_slave_controlling_terminal {
   } else {
     close \*DEVTTY;
   }
-
+  
   return 1;
 }
 
@@ -166,9 +166,9 @@ IO::Pty - Pseudo TTY object class
     $slave  = $pty->slave;
 
     foreach $val (1..10) {
-        print $pty "$val\n";
-        $_ = <$slave>;
-        print "$_";
+	print $pty "$val\n";
+	$_ = <$slave>;
+	print "$_";
     }
 
     close($slave);
@@ -296,7 +296,7 @@ Ptty module by Nick Ing-Simmons E<lt>F<nik@tiuk.ti.com>E<gt>.
 Now maintained and heavily rewritten by Roland Giersig
 E<lt>F<RGiersig@cpan.org>E<gt>.
 
-Contains copyrighted stuff from openssh v3.0p1, authored by
+Contains copyrighted stuff from openssh v3.0p1, authored by 
 Tatu Ylonen <ylo@cs.hut.fi>, Markus Friedl and Todd C. Miller
 <Todd.Miller@courtesan.com>.
 

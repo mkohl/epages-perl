@@ -180,7 +180,7 @@ This hashset contains all phrasal-level elements.
 %isPhraseMarkup = map {; $_ => 1 } qw(
   span abbr acronym q sub sup
   cite code em kbd samp strong var dfn strike
-  b i u s tt small big
+  b i u s tt small big 
   a img br
   wbr nobr blink
   font basefont bdo
@@ -276,9 +276,9 @@ the "body" element of an HTML document.
   ol ul dir menu li
   dl dt dd
   ins del
-
+  
   fieldset legend
-
+  
   map area
   applet param object
   isindex script noscript

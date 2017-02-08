@@ -36,7 +36,7 @@ use XSLoader ();
 %EXPORT_TAGS = (
     'glob' => [ qw(
         GLOB_ABEND
-        GLOB_ALPHASORT
+	GLOB_ALPHASORT
         GLOB_ALTDIRFUNC
         GLOB_BRACE
         GLOB_CSH
@@ -62,17 +62,17 @@ sub import {
     require Exporter;
     my $i = 1;
     while ($i < @_) {
-        if ($_[$i] =~ /^:(case|nocase|globally)$/) {
-            splice(@_, $i, 1);
-            $DEFAULT_FLAGS &= ~GLOB_NOCASE() if $1 eq 'case';
-            $DEFAULT_FLAGS |= GLOB_NOCASE() if $1 eq 'nocase';
-            if ($1 eq 'globally') {
-                local $^W;
-                *CORE::GLOBAL::glob = \&File::Glob::csh_glob;
-            }
-            next;
-        }
-        ++$i;
+	if ($_[$i] =~ /^:(case|nocase|globally)$/) {
+	    splice(@_, $i, 1);
+	    $DEFAULT_FLAGS &= ~GLOB_NOCASE() if $1 eq 'case';
+	    $DEFAULT_FLAGS |= GLOB_NOCASE() if $1 eq 'nocase';
+	    if ($1 eq 'globally') {
+		local $^W;
+		*CORE::GLOBAL::glob = \&File::Glob::csh_glob;
+	    }
+	    next;
+	}
+	++$i;
     }
     goto &Exporter::import;
 }
@@ -86,8 +86,8 @@ sub AUTOLOAD {
     ($constname = $AUTOLOAD) =~ s/.*:://;
     my ($error, $val) = constant($constname);
     if ($error) {
-        require Carp;
-        Carp::croak($error);
+	require Carp;
+	Carp::croak($error);
     }
     eval "sub $AUTOLOAD { $val }";
     goto &$AUTOLOAD;
@@ -103,10 +103,10 @@ sub GLOB_ERROR {
 
 sub GLOB_CSH () {
     GLOB_BRACE()
-        | GLOB_NOMAGIC()
-        | GLOB_QUOTE()
-        | GLOB_TILDE()
-        | GLOB_ALPHASORT()
+	| GLOB_NOMAGIC()
+	| GLOB_QUOTE()
+	| GLOB_TILDE()
+	| GLOB_ALPHASORT()
 }
 
 $DEFAULT_FLAGS = GLOB_CSH();
@@ -142,15 +142,15 @@ sub csh_glob {
     $pat = $_ unless defined $pat;
 
     # extract patterns
-    $pat =~ s/^\s+//;   # Protect against empty elements in
-    $pat =~ s/\s+$//;   # things like < *.c> and <*.c >.
-                        # These alone shouldn't trigger ParseWords.
+    $pat =~ s/^\s+//;	# Protect against empty elements in
+    $pat =~ s/\s+$//;	# things like < *.c> and <*.c >.
+			# These alone shouldn't trigger ParseWords.
     if ($pat =~ /\s/) {
         # XXX this is needed for compatibility with the csh
-        # implementation in Perl.  Need to support a flag
-        # to disable this behavior.
-        require Text::ParseWords;
-        @pat = Text::ParseWords::parse_line('\s+',0,$pat);
+	# implementation in Perl.  Need to support a flag
+	# to disable this behavior.
+	require Text::ParseWords;
+	@pat = Text::ParseWords::parse_line('\s+',0,$pat);
     }
 
     # assume global context if not provided one
@@ -159,12 +159,12 @@ sub csh_glob {
 
     # if we're just beginning, do it all first
     if ($iter{$cxix} == 0) {
-        if (@pat) {
-            $entries{$cxix} = [ map { doglob($_, $DEFAULT_FLAGS) } @pat ];
-        }
-        else {
-            $entries{$cxix} = [ doglob($pat, $DEFAULT_FLAGS) ];
-        }
+	if (@pat) {
+	    $entries{$cxix} = [ map { doglob($_, $DEFAULT_FLAGS) } @pat ];
+	}
+	else {
+	    $entries{$cxix} = [ doglob($pat, $DEFAULT_FLAGS) ];
+	}
     }
 
     # chuck it all out, quick or slow

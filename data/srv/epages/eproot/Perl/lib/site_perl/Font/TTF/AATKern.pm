@@ -25,7 +25,7 @@ Reads the table into memory
 sub read
 {
     my ($self) = @_;
-
+    
     $self->SUPER::read or return $self;
 
     my ($dat, $fh, $numSubtables);
@@ -33,11 +33,11 @@ sub read
 
     $fh->read($dat, 8);
     ($self->{'version'}, $numSubtables) = TTF_Unpack("vL", $dat);
-
+    
     my $subtables = [];
     foreach (1 .. $numSubtables) {
         my $subtableStart = $fh->tell();
-
+        
         $fh->read($dat, 8);
         my ($length, $coverage, $tupleIndex) = TTF_Unpack("LSS", $dat);
         my $type = $coverage & 0x00ff;
@@ -64,7 +64,7 @@ Writes the table to a file either from memory or by copying
 sub out
 {
     my ($self, $fh) = @_;
-
+    
     return $self->SUPER::out($fh) unless $self->{' read'};
 
     my $subtables = $self->{'subtables'};
@@ -84,13 +84,13 @@ Prints a human-readable representation of the table
 sub print
 {
     my ($self, $fh) = @_;
-
+    
     $self->read unless $self->{' read'};
-
+    
     $fh = 'STDOUT' unless defined $fh;
 
     $fh->printf("version %f\n", $self->{'version'});
-
+    
     my $subtables = $self->{'subtables'};
     foreach (@$subtables) {
         $_->print($fh);
@@ -104,10 +104,10 @@ sub dumpXML
 
     my $post = $self->{' PARENT'}->{'post'};
     $post->read;
-
+    
     $fh = 'STDOUT' unless defined $fh;
     $fh->printf("<kern version=\"%f\">\n", $self->{'version'});
-
+    
     my $subtables = $self->{'subtables'};
     foreach (@$subtables) {
         $fh->printf("<%s", $_->type);

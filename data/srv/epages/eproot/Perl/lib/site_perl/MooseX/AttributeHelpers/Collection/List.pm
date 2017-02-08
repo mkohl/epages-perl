@@ -32,7 +32,7 @@ MooseX::AttributeHelpers::Collection::List
   package Stuff;
   use Moose;
   use MooseX::AttributeHelpers;
-
+  
   has 'options' => (
       metaclass => 'Collection::List',
       is        => 'ro',
@@ -46,7 +46,7 @@ MooseX::AttributeHelpers::Collection::List
 
 =head1 DESCRIPTION
 
-This module provides an List attribute which provides a number of
+This module provides an List attribute which provides a number of 
 list operations. See L<MooseX::AttributeHelpers::MethodProvider::List>
 for more details.
 
@@ -66,7 +66,7 @@ for more details.
 
 =head1 BUGS
 
-All complex software has bugs lurking in it, and this module is no
+All complex software has bugs lurking in it, and this module is no 
 exception. If you find a bug please either email me, or add the bug
 to cpan-RT.
 

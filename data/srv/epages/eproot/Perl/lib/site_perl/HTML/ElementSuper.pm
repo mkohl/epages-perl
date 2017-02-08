@@ -154,7 +154,7 @@ sub _cloning {
                         return unless $startflag;
                         $node->_clone_state(0) if $node->can('_clone_state');
                         1;
-                      }, 'ignore_text');
+                      }, 'ignore_text');      
     }
   }
   $node->can('watchdog') && $node->watchdog ? $node->watchdog->cloning : 0;
@@ -204,7 +204,7 @@ sub mask {
     }
   }
   $self->{_mask};
-}
+} 
 
 sub starttag {
   my $self = shift;
@@ -522,7 +522,7 @@ HTML::ElementSuper - Perl extension for HTML::Element(3)
   $sibling_number = $e->addr();
   $e2 = new HTML::ElementSuper 'p';
   $e2->push_content($e);
-  #
+  # 
   @coords = $e->position();
   $depth_in_pos_tree = $e->depth();
 

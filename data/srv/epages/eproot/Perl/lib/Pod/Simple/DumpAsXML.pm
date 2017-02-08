@@ -26,7 +26,7 @@ sub _handle_element_start {
   my $fh = $_[0]{'output_fh'};
   my($key, $value);
   DEBUG and print "++ $_[1]\n";
-
+  
   print $fh   '  ' x ($_[0]{'indent'} || 0),  "<", $_[1];
 
   foreach my $key (sort keys %{$_[2]}) {
@@ -57,7 +57,7 @@ sub _handle_text {
         \x20{1,10}(?!\n)   # capture some spaces not at line-end
        /$1\n$indent/gx     # => line-break here
     ;
-
+    
     print {$_[0]{'output_fh'}} $indent, $text, "\n";
   }
   return;

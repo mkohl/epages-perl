@@ -19,7 +19,7 @@ sub bits {
     my $bits = 0;
     my @wrong;
     foreach my $s (@_) {
-        push @wrong, $s unless exists $bitmask{$s};
+	push @wrong, $s unless exists $bitmask{$s};
         $bits |= $bitmask{$s} || 0;
     }
     if (@wrong) {
@@ -70,16 +70,16 @@ strict about:  "subs", "vars", and "refs".
 
 =item C<strict refs>
 
-This generates a runtime error if you
+This generates a runtime error if you 
 use symbolic references (see L<perlref>).
 
     use strict 'refs';
     $ref = \$foo;
-    print $$ref;        # ok
+    print $$ref;	# ok
     $ref = "foo";
-    print $$ref;        # runtime error; normally ok
+    print $$ref;	# runtime error; normally ok
     $file = "STDOUT";
-    print $file "Hi!";  # error; note: no comma after $file
+    print $file "Hi!";	# error; note: no comma after $file
 
 There is one exception to this rule:
 
@@ -99,13 +99,13 @@ local() variable isn't good enough.  See L<perlfunc/my> and
 L<perlfunc/local>.
 
     use strict 'vars';
-    $X::foo = 1;         # ok, fully qualified
-    my $foo = 10;        # ok, my() var
-    local $foo = 9;      # blows up
+    $X::foo = 1;	 # ok, fully qualified
+    my $foo = 10;	 # ok, my() var
+    local $foo = 9;	 # blows up
 
     package Cinna;
-    our $bar;                   # Declares $bar in current package
-    $bar = 'HgS';               # ok, global declared via pragma
+    our $bar;			# Declares $bar in current package
+    $bar = 'HgS';		# ok, global declared via pragma
 
 The local() generated a compile-time error because you just touched a global
 name without fully qualifying it.
@@ -121,9 +121,9 @@ is a simple identifier (no colons) and that it appears in curly braces or
 on the left hand side of the C<< => >> symbol.
 
     use strict 'subs';
-    $SIG{PIPE} = Plumber;       # blows up
-    $SIG{PIPE} = "Plumber";     # just fine: quoted string is always ok
-    $SIG{PIPE} = \&Plumber;     # preferred form
+    $SIG{PIPE} = Plumber;   	# blows up
+    $SIG{PIPE} = "Plumber"; 	# just fine: quoted string is always ok
+    $SIG{PIPE} = \&Plumber; 	# preferred form
 
 =back
 

@@ -184,13 +184,13 @@ sub uncolor {
         push (@nums, split (/;/, $1));
     }
     for (@nums) {
-        $_ += 0; # Strip leading zeroes
-        my $name = $ATTRIBUTES_R{$_};
-        if (!defined $name) {
-            require Carp;
-            Carp::croak ("No name for escape sequence $_" );
-        }
-        push (@result, $name);
+	$_ += 0; # Strip leading zeroes
+	my $name = $ATTRIBUTES_R{$_};
+	if (!defined $name) {
+	    require Carp;
+	    Carp::croak ("No name for escape sequence $_" );
+	}
+	push (@result, $name);
     }
     return @result;
 }

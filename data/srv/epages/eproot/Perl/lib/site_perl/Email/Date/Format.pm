@@ -18,9 +18,9 @@ Email::Date::Format - produce RFC 2822 date strings
 =head1 SYNOPSIS
 
   use Email::Date::Format qw(email_date);
-
+  
   my $header = email_date($date->epoch);
-
+  
   Email::Simple->create(
     header => [
       Date => $header,

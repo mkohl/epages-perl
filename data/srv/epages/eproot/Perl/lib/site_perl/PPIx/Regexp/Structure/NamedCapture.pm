@@ -54,7 +54,7 @@ This method returns the name of the capture.
 sub name {
     my ( $self ) = @_;
     my $type = $self->type()
-        or croak 'Programming error - ', __PACKAGE__, ' without type object';
+	or croak 'Programming error - ', __PACKAGE__, ' without type object';
     return $type->name();
 }
 

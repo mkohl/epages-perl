@@ -5,37 +5,37 @@ Unix crypt()
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::BlowfishCrypt;
+	use Authen::Passphrase::BlowfishCrypt;
 
-        $ppr = Authen::Passphrase::BlowfishCrypt->new(
-                cost => 8,
-                salt => "sodium__chloride",
-                hash_base64 => "BPZijhMHLvPeNMHd6XwZyNamOXVBTPi");
+	$ppr = Authen::Passphrase::BlowfishCrypt->new(
+		cost => 8,
+		salt => "sodium__chloride",
+		hash_base64 => "BPZijhMHLvPeNMHd6XwZyNamOXVBTPi");
 
-        $ppr = Authen::Passphrase::BlowfishCrypt->new(
-                cost => 8, salt_random => 1,
-                passphrase => "passphrase");
+	$ppr = Authen::Passphrase::BlowfishCrypt->new(
+		cost => 8, salt_random => 1,
+		passphrase => "passphrase");
 
-        $ppr = Authen::Passphrase::BlowfishCrypt->from_crypt(
-                '$2a$08$a07iYVTrVz7hYEvtakjiXOB'.
-                'PZijhMHLvPeNMHd6XwZyNamOXVBTPi');
+	$ppr = Authen::Passphrase::BlowfishCrypt->from_crypt(
+		'$2a$08$a07iYVTrVz7hYEvtakjiXOB'.
+		'PZijhMHLvPeNMHd6XwZyNamOXVBTPi');
 
-        $ppr = Authen::Passphrase::BlowfishCrypt->from_rfc2307(
-                '{CRYPT}$2a$08$a07iYVTrVz7hYEvtakjiXOB'.
-                'PZijhMHLvPeNMHd6XwZyNamOXVBTPi');
+	$ppr = Authen::Passphrase::BlowfishCrypt->from_rfc2307(
+		'{CRYPT}$2a$08$a07iYVTrVz7hYEvtakjiXOB'.
+		'PZijhMHLvPeNMHd6XwZyNamOXVBTPi');
 
-        $key_nul = $ppr->key_nul;
-        $cost = $ppr->cost;
-        $cost = $ppr->keying_nrounds_log2;
-        $salt = $ppr->salt;
-        $salt_base64 = $ppr->salt_base64;
-        $hash = $ppr->hash;
-        $hash_base64 = $ppr->hash_base64;
+	$key_nul = $ppr->key_nul;
+	$cost = $ppr->cost;
+	$cost = $ppr->keying_nrounds_log2;
+	$salt = $ppr->salt;
+	$salt_base64 = $ppr->salt_base64;
+	$hash = $ppr->hash;
+	$hash_base64 = $ppr->hash_base64;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $passwd = $ppr->as_crypt;
-        $userPassword = $ppr->as_rfc2307;
+	$passwd = $ppr->as_crypt;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -163,67 +163,67 @@ The cost and salt must be given, and either the hash or the passphrase.
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "key_nul") {
-                        croak "foldness specified redundantly"
-                                if exists $self->{fold};
-                        $self->{key_nul} = !!$value;
-                } elsif($attr eq "cost" || $attr eq "keying_nrounds_log2") {
-                        croak "cost specified redundantly"
-                                if exists $self->{cost};
-                        croak "\"$value\" is not a valid cost parameter"
-                                unless $value == int($value) && $value >= 0;
-                        $self->{cost} = 0+$value;
-                } elsif($attr eq "salt") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $value =~ m#\A[\x00-\xff]{16}\z#
-                                or croak "\"$value\" is not a valid raw salt";
-                        $self->{salt} = "$value";
-                } elsif($attr eq "salt_base64") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        croak "\"$value\" is not a valid salt"
-                                unless length($value) == 22;
-                        $self->{salt} = de_base64($value);
-                } elsif($attr eq "salt_random") {
-                        croak "salt specified redundantly"
-                                if exists $self->{salt};
-                        $self->{salt} = rand_bits(128);
-                } elsif($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[\x00-\xff]{23}\z#
-                                or croak "not a valid raw hash";
-                        $self->{hash} = "$value";
-                } elsif($attr eq "hash_base64") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        croak "\"$value\" is not a valid hash"
-                                unless length($value) == 31;
-                        $self->{hash} = de_base64($value);
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        $self->{key_nul} = !!1 unless exists $self->{key_nul};
-        croak "cost not specified" unless exists $self->{cost};
-        croak "salt not specified" unless exists $self->{salt};
-        $self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
-        croak "hash not specified" unless exists $self->{hash};
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "key_nul") {
+			croak "foldness specified redundantly"
+				if exists $self->{fold};
+			$self->{key_nul} = !!$value;
+		} elsif($attr eq "cost" || $attr eq "keying_nrounds_log2") {
+			croak "cost specified redundantly"
+				if exists $self->{cost};
+			croak "\"$value\" is not a valid cost parameter"
+				unless $value == int($value) && $value >= 0;
+			$self->{cost} = 0+$value;
+		} elsif($attr eq "salt") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$value =~ m#\A[\x00-\xff]{16}\z#
+				or croak "\"$value\" is not a valid raw salt";
+			$self->{salt} = "$value";
+		} elsif($attr eq "salt_base64") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			croak "\"$value\" is not a valid salt"
+				unless length($value) == 22;
+			$self->{salt} = de_base64($value);
+		} elsif($attr eq "salt_random") {
+			croak "salt specified redundantly"
+				if exists $self->{salt};
+			$self->{salt} = rand_bits(128);
+		} elsif($attr eq "hash") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[\x00-\xff]{23}\z#
+				or croak "not a valid raw hash";
+			$self->{hash} = "$value";
+		} elsif($attr eq "hash_base64") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			croak "\"$value\" is not a valid hash"
+				unless length($value) == 31;
+			$self->{hash} = de_base64($value);
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	$self->{key_nul} = !!1 unless exists $self->{key_nul};
+	croak "cost not specified" unless exists $self->{cost};
+	croak "salt not specified" unless exists $self->{salt};
+	$self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
+	croak "hash not specified" unless exists $self->{hash};
+	return $self;
 }
 
 =item Authen::Passphrase::BlowfishCrypt->from_crypt(PASSWD)
@@ -238,16 +238,16 @@ digits giving the salt, and finally 31 base 64 digits giving the hash.
 =cut
 
 sub from_crypt {
-        my($class, $passwd) = @_;
-        if($passwd =~ /\A(\$2a?\$)/) {
-                $passwd =~ m#\A\$2(a?)\$([0-9]{2})\$
-                                ([./A-Za-z0-9]{22})([./A-Za-z0-9]{31})\z#x
-                        or croak "malformed $1 data";
-                my($kn, $cost, $salt, $hash) = ($1, $2, $3, $4);
-                return $class->new(key_nul => $kn, cost => $cost,
-                                   salt_base64 => $salt, hash_base64 => $hash);
-        }
-        return $class->SUPER::from_crypt($passwd);
+	my($class, $passwd) = @_;
+	if($passwd =~ /\A(\$2a?\$)/) {
+		$passwd =~ m#\A\$2(a?)\$([0-9]{2})\$
+				([./A-Za-z0-9]{22})([./A-Za-z0-9]{31})\z#x
+			or croak "malformed $1 data";
+		my($kn, $cost, $salt, $hash) = ($1, $2, $3, $4);
+		return $class->new(key_nul => $kn, cost => $cost,
+				   salt_base64 => $salt, hash_base64 => $hash);
+	}
+	return $class->SUPER::from_crypt($passwd);
 }
 
 =item Authen::Passphrase::BlowfishCrypt->from_rfc2307(USERPASSWORD)
@@ -270,8 +270,8 @@ passphrase before using it as a key.
 =cut
 
 sub key_nul {
-        my($self) = @_;
-        return $self->{key_nul};
+	my($self) = @_;
+	return $self->{key_nul};
 }
 
 =item $ppr->cost
@@ -282,8 +282,8 @@ be performed.
 =cut
 
 sub cost {
-        my($self) = @_;
-        return $self->{cost};
+	my($self) = @_;
+	return $self->{cost};
 }
 
 =item $ppr->keying_nrounds_log2
@@ -301,8 +301,8 @@ Returns the salt, as a string of sixteen bytes.
 =cut
 
 sub salt {
-        my($self) = @_;
-        return $self->{salt};
+	my($self) = @_;
+	return $self->{salt};
 }
 
 =item $ppr->salt_base64
@@ -312,8 +312,8 @@ Returns the salt, as a string of 22 base 64 digits.
 =cut
 
 sub salt_base64 {
-        my($self) = @_;
-        return en_base64($self->{salt});
+	my($self) = @_;
+	return en_base64($self->{salt});
 }
 
 =item $ppr->hash
@@ -323,8 +323,8 @@ Returns the hash value, as a string of 23 bytes.
 =cut
 
 sub hash {
-        my($self) = @_;
-        return $self->{hash};
+	my($self) = @_;
+	return $self->{hash};
 }
 
 =item $ppr->hash_base64
@@ -334,8 +334,8 @@ Returns the hash value, as a string of 31 base 64 digits.
 =cut
 
 sub hash_base64 {
-        my($self) = @_;
-        return en_base64($self->{hash});
+	my($self) = @_;
+	return en_base64($self->{hash});
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -349,25 +349,25 @@ These methods are part of the standard L<Authen::Passphrase> interface.
 =cut
 
 sub _hash_of {
-        my($self, $passphrase) = @_;
-        return bcrypt_hash({
-                key_nul => $self->{key_nul},
-                cost => $self->{cost},
-                salt => $self->{salt},
-        }, $passphrase);
+	my($self, $passphrase) = @_;
+	return bcrypt_hash({
+		key_nul => $self->{key_nul},
+		cost => $self->{cost},
+		salt => $self->{salt},
+	}, $passphrase);
 }
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $self->_hash_of($passphrase) eq $self->{hash};
+	my($self, $passphrase) = @_;
+	return $self->_hash_of($passphrase) eq $self->{hash};
 }
 
 sub as_crypt {
-        my($self) = @_;
-        croak "passphrase can't be expressed as a crypt string"
-                if $self->{cost} > 99;
-        return sprintf("\$2%s\$%02d\$%s%s", $self->key_nul ? "a" : "",
-                        $self->cost, $self->salt_base64, $self->hash_base64);
+	my($self) = @_;
+	croak "passphrase can't be expressed as a crypt string"
+		if $self->{cost} > 99;
+	return sprintf("\$2%s\$%02d\$%s%s", $self->key_nul ? "a" : "",
+			$self->cost, $self->salt_base64, $self->hash_base64);
 }
 
 =back

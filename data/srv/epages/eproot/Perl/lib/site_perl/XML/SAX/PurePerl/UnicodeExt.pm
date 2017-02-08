@@ -11,7 +11,7 @@ sub chr_ref {
 
 if ($] >= 5.007002) {
     require Encode;
-
+    
     Encode::define_alias( "UTF-16" => "UCS-2" );
     Encode::define_alias( "UTF-16BE" => "UCS-2" );
     Encode::define_alias( "UTF-16LE" => "ucs-2le" );

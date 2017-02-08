@@ -59,12 +59,12 @@ sub create_class
 {
     my $class = shift;
     my %args = validate( @_, {
-        class   => { type => SCALAR, default => (caller)[0] },
-        version => { type => SCALAR, optional => 1 },
-        verbose => { type => SCALAR|GLOBREF|GLOB, optional => 1 },
-        parsers => { type => HASHREF },
-        groups  => { type => HASHREF, optional => 1 },
-        constructor => { type => UNDEF|SCALAR|CODEREF, optional => 1 },
+	class	=> { type => SCALAR, default => (caller)[0] },
+	version => { type => SCALAR, optional => 1 },
+	verbose	=> { type => SCALAR|GLOBREF|GLOB, optional => 1 },
+	parsers	=> { type => HASHREF },
+	groups  => { type => HASHREF, optional => 1 },
+	constructor => { type => UNDEF|SCALAR|CODEREF, optional => 1 },
     });
 
     verbose( $args{verbose} ) if exists $args{verbose};
@@ -73,36 +73,36 @@ sub create_class
 
     # Create own lovely new package
     {
-        no strict 'refs';
+	no strict 'refs';
 
 
-        ${"${target}::VERSION"} = $args{version} if exists $args{version};
+	${"${target}::VERSION"} = $args{version} if exists $args{version};
 
-        $class->create_constructor(
-            $target, exists $args{constructor}, $args{constructor} );
+	$class->create_constructor(
+	    $target, exists $args{constructor}, $args{constructor} );
 
-        # Turn groups of parser specs in to groups of parsers
-        {
-            my $specs = $args{groups};
-            my %groups;
+	# Turn groups of parser specs in to groups of parsers
+	{
+	    my $specs = $args{groups};
+	    my %groups;
 
-            for my $label ( keys %$specs )
-            {
-                my $parsers = $specs->{$label};
-                my $code = $class->create_parser( $parsers );
-                $groups{$label} = $code;
-            }
+	    for my $label ( keys %$specs )
+	    {
+		my $parsers = $specs->{$label};
+		my $code = $class->create_parser( $parsers );
+		$groups{$label} = $code;
+	    }
 
-            $dispatch_data{$target} = \%groups;
-        }
+	    $dispatch_data{$target} = \%groups;
+	}
 
-        # Write all our parser methods, creating parsers as we go.
-        while (my ($method, $parsers) = each %{ $args{parsers} })
-        {
-            my $globname = $target."::$method";
-            croak "Will not override a preexisting method $method()" if defined &{$globname};
-            *$globname = $class->create_end_parser( $parsers );
-        }
+	# Write all our parser methods, creating parsers as we go.
+	while (my ($method, $parsers) = each %{ $args{parsers} })
+	{
+	    my $globname = $target."::$method";
+ 	    croak "Will not override a preexisting method $method()" if defined &{$globname};
+	    *$globname = $class->create_end_parser( $parsers );
+	}
     }
 
 }
@@ -123,14 +123,14 @@ sub create_constructor
 
     return *$new = $value if ref $value eq 'CODE';
     return *$new = sub {
-        my $class = shift;
-        croak "${class}->new takes no parameters." if @_;
+	my $class = shift;
+ 	croak "${class}->new takes no parameters." if @_;
 
-        my $self = bless {}, ref($class)||$class;
-        # If called on an object, clone, but we've nothing to
-        # clone
+	my $self = bless {}, ref($class)||$class;
+	# If called on an object, clone, but we've nothing to
+	# clone
 
-        $self;
+	$self;
     };
 }
 
@@ -148,16 +148,16 @@ sub create_parser
     my @common = ( maker => $class );
     if (@_ == 1)
     {
-        my $parsers = shift;
-        my @parsers = (
-            (ref $parsers eq 'HASH' ) ? %$parsers :
-            ( ( ref $parsers eq 'ARRAY' ) ? @$parsers : $parsers)
-        );
-        $parser->create_parser( \@common, @parsers );
+	my $parsers = shift;
+	my @parsers = (
+	    (ref $parsers eq 'HASH' ) ? %$parsers :
+	    ( ( ref $parsers eq 'ARRAY' ) ? @$parsers : $parsers)
+	);
+	$parser->create_parser( \@common, @parsers );
     }
     else
     {
-        $parser->create_parser( \@common, @_ );
+	$parser->create_parser( \@common, @_ );
     }
 }
 
@@ -185,8 +185,8 @@ sub create_method
 {
     my ($class, $parser) = @_;
     return sub {
-        my $self = shift;
-        $parser->parse( $self, @_);
+	my $self = shift;
+	$parser->parse( $self, @_);
     }
 }
 
@@ -227,13 +227,13 @@ sub new
     my $class = shift;
     croak "Constructor 'new' takes no parameters" if @_;
     my $self = bless {
-        parser => sub { croak "No parser set." }
+	parser => sub { croak "No parser set." }
     }, ref($class)||$class;
     if (ref $class)
     {
-        # If called on an object, clone
-        $self->set_parser( $class->get_parser );
-        # and that's it. we don't store that much info per object
+	# If called on an object, clone
+	$self->set_parser( $class->get_parser );
+	# and that's it. we don't store that much info per object
     }
     return $self;
 }
@@ -264,7 +264,7 @@ sub set_parser
 {
     my ($self, $parser) = @_;
     croak "set_parser given something other than a coderef" unless $parser
-        and ref $parser eq 'CODE';
+	and ref $parser eq 'CODE';
     $self->{parser} = $parser;
     $self;
 }

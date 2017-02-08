@@ -16,8 +16,8 @@ sub canonical
         !length($other->path) && !defined($other->query);
 
     if ($slash_path) {
-        $other = $other->clone if $other == $self;
-        $other->path("/");
+	$other = $other->clone if $other == $self;
+	$other->path("/");
     }
     $other;
 }

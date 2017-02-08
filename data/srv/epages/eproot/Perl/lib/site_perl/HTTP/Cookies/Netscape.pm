@@ -18,19 +18,19 @@ sub load
     open(FILE, $file) || return;
     my $magic = <FILE>;
     unless ($magic =~ /^\#(?: Netscape)? HTTP Cookie File/) {
-        warn "$file does not look like a netscape cookies file" if $^W;
-        close(FILE);
-        return;
+	warn "$file does not look like a netscape cookies file" if $^W;
+	close(FILE);
+	return;
     }
     my $now = time() - $HTTP::Cookies::EPOCH_OFFSET;
     while (<FILE>) {
-        next if /^\s*\#/;
-        next if /^\s*$/;
-        tr/\n\r//d;
-        my($domain,$bool1,$path,$secure, $expires,$key,$val) = split(/\t/, $_);
-        $secure = ($secure eq "TRUE");
-        $self->set_cookie(undef,$key,$val,$path,$domain,undef,
-                          0,$secure,$expires-$now, 0);
+	next if /^\s*\#/;
+	next if /^\s*$/;
+	tr/\n\r//d;
+	my($domain,$bool1,$path,$secure, $expires,$key,$val) = split(/\t/, $_);
+	$secure = ($secure eq "TRUE");
+	$self->set_cookie(undef,$key,$val,$path,$domain,undef,
+			  0,$secure,$expires-$now, 0);
     }
     close(FILE);
     1;
@@ -54,14 +54,14 @@ EOT
 
     my $now = time - $HTTP::Cookies::EPOCH_OFFSET;
     $self->scan(sub {
-        my($version,$key,$val,$path,$domain,$port,
-           $path_spec,$secure,$expires,$discard,$rest) = @_;
-        return if $discard && !$self->{ignore_discard};
-        $expires = $expires ? $expires - $HTTP::Cookies::EPOCH_OFFSET : 0;
-        return if $now > $expires;
-        $secure = $secure ? "TRUE" : "FALSE";
-        my $bool = $domain =~ /^\./ ? "TRUE" : "FALSE";
-        print FILE join("\t", $domain, $bool, $path, $secure, $expires, $key, $val), "\n";
+	my($version,$key,$val,$path,$domain,$port,
+	   $path_spec,$secure,$expires,$discard,$rest) = @_;
+	return if $discard && !$self->{ignore_discard};
+	$expires = $expires ? $expires - $HTTP::Cookies::EPOCH_OFFSET : 0;
+	return if $now > $expires;
+	$secure = $secure ? "TRUE" : "FALSE";
+	my $bool = $domain =~ /^\./ ? "TRUE" : "FALSE";
+	print FILE join("\t", $domain, $bool, $path, $secure, $expires, $key, $val), "\n";
     });
     close(FILE);
     1;
@@ -97,7 +97,7 @@ Please note that the Netscape/Mozilla cookie file format can't store
 all the information available in the Set-Cookie2 headers, so you will
 probably lose some information if you save in this format.
 
-At time of writing, this module seems to work fine with Mozilla
+At time of writing, this module seems to work fine with Mozilla      
 Phoenix/Firebird.
 
 =head1 SEE ALSO

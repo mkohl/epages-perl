@@ -34,13 +34,13 @@ $ENV{EMXSHELL} = 'sh'; # to run `commands`
 my ( $BORLAND, $GCC, $DLLTOOL ) = _identify_compiler_environment( \%Config );
 
 sub _identify_compiler_environment {
-        my ( $config ) = @_;
+	my ( $config ) = @_;
 
-        my $BORLAND = $config->{cc} =~ /^bcc/i ? 1 : 0;
-        my $GCC     = $config->{cc} =~ /\bgcc\b/i ? 1 : 0;
-        my $DLLTOOL = $config->{dlltool} || 'dlltool';
+	my $BORLAND = $config->{cc} =~ /^bcc/i ? 1 : 0;
+	my $GCC     = $config->{cc} =~ /\bgcc\b/i ? 1 : 0;
+	my $DLLTOOL = $config->{dlltool} || 'dlltool';
 
-        return ( $BORLAND, $GCC, $DLLTOOL );
+	return ( $BORLAND, $GCC, $DLLTOOL );
 }
 
 
@@ -62,10 +62,10 @@ sub dlsyms {
     my(@m);
 
     if (not $self->{SKIPHASH}{'dynamic'}) {
-        push(@m,"
+	push(@m,"
 $self->{BASEEXT}.def: Makefile.PL
 ",
-     q! $(PERLRUN) -MExtUtils::Mksymlists \\
+     q!	$(PERLRUN) -MExtUtils::Mksymlists \\
      -e "Mksymlists('NAME'=>\"!, $self->{NAME},
      q!\", 'DLBASE' => '!,$self->{DLBASE},
      # The above two lines quoted differently to work around
@@ -109,18 +109,18 @@ sub maybe_command {
     my($self,$file) = @_;
     my @e = exists($ENV{'PATHEXT'})
           ? split(/;/, $ENV{PATHEXT})
-          : qw(.com .exe .bat .cmd);
+	  : qw(.com .exe .bat .cmd);
     my $e = '';
     for (@e) { $e .= "\Q$_\E|" }
     chop $e;
     # see if file ends in one of the known extensions
     if ($file =~ /($e)$/i) {
-        return $file if -e $file;
+	return $file if -e $file;
     }
     else {
-        for (@e) {
-            return "$file$_" if -e "$file$_";
-        }
+	for (@e) {
+	    return "$file$_" if -e "$file$_";
+	}
     }
     return;
 }
@@ -297,26 +297,26 @@ sub static_lib {
     my(@m);
     push(@m, <<'END');
 $(INST_STATIC): $(OBJECT) $(MYEXTLIB) $(INST_ARCHAUTODIR)$(DFSEP).exists
-        $(RM_RF) $@
+	$(RM_RF) $@
 END
 
     # If this extension has its own library (eg SDBM_File)
     # then copy that to $(INST_STATIC) and add $(OBJECT) into it.
     push @m, <<'MAKE_FRAG' if $self->{MYEXTLIB};
-        $(CP) $(MYEXTLIB) $@
+	$(CP) $(MYEXTLIB) $@
 MAKE_FRAG
 
     push @m,
-q{      $(AR) }.($BORLAND ? '$@ $(OBJECT:^"+")'
-                          : ($GCC ? '-ru $@ $(OBJECT)'
-                                  : '-out:$@ $(OBJECT)')).q{
-        $(CHMOD) $(PERM_RWX) $@
-        $(NOECHO) $(ECHO) "$(EXTRALIBS)" > $(INST_ARCHAUTODIR)\extralibs.ld
+q{	$(AR) }.($BORLAND ? '$@ $(OBJECT:^"+")'
+			  : ($GCC ? '-ru $@ $(OBJECT)'
+			          : '-out:$@ $(OBJECT)')).q{
+	$(CHMOD) $(PERM_RWX) $@
+	$(NOECHO) $(ECHO) "$(EXTRALIBS)" > $(INST_ARCHAUTODIR)\extralibs.ld
 };
 
     # Old mechanism - still available:
     push @m, <<'MAKE_FRAG' if $self->{PERL_SRC} && $self->{EXTRALIBS};
-        $(NOECHO) $(ECHO) "$(EXTRALIBS)" >> $(PERL_SRC)\ext.libs
+	$(NOECHO) $(ECHO) "$(EXTRALIBS)" >> $(PERL_SRC)\ext.libs
 MAKE_FRAG
 
     join('', @m);
@@ -350,31 +350,31 @@ $(INST_DYNAMIC): $(OBJECT) $(MYEXTLIB) $(BOOTSTRAP) $(INST_ARCHAUTODIR)$(DFSEP).
 ');
     if ($GCC) {
       push(@m,
-       q{       }.$DLLTOOL.q{ --def $(EXPORT_LIST) --output-exp dll.exp
-        $(LD) -o $@ -Wl,--base-file -Wl,dll.base $(LDDLFLAGS) }.$ldfrom.q{ $(OTHERLDFLAGS) $(MYEXTLIB) $(PERL_ARCHIVE) $(LDLOADLIBS) dll.exp
-        }.$DLLTOOL.q{ --def $(EXPORT_LIST) --base-file dll.base --output-exp dll.exp
-        $(LD) -o $@ $(LDDLFLAGS) }.$ldfrom.q{ $(OTHERLDFLAGS) $(MYEXTLIB) $(PERL_ARCHIVE) $(LDLOADLIBS) dll.exp });
+       q{	}.$DLLTOOL.q{ --def $(EXPORT_LIST) --output-exp dll.exp
+	$(LD) -o $@ -Wl,--base-file -Wl,dll.base $(LDDLFLAGS) }.$ldfrom.q{ $(OTHERLDFLAGS) $(MYEXTLIB) $(PERL_ARCHIVE) $(LDLOADLIBS) dll.exp
+	}.$DLLTOOL.q{ --def $(EXPORT_LIST) --base-file dll.base --output-exp dll.exp
+	$(LD) -o $@ $(LDDLFLAGS) }.$ldfrom.q{ $(OTHERLDFLAGS) $(MYEXTLIB) $(PERL_ARCHIVE) $(LDLOADLIBS) dll.exp });
     } elsif ($BORLAND) {
       push(@m,
-       q{       $(LD) $(LDDLFLAGS) $(OTHERLDFLAGS) }.$ldfrom.q{,$@,,}
+       q{	$(LD) $(LDDLFLAGS) $(OTHERLDFLAGS) }.$ldfrom.q{,$@,,}
        .($self->is_make_type('dmake')
                 ? q{$(PERL_ARCHIVE:s,/,\,) $(LDLOADLIBS:s,/,\,) }
-                 .q{$(MYEXTLIB:s,/,\,),$(EXPORT_LIST:s,/,\,)}
-                : q{$(subst /,\,$(PERL_ARCHIVE)) $(subst /,\,$(LDLOADLIBS)) }
-                 .q{$(subst /,\,$(MYEXTLIB)),$(subst /,\,$(EXPORT_LIST))})
+		 .q{$(MYEXTLIB:s,/,\,),$(EXPORT_LIST:s,/,\,)}
+		: q{$(subst /,\,$(PERL_ARCHIVE)) $(subst /,\,$(LDLOADLIBS)) }
+		 .q{$(subst /,\,$(MYEXTLIB)),$(subst /,\,$(EXPORT_LIST))})
        .q{,$(RESFILES)});
-    } else {    # VC
+    } else {	# VC
       push(@m,
-       q{       $(LD) -out:$@ $(LDDLFLAGS) }.$ldfrom.q{ $(OTHERLDFLAGS) }
+       q{	$(LD) -out:$@ $(LDDLFLAGS) }.$ldfrom.q{ $(OTHERLDFLAGS) }
       .q{$(MYEXTLIB) $(PERL_ARCHIVE) $(LDLOADLIBS) -def:$(EXPORT_LIST)});
 
       # Embed the manifest file if it exists
       push(@m, q{
-        if exist $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
-        if exist $@.manifest del $@.manifest});
+	if exist $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+	if exist $@.manifest del $@.manifest});
     }
     push @m, '
-        $(CHMOD) $(PERM_RWX) $@
+	$(CHMOD) $(PERM_RWX) $@
 ';
 
     join('',@m);
@@ -561,8 +561,8 @@ sub cd {
     # No leading tab and no trailing newline makes for easier embedding.
     my $make_frag = sprintf <<'MAKE_FRAG', $dir, $cmd, $updirs;
 cd %s
-        %s
-        cd %s
+	%s
+	cd %s
 MAKE_FRAG
 
     chomp $make_frag;

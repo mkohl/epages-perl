@@ -47,7 +47,7 @@ sub perl_command_words {
     my %opt = @_;
 
     my @perl = ($this_perl);
-
+    
     # testing just $Config{usesitecustomize} isn't reliable for perl 5.11.x
     if (($Config{usesitecustomize}||'') eq 'define'
     or   $Config{ccflags} =~ /(?<!\w)-DUSE_SITECUSTOMIZE\b/
@@ -84,7 +84,7 @@ sub profile_this {
         open my $fh, "| @perl"
             or croak "Can't open pipe to @perl";
         print $fh $src_code;
-        close $fh
+        close $fh 
             or carp $! ? "Error closing @perl pipe: $!"
                        : "Exit status $? from @perl";
 

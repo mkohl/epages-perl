@@ -21,48 +21,48 @@ my ($user_files, $user_fused);
 my %fs = ();
 
 
-        (defined($dir)) ||
-                (croak "Usage: dfportable\(\$dir\) or dfportable\(\$dir\, \$block_size)");
+	(defined($dir)) ||
+		(croak "Usage: dfportable\(\$dir\) or dfportable\(\$dir\, \$block_size)");
 
-        #### If no requested block size then we will return the values in bytes
-        ($block_size) ||
-                ($block_size = 1);
+	#### If no requested block size then we will return the values in bytes
+	($block_size) ||
+		($block_size = 1);
 
-        my ($frsize, $blocks, $bfree, $bavail, $files, $ffree, $favail) = _dfportable($dir);
+	my ($frsize, $blocks, $bfree, $bavail, $files, $ffree, $favail) = _dfportable($dir);
 
-        #### Some system or XS failure, something like /proc, or bad $dir
-        if($frsize == 0 || $blocks == 0) {
-                return();
-        }
+	#### Some system or XS failure, something like /proc, or bad $dir
+	if($frsize == 0 || $blocks == 0) {
+		return();
+	}
 
-        #### Change to requested or default block size
-        if($block_size > $frsize) {
-                my $result = $block_size / $frsize;
-                $blocks /= $result;
-                ($bfree != 0) &&
-                        ($bfree /= $result);
-                #### Keep bavail -
-                ($bavail < 0) &&
-                        ($result *= -1);
+	#### Change to requested or default block size
+	if($block_size > $frsize) {
+		my $result = $block_size / $frsize;
+		$blocks /= $result;
+		($bfree != 0) &&
+			($bfree /= $result);
+		#### Keep bavail -
+		($bavail < 0) &&
+			($result *= -1);
 
-                ($bavail != 0) &&
-                        ($bavail /= $result);
-        }
+		($bavail != 0) &&
+			($bavail /= $result);
+	}
 
-        elsif($block_size < $frsize) {
-                my $result = $frsize / $block_size;
-                $blocks *= $result;
-                $bfree *= $result;
-                #### Keep bavail -
-                ($bavail < 0) &&
-                        ($result *= -1);
-                $bavail *= $result;
-        }
+	elsif($block_size < $frsize) {
+		my $result = $frsize / $block_size;
+		$blocks *= $result;
+		$bfree *= $result;
+		#### Keep bavail -
+		($bavail < 0) &&
+			($result *= -1);
+		$bavail *= $result;
+	}
 
-        $used = $blocks - $bfree;
+	$used = $blocks - $bfree;
 
-        #### There is a reserved amount for the su
-        #### or there are disk quotas
+	#### There is a reserved amount for the su
+	#### or there are disk quotas
         if($bfree > $bavail) {
                 $user_blocks = $blocks - ($bfree - $bavail);
                 $user_used = $user_blocks - $bavail;
@@ -73,13 +73,13 @@ my %fs = ();
                 }
                                                                                                          
                 else {
-                        if($user_used == 0) {
-                                $per = 0;
-                        }
+			if($user_used == 0) {
+				$per = 0;
+			}
 
-                        else {
-                                $per = $user_used / $user_blocks;
-                        }
+			else {
+                        	$per = $user_used / $user_blocks;
+			}
                 }
         }
                                                                                                          
@@ -91,12 +91,12 @@ my %fs = ();
                                                                                                          
                 else {
                         $per = $used / $blocks;
-                        $user_blocks = $blocks;
-                        $user_used = $used;
+			$user_blocks = $blocks;
+			$user_used = $used;
                 }
         }
 
-        #### round
+	#### round
         $per *= 100;
         $per += .5;
                                                                                                          
@@ -105,16 +105,16 @@ my %fs = ();
                 ($per += 100);
 
         $fs{per}     = int($per);
-        $fs{blocks}  = $blocks;
-        $fs{bfree}   = $bfree;
-        $fs{bavail}  = $bavail;
-        $fs{bused}   = $used;
+	$fs{blocks}  = $blocks;
+	$fs{bfree}   = $bfree;
+	$fs{bavail}  = $bavail;
+	$fs{bused}   = $used;
 
 
 
-        #### Handle inodes if system supports them
-        if(defined $files && $files > 0) {
-                $fused = $files - $ffree;
+	#### Handle inodes if system supports them
+	if(defined $files && $files > 0) {
+		$fused = $files - $ffree;
                 #### There is a reserved amount
                 if($ffree > $favail) {
                         $user_files = $files - ($ffree - $favail);
@@ -126,13 +126,13 @@ my %fs = ();
                         }
                                                                                                              
                         else {
-                                if($user_fused == 0) {
-                                        $fper = 0;
-                                }
+				if($user_fused == 0) {
+					$fper = 0;
+				}
 
-                                else {
-                                        $fper = $user_fused / $user_files;
-                                }
+				else {
+                                	$fper = $user_fused / $user_files;
+				}
                         }
                 }
                                                                                                              
@@ -158,7 +158,7 @@ my %fs = ();
                 ($favail < 0) &&
                         ($fper += 100);
 
-                $fs{fper}        = int($fper);
+		$fs{fper}        = int($fper);
                 $fs{files}       = $files;
                 $fs{ffree}       = $ffree;
                 $fs{favail}      = $favail;
@@ -168,7 +168,7 @@ my %fs = ();
         }
                                                                                                              
         #### No valid inode info. Probably Windows or NFS
-        #### Instead of undefing, just have the user call exists().
+	#### Instead of undefing, just have the user call exists().
         #else {
         #        $fs{fper}        = undef;
         #        $fs{files}       = undef;
@@ -180,7 +180,7 @@ my %fs = ();
         #}
                                                                                                              
 
-        return(\%fs);
+	return(\%fs);
 }
 
 1;

@@ -7,8 +7,8 @@ our @ISA = qw(NDBM_File DB_File GDBM_File SDBM_File ODBM_File) unless @ISA;
 my $mod;
 for $mod (@ISA) {
     if (eval "require $mod") {
-        @ISA = ($mod);  # if we leave @ISA alone, warnings abound
-        return 1;
+	@ISA = ($mod);	# if we leave @ISA alone, warnings abound
+	return 1;
     }
 }
 
@@ -49,7 +49,7 @@ Having multiple DBM implementations makes it trivial to copy database formats:
 Here's a partial table of features the different packages offer:
 
                          odbm    ndbm    sdbm    gdbm    bsd-db
-                         ----    ----    ----    ----    ------
+			 ----	 ----    ----    ----    ------
  Linkage comes w/ perl   yes     yes     yes     yes     yes
  Src comes w/ perl       no      no      yes     no      no
  Comes w/ many unix os   yes     yes[0]  no      no      no
@@ -66,21 +66,21 @@ Here's a partial table of features the different packages offer:
 
 =over 4
 
-=item [0]
+=item [0] 
 
 on mixed universe machines, may be in the bsd compat library,
 which is often shunned.
 
-=item [1]
+=item [1] 
 
 Can be trimmed if you compile for one access method.
 
-=item [2]
+=item [2] 
 
-See L<DB_File>.
-Requires symbolic links.
+See L<DB_File>. 
+Requires symbolic links.  
 
-=item [3]
+=item [3] 
 
 By default, but can be redefined.
 

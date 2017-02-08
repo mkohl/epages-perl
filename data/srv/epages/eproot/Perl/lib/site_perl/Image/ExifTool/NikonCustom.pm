@@ -1290,7 +1290,7 @@ $VERSION = '1.06';
             Condition => '$$self{Model} =~ /D3[SX]?\b/',
             Notes => 'D3',
             Mask => 0x60,
-            PrintConv => {
+            PrintConv => { 
                 0x00 => 'On in Continuous Shooting and Manual Focusing',
                 0x20 => 'On During Manual Focusing',
                 0x40 => 'On in Continuous Shooting Modes',
@@ -2393,7 +2393,7 @@ This module is loaded automatically by Image::ExifTool when required.
 
 The Nikon custom functions are very specific to the camera model (and
 sometimes even change with firmware version).  The information is stored as
-unformatted binary data in the ShotInfo record of the Nikon MakerNotes.
+unformatted binary data in the ShotInfo record of the Nikon MakerNotes. 
 This module contains the definitions necessary for Image::ExifTool to decode
 this information.
 

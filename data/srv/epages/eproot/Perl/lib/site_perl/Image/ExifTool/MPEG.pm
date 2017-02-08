@@ -574,7 +574,7 @@ sub ParseMPEGAudio($$)
             $exifTool->HandleTag($xingTable, 4, substr($$buffPt, $pos, 20));
         }
         last;   # (didn't want to loop anyway)
-        }
+	}
 
     return 1;
 }

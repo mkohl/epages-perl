@@ -88,11 +88,11 @@ consumer register on service provider beforehand.
 =back
 
     my $signer = OAuth::Lite::SignatureMethod::RSA_SHA1->new(
-        consumer_secret => $rsa_private_key,
+        consumer_secret => $rsa_private_key, 
     );
 
     my $verifier = OAuth::Lite::SignatureMethod::RSA_SHA1->new(
-        consumer_secret => $rsa_public_key,
+        consumer_secret => $rsa_public_key, 
     );
 
 =head2 sign($base_string)

@@ -16,14 +16,14 @@ use XML::XPath::Node ':node_keys';
 sub new {
     my $class = shift;
     my ($comment) = @_;
-
+    
         my $pos = XML::XPath::Node->nextPos;
-
+        
         my @vals;
         @vals[node_global_pos, node_comment] =
                 ($pos, $comment);
     my $self = \@vals;
-
+        
     bless $self, $class;
 }
 
@@ -46,7 +46,7 @@ sub setNodeValue {
 sub _to_sax {
     my $self = shift;
     my ($doch, $dtdh, $enth) = @_;
-
+    
     $doch->comment( { Data => $self->getValue } );
 }
 

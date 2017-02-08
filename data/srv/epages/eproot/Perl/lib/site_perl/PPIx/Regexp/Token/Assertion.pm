@@ -46,13 +46,13 @@ our $VERSION = '0.020';
 {
 
     my %perl_version_introduced = (
-        '\\K' => '5.009005',
-        '\\z' => '5.005',
+	'\\K' => '5.009005',
+	'\\z' => '5.005',
     );
 
     sub perl_version_introduced {
-        my ( $self ) = @_;
-        return $perl_version_introduced{$self->content()} || MINIMUM_PERL;
+	my ( $self ) = @_;
+	return $perl_version_introduced{$self->content()} || MINIMUM_PERL;
     }
 
 }
@@ -74,19 +74,19 @@ sub __PPIX_TOKENIZER__regexp {
 
     # Inside a character class, these are all literals.
     my $make = $tokenizer->cookie( COOKIE_CLASS ) ?
-        TOKEN_LITERAL :
-        __PACKAGE__;
+	TOKEN_LITERAL :
+	__PACKAGE__;
 
     # '^' and '$'. Or at least '^'. See note above for '$'.
     $assertion{$character}
-        and return $tokenizer->make_token( 1, $make );
+	and return $tokenizer->make_token( 1, $make );
 
     $character eq '\\' or return;
 
     defined ( my $next = $tokenizer->peek( 1 ) ) or return;
 
     $escaped{$next}
-        and return $tokenizer->make_token( 2, $make );
+	and return $tokenizer->make_token( 2, $make );
 
     return;
 }

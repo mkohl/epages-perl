@@ -20,7 +20,7 @@ Encode::TW - Taiwan-based Chinese Encodings
 
 =head1 SYNOPSIS
 
-    use Encode qw/encode decode/;
+    use Encode qw/encode decode/; 
     $big5 = encode("big5", $utf8); # loads Encode::TW implicitly
     $utf8 = decode("big5", $big5); # ditto
 
@@ -30,16 +30,16 @@ This module implements tradition Chinese charset encodings as used
 in Taiwan and Hong Kong.
 Encodings supported are as follows.
 
-  Canonical   Alias             Description
+  Canonical   Alias		Description
   --------------------------------------------------------------------
-  big5-eten   /\bbig-?5$/i      Big5 encoding (with ETen extensions)
+  big5-eten   /\bbig-?5$/i	Big5 encoding (with ETen extensions)
           /\bbig5-?et(en)?$/i
           /\btca-?big5$/i
   big5-hkscs  /\bbig5-?hk(scs)?$/i
               /\bhk(scs)?-?big5$/i
                                 Big5 + Cantonese characters in Hong Kong
-  MacChineseTrad                Big5 + Apple Vendor Mappings
-  cp950                         Code Page 950
+  MacChineseTrad		Big5 + Apple Vendor Mappings
+  cp950		                Code Page 950 
                                 = Big5 + Microsoft vendor mappings
   --------------------------------------------------------------------
 

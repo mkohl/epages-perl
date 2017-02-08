@@ -783,12 +783,12 @@ sub ParseDateString {
 
     # Other regular expressions
 
-    my($D4)='(\d{4})';                      # 4 digits      (yr)
-    my($YY)='(\d{4}|\d{2})';                # 2 or 4 digits (yr)
-    my($DD)='(\d{2})';                      # 2 digits      (mon/day/hr/min/sec)
-    my($D) ='(\d{1,2})';                    # 1 or 2 digit  (mon/day/hr)
-    my($FS)="(?:$ss\\d+)?";                 # fractional secs
-    my($sep)='[\/.-]';                      # non-ISO8601 m/d/yy separators
+    my($D4)='(\d{4})';            	    # 4 digits      (yr)
+    my($YY)='(\d{4}|\d{2})';      	    # 2 or 4 digits (yr)
+    my($DD)='(\d{2})';            	    # 2 digits      (mon/day/hr/min/sec)
+    my($D) ='(\d{1,2})';          	    # 1 or 2 digit  (mon/day/hr)
+    my($FS)="(?:$ss\\d+)?";       	    # fractional secs
+    my($sep)='[\/.-]';            	    # non-ISO8601 m/d/yy separators
     # absolute time zone     +0700 (GMT)
     my($hzone)='(?:[0-1][0-9]|2[0-3])';     # 00 - 23
     my($mzone)='(?:[0-5][0-9])';            # 00 - 59
@@ -4357,9 +4357,9 @@ sub _Date_Split {
 
   if (not defined $date or $date eq '') {
       if ($definitely_valid) {
-          die "bad date '$date'";
+	  die "bad date '$date'";
       } else {
-          return $t;
+	  return $t;
       }
   }
 
@@ -4368,14 +4368,14 @@ sub _Date_Split {
     my(@d_in_m)=(0,31,28,31,30,31,30,31,31,30,31,30,31);
     $d_in_m[2]=29  if (Date_LeapYear($y));
     if ($d>$d_in_m[$m]) {
-        my $msg = "invalid date $date: day $d of month $m, but only $d_in_m[$m] days in that month";
-        if ($definitely_valid) {
-            die $msg;
-        }
-        else {
-            warn $msg;
-            return ();
-        }
+	my $msg = "invalid date $date: day $d of month $m, but only $d_in_m[$m] days in that month";
+	if ($definitely_valid) {
+	    die $msg;
+	}
+	else {
+	    warn $msg;
+	    return ();
+	}
     }
     return ($y,$m,$d,$h,$mn,$s);
   }

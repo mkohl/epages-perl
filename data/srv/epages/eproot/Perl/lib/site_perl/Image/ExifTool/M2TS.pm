@@ -262,7 +262,7 @@ sub ParsePID($$$$$)
 {
     my ($exifTool, $pid, $type, $pidName, $dataPt) = @_;
     # can't parse until we know the type (Program Map Table may be later in the stream)
-    return -1 unless defined $type;
+    return -1 unless defined $type;   
     my $verbose = $exifTool->Options('Verbose');
     if ($verbose > 1) {
         my $out = $exifTool->Options('TextOut');

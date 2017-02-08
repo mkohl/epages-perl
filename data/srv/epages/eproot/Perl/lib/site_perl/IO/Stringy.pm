@@ -263,7 +263,7 @@ but it turns out that I left out a crucial direction.  D'OH!
 I<Thanks to David Beroff for the "patch" and the haiku...>
 
        Enough info there?
-         Here's unflattering haiku:
+	 Here's unflattering haiku:
        Forgot the line, "make"!  ;-)
 
 
@@ -321,11 +321,11 @@ I<Thanks to Richard Jones for finding this one.
 For you, Rich, a double-length haiku:>
 
        Newspaper headline
-          typeset by dyslexic man
+	  typeset by dyslexic man
        loses urgency
 
        BABY EATS FISH is
-          simply not equivalent
+	  simply not equivalent
        to FISH EATS BABY
 
 B<New sysread and syswrite methods for IO::Scalar.>

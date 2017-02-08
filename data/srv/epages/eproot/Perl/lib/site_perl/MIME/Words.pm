@@ -72,9 +72,9 @@ use vars qw($VERSION @EXPORT_OK %EXPORT_TAGS @ISA);
 ### Exporting:
 use Exporter;
 %EXPORT_TAGS = (all => [qw(decode_mimewords
-                           encode_mimeword
-                           encode_mimewords
-                           )]);
+			   encode_mimeword
+			   encode_mimewords
+			   )]);
 Exporter::export_ok_tags('all');
 
 ### Inheritance:
@@ -184,46 +184,46 @@ sub decode_mimewords {
     ### Decode:
     my ($charset, $encoding, $enc, $dec);
     while (1) {
-        last if (pos($encstr) >= length($encstr));
-        my $pos = pos($encstr);               ### save it
+	last if (pos($encstr) >= length($encstr));
+	my $pos = pos($encstr);               ### save it
 
-        ### Case 1: are we looking at "=?..?..?="?
-        if ($encstr =~    m{\G             # from where we left off..
-                            =\?([^?]*)     # "=?" + charset +
-                             \?([bq])      #  "?" + encoding +
-                             \?([^?]+)     #  "?" + data maybe with spcs +
-                             \?=           #  "?="
-                            }xgi) {
-            ($charset, $encoding, $enc) = ($1, lc($2), $3);
-            $dec = (($encoding eq 'q') ? _decode_Q($enc) : _decode_B($enc));
-            push @tokens, [$dec, $charset];
-            next;
-        }
+	### Case 1: are we looking at "=?..?..?="?
+	if ($encstr =~    m{\G             # from where we left off..
+			    =\?([^?]*)     # "=?" + charset +
+			     \?([bq])      #  "?" + encoding +
+			     \?([^?]+)     #  "?" + data maybe with spcs +
+			     \?=           #  "?="
+			    }xgi) {
+	    ($charset, $encoding, $enc) = ($1, lc($2), $3);
+	    $dec = (($encoding eq 'q') ? _decode_Q($enc) : _decode_B($enc));
+	    push @tokens, [$dec, $charset];
+	    next;
+	}
 
-        ### Case 2: are we looking at a bad "=?..." prefix?
-        ### We need this to detect problems for case 3, which stops at "=?":
-        pos($encstr) = $pos;               # reset the pointer.
-        if ($encstr =~ m{\G=\?}xg) {
-            $@ .= qq|unterminated "=?..?..?=" in "$encstr" (pos $pos)\n|;
-            push @tokens, ['=?'];
-            next;
-        }
+	### Case 2: are we looking at a bad "=?..." prefix?
+	### We need this to detect problems for case 3, which stops at "=?":
+	pos($encstr) = $pos;               # reset the pointer.
+	if ($encstr =~ m{\G=\?}xg) {
+	    $@ .= qq|unterminated "=?..?..?=" in "$encstr" (pos $pos)\n|;
+	    push @tokens, ['=?'];
+	    next;
+	}
 
-        ### Case 3: are we looking at ordinary text?
-        pos($encstr) = $pos;               # reset the pointer.
-        if ($encstr =~ m{\G                # from where we left off...
-                         (.*?    #   shortest possible string,
-                          \n*)             #   followed by 0 or more NLs,
-                         (?=(\Z|=\?))      # terminated by "=?" or EOS
-                        }sxg) {
-            length($1) or die "MIME::Words: internal logic err: empty token\n";
-            push @tokens, [$1];
-            next;
-        }
+	### Case 3: are we looking at ordinary text?
+	pos($encstr) = $pos;               # reset the pointer.
+	if ($encstr =~ m{\G                # from where we left off...
+			 (.*?    #   shortest possible string,
+			  \n*)             #   followed by 0 or more NLs,
+		         (?=(\Z|=\?))      # terminated by "=?" or EOS
+			}sxg) {
+	    length($1) or die "MIME::Words: internal logic err: empty token\n";
+	    push @tokens, [$1];
+	    next;
+	}
 
-        ### Case 4: bug!
-        die "MIME::Words: unexpected case:\n($encstr) pos $pos\n\t".
-            "Please alert developer.\n";
+	### Case 4: bug!
+	die "MIME::Words: unexpected case:\n($encstr) pos $pos\n\t".
+	    "Please alert developer.\n";
     }
     return (wantarray ? @tokens : join('',map {$_->[0]} @tokens));
 }
@@ -298,10 +298,10 @@ sub encode_mimewords {
     ###    worst-case encoding give us no more than 54 + ~10 < 75 characters
     my $word;
     $rawstr =~ s{([ a-zA-Z0-9\x7F-\xFF]{1,18})}{     ### get next "word"
-        $word = $1;
-        (($word !~ /(?:[$NONPRINT])|(?:^\s+$)/o)
-         ? $word                                          ### no unsafe chars
-         : encode_mimeword($word, $encoding, $charset));  ### has unsafe chars
+	$word = $1;
+	(($word !~ /(?:[$NONPRINT])|(?:^\s+$)/o)
+	 ? $word                                          ### no unsafe chars
+	 : encode_mimeword($word, $encoding, $charset));  ### has unsafe chars
     }xeg;
     $rawstr =~ s/\?==\?/?= =?/g;
     $rawstr;

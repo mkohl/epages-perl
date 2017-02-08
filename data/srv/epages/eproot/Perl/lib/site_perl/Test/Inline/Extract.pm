@@ -23,7 +23,7 @@ use Params::Util qw{_CLASS _INSTANCE _SCALAR};
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '2.212';
+	$VERSION = '2.212';
 }
 
 
@@ -46,28 +46,28 @@ Returns a new C<Test::Inline::Extract> object or C<undef> on error.
 =cut
 
 sub new {
-        my $class  = _CLASS(shift) or die '->new is a static method';
+	my $class  = _CLASS(shift) or die '->new is a static method';
 
-        # Get the source code to process, and clean it up
-        my $source = $class->_source(shift) or return undef;
-        $source = $$source;
-        $source =~ s/(?:\015{1,2}\012|\015|\012)/\n/g;
+	# Get the source code to process, and clean it up
+	my $source = $class->_source(shift) or return undef;
+	$source = $$source;
+	$source =~ s/(?:\015{1,2}\012|\015|\012)/\n/g;
 
-        # Create the object
-        my $self = bless {
-                source   => $source,
-                elements => undef,
-                }, $class;
+	# Create the object
+	my $self = bless {
+		source   => $source,
+		elements => undef,
+		}, $class;
 
-        $self;
+	$self;
 }
 
 sub _source {
-        my $self = shift;
-        return undef unless defined $_[0];
-        return shift if     _SCALAR($_[0]);
-        return undef if     ref $_[0];
-        File::Slurp::read_file( shift, scalar_ref => 1 );
+	my $self = shift;
+	return undef unless defined $_[0];
+	return shift if     _SCALAR($_[0]);
+	return undef if     ref $_[0];
+	File::Slurp::read_file( shift, scalar_ref => 1 );
 }
 
 =pod
@@ -92,39 +92,39 @@ unit tests.
 # Define the search pattern we will use
 use vars qw{$search};
 BEGIN {
-        $search = qr/
-                (?:^|\n)                           # After the beginning of the string, or a newline
-                (                                  # ... start capturing
-                                                   # EITHER
-                        package\s+                            # A package
-                        [^\W\d]\w*(?:(?:\'|::)[^\W\d]\w*)*    # ... with a name
-                        \s*;                                  # And a statement terminator
-                |                                  # OR
-                        =for[ \t]+example[ \t]+begin\n        # ... when we find a =for example begin
-                        .*?                                   # ... and keep capturing
-                        \n=for[ \t]+example[ \t]+end\s*?      # ... until the =for example end
-                        (?:\n|$)                              # ... at the end of file or a newline
-                |                                  # OR
-                        =begin[ \t]+(?:test|testing)\b        # ... when we find a =begin test or testing
-                        .*?                                   # ... and keep capturing
-                        \n=end[ \t]+(?:test|testing)\s*?      # ... until an =end tag
-                        (?:\n|$)                              # ... at the end of file or a newline
-                )                                  # ... and stop capturing
-                /isx;
+	$search = qr/
+		(?:^|\n)                           # After the beginning of the string, or a newline
+		(                                  # ... start capturing
+		                                   # EITHER
+			package\s+                            # A package
+			[^\W\d]\w*(?:(?:\'|::)[^\W\d]\w*)*    # ... with a name
+			\s*;                                  # And a statement terminator
+		|                                  # OR
+			=for[ \t]+example[ \t]+begin\n        # ... when we find a =for example begin
+			.*?                                   # ... and keep capturing
+			\n=for[ \t]+example[ \t]+end\s*?      # ... until the =for example end
+			(?:\n|$)                              # ... at the end of file or a newline
+		|                                  # OR
+			=begin[ \t]+(?:test|testing)\b        # ... when we find a =begin test or testing
+			.*?                                   # ... and keep capturing
+			\n=end[ \t]+(?:test|testing)\s*?      # ... until an =end tag
+			(?:\n|$)                              # ... at the end of file or a newline
+		)                                  # ... and stop capturing
+		/isx;
 }
 
 sub elements {
-        $_[0]->{elements} or
-        $_[0]->{elements} = $_[0]->_elements;
+	$_[0]->{elements} or
+	$_[0]->{elements} = $_[0]->_elements;
 }
 
 sub _elements {
-        my $self     = shift;
-        my @elements = ();
-        while ( $self->{source} =~ m/$search/go ) {
-                push @elements, $1;
-        }
-        (List::Util::first { /^=/ } @elements) ? \@elements : '';
+	my $self     = shift;
+	my @elements = ();
+	while ( $self->{source} =~ m/$search/go ) {
+		push @elements, $1;
+	}
+	(List::Util::first { /^=/ } @elements) ? \@elements : '';
 }
 
 1;

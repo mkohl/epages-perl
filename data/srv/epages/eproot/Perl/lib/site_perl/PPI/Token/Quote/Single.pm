@@ -16,13 +16,13 @@ PPI::Token::Quote::Single - A 'single quote' token
 =head1 SYNOPSIS
 
   'This is a single quote'
-
+  
   q{This is a literal, but NOT a single quote}
 
 =head1 DESCRIPTION
 
 A C<PPI::Token::Quote::Single> object represents a single quoted string
-literal.
+literal. 
 
 =head1 METHODS
 
@@ -40,11 +40,11 @@ use PPI::Token::_QuoteEngine::Simple ();
 
 use vars qw{$VERSION @ISA};
 BEGIN {
-        $VERSION = '1.215';
-        @ISA     = qw{
-                PPI::Token::_QuoteEngine::Simple
-                PPI::Token::Quote
-        };
+	$VERSION = '1.215';
+	@ISA     = qw{
+		PPI::Token::_QuoteEngine::Simple
+		PPI::Token::Quote
+	};
 }
 
 
@@ -69,8 +69,8 @@ is( $Single->string, 'foo', '->string returns as expected' );
 =cut
 
 sub string {
-        my $str = $_[0]->{content};
-        substr( $str, 1, length($str) - 2 );
+	my $str = $_[0]->{content};
+	substr( $str, 1, length($str) - 2 );
 }
 
 =pod
@@ -78,38 +78,38 @@ sub string {
 =begin testing literal 21
 
 my @pairs = (
-        "''",          '',
-        "'f'",         'f',
-        "'f\\'b'",     "f\'b",
-        "'f\\nb'",     "f\\nb",
-        "'f\\\\b'",    "f\\b",
-        "'f\\\\\\b'", "f\\\\b",
-        "'f\\\\\\\''", "f\\'",
+	"''",          '',
+	"'f'",         'f',
+	"'f\\'b'",     "f\'b",
+	"'f\\nb'",     "f\\nb",
+	"'f\\\\b'",    "f\\b",
+	"'f\\\\\\b'", "f\\\\b",
+	"'f\\\\\\\''", "f\\'",
 );
 while ( @pairs ) {
-        my $from  = shift @pairs;
-        my $to    = shift @pairs;
-        my $doc   = PPI::Document->new( \"print $from;" );
-        isa_ok( $doc, 'PPI::Document' );
-        my $quote = $doc->find_first('Token::Quote::Single');
-        isa_ok( $quote, 'PPI::Token::Quote::Single' );
-        is( $quote->literal, $to, "The source $from becomes $to ok" );
+	my $from  = shift @pairs;
+	my $to    = shift @pairs;
+	my $doc   = PPI::Document->new( \"print $from;" );
+	isa_ok( $doc, 'PPI::Document' );
+	my $quote = $doc->find_first('Token::Quote::Single');
+	isa_ok( $quote, 'PPI::Token::Quote::Single' );
+	is( $quote->literal, $to, "The source $from becomes $to ok" );
 }
 
-=end testing
+=end testing 
 
 =cut
 
 my %UNESCAPE = (
-        "\\'"  => "'",
-        "\\\\" => "\\",
+	"\\'"  => "'",
+	"\\\\" => "\\",
 );
 
 sub literal {
-        # Unescape \\ and \' ONLY
-        my $str = $_[0]->string;
-        $str =~ s/(\\.)/$UNESCAPE{$1} || $1/ge;
-        return $str;
+	# Unescape \\ and \' ONLY
+	my $str = $_[0]->string;
+	$str =~ s/(\\.)/$UNESCAPE{$1} || $1/ge;
+	return $str;
 }
 
 1;

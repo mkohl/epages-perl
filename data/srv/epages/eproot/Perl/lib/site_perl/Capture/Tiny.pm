@@ -418,31 +418,31 @@ version 0.23
 =head1 SYNOPSIS
 
    use Capture::Tiny ':all';
-
+ 
    # capture from external command
-
+ 
    ($stdout, $stderr, $exit) = capture {
      system( $cmd, @args );
    };
-
+ 
    # capture from arbitrary code (Perl or external)
-
+ 
    ($stdout, $stderr, @result) = capture {
      # your code here
    };
-
+ 
    # capture partial or merged output
-
+ 
    $stdout = capture_stdout { ... };
    $stderr = capture_stderr { ... };
    $merged = capture_merged { ... };
-
+ 
    # tee output
-
+ 
    ($stdout, $stderr) = tee {
      # your code here
    };
-
+ 
    $stdout = tee_stdout { ... };
    $stderr = tee_stderr { ... };
    $merged = tee_merged { ... };
@@ -494,7 +494,7 @@ first:
      my ($stdout, $stderr) = capture { do_stuff( @_ ) };    # WRONG
      ...
    }
-
+ 
    sub will_work {
      my @args = @_;
      my ($stdout, $stderr) = capture { do_stuff( @args ) }; # RIGHT

@@ -56,7 +56,7 @@ sub ancestor_of {
     __instance( $elem, __PACKAGE__ ) or return;
     my $addr = refaddr( $self );
     while ( $addr != refaddr( $elem ) ) {
-        $elem = $elem->_parent() or return;
+	$elem = $elem->_parent() or return;
     }
     return 1;
 }
@@ -145,7 +145,7 @@ none.
 sub next_sibling {
     my ( $self ) = @_;
     my ( $method, $inx ) = $self->_my_inx()
-        or return;
+	or return;
     return $self->_parent()->$method( $inx + 1 );
 }
 
@@ -196,7 +196,7 @@ introduced since 5.0, few have been removed.
 =cut
 
 sub perl_version_removed {
-    return undef;       ## no critic (ProhibitExplicitReturnUndef)
+    return undef;	## no critic (ProhibitExplicitReturnUndef)
 }
 
 =head2 previous_sibling
@@ -209,7 +209,7 @@ is none.
 sub previous_sibling {
     my ( $self ) = @_;
     my ( $method, $inx ) = $self->_my_inx()
-        or return;
+	or return;
     $inx or return;
     return $self->_parent()->$method( $inx - 1 );
 }
@@ -236,7 +236,7 @@ sub snext_sibling {
     my ( $self ) = @_;
     my $sib = $self;
     while ( defined ( $sib = $sib->next_sibling() ) ) {
-        $sib->significant() and return $sib;
+	$sib->significant() and return $sib;
     }
     return;
 }
@@ -252,7 +252,7 @@ sub sprevious_sibling {
     my ( $self ) = @_;
     my $sib = $self;
     while ( defined ( $sib = $sib->previous_sibling() ) ) {
-        $sib->significant() and return $sib;
+	$sib->significant() and return $sib;
     }
     return;
 }
@@ -278,7 +278,7 @@ sub top {
     my ( $self ) = @_;
     my $kid = $self;
     while ( defined ( my $parent = $kid->_parent() ) ) {
-        $kid = $parent;
+	$kid = $parent;
     }
     return $kid;
 }
@@ -329,19 +329,19 @@ sub nav {
 
 {
     my %method_map = (
-        children => 'child',
+	children => 'child',
     );
     sub _my_inx {
-        my ( $self ) = @_;
-        my $parent = $self->_parent() or return;
-        my $addr = refaddr( $self );
-        foreach my $method ( qw{ children start type finish } ) {
-            $parent->can( $method ) or next;
-            my $inx = firstidx { refaddr $_ == $addr } $parent->$method();
-            $inx < 0 and next;
-            return ( $method_map{$method} || $method, $inx );
-        }
-        return;
+	my ( $self ) = @_;
+	my $parent = $self->_parent() or return;
+	my $addr = refaddr( $self );
+	foreach my $method ( qw{ children start type finish } ) {
+	    $parent->can( $method ) or next;
+	    my $inx = firstidx { refaddr $_ == $addr } $parent->$method();
+	    $inx < 0 and next;
+	    return ( $method_map{$method} || $method, $inx );
+	}
+	return;
     }
 }
 
@@ -350,23 +350,23 @@ sub nav {
 
     # no-argument form returns the parent; one-argument sets it.
     sub _parent {
-        my ( $self, @arg ) = @_;
-        my $addr = refaddr( $self );
-        if ( @arg ) {
-            my $parent = shift @arg;
-            if ( defined $parent ) {
-                __instance( $parent, __PACKAGE__ ) or return;
-                weaken(
-                    $parent{$addr} = $parent );
-            } else {
-                delete $parent{$addr};
-            }
-        }
-        return $parent{$addr};
+	my ( $self, @arg ) = @_;
+	my $addr = refaddr( $self );
+	if ( @arg ) {
+	    my $parent = shift @arg;
+	    if ( defined $parent ) {
+		__instance( $parent, __PACKAGE__ ) or return;
+		weaken(
+		    $parent{$addr} = $parent );
+	    } else {
+		delete $parent{$addr};
+	    }
+	}
+	return $parent{$addr};
     }
 
     sub _parent_keys {
-        return scalar keys %parent;
+	return scalar keys %parent;
     }
 
 }

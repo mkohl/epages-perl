@@ -21,7 +21,7 @@ my %HDR_LENGTHS = ();
 #
 #     CHAR        =  <any ASCII character>        ; (  0-177,  0.-127.)
 #     CTL         =  <any ASCII control           ; (  0- 37,  0.- 31.)
-#                     character and DEL>          ; (    177,     127.)
+#		      character and DEL>          ; (    177,     127.)
 # I have included the trailing ':' in the field-name
 #
 our $FIELD_NAME = '[^\x00-\x1f\x7f-\xff :]+:';
@@ -53,7 +53,7 @@ sub _tidy_header
 
         while(my ($key,$ref) = each %{$self->{mail_hdr_hash}} )
         {   push @del, $key
-               unless @$ref = grep { ref $_ && defined $$_ } @$ref;
+	       unless @$ref = grep { ref $_ && defined $$_ } @$ref;
         }
 
         delete $self->{'mail_hdr_hash'}{$_} for @del;
@@ -114,7 +114,7 @@ sub _fold_line
         }
     }
 
-    $_[0] =~ s/\A(\S+)\n\s*(?=\S)/$1 /so;
+    $_[0] =~ s/\A(\S+)\n\s*(?=\S)/$1 /so; 
 }
 
 # Tags are case-insensitive, but there is a (slightly) prefered construction
@@ -312,7 +312,7 @@ sub read
         if(defined $line)
         {   ($tag, $line) = _fmt_line $self, $tag, $line;
             _insert $self, $tag, $line, -1
-                if defined $line;
+	        if defined $line;
         }
 
         defined $ln && $ln =~ /^($FIELD_NAME|From )/o
@@ -337,7 +337,7 @@ sub header
 {   my $self = shift;
 
     $self->extract(@_)
-        if @_;
+	if @_;
 
     $self->fold
         if $self->{mail_hdr_modify};
@@ -366,7 +366,7 @@ sub header_hashref
 
     +{ map { ($_ => [$self->get($_)] ) }   # MO: Eh?
            keys %{$self->{mail_hdr_hash}}
-     };
+     }; 
 }
 
 
@@ -375,7 +375,7 @@ sub modify
     my $old  = $self->{mail_hdr_modify};
 
     $self->{mail_hdr_modify} = 0 + shift
-        if @_;
+	if @_;
 
     $old;
 }
@@ -385,8 +385,8 @@ sub mail_from
 {   my $thing  = shift;
     my $choice = uc shift;
 
-    $choice =~ /^(IGNORE|ERROR|COERCE|KEEP)$/
-        or die "bad Mail-From choice: '$choice'";
+    $choice =~ /^(IGNORE|ERROR|COERCE|KEEP)$/ 
+	or die "bad Mail-From choice: '$choice'";
 
     if(ref $thing) { $thing->{mail_hdr_mail_from} = $choice }
     else           { $MAIL_FROM = $choice }
@@ -460,7 +460,7 @@ sub unfold
     while( my ($tag, $list) = each %{$self->{mail_hdr_hash}})
     {   foreach my $ln (@$list)
         {   $$ln =~ s/\r?\n\s+/ /sog
-                if defined $ln && defined $$ln;
+	        if defined $ln && defined $$ln;
         }
     }
 
@@ -549,8 +549,8 @@ sub get
          my $val = ${$def->[$idx]};
          defined $val or return undef;
 
-         $val = substr $val, $l;
-         $val =~ s/^\s+//;
+	 $val = substr $val, $l;
+	 $val =~ s/^\s+//;
          return $val;
     }
 
@@ -631,7 +631,7 @@ sub cleanup
     _tidy_header $self
         if $deleted;
 
-    $self;
+    $self;  
 }
 
 1;

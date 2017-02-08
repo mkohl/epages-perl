@@ -110,7 +110,7 @@ $utf8 = 1;
     $i = 0;
     %langs_mac = map {$_ => $i++} @mac_langs;
 }
-
+    
 
 $VERSION = 1.1;             # MJPH  17-JUN-2000     Add utf8 support
 # $VERSION = 1.001;           # MJPH  10-AUG-1998     Put $number first in list
@@ -209,7 +209,7 @@ sub out
         $fh->print(pack("n6", @{$todo}[0..3], $len, $offset));
         $offset += $len;
     }
-
+    
     $stroff = $fh->tell() - $loc;
     foreach $todo (@todo)
     { $fh->print($todo->[4]); }
@@ -340,10 +340,10 @@ this module can handle. If $lang is set, it is interpretted as a language
 tag and if the particular language of a string is found to match, then
 that string is changed, otherwise no change occurs.
 
-If supplied, @cover should be a list of references to two-element arrays
+If supplied, @cover should be a list of references to two-element arrays 
 containing pid,eid pairs that should added to the name table if not already present.
 
-This function does not add any names to the table unless @cover is supplied.
+This function does not add any names to the table unless @cover is supplied. 
 
 =cut
 
@@ -580,7 +580,7 @@ EOT
 #'
 
 @ms_langids = ( [""],
-    ['ar', ["-SA", "-IQ", "-EG", "-LY", "-DZ", "-MA", "-TN",
+    ['ar', ["-SA", "-IQ", "-EG", "-LY", "-DZ", "-MA", "-TN", 
             "-OM", "-YE", "-SY", "-JO", "-LB", "-KW", "-AE",
             "-BH", "-QA"]],
     ['bg-BG'],
@@ -697,7 +697,7 @@ EOT
     ["fil-PH"],
     ["dv-MV"],
     ["bin-NG"],
-    ["fuv-NG"],
+    ["fuv-NG"], 
     ["ha-Latn-NG"],
     ["ibb-NG"],
     ["yo-NG"],

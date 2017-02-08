@@ -405,7 +405,7 @@ sub command {
     if($canon =~ m/^no_(.*)/) {
       my $what = $1;
       $setup{opposes} = $what;
-      # implicit 'opposes' -- vs
+      # implicit 'opposes' -- vs 
       # warn "$canon (@long)- opposes $what\n";
       #$self->{__go}->add_aliases($canon, \@short, @long);
       #return;

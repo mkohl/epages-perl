@@ -5,7 +5,7 @@ use strict;
 use vars qw(
     @ISA @EXPORT $VERSION
     $Headless $SortKeys $SingleQuote
-    $ImplicitBinary $ImplicitTyping $ImplicitUnicode
+    $ImplicitBinary $ImplicitTyping $ImplicitUnicode 
     $UseCode $LoadCode $DumpCode
     $DeparseObject $LoadBlessed
 );
@@ -34,22 +34,22 @@ BEGIN {
 }
 
 use constant QR_MAP => {
-    ''   => sub { qr{$_[0]}     },
-    x    => sub { qr{$_[0]}x    },
-    i    => sub { qr{$_[0]}i    },
-    s    => sub { qr{$_[0]}s    },
-    m    => sub { qr{$_[0]}m    },
-    ix   => sub { qr{$_[0]}ix   },
-    sx   => sub { qr{$_[0]}sx   },
-    mx   => sub { qr{$_[0]}mx   },
-    si   => sub { qr{$_[0]}si   },
-    mi   => sub { qr{$_[0]}mi   },
-    ms   => sub { qr{$_[0]}sm   },
-    six  => sub { qr{$_[0]}six  },
-    mix  => sub { qr{$_[0]}mix  },
-    msx  => sub { qr{$_[0]}msx  },
-    msi  => sub { qr{$_[0]}msi  },
-    msix => sub { qr{$_[0]}msix },
+    ''   => sub { qr{$_[0]}     }, 
+    x    => sub { qr{$_[0]}x    }, 
+    i    => sub { qr{$_[0]}i    }, 
+    s    => sub { qr{$_[0]}s    }, 
+    m    => sub { qr{$_[0]}m    }, 
+    ix   => sub { qr{$_[0]}ix   }, 
+    sx   => sub { qr{$_[0]}sx   }, 
+    mx   => sub { qr{$_[0]}mx   }, 
+    si   => sub { qr{$_[0]}si   }, 
+    mi   => sub { qr{$_[0]}mi   }, 
+    ms   => sub { qr{$_[0]}sm   }, 
+    six  => sub { qr{$_[0]}six  }, 
+    mix  => sub { qr{$_[0]}mix  }, 
+    msx  => sub { qr{$_[0]}msx  }, 
+    msi  => sub { qr{$_[0]}msi  }, 
+    msix => sub { qr{$_[0]}msix }, 
 };
 
 sub __qr_helper {
@@ -126,7 +126,7 @@ sub LoadFile {
     }
     else {
       if(!-e $file || -z $file) {
-        die("'$file' is empty or non-existant");
+	die("'$file' is empty or non-existant");
       }
         open(my $fh, '<', $file) or die "Cannot read from $file: $!";
         Load(do { local $/; <$fh> });
@@ -138,7 +138,7 @@ sub LoadFile {
 __END__
 =pod
 
-=head1 NAME
+=head1 NAME 
 
 YAML::Syck - Fast, lightweight YAML loader and dumper
 
@@ -248,7 +248,7 @@ Dumping of Tied variables is unsupported.
 
 =head1 CAVEATS
 
-This module implements the YAML 1.0 spec.  To deal with data in YAML 1.1,
+This module implements the YAML 1.0 spec.  To deal with data in YAML 1.1, 
 please use the C<YAML::XS> module instead.
 
 The current implementation bundles libsyck source code; if your system has a

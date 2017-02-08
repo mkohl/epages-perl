@@ -47,7 +47,7 @@ sub read
 {
     my ($self) = @_;
     my ($dat, $fh);
-
+    
     $self->SUPER::read or return $self;
 
     $fh = $self->{' INFILE'};
@@ -67,7 +67,7 @@ sub read
     else {
         die "unknown table format";
     }
-
+    
     if ($format == 1 or $format == 3) {
         my $len = $self->{' LENGTH'} - ($fh->tell() - $self->{' OFFSET'});
         my ($lookupFormat, $lookup) = AAT_read_lookup($fh, 2, $len, $defaultBaseline);
@@ -91,7 +91,7 @@ Writes the table to a file either from memory or by copying
 sub out
 {
     my ($self, $fh) = @_;
-
+    
     return $self->SUPER::out($fh) unless $self->{' read'};
 
     my $format = $self->{'format'};
@@ -112,9 +112,9 @@ sub print
     my ($self, $fh) = @_;
 
     $self->read;
-
+        
     $fh = 'STDOUT' unless defined $fh;
-
+    
     my $format = $self->{'format'};
     $fh->printf("version %f\nformat %d\ndefaultBaseline %d\n", $self->{'version'}, $format, $self->{'defaultBaseline'});
     if ($format == 0 or $format == 1) {

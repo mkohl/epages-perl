@@ -1,4 +1,4 @@
-#================================================================= -*-Perl-*-
+#================================================================= -*-Perl-*- 
 #
 # Template::Namespace::Constants
 #
@@ -64,7 +64,7 @@ sub ident {
             return Template::Directive->ident(\@save);
         }
 
-        # if args is non-zero then it must be eval'ed
+        # if args is non-zero then it must be eval'ed 
         if ($ident->[$e * 2 + 1]) {
             my $args = $ident->[$e * 2 + 1];
             my $comp = eval "$args";
@@ -105,7 +105,7 @@ Template::Namespace::Constants - Compile time constant folding
 
     # easy way to define constants
     use Template;
-
+    
     my $tt = Template->new({
         CONSTANTS => {
             pi => 3.14,
@@ -115,7 +115,7 @@ Template::Namespace::Constants - Compile time constant folding
 
     # nitty-gritty, hands-dirty way
     use Template::Namespace::Constants;
-
+    
     my $tt = Template->new({
         NAMESPACE => {
             constants => Template::Namespace::Constants->new({

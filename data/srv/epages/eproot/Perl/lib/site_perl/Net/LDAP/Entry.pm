@@ -73,7 +73,7 @@ sub decode {
   if (CHECK_UTF8 && $arg{raw}) {
     $result->{objectName} = Encode::decode_utf8($result->{objectName})
       if ('dn' !~ /$arg{raw}/);
-
+  
     foreach my $elem (@{$self->{asn}{attributes}}) {
       map { $_ = Encode::decode_utf8($_) } @{$elem->{vals}}
         if ($elem->{type} !~ /$arg{raw}/);
@@ -132,10 +132,10 @@ sub get_value {
   my $attr  = $attrs->{$type} or return;
 
   return $opt{asref}
-          ? $attr
-          : wantarray
-            ? @{$attr}
-            : $attr->[0];
+	  ? $attr
+	  : wantarray
+	    ? @{$attr}
+	    : $attr->[0];
 }
 
 
@@ -185,22 +185,22 @@ sub replace {
     if (defined($val) and (!ref($val) or @$val)) {
 
       push @{$self->{asn}{attributes}}, { type => $type, vals => ($attrs->{$lc_type}=[])}
-        unless exists $attrs->{$lc_type};
+	unless exists $attrs->{$lc_type};
 
       @{$attrs->{$lc_type}} = ref($val) ? @$val : ($val);
 
       push @$cmd, $type, [ ref($val) ? @$val : $val ]
-        if $cmd;
+	if $cmd;
 
     }
     else {
       delete $attrs->{$lc_type};
 
       @{$self->{asn}{attributes}}
-        = grep { $lc_type ne lc($_->{type}) } @{$self->{asn}{attributes}};
+	= grep { $lc_type ne lc($_->{type}) } @{$self->{asn}{attributes}};
 
       push @$cmd, $type, []
-        if $cmd;
+	if $cmd;
 
     }
   }
@@ -232,19 +232,19 @@ sub delete {
       unless( @{$attrs->{$lc_type}}
         = grep { !exists $values{$_} } @{$attrs->{$lc_type}})
       {
-        delete $attrs->{$lc_type};
-        @{$self->{asn}{attributes}}
-          = grep { $lc_type ne lc($_->{type}) } @{$self->{asn}{attributes}};
+	delete $attrs->{$lc_type};
+	@{$self->{asn}{attributes}}
+	  = grep { $lc_type ne lc($_->{type}) } @{$self->{asn}{attributes}};
       }
 
       push @$cmd, $type, [ ref($val) ? @$val : $val ]
-        if $cmd;
+	if $cmd;
     }
     else {
       delete $attrs->{$lc_type};
 
       @{$self->{asn}{attributes}}
-        = grep { $lc_type ne lc($_->{type}) } @{$self->{asn}{attributes}};
+	= grep { $lc_type ne lc($_->{type}) } @{$self->{asn}{attributes}};
 
       push @$cmd, $type, [] if $cmd;
     }

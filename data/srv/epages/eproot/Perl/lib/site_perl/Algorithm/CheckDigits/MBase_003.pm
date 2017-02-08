@@ -12,93 +12,93 @@ our @ISA = qw(Algorithm::CheckDigits);
 my @weight = ( 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 );
 
 my %table_to = (
-        '0' => 0, '1' => 1, '2' => 2, '3' => 3, '4' => 4,
-        '5' => 5, '6' => 6, '7' => 7, '8' => 8, '9' => 9,
-        'A' => 10, 'B' => 11, 'C' => 12, 'D' => 13, 'E' => 14,
-        'F' => 15, 'G' => 16, 'H' => 17, 'I' => 18, 'J' => 19,
-        'K' => 20, 'L' => 21, 'M' => 22, 'N' => 23, 'O' => 24,
-        'P' => 25, 'Q' => 26, 'R' => 27, 'S' => 28, 'T' => 29,
-        'U' => 30, 'V' => 31, 'W' => 32, 'X' => 33, 'Y' => 34,
-        'Z' => 35,
+	'0' => 0, '1' => 1, '2' => 2, '3' => 3, '4' => 4,
+	'5' => 5, '6' => 6, '7' => 7, '8' => 8, '9' => 9,
+	'A' => 10, 'B' => 11, 'C' => 12, 'D' => 13, 'E' => 14,
+	'F' => 15, 'G' => 16, 'H' => 17, 'I' => 18, 'J' => 19,
+	'K' => 20, 'L' => 21, 'M' => 22, 'N' => 23, 'O' => 24,
+	'P' => 25, 'Q' => 26, 'R' => 27, 'S' => 28, 'T' => 29,
+	'U' => 30, 'V' => 31, 'W' => 32, 'X' => 33, 'Y' => 34,
+	'Z' => 35,
 );
 
 my @table_from = (
-        '0', '1', '2', '3', '4',
-        '5', '6', '7', '8', '9',
-        'A', 'B', 'C', 'D', 'E',
-        'F', 'G', 'H', 'I', 'J',
-        'K', 'L', 'M', 'N', 'O',
-        'P', 'Q', 'R', 'S', 'T',
-        'U', 'V', 'W', 'X', 'Y',
-        'Z', '#',
+	'0', '1', '2', '3', '4',
+	'5', '6', '7', '8', '9',
+	'A', 'B', 'C', 'D', 'E',
+	'F', 'G', 'H', 'I', 'J',
+	'K', 'L', 'M', 'N', 'O',
+	'P', 'Q', 'R', 'S', 'T',
+	'U', 'V', 'W', 'X', 'Y',
+	'Z', '#',
 );
 
 sub new {
-        my $proto = shift;
-        my $type  = shift;
-        my $class = ref($proto) || $proto;
-        my $self  = bless({}, $class);
-        $self->{type} = lc($type);
-        return $self;
+	my $proto = shift;
+	my $type  = shift;
+	my $class = ref($proto) || $proto;
+	my $self  = bless({}, $class);
+	$self->{type} = lc($type);
+	return $self;
 } # new()
 
 sub is_valid {
-        my ($self,$number) = @_;
-        if ($number =~ /^(.*)(.)$/) {
-                return uc($2) eq $self->_compute_checkdigits($1);
-        }
-        return ''
+	my ($self,$number) = @_;
+	if ($number =~ /^(.*)(.)$/) {
+		return uc($2) eq $self->_compute_checkdigits($1);
+	}
+	return ''
 } # is_valid()
 
 sub complete {
-        my ($self,$number) = @_;
-        if ($number =~ /^(.*)$/) {
-                return "$1"
-                     . $self->_compute_checkdigits($1)
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(.*)$/) {
+		return "$1"
+		     . $self->_compute_checkdigits($1)
+	}
+	return '';
 } # complete()
 
 sub basenumber {
-        my ($self,$number) = @_;
-        if ($number =~ /^(.*)(.)$/) {
-                return "$1" if ($2 eq $self->_compute_checkdigits($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(.*)(.)$/) {
+		return "$1" if ($2 eq $self->_compute_checkdigits($1));
+	}
+	return '';
 } # basenumber()
 
 sub checkdigit {
-        my ($self,$number) = @_;
-        if ($number =~ /^(.*)(.)$/) {
-                return $2 if ($2 eq $self->_compute_checkdigits($1));
-        }
-        return '';
+	my ($self,$number) = @_;
+	if ($number =~ /^(.*)(.)$/) {
+		return $2 if ($2 eq $self->_compute_checkdigits($1));
+	}
+	return '';
 } # checkdigit()
 
 sub _compute_checkdigits {
-        my $self    = shift;
-        my $number  = shift;
+	my $self    = shift;
+	my $number  = shift;
 
-        my $digit;
+	my $digit;
 
-        my @digits  = split(//,$number);
-        my $even    = 0;
-        my $sum1    = 0;
-        my $sum2    = 0;
+	my @digits  = split(//,$number);
+	my $even    = 0;
+	my $sum1    = 0;
+	my $sum2    = 0;
 
-        for (my $i = $#digits; $i>= 0; $i--) {
-                if (uc($digits[$i]) =~ /[0-9A-Z]/) {
-                        $digit = $table_to{uc($digits[$i])};
-                } else {
-                        $digit = 36;
-                }
-                $sum1 += 3 * $digit unless ($even);
-                $sum2 += $digit     if     ($even);
-                $even = not $even;
-        }
-        my $sum = 37 - (($sum1 + $sum2) % 37);
+	for (my $i = $#digits; $i>= 0; $i--) {
+		if (uc($digits[$i]) =~ /[0-9A-Z]/) {
+			$digit = $table_to{uc($digits[$i])};
+		} else {
+			$digit = 36;
+		}
+		$sum1 += 3 * $digit unless ($even);
+		$sum2 += $digit     if     ($even);
+		$even = not $even;
+	}
+	my $sum = 37 - (($sum1 + $sum2) % 37);
 
-        return $table_from[$sum];
+	return $table_from[$sum];
 
 } # _compute_checkdigit()
 
@@ -119,7 +119,7 @@ and Contribution Identifier)
   $sici = CheckDigits('sici');
 
   if ($sici->is_valid('0784-8679(20040308)6:<138>2.0.TX;2-H')) {
-        # do something
+	# do something
   }
 
   $cn = $sici->complete('0784-8679(20040308)6:<138>2.0.TX;2-');
@@ -130,7 +130,7 @@ and Contribution Identifier)
 
   $bn = $sici->basenumber('0784-8679(20040308)6:<138>2.0.TX;2-H');
   # $bn = '0784-8679(20040308)6:<138>2.0.TX;2-';
-
+  
 =head1 DESCRIPTION
 
 =head2 ALGORITHM

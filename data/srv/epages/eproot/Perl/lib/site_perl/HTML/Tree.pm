@@ -186,19 +186,19 @@ Terrence Brannon, Gordon Lack, Chris Madsen and Ricardo Signes.
 =head1 AUTHOR
 
 Current Author:
-        Jeff Fearn C<< <jfearn@cpan.org> >>.
+	Jeff Fearn C<< <jfearn@cpan.org> >>.
 
 Original HTML-Tree author:
-        Gisle Aas.
+	Gisle Aas.
 
 Former Authors:
-        Sean M. Burke.
-        Andy Lester.
-        Pete Krawczyk C<< <petek@cpan.org> >>.
+	Sean M. Burke.
+	Andy Lester.
+	Pete Krawczyk C<< <petek@cpan.org> >>.
 
 =head1 COPYRIGHT
 
-Copyright 1995-1998 Gisle Aas; 1999-2004 Sean M. Burke;
+Copyright 1995-1998 Gisle Aas; 1999-2004 Sean M. Burke; 
 2005 Andy Lester; 2006 Pete Krawczyk.  (Except the articles
 contained in HTML::Tree::AboutObjects, HTML::Tree::AboutTrees, and
 HTML::Tree::Scanning, which are all copyright 2000 The Perl Journal.)

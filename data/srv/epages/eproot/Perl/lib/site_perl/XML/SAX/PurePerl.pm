@@ -73,7 +73,7 @@ sub _parse_systemid {
 
 sub _parse {
     my ($self, $reader) = @_;
-
+    
     $reader->public_id($self->{ParseOptions}{Source}{PublicId});
     $reader->system_id($self->{ParseOptions}{Source}{SystemId});
 
@@ -89,7 +89,7 @@ sub _parse {
             sub { $reader->get_xml_version },
         ),
     );
-
+    
     $self->start_document({});
 
     if (defined $self->{ParseOptions}{Source}{Encoding}) {
@@ -98,17 +98,17 @@ sub _parse {
     else {
         $self->encoding_detect($reader);
     }
-
+    
     # parse a document
     $self->document($reader);
-
+    
     return $self->end_document({});
 }
 
 sub parser_error {
     my $self = shift;
     my ($error, $reader) = @_;
-
+    
 # warn("parser error: $error from ", $reader->line, " : ", $reader->column, "\n");
     my $exception = XML::SAX::Exception::Parse->new(
                 Message => $error,
@@ -124,27 +124,27 @@ sub parser_error {
 
 sub document {
     my ($self, $reader) = @_;
-
+    
     # document ::= prolog element Misc*
-
+    
     $self->prolog($reader);
     $self->element($reader) ||
         $self->parser_error("Document requires an element", $reader);
-
+    
     while(length($reader->data)) {
-        $self->Misc($reader) ||
+        $self->Misc($reader) || 
                 $self->parser_error("Only Comments, PIs and whitespace allowed at end of document", $reader);
     }
 }
 
 sub prolog {
     my ($self, $reader) = @_;
-
+    
     $self->XMLDecl($reader);
-
+    
     # consume all misc bits
     1 while($self->Misc($reader));
-
+    
     if ($self->doctypedecl($reader)) {
         while (length($reader->data)) {
             $self->Misc($reader) || last;
@@ -154,19 +154,19 @@ sub prolog {
 
 sub element {
     my ($self, $reader) = @_;
-
+    
     return 0 unless $reader->match('<');
-
+    
     my $name = $self->Name($reader) || $self->parser_error("Invalid element name", $reader);
-
+    
     my %attribs;
-
+    
     while( my ($k, $v) = $self->Attribute($reader) ) {
         $attribs{$k} = $v;
     }
-
+    
     my $have_namespaces = $self->get_feature(Namespaces);
-
+    
     # Namespace processing
     $self->{NSHelper}->push_context;
     my @new_ns;
@@ -177,7 +177,7 @@ sub element {
             if ($k =~ m/^xmlns(:(.*))?$/) {
                 my $prefix = $2 || '';
                 $self->{NSHelper}->declare_prefix($prefix, $v);
-                my $ns =
+                my $ns = 
                     {
                         Prefix       => $prefix,
                         NamespaceURI => $v,
@@ -205,9 +205,9 @@ sub element {
             Value => $value,
         };
     }
-
+    
     %attribs = (); # lose the memory since we recurse deep
-
+    
     my ($ns, $prefix, $lname);
     if ($self->get_feature(Namespaces)) {
         ($ns, $prefix, $lname) = $self->{NSHelper}->process_element_name($name);
@@ -229,8 +229,8 @@ sub element {
         $reader->move_along(1);
         $have_content++;
     }
-
-    my $el =
+    
+    my $el = 
     {
         Name => $name,
         LocalName => $lname,
@@ -239,12 +239,12 @@ sub element {
         Attributes => \%attrib_hash,
     };
     $self->start_element($el);
-
+    
     # warn("($name\n");
-
+    
     if ($have_content) {
         $self->content($reader);
-
+        
         my $data = $reader->data(2);
         $data =~ /^<\// or $self->parser_error("No close tag marker", $reader);
         $reader->move_along(2);
@@ -253,7 +253,7 @@ sub element {
         $self->skip_whitespace($reader);
         $reader->match('>') or $self->parser_error("No close '>' on end tag", $reader);
     }
-
+        
     my %end_el = %$el;
     delete $end_el{Attributes};
     $self->end_element(\%end_el);
@@ -262,18 +262,18 @@ sub element {
         $self->end_prefix_mapping($ns);
     }
     $self->{NSHelper}->pop_context;
-
+    
     return 1;
 }
 
 sub content {
     my ($self, $reader) = @_;
-
+    
     while (1) {
         $self->CharData($reader);
-
+        
         my $data = $reader->data(2);
-
+        
         if ($data =~ /^<\//) {
             return 1;
         }
@@ -295,24 +295,24 @@ sub content {
         }
         last;
     }
-
+    
     return 1;
 }
 
 sub CDSect {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(9);
     return 0 unless $data =~ /^<!\[CDATA\[/;
     $reader->move_along(9);
-
+    
     $self->start_cdata({});
-
+    
     $data = $reader->data;
     while (1) {
         $self->parser_error("EOF looking for CDATA section end", $reader)
             unless length($data);
-
+        
         if ($data =~ /^(.*?)\]\]>/s) {
             my $chars = $1;
             $reader->move_along(length($chars) + 3);
@@ -331,12 +331,12 @@ sub CDSect {
 
 sub CharData {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data;
-
+    
     while (1) {
         return unless length($data);
-
+        
         if ($data =~ /^([^<&]*)[<&]/s) {
             my $chars = $1;
             $self->parser_error("String ']]>' not allowed in character data", $reader)
@@ -364,22 +364,22 @@ sub Misc {
     elsif ($self->skip_whitespace($reader)) {
         return 1;
     }
-
+    
     return 0;
 }
 
 sub Reference {
     my ($self, $reader) = @_;
-
+    
     return 0 unless $reader->match('&');
-
+    
     my $data = $reader->data;
 
     # Fetch more data if we have an incomplete numeric reference
     if ($data =~ /^(#\d*|#x[0-9a-fA-F]*)$/) {
         $data = $reader->data(length($data) + 6);
     }
-
+    
     if ($data =~ /^#x([0-9a-fA-F]+);/) {
         my $ref = $1;
         $reader->move_along(length($ref) + 3);
@@ -403,12 +403,12 @@ sub Reference {
         my $name = $self->Name($reader)
             || $self->parser_error("Invalid name in entity", $reader);
         $reader->match(';') or $self->parser_error("No semi-colon found after entity name", $reader);
-
+        
         # warn("got entity: \&$name;\n");
-
+        
         # expand it
         if ($self->_is_entity($name)) {
-
+            
             if ($self->_is_external($name)) {
                 my $value = $self->_get_entity($name);
                 my $ent_reader = XML::SAX::PurePerl::Reader::URI->new($value);
@@ -465,7 +465,7 @@ sub AttReference {
 
 sub extParsedEnt {
     my ($self, $reader) = @_;
-
+    
     $self->TextDecl($reader);
     $self->content($reader);
 }
@@ -513,9 +513,9 @@ sub _get_entity {
 
 sub skip_whitespace {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data;
-
+    
     my $found = 0;
     while ($data =~ s/^([\x20\x0A\x0D\x09]*)//) {
         last unless length($1);
@@ -523,18 +523,18 @@ sub skip_whitespace {
         $reader->move_along(length($1));
         $data = $reader->data;
     }
-
+    
     return $found;
 }
 
 sub Attribute {
     my ($self, $reader) = @_;
-
+    
     $self->skip_whitespace($reader) || return;
-
+    
     my $data = $reader->data(2);
     return if $data =~ /^\/?>/;
-
+    
     if (my $name = $self->Name($reader)) {
         $self->skip_whitespace($reader);
         $reader->match('=') or $self->parser_error("No '=' in Attribute", $reader);
@@ -546,10 +546,10 @@ sub Attribute {
             $value =~ s/\x20*$//; # discard trailing spaces
             $value =~ s/ {1,}/ /g; # all >1 space to single space
         }
-
+        
         return $name, $value;
     }
-
+    
     return;
 }
 
@@ -560,11 +560,11 @@ sub cdata_attrib {
 
 sub AttValue {
     my ($self, $reader) = @_;
-
+    
     my $quote = $self->quote($reader);
-
+    
     my $value = '';
-
+    
     while (1) {
         my $data = $reader->data;
         $self->parser_error("EOF found while looking for the end of attribute value", $reader)
@@ -579,20 +579,20 @@ sub AttValue {
             $reader->move_along(length($data));
         }
     }
-
+    
     if ($value =~ /</) {
         $self->parser_error("< character not allowed in attribute values", $reader);
     }
-
+    
     $value =~ s/[\x09\x0A\x0D]/\x20/g;
     $value =~ s/&(#(x[0-9a-fA-F]+)|#([0-9]+)|\w+);/$self->AttReference($1, $reader)/geo;
-
+    
     return $value;
 }
 
 sub Comment {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(4);
     if ($data =~ /^<!--/) {
         $reader->move_along(4);
@@ -612,9 +612,9 @@ sub Comment {
                 $reader->move_along(length($data));
             }
         }
-
+        
         $self->comment({ Data => $comment_str });
-
+        
         return 1;
     }
     return 0;
@@ -622,15 +622,15 @@ sub Comment {
 
 sub PI {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data(2);
-
+    
     if ($data =~ /^<\?/) {
         $reader->move_along(2);
         my ($target);
         $target = $self->Name($reader) ||
             $self->parser_error("PI has no target", $reader);
-
+	    
         my $pi_data = '';
         if ($self->skip_whitespace($reader)) {
             while (1) {
@@ -653,9 +653,9 @@ sub PI {
             $data =~ /^\?>/ or $self->parser_error("PI closing sequence not found", $reader);
             $reader->move_along(2);
         }
-
+	
         $self->processing_instruction({ Target => $target, Data => $pi_data });
-
+        
         return 1;
     }
     return 0;
@@ -663,7 +663,7 @@ sub PI {
 
 sub Name {
     my ($self, $reader) = @_;
-
+    
     my $name = '';
     while(1) {
         my $data = $reader->data;
@@ -674,9 +674,9 @@ sub Name {
         $reader->move_along($len);
         last if ($len != length($data));
     }
-
+    
     return unless length($name);
-
+    
     $name =~ /$NameChar/o or $self->parser_error("Name <$name> does not match NameChar production", $reader);
 
     return $name;
@@ -684,9 +684,9 @@ sub Name {
 
 sub quote {
     my ($self, $reader) = @_;
-
+    
     my $data = $reader->data;
-
+    
     $data =~ /^(['"])/ or $self->parser_error("Invalid quote token", $reader);
     $reader->move_along(1);
     return $1;
@@ -710,7 +710,7 @@ XML::SAX::PurePerl - Pure Perl XML Parser with SAX2 interface
 =head1 DESCRIPTION
 
 This module implements an XML parser in pure perl. It is written around the
-upcoming perl 5.8's unicode support and support for multiple document
+upcoming perl 5.8's unicode support and support for multiple document 
 encodings (using the PerlIO layer), however it has been ported to work with
 ASCII/UTF8 documents under lower perl versions.
 

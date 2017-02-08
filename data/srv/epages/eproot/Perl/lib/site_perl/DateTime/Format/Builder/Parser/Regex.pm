@@ -7,8 +7,8 @@ DateTime::Format::Builder::Parser::Regex - Regex based date parsing
 =head1 SYNOPSIS
 
    my $parser = DateTime::Format::Builder->create_parser(
-        regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)$/,
-        params => [ qw( year month day hour minute second ) ],
+	regex  => qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)$/,
+	params => [ qw( year month day hour minute second ) ],
    );
 
 =head1 SPECIFICATION
@@ -75,28 +75,28 @@ use DateTime::Format::Builder::Parser::generic;
 
 __PACKAGE__->valid_params(
 # How to match
-    params      => {
-        type    => ARRAYREF, # mapping $1,$2,... to new() args
+    params	=> {
+	type	=> ARRAYREF, # mapping $1,$2,... to new() args
     },
-    regex       => {
-        type      => SCALARREF,
-        callbacks => {
-            'is a regex' => sub { ref(shift) eq 'Regexp' }
-        }
+    regex	=> {
+	type      => SCALARREF,
+	callbacks => {
+	    'is a regex' => sub { ref(shift) eq 'Regexp' }
+	}
     },
 # How to create
-    extra       => {
-        type => HASHREF,
-        optional => 1,
+    extra	=> {
+	type => HASHREF,
+	optional => 1,
     },
     constructor => {
-        type => CODEREF|ARRAYREF,
-        optional => 1,
-        callbacks => {
-            'array has 2 elements' => sub {
-                ref($_[0]) eq 'ARRAY' ? (@{$_[0]} == 2) : 1
-            }
-        }
+	type => CODEREF|ARRAYREF,
+	optional => 1,
+	callbacks => {
+	    'array has 2 elements' => sub {
+	        ref($_[0]) eq 'ARRAY' ? (@{$_[0]} == 2) : 1
+	    }
+	}
     },
 );
 
@@ -123,16 +123,16 @@ sub make {
     my @args = ( %$p, %{ $self->{extra} } );
     if (my $cons = $self->{constructor})
     {
-        if (ref $cons eq 'ARRAY') {
-            my ($class, $method) = @$cons;
-            return $class->$method(@args);
-        } elsif (ref $cons eq 'CODE') {
-            return $self->$cons( @args );
-        }
+	if (ref $cons eq 'ARRAY') {
+	    my ($class, $method) = @$cons;
+	    return $class->$method(@args);
+	} elsif (ref $cons eq 'CODE') {
+	    return $self->$cons( @args );
+	}
     }
     else
     {
-        return DateTime->new(@args);
+	return DateTime->new(@args);
     }
 }
 
@@ -142,15 +142,15 @@ sub create_parser
     $args{extra} ||= {};
     unless (ref $self)
     {
-        $self = $self->new( %args );
+	$self = $self->new( %args );
     }
 
     # Create our parser
     return $self->generic_parser(
-        ( map { exists $args{$_} ? ( $_ => $args{$_} ) : () } qw(
-            on_match on_fail preprocess postprocess
-            ) ),
-        label => $args{label},
+	( map { exists $args{$_} ? ( $_ => $args{$_} ) : () } qw(
+	    on_match on_fail preprocess postprocess
+	    ) ),
+	label => $args{label},
     );
 }
 

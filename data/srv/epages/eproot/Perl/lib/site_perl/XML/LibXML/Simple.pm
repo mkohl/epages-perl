@@ -111,7 +111,7 @@ sub _create_parser(@)
 
 sub _take_opts(@)
 {   my $self = shift;
-
+   
     my %opts;
     @_ % 2==0
         or die "ERROR: odd number of options.\n";
@@ -127,7 +127,7 @@ sub _take_opts(@)
     \%opts;
 }
 
-# Returns the name of the XML file to parse if no filename or XML string
+# Returns the name of the XML file to parse if no filename or XML string 
 # was provided explictly.
 
 sub default_data_source($)
@@ -173,14 +173,14 @@ sub _init($$)
 
     my $ka = $opt{keyattr} || \@DefKeyAttr;
     $ka    = [ $ka ] unless ref $ka;
-
+ 
     if(ref $ka eq 'ARRAY')
     {   if(@$ka) { $opt{keyattr} = $ka }
         else { delete $opt{keyattr} }
     }
     elsif(ref $ka eq 'HASH')
     {   # Convert keyattr => { elem => '+attr' }
-        # to keyattr => { elem => [ 'attr', '+' ] }
+        # to keyattr => { elem => [ 'attr', '+' ] } 
         my %at;
         while(my($k,$v) = each %$ka)
         {   $v =~ /^(\+|-)?(.*)$/;
@@ -234,7 +234,7 @@ sub _add_kv($$$$)
         else                          { $d->{$k} = [ $d->{$k}, $v ] } }
     elsif(ref $v eq 'ARRAY')          { push @{$d->{$k}}, $v }
     elsif(ref $v eq 'HASH'
-       && $k ne $opts->{contentkey}
+       && $k ne $opts->{contentkey} 
        && $opts->{forcearray_always}) { push @{$d->{$k}}, $v }
     elsif($opts->{forcearray_elem}{$k}
         || grep {$k =~ $_} @{$opts->{forcearray_regex}}
@@ -460,7 +460,7 @@ sub array_to_hash($$$$)
     $out{$_} =  $out{$_}{$contentkey} for keys %out;
     \%out;
 }
-
+  
 1;
 
 __END__

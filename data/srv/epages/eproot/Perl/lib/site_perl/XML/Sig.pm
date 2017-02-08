@@ -46,10 +46,10 @@ sub new {
     }
     bless $self, $class;
     $self->{ 'canonicalizer' } =
-        exists $params->{ canonicalizer } ? $params->{ canonicalizer } : 'XML::CanonicalizeXML';
+	exists $params->{ canonicalizer } ? $params->{ canonicalizer } : 'XML::CanonicalizeXML';
     $self->{ 'x509' } = exists $params->{ x509 } ? 1 : 0;
     if ( exists $params->{ 'key' } ) {
-        $self->_load_key( $params->{ 'key' } );
+	$self->_load_key( $params->{ 'key' } );
     }
     return $self;
 }
@@ -82,12 +82,12 @@ sub sign {
 
     my $signature;
     if ($self->{key_type} eq 'dsa') {
-        # DSA only permits the signing of 20 bytes or less, hence the sha1
-        my $bin_signature  = $self->{key_obj}->sign( sha1($canonical) );
-        $signature     = encode_base64( $bin_signature, "\n" );
+	# DSA only permits the signing of 20 bytes or less, hence the sha1
+	my $bin_signature  = $self->{key_obj}->sign( sha1($canonical) );
+	$signature     = encode_base64( $bin_signature, "\n" );
     } else {
-        my $bin_signature = $self->{key_obj}->sign( $canonical );
-        $signature     = encode_base64( $bin_signature, "\n" );
+	my $bin_signature = $self->{key_obj}->sign( $canonical );
+	$signature     = encode_base64( $bin_signature, "\n" );
     }
 
     # With the signature value and the signedinfo element, we create
@@ -103,7 +103,7 @@ sub sign {
 sub verify {
     my $self = shift;
     my ($xml) = @_;
-
+    
     $self->{ parser } = XML::XPath->new( xml => $xml );
 
     my $signature                = _trim($self->{parser}->findvalue('//Signature/SignatureValue'));
@@ -112,24 +112,24 @@ sub verify {
 
     my $keyinfo_node;
     if ($keyinfo_node = $self->{parser}->find('//Signature/KeyInfo/X509Data')) {
-        return 0 unless $self->_verify_x509($keyinfo_node,$signed_info_canon,$signature);
-    }
+	return 0 unless $self->_verify_x509($keyinfo_node,$signed_info_canon,$signature);
+    } 
     elsif ($keyinfo_node = $self->{parser}->find('//Signature/KeyInfo/KeyValue/RSAKeyValue')) {
-        return 0 unless $self->_verify_rsa($keyinfo_node,$signed_info_canon,$signature);
+	return 0 unless $self->_verify_rsa($keyinfo_node,$signed_info_canon,$signature);
     }
     elsif ($keyinfo_node = $self->{parser}->find('//Signature/KeyInfo/KeyValue/DSAKeyValue')) {
-        return 0 unless $self->_verify_dsa($keyinfo_node,$signed_info_canon,$signature);
+	return 0 unless $self->_verify_dsa($keyinfo_node,$signed_info_canon,$signature);
     }
     else {
-        die "Unrecognized key type in signature.";
+	die "Unrecognized key type in signature.";
     }
 
     my $digest_method = $self->{parser}->findvalue('//Signature/SignedInfo/Reference/DigestMethod/@Algorithm');
     my $digest = _trim($self->{parser}->findvalue('//Signature/SignedInfo/Reference/DigestValue'));
-
+    
     my $signed_xml    = $self->_get_signed_xml();
     my $canonical     = $self->_transform( $signed_xml );
-    my $digest_bin    = sha1( $canonical );
+    my $digest_bin    = sha1( $canonical ); 
 
     return 1 if ($digest eq _trim(encode_base64($digest_bin)));
     return 0;
@@ -157,11 +157,11 @@ sub _transform {
     my $self = shift;
     my ($xml) = @_;
     foreach my $node ($self->{parser}->find('//Transform/@Algorithm')->get_nodelist) {
-        my $alg = $node->getNodeValue;
-        if ($alg eq TRANSFORM_ENV_SIG) { $xml = $self->_transform_env_sig($xml); }
-        elsif ($alg eq TRANSFORM_EXC_C14N) { $xml = $self->_canonicalize($xml,0); }
-        elsif ($alg eq TRANSFORM_EXC_C14N_COMMENTS) { $xml = $self->canonicalize($xml,1); }
-        else { die "Unsupported transform: $alg"; }
+	my $alg = $node->getNodeValue;
+	if ($alg eq TRANSFORM_ENV_SIG) { $xml = $self->_transform_env_sig($xml); }
+	elsif ($alg eq TRANSFORM_EXC_C14N) { $xml = $self->_canonicalize($xml,0); }
+	elsif ($alg eq TRANSFORM_EXC_C14N_COMMENTS) { $xml = $self->canonicalize($xml,1); }
+	else { die "Unsupported transform: $alg"; }
     }
     return $xml;
 }
@@ -201,7 +201,7 @@ sub _verify_x509 {
     my ($context,$canonical,$sig) = @_;
 
     eval {
-        require Crypt::OpenSSL::X509;
+	require Crypt::OpenSSL::X509;
         require Crypt::OpenSSL::RSA;
     };
 
@@ -251,7 +251,7 @@ sub _get_node {
     my ($xpath) = @_;
     my $nodeset = $self->{parser}->find($xpath);
     foreach my $node ($nodeset->get_nodelist) {
-        return $node;
+        return $node; 
     }
 }
 
@@ -317,20 +317,20 @@ sub _load_rsa_key {
         $self->{ key_obj }  = $rsaKey;
         $self->{ key_type } = 'rsa';
 
-        if ($self->{'x509'}) {
-            my $cert = $rsaKey->get_public_key_x509_string();
-            $cert =~ s/-----[^-]*-----//gm;
-            $self->{KeyInfo} = "<KeyInfo><X509Data><X509Certificate>\n"._trim($cert)."\n</X509Certificate></X509Data></KeyInfo>";
-        } else {
-            my $bigNum = ( $rsaKey->get_key_parameters() )[1];
-            my $bin = $bigNum->to_bin();
-            my $exp = encode_base64( $bin, '' );
-
-            $bigNum = ( $rsaKey->get_key_parameters() )[0];
-            $bin = $bigNum->to_bin();
-            my $mod = encode_base64( $bin, '' );
-            $self->{KeyInfo} = "<KeyInfo><KeyValue><RSAKeyValue><Modulus>$mod</Modulus><Exponent>$exp</Exponent></RSAKeyValue></KeyValue></KeyInfo>";
-        }
+	if ($self->{'x509'}) {
+	    my $cert = $rsaKey->get_public_key_x509_string();
+	    $cert =~ s/-----[^-]*-----//gm;
+	    $self->{KeyInfo} = "<KeyInfo><X509Data><X509Certificate>\n"._trim($cert)."\n</X509Certificate></X509Data></KeyInfo>";
+	} else {
+	    my $bigNum = ( $rsaKey->get_key_parameters() )[1];
+	    my $bin = $bigNum->to_bin();
+	    my $exp = encode_base64( $bin, '' );
+	    
+	    $bigNum = ( $rsaKey->get_key_parameters() )[0];
+	    $bin = $bigNum->to_bin();
+	    my $mod = encode_base64( $bin, '' );
+	    $self->{KeyInfo} = "<KeyInfo><KeyValue><RSAKeyValue><Modulus>$mod</Modulus><Exponent>$exp</Exponent></RSAKeyValue></KeyValue></KeyInfo>";
+	}
     }
     else {
         confess "did not get a new Crypt::OpenSSL::RSA object";
@@ -351,7 +351,7 @@ sub _load_x509_key {
         $x509Key->use_pkcs1_padding();
         $self->{ key_obj } = $x509Key;
         my $cert = $x509Key->pubkey;
-        $cert =~ s/^-----[^-]*-----\n$//gm;
+	$cert =~ s/^-----[^-]*-----\n$//gm;
         $self->{KeyInfo} = "<KeyInfo><X509Data><X509Certificate>\n$cert\n</X509Certificate></X509Data></KeyInfo>";
         $self->{key_type} = 'x509';
     }
@@ -386,11 +386,11 @@ sub _load_key {
             }
 
             return 1;
-        } elsif ( $text =~ m/BEGIN PRIVATE KEY/ ) {
-            $self->_load_rsa_key( $text );
+	} elsif ( $text =~ m/BEGIN PRIVATE KEY/ ) {
+	    $self->_load_rsa_key( $text );
         } elsif ($text =~ m/BEGIN CERTIFICATE/) {
-            $self->_load_x509_key( $text );
-        }
+	    $self->_load_x509_key( $text );
+	}
         else {
             confess "Could not detect type of key $file.";
         }
@@ -449,7 +449,7 @@ sub _canonicalize_xml {
     elsif ( $self->{ canonicalizer } eq 'XML::CanonicalizeXML' ) {
         require XML::CanonicalizeXML;
         my $xpath = '<XPath>(//. | //@* | //namespace::*)</XPath>';
-        return XML::CanonicalizeXML::canonicalize( $xml, $xpath, [], 0, $comments );
+	return XML::CanonicalizeXML::canonicalize( $xml, $xpath, [], 0, $comments );
     }
     else {
         confess "Unknown XML canonicalizer module.";
@@ -466,18 +466,18 @@ XML::Sig - A toolkit to help sign and verify XML Digital Signatures.
 =head1 DESCRIPTION
 
 This perl module provides two primary capabilities: given an XML string, create
-and insert a digital signature, or if one is already present in the string verify
+and insert a digital signature, or if one is already present in the string verify 
 it -- all in accordance with the W3C standard governing XML signatures.
 
 =head1 ABOUT DIGITAL SIGNATURES
 
 Just as one might want to send an email message that is cryptographically signed
 in order to give the recipient the means to independently verify who sent the email,
-one might also want to sign an XML document. This is especially true in the
-scenario where an XML document is received in an otherwise unauthenticated
+one might also want to sign an XML document. This is especially true in the 
+scenario where an XML document is received in an otherwise unauthenticated 
 context, e.g. SAML.
 
-However XML provides a challenge that email does not. In XML, two documents can be
+However XML provides a challenge that email does not. In XML, two documents can be 
 byte-wise inequivalent, and semanticaly equivalent at the same time. For example:
 
     <?xml version="1.0"?>
@@ -493,16 +493,16 @@ byte-wise inequivalent, and semanticaly equivalent at the same time. For example
     </foo>
 
 Each of these document express the same thing, or in other words they "mean"
-the same thing. However if you were to strictly sign the raw text of these
-documents, they would each produce different signatures.
+the same thing. However if you were to strictly sign the raw text of these 
+documents, they would each produce different signatures. 
 
-XML Signatures on the other hand will produce the same signature for each of
-the documents above. Therefore an XML document can be written and rewritten by
-different parties and still be able to have someone at the end of the line
+XML Signatures on the other hand will produce the same signature for each of 
+the documents above. Therefore an XML document can be written and rewritten by 
+different parties and still be able to have someone at the end of the line 
 verify a signature the document may contain.
 
 There is a specially subscribed methodology for how this process should be
-executed and involves transforming the XML into its canonical form so a
+executed and involves transforming the XML into its canonical form so a 
 signature can be reliably inserted or extracted for verification. This
 module implements that process.
 
@@ -579,7 +579,7 @@ Now, let's insert a signature:
 
 This module supports the following signature methods:
 
-=over
+=over 
 
 =item DSA
 
@@ -591,7 +591,7 @@ This module supports the following signature methods:
 
 This module supports the following canonicalization methods and transforms:
 
-=over
+=over 
 
 =item EXC-X14N#
 
@@ -608,7 +608,7 @@ This module supports the following canonicalization methods and transforms:
 =item B<sign($xml)>
 
 When given a string of XML, it will return the same string with a signature
-generated from the key provided when the XML::Sig object was initialized.
+generated from the key provided when the XML::Sig object was initialized. 
 
 This method presumes that there is one and only one element in your XML
 document with an ID (case sensitive) attribute. This is the element that will
@@ -618,7 +618,7 @@ attribute can be found on an element, the signature will not be created.
 
 =item B<verify($xml)>
 
-Returns true or false based upon whether the signature is valid or not.
+Returns true or false based upon whether the signature is valid or not. 
 
 When using XML::Sig exclusively to verify a signature, no key needs to be
 specified during initialization given that the public key should be
@@ -652,8 +652,8 @@ The XML canonicalization library to use. Options currently are:
 
 =item B<x509>
 
-Takes a true (1) or false (0) value and indicates how you want the
-signature to be encoded. When true, an X509 certificate will be
+Takes a true (1) or false (0) value and indicates how you want the 
+signature to be encoded. When true, an X509 certificate will be 
 encoded in the signature. Otherwise the native encoding format for
 RSA and DSA will be used.
 
@@ -670,7 +670,7 @@ Fetch the newest and greatest perl version:
    });
    my $signed = $signer->sign($xml);
    print "Signed XML: $signed\n";
-   $signer->verify($signed)
+   $signer->verify($signed) 
      or die "Signature Invalid.";
    print "Signature valid.\n";
 
@@ -682,8 +682,8 @@ L<http://www.w3.org/TR/xmldsig-core/>
 
 Author: Byrne Reese <byrne@majordojo.com>
 
-Thanks to Manni Heumann who wrote Google::SAML::Response from
-which this module borrows heavily in order to create digital
+Thanks to Manni Heumann who wrote Google::SAML::Response from 
+which this module borrows heavily in order to create digital 
 signatures.
 
 =cut

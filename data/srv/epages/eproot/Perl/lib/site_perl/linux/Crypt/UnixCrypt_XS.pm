@@ -13,11 +13,11 @@ our @ISA = qw(Exporter);
 # Do not simply export all your public functions/methods/constants.
 
 our @EXPORT_OK = ( qw/crypt crypt_rounds fold_password base64_to_block
-                block_to_base64 base64_to_int24 int24_to_base64
-                base64_to_int12 int12_to_base64/ );
+		block_to_base64 base64_to_int24 int24_to_base64
+		base64_to_int12 int12_to_base64/ );
 
 our @EXPORT = qw(
-
+	
 );
 
 our $VERSION = '0.09';
@@ -33,8 +33,8 @@ __END__
 
 =head1 NAME
 
-Crypt::UnixCrypt_XS - perl xs interface for a portable traditional
-F<crypt> function.
+Crypt::UnixCrypt_XS - perl xs interface for a portable traditional 
+F<crypt> function. 
 
 
 =head1 SYNOPSIS
@@ -121,7 +121,7 @@ C<crypt(3)>, L<Crypt::UnixCrypt>
 
 =head1 AUTHOR
 
-Boris Zentner, E<lt>bzm@2bz.deE<gt>, the original C source code was
+Boris Zentner, E<lt>bzm@2bz.deE<gt>, the original C source code was 
 written by Eric Young, eay@psych.uq.oz.au.
 
 =head1 CREDITS

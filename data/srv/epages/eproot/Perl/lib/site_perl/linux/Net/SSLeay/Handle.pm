@@ -23,7 +23,7 @@ handled as standard file handles.
   print SSL "GET / HTTP/1.0\r\n";
   shutdown(\*SSL, 1);
   print while (<SSL>);
-  close SSL;
+  close SSL;                                                       
 
 =head1 DESCRIPTION
 
@@ -47,7 +47,7 @@ you need to add to your program is the tie function as in:
         $socket = Net::SSLeay::Handle->make_socket($host, $port);
     }
     print $socket $request_headers;
-    ...
+    ... 
 
 =cut
 
@@ -85,8 +85,8 @@ sub TIEHANDLE {
 
     $Debug and print "Cipher '" . Net::SSLeay::get_cipher($ssl) . "'\n";
 
-        my $self = bless {
-        ssl    => $ssl,
+	my $self = bless {
+        ssl    => $ssl, 
         ctx    => $ctx,
         socket => $socket,
         fileno => $fileno,
@@ -110,22 +110,22 @@ sub PRINT {
 sub READLINE {
     my $self = shift;
     my $ssl  = _get_ssl($self);
-        if (wantarray) {
-                my @lines;
-                while (my $line = Net::SSLeay::ssl_read_until($ssl)) {
-                        push @lines, $line;
-                }
-                return @lines;
-        } else {
-                my $line = Net::SSLeay::ssl_read_until($ssl);
-                return $line ? $line : undef;
-        }
+	if (wantarray) {
+		my @lines;
+		while (my $line = Net::SSLeay::ssl_read_until($ssl)) {
+			push @lines, $line;
+		}
+		return @lines;
+	} else {
+		my $line = Net::SSLeay::ssl_read_until($ssl); 
+		return $line ? $line : undef;
+	}
 }
 
 sub READ {
     my ($self, $buf, $len, $offset) = \ (@_);
     my $ssl = _get_ssl($$self);
-    defined($$offset) or
+    defined($$offset) or 
       return length($$buf = Net::SSLeay::ssl_read_all($ssl, $$len));
 
     defined(my $read = Net::SSLeay::ssl_read_all($ssl, $$len))
@@ -177,8 +177,8 @@ sockets and do the right thing.
 sub shutdown {
     my ($obj, @params) = @_;
 
-        my $socket = UNIVERSAL::isa($obj, 'Net::SSLeay::Handle') ?
-                $obj->{socket} : $obj;
+	my $socket = UNIVERSAL::isa($obj, 'Net::SSLeay::Handle') ?
+		$obj->{socket} : $obj;
     return shutdown($socket, @params);
 }
 
@@ -224,7 +224,7 @@ sub make_socket {
     my $dest_ip     = gethostbyname($phost || $host);
     my $host_params = sockaddr_in($pport, $dest_ip);
     my $socket = $^V ? undef : $class->_glob_ref("$host:$port");
-
+    
     socket($socket, &PF_INET(), &SOCK_STREAM(), 0) or die "socket: $!";
     connect($socket, $host_params)                 or die "connect: $!";
 
@@ -261,7 +261,7 @@ sub _glob_ref {
 
     $Debug and do {
         print "GLOB_REF $preamb\n";
-        while (my ($k, $v) = each %Glob_Ref) {print "$k = $v\n"}
+        while (my ($k, $v) = each %Glob_Ref) {print "$k = $v\n"} 
         print "\n";
     };
 
@@ -318,7 +318,7 @@ like:
     }
     my $last_sel = select($socket); $| = 1; select($last_sel);
     print $socket $request_headers;
-    ...
+    ... 
 
 Note: As far as I know you must be careful with the globs in the tie()
 function.  The first parameter must be a glob (*SOMETHING) and the
@@ -350,7 +350,7 @@ non-SSL sockets and do the right thing.
   print SSL "GET / HTTP/1.0\r\n";
   shutdown(\*SSL, 1);
   print while (<SSL>);
-  close SSL;
+  close SSL; 
 
 =head1 TODO
 

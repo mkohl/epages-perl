@@ -31,7 +31,7 @@ sub call {
         }
         else {
             $env->{'psgi.errors'}->print($log_line);
-        }
+        }  
         return $res;
     }
 
@@ -44,7 +44,7 @@ sub call {
         }
         else {
             $env->{'psgi.errors'}->print($log_line);
-        }
+        }  
     });
 }
 

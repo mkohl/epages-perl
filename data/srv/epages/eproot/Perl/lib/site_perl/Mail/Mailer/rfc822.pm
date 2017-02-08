@@ -24,7 +24,7 @@ sub set_headers
         }
     }
 
-    print $self "\n";   # terminate headers
+    print $self "\n";	# terminate headers
 }
 
 1;

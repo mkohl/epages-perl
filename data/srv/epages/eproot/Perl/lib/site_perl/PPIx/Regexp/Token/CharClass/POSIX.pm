@@ -55,22 +55,22 @@ sub perl_version_introduced {
 {
 
     my %class = (
-        ':' => __PACKAGE__,
+	':' => __PACKAGE__,
     );
 
     sub __PPIX_TOKENIZER__regexp {
-        my ( $class, $tokenizer, $character ) = @_;
+	my ( $class, $tokenizer, $character ) = @_;
 
-        $tokenizer->cookie( COOKIE_CLASS ) or return;
+	$tokenizer->cookie( COOKIE_CLASS ) or return;
 
-        if ( my $accept = $tokenizer->find_regexp(
-                qr{ \A [[] ( [.=:] ) \^? .*? \1 []] }smx ) ) {
-            my ( $punc ) = $tokenizer->capture();
-            return $tokenizer->make_token( $accept,
-                $class{$punc} || __PACKAGE__ . '::Unknown' );
-        }
+	if ( my $accept = $tokenizer->find_regexp(
+		qr{ \A [[] ( [.=:] ) \^? .*? \1 []] }smx ) ) {
+	    my ( $punc ) = $tokenizer->capture();
+	    return $tokenizer->make_token( $accept,
+		$class{$punc} || __PACKAGE__ . '::Unknown' );
+	}
 
-        return;
+	return;
 
     }
 

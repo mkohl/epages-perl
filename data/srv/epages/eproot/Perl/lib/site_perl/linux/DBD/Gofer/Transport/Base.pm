@@ -38,7 +38,7 @@ sub new {
     $args->{keep_meta_frozen} ||= 1 if $args->{go_cache};
     #warn "args @{[ %$args ]}\n";
     return $class->SUPER::new($args);
-}
+}   
 
 
 sub _init_trace { $ENV{DBD_GOFER_TRACE} || 0 }

@@ -60,7 +60,7 @@ sub _read
     my ($self, $numg, $numh, $tAdv, $tLsb) = @_;
     my ($fh) = $self->{' INFILE'};
     my ($i, $dat);
-
+    
     $self->SUPER::read or return $self;
 
     for ($i = 0; $i < $numh; $i++)
@@ -69,7 +69,7 @@ sub _read
         ($self->{$tAdv}[$i], $self->{$tLsb}[$i]) = unpack("nn", $dat);
         $self->{$tLsb}[$i] -= 65536 if ($self->{$tLsb}[$i] >= 32768);
     }
-
+    
     $i--;
     while (++$i < $numg)
     {
@@ -80,7 +80,7 @@ sub _read
     }
     $self;
 }
-
+    
 =head2 $t->numMetrics
 
 Calculates again the number of long metrics required to store the information
@@ -166,7 +166,7 @@ sub update
     $self->{' PARENT'}{'head'}{'flags'} |= 2;
     $self;
 }
-
+    
 
 =head2 $t->out_xml($context, $depth)
 

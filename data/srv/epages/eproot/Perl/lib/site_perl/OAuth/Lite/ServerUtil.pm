@@ -46,9 +46,9 @@ This module helps you to implement application that acts as OAuth Service Provid
 If you use OAuth 1.31 or older version, its has invalid way to normalize params.
 (when there are two or more same key and they contain ASCII and non ASCII value)
 
-But the many services have already supported deprecated version,
+But the many services have already supported deprecated version, 
 and the correct way breaks backward compatibility.
-So, from 1.32, supported both correct and deprecated method.
+So, from 1.32, supported both correct and deprecated method. 
 
 use $OAuth::Lite::USE_DEPRECATED_NORMALIZER to switch behaviour.
 Currently 1 is set by default to keep backward compatibility.
@@ -218,7 +218,7 @@ sub validate_params {
 =head2 validate_signature_method($method_name)
 
     unless ($util->validate_signature_method('HMAC-SHA1')) {
-
+        
         $your_app->error(qq/Unsupported signature method/);
         ...
     }
@@ -249,7 +249,7 @@ sub validate_signature_method {
 
     # you can omit consumer_secret and token_secret if you don't need them.
     $util->verify_signature(
-        method          => $r->method,
+        method          => $r->method, 
         params          => $params,
         url             => $requested_uri,
         consumer_secret => $consumer_secret,

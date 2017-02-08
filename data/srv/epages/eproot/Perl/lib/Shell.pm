@@ -27,9 +27,9 @@ sub import {
     }
 }
 
-# NOTE: this is used to enable constant folding in
-# expressions like (OS eq 'MSWin32') and
-# (OS eq 'os2') just like it happened in  0.6  version
+# NOTE: this is used to enable constant folding in 
+# expressions like (OS eq 'MSWin32') and 
+# (OS eq 'os2') just like it happened in  0.6  version 
 # which used eval "string" to install subs on the fly.
 use constant OS => $^O;
 
@@ -55,8 +55,8 @@ sub _make_cmd {
     return sub {
             shift if ref $_[0] && $_[0]->isa( 'Shell' );
             if (@_ < 1) {
-                $Shell::capture_stderr ==  1 ? `$cmd 2>&1` :
-                $Shell::capture_stderr == -1 ? `$cmd 2>$null` :
+                $Shell::capture_stderr ==  1 ? `$cmd 2>&1` : 
+                $Shell::capture_stderr == -1 ? `$cmd 2>$null` : 
                 `$cmd`;
             } elsif (OS eq 'os2') {
                 local(*SAVEOUT, *READ, *WRITE);
@@ -153,7 +153,7 @@ Shell - run shell commands transparently within perl
    @pslines = ps('-ww'),
    cp("/etc/passwd", "/tmp/passwd");
 
-   # object oriented
+   # object oriented 
    my $sh = Shell->new;
    print $sh->ls('-l');
 
@@ -162,7 +162,7 @@ Shell - run shell commands transparently within perl
 =head2 Caveats
 
 This package is included as a show case, illustrating a few Perl features.
-It shouldn't be used for production programs. Although it does provide a
+It shouldn't be used for production programs. Although it does provide a 
 simple interface for obtaining the standard output of arbitrary commands,
 there may be better ways of achieving what you need.
 
@@ -173,16 +173,16 @@ If you don't need to process standard output at all, you might use C<system>
 (in preference of doing a print with the collected standard output).
 
 Since Shell.pm and all of the aforementioned techniques use your system's
-shell to call some local command, none of them is portable across different
-systems. Note, however, that there are several built in functions and
+shell to call some local command, none of them is portable across different 
+systems. Note, however, that there are several built in functions and 
 library packages providing portable implementations of functions operating
-on files, such as: C<glob>, C<link> and C<unlink>, C<mkdir> and C<rmdir>,
+on files, such as: C<glob>, C<link> and C<unlink>, C<mkdir> and C<rmdir>, 
 C<rename>, C<File::Compare>, C<File::Copy>, C<File::Find> etc.
 
 Using Shell.pm while importing C<foo> creates a subroutine C<foo> in the
 namespace of the importing package. Calling C<foo> with arguments C<arg1>,
-C<arg2>,... results in a shell command C<foo arg1 arg2...>, where the
-function name and the arguments are joined with a blank. (See the subsection
+C<arg2>,... results in a shell command C<foo arg1 arg2...>, where the 
+function name and the arguments are joined with a blank. (See the subsection 
 on Escaping magic characters.) Since the result is essentially a command
 line to be passed to the shell, your notion of arguments to the Perl
 function is not necessarily identical to what the shell treats as a

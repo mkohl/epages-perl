@@ -25,7 +25,7 @@ use Params::Util qw{_SET};
 
 use vars qw{$VERSION};
 BEGIN {
-        $VERSION = '1.110';
+	$VERSION = '1.110';
 }
 
 
@@ -53,26 +53,26 @@ Returns a new object on success, or C<undef> on error.
 =cut
 
 sub new {
-        my $class = shift;
+	my $class = shift;
 
-        # This can't be created directly, it must be through
-        # a SUPER::new call
-        if ( $class eq __PACKAGE__ ) {
-                die "Cannot directly instantiate Algorithm::Dependency::Source."
-                        . " You must use a subclass";
-        }
+	# This can't be created directly, it must be through
+	# a SUPER::new call
+	if ( $class eq __PACKAGE__ ) {
+		die "Cannot directly instantiate Algorithm::Dependency::Source."
+			. " You must use a subclass";
+	}
 
-        # Create the basic object
-        my $self = bless {
-                # Has the source been loaded
-                loaded      => 0,
+	# Create the basic object
+	my $self = bless {
+		# Has the source been loaded
+		loaded      => 0,
 
-                # Indexes
-                items_hash  => undef,
-                items_array => undef,
-                }, $class;
+		# Indexes
+		items_hash  => undef,
+		items_array => undef,
+		}, $class;
 
-        $self;
+	$self;
 }
 
 =pod
@@ -90,37 +90,37 @@ Returns true if the items are loaded successfully, or C<undef> on error.
 =cut
 
 sub load {
-        my $self = shift;
+	my $self = shift;
 
-        # If this is a reload, clean up in preperation
-        if ( $self->{loaded} ) {
-                $self->{loaded}      = 0;
-                $self->{items_hash}  = undef;
-                $self->{items_array} = undef;
-        }
+	# If this is a reload, clean up in preperation
+	if ( $self->{loaded} ) {
+		$self->{loaded}      = 0;
+		$self->{items_hash}  = undef;
+		$self->{items_array} = undef;
+	}
 
-        # Pass through to the real loader
-        my $items = $self->_load_item_list;
-        return $items unless $items;
-        unless ( _SET($items, 'Algorithm::Dependency::Item') ) {
-                die( ref($self) . "::_load_item_list did not return an Algorithm::Dependency::Item set" );
-        }
+	# Pass through to the real loader
+	my $items = $self->_load_item_list;
+	return $items unless $items;
+	unless ( _SET($items, 'Algorithm::Dependency::Item') ) {
+		die( ref($self) . "::_load_item_list did not return an Algorithm::Dependency::Item set" );
+	}
 
-        # Add the items
-        foreach my $item ( @$items ) {
-                # Have we added this one already?
-                my $id = $item->id;
-                if ( $self->{items_hash}->{ $id } ) {
-                        # Duplicate entry
-                        return undef;
-                }
+	# Add the items
+	foreach my $item ( @$items ) {
+		# Have we added this one already?
+		my $id = $item->id;
+		if ( $self->{items_hash}->{ $id } ) {
+			# Duplicate entry
+			return undef;
+		}
 
-                # Add it
-                push @{ $self->{items_array} }, $item;
-                $self->{items_hash}->{$id} = $item;
-        }
+		# Add it
+		push @{ $self->{items_array} }, $item;
+		$self->{items_hash}->{$id} = $item;
+	}
 
-        $self->{loaded} = 1;
+	$self->{loaded} = 1;
 }
 
 =pod
@@ -136,12 +136,12 @@ the named item does not exist in the source.
 =cut
 
 sub item {
-        my $self = shift;
-        my $id   = (defined $_[0] and ! ref $_[0] and $_[0] ne '') ? shift : return undef;
-        $self->{loaded} or $self->load or return undef;
+	my $self = shift;
+	my $id   = (defined $_[0] and ! ref $_[0] and $_[0] ne '') ? shift : return undef;
+	$self->{loaded} or $self->load or return undef;
 
-        # Return the item (or undef)
-        $self->{items_hash}->{$id};
+	# Return the item (or undef)
+	$self->{items_hash}->{$id};
 }
 
 =pod
@@ -158,37 +158,37 @@ C<undef> on error.
 =cut
 
 sub items {
-        my $self = shift;
-        $self->{loaded} or $self->load or return undef;
-        @{ $self->{items_array} };
+	my $self = shift;
+	$self->{loaded} or $self->load or return undef;
+	@{ $self->{items_array} };
 }
 
 =pod
 
 =head2 missing_dependencies
 
-By default, we are leniant with missing dependencies if the item is neved
-used. For systems where having a missing dependency can be very bad, the
-C<missing_dependencies> method checks all Items to make sure their
+By default, we are leniant with missing dependencies if the item is neved 
+used. For systems where having a missing dependency can be very bad, the 
+C<missing_dependencies> method checks all Items to make sure their 
 dependencies exist.
 
 If there are any missing dependencies, returns a reference to an array of
-their ids. If there are no missing dependencies, returns 0. Returns
+their ids. If there are no missing dependencies, returns 0. Returns 
 C<undef> on error.
 
 =cut
 
 sub missing_dependencies {
-        my $self = shift;
-        $self->{loaded} or $self->load or return undef;
-
-        # Merged the depends of all the items, and see if
-        # any are missing.
-        my %missing = map  { $_ => 1           }
-                      grep { ! $self->item($_) }
-                      map  { $_->depends       }
-                      $self->items;
-        %missing ? [ sort keys %missing ] : 0;
+	my $self = shift;
+	$self->{loaded} or $self->load or return undef;
+	
+	# Merged the depends of all the items, and see if
+	# any are missing.
+	my %missing = map  { $_ => 1           }
+	              grep { ! $self->item($_) }
+	              map  { $_->depends       }
+	              $self->items;
+	%missing ? [ sort keys %missing ] : 0;
 }
 
 
@@ -199,7 +199,7 @@ sub missing_dependencies {
 # Catch unimplemented methods in subclasses
 
 sub _load_item_list {
-        die "Class $_[0] failed to define the method _load_item_list";
+	die "Class $_[0] failed to define the method _load_item_list";
 }
 
 1;

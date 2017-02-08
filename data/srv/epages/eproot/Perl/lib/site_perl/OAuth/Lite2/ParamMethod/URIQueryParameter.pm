@@ -48,7 +48,7 @@ Returns true if passed L<Plack::Request> object is matched for the type of this 
 
 sub match {
     my ($self, $req) = @_;
-    return (exists $req->query_parameters->{oauth_token}
+    return (exists $req->query_parameters->{oauth_token} 
             || exists $req->query_parameters->{access_token});
 }
 

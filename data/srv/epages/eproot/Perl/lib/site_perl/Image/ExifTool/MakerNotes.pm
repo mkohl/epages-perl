@@ -1176,7 +1176,7 @@ sub LocateIFD($$)
 #
     if ($tagInfo and $$tagInfo{SubDirectory}) {
         my $subdir = $$tagInfo{SubDirectory};
-        unless ($$subdir{ProcessProc} and
+        unless ($$subdir{ProcessProc} and 
                ($$subdir{ProcessProc} eq \&ProcessUnknown or
                 $$subdir{ProcessProc} eq \&ProcessUnknownOrPreview))
         {

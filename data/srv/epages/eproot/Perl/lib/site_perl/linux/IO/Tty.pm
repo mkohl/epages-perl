@@ -28,9 +28,9 @@ BOOT_XS: {
     *dl_load_flags = DynaLoader->can('dl_load_flags');
 
     do {
-        defined(&bootstrap)
-                ? \&bootstrap
-                : \&DynaLoader::bootstrap
+	defined(&bootstrap)
+		? \&bootstrap
+		: \&DynaLoader::bootstrap
     }->(__PACKAGE__);
 }
 
@@ -42,7 +42,7 @@ sub open {
     my($tty,$dev,$mode) = @_;
 
     IO::File::open($tty,$dev,$mode) or
-        return undef;
+	return undef;
 
     $tty->autoflush;
 
@@ -52,7 +52,7 @@ sub open {
 sub clone_winsize_from {
   my ($self, $fh) = @_;
   croak "Given filehandle is not a tty in clone_winsize_from, called"
-    if not POSIX::isatty($fh);
+    if not POSIX::isatty($fh);  
   return 1 if not POSIX::isatty($self);  # ignored for master ptys
   my $winsize = " "x1024; # preallocate memory
   ioctl($fh, &IO::Tty::Constant::TIOCGWINSZ, $winsize)

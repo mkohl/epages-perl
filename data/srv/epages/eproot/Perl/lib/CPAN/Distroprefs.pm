@@ -169,7 +169,7 @@ sub find {
             file => $_, ext => $ext, dir => $dir
         });
         # copied from CPAN.pm; is this ever actually possible?
-        redo unless -f $result->abs;
+        redo unless -f $result->abs; 
 
         my $load_method = $self->_load_method($loader, $result);
         my @prefs = eval { $self->$load_method($loader, $result) };
@@ -231,14 +231,14 @@ sub _match_scalar {
 sub _match_hash {
     my ($match, $data) = @_;
     for my $mkey (keys %$match) {
-        (my $dkey = $mkey) =~ s/^not_//;
+	(my $dkey = $mkey) =~ s/^not_//;
         my $val = defined $data->{$dkey} ? $data->{$dkey} : '';
-        if (_match_scalar($match->{$mkey}, $val)) {
-            return 0 if $mkey =~ /^not_/;
-        }
-        else {
-            return 0 if $mkey !~ /^not_/;
-        }
+	if (_match_scalar($match->{$mkey}, $val)) {
+	    return 0 if $mkey =~ /^not_/;
+	}
+	else {
+	    return 0 if $mkey !~ /^not_/;
+	}
     }
     return 1;
 }
@@ -247,10 +247,10 @@ sub _match {
     my ($self, $key, $data, $matcher) = @_;
     my $m = $self->data->{match};
     if (exists $m->{$key}) {
-        return 0 unless $matcher->($m->{$key}, $data);
+	return 0 unless $matcher->($m->{$key}, $data);
     }
     if (exists $m->{"not_$key"}) {
-        return 0 if $matcher->($m->{"not_$key"}, $data);
+	return 0 if $matcher->($m->{"not_$key"}, $data);
     }
     return 1;
 }
@@ -272,12 +272,12 @@ sub match_attributes { qw(env distribution perl perlconfig module) }
 sub match_module {
     my ($self, $modules) = @_;
     return $self->_match("module", $modules, sub {
-        my($match, $data) = @_;
-        my $qr = _pattern($match);
-        for my $module (@$data) {
-            return 1 if $module =~ /$qr/;
-        }
-        return 0;
+	my($match, $data) = @_;
+	my $qr = _pattern($match);
+	for my $module (@$data) {
+	    return 1 if $module =~ /$qr/;
+	}
+	return 0;
     });
 }
 
@@ -314,7 +314,7 @@ __END__
 
 CPAN::Distroprefs -- read and match distroprefs
 
-=head1 SYNOPSIS
+=head1 SYNOPSIS 
 
     use CPAN::Distroprefs;
 
@@ -381,7 +381,7 @@ All results share some common attributes:
 
 C<success>, C<warning>, or C<fatal>
 
-=head3 file
+=head3 file 
 
 the file from which these prefs were read, or to which this error refers (relative filename)
 
@@ -413,7 +413,7 @@ Success results contain:
 
 an arrayref of CPAN::Distroprefs::Pref objects
 
-=head1 PREFS
+=head1 PREFS 
 
 CPAN::Distroprefs::Pref objects represent individual distroprefs documents.
 They are constructed automatically as part of C<success> results from C<find()>.

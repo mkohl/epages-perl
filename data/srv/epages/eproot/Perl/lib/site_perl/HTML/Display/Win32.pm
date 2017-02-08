@@ -28,7 +28,7 @@ a suitable application there.
 
 use parent 'HTML::Display::TempFile';
 
-sub browsercmd {
+sub browsercmd { 
   # cmd.exe needs two arguments, command.com needs one
   ($ENV{COMSPEC} =~ /cmd.exe$/i) ? 'start "HTML::Display" "%s"' : 'start "%s"'
 };

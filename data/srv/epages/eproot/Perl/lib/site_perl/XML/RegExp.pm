@@ -1,11 +1,11 @@
 package XML::RegExp;
 
-use vars qw( $BaseChar $Ideographic $Letter $Digit $Extender
-             $CombiningChar $NameChar
-             $EntityRef $CharRef $Reference
-             $Name $NmToken $AttValue
-             $NCNameChar $NCName $Prefix $LocalPart $QName
-             $VERSION );
+use vars qw( $BaseChar $Ideographic $Letter $Digit $Extender 
+	     $CombiningChar $NameChar 
+	     $EntityRef $CharRef $Reference
+	     $Name $NmToken $AttValue
+	     $NCNameChar $NCName $Prefix $LocalPart $QName 
+	     $VERSION );
 
 $VERSION = '0.02';
 
@@ -19,14 +19,14 @@ $Extender = '(?:\xC2\xB7|\xCB[\x90\x91]|\xCE\x87|\xD9\x80|\xE0(?:\xB9\x86|\xBB\x
 
 $CombiningChar = '(?:\xCC[\x80-\xBF]|\xCD[\x80-\x85\xA0\xA1]|\xD2[\x83-\x86]|\xD6[\x91-\xA1\xA3-\xB9\xBB-\xBD\xBF]|\xD7[\x81\x82\x84]|\xD9[\x8B-\x92\xB0]|\xDB[\x96-\xA4\xA7\xA8\xAA-\xAD]|\xE0(?:\xA4[\x81-\x83\xBC\xBE\xBF]|\xA5[\x80-\x8D\x91-\x94\xA2\xA3]|\xA6[\x81-\x83\xBC\xBE\xBF]|\xA7[\x80-\x84\x87\x88\x8B-\x8D\x97\xA2\xA3]|\xA8[\x82\xBC\xBE\xBF]|\xA9[\x80-\x82\x87\x88\x8B-\x8D\xB0\xB1]|\xAA[\x81-\x83\xBC\xBE\xBF]|\xAB[\x80-\x85\x87-\x89\x8B-\x8D]|\xAC[\x81-\x83\xBC\xBE\xBF]|\xAD[\x80-\x83\x87\x88\x8B-\x8D\x96\x97]|\xAE[\x82\x83\xBE\xBF]|\xAF[\x80-\x82\x86-\x88\x8A-\x8D\x97]|\xB0[\x81-\x83\xBE\xBF]|\xB1[\x80-\x84\x86-\x88\x8A-\x8D\x95\x96]|\xB2[\x82\x83\xBE\xBF]|\xB3[\x80-\x84\x86-\x88\x8A-\x8D\x95\x96]|\xB4[\x82\x83\xBE\xBF]|\xB5[\x80-\x83\x86-\x88\x8A-\x8D\x97]|\xB8[\xB1\xB4-\xBA]|\xB9[\x87-\x8E]|\xBA[\xB1\xB4-\xB9\xBB\xBC]|\xBB[\x88-\x8D]|\xBC[\x98\x99\xB5\xB7\xB9\xBE\xBF]|\xBD[\xB1-\xBF]|\xBE[\x80-\x84\x86-\x8B\x90-\x95\x97\x99-\xAD\xB1-\xB7\xB9])|\xE2\x83[\x90-\x9C\xA1]|\xE3(?:\x80[\xAA-\xAF]|\x82[\x99\x9A]))';
 
-$Letter =        "(?:$BaseChar|$Ideographic)";
-$NameChar       = "(?:[-._:]|$Letter|$Digit|$CombiningChar|$Extender)";
+$Letter	=	 "(?:$BaseChar|$Ideographic)";
+$NameChar	= "(?:[-._:]|$Letter|$Digit|$CombiningChar|$Extender)";
 
-$Name           = "(?:(?:[:_]|$Letter)$NameChar*)";
-$NmToken        = "(?:$NameChar+)";
-$EntityRef      = "(?:\&$Name;)";
-$CharRef        = "(?:\&#(?:[0-9]+|x[0-9a-fA-F]+);)";
-$Reference      = "(?:$EntityRef|$CharRef)";
+$Name		= "(?:(?:[:_]|$Letter)$NameChar*)";
+$NmToken	= "(?:$NameChar+)";
+$EntityRef	= "(?:\&$Name;)";
+$CharRef	= "(?:\&#(?:[0-9]+|x[0-9a-fA-F]+);)";
+$Reference	= "(?:$EntityRef|$CharRef)";
 
 #?? what if it contains entity references?
 $AttValue     = "(?:\"(?:[^\"&<]*|$Reference)\"|'(?:[^\'&<]|$Reference)*')";
@@ -36,14 +36,14 @@ $AttValue     = "(?:\"(?:[^\"&<]*|$Reference)\"|'(?:[^\'&<]|$Reference)*')";
 #########################################################################
 
 # Same as $NameChar without the ":"
-$NCNameChar     = "(?:[-._]|$Letter|$Digit|$CombiningChar|$Extender)";
+$NCNameChar	= "(?:[-._]|$Letter|$Digit|$CombiningChar|$Extender)";
 
 # Same as $Name without the colons
-$NCName         = "(?:(?:_|$Letter)$NCNameChar*)";
+$NCName		= "(?:(?:_|$Letter)$NCNameChar*)";
 
-$Prefix         = $NCName;
-$LocalPart      = $NCName;
-$QName          = "(?:(?:$Prefix:)?$LocalPart)";
+$Prefix		= $NCName;
+$LocalPart	= $NCName;
+$QName		= "(?:(?:$Prefix:)?$LocalPart)";
 
 return 1;
 
@@ -65,10 +65,10 @@ XML::RegExp - Regular expressions for XML tokens
 =head1 DESCRIPTION
 
 This package contains regular expressions for the following XML tokens:
-BaseChar, Ideographic, Letter, Digit, Extender, CombiningChar, NameChar,
+BaseChar, Ideographic, Letter, Digit, Extender, CombiningChar, NameChar, 
 EntityRef, CharRef, Reference, Name, NmToken, and AttValue.
 
-The definitions of these tokens were taken from the XML spec
+The definitions of these tokens were taken from the XML spec 
 (Extensible Markup Language 1.0) at L<http://www.w3.org/TR/REC-xml>.
 
 Also contains the regular expressions for the following tokens from the

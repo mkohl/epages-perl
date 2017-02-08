@@ -33,7 +33,7 @@ Eryq (F<eryq@zeegee.com>), ZeeGee Software Inc (F<http://www.zeegee.com>).
 UU-decoding code lifted from "uuexplode", a Perl script by an
 unknown author...
 
-All rights reserved.  This program is free software; you can redistribute
+All rights reserved.  This program is free software; you can redistribute 
 it and/or modify it under the same terms as Perl itself.
 
 =cut
@@ -67,14 +67,14 @@ sub decode_it {
     ### Find beginning...
     local $_;
     while (defined($_ = $in->getline)) {
-        if (/^begin(.*)/) {        ### found it: now decode it...
-            my $modefile = $1;
-            if ($modefile =~ /^(\s+(\d+))?(\s+(.*?\S))?\s*\Z/) {
-                ($mode, $file) = ($2, $4);
-            }
-            last;                  ### decoded or not, we're done
-        }
-        push @preamble, $_;
+	if (/^begin(.*)/) {        ### found it: now decode it...
+	    my $modefile = $1;
+	    if ($modefile =~ /^(\s+(\d+))?(\s+(.*?\S))?\s*\Z/) {
+		($mode, $file) = ($2, $4);
+	    }
+	    last;                  ### decoded or not, we're done
+	}
+	push @preamble, $_;
     }
     die("uu decoding: no begin found\n") if !defined($_);      # hit eof!
 
@@ -84,10 +84,10 @@ sub decode_it {
 
     ### Decode:
     while (defined($_ = $in->getline)) {
-        last if /^end/;
-        next if /[a-z]/;
-        next unless int((((ord() - 32) & 077) + 2) / 3) == int(length() / 4);
-        $out->print(unpack('u', $_));
+	last if /^end/;
+	next if /[a-z]/;
+	next unless int((((ord() - 32) & 077) + 2) / 3) == int(length() / 4);
+	$out->print(unpack('u', $_));
     }
     ### chmod oct($mode), $file;    # sheeyeah... right...
     whine "file incomplete, no end found\n" if !defined($_); # eof
@@ -102,9 +102,9 @@ sub encode_it {
     my ($self, $in, $out) = @_;
     my $buf = '';
 
-    my $fname = (($self->head &&
-                  $self->head->mime_attr('content-disposition.filename')) ||
-                 '');
+    my $fname = (($self->head && 
+		  $self->head->mime_attr('content-disposition.filename')) ||
+		 '');
     $out->print("begin 644 $fname\n");
     while ($in->read($buf, 45)) { $out->print(pack('u', $buf)) }
     $out->print("end\n");

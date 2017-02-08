@@ -30,8 +30,8 @@ sub new {
     my $class = shift;
     my $dh = gensym;
     if (@_) {
-        IO::Dir::open($dh, $_[0])
-            or return undef;
+	IO::Dir::open($dh, $_[0])
+	    or return undef;
     }
     bless $dh, $class;
 }
@@ -47,7 +47,7 @@ sub open {
     @_ == 2 or croak 'usage: $dh->open(DIRNAME)';
     my ($dh, $dirname) = @_;
     return undef
-        unless opendir($dh, $dirname);
+	unless opendir($dh, $dirname);
     # a dir name should always have a ":" in it; assume dirname is
     # in current directory
     $dirname = ':' .  $dirname if ( ($^O eq 'MacOS') && ($dirname !~ /:/) );
@@ -89,7 +89,7 @@ sub TIEHASH {
     my($class,$dir,$options) = @_;
 
     my $dh = $class->new($dir)
-        or return undef;
+	or return undef;
 
     $options ||= 0;
 
@@ -123,8 +123,8 @@ sub STORE {
     my($atime,$mtime) = ref($data) ? @$data : ($data,$data);
     my $file = File::Spec->catfile(${*$dh}{io_dir_path}, $key);
     unless(-e $file) {
-        my $io = IO::File->new($file,O_CREAT | O_RDWR);
-        $io->close if $io;
+	my $io = IO::File->new($file,O_CREAT | O_RDWR);
+	$io->close if $io;
     }
     utime($atime,$mtime, $file);
 }
@@ -134,20 +134,20 @@ sub DELETE {
 
     # Only unlink if unlink-ing is enabled
     return 0
-        unless ${*$dh}{io_dir_unlink};
+	unless ${*$dh}{io_dir_unlink};
 
     my $file = File::Spec->catfile(${*$dh}{io_dir_path}, $key);
 
     -d $file
-        ? rmdir($file)
-        : unlink($file);
+	? rmdir($file)
+	: unlink($file);
 }
 
 1;
 
 __END__
 
-=head1 NAME
+=head1 NAME 
 
 IO::Dir - supply object methods for directory handles
 
@@ -164,7 +164,7 @@ IO::Dir - supply object methods for directory handles
 
     tie %dir, 'IO::Dir', ".";
     foreach (keys %dir) {
-        print $_, " " , $dir{$_}->size,"\n";
+	print $_, " " , $dir{$_}->size,"\n";
     }
 
 =head1 DESCRIPTION
@@ -216,15 +216,15 @@ C<unlink>, C<rmdir> and C<utime>.
 
 =back
 
-The keys of the hash will be the names of the entries in the directory.
+The keys of the hash will be the names of the entries in the directory. 
 Reading a value from the hash will be the result of calling
-C<File::stat::lstat>.  Deleting an element from the hash will
+C<File::stat::lstat>.  Deleting an element from the hash will 
 delete the corresponding file or subdirectory,
 provided that C<DIR_UNLINK> is included in the C<OPTIONS>.
 
 Assigning to an entry in the hash will cause the time stamps of the file
 to be modified. If the file does not exist then it will be created. Assigning
-a single integer to a hash element will cause both the access and
+a single integer to a hash element will cause both the access and 
 modification times to be changed to that value. Alternatively a reference to
 an array of two values can be passed. The first array element will be used to
 set the access time and the second element will be used to set the modification

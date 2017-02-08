@@ -13,7 +13,7 @@ Crypt::Rijndael - Crypt::CBC compliant Rijndael encryption module
 
  $cipher->set_iv($iv);
  $crypted = $cipher->encrypt($plaintext);
-        # - OR -
+ 	# - OR -
  $plaintext = $cipher->decrypt($crypted);
 
 =head1 DESCRIPTION
@@ -122,8 +122,8 @@ and has been selected as the US Government's Advanced Encryption Standard.
 
 This code is in Github:
 
-        git://github.com/briandfoy/crypt-rijndael.git
-
+	git://github.com/briandfoy/crypt-rijndael.git
+	
 =head1 LICENSE
 
 This software is licensed under the Lesser GNU Public License. See the included

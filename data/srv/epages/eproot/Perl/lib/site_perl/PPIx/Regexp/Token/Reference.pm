@@ -121,11 +121,11 @@ sub number {
 sub __PPIX_LEXER__record_capture_number {
     my ( $self, $number ) = @_;
     if ( ! exists $self->{absolute} && exists $self->{number}
-        && $self->{number} =~ m/ \A [-+] /smx ) {
+	&& $self->{number} =~ m/ \A [-+] /smx ) {
 
-        my $delta = $self->{number};
-        $delta > 0 and --$delta;        # no -0 or +0.
-        $self->{absolute} = $number + $delta;
+	my $delta = $self->{number};
+	$delta > 0 and --$delta;	# no -0 or +0.
+	$self->{absolute} = $number + $delta;
 
     }
     return $number;
@@ -140,47 +140,47 @@ sub __PPIX_TOKEN__post_make {
 
     my $capture;
     if ( defined $arg ) {
-        $tokenizer
-            and $capture = first { defined $_ } $tokenizer->capture();
-        defined $capture or $capture = $arg->{capture};
+	$tokenizer
+	    and $capture = first { defined $_ } $tokenizer->capture();
+	defined $capture or $capture = $arg->{capture};
     } else {
-        my $content = $self->content();
-        foreach ( $self->__PPIX_TOKEN__recognize() ) {
-            my ( $re, $a ) = @{ $_ };
-            $content =~ $re or next;
-            $arg = $a;
-            if ( exists $arg->{capture} ) {
-                $capture = $arg->{capture};
-            } else {
-                foreach my $inx ( 1 .. $#- ) {
-                    defined $-[$inx] or next;
-                    $capture = substr $content, $-[$inx], $+[$inx] - $-[$inx];
-                    last;
-                }
-            }
-            last;
-        }
+	my $content = $self->content();
+	foreach ( $self->__PPIX_TOKEN__recognize() ) {
+	    my ( $re, $a ) = @{ $_ };
+	    $content =~ $re or next;
+	    $arg = $a;
+	    if ( exists $arg->{capture} ) {
+		$capture = $arg->{capture};
+	    } else {
+		foreach my $inx ( 1 .. $#- ) {
+		    defined $-[$inx] or next;
+		    $capture = substr $content, $-[$inx], $+[$inx] - $-[$inx];
+		    last;
+		}
+	    }
+	    last;
+	}
     }
 
     defined $capture
-        or confess q{Programming error - reference '},
-            $self->content(), q{' of unknown form};
+	or confess q{Programming error - reference '},
+	    $self->content(), q{' of unknown form};
 
     foreach my $key ( keys %{ $arg } ) {
-        $key eq 'capture' and next;
-        $self->{$key} = $arg->{$key};
+	$key eq 'capture' and next;
+	$self->{$key} = $arg->{$key};
     }
 
     if ( $arg->{is_named} ) {
-        $self->{absolute} = undef;
-        $self->{is_relative} = undef;
-        $self->{name} = $capture;
+	$self->{absolute} = undef;
+	$self->{is_relative} = undef;
+	$self->{name} = $capture;
     } elsif ( $capture !~ m/ \A [-+] /smx ) {
-        $self->{absolute} = $self->{number} = $capture;
-        $self->{is_relative} = undef;
+	$self->{absolute} = $self->{number} = $capture;
+	$self->{is_relative} = undef;
     } else {
-        $self->{number} = $capture;
-        $self->{is_relative} = 1;
+	$self->{number} = $capture;
+	$self->{is_relative} = 1;
     }
 
     return;

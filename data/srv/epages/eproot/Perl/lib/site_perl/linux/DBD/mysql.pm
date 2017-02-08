@@ -20,9 +20,9 @@ our $VERSION = '4.033';
 bootstrap DBD::mysql $VERSION;
 
 
-our $err = 0;       # holds error code for DBI::err
-our $errstr = "";       # holds error string for DBI::errstr
-our $drh = undef;       # holds driver handle once initialised
+our $err = 0;	    # holds error code for DBI::err
+our $errstr = "";	# holds error string for DBI::errstr
+our $drh = undef;	# holds driver handle once initialised
 
 my $methods_are_installed = 0;
 sub driver{
@@ -33,20 +33,20 @@ sub driver{
 
     # not a 'my' since we use it above to prevent multiple drivers
     $drh = DBI::_new_drh($class, { 'Name' => 'mysql',
-                                   'Version' => $VERSION,
-                                   'Err'    => \$DBD::mysql::err,
-                                   'Errstr' => \$DBD::mysql::errstr,
-                                   'Attribution' => 'DBD::mysql by Patrick Galbraith'
-                                 });
+				   'Version' => $VERSION,
+				   'Err'    => \$DBD::mysql::err,
+				   'Errstr' => \$DBD::mysql::errstr,
+				   'Attribution' => 'DBD::mysql by Patrick Galbraith'
+				 });
 
     if (!$methods_are_installed) {
-        DBD::mysql::db->install_method('mysql_fd');
-        DBD::mysql::db->install_method('mysql_async_result');
-        DBD::mysql::db->install_method('mysql_async_ready');
-        DBD::mysql::st->install_method('mysql_async_result');
-        DBD::mysql::st->install_method('mysql_async_ready');
+	DBD::mysql::db->install_method('mysql_fd');
+	DBD::mysql::db->install_method('mysql_async_result');
+	DBD::mysql::db->install_method('mysql_async_ready');
+	DBD::mysql::st->install_method('mysql_async_result');
+	DBD::mysql::st->install_method('mysql_async_ready');
 
-        $methods_are_installed++;
+	$methods_are_installed++;
     }
 
     $drh;
@@ -60,35 +60,35 @@ sub _OdbcParse($$$) {
     my($class, $dsn, $hash, $args) = @_;
     my($var, $val);
     if (!defined($dsn)) {
-        return;
+	return;
     }
     while (length($dsn)) {
-        if ($dsn =~ /([^:;]*\[.*]|[^:;]*)[:;](.*)/) {
-            $val = $1;
-            $dsn = $2;
-            $val =~ s/\[|]//g; # Remove [] if present, the rest of the code prefers plain IPv6 addresses
-        } else {
-            $val = $dsn;
-            $dsn = '';
-        }
-        if ($val =~ /([^=]*)=(.*)/) {
-            $var = $1;
-            $val = $2;
-            if ($var eq 'hostname'  ||  $var eq 'host') {
-                $hash->{'host'} = $val;
-            } elsif ($var eq 'db'  ||  $var eq 'dbname') {
-                $hash->{'database'} = $val;
-            } else {
-                $hash->{$var} = $val;
-            }
-        } else {
-            foreach $var (@$args) {
-                if (!defined($hash->{$var})) {
-                    $hash->{$var} = $val;
-                    last;
-                }
-            }
-        }
+	if ($dsn =~ /([^:;]*\[.*]|[^:;]*)[:;](.*)/) {
+	    $val = $1;
+	    $dsn = $2;
+	    $val =~ s/\[|]//g; # Remove [] if present, the rest of the code prefers plain IPv6 addresses
+	} else {
+	    $val = $dsn;
+	    $dsn = '';
+	}
+	if ($val =~ /([^=]*)=(.*)/) {
+	    $var = $1;
+	    $val = $2;
+	    if ($var eq 'hostname'  ||  $var eq 'host') {
+		$hash->{'host'} = $val;
+	    } elsif ($var eq 'db'  ||  $var eq 'dbname') {
+		$hash->{'database'} = $val;
+	    } else {
+		$hash->{$var} = $val;
+	    }
+	} else {
+	    foreach $var (@$args) {
+		if (!defined($hash->{$var})) {
+		    $hash->{$var} = $val;
+		    last;
+		}
+	    }
+	}
     }
 }
 
@@ -135,13 +135,13 @@ sub connect {
     # create a 'blank' dbh
     my($this, $privateAttrHash) = (undef, $attrhash);
     $privateAttrHash = { %$privateAttrHash,
-        'Name' => $dsn,
-        'user' => $username,
-        'password' => $password
+	'Name' => $dsn,
+	'user' => $username,
+	'password' => $password
     };
 
     DBD::mysql->_OdbcParse($dsn, $privateAttrHash,
-                                    ['database', 'host', 'port']);
+				    ['database', 'host', 'port']);
 
 
     if ($DBI::VERSION >= 1.49)
@@ -158,7 +158,7 @@ sub connect {
     }
 
     DBD::mysql::db::_login($this, $dsn, $username, $password)
-          or $this = undef;
+	  or $this = undef;
 
     if ($this && ($ENV{MOD_PERL} || $ENV{GATEWAY_INTERFACE})) {
         $this->{mysql_auto_reconnect} = 1;
@@ -179,7 +179,7 @@ sub data_sources {
     my(@dsn) = $self->func($host, $port, $user, $password, '_ListDBs');
     my($i);
     for ($i = 0;  $i < @dsn;  $i++) {
-        $dsn[$i] = "DBI:mysql:$dsn[$i]";
+	$dsn[$i] = "DBI:mysql:$dsn[$i]";
     }
     @dsn;
 }
@@ -188,16 +188,16 @@ sub admin {
     my($drh) = shift;
     my($command) = shift;
     my($dbname) = ($command eq 'createdb'  ||  $command eq 'dropdb') ?
-        shift : '';
+	shift : '';
     my($host, $port) = DBD::mysql->_OdbcParseHost(shift(@_) || '');
     my($user) = shift || '';
     my($password) = shift || '';
 
     $drh->func(undef, $command,
-               $dbname || '',
-               $host || '',
-               $port || '',
-               $user, $password, '_admin_internal');
+	       $dbname || '',
+	       $host || '',
+	       $port || '',
+	       $user, $password, '_admin_internal');
 }
 
 package DBD::mysql::db; # ====== DATABASE ======
@@ -244,7 +244,7 @@ sub prepare {
 
     # Populate internal handle data.
     if (!DBD::mysql::st::_prepare($sth, $statement, $attribs)) {
-        $sth = undef;
+	$sth = undef;
     }
 
     $sth;
@@ -266,9 +266,9 @@ sub admin {
     my($dbh) = shift;
     my($command) = shift;
     my($dbname) = ($command eq 'createdb'  ||  $command eq 'dropdb') ?
-        shift : '';
+	shift : '';
     $dbh->{'Driver'}->func($dbh, $command, $dbname, '', '', '',
-                           '_admin_internal');
+			   '_admin_internal');
 }
 
 sub _SelectDB ($$) {
@@ -476,32 +476,32 @@ sub column_info {
 
     push @fields, $row->{field};
     my $info = $col_info{ $row->{field} }= {
-            TABLE_CAT               => $catalog,
-            TABLE_SCHEM             => $schema,
-            TABLE_NAME              => $table,
-            COLUMN_NAME             => $row->{field},
-            NULLABLE                => ($row->{null} eq 'YES') ? 1 : 0,
-            IS_NULLABLE             => ($row->{null} eq 'YES') ? "YES" : "NO",
-            TYPE_NAME               => uc($basetype),
-            COLUMN_DEF              => $row->{default},
-            ORDINAL_POSITION        => ++$ordinal_pos,
-            mysql_is_pri_key        => ($row->{key}  eq 'PRI'),
-            mysql_type_name         => $row->{type},
+	    TABLE_CAT               => $catalog,
+	    TABLE_SCHEM             => $schema,
+	    TABLE_NAME              => $table,
+	    COLUMN_NAME             => $row->{field},
+	    NULLABLE                => ($row->{null} eq 'YES') ? 1 : 0,
+	    IS_NULLABLE             => ($row->{null} eq 'YES') ? "YES" : "NO",
+	    TYPE_NAME               => uc($basetype),
+	    COLUMN_DEF              => $row->{default},
+	    ORDINAL_POSITION        => ++$ordinal_pos,
+	    mysql_is_pri_key        => ($row->{key}  eq 'PRI'),
+	    mysql_type_name         => $row->{type},
       mysql_is_auto_increment => ($row->{extra} =~ /auto_increment/i ? 1 : 0),
     };
     #
-          # This code won't deal with a pathological case where a value
-          # contains a single quote followed by a comma, and doesn't unescape
-          # any escaped values. But who would use those in an enum or set?
+	  # This code won't deal with a pathological case where a value
+	  # contains a single quote followed by a comma, and doesn't unescape
+	  # any escaped values. But who would use those in an enum or set?
     #
-          my @type_params= ($typemod && index($typemod,"'")>=0) ?
+	  my @type_params= ($typemod && index($typemod,"'")>=0) ?
       ("$typemod," =~ /'(.*?)',/g)  # assume all are quoted
-                        : split /,/, $typemod||'';      # no quotes, plain list
-          s/''/'/g for @type_params;                # undo doubling of quotes
+			: split /,/, $typemod||'';      # no quotes, plain list
+	  s/''/'/g for @type_params;                # undo doubling of quotes
 
-          my @type_attr= split / /, $attr||'';
+	  my @type_attr= split / /, $attr||'';
 
-        $info->{DATA_TYPE}= SQL_VARCHAR();
+  	$info->{DATA_TYPE}= SQL_VARCHAR();
     if ($basetype =~ /^(char|varchar|\w*text|\w*blob)/)
     {
       $info->{DATA_TYPE}= SQL_CHAR() if $basetype eq 'char';
@@ -517,33 +517,33 @@ sub column_info {
         $info->{COLUMN_SIZE} = 4294967295 if $basetype =~ /^long/;
       }
     }
-          elsif ($basetype =~ /^(binary|varbinary)/)
+	  elsif ($basetype =~ /^(binary|varbinary)/)
     {
       $info->{COLUMN_SIZE} = $type_params[0];
-            # SQL_BINARY & SQL_VARBINARY are tempting here but don't match the
-            # semantics for mysql (not hex). SQL_CHAR &  SQL_VARCHAR are correct here.
-            $info->{DATA_TYPE} = ($basetype eq 'binary') ? SQL_CHAR() : SQL_VARCHAR();
+	    # SQL_BINARY & SQL_VARBINARY are tempting here but don't match the
+	    # semantics for mysql (not hex). SQL_CHAR &  SQL_VARCHAR are correct here.
+	    $info->{DATA_TYPE} = ($basetype eq 'binary') ? SQL_CHAR() : SQL_VARCHAR();
     }
     elsif ($basetype =~ /^(enum|set)/)
     {
-            if ($basetype eq 'set')
+	    if ($basetype eq 'set')
       {
-                    $info->{COLUMN_SIZE} = length(join ",", @type_params);
-            }
-            else
+		    $info->{COLUMN_SIZE} = length(join ",", @type_params);
+	    }
+	    else
       {
         my $max_len = 0;
         length($_) > $max_len and $max_len = length($_) for @type_params;
         $info->{COLUMN_SIZE} = $max_len;
-            }
-            $info->{"mysql_values"} = \@type_params;
+	    }
+	    $info->{"mysql_values"} = \@type_params;
     }
     elsif ($basetype =~ /int/ || $basetype eq 'bit' )
     {
       # big/medium/small/tiny etc + unsigned?
-            $info->{DATA_TYPE} = SQL_INTEGER();
-            $info->{NUM_PREC_RADIX} = 10;
-            $info->{COLUMN_SIZE} = $type_params[0];
+	    $info->{DATA_TYPE} = SQL_INTEGER();
+	    $info->{NUM_PREC_RADIX} = 10;
+	    $info->{COLUMN_SIZE} = $type_params[0];
     }
     elsif ($basetype =~ /^decimal/)
     {
@@ -554,40 +554,40 @@ sub column_info {
     }
     elsif ($basetype =~ /^(float|double)/)
     {
-            $info->{DATA_TYPE} = ($basetype eq 'float') ? SQL_FLOAT() : SQL_DOUBLE();
-            $info->{NUM_PREC_RADIX} = 2;
-            $info->{COLUMN_SIZE} = ($basetype eq 'float') ? 32 : 64;
+	    $info->{DATA_TYPE} = ($basetype eq 'float') ? SQL_FLOAT() : SQL_DOUBLE();
+	    $info->{NUM_PREC_RADIX} = 2;
+	    $info->{COLUMN_SIZE} = ($basetype eq 'float') ? 32 : 64;
     }
     elsif ($basetype =~ /date|time/)
     {
       # date/datetime/time/timestamp
-            if ($basetype eq 'time' or $basetype eq 'date')
+	    if ($basetype eq 'time' or $basetype eq 'date')
       {
-                    #$info->{DATA_TYPE}   = ($basetype eq 'time') ? SQL_TYPE_TIME() : SQL_TYPE_DATE();
+		    #$info->{DATA_TYPE}   = ($basetype eq 'time') ? SQL_TYPE_TIME() : SQL_TYPE_DATE();
         $info->{DATA_TYPE}   = ($basetype eq 'time') ? SQL_TIME() : SQL_DATE();
         $info->{COLUMN_SIZE} = ($basetype eq 'time') ? 8 : 10;
       }
-            else
+	    else
       {
         # datetime/timestamp
         #$info->{DATA_TYPE}     = SQL_TYPE_TIMESTAMP();
-                    $info->{DATA_TYPE}        = SQL_TIMESTAMP();
-                    $info->{SQL_DATA_TYPE}    = SQL_DATETIME();
+		    $info->{DATA_TYPE}        = SQL_TIMESTAMP();
+		    $info->{SQL_DATA_TYPE}    = SQL_DATETIME();
         $info->{SQL_DATETIME_SUB} = $info->{DATA_TYPE} - ($info->{SQL_DATA_TYPE} * 10);
         $info->{COLUMN_SIZE}      = ($basetype eq 'datetime') ? 19 : $type_params[0] || 14;
-            }
-            $info->{DECIMAL_DIGITS}= 0; # no fractional seconds
+	    }
+	    $info->{DECIMAL_DIGITS}= 0; # no fractional seconds
     }
     elsif ($basetype eq 'year')
     {
       # no close standard so treat as int
-            $info->{DATA_TYPE}      = SQL_INTEGER();
-            $info->{NUM_PREC_RADIX} = 10;
-            $info->{COLUMN_SIZE}    = 4;
-          }
-          else
+	    $info->{DATA_TYPE}      = SQL_INTEGER();
+	    $info->{NUM_PREC_RADIX} = 10;
+	    $info->{COLUMN_SIZE}    = 4;
+	  }
+	  else
     {
-            Carp::carp("column_info: unrecognized column type '$basetype' of $table_id.$row->{field} treated as varchar");
+	    Carp::carp("column_info: unrecognized column type '$basetype' of $table_id.$row->{field} treated as varchar");
     }
     $info->{SQL_DATA_TYPE} ||= $info->{DATA_TYPE};
     #warn Dumper($info);
@@ -1003,14 +1003,14 @@ Once you have connected to a database, you can execute SQL
 statements with:
 
   my $query = sprintf("INSERT INTO foo VALUES (%d, %s)",
-                      $number, $dbh->quote("name"));
+		      $number, $dbh->quote("name"));
   $dbh->do($query);
 
 See L<DBI> for details on the quote and do methods. An alternative
 approach is
 
   $dbh->do("INSERT INTO foo VALUES (?, ?)", undef,
-           $number, $name);
+	   $number, $name);
 
 in which case the quote method is executed automatically. See also
 the bind_param method in L<DBI>. See L</"DATABASE HANDLES"> below

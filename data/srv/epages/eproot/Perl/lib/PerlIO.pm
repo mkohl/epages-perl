@@ -131,13 +131,13 @@ digits and common punctuation) human readable in the encoded file.
 Here is how to write your native data out using UTF-8 (or UTF-EBCDIC)
 and then read it back in.
 
-        open(F, ">:utf8", "data.utf");
-        print F $out;
-        close(F);
+	open(F, ">:utf8", "data.utf");
+	print F $out;
+	close(F);
 
-        open(F, "<:utf8", "data.utf");
-        $in = <F>;
-        close(F);
+	open(F, "<:utf8", "data.utf");
+	$in = <F>;
+	close(F);
 
 Note that this layer does not validate byte sequences. For reading
 input, using C<:encoding(utf8)> instead of bare C<:utf8> is strongly

@@ -9,30 +9,30 @@ XSLoader::load('MP3::Cut::Gapless', $VERSION);
 
 sub new {
     my ( $class, %args ) = @_;
-
+    
     if ( !$args{file} && !$args{cue} ) {
         die "Either file or cue argument must be specified";
     }
-
+    
     my $self = bless \%args, $class;
-
+    
     if ( $self->{cue} ) {
         $self->_parse_cue;
     }
-
+    
     if ( !-f $self->{file} ) {
         die "Invalid file: $self->{file}";
     }
-
+    
     if ( $self->{cache_dir} ) {
         require Digest::MD5;
         require File::Spec;
-
+        
         if ( !-d $self->{cache_dir} ) {
             require File::Path;
             File::Path::mkpath( $self->{cache_dir} );
         }
-
+        
         # Cache key is filename + size + mtime so if the file changes
         # we will not read a stale cache file.
         my ($size, $mtime) = (stat $self->{file})[7, 9];
@@ -41,43 +41,43 @@ sub new {
             Digest::MD5::md5_hex( $self->{file} . $size . $mtime ) . '.mllt'
         );
     }
-
+    
     # Pre-scan the file for the range we will be cutting
     $self->_init;
-
+    
     return $self;
 }
 
 sub tracks {
     my $self = shift;
-
+    
     return @{ $self->{_tracks} || [] };
 }
 
 sub write {
     my ( $self, $track, $filename ) = @_;
-
+    
     if ( !$filename ) {
         # Default filename is "position - performer - title.mp3"
         $filename = join(' - ', $track->{position}, $track->{performer}, $track->{title}) . '.mp3';
     }
-
+    
     if ( -e $filename ) {
         warn "$filename already exists, will not overwrite\n";
         return;
     }
-
+    
     # Reset XS counter for read()
     $self->__reset_read();
-
+    
     delete $self->{start_ms};
     delete $self->{end_ms};
-
+    
     $self->{start_ms} = $track->{start_ms};
     $self->{end_ms}   = $track->{end_ms} if $track->{end_ms};
-
+    
     print "Writing $filename...\n";
-
+    
     open my $fh, '>', $filename;
     while ( $self->read( my $buf, 65536 ) ) {
         syswrite $fh, $buf;
@@ -89,27 +89,27 @@ sub write {
 
 sub _init {
     my $self = shift;
-
+    
     open $self->{_fh}, '<', $self->{file} || die "Unable to open $self->{file} for reading";
-
+    
     binmode $self->{_fh};
-
+    
     # XS init
     $self->{_mp3c} = $self->__init(@_);
 }
 
 sub _parse_cue {
     my $self = shift;
-
+    
     require Audio::Cuefile::Parser;
     require MP3::Cut::Gapless::Track;
     require File::Spec;
-
+    
     my $cue = Audio::Cuefile::Parser->new( $self->{cue} );
-
+    
     if ( !$self->{file} ) {
         $self->{file} = $cue->file || die "No FILE entry found in cue sheet";
-
+        
         # Handle relative path
         my ($vol, $dirs, $file) = File::Spec->splitpath( $self->{file} );
         if ( $dirs !~ m{^[/\\]} ) {
@@ -117,12 +117,12 @@ sub _parse_cue {
             $self->{file} = File::Spec->rel2abs( $self->{file}, File::Spec->catdir($cvol, $cdirs) );
         }
     }
-
+    
     $self->{_tracks} = [];
     for my $track ( $cue->tracks ) {
         push @{ $self->{_tracks} }, MP3::Cut::Gapless::Track->new($track);
     }
-
+    
     # Set end_ms values, last track will fill to the end
     for ( my $i = 0; $i < scalar @{ $self->{_tracks} } - 1; $i++ ) {
         $self->{_tracks}->[$i]->{end_ms} = $self->{_tracks}->[$i + 1]->{start_ms};
@@ -131,9 +131,9 @@ sub _parse_cue {
 
 sub DESTROY {
     my $self = shift;
-
+    
     close $self->{_fh};
-
+    
     $self->__cleanup( $self->{_mp3c} );
 }
 
@@ -151,7 +151,7 @@ version 0.02
 =head1 SYNOPSIS
 
     use MP3::Cut::Gapless;
-
+    
     # Cut file using a cue sheet
     my $cut = MP3::Cut::Gapless->new(
         cue => 'file.cue'
@@ -159,7 +159,7 @@ version 0.02
     for my $track ( $cut->tracks ) {
         $cut->write( $track );
     }
-
+    
     # Or, cut at defined points and stream the rewritten file
     my $cut = MP3::Cut::Gapless->new(
         file      => 'long.mp3',
@@ -212,7 +212,7 @@ Optional, can be used to manually define cut points.
     cache_dir => "/path/to/cache/dir"
 
 Optional. When new() is called, a complete scan must be done of the
-MP3 file to determine the number of frames and their locations. This
+MP3 file to determine the number of frames and their locations. This 
 can be somewhat time-consuming depending on the size of the file,
 disk/network speed, and so on. A cache file can be created to avoid this
 operation if the file needs to be cut a second time. This is most useful

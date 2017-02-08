@@ -199,7 +199,7 @@ each element is a hash containing a I<message> and I<level> key.
 
 Allow testing of log levels.
 
-=back
+=back    
 
 =head1 SEE ALSO
 

@@ -68,7 +68,7 @@ sub _run {
 
     print 'Bound queue to exchange', "\n";
     return;
-}
+} 
 
 1;
 

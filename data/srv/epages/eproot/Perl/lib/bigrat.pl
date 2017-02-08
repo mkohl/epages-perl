@@ -13,7 +13,7 @@ require "bigint.pl";
 
 # by Mark Biggar
 #
-# Input values to these routines consist of strings of the form
+# Input values to these routines consist of strings of the form 
 #   m|^\s*[+-]?[\d\s]+(/[\d\s]+)?$|.
 # Examples:
 #   "+0/1"                          canonical zero value
@@ -23,7 +23,7 @@ require "bigint.pl";
 # Output values always include a sign and no leading zeros or
 #   white space.
 # This package makes use of the bigint package.
-# The string 'NaN' is used to represent the result when input arguments
+# The string 'NaN' is used to represent the result when input arguments 
 #   that are not numbers, as well as the result of dividing by zero and
 #       the sqrt of a negative number.
 # Extreamly naive algorthims are used.
@@ -46,9 +46,9 @@ sub main'rnorm { #(string) return rat_num
     local($_) = @_;
     s/\s+//g;
     if (m#^([+-]?\d+)(/(\d*[1-9]0*))?$#) {
-        &norm($1, $3 ? $3 : '+1');
+	&norm($1, $3 ? $3 : '+1');
     } else {
-        'NaN';
+	'NaN';
     }
 }
 
@@ -56,23 +56,23 @@ sub main'rnorm { #(string) return rat_num
 sub norm { #(bint, bint) return rat_num
     local($num,$dom) = @_;
     if ($num eq 'NaN') {
-        'NaN';
+	'NaN';
     } elsif ($dom eq 'NaN') {
-        'NaN';
+	'NaN';
     } elsif ($dom =~ /^[+-]?0+$/) {
-        'NaN';
+	'NaN';
     } else {
-        local($gcd) = &'bgcd($num,$dom);
-        $gcd =~ s/^-/+/;
-        if ($gcd ne '+1') {
-            $num = &'bdiv($num,$gcd);
-            $dom = &'bdiv($dom,$gcd);
-        } else {
-            $num = &'bnorm($num);
-            $dom = &'bnorm($dom);
-        }
-        substr($dom,$[,1) = '';
-        "$num/$dom";
+	local($gcd) = &'bgcd($num,$dom);
+	$gcd =~ s/^-/+/;
+	if ($gcd ne '+1') { 
+	    $num = &'bdiv($num,$gcd);
+	    $dom = &'bdiv($dom,$gcd);
+	} else {
+	    $num = &'bnorm($num);
+	    $dom = &'bnorm($dom);
+	}
+	substr($dom,$[,1) = '';
+	"$num/$dom";
     }
 }
 
@@ -130,10 +130,10 @@ sub main'rmod { #(rat_num) return (rat_num,rat_num)
     local($xn,$xd) = split('/',&'rnorm(@_));
     local($i,$f) = &'bdiv($xn,$xd);
     if (wantarray) {
-        ("$i/1", "$f/$xd");
+	("$i/1", "$f/$xd");
     } else {
-        "$i/1";
-    }
+	"$i/1";
+    }   
 }
 
 # square root by Newtons method.
@@ -141,16 +141,16 @@ sub main'rmod { #(rat_num) return (rat_num,rat_num)
 sub main'rsqrt { #(fnum_str[, cycles]) return fnum_str
     local($x, $scale) = (&'rnorm($_[$[]), $_[$[+1]);
     if ($x eq 'NaN') {
-        'NaN';
+	'NaN';
     } elsif ($x =~ /^-/) {
-        'NaN';
+	'NaN';
     } else {
-        local($gscale, $guess) = (0, '+1/1');
-        $scale = 5 if (!$scale);
-        while ($gscale++ < $scale) {
-            $guess = &'rmul(&'radd($guess,&'rdiv($x,$guess)),"+1/2");
-        }
-        "$guess";          # quotes necessary due to perl bug
+	local($gscale, $guess) = (0, '+1/1');
+	$scale = 5 if (!$scale);
+	while ($gscale++ < $scale) {
+	    $guess = &'rmul(&'radd($guess,&'rdiv($x,$guess)),"+1/2");
+	}
+	"$guess";          # quotes necessary due to perl bug
     }
 }
 

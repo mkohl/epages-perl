@@ -115,7 +115,7 @@ as a shorthand for:
 e.g.
 
     my $guard = guard { ... };
-
+    
 Note: calling C<guard> anonymously, i.e. in void context, will raise an exception.
 This is because anonymous guards are destroyed B<immediately>
 (rather than at the end of the scope), which is unlikely to be the desired behaviour.

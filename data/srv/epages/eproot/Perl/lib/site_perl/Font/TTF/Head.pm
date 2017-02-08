@@ -139,7 +139,7 @@ sub XML_element
     $fh->print("$depth<$key>$output</$key>\n");
     $self;
 }
-
+    
 
 =head2 $t->update
 
@@ -158,7 +158,7 @@ sub update
     $num = $self->{' PARENT'}{'maxp'}{'numGlyphs'};
     return undef unless (defined $self->{' PARENT'}{'hmtx'} && defined $self->{' PARENT'}{'loca'});
     $hmtx = $self->{' PARENT'}{'hmtx'}->read;
-
+    
     $self->{' PARENT'}{'loca'}->update;
     $hmtx->update;              # if we updated, then the flags will be set anyway.
     $lsbx = 1;
@@ -232,7 +232,7 @@ sub setdate
     $self->{$is_create ? 'created' : 'modified'} = \@arr;
     $self;
 }
-
+    
 
 1;
 

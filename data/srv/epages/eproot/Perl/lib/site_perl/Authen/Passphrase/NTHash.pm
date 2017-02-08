@@ -4,27 +4,27 @@ Authen::Passphrase::NTHash - passphrases using the NT-Hash algorithm
 
 =head1 SYNOPSIS
 
-        use Authen::Passphrase::NTHash;
+	use Authen::Passphrase::NTHash;
 
-        $ppr = Authen::Passphrase::NTHash->new(
-                hash_hex => "7f8fe03093cc84b267b109625f6bbf4b");
+	$ppr = Authen::Passphrase::NTHash->new(
+		hash_hex => "7f8fe03093cc84b267b109625f6bbf4b");
 
-        $ppr = Authen::Passphrase::NTHash->new(
-                passphrase => "passphrase");
+	$ppr = Authen::Passphrase::NTHash->new(
+		passphrase => "passphrase");
 
-        $ppr = Authen::Passphrase::NTHash->from_crypt(
-                '$3$$7f8fe03093cc84b267b109625f6bbf4b');
+	$ppr = Authen::Passphrase::NTHash->from_crypt(
+		'$3$$7f8fe03093cc84b267b109625f6bbf4b');
 
-        $ppr = Authen::Passphrase::NTHash->from_rfc2307(
-                '{MSNT}7f8fe03093cc84b267b109625f6bbf4b');
+	$ppr = Authen::Passphrase::NTHash->from_rfc2307(
+		'{MSNT}7f8fe03093cc84b267b109625f6bbf4b');
 
-        $hash = $ppr->hash;
-        $hash_hex = $ppr->hash_hex;
+	$hash = $ppr->hash;
+	$hash_hex = $ppr->hash_hex;
 
-        if($ppr->match($passphrase)) { ...
+	if($ppr->match($passphrase)) { ...
 
-        $passwd = $ppr->as_crypt;
-        $userPassword = $ppr->as_rfc2307;
+	$passwd = $ppr->as_crypt;
+	$userPassword = $ppr->as_rfc2307;
 
 =head1 DESCRIPTION
 
@@ -86,39 +86,39 @@ Either the hash or the passphrase must be given.
 =cut
 
 sub new {
-        my $class = shift;
-        my $self = bless({}, $class);
-        my $passphrase;
-        while(@_) {
-                my $attr = shift;
-                my $value = shift;
-                if($attr eq "hash") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[\x00-\xff]{16}\z#
-                                or croak "not a valid MD4 hash";
-                        $self->{hash} = "$value";
-                } elsif($attr eq "hash_hex") {
-                        croak "hash specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $value =~ m#\A[0-9A-Fa-f]{32}\z#
-                                or croak "\"$value\" is not a valid ".
-                                                "hex MD4 hash";
-                        $self->{hash} = pack("H*", $value);
-                } elsif($attr eq "passphrase") {
-                        croak "passphrase specified redundantly"
-                                if exists($self->{hash}) ||
-                                        defined($passphrase);
-                        $passphrase = $value;
-                } else {
-                        croak "unrecognised attribute `$attr'";
-                }
-        }
-        $self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
-        croak "hash not specified" unless exists $self->{hash};
-        return $self;
+	my $class = shift;
+	my $self = bless({}, $class);
+	my $passphrase;
+	while(@_) {
+		my $attr = shift;
+		my $value = shift;
+		if($attr eq "hash") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[\x00-\xff]{16}\z#
+				or croak "not a valid MD4 hash";
+			$self->{hash} = "$value";
+		} elsif($attr eq "hash_hex") {
+			croak "hash specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$value =~ m#\A[0-9A-Fa-f]{32}\z#
+				or croak "\"$value\" is not a valid ".
+						"hex MD4 hash";
+			$self->{hash} = pack("H*", $value);
+		} elsif($attr eq "passphrase") {
+			croak "passphrase specified redundantly"
+				if exists($self->{hash}) ||
+					defined($passphrase);
+			$passphrase = $value;
+		} else {
+			croak "unrecognised attribute `$attr'";
+		}
+	}
+	$self->{hash} = $self->_hash_of($passphrase) if defined $passphrase;
+	croak "hash not specified" unless exists $self->{hash};
+	return $self;
 }
 
 =item Authen::Passphrase::NTHash->from_crypt(PASSWD)
@@ -132,19 +132,19 @@ consist of "B<$NT$>" followed by the hash in lowercase hexadecimal.
 =cut
 
 sub from_crypt {
-        my($class, $passwd) = @_;
-        if($passwd =~ /\A\$3\$/) {
-                $passwd =~ m#\A\$3\$\$([0-9a-f]{32})\z#
-                        or croak "malformed \$3\$ data";
-                my $hash = $1;
-                return $class->new(hash_hex => $hash);
-        } elsif($passwd =~ /\A\$NT\$/) {
-                $passwd =~ m#\A\$NT\$([0-9a-f]{32})\z#
-                        or croak "malformed \$NT\$ data";
-                my $hash = $1;
-                return $class->new(hash_hex => $hash);
-        }
-        return $class->SUPER::from_crypt($passwd);
+	my($class, $passwd) = @_;
+	if($passwd =~ /\A\$3\$/) {
+		$passwd =~ m#\A\$3\$\$([0-9a-f]{32})\z#
+			or croak "malformed \$3\$ data";
+		my $hash = $1;
+		return $class->new(hash_hex => $hash);
+	} elsif($passwd =~ /\A\$NT\$/) {
+		$passwd =~ m#\A\$NT\$([0-9a-f]{32})\z#
+			or croak "malformed \$NT\$ data";
+		my $hash = $1;
+		return $class->new(hash_hex => $hash);
+	}
+	return $class->SUPER::from_crypt($passwd);
 }
 
 =item Authen::Passphrase::NTHash->from_rfc2307(USERPASSWORD)
@@ -158,14 +158,14 @@ is ignored.  In the second form, the string must consist of "B<{CRYPT}>"
 =cut
 
 sub from_rfc2307 {
-        my($class, $userpassword) = @_;
-        if($userpassword =~ /\A\{(?i:msnt)\}/) {
-                $userpassword =~ /\A\{.*?\}([0-9a-fA-F]{32})\z/
-                        or croak "malformed {MSNT} data";
-                my $hash = $1;
-                return $class->new(hash_hex => $hash);
-        }
-        return $class->SUPER::from_rfc2307($userpassword);
+	my($class, $userpassword) = @_;
+	if($userpassword =~ /\A\{(?i:msnt)\}/) {
+		$userpassword =~ /\A\{.*?\}([0-9a-fA-F]{32})\z/
+			or croak "malformed {MSNT} data";
+		my $hash = $1;
+		return $class->new(hash_hex => $hash);
+	}
+	return $class->SUPER::from_rfc2307($userpassword);
 }
 
 =back
@@ -181,8 +181,8 @@ Returns the hash value, as a string of 16 bytes.
 =cut
 
 sub hash {
-        my($self) = @_;
-        return $self->{hash};
+	my($self) = @_;
+	return $self->{hash};
 }
 
 =item $ppr->hash_hex
@@ -192,8 +192,8 @@ Returns the hash value, as a string of 32 hexadecimal digits.
 =cut
 
 sub hash_hex {
-        my($self) = @_;
-        return unpack("H*", $self->{hash});
+	my($self) = @_;
+	return unpack("H*", $self->{hash});
 }
 
 =item $ppr->match(PASSPHRASE)
@@ -207,25 +207,25 @@ These methods are part of the standard L<Authen::Passphrase> interface.
 =cut
 
 sub _hash_of {
-        my($self, $passphrase) = @_;
-        $passphrase = substr($passphrase, 0, 128);
-        $passphrase =~ s/(.)/pack("v", ord($1))/eg;
-        return md4($passphrase);
+	my($self, $passphrase) = @_;
+	$passphrase = substr($passphrase, 0, 128);
+	$passphrase =~ s/(.)/pack("v", ord($1))/eg;
+	return md4($passphrase);
 }
 
 sub match {
-        my($self, $passphrase) = @_;
-        return $self->_hash_of($passphrase) eq $self->{hash};
+	my($self, $passphrase) = @_;
+	return $self->_hash_of($passphrase) eq $self->{hash};
 }
 
 sub as_crypt {
-        my($self) = @_;
-        return "\$3\$\$".$self->hash_hex;
+	my($self) = @_;
+	return "\$3\$\$".$self->hash_hex;
 }
 
 sub as_rfc2307 {
-        my($self) = @_;
-        return "{MSNT}".$self->hash_hex;
+	my($self) = @_;
+	return "{MSNT}".$self->hash_hex;
 }
 
 =back
