@@ -2,7 +2,7 @@
 
 . /var/epages/functions.sh
 
-ETC_DEFAULT=$(etc_default $(cd $(dirname $BASH_SOURCE)/../../.. && pwd))
+ETC_DEFAULT=$(etc_default)
 
 if [ ! -f $(readlink -f "$ETC_DEFAULT") ] ; then
   echo -n "$BASH_SOURCE: " ; ls -l "$ETC_DEFAULT"
