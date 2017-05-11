@@ -123,56 +123,17 @@
 .rm #[ #] #H #V #F C
 .\" ========================================================================
 .\"
-.IX Title "Net::HTTP::NB 3"
-.TH Net::HTTP::NB 3 "2017-04-24" "perl v5.12.3" "User Contributed Perl Documentation"
+.IX Title "Net::HTTP::Methods 3"
+.TH Net::HTTP::Methods 3 "2017-04-24" "perl v5.12.3" "User Contributed Perl Documentation"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
 .nh
 .SH "NAME"
-Net::HTTP::NB \- Non\-blocking HTTP client
+Net::HTTP::Methods
 .SH "VERSION"
 .IX Header "VERSION"
 version 6.14
-.SH "SYNOPSIS"
-.IX Header "SYNOPSIS"
-.Vb 3
-\& use Net::HTTP::NB;
-\& my $s = Net::HTTP::NB\->new(Host => "www.perl.com") || die $@;
-\& $s\->write_request(GET => "/");
-\&
-\& use IO::Select;
-\& my $sel = IO::Select\->new($s);
-\&
-\& READ_HEADER: {
-\&    die "Header timeout" unless $sel\->can_read(10);
-\&    my($code, $mess, %h) = $s\->read_response_headers;
-\&    redo READ_HEADER unless $code;
-\& }
-\&
-\& while (1) {
-\&    die "Body timeout" unless $sel\->can_read(10);
-\&    my $buf;
-\&    my $n = $s\->read_entity_body($buf, 1024);
-\&    last unless $n;
-\&    print $buf;
-\& }
-.Ve
-.SH "DESCRIPTION"
-.IX Header "DESCRIPTION"
-Same interface as \f(CW\*(C`Net::HTTP\*(C'\fR but it will never try multiple reads
-when the \fIread_response_headers()\fR or \fIread_entity_body()\fR methods are
-invoked.  This make it possible to multiplex multiple Net::HTTP::NB
-using select without risk blocking.
-.PP
-If \fIread_response_headers()\fR did not see enough data to complete the
-headers an empty list is returned.
-.PP
-If \fIread_entity_body()\fR did not see new entity data in its read
-the value \-1 is returned.
-.SH "SEE ALSO"
-.IX Header "SEE ALSO"
-Net::HTTP
 .SH "AUTHOR"
 .IX Header "AUTHOR"
 Gisle Aas <gisle@activestate.com>

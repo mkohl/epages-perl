@@ -1,13 +1,9 @@
 package Net::HTTP::NB;
-
+$Net::HTTP::NB::VERSION = '6.14';
 use strict;
-use vars qw($VERSION @ISA);
+use warnings;
 
-$VERSION = "6.09";
-$VERSION = eval $VERSION;
-
-require Net::HTTP;
-@ISA=qw(Net::HTTP);
+use base 'Net::HTTP';
 
 sub can_read {
     return 1;
@@ -16,8 +12,8 @@ sub can_read {
 sub sysread {
     my $self = $_[0];
     if (${*$self}{'httpnb_read_count'}++) {
-	${*$self}{'http_buf'} = ${*$self}{'httpnb_save'};
-	die "Multi-read\n";
+        ${*$self}{'http_buf'} = ${*$self}{'httpnb_save'};
+        die "Multi-read\n";
     }
     my $buf;
     my $offset = $_[3] || 0;
@@ -32,8 +28,8 @@ sub read_response_headers {
     ${*$self}{'httpnb_save'} = ${*$self}{'http_buf'};
     my @h = eval { $self->SUPER::read_response_headers(@_) };
     if ($@) {
-	return if $@ eq "Multi-read\n";
-	die;
+        return if $@ eq "Multi-read\n";
+        die;
     }
     return @h;
 }
@@ -46,19 +42,25 @@ sub read_entity_body {
     # transfer-encoding transforms
     my $n = eval { $self->SUPER::read_entity_body(@_); };
     if ($@) {
-	$_[0] = "";
-	return -1;
+        $_[0] = "";
+        return -1;
     }
     return $n;
 }
 
 1;
 
-__END__
+=pod
+
+=encoding UTF-8
 
 =head1 NAME
 
 Net::HTTP::NB - Non-blocking HTTP client
+
+=head1 VERSION
+
+version 6.14
 
 =head1 SYNOPSIS
 
@@ -100,11 +102,20 @@ the value -1 is returned.
 
 L<Net::HTTP>
 
-=head1 COPYRIGHT
+=head1 AUTHOR
 
-Copyright 2001 Gisle Aas.
+Gisle Aas <gisle@activestate.com>
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2001-2017 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
+
+__END__
+
+#ABSTRACT: Non-blocking HTTP client
+
