@@ -1,18 +1,16 @@
 package Net::HTTPS;
-
+$Net::HTTPS::VERSION = '6.14';
 use strict;
-use vars qw($VERSION $SSL_SOCKET_CLASS @ISA);
-
-$VERSION = "6.09";
-$VERSION = eval $VERSION;
+use warnings;
 
 # Figure out which SSL implementation to use
+use vars qw($SSL_SOCKET_CLASS);
 if ($SSL_SOCKET_CLASS) {
     # somebody already set it
 }
 elsif ($SSL_SOCKET_CLASS = $ENV{PERL_NET_HTTPS_SSL_SOCKET_CLASS}) {
     unless ($SSL_SOCKET_CLASS =~ /^(IO::Socket::SSL|Net::SSL)\z/) {
-	die "Bad socket class [$SSL_SOCKET_CLASS]";
+        die "Bad socket class [$SSL_SOCKET_CLASS]";
     }
     eval "require $SSL_SOCKET_CLASS";
     die $@ if $@;
@@ -26,24 +24,24 @@ elsif ($Net::SSL::VERSION) {
 else {
     eval { require IO::Socket::SSL; };
     if ($@) {
-	my $old_errsv = $@;
-	eval {
-	    require Net::SSL;  # from Crypt-SSLeay
-	};
-	if ($@) {
-	    $old_errsv =~ s/\s\(\@INC contains:.*\)/)/g;
-	    die $old_errsv . $@;
-	}
-	$SSL_SOCKET_CLASS = "Net::SSL";
+        my $old_errsv = $@;
+        eval {
+            require Net::SSL;  # from Crypt-SSLeay
+        };
+        if ($@) {
+            $old_errsv =~ s/\s\(\@INC contains:.*\)/)/g;
+            die $old_errsv . $@;
+        }
+        $SSL_SOCKET_CLASS = "Net::SSL";
     }
     else {
-	$SSL_SOCKET_CLASS = "IO::Socket::SSL";
+        $SSL_SOCKET_CLASS = "IO::Socket::SSL";
     }
 }
 
 require Net::HTTP::Methods;
 
-@ISA=($SSL_SOCKET_CLASS, 'Net::HTTP::Methods');
+our @ISA=($SSL_SOCKET_CLASS, 'Net::HTTP::Methods');
 
 sub configure {
     my($self, $cnf) = @_;
@@ -53,18 +51,18 @@ sub configure {
 sub http_connect {
     my($self, $cnf) = @_;
     if ($self->isa("Net::SSL")) {
-	if ($cnf->{SSL_verify_mode}) {
-	    if (my $f = $cnf->{SSL_ca_file}) {
-		$ENV{HTTPS_CA_FILE} = $f;
-	    }
-	    if (my $f = $cnf->{SSL_ca_path}) {
-		$ENV{HTTPS_CA_DIR} = $f;
-	    }
-	}
-	if ($cnf->{SSL_verifycn_scheme}) {
-	    $@ = "Net::SSL from Crypt-SSLeay can't verify hostnames; either install IO::Socket::SSL or turn off verification by setting the PERL_LWP_SSL_VERIFY_HOSTNAME environment variable to 0";
-	    return undef;
-	}
+        if ($cnf->{SSL_verify_mode}) {
+            if (my $f = $cnf->{SSL_ca_file}) {
+                $ENV{HTTPS_CA_FILE} = $f;
+            }
+            if (my $f = $cnf->{SSL_ca_path}) {
+                $ENV{HTTPS_CA_DIR} = $f;
+            }
+        }
+        if ($cnf->{SSL_verifycn_scheme}) {
+            $@ = "Net::SSL from Crypt-SSLeay can't verify hostnames; either install IO::Socket::SSL or turn off verification by setting the PERL_LWP_SSL_VERIFY_HOSTNAME environment variable to 0";
+            return undef;
+        }
     }
     $self->SUPER::configure($cnf);
 }
@@ -82,16 +80,24 @@ if ($SSL_SOCKET_CLASS eq "Net::SSL") {
 
 1;
 
+=pod
+
+=encoding UTF-8
+
 =head1 NAME
 
 Net::HTTPS - Low-level HTTP over SSL/TLS connection (client)
 
+=head1 VERSION
+
+version 6.14
+
 =head1 DESCRIPTION
 
 The C<Net::HTTPS> is a low-level HTTP over SSL/TLS client.  The interface is the same
-as the interface for C<Net::HTTP>, but the constructor method take additional parameters
-as accepted by L<IO::Socket::SSL>.  The C<Net::HTTPS> object isa C<IO::Socket::SSL>
-too, which make it inherit additional methods from that base class.
+as the interface for C<Net::HTTP>, but the constructor takes additional parameters
+as accepted by L<IO::Socket::SSL>.  The C<Net::HTTPS> object is an C<IO::Socket::SSL>
+too, which makes it inherit additional methods from that base class.
 
 For historical reasons this module also supports using C<Net::SSL> (from the
 Crypt-SSLeay distribution) as its SSL driver and base class.  This base is
@@ -109,3 +115,21 @@ is C<IO::Socket::SSL>.  Currently the only other supported value is C<Net::SSL>.
 =head1 SEE ALSO
 
 L<Net::HTTP>, L<IO::Socket::SSL>
+
+=head1 AUTHOR
+
+Gisle Aas <gisle@activestate.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2001-2017 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+__END__
+
+#ABSTRACT: Low-level HTTP over SSL/TLS connection (client)
+
