@@ -1,8 +1,13 @@
 package Net::HTTP::Methods;
-$Net::HTTP::Methods::VERSION = '6.14';
+
+require 5.005;  # 4-arg substr
+
 use strict;
-use warnings;
+use vars qw($VERSION);
 use URI;
+
+$VERSION = "6.09";
+$VERSION = eval $VERSION;
 
 my $CRLF = "\015\012";   # "\r\n" is not portable
 
@@ -269,17 +274,21 @@ sub my_readline {
                      or die "read timeout";
 
                 # consume all incoming bytes
-                my $bytes_read = $self->sysread($_, 1024, length);
-                if(defined $bytes_read) {
-                    $new_bytes += $bytes_read;
-                }
-                elsif($!{EINTR} || $!{EAGAIN} || $!{EWOULDBLOCK} || $!{ESPIPE}) {
-                    redo READ;
-                }
-                else {
-                    # if we have already accumulated some data let's at
-                    # least return that as a line
-                    length or die "$what read failed: $!";
+                while(1) {
+                    my $bytes_read = $self->sysread($_, 1024, length);
+                    if(defined $bytes_read) {
+                        $new_bytes += $bytes_read;
+                        last if $bytes_read < 1024;
+                    }
+                    elsif($!{EINTR} || $!{EAGAIN} || $!{EWOULDBLOCK} || $!{ESPIPE}) {
+                        redo READ;
+                    }
+                    else {
+                        # if we have already accumulated some data let's at
+                        # least return that as a line
+                        length or die "$what read failed: $!";
+                        last;
+                    }
                 }
 
                 # no line-ending, no new bytes
@@ -301,7 +310,6 @@ sub can_read {
     my $self = shift;
     return 1 unless defined(fileno($self));
     return 1 if $self->isa('IO::Socket::SSL') && $self->pending;
-    return 1 if $self->isa('Net::SSL') && $self->can('pending') && $self->pending;
 
     # With no timeout, wait forever.  An explicit timeout of 0 can be
     # used to just check if the socket is readable without waiting.
@@ -315,8 +323,8 @@ sub can_read {
         $before = time if $timeout;
         my $nfound = select($fbits, undef, undef, $timeout);
         if ($nfound < 0) {
-            if ($!{EINTR} || $!{EAGAIN} || $!{EWOULDBLOCK} || $!{ESPIPE} || $!{EACCES) {
-                # don't really think EAGAIN/EWOULDBLOCK can happen here
+            if ($!{EINTR} || $!{EAGAIN} || $!{ESPIPE} || $!{EACCES}) {
+                # don't really think EAGAIN can happen here
                 if ($timeout) {
                     $timeout -= time - $before;
                     $timeout = 0 if $timeout < 0;
@@ -638,30 +646,3 @@ sub inflate_ok {
 } # BEGIN
 
 1;
-
-__END__
-
-=pod
-
-=encoding UTF-8
-
-=head1 NAME
-
-Net::HTTP::Methods
-
-=head1 VERSION
-
-version 6.14
-
-=head1 AUTHOR
-
-Gisle Aas <gisle@activestate.com>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2001-2017 by Gisle Aas.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
